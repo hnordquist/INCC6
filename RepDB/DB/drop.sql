@@ -63,6 +63,8 @@ DROP TABLE [truncated_mult_rec_m];
 GO
 DROP TABLE [active_passive_rec_m];
 GO
+DROP TABLE [active_rec];
+GO
 DROP TABLE [active_mult_rec_m];
 GO
 DROP TABLE [collar_rec_m];
@@ -148,8 +150,6 @@ GO
 DROP TABLE [add_a_source_setup_rec];
 GO
 DROP TABLE [add_a_source_rec];
-GO
-DROP TABLE [active_rec];
 GO
 DROP TABLE [active_passive_rec];
 GO

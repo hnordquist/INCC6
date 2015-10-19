@@ -56,8 +56,8 @@ INSERT INTO "alpha_beta_rec" VALUES(2,'0','0');
 GO
 INSERT INTO "bkg_parms_rec" 
 (detector_id,passive_bkg_singles_rate,[passive_bkg_singles_rate_err],[passive_bkg_doubles_rate],[passive_bkg_doubles_rate_err],[passive_bkg_triples_rate],[passive_bkg_triples_rate_err],
-[active_bkg_singles_rate],[active_bkg_singles_rate_err],[passive_bkg_scaler1_rate],[passive_bkg_scaler2_rate],[active_bkg_scaler1_rate],[active_bkg_scaler2_rate]
-) VALUES(2, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+[active_bkg_singles_rate],[active_bkg_singles_rate_err],[active_bkg_doubles_rate],[active_bkg_doubles_rate_err],[active_bkg_triples_rate],[active_bkg_triples_rate_err],[passive_bkg_scaler1_rate],[passive_bkg_scaler2_rate],[active_bkg_scaler1_rate],[active_bkg_scaler2_rate]
+) VALUES(2, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 GO
 INSERT INTO "norm_parms_rec" 
 (detector_id, [source_id],[normalization_constant],[normalization_constant_err],[bias_mode],[meas_rate],[meas_rate_err],[amli_ref_singles_rate],
@@ -169,7 +169,7 @@ INSERT INTO "add_a_source_setup_rec" VALUES(3,'None',1,0.0,0.0,1,'0,0,0,0,0',625
 GO
 INSERT INTO "alpha_beta_rec" VALUES(3,'','');
 GO
-INSERT INTO "bkg_parms_rec" VALUES(3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+INSERT INTO "bkg_parms_rec" VALUES(3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 GO
 INSERT INTO "norm_parms_rec" VALUES(3,'',1.0,0.0,1,0.0,0.0,0.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
 GO
