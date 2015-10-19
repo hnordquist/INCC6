@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C4393A93-ABF7-448C-A3EB-4F0E5A1F7376}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>LM</RootNamespace>
+    <AssemblyName>NCCCtrl</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BigNum">
+      <HintPath>..\deployment\BigNum.dll</HintPath>
+    </Reference>
+    <Reference Include="Defs">
+      <HintPath>..\deployment\Defs.dll</HintPath>
+    </Reference>
+    <Reference Include="LMSR">
+      <HintPath>..\deployment\LMSR.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="NCCCore">
+      <HintPath>..\deployment\NCCCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Options">
+      <HintPath>..\deployment\Options.dll</HintPath>
+    </Reference>
+    <Reference Include="RepDB">
+      <HintPath>..\deployment\RepDB.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Analysis\INCCMeasurement.cs" />
+    <Compile Include="Analysis\LMRDT.cs" />
+    <Compile Include="Analysis\Ptr32ProcessingState.cs" />
+    <Compile Include="Analysis\Ptr32RawDataTransform.cs" />
+    <Compile Include="Analysis\RDT.cs" />
+    <Compile Include="Analysis\RTAnalysis.cs" />
+    <Compile Include="Analysis\SRRDT.cs" />
+    <Compile Include="Comm\IEmulatorDiversion.cs" />
+    <Compile Include="Comm\Lingo.cs" />
+    <Compile Include="Comm\LMMMComm.cs" />
+    <Compile Include="Comm\NullEmulation.cs" />
+    <Compile Include="DAQServer\BufferPool.cs" />
+    <Compile Include="DAQServer\ExtensionMethods.cs" />
+    <Compile Include="DAQServer\Server.cs" />
+    <Compile Include="DAQServer\SocketAsyncEventArgsPool.cs" />
+    <Compile Include="DAQ\Collect.cs" />
+    <Compile Include="DAQ\Control.cs" />
+    <Compile Include="DAQ\DataHandlers.cs" />
+    <Compile Include="DAQ\HV.cs" />
+    <Compile Include="DAQ\INCCSR.cs" />
+    <Compile Include="DAQ\Instr.cs" />
+    <Compile Include="DAQ\Ptr32Instrument.cs" />
+    <Compile Include="DAQ\SRDAQHandler.cs" />
+    <Compile Include="DAQ\SREventHandler.cs" />
+    <Compile Include="Device\Ptr32.cs" />
+    <Compile Include="Device\Ptr32Error.cs" />
+    <Compile Include="Device\Ptr32Exception.cs" />
+    <Compile Include="Device\Ptr32Parser.cs" />
+    <Compile Include="Device\Ptr32RateCounter.cs" />
+    <Compile Include="File\FileCtrlINCC5.cs" />
+    <Compile Include="File\CSVFile.cs" />
+    <Compile Include="File\FileCtrl.cs" />
+    <Compile Include="File\INCCKnew.cs" />
+    <Compile Include="File\NeutronDataFiles.cs" />
+    <Compile Include="File\OPFiles.cs" />
+    <Compile Include="LM\IAction.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawAnalysis\AnalyzerEventCode.cs" />
+    <Compile Include="RawAnalysis\AnalyzerHandler.cs" />
+    <Compile Include="RawAnalysis\AnalyzerHandlerResult.cs" />
+    <Compile Include="RawAnalysis\AnalyzerHandlerStatus.cs" />
+    <Compile Include="RawAnalysis\CoincidenceAnalysisSlowBackground.cs" />
+    <Compile Include="RawAnalysis\CoincidenceNeutronEvent.cs" />
+    <Compile Include="RawAnalysis\EventSpacingAnalysis.cs" />
+    <Compile Include="RawAnalysis\FastBackgroundAnalysis.cs" />
+    <Compile Include="RawAnalysis\FeynmanGateAnalysis.cs" />
+    <Compile Include="RawAnalysis\MultiplicityAnalysisFastBackground.cs" />
+    <Compile Include="RawAnalysis\MultiplicityAnalysisSlowBackground.cs" />
+    <Compile Include="RawAnalysis\NeutronEvent.cs" />
+    <Compile Include="RawAnalysis\RateGateAnalysis.cs" />
+    <Compile Include="RawAnalysis\RossiAlphaCircularStackAnalysis.cs" />
+    <Compile Include="Status\Status.cs" />
+    <Compile Include="Transfer\FileTransfer.cs" />
+    <Compile Include="Transfer\INCCDBStructs.cs" />
+    <Compile Include="Transfer\INCCFileInfo.cs" />
+    <Compile Include="Utils\ProgressTracker.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /B /V /Y "$(TargetPath)" "$(SolutionDir)deployment"
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

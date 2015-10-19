@@ -1,0 +1,125 @@
+
+<html><head><title>Command line examples</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="initialize.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="references.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">Appendix</span><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="commandlineflags.htm">Command Line Flags</a></div>
+
+
+<h3><span style="DISPLAY: none"></span><a name="_Toc224737487" id="_Toc224737487">Command line 
+examples</a><br /><br /></h3>
+<p class="MsoNormalCxSpFirst" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">Preparing a new database with 
+calibration parameters</span></b></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">incc 
+/initialize C:\INCC Test\incc delta /LogLocation \tmp\incc xfer.log /target 
+\tmp\db </span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">1: Start log file in \tmp\incc 
+xfer.log</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">2: Create an empty database at 
+\tmp\db if one is not found</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">3: Load all transfer and initial data 
+files found in the “C:\INCC Test\incc delta” folder into the database at 
+\tmp\db.</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"></span> </p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">Preparing a new database with one set 
+of calibration parameters from a transfer file, then analyzing one or more NCC 
+files</span></b></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">incc /import 
+/initialize C:\INCC Test\8C4O4735.RTS /loglocation \tmp /target \tmp\db 
+/datasource C:\RRP\IPCAS\data /exportlocation C:\tmp\data</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">1: Start auto-named log file in \tmp, 
+uses a time stamp and mnemonic cue in the file name</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">2: Create an empty database at 
+\tmp\db if one is not found</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">3: Load the info in the rates-only 
+transfer file C:\INCC Test\8C4O4735.RTS into the database</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">4: Start the IMPORT processing, using 
+C:\RRP\IPCAS\data as the source of cop/nop/ncc files</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">5: Write the “IR” txt file in 
+C:\tmp\data, using the default filename incc.txt</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%"></span> </p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">Importing NCC files into a new 
+database, but using a specific pre-configured source database as the starting 
+point</span></b></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">incc.exe 
+/import /target \tmp\db /dbsource c:\ndar config\incccfg\inccdb.zip /datasource 
+c:\rrp\ipcas\data /exportlocation C:\tmp\data</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">1: Start auto-named log file in 
+&lt;incc.exe install location&gt;, uses a time stamp and mnemonic cue in the 
+file name</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">2: Create a database using the 
+/dbsource  inccdb.zip at \tmp\db, overwriting any existing 
+database</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">3: Start the IMPORT processing, using 
+C:\RRP\IPCAS\data as the source of cop/nop/ncc files</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">4: Write the “IR” txt file in 
+C:\tmp\data, using the default filename incc.txt</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%"></span> </p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">Preparing a new database with 
+multiple sets of calibration parameters from initial data and transfer files, 
+stored in a zip archive, then analyzing one or more NCC files</span></b></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">incc.exe 
+/import /initialize C:\INCC Test\test some files.zip /loglocation 
+\tmp\ziptest.txt /target \tmp\db /datasource C:\RRP\IPCAS\data /exportlocation 
+C:\tmp\data</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">1: Start log file in 
+\tmp\ziptest.txt</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">2: Create an empty database at 
+\tmp\db if one is not found</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">3: Load all transfer and initial data 
+files found in “C:\INCC Test\test some files.zip” into the database at 
+\tmp\db.</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">4: Start the IMPORT processing, using 
+C:\RRP\IPCAS\data as the source of cop/nop/ncc files</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">5: Write the “IR” txt file in 
+C:\tmp\data, using the default filename incc.txt</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%"></span> </p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">Preparing a new database with 
+multiple calibration parameters from initial data and transfer files, stored in 
+a folder, then analyzing one or more NCC files</span></b></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">incc.exe 
+/import /initialize C:\INCC Test\test dir /loglocation \tmp\foldertest.txt 
+/target \tmp\db /datasource C:\RRP\IPCAS\data /exportlocation 
+C:\tmp\data</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">1: Start log file in \tmp\ 
+foldertest.txt</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">2: Create an empty database at 
+\tmp\db if one is not found</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">3: Load all transfer and initial data 
+files found in the folder “C:\INCC Test\test dir” into the database at 
+\tmp\db.</span></p>
+<p class="MsoNormalCxSpMiddle" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">4: Start the IMPORT processing, using 
+C:\RRP\IPCAS\data as the source of cop/nop/ncc files</span></p>
+<p class="MsoNormalCxSpLast" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="FONT-SIZE: 11pt; LINE-HEIGHT: 115%">5: Write the “IR” txt file in 
+C:\tmp\data, using the default filename incc.txt</span></p></div></body></html>

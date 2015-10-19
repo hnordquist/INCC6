@@ -1,0 +1,1138 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Introduction">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Overview">
+			<param name="Local" value="WordDocuments/overview.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="This Document's Conventions">
+			<param name="Local" value="WordDocuments/thisdocumentsconventions.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Windows Conventions">
+			<param name="Local" value="WordDocuments/windowsconventions.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Units">
+			<param name="Local" value="WordDocuments/units.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Date format">
+			<param name="Local" value="WordDocuments/dateformat.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Getting started">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="System Requirements">
+			<param name="Local" value="WordDocuments/systemrequirements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Installation Procedure">
+			<param name="Local" value="WordDocuments/installationprocedure.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Integrated Review Installation Configuration">
+				<param name="Local" value="WordDocuments/integratedreviewinstallationconfiguration.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Procedures">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="System Setup">
+			<param name="Local" value="WordDocuments/systemsetup.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Inspector Verification Measurement Procedure">
+			<param name="Local" value="WordDocuments/inspectorverificationmeasurementprocedure.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Background Measurements">
+			<param name="Local" value="WordDocuments/backgroundmeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Initial Source Measurements">
+			<param name="Local" value="WordDocuments/initialsourcemeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Normalization Measurements">
+			<param name="Local" value="WordDocuments/normalizationmeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Precision Measurements">
+			<param name="Local" value="WordDocuments/precisionmeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Verification Measurements">
+			<param name="Local" value="WordDocuments/verificationmeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Calibration Measurements">
+			<param name="Local" value="WordDocuments/calibrationmeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Calibration Procedure">
+			<param name="Local" value="WordDocuments/calibrationprocedure.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Holdup Measurements Procedure">
+			<param name="Local" value="WordDocuments/holdupmeasurementsprocedure.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Import Operator Declarations from Operator Review and Measurements from Radiation Review">
+			<param name="Local" value="WordDocuments/importoperatordeclarationsfromoperatorreviewandmeasurementsfromradiationreview.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Display measurement corresponding to a peak in Radiation Review">
+			<param name="Local" value="WordDocuments/displaymeasurementcorrespondingtoapeakinradiationreview.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Operations Reference">
+			<param name="Local" value="WordDocuments/operationsreference.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Startup">
+				<param name="Local" value="WordDocuments/startup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Inspection Main Menu">
+			<param name="Local" value="WordDocuments/inspectionmainmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Maintenance Main Menu">
+			<param name="Local" value="WordDocuments/maintenancemainmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="File Submenu">
+			<param name="Local" value="WordDocuments/filesubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Save As/Export">
+				<param name="Local" value="WordDocuments/saveasexport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Get External Data">
+				<param name="Local" value="WordDocuments/getexternaldata.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Backup All Data">
+				<param name="Local" value="WordDocuments/backupalldata.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Restore All Data">
+				<param name="Local" value="WordDocuments/restorealldata.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Batch Analysis">
+				<param name="Local" value="WordDocuments/batchanalysis.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Database">
+				<param name="Local" value="WordDocuments/database.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Printer Setup">
+				<param name="Local" value="WordDocuments/printersetup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Exit INCC">
+				<param name="Local" value="WordDocuments/exitincc.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="View Submenu">
+			<param name="Local" value="WordDocuments/viewsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Setup Submenu">
+			<param name="Local" value="WordDocuments/setupsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Facility/Inspection">
+				<param name="Local" value="WordDocuments/facilityinspection.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Measurement Parameters">
+				<param name="Local" value="WordDocuments/measurementparameters.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Isotopics">
+				<param name="Local" value="WordDocuments/isotopics.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Composite Isotopics">
+				<param name="Local" value="WordDocuments/compositeisotopics.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Item Data Entry">
+				<param name="Local" value="WordDocuments/itemdataentry.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Collar Item Data Entry">
+				<param name="Local" value="WordDocuments/collaritemdataentry.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Maintain Submenu">
+			<param name="Local" value="WordDocuments/maintainsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Calibration">
+				<param name="Local" value="WordDocuments/calibration.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Deming Curve Fitting">
+				<param name="Local" value="WordDocuments/demingcurvefitting.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Analysis Methods">
+				<param name="Local" value="WordDocuments/analysismethods.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Passive Calibration Curve">
+				<param name="Local" value="WordDocuments/passivecalibrationcurve.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Known Alpha">
+				<param name="Local" value="WordDocuments/knownalpha.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Known M">
+				<param name="Local" value="WordDocuments/knownm.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Passive Multiplicity">
+				<param name="Local" value="WordDocuments/passivemultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Add-a-source">
+				<param name="Local" value="WordDocuments/addasource.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Curium Ratio">
+				<param name="Local" value="WordDocuments/curiumratio.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Truncated Multiplicity">
+				<param name="Local" value="WordDocuments/truncatedmultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Active Calibration Curve">
+				<param name="Local" value="WordDocuments/activecalibrationcurve.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Collar">
+				<param name="Local" value="WordDocuments/collar.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Active Multiplicity">
+				<param name="Local" value="WordDocuments/activemultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Active/Passive">
+				<param name="Local" value="WordDocuments/activepassive.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Background Setup">
+				<param name="Local" value="WordDocuments/backgroundsetup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Normalization Setup">
+				<param name="Local" value="WordDocuments/normalizationsetup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Unattended Measurements Setup">
+				<param name="Local" value="WordDocuments/unattendedmeasurementssetup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="QC and Test Parameters">
+				<param name="Local" value="WordDocuments/qcandtestparameters.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Stratum Rejection Limits">
+				<param name="Local" value="WordDocuments/stratumrejectionlimits.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Error Calculation Method">
+				<param name="Local" value="WordDocuments/errorcalculationmethod.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Sweep">
+				<param name="Local" value="WordDocuments/sweep.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Archive">
+				<param name="Local" value="WordDocuments/archive.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Detector Add/Delete">
+				<param name="Local" value="WordDocuments/detectoradddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Facility Add/Delete">
+				<param name="Local" value="WordDocuments/facilityadddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="MBA Add/Delete">
+				<param name="Local" value="WordDocuments/mbaadddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Stratum Id Add/Delete">
+				<param name="Local" value="WordDocuments/stratumidadddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Material Type Add/Delete">
+				<param name="Local" value="WordDocuments/materialtypeadddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Poison Rod Type Add/Delete">
+				<param name="Local" value="WordDocuments/poisonrodtypeadddelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Glovebox Add/Edit/Delete">
+				<param name="Local" value="WordDocuments/gloveboxaddeditdelete.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Add-a-source Setup">
+				<param name="Local" value="WordDocuments/addasourcesetup.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Delete Measurements">
+				<param name="Local" value="WordDocuments/deletemeasurements.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Some Settings">
+				<param name="Local" value="WordDocuments/somesettings.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Certain Advanced Features">
+				<param name="Local" value="WordDocuments/certainadvancedfeatures.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Add/Delete Password">
+				<param name="Local" value="WordDocuments/adddeletepassword.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Measure High Voltage Plateau">
+				<param name="Local" value="WordDocuments/measurehighvoltageplateau.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Select Pu240e Coefficients">
+				<param name="Local" value="WordDocuments/selectpu240ecoefficients.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Acquire Submenu">
+			<param name="Local" value="WordDocuments/acquiresubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Rates Only Acquire">
+				<param name="Local" value="WordDocuments/ratesonlyacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Background Acquire">
+				<param name="Local" value="WordDocuments/backgroundacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Initial Source Acquire">
+				<param name="Local" value="WordDocuments/initialsourceacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Normalization Acquire">
+				<param name="Local" value="WordDocuments/normalizationacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Precision Acquire">
+				<param name="Local" value="WordDocuments/precisionacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification Acquire">
+				<param name="Local" value="WordDocuments/verificationacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Calibration Measurements Acquire">
+				<param name="Local" value="WordDocuments/calibrationmeasurementsacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup Acquire">
+				<param name="Local" value="WordDocuments/holdupacquire.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Reanalyze Submenu">
+			<param name="Local" value="WordDocuments/reanalyzesubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification Reanalysis">
+				<param name="Local" value="WordDocuments/verificationreanalysis.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup Reanalysis">
+				<param name="Local" value="WordDocuments/holdupreanalysis.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Report Submenu">
+			<param name="Local" value="WordDocuments/reportsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="All Measurements Report">
+				<param name="Local" value="WordDocuments/allmeasurementsreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<UL>
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Batch Script Generation">
+					<param name="Local" value="WordDocuments/batchscriptgeneration.htm">
+					<param name="WindowName" value="$global_proc">
+					</OBJECT>
+			</UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Rates Only Report">
+				<param name="Local" value="WordDocuments/ratesonlyreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Background Report">
+				<param name="Local" value="WordDocuments/backgroundreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Initial Source Report">
+				<param name="Local" value="WordDocuments/initialsourcereport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Normalization Report">
+				<param name="Local" value="WordDocuments/normalizationreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Precision Report">
+				<param name="Local" value="WordDocuments/precisionreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification Report">
+				<param name="Local" value="WordDocuments/verificationreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Calibration Report">
+				<param name="Local" value="WordDocuments/calibrationreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup Report">
+				<param name="Local" value="WordDocuments/holdupreport.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Measurement Summary">
+				<param name="Local" value="WordDocuments/measurementsummary.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification Summary">
+				<param name="Local" value="WordDocuments/verificationsummary.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup Summary">
+				<param name="Local" value="WordDocuments/holdupsummary.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Plot Normalization History">
+				<param name="Local" value="WordDocuments/plotnormalizationhistory.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Plot Calibration and Verification Results">
+				<param name="Local" value="WordDocuments/plotcalibrationandverificationresults.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Tools Submenu">
+			<param name="Local" value="WordDocuments/toolssubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Select Another Review Tool">
+				<param name="Local" value="WordDocuments/selectanotherreviewtool.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Window Submenu">
+			<param name="Local" value="WordDocuments/windowsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Arrange Icons">
+				<param name="Local" value="WordDocuments/arrangeicons.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Cascade">
+				<param name="Local" value="WordDocuments/cascade.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Tile">
+				<param name="Local" value="WordDocuments/tile.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Help Submenu">
+			<param name="Local" value="WordDocuments/helpsubmenu.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Topics">
+				<param name="Local" value="WordDocuments/topics.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Procedures">
+				<param name="Local" value="WordDocuments/procedures1.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="App Info">
+				<param name="Local" value="WordDocuments/appinfo.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="About INCC">
+				<param name="Local" value="WordDocuments/aboutincc.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Files">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Input files">
+			<param name="Local" value="WordDocuments/inputfiles.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Stratum Authority File Format">
+				<param name="Local" value="WordDocuments/stratumauthorityfileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Item Relevant Data File Format">
+				<param name="Local" value="WordDocuments/itemrelevantdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Operator Declaration File Format">
+				<param name="Local" value="WordDocuments/operatordeclarationfileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Operator Declaration File Format for Curium Ratio Measurements">
+				<param name="Local" value="WordDocuments/operatordeclarationfileformatforcuriumratiomeasurements.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Isotopics Data File Format">
+				<param name="Local" value="WordDocuments/isotopicsdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Composite Isotopics Data File Format">
+				<param name="Local" value="WordDocuments/compositeisotopicsdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Test Data File Format">
+				<param name="Local" value="WordDocuments/testdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup Test Data File Format">
+				<param name="Local" value="WordDocuments/holduptestdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Radiation Review Measurement Data File Format">
+				<param name="Local" value="WordDocuments/radiationreviewmeasurementdatafileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Batch Script File Format">
+				<param name="Local" value="WordDocuments/batchscriptfileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Output files">
+			<param name="Local" value="WordDocuments/outputfiles.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="File Naming Conventions">
+				<param name="Local" value="WordDocuments/filenamingconventions.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="PSA Operator-Inspector Measurement Database and Logsheet File Format">
+				<param name="Local" value="WordDocuments/psaoperatorinspectormeasurementdatabaseandlogsheetfileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Performance Monitoring File Format">
+				<param name="Local" value="WordDocuments/performancemonitoringfileformat.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Isotopics Data File Format">
+				<param name="Local" value="WordDocuments/isotopicsdatafileformat1.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Composite Isotopics Data File Format">
+				<param name="Local" value="WordDocuments/compositeisotopicsdatafileformat1.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="INCC Analysis Algorithms">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Introduction">
+			<param name="Local" value="WordDocuments/introduction1.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Raw Data">
+			<param name="Local" value="WordDocuments/rawdata.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Quality Control (QC) Tests">
+			<param name="Local" value="WordDocuments/qualitycontrolqctests.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="High Voltage Test">
+			<param name="Local" value="WordDocuments/highvoltagetest.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Raw Data Checksum Tests">
+			<param name="Local" value="WordDocuments/rawdatachecksumtests.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Measured Count Rates">
+			<param name="Local" value="WordDocuments/measuredcountrates.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Accidentals/Singles Test">
+			<param name="Local" value="WordDocuments/accidentalssinglestest.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Theoretical and Sample Standard Deviations">
+			<param name="Local" value="WordDocuments/theoreticalandsamplestandarddeviations.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Calculated Accidental Coincidence Counts">
+			<param name="Local" value="WordDocuments/calculatedaccidentalcoincidencecounts.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Outlier Tests">
+			<param name="Local" value="WordDocuments/outliertests.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Errors of Measured Singles and Doubles Rates">
+			<param name="Local" value="WordDocuments/errorsofmeasuredsinglesanddoublesrates.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Count Rates Corrected for Deadtime">
+			<param name="Local" value="WordDocuments/countratescorrectedfordeadtime.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Theoretical Errors of Deadtime Corrected Singles and Doubles Rates">
+			<param name="Local" value="WordDocuments/theoreticalerrorsofdeadtimecorrectedsinglesanddoublesrates.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Theoretical Error of Deadtime Corrected Triples Rate">
+			<param name="Local" value="WordDocuments/theoreticalerrorofdeadtimecorrectedtriplesrate.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Background Subtraction">
+			<param name="Local" value="WordDocuments/backgroundsubtraction.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Normalization">
+			<param name="Local" value="WordDocuments/normalization.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Deadtime, Background, Normalization and QC Test Table">
+			<param name="Local" value="WordDocuments/deadtimebackgroundnormalizationandqctesttable.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Rates Only Measurements">
+			<param name="Local" value="WordDocuments/ratesonlymeasurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Background Measurement">
+			<param name="Local" value="WordDocuments/backgroundmeasurement.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Initial Source Measurement">
+			<param name="Local" value="WordDocuments/initialsourcemeasurement.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Normalization Measurement">
+			<param name="Local" value="WordDocuments/normalizationmeasurement.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Precision measurement">
+			<param name="Local" value="WordDocuments/precisionmeasurement.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Plutonium Isotopic Updating">
+			<param name="Local" value="WordDocuments/plutoniumisotopicupdating.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Alpha">
+			<param name="Local" value="WordDocuments/alpha.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Effective 240Pu Mass">
+			<param name="Local" value="WordDocuments/effective240pumass.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Effective 239Pu Mass">
+			<param name="Local" value="WordDocuments/effective239pumass.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Calibration Measurements">
+			<param name="Local" value="WordDocuments/calibrationmeasurements1.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Conventional Calibration Curve Assay">
+			<param name="Local" value="WordDocuments/conventionalcalibrationcurveassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Conventional Multiplicity Assay">
+			<param name="Local" value="WordDocuments/conventionalmultiplicityassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Weighted Point Model Multiplicity Assay">
+			<param name="Local" value="WordDocuments/weightedpointmodelmultiplicityassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Multiplicity Assay with Unknown Efficiency">
+			<param name="Local" value="WordDocuments/multiplicityassaywithunknownefficiency.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Dual Energy Passive Multiplicity Assay">
+			<param name="Local" value="WordDocuments/dualenergypassivemultiplicityassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Multiplicity Assay with Known Alpha">
+			<param name="Local" value="WordDocuments/multiplicityassaywithknownalpha.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Known Alpha Assay">
+			<param name="Local" value="WordDocuments/knownalphaassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Known Multiplication Assay">
+			<param name="Local" value="WordDocuments/knownmultiplicationassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Active Multiplicity Assay">
+			<param name="Local" value="WordDocuments/activemultiplicityassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Add-a-Source Assay">
+			<param name="Local" value="WordDocuments/addasourceassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Truncated Multiplicity Assay">
+			<param name="Local" value="WordDocuments/truncatedmultiplicityassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Plutonium Assay Mass">
+			<param name="Local" value="WordDocuments/plutoniumassaymass.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="LWR Fuel Collar Assay">
+			<param name="Local" value="WordDocuments/lwrfuelcollarassay.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Table of Symbols">
+			<param name="Local" value="WordDocuments/tableofsymbols.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Database Recovery Procedure">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Database corrupted">
+			<param name="Local" value="WordDocuments/databasecorrupted.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Technical Support">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Physics technical support">
+			<param name="Local" value="WordDocuments/physicstechnicalsupport.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Software technical support, issue reporting and resolution">
+			<param name="Local" value="WordDocuments/softwaretechnicalsupportissuereportingandresolution.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Appendix">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Data Processing">
+			<param name="Local" value="WordDocuments/dataprocessing.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - raw data">
+				<param name="Local" value="WordDocuments/dataprocessingrawdata.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - checksum test">
+				<param name="Local" value="WordDocuments/dataprocessingchecksumtest.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - accidentals/singles test">
+				<param name="Local" value="WordDocuments/dataprocessingaccidentalssinglestest.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - outlier test">
+				<param name="Local" value="WordDocuments/dataprocessingoutliertest.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - deadtime corrected count rates and errors">
+				<param name="Local" value="WordDocuments/dataprocessingdeadtimecorrectedcountratesanderrors.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - average rates">
+				<param name="Local" value="WordDocuments/dataprocessingaveragerates.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Data processing - background subtraction">
+				<param name="Local" value="WordDocuments/dataprocessingbackgroundsubtraction.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Measurements">
+			<param name="Local" value="WordDocuments/measurements.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Rates Only">
+				<param name="Local" value="WordDocuments/ratesonly.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Background">
+				<param name="Local" value="WordDocuments/background.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Initial Source">
+				<param name="Local" value="WordDocuments/initialsource.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Normalization">
+				<param name="Local" value="WordDocuments/normalization1.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Precision">
+				<param name="Local" value="WordDocuments/precision.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - general">
+				<param name="Local" value="WordDocuments/verificationmeasurementsgeneral.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - passive calibration curve">
+				<param name="Local" value="WordDocuments/verificationmeasurementspassivecalibrationcurve.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - known alpha">
+				<param name="Local" value="WordDocuments/verificationmeasurementsknownalpha.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - known M">
+				<param name="Local" value="WordDocuments/verificationmeasurementsknownm.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - passive multiplicity">
+				<param name="Local" value="WordDocuments/verificationmeasurementspassivemultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - add-a-source">
+				<param name="Local" value="WordDocuments/verificationmeasurementsaddasource.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - curium ratio">
+				<param name="Local" value="WordDocuments/verificationmeasurementscuriumratio.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - truncated multiplicity">
+				<param name="Local" value="WordDocuments/verificationmeasurementstruncatedmultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - active calibration curve">
+				<param name="Local" value="WordDocuments/verificationmeasurementsactivecalibrationcurve.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - collar">
+				<param name="Local" value="WordDocuments/verificationmeasurementscollar.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - active multiplicity">
+				<param name="Local" value="WordDocuments/verificationmeasurementsactivemultiplicity.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Verification measurements - active/passive">
+				<param name="Local" value="WordDocuments/verificationmeasurementsactivepassive.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Holdup measurements">
+				<param name="Local" value="WordDocuments/holdupmeasurements.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Calibration">
+				<param name="Local" value="WordDocuments/calibration1.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Command Line Flags">
+			<param name="Local" value="WordDocuments/commandlineflags.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="/IMPORT">
+				<param name="Local" value="WordDocuments/import.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="/INITIALIZE">
+				<param name="Local" value="WordDocuments/initialize.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Command line examples">
+				<param name="Local" value="WordDocuments/commandlineexamples.htm">
+				<param name="WindowName" value="$global_main">
+				</OBJECT>
+		</UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="References">
+			<param name="Local" value="WordDocuments/references.htm">
+			<param name="WindowName" value="$global_main">
+			</OBJECT>
+	</UL>
+</UL>
+</BODY></HTML>

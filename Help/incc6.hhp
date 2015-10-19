@@ -1,0 +1,13 @@
+[OPTIONS]
+Compatibility=1.1 or later
+Compiled file=incc6.chm
+Contents file=incc6.hhc
+Default topic=WordDocuments\intro.htm
+Display compile progress=No
+Index file=incc6.hhk
+Language=0x409 English (United States)
+Title=INCC6 Help File
+
+
+[INFOTYPES]
+

@@ -1,0 +1,45 @@
+﻿<Window x:Class="NewUI.MeasSetup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Shift Register Specification" mc:Ignorable="d" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        d:DesignHeight="270" d:DesignWidth="641" SizeToContent="WidthAndHeight" Initialized="Window_Initialized" Topmost="True" SourceInitialized="Window_SourceInitialized" Background="LightGray">
+
+    <Grid Height="233" Margin="-2,0,5,46" Width="624"  DataContext="{Binding}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="148*" />
+            <ColumnDefinition Width="476*" />
+        </Grid.ColumnDefinitions>
+        <Label Content="SR Type" HorizontalAlignment="Left" Margin="62,38,0,0" Name="label1" VerticalAlignment="Top" />
+        <ComboBox HorizontalAlignment="Left" Margin="118,40,0,0" Name="TypeCombo" VerticalAlignment="Top" Width="94" ItemsSource="{Binding DB.DetectorTypes}" Grid.ColumnSpan="2" />
+            <Label Content="Predelay (ms)" HorizontalAlignment="Left" Margin="37,65,0,145" Name="label7" />
+            <Label Content="Gate length (ms)" HorizontalAlignment="Left" Margin="23,88,0,0" Name="label2" VerticalAlignment="Top" />
+            <Label Content="2nd gate length (ms)" HorizontalAlignment="Left" Margin="117,17,0,0" Name="label3" VerticalAlignment="Top" Visibility="Hidden" Grid.Column="1" />
+            <Label Content="High voltage" HorizontalAlignment="Left" Margin="44,109,0,0" Name="label4" VerticalAlignment="Top" />
+            <Label Content="Die away time (ms)" HorizontalAlignment="Left" Margin="10,133,0,0" Name="label5" VerticalAlignment="Top" />
+            <Label Content="Efficency" HorizontalAlignment="Left" Margin="62,155,0,0" Name="label6" VerticalAlignment="Top" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="118,65,0,0" Name="predelay" VerticalAlignment="Top" Width="94" Grid.ColumnSpan="2" LostFocus="predelay_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="118,88,0,0" Name="gatelength" VerticalAlignment="Top" Width="94" Grid.ColumnSpan="2" LostFocus="gatelength_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="233,17,0,0" Name="gatelength2" VerticalAlignment="Top" Width="94" Visibility="Hidden" Grid.Column="1" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="118,111,0,0" Name="hv" VerticalAlignment="Top" Width="94" Grid.ColumnSpan="2" LostFocus="hv_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="118,134,0,0" Name="dieaway" VerticalAlignment="Top" Width="94" Grid.ColumnSpan="2" LostFocus="dieaway_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="118,157,0,0" Name="efficiency" VerticalAlignment="Top" Width="94" Grid.ColumnSpan="2" LostFocus="efficiency_LostFocus" />
+            <Label Content="Multiplicity deadtime (1e-9)" HorizontalAlignment="Left" Margin="89,42,0,0" Name="label8" VerticalAlignment="Top" Grid.Column="1" />
+            <Label Content="Deadtime coefficent A (1e-6)" HorizontalAlignment="Left" Margin="82,65,0,0" Name="label9" VerticalAlignment="Top" Grid.Column="1" />
+            <Label Content="Deadtime coefficent B (1e-12)" HorizontalAlignment="Left" Margin="76,88,0,0" Name="label10" VerticalAlignment="Top" Grid.Column="1" />
+            <Label Content="Deadtime coefficent C (1e-9)" HorizontalAlignment="Left" Margin="81,109,0,0" Name="label11" VerticalAlignment="Top" Grid.Column="1" />
+            <Label Content="Doubles gate fraction" HorizontalAlignment="Left" Margin="119,133,0,0" Name="label12" VerticalAlignment="Top" Grid.Column="1" />
+            <Label Content="Triples gate fraction" HorizontalAlignment="Left" Margin="124,155,0,0" Name="label13" VerticalAlignment="Top" Grid.Column="1" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,42,0,0" Name="mdeadtime" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="mdeadtime_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,65,0,0" Name="MDTA" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="MDTA_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,88,0,0" Name="MDTB" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="MDTB_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,111,0,0" Name="MDTC" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="MDTC_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,134,0,0" Name="DoublesGateFrac" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="DoublesGateFrac_LostFocus" />
+            <TextBox Height="19" HorizontalAlignment="Left" Margin="232,157,0,0" Name="TriplesGateFrac" VerticalAlignment="Top" Width="94" Grid.Column="1" LostFocus="TriplesGateFrac_LostFocus" />
+        <ListBox Height="157" HorizontalAlignment="Left" ItemsSource="{Binding DB.Detectors}" Margin="345,17,0,0" Name="detectors" VerticalAlignment="Top" Width="120" SelectionChanged="detectors_SelectionChanged_1" Grid.Column="1" />
+        <Button Content="Ok" Height="23" HorizontalAlignment="Left" Margin="308,201,0,0" Name="okButton" VerticalAlignment="Top" Width="75" IsDefault="True" Click="okButton_Click_1" Grid.Column="1" />
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="232,14,0,0" Name="CommComboBox" VerticalAlignment="Top" Width="94" Grid.Column="1" />
+        <Label Content="  Serial Port  " HorizontalAlignment="Left" Margin="164,14,0,0" Name="COMvNetLabel" VerticalAlignment="Top" Width="74"  UseLayoutRounding="True" Grid.Column="1" />
+    </Grid>
+</Window>

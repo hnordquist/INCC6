@@ -1,0 +1,201 @@
+﻿<Window x:Class="NewUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:src="clr-namespace:NewUI"
+        Title="INCC 6β" Loaded="Window_Loaded" Unloaded="Window_Unloaded" Closed="Window_Closed" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="600" Width="800">
+    <DockPanel>
+        <Menu Background="{x:Null}" DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Save As/Export..." Click="SaveAsExportClick" IsEnabled="False">
+                    <MenuItem Header="_PSA/Logsheet File..." Click="PSALogsheetOutClick" IsEnabled="False"/>
+                    <MenuItem Header="_Performance Monitoring File..." Click="PerformanceMonitoringFileOutClick" IsEnabled="False"/>
+                    <MenuItem Header="_Transfer..." Click="TransferFileOutClick" IsEnabled="False"/>
+                    <MenuItem Header="_Initial Data..." Click="InitialDataOutClick" IsEnabled="False"/>
+                </MenuItem>
+                <MenuItem Header="_Get External Data..." Click="GetExternalDataClick">
+                    <MenuItem Header="_Stratum Authority File..." Click="StratumAuthorityFileClick" IsEnabled="False"/>
+                    <MenuItem Header="_Item Relevant Data File..." Click="ItemRelevantDataClick" IsEnabled="False"/>
+                    <MenuItem Header="_Transfer..." Click="TransferFileInClick" ToolTip="Import saved transfer files into current INCC database."/>
+                    <MenuItem Header="_Initial Data..." Click="InitialDataSelectorClick" ToolTip="Import inital data files (detector and calibration) into the current INCC database." />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="_Back Up All Data..." Click="BackupAllDataClick" IsEnabled="False" />
+                <MenuItem Header="_Restore All Data..." Click="RestoreAllDataClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Batch Analysis..." Click="BatchAnalysisClick" IsEnabled="False"/>
+                <MenuItem Header="_Database..." Click="ChangeDatabaseClick"/>
+                <Separator />
+                <MenuItem Header="_Printer Setup..." Click="SetupPrinterClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Exit INCC..." Click="Exit" />
+            </MenuItem>
+            <!--<MenuItem Header="_View">
+                <MenuItem Header="_Maintain" Click="ViewMaintainClick" ToolTip="Switch between Inspector and Maintenance mode."/>
+            </MenuItem>    No View Maintain now HN 7/31/14-->
+            <MenuItem Header="_Setup">
+                <MenuItem Header="_Facility/Inspection..." Click="SetupFacilityClick" ToolTip="Select facility, MBA, detector and inspection number." />
+                <Separator />
+                <MenuItem Header="_Measurement Parameters..." Click="SetupMeasParamsClick" ToolTip="Enter detector and shift register parameters." />
+                <MenuItem Header="_List Mode Connection Parameters..." Click="SetupLMInstConnParamsClick" ToolTip="Enter detector and list mode instrument parameters." />
+                <Separator />
+                <MenuItem Header="_Isotopics..." Click="SetupIsotopicsClick" ToolTip="Enter, or read from disk, an item's isotopics."/>
+                <MenuItem Header="_Composite Isotopics..." Click="SetupCompositeIsotopicsClick" ToolTip="Enter, or read from disk, an item's composite isotopics." />
+                <Separator />
+                <MenuItem Header="_Item Data Entry..." Click="SetupItemDataEntryClick" ToolTip="Enter item data for later verification and holdup measurements."  IsEnabled="True"/>
+                <MenuItem Header="_Collar Item Data Entry..." Click="SetupCollarItemDataEntryClick" ToolTip="Enter collar-specific item data for later collar verification measurements." IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Maintain">
+                <MenuItem Header="_Calibration...">
+                    <MenuItem Header="_Deming Curve Fitting..." Click="MaintainDemingClick" IsEnabled="False"/>
+                    <Separator />
+                    <MenuItem Header="_Analysis Methods..." Click="MaintainAnalysisMethodsClick"  IsEnabled="True"/>
+                    <Separator />
+                    <MenuItem Header="_Passive Calibration Curve..." Click="MaintainPassiveCalCurveClick"  IsEnabled="True"/>
+                    <MenuItem Header="_Known Alpha..." Click="MaintainKnownAlphaClick"  IsEnabled="True"/>
+                    <MenuItem Header="_Known M..." Click="MaintainKnownMClick"  IsEnabled="True"/>
+                    <MenuItem Header="_Passive Multiplicity..." Click="MaintainPassiveMultClick"  IsEnabled="True"/>
+                    <MenuItem Header="_Add-a-source..." Click="MaintainAddASourceClick"  IsEnabled="True"/>
+                    <MenuItem Header="_Curium Ratio..." Click="MaintainCuriumRatioClick" IsEnabled="True" />
+                    <MenuItem Header="_Truncated Multiplicity..." Click="MaintainTruncatedMultClick" IsEnabled="True"/>
+                    <MenuItem Header="_Active Calibration Curve..." Click="MaintainActiveCalCurveClick" IsEnabled="True"/>
+                    <MenuItem Header="_Collar..." Click="MaintainCollarClick" IsEnabled="False"/>
+                    <MenuItem Header="_Active Multiplicity..." Click="MaintainActiveMultClick" IsEnabled="True"/>
+                    <MenuItem Header="_Active/Passive..." Click="MaintainActivePassiveClick" IsEnabled="True"/>
+                </MenuItem>
+                <MenuItem Header="_Background Setup..." Click="MaintainBackgroundSetupClick" />
+                <MenuItem Header="_Normalization Setup..." Click="MaintainNormSetupClick" IsEnabled="True"/>
+                <MenuItem Header="_Unattended Measurement Setup..." Click="MaintainUnattendedMeasSetupClick" IsEnabled="True"/>
+                <Separator />
+                <MenuItem Header="_QC and Test Parameters..." Click="MaintainQCTestClick" />
+                <MenuItem Header="_Stratum Rejection Limits..." Click="MaintainStratumRejectionLimitsClick" IsEnabled="True"/>
+                <Separator />
+                <MenuItem Header="_Error Calculation Method..." Click="MaintainErrorCalcMethodClick"  IsEnabled="True"/>
+                <Separator />
+                <MenuItem Header="_Sweep..." Click="MaintainSweepClick" IsEnabled="False"/>
+                <MenuItem Header="_Archive..." Click="MaintainArchiveClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Detector Add/Delete..." Click="MaintainDetectorAddEditClick" />
+                <MenuItem Header="_Facility Add/Delete..." Click="MaintainFacilityAddDeleteClick" />
+                <MenuItem Header="_MBA Add/Delete..." Click="MaintainMBAAddDeleteClick"  IsEnabled="True"/>
+                <MenuItem Header="_Stratum Id Add/Delete..." Click="MaintainStratumIdAddDeleteClick" IsEnabled="True"/>
+                <MenuItem Header="_Material Type Add/Delete..." Click="MaintainMaterialTypeAddDeleteClick" IsEnabled="True"/>
+                <MenuItem Header="_Poison Rod Type Add/Delete..." Click="MaintainPoisonRodTypeAddDeleteClick" IsEnabled="False"/>
+                <MenuItem Header="_Glovebox Add/Edit/Delete..." Click="MaintainGloveboxAddEditDeleteClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Add-a-source Setup..." Click="MaintainAddASourceSetupClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Delete Measurements..." Click="MaintainDeleteMeasurementClick" IsEnabled="False" />
+                <Separator />
+                <MenuItem Header="Measure _High Voltage Plateau" Click="HVPClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Other Preferences..." Click="MaintainSomeSettingsClick" />
+            </MenuItem>
+            <MenuItem Header="_Acquire">
+                <MenuItem Header="_Rates Only..." Click="AcquireRatesClick" ToolTip="A general purpose measurement to use when only rates are needed." IsEnabled="True"/>
+                <MenuItem Header="_Background..." Click="AcquireBackgroundClick" ToolTip="Acquire and store background rates to be used with succeeding measurements." IsEnabled="True"/>
+                <MenuItem Header="_Initial Source..." Click="AcquireInitSrcClick" ToolTip="Acquire and store initial normalization parameters." IsEnabled="True"/>
+                <MenuItem Header="_Normalization..." Click="AcquireNormClick" ToolTip="Measurement to verify detector efficiency and electronics are unchanged." IsEnabled="True"/>
+                <MenuItem Header="_Precision..." Click="AcquirePrecisionClick" ToolTip="Measurement to verify detector and electronics stability." IsEnabled="True"/>
+                <MenuItem Header="_Verification..." Click="AcquireVerificationClick" ToolTip="Measurement used to get a verification mass and error." IsEnabled="True"/>
+                <MenuItem Header="_Calibration Measurements..." Click="AcquireCalMeasClick" ToolTip="Collect data for calculating calibration curves." IsEnabled="True"/>
+                <MenuItem Header="_Holdup..." Click="AcquireHoldupClick" ToolTip="Measurement used to get holdup data and get a verification mass and error." IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_List Mode" Click="AnalysisWizardClick" ToolTip="List Mode measurement and analysis" IsEnabled="True"/>
+            </MenuItem>
+            <MenuItem Header="_Reanalyze">
+                <MenuItem Header="_Verification..." Click="ReanalyzeVerificationClick" ToolTip="Change selected parameters and reanalyze a verification measurement." IsEnabled="False"/>
+                <MenuItem Header="_Holdup..." ToolTip="Change selected parameters and reanalyze a holdup measurement." IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Report">
+                <MenuItem Header="_All Measurements..." Click="ReportAllMeasClick"  ToolTip="Look at any previous measurements." IsEnabled="True"/>
+                <MenuItem Header="_Rates Only..." Click="ReportRatesClick"  ToolTip="Look at previous Rates Only measurements." IsEnabled="True"/>
+                <MenuItem Header="_Background..." Click="ReportBackgroundClick" ToolTip="Look at previous Background measurements." IsEnabled="True"/>
+                <MenuItem Header="_Initial Source..." Click="ReportInitialSourceClick" ToolTip="Look at previous Initial Source measurements." IsEnabled="True"/>
+                <MenuItem Header="_Normalization..." Click="ReportNormClick" ToolTip="Look at previous Normalization measurements." IsEnabled="True"/>
+                <MenuItem Header="_Precision..." Click="ReportPrecisionClick" ToolTip="Look at previous Precision measurements." IsEnabled="True"/>
+                <MenuItem Header="_Verification..." Click="ReportVerificationClick" ToolTip="Look at previous Verification measurements." IsEnabled="True"/>
+                <MenuItem Header="_Calibration Measurements..." Click="ReportCalibrationMeasClick" ToolTip="Look at previous Calibration measurements." IsEnabled="True"/>
+                <MenuItem Header="_Holdup..." Click="ReportHoldupClick" ToolTip="Look at previous Holdup measurements." IsEnabled="True"/>
+                <Separator />
+                <MenuItem Header="_Measurement Summary..." Click="ReportMeasSummaryClick" IsEnabled="False"/>
+                <MenuItem Header="_Verification Summary..." Click="ReportVerificationSummaryClick" IsEnabled="False"/>
+                <MenuItem Header="_Holdup Summary..." Click="ReportHoldupSummaryClick" IsEnabled="False"/>
+                <Separator />
+                <MenuItem Header="_Plot Normalization History..." Click="ReportPlotNormHistoryClick" IsEnabled="False"/>
+                <MenuItem Header="_Plot Calibration and Verification Results..." Click="ReportPlotCalVerificationClick" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Window">
+                <MenuItem Header="_Arrange Icons" Click="WindowArrangeIconsClick" IsEnabled="False"/>
+                <MenuItem Header="_Cascade" Click="WindowCascadeClick" IsEnabled="False"/>
+                <MenuItem Header="_Tile" Click="WindowTileClick" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Help" IsEnabled="True">
+                <MenuItem Header="_Topics" Click="HelpTopicsClick" IsEnabled="True"/>
+                <MenuItem Header="_Procedures" Click="HelpProceduresClick" IsEnabled="False"/>
+                <MenuItem Header="_App Info" Click="HelpAppInfoClick" IsEnabled="False"/>
+                <MenuItem Header="_About INCC" Click="HelpAboutINCCClick" IsEnabled="True"/>
+            </MenuItem>
+        </Menu>
+        <Expander Header="Activity Log" IsExpanded="True">
+            <Expander.Content>
+                <DockPanel>
+                    <GroupBox DockPanel.Dock="Top" Header="Logging Settings" Name="groupBox1">
+                        <Grid Height="34" Width="778">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="410*" />
+                                <ColumnDefinition Width="26*" />
+                                <ColumnDefinition Width="54*" />
+                                <ColumnDefinition Width="25*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Name="logLevels" Width="83" Margin="112,4,0,8" HorizontalAlignment="Left" ToolTip="Specifiy log message severity level filter" IsEnabled="False" SelectionChanged="logLevels_SelectionChanged">
+                                <ComboBoxItem Content="None" IsEnabled="False"/>
+                                <ComboBoxItem Content="Critical"/>
+                                <ComboBoxItem Content="Error" />
+                                <ComboBoxItem Content="Warning" />
+                                <ComboBoxItem Content="Information" />
+                                <ComboBoxItem Content="Verbose" />
+                            </ComboBox>
+                            <CheckBox Content="Logging" Name="EnableLog" Margin="0,7,554,11" Checked="EnableLog_Checked" ToolTip="Enable/disable logging" Unchecked="EnableLog_Unchecked" FlowDirection="RightToLeft" />
+                            <ComboBox Height="Auto" Name="logResults" Width="75" ToolTip="Select how results are logged" IsEnabled="False" Margin="268,5,276,8" SelectionChanged="logResults_SelectionChanged" Visibility="Hidden">
+                                <ComboBoxItem Content="None" />
+                                <ComboBoxItem Content="File only" />
+                                <ComboBoxItem Content="UI/console only" />
+                                <ComboBoxItem Content="All log targets" />
+                            </ComboBox>
+                            <Label Content="Level" Height="28" HorizontalAlignment="Left" Margin="71,2,0,0" Name="label1" VerticalAlignment="Top" />
+                            <Label Content="Log results" Height="28" Margin="201,5,358,0" Name="label2" VerticalAlignment="Top" ToolTip="Include results in logs" Visibility="Hidden"/>
+                        </Grid>
+                    </GroupBox>
+                    <ListView
+                            ItemsSource="{Binding Events}"
+                            Name="loggingListBox"
+                            ScrollViewer.HorizontalScrollBarVisibility="Visible"
+                            ScrollViewer.VerticalScrollBarVisibility="Visible"
+                            logging:AutoScrollBehavior.AutoScroll="True"
+                            xmlns:logging="clr-namespace:NewUI.Logging">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding DateTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                        Header="Time"
+                                        Width="150"/>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding Source}"
+                                        Header="Source"
+                                        Width="100"/>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding EventType}"
+                                        Header="Type"
+                                        Width="100"/>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding Message}"
+                                        Header="Message"
+                                        Width="800"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </Expander.Content>
+        </Expander>
+    </DockPanel>
+</Window>

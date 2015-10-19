@@ -1,0 +1,245 @@
+﻿/*
+Copyright (c) 2014, Los Alamos National Security, LLC
+All rights reserved.
+Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
+
+Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
+that the following conditions are met:
+•	Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+disclaimer. 
+•	Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following 
+disclaimer in the documentation and/or other materials provided with the distribution. 
+•	Neither the name of Los Alamos National Security, LLC, Los Alamos National Laboratory, LANL, the U.S. Government, 
+nor the names of its contributors may be used to endorse or promote products derived from this software without specific 
+prior written permission. 
+THIS SOFTWARE IS PROVIDED BY LOS ALAMOS NATIONAL SECURITY, LLC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED 
+WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL LOS ALAMOS NATIONAL SECURITY, LLC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY 
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using NCCConfig;
+using NCCReporter;
+
+namespace DB
+{
+
+    public enum Pieces { IOCodes, InvChangeCodes, 
+        Measurements, HVResults,
+        Detectors, TestParams, NormParams, BackgroundParams, AASSetupParams, Facilities, MBAs, Materials, Items, Isotopics, DetectorTypes, CollarItems,
+        Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams,
+        AnalysisMethodSpecifiers,
+        CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams,Results, CompositeIsotopics}
+
+    public class Persistence
+    {
+        public LMLoggers.LognLM logger;
+        public DBConfig cfg;
+
+        public Persistence(LMLoggers.LognLM logger, DBConfig cfg)
+        {
+            this.cfg = cfg;
+            this.logger = logger;
+            DBMain.pest = this;
+        }
+
+        public bool SwitchDB(string dbFile)
+        {
+            return DBMain.SwitchDB(dbFile);
+        }
+        // initial prep of config and DB state, where DB could be flat file, XML file, web service, moon rock, real DB, or in-memory hard-coded values 
+        public void InitialLoad()
+        {
+            // check for DB existence
+
+           // DBMain.CreateNew();
+        }
+
+        public string GetDBFileFromConxString()
+        {
+            Match m = Regex.Match(DBMain.ConnStr, "^Data\\sSource(\\s)*=(\\s)*(?<DataSourceName>([^;]*))", RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+            char[] trimchars = new char[1] { '\"' };
+            if (m.Success)
+                return (m.Groups[3].Value.TrimStart(trimchars).TrimEnd(trimchars));
+            else
+                return String.Empty;
+        }
+        
+        public DataTable GetAUniqueThang(Pieces p, String did = null)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                switch (p)
+                {
+                    default:
+                        break;
+                    case Pieces.AppContext:
+                        AppContext app = new AppContext();
+                        dt = app.GetAll();
+                        break;
+                }
+            }
+            catch (Exception caught)
+            {
+                DBMain.AltLog(LogLevels.Warning, 70192, "Get Unique  '" + caught.Message + "' ");
+            }
+            return dt;
+        }
+
+        public DataTableReader GetADataTableReader(Pieces p, String did = null)
+        {
+            return new DataTableReader(GetACollection(p, did));
+        }
+
+        // can use IList interface on this
+        public DataTable GetACollection(Pieces p, String did = null)
+        {
+            DataTable dt = new DataTable();
+
+            try
+            {
+                switch (p)
+                {
+                    default:
+                        break;
+
+                    case Pieces.HVParams:
+                        HVParams hv = new HVParams();
+                        dt = hv.Get(did);
+                        break;
+                    case Pieces.HVResults:
+                        HVPlateauResults hvr = new HVPlateauResults();
+                        dt = hvr.AllHVPlateauResults(did);
+                        break;
+                    case Pieces.Measurements:
+                        Measurements ms = new Measurements();
+                        dt = ms.AllMeasurements(did);
+                        break;
+                    case Pieces.CountingAnalyzers:
+                        CountingAnalysisParameters cap = new CountingAnalysisParameters();
+                        dt = cap.AnalyzerParamsForDetector(did);
+                        break;
+
+                    case Pieces.AnalysisMethodSpecifiers:
+                        using(AnalysisMethodSpecifiers am = new AnalysisMethodSpecifiers())
+                        {
+                            dt = am.MethodsForDetector(did);
+                        }
+                        
+                        break;
+
+                    case Pieces.Detectors:
+                        Detectors clsD = new Detectors();
+                        dt = clsD.getDetectors(true);
+                        break;
+                    case Pieces.LMParams:
+                        LMNetCommParams blue = new LMNetCommParams();
+                        dt = blue.Get(did);
+                        break;
+                    case Pieces.LMMultParams:
+                        LMMultiplicityParams purple = new LMMultiplicityParams();
+                        dt = purple.Get(did);
+                        break;
+                    case Pieces.DetectorTypes:
+                        Descriptors clsDT = new Descriptors("detector_types");
+                        dt = clsDT.getDescs();
+                        break;
+                    case Pieces.Materials:
+                        Descriptors clsMtl = new Descriptors("material_types");
+                        dt = clsMtl.getDescs();
+                        break;
+                    case Pieces.TestParams:
+                        TestParams tp = new TestParams();
+                        dt = tp.Get();
+                        break;
+                    case Pieces.NormParams:
+                        NormParams np = new NormParams();
+                        dt = np.Get(did);
+                        break;
+                    case Pieces.AASSetupParams:
+                        AASSetupParams aass = new AASSetupParams();
+                        dt = aass.Get(did);
+                        break;
+                    case Pieces.BackgroundParams:
+                        BackgroundParams clsB = new BackgroundParams();
+                        TruncatedBackgroundParams clsTB = new TruncatedBackgroundParams();
+                        dt = clsB.Get(did);
+                        DataTable dt2 = clsTB.Get(did);
+                        dt.Merge(dt2);
+                        break;  // next: caution, should use select/join
+                    case Pieces.Facilities:
+                        Descriptors clsF = new Descriptors("facility_names");
+                        dt = clsF.getDescs();
+                        break;
+                    case Pieces.MBAs:
+                        Descriptors MBA = new Descriptors(p.ToString());
+                        dt = MBA.getDescs();
+                        break;
+                    case Pieces.Items:
+                        Items clsI = new Items();
+                        dt = clsI.getItems();
+                        break;
+                    case Pieces.CollarItems:
+                        CollarItems clsCI = new CollarItems();
+                        dt = clsCI.getItems();
+                        break;
+                    case Pieces.Isotopics:
+                        Isotopics clsIs = new Isotopics();
+                        dt = clsIs.getIsotopics();
+                        break;
+                    case Pieces.Strata:
+                        Strata s = new Strata();
+                        dt = s.Get();
+                        break;
+                    case Pieces.StrataWithAssoc:
+                        Strata ss = new Strata();
+                        dt = ss.GetAssociations(did);
+                        break;
+                    case Pieces.AcquireParams:
+                        AcquireParams aq = new AcquireParams();
+                        dt = aq.Get(did);
+                        break;
+                    case Pieces.IOCodes:
+                        Descriptors ioc = new Descriptors("io_code");
+                        dt = ioc.getDescs();
+                        break;
+                    case Pieces.InvChangeCodes:
+                        Descriptors icc = new Descriptors("inventory_change_code");
+                        dt = icc.getDescs();    
+                        break;
+                    case Pieces.UnattendedParams:
+                        UnattendParams u = new UnattendParams();
+                        dt = u.Get(did);
+                        break;
+                    case Pieces.CmPuRatioParams:
+                        cm_pu_ratio_rec cpu = new cm_pu_ratio_rec();
+                        dt = cpu.Get();
+                        break;
+                    case Pieces.Results:
+                        Results rr = new Results();
+                        dt = rr.AllResults(did);
+                        break;
+
+                }
+            }
+            catch (Exception caught)
+            {
+                DBMain.AltLog(LogLevels.Warning, 70191, "Get Collection  '" + caught.Message + "' ");
+            }
+            return dt;
+        }
+
+    }
+}

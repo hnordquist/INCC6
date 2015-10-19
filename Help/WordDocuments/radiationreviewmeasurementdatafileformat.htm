@@ -1,0 +1,84 @@
+
+<html><head><title>Radiation Review Measurement Data File Format</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="holduptestdatafileformat.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="batchscriptfileformat.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">Files</span><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="inputfiles.htm">Input files</a></div>
+
+
+<h3><a name="D2HTopic_61" id="D2HTopic_61"></a><a name="_Toc224737400" id="_Toc224737400">Radiation Review Measurement 
+Data</a><span style="FONT-SIZE: 12pt; FONT-FAMILY: 'Times New Roman','serif'"> 
+</span>File Format</h3>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">Radiation Review Measurement Data File format (binary), file 
+extension is always .NCC:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><u>Header</u></p>
+<p class="MsoNormal">“IREV” 4 characters specifying the file type</p>
+<p class="MsoNormal">1 character    B = background, N = 
+normalization, V = verification</p>
+<p class="MsoNormal">11 character detector id (XXXX/YYY/ZZ)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt">where:</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 126pt">XXXX = detector type, <i>e.g.</i> 
+PCAS</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 126pt">YYY = detector identifier, 
+<i>e.g.</i> 004</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 126pt">ZZ = configuration id, usually 
+01</p>
+<p class="MsoNormal">12 character item id (filled with trailing blanks if less 
+than 12 characters)</p>
+<p class="MsoNormal">yy.mm.dd, 8 characters, date of first cycle</p>
+<p class="MsoNormal">hh:mm:ss, 8 characters, time of first cycle</p>
+<p class="MsoNormal">unsigned short, number of cycles</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><u>Repeated for each cycle in the measurement</u></p>
+<p class="MsoNormal">yy.mm.dd, 8 characters, date of cycle i</p>
+<p class="MsoNormal">hh:mm:ss, 8 characters, time of cycle i</p>
+<p class="MsoNormal">unsigned short, count time in seconds for cycle i</p>
+<p class="MsoNormal">double, totals for cycle i</p>
+<p class="MsoNormal">double, R+A for cycle i</p>
+<p class="MsoNormal">double, accidentals for cycle i</p>
+<p class="MsoNormal">double, scaler 1 for cycle i</p>
+<p class="MsoNormal">double, scaler 2 for cycle i</p>
+<p class="MsoNormal">unsigned short, number of multiplicity values for cycle i (n 
+= 0 to 128)</p>
+<p class="MsoNormal">n unsigned longs, non-zero R+A multiplicity distributions for 
+cycle i</p>
+<p class="MsoNormal">n unsigned longs, non-zero accidentals multiplicity 
+distributions for cycle i</p>
+<p class="MsoNormal">Note:  All cycles in a verification or normalization 
+measurement must have the same count time. Background measurements may have 
+cycles with different count times because all the cycles will be summed into one 
+cycle.</p>
+<p class="MsoNormal"> </p></div></body></html>

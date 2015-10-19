@@ -1,0 +1,111 @@
+
+<html><head><title>/INITIALIZE</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="import.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="commandlineexamples.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">Appendix</span><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="commandlineflags.htm">Command Line Flags</a></div>
+
+
+
+<h3><span style="DISPLAY: none"></span><span style="DISPLAY: none"></span><a name="_Toc224737486" id="_Toc224737486">/INITIALIZE</a></h3>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="LINE-HEIGHT: 115%">The </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">Initialize</span></b><span style="LINE-HEIGHT: 115%"> flag causes INCC to import specified transfer files 
+and initial data files into a new or existing database. The files may be 
+identified singly by name, or collectively by folder name, or by zip archive. 
+The target database is configured with the content of the specified files. The 
+processing is logged. Subsequent import processing of measurement data files may 
+immediately follow the database preparation steps of </span><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/initialize</span><span style="LINE-HEIGHT: 115%">. </span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">  
+\path\to\a\transfer\file</span><span style="LINE-HEIGHT: 115%"> 
+(1)<br /></span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">  \path\to\an\initial data 
+cal file</span><span style="LINE-HEIGHT: 115%"> (2)<br /></span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">  \path\to\an\initial data 
+detector file</span><span style="LINE-HEIGHT: 115%"> (3)<br /></span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">  
+\path\to\a\folder</span><span style="LINE-HEIGHT: 115%"> -- (4) the folder is 
+searched for all transfer and initial data files. Those found are used to 
+initialize the target database. The initialize processing order is based on the 
+file names. For transfer files, this means oldest first, usually followed by 
+initial data files, in a simple alphabetical order. <br /></span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">  
+\path\to\a\zipfile.zip</span><span style="LINE-HEIGHT: 115%"> -- (5) the zip 
+file is extracted to a temporary folder, and then processed as above, see 
+(4)</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="LINE-HEIGHT: 115%"></span> </p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><span style="LINE-HEIGHT: 115%">Supporting flags used with </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Initialize</span></b><span style="LINE-HEIGHT: 115%"> and </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Import</span></b><span style="LINE-HEIGHT: 115%"> operations.</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Target</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> \path\to\existing 
+db\or\location\for\new db\</span><span style="LINE-HEIGHT: 115%"><br />-- 
+required</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/DBSource</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> 
+\optional\path\to\a\zipped\inccdb.zip\used as an\initial\db <br /></span><span style="LINE-HEIGHT: 115%">-- otherwise an empty db is used</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/DataSource</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> 
+\optional\path\to\the\shared\RAD\location\for\files\ ncc+nop+cop+ncc</span><span style="LINE-HEIGHT: 115%">  <br />-- use with </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/import</span></b><span style="LINE-HEIGHT: 115%">, default is existing values in incc.ini</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/Preserve</span></b><b><span style="LINE-HEIGHT: 115%"><br /></span></b><span style="LINE-HEIGHT: 115%">-- 
+default INCC behavior is “reckless”, overwriting an existing </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/target</span></b><span style="LINE-HEIGHT: 115%"> database with new material. Using </span><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/preserve</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> </span><span style="LINE-HEIGHT: 115%">prevents the overwrite<b></b></span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/ExportLocation</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> 
+\optional\path\to\the\shared\RAD\location\and\name\for\the\tab-delimited\file\used\by 
+“IR”</span><span style="LINE-HEIGHT: 115%"><br />-- use with</span><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> <b>/import</b></span><span style="LINE-HEIGHT: 115%">, default is existing value in 
+incc.ini<b></b></span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/LogLocation</span></b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas"> 
+\path\to\folder\with\optional\file.name</span><span style="LINE-HEIGHT: 115%">    <br />-- Specify the folder to place 
+the log file. When no name is given, an auto-generated file name is created, and 
+all log messages generated during a clock-hour are directed to the log file. If 
+the file name is used, that file becomes the unified log file for the duration 
+of the incc operation.</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/quiet</span></b><span style="LINE-HEIGHT: 115%"><br />-- default behavior is the database setting for 
+‘Maintain&gt;Some Settings…&gt;Allow or Suppress all dialogs and pop-ups during 
+IMPORT’. In an empty database the database setting is ‘Allow’, and user 
+interaction may cause dialogs and acknowledgement pop-ups to appear during 
+runtime. Such interaction is unwelcome in batch processing use. Use the 
+</span><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Consolas">/quiet</span><span style="LINE-HEIGHT: 115%"> flag to suppress user interaction no matter what the 
+source or target database setting may be.</span></p>
+<p class="MsoNormal" style="MARGIN-BOTTOM: 10pt; LINE-HEIGHT: 115%"><b><span style="LINE-HEIGHT: 115%">Other details:</span></b></p>
+<p class="MsoNormal" style="MARGIN: 0pt 0pt 10pt 72pt; TEXT-INDENT: -18pt; LINE-HEIGHT: 115%; tab-stops: 72.0pt"><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Symbol">·      
+</span><span style="LINE-HEIGHT: 115%">Flags are <b>not</b> case-sensitive.<span style="COLOR: #1f497d"></span></span></p>
+<p class="MsoNormal" style="MARGIN: 0pt 0pt 10pt 72pt; TEXT-INDENT: -18pt; LINE-HEIGHT: 115%; tab-stops: 72.0pt"><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Symbol">·      
+</span><span style="LINE-HEIGHT: 115%">The flags <b>/initialize /DBSource 
+/ExportLocation, /LogLocation</b> and <b>/DataSource</b>, when present, must 
+each be followed by a path.</span></p>
+<p class="MsoNormal" style="MARGIN: 0pt 0pt 10pt 72pt; TEXT-INDENT: -18pt; LINE-HEIGHT: 115%; tab-stops: 72.0pt"><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Symbol">·      
+</span><b><span style="LINE-HEIGHT: 115%">/import</span></b><span style="LINE-HEIGHT: 115%">, when used, must come first in the argument 
+list.</span></p>
+<p class="MsoNormal" style="MARGIN: 0pt 0pt 10pt 72pt; TEXT-INDENT: -18pt; LINE-HEIGHT: 115%; tab-stops: 72.0pt"><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Symbol">·      
+</span><span style="LINE-HEIGHT: 115%">Parameters are parsed only by the 
+presence of a ‘/’. A new command line flag starts when a ‘/’ is encountered by 
+the command line parser. File paths and names with embedded white space need not 
+be quoted. This is counter-intuitive to traditional command line and command 
+shell parsing behavior, and is a legacy of the UI library used in 
+INCC.</span></p>
+<p class="MsoNormal" style="MARGIN: 0pt 0pt 10pt 72pt; TEXT-INDENT: -18pt; LINE-HEIGHT: 115%; tab-stops: 72.0pt"><span style="LINE-HEIGHT: 115%; FONT-FAMILY: Symbol">·      
+</span><span style="LINE-HEIGHT: 115%">When the log file is auto-created, a 
+separate new file is created every hour. A new log file is created every hour to 
+manage file size and clutter. All log messages within an hour are directed to 
+the lastest hourly file. Manually specifying a log file (/<b>LogLocation</b>) 
+avoids the hourly log behavior.</span></p></div></body></html>

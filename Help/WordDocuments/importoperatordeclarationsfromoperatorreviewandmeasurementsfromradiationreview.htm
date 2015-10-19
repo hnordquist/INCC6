@@ -1,0 +1,264 @@
+
+<html><head><title>Import Operator Declarations from Operator Review and Measurements from Radiation Review</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="holdupmeasurementsprocedure.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="displaymeasurementcorrespondingtoapeakinradiationreview.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">Procedures</span></div>
+
+
+
+
+<h2><a name="_Toc224737292" id="_Toc224737292"></a><a name="_Ref224034041" id="_Ref224034041"></a><a name="_Ref224034028" id="_Ref224034028">Import Operator Declarations from Operator Review and 
+Measurements from Radiation Review</a></h2>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt">INCC can calculate the mass and 
+display results for verification measurement data files, and display results for 
+background and normalization measurement data files imported from Radiation 
+Review. These files were created from measurements made by Shift Register 
+Collect or Multi-Instrument Collect running in unattended mode.  These 
+results will remain in the database, and can be reviewed or reanalyzed at any 
+time, just as you would with any other measurement. The results from background 
+and normalization measurements will replace previously existing values in the 
+database and should be used with caution.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt">The measurement data files created 
+by Radiation Review must reside in the common database directory. The format of 
+these binary files is described in “Radiation Review Measurement Data 
+File format” under the Input Files section of this document.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt">Each file includes all the cycles 
+for one verification, background or normalization measurement.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt">Note: All cycles in a verification 
+or normalization measurement must have the same count time. Background 
+measurements may have cycles with different count times because all the cycles 
+will be summed into one cycle.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt">Import procedure:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">1. The INCC 
+import function is initiated by Integrated Review.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">2. The operator 
+declaration file created by Operator Review for INCC is read. Isotopic data sets 
+are created for each unique set of isotopics and an entry is made in the item 
+data entry table for each unique item id. Composite isotopics cannot be created 
+from multiple sets of isotopics. This file contains the following 
+parameters:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Material balance area</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Item id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Stratum id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Inventory change code</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">I/O code</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Material type</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Declared mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Isotopics source code</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Isotopics id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>238</sup>Pu %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>240</sup>Pu %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>241</sup>Pu %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>239</sup>Pu %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>242</sup>Pu %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Pu date (YYYYMMDD)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>241</sup>Am %</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt">Am date (YYYYMMDD)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>238</sup>Pu error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>239</sup>Pu error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>240</sup>Pu error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>241</sup>Pu error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>242</sup>Pu error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 54pt"><sup>241</sup>Am error</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">3. The header 
+for each Radiation Review file in the common database directory with an 
+extension of .NCC is read. The files are sorted chronologically.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">4. If no 
+detector id has been created for a measurement, a warning message is displayed, 
+and that measurement is skipped. In other words, <b>you must go into INCC and 
+create the detector before you import any measurements from that detector</b>. 
+This is necessary because there are several detector parameters such as gate 
+length, dead time, efficiency ,etc. and calibration parameters that are needed 
+to calculate mass.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">5. Each 
+measurement that passes step 4 is displayed in chronological order, one line per 
+measurement, in a selection screen with the following information:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">            
+Detector id      Item id      
+Meas. Type      Date      
+Time      Filename</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">6. The user 
+selects as many measurements as desired, and they are processed in chronological 
+order. The default is to select all measurements. The last processed background 
+and normalization measurements will be saved in the database and used with 
+subsequent verification measurements.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">7. At this 
+point there are two options. If the detector dependent “auto import” box was 
+<b>not</b> checked, as each measurement is processed, the appropriate acquire 
+dialog box is displayed, enabling the user to specify the desired details for 
+that measurement. Steps 7, 8 and 9 only apply if “Auto import” was not 
+checked.</p>
+<p class="MsoNormal"><u>  </u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt"><u>Background measurements</u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Enter a comment if desired</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to use or 
+not use QC tests</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to print or 
+not print results</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to enter or 
+not enter an ending comment</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a separate dialog box choose 
+whether this is a passive or active measurement</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt; TEXT-INDENT: -18pt"><u>  
+</u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt"><u>Normalization 
+measurements</u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Enter a comment if desired</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to use or 
+not use QC tests</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to print or 
+not print results</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">From a checkbox select to enter or 
+not enter an ending comment</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Source id (display only)</p>
+<p class="MsoNormal"><u>  </u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt"><u>Verification 
+measurements</u></p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select Material 
+Balance Area (defaults to current MBA)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select or enter 
+Item Id (defaults to the one in the file header)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select Stratum 
+Id (defaults to one corresponding to the item id in the file header if 
+previously set through the <i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select Material 
+Type (defaults to the one corresponding to the item id in the file header if 
+previously set through the <i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Enter declared 
+mass (defaults to the one corresponding to the item id in the file header if 
+previously set through the <i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select 
+Inventory Change Code (defaults to the one corresponding to the item id in the 
+file header if previously set through the <i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select I/O Code 
+(defaults to the one corresponding to the item id in the file header if 
+previously set through the <i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Select 
+isotopics or composite isotopics by clicking on the button (defaults to the one 
+corresponding to the item id in the file header if previously set through the 
+<i>Item Data Entry</i> dialog box)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">Enter a comment 
+if desired</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">From a checkbox 
+select to use or not use QC tests</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">From a checkbox 
+select to print or not print results</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 90pt; TEXT-INDENT: -18pt">From a checkbox 
+select to enter or not enter an ending comment</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">If the “Auto import” checkbox has 
+been checked, then as each measurement is processed only the dialog box for 
+selecting active or passive is displayed for background measurements, no dialog 
+boxes are displayed for normalization measurements, and if the item data for the 
+item id of the current measurement have been previously entered then no dialog 
+boxes are displayed for verification measurements. The “Auto import” checkbox is 
+accessible in maintenance mode by selecting <i>Maintain | Unattended 
+Measurements Setup</i>.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 18pt"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">8. In manual 
+mode a results text window is optionally printed for each selected measurement 
+in the same format as for other measurements. The data source will be “Review 
+disk file”.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">9. In manual 
+mode, if ‘Ending comment’ was selected then a dialog box will be displayed with 
+the measurement results and a box for entering the ending comment.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">10. 
+         If this is a verification 
+measurement then the following data for this measurement will be appended to the 
+file for Integrated Review to reconcile and display:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Pass/Fail status (pass specified as 
+green, fail specified as yellow)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Detector id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Item id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Measurement start time</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Measurement start date</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated mass (g) from the 
+primary analysis method</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated mass error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay mass (%)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Isotopics source code</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt"> </p>
+<p class="MsoNormal">If the analysis method is curium ratio, the following data 
+for this measurement will be appended to the file for Integrated Review to 
+reconcile and display:</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Pu Pass/Fail status (pass specified 
+as green, fail specified as yellow)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Total U Pass/Fail status (pass 
+specified as green, fail specified as yellow)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt"><sup>235</sup>U Pass/Fail status 
+(pass specified as green, fail specified as yellow)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Detector id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Item id</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Measurement start time</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Measurement start date</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated Pu mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated Pu mass error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay Pu mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay Pu mass (%)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated total U mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated total U mass error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay total U mass 
+(g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay total U mass 
+(%)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated <sup>235</sup>U mass 
+(g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Calculated <sup>235</sup>U mass 
+error</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay <sup>235</sup>U 
+mass (g)</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 72pt">Declared - assay <sup>235</sup>U 
+mass (%)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">11. 
+         The import files created by 
+Operator Review and Radiation Review for INCC will be deleted so that these 
+operator declarations and measurements will not get imported again the next time 
+there is an import.</p>
+<p class="MsoNormal" style="MARGIN-LEFT: 36pt; TEXT-INDENT: -18pt; tab-stops: 36.0pt">12. 
+         When all measurement files have 
+been processed, INCC automatically will exit.</p></div></body></html>

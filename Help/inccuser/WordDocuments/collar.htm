@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<html><head><title>Collar</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="activecalibrationcurve.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="activemultiplicity.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">Procedures</span><span class="d2h_breadcrumbsLinkSeparator"> &gt; </span><a class="d2h_breadcrumbsNormal" href="maintainsubmenu.htm">Maintain Submenu</a></div>
+
+
+
+
+<h3><a name="D2HTopic_14" id="D2HTopic_14"></a><a name="_Collar" id="_Collar"></a><a name="_Toc224737327" id="_Toc224737327"></a><a name="_Ref224698995" id="_Ref224698995">Collar</a></h3>
+<p class="TOCBase"> </p>
+<p class="MsoNormal">To use this analysis method select <i>Maintain |</i> 
+<i>Calibration</i><i></i><i></i><i> | Collar. </i>Select the material type 
+(PWR, BWR, etc.) and the mode [Thermal (no Cd)] or [Fast (Cd)]. Then select the 
+Next button to enter the calibration coefficients. You can set upper and lower 
+mass limits, if desired; after a verification measurement is completed, a 
+warning is given if the assay mass is outside of the mass limits.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">A recent enhancement to the Collar Calibration parameters 
+increases the specificity of the poison absorption factor (PAF) for a given 
+poison rod type. Normally, a PAF value is globally associated with a single rod 
+type, and specified in the global <a href="JavaScript:TL_3681.HHClick()">Poison 
+Rod Type Add/Delete</a> feature. Specific PAF values may now be assigned to each 
+thermal mode, for a single material type. On the first dialog of the Collar 
+Calibration parameters, a rod type selector is shown. The corresponding PAF for 
+the selected rod type is also shown. To override the default PAF for the 
+selected rod type, enter a new PAF value in the edit box. The new value will be 
+associated with the currently selected detector, material type and thermal mode. 
+On the third dialog, a table entry is provided for entering coefficients for 
+each rod type. The active PAF value for each rod is shown. A new PAF value may 
+be entered from this dialog. These new unique PAF values are used in analyses 
+and retained in measurement results. </p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The only calibration curve type used for the collar so far is 
+D = am/(1 + bm), where D is the doubles rate, m is the <sup>235</sup>U mass, and 
+a and b are calibration coefficients. You can enter the calibration coefficients 
+and errors from the keyboard or read them from a disk file under <i>File | Get 
+External Data | Initial Data</i>. The extra error term (sigma x) is normally 
+zero. This error is used to account for error sources not accounted for by the 
+curve-fitting process and is expressed as percent relative standard deviation; 
+the corresponding mass error is combined quadratically with the mass error 
+calculated from the calibration curve variances and covariances and the doubles 
+rate standard deviation.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The number of calibration rods is the number of rods in the 
+fuel assembly used to determine the calibration parameters.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The poison correction factor k3 has the form:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">k3 = 1 + n * N0 / N * a * [1 - 
+exp(-lambda * poison)] * (b - c * E)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">where:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">n          
+=       number of poison rods in the measured fuel 
+assembly</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">N0     
+   =       number of rods in reference 
+fuel assembly</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">N          
+=       total number of rods in the measured fuel 
+assembly</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">lambda  
+=       poison absorption factor</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">poison    
+=       weight-percent poison in the poison 
+rods</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">E          
+=       <sup>235</sup>U enrichment in percent</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">a, b, c   
+=       calibration constants</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">Lambda depends on the type of poison rod. You can enter new 
+poison rod types under<i> Maintain | Poison Rod Type Add/Delete</i>.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The uranium mass correction factor k4 has the form:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="MARGIN-LEFT: 81pt">k4 = 1 + a * (b - U)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">where:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">U          
+=       total uranium mass in grams</p>
+<p class="MsoNormal" style="TEXT-INDENT: 27pt">a, b       
+=       calibration constants</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The extra item correction factor k5 accounts for other sample 
+effects such as protective bagging and cardboard around a fuel assembly. The k5 
+correction factor can be composed of up to 20 separate factors and their 
+absolute errors which can be enabled on an individual measurement basis. The 
+final k5 correction factor is the product of all the k5 components selected for 
+a particular measurement.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">You can find details about collar calibration in the Los 
+Alamos report “Neutron Collar Calibration and Evaluation for Assay of LWR Fuel 
+Assemblies Containing Burnable Neutron Absorbers”, LA-11965-MS (1990). This 
+report gives calibration parameters for PWR and BWR fuel assemblies containing 
+gadolinium poison rods.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">You can print all of the collar calibration parameters by 
+clicking on “Print calibration parameters” in either the “Collar Calibration” or 
+“Correction Factors” dialog box.</p>
+<object id="TL_3681" type="application/x-oleobject" classid="clsid:adb880a6-d8ff-11cf-9377-00aa003b7a11"><param name="Command" value="Related Topics" /><param name="Window" value="$global_main" /><param name="Item1" value=";inccuser.chm::/WordDocuments/poisonrodtypeadddelete.htm" /></object></div></body></html>

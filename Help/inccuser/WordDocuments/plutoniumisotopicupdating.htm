@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<html><head><title>Plutonium Isotopic Updating</title>
+<meta http-equiv="Content-Type" content="text/html; charset=Windows-1252" /><link href="../Theme/nav.css" type="text/css" rel="stylesheet" /><link href="../Theme/lf.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/C1H_HTML.css" type="text/css" rel="stylesheet" /><link href="../LinksExt/inccuser.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript">
+//<![CDATA[
+
+
+
+var _needIndentation = true;
+
+
+
+
+//]]></script>
+
+<script language="JavaScript" src="../DocToHelp.js" type="text/JavaScript"></script>
+
+<meta name="Generator" content="ComponentOne Doc-To-Help v.2009.2.0.474" />
+<meta name="D2HTheme" content="(Default) v.27" />
+</head>
+<body style="PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px" relpart="../">
+<script language="javascript" type="text/javascript">
+//<![CDATA[
+
+if (typeof d2hInitMainThemeHandlers != "undefined")
+
+    d2hInitMainThemeHandlers();
+
+
+//]]></script>
+
+<div class="d2h_main_nsbanner" id="nsbanner" style="PADDING-RIGHT: 0px; BORDER-TOP: #999999 1px solid; DISPLAY: none; PADDING-LEFT: 0px; LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; BORDER-BOTTOM: #999999 1px solid; POSITION: relative; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_titlerow" id="TitleRow" style="PADDING-RIGHT: 10px; DISPLAY: none; PADDING-LEFT: 22px; PADDING-BOTTOM: 4px; WIDTH: 100%; PADDING-TOP: 4px; BACKGROUND-COLOR: transparent">
+<div class="d2h_main_ienav" id="ienav" style="DISPLAY: none">
+<p class="d2h_main_linknav" align="left"><a class="D2HPreviousEnabled" id="D2HPrevious" href="precisionmeasurement.htm"></a>  <a class="D2HNextEnabled" id="D2HNext" href="alpha.htm"></a></p></div></div></div>
+<div class="d2h_main_nstext" id="nstext" style="PADDING-RIGHT: 10px; PADDING-LEFT: 22px; PADDING-BOTTOM: 10px; OVERFLOW: auto; PADDING-TOP: 5px; BACKGROUND-COLOR: transparent" hasuserbackground="true" valign="bottom">
+<div class="d2h_breadcrumbs" id="d2h_breadcrumbs"><span class="d2h_breadcrumbsContentsOnly">INCC Analysis Algorithms</span></div>
+
+<h2><a name="_Toc224737431" id="_Toc224737431">Plutonium Isotopic Updating</a></h2>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The updating calculations obtain the plutonium isotopic 
+composition and <sup>241</sup>Am content on the measurement date from the 
+plutonium isotopic composition and <sup>241</sup>Am content at specified 
+dates.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><u>Single component updating</u></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">This refers to a plutonium item with a single isotopic 
+composition. The plutonium isotopics and <sup>241</sup>Am content are given as 
+weight percents of plutonium on specified dates. The symbol definitions are:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 2pt"><img style="WIDTH: 24.8pt; HEIGHT: 18pt" src="../ImagesExt/image9_131.png" border="0" alt="" /></span> = date of 
+measurement</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 2pt"><img style="WIDTH: 21.8pt; HEIGHT: 18pt" src="../ImagesExt/image9_132.png" border="0" alt="" /></span> = date of plutonium 
+analysis</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 2pt"><img style="WIDTH: 21.8pt; HEIGHT: 18pt" src="../ImagesExt/image9_133.png" border="0" alt="" /></span> = date of americium 
+analysis</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 24pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_134.png" border="0" alt="" /></span> = plutonium mass on 
+measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 24pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_135.png" border="0" alt="" /></span> = plutonium mass on 
+plutonium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 24pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_136.png" border="0" alt="" /></span> = plutonium mass on 
+americium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 26.3pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_137.png" border="0" alt="" /></span> = <sup>241</sup>Am mass 
+on measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><i>                   
+i</i> = isotope index:</p>
+<p class="MsoNormal">                   
+<i>i </i>= 1 for <sup>238</sup>Pu</p>
+<p class="MsoNormal">                   
+<i>i </i>= 2 for <sup>239</sup>Pu </p>
+<p class="MsoNormal">                   
+<i>i</i> = 3 for <sup>240</sup>Pu</p>
+<p class="MsoNormal">                   
+<i>i</i> = 4 for <sup>241</sup>Pu</p>
+<p class="MsoNormal">                   
+<i>i</i> = 5 for <sup>242</sup>Pu</p>
+<p class="MsoNormal">                   
+<i>i </i>= 6 for <sup>241</sup>Am</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 24pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_138.png" border="0" alt="" /></span> = mass of isotope 
+<i>i</i> on measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 21pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_139.png" border="0" alt="" /></span> = mass of isotope 
+<i>i</i> on plutonium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 15.8pt; HEIGHT: 18.8pt" src="../ImagesExt/image9_140.png" border="0" alt="" /></span> = decay constant for 
+isotope<i> i</i> = ln(2) / half life:</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">  
+                 
+<img style="WIDTH: 233.3pt; HEIGHT: 108pt" src="../ImagesExt/image9_141.png" alt="" /></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">                   
+<sup>*</sup>Ref. 26.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 14.3pt; HEIGHT: 18.8pt" src="../ImagesExt/image9_142.png" border="0" alt="" /></span> = decay fraction for 
+isotope <i>i</i> from plutonium analysis date to americium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 15pt; HEIGHT: 18.8pt" src="../ImagesExt/image9_143.png" border="0" alt="" /></span> = decay fraction for 
+isotope <i>i</i> from americium analysis date to measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 12.8pt; HEIGHT: 18.8pt" src="../ImagesExt/image9_144.png" border="0" alt="" /></span> = decay fraction for 
+isotope <i>i</i> from plutonium analysis date to measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 24pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_145.png" border="0" alt="" /></span> = weight percent of 
+plutonium for isotope <i>i </i>on measurement date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 21pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_146.png" border="0" alt="" /></span> = weight percent of 
+plutonium for isotope<i> i</i> on plutonium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 21pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_147.png" border="0" alt="" /></span> = weight percent of 
+plutonium for isotope<i> i</i> on americium analysis date</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The plutonium isotopic masses on the plutonium analysis date 
+are</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 13pt"><img style="WIDTH: 78pt; HEIGHT: 38.3pt" src="../ImagesExt/image9_148.png" border="0" alt="" /></span>  (<i>i </i>= 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">and the decay fractions are</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 9pt"><img style="WIDTH: 144pt; HEIGHT: 24.8pt" src="../ImagesExt/image9_149.png" border="0" alt="" /></span>  (<i>i </i>= 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 9pt"><img style="WIDTH: 147.8pt; HEIGHT: 24.8pt" src="../ImagesExt/image9_150.png" border="0" alt="" /></span>  (<i>i </i>= 4,6)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 9pt"><img style="WIDTH: 146.3pt; HEIGHT: 24.8pt" src="../ImagesExt/image9_151.png" border="0" alt="" /></span>  (<i>i</i> = 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The plutonium isotopic masses on the measurement date are</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 66pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_152.png" border="0" alt="" /></span>  (<i>i</i> = 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">the plutonium mass on the measurement date is</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 16pt"><img style="WIDTH: 77.3pt; HEIGHT: 39.8pt" src="../ImagesExt/image9_153.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">and the plutonium isotopic composition in weight percent on 
+the measurement date is</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 84pt; HEIGHT: 42pt" src="../ImagesExt/image9_154.png" border="0" alt="" /></span>  (<i>i</i> = 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The plutonium mass on the americium analysis date is</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 16pt"><img style="WIDTH: 84.8pt; HEIGHT: 39.8pt" src="../ImagesExt/image9_155.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">Accounting for the beta decay of <sup>241</sup>Pu to 
+<sup>241</sup>Am and the alpha decay of <sup>241</sup>Am, the <sup>241</sup>Am 
+mass on the date of measurement is</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 210pt; HEIGHT: 42pt" src="../ImagesExt/image9_156.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">the 0.002% alpha decay of <sup>241</sup>Pu is ignored and the 
+growth of <sup>241</sup>Am is calculated as shown in Ref. 29. Thus, the 
+<sup>241</sup>Am weight percent on the measurement date is</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 84pt; HEIGHT: 42pt" src="../ImagesExt/image9_157.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The errors of the updated plutonium isotopic weight percents 
+are set to the approximate values</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 122.3pt; HEIGHT: 42pt" src="../ImagesExt/image9_158.png" border="0" alt="" /></span> (<i>i</i> = 1 to 5)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">and the error of the updated <sup>241</sup>Am weight percent 
+is set to the approximate value</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 135.8pt; HEIGHT: 45pt" src="../ImagesExt/image9_159.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">where</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 13pt"><img style="WIDTH: 102pt; HEIGHT: 38.3pt" src="../ImagesExt/image9_160.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 174.8pt; HEIGHT: 42pt" src="../ImagesExt/image9_161.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><u>Multiple component updating</u></p>
+<p class="MsoNormal"><u>  </u></p>
+<p class="MsoNormal">Composite items can be specified to have different isotopic 
+compositons, with a plutonium mass specified for each composition. Multiple 
+component updating calculates an isotopic composition for the entire item. The 
+symbol definitions are</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><span style="POSITION: relative; TOP: 8pt"><img style="WIDTH: 35.3pt; HEIGHT: 21pt" src="../ImagesExt/image9_162.png" border="0" alt="" /></span> = number of components</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><span style="POSITION: relative; TOP: 8pt"><img style="WIDTH: 24pt; HEIGHT: 24pt" src="../ImagesExt/image9_163.png" border="0" alt="" /></span> = mass of isotope<i> i</i> (as defined above) for 
+component <i>j</i> on the date of measurement</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 26.3pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_164.png" border="0" alt="" /></span> = weight percent of plutonium for isotope <i>i</i> in 
+composite item on date of measurement</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 29.3pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_165.png" border="0" alt="" /></span> = mass of isotope<i> i</i> in the composite sample on the 
+date of measurement</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal"><span style="POSITION: relative; TOP: 6pt"><img style="WIDTH: 29.3pt; HEIGHT: 21.8pt" src="../ImagesExt/image9_166.png" border="0" alt="" /></span> = total plutonium mass for the composite sample on the 
+date of measurement.</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">The values of <span style="POSITION: relative; TOP: 8pt"><img style="WIDTH: 24pt; HEIGHT: 24pt" src="../ImagesExt/image9_163.png" border="0" alt="" /></span> and are calculated from the equations above. Then</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 18pt"><img style="WIDTH: 90.8pt; HEIGHT: 44.3pt" src="../ImagesExt/image9_167.png" border="0" alt="" /></span>  (<i>i </i>= 1 to 6)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">and</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 18pt"><img style="WIDTH: 107.3pt; HEIGHT: 44.3pt" src="../ImagesExt/image9_168.png" border="0" alt="" /></span></p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">so</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">          <span style="POSITION: relative; TOP: 17pt"><img style="WIDTH: 90.8pt; HEIGHT: 42pt" src="../ImagesExt/image9_169.png" border="0" alt="" /></span>  (<i>i</i> = 1 to 6)</p>
+<p class="MsoNormal"> </p>
+<p class="MsoNormal">There is presently no error propagation in the composite 
+isotopics calculation, so the composite isotopics errors are set to 
+zero.</p></div></body></html>
