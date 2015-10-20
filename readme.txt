@@ -4,7 +4,7 @@ INCC6 Beta Release 1
 October 15, 2015
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
-the U.S. Department of Entergy, Office of Nonproliferation and National Security, International
+the U.S. Department of Energy, Office of Nonproliferation and National Security, International
 Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security.
 
 LA-CC-14-009. This software was exported from the United States in accordance with the Export
