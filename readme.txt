@@ -10,8 +10,6 @@ Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and
 LA-CC-14-009. This software was exported from the United States in accordance with the Export
 Administration Regulations. Diversion contrary to U.S. law prohibited.
 
-Export Control Classification Number (ECCN): EAR99
-
 Copyright 2015, Los Alamos National Security, LLC. This software application and associated
 material ("The Software") was prepared by the Los Alamos National Security, LLC. (LANS), under
 Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE). All rights in the software
