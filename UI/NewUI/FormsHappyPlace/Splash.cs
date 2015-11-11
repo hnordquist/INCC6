@@ -45,7 +45,6 @@ namespace NewUI
             richTextBox1.Text = @"This work was supported by the United States Member State Support Program to IAEA Safeguards; the U.S. Department of Energy, ";
             richTextBox1.Text += @"Office of Nonproliferation and National Security, International Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security." + System.Environment.NewLine + System.Environment.NewLine;
             richTextBox1.Text += @"LA-CC-14-009. This software was exported from the United States in accordance with the Export Administration Regulations. Diversion contrary to U.S. law prohibited." + System.Environment.NewLine + System.Environment.NewLine;
-            richTextBox1.Text +=@"Export Control Classification Number (ECCN): EAR99";
 
             richTextBox2.Text = "Copyright © 2015, Los Alamos National Security, LLC. This software application and associated material (\"The Software\") was prepared by the Los Alamos National Security, LLC (LANS),";
             richTextBox2.Text += @" under Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE) for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, LLC (LANS) for the";
