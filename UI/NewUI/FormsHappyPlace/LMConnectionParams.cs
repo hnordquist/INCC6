@@ -162,7 +162,7 @@ namespace NewUI
                     VoltageTolerance.Visible = true;
                            
                 }
-                else if (det.Id.SRType == InstrType.NILA)
+                else if (det.Id.SRType == InstrType.MCA527)
                 {
                     this.PTR32Panel.Visible = true;
                 }

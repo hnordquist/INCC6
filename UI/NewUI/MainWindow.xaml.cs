@@ -46,16 +46,17 @@ namespace NewUI
     public partial class MainWindow : Window
     {
 
-        public WinPos main = new WinPos();
-
+        private WinPos main;
         public MainWindow()
         {
             InitializeComponent();
+			main = new WinPos();
+
             //Set defaults for window position hn 6.23.15
-            this.MinWidth = main.width;
-            this.MinHeight = main.height;
-            main.SizeToFit();
-            main.MoveIntoView();
+            //this.MinWidth = main.width;
+            //this.MinHeight = main.height;
+            //main.SizeToFit();
+            //main.MoveIntoView();
         }
 
         /////////////////
@@ -667,6 +668,10 @@ namespace NewUI
                         break;
                     case ConstructedSource.PTRFile:
                         NC.App.AppContext.PTRFileAssay = true;
+                        UIIntegration.Controller.file = true;
+                        break;
+                    case ConstructedSource.MCA527File:
+                        NC.App.AppContext.MCA527FileAssay = true;
                         UIIntegration.Controller.file = true;
                         break;
                     default:

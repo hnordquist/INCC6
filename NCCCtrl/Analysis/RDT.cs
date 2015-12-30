@@ -103,7 +103,13 @@ namespace Analysis
             NumTotalsEncountered = 0;
         }
 
-        public virtual void AccumulateCycleSummary() // accumulate any remaining data on the cycle object from the time/hits processor
+		/// <summary>
+		/// Accumulate any remaining data on the cycle object from the time/hits processor,
+		/// Final high-voltage value is copied from data source,
+		/// Time interval is either last neutron or requested time interval.
+		/// </summary>
+		/// <param name="useLastNeutron">Use the last neutron time, o.w. time is set at cycle creation time</param>
+        public virtual void AccumulateCycleSummary() 
         {
             if (numValuesParsed > 0)
             {

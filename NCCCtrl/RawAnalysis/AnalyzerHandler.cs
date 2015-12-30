@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -84,6 +84,21 @@ namespace LMRawAnalysis
         public long spinTimeStart;
 #endif
 
+		public double TickSizeInSeconds
+		{
+			set
+			{
+				ticSizeInSeconds = value;
+				if (ticSizeInSeconds == 1e-7)
+				{
+					timeBaseConversion = 1ul;  // no external to internal conversion
+				} else if (ticSizeInSeconds == 1e-8)
+				{
+					timeBaseConversion = 10ul; // shift gate units from tics (1e-7) to shakes (1e-8)
+				}
+			}
+		}
+
         #region Events
 
         public delegate void AnalysesCompleted(string statusMessage);
@@ -101,7 +116,7 @@ namespace LMRawAnalysis
         public AnalyzerHandler(double theTicSizeInSeconds, LMLoggers.LognLM logger)
         {
 
-            ticSizeInSeconds = theTicSizeInSeconds;
+            TickSizeInSeconds = theTicSizeInSeconds;
             log = logger;
             verboseTrace = log.ShouldTrace(LogLevels.Verbose);
             numNeutronEventsReceived = 0;
@@ -109,14 +124,6 @@ namespace LMRawAnalysis
             numNeutronEventsCompleted = 0;
             numCircuits = 0;
             timeOfLastNeutronEvent = 0;
-            if (ticSizeInSeconds == 1e-7)
-            {
-                timeBaseConversion = 1ul;  // no external to internal conversion
-            }
-            else if (ticSizeInSeconds == 1e-8)
-            {
-                timeBaseConversion = 10ul; // shift gate units from tics (1e-7) to shakes (1e-8)
-            }
 
 #if USE_SPINTIME
             ResetSpinTime();

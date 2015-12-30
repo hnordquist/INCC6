@@ -87,10 +87,10 @@ namespace ListModeDB
                 app.SortPulseFile = DB.Utils.DBBool(dr["sortPulseFile"]);
                 app.PulseFileNCD = DB.Utils.DBBool(dr["pulseFileNCD"]);
                 app.PTRFileNCD = DB.Utils.DBBool(dr["ptrFileNCD"]);
-                app.NILAFileNCD = DB.Utils.DBBool(dr["nilaFileNCD"]);
+                app.MCA527FileNCD = DB.Utils.DBBool(dr["nilaFileNCD"]);
                 app.PulseFileAssay = DB.Utils.DBBool(dr["pulseFileAssay"]);
                 app.PTRFileAssay = DB.Utils.DBBool(dr["ptrFileAssay"]);
-                app.NILAFileAssay = DB.Utils.DBBool(dr["nilaFileAssay"]);
+                app.MCA527FileAssay = DB.Utils.DBBool(dr["nilaFileAssay"]);
                 app.TestDataFileAssay = DB.Utils.DBBool(dr["testDataFileAssay"]);
                 app.ReviewFileAssay = DB.Utils.DBBool(dr["reviewFileAssay"]);
 

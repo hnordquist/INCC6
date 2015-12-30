@@ -53,7 +53,7 @@ namespace NCCConfig
         detector, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, pulseFileNCD, ptrFileNCD, nilaFileNCD, pulseFileAssay, ptrFileAssay, nilaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+        sortPulseFile, pulseFileNCD, ptrFileNCD, mcaFileNCD, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString
@@ -140,7 +140,7 @@ namespace NCCConfig
             { "sortPulseFile", "sort and save pulse files, (line-delimited fixed-point strings, unsorted)", v => app.SortPulseFile = v != null },                                                           
             { "pulseFileToNCD", "convert a sorted pulse file to NCD format", v => app.PulseFileNCD = v != null }, 
             { "ptrFileToNCD", "convert a PTR-32 channel + pulse file pair to NCD format", v => app.PTRFileNCD = v != null }, 
-            { "nilaFileToNCD", "convert a NILA channel + pulse file pair to NCD format", v => app.NILAFileNCD = v != null }, 
+            { "mcaFileToNCD", "convert a MCA527 mca file to NCD format", v => app.MCA527FileNCD = v != null }, 
             { "INCCXfer", "identify and process ye olde INCC Transfer files, (incomplete but worthy)",  v => app.INCCXfer = v != null },                                                           
             { "overwriteXfer", "replace existing definitions during each INCC Transfer operation",  v => app.OverwriteImportedDefs = v != null },                                                           
             { "INCCParity", "process mass calculations using INCC constraints",  v => app.INCCParity = v != null },                                                           
@@ -148,7 +148,7 @@ namespace NCCConfig
             { "pulseFileAssay", "use sorted pulse files for input, in place of NCD files", v => app.PulseFileAssay = v != null }, 
             { "ncdFileAssay", "use LMMM NCD files for input", v => app.NCDFileAssay = v != null }, 
             { "ptrFileAssay", "use PTR-32 dual file streams for input, in place of NCD files", v => app.PTRFileAssay = v != null }, 
-            { "nilaFileAssay", "use NILA dual file streams for input, in place of NCD files", v => app.NILAFileAssay = v != null },
+            { "mcaFileAssay", "use MCA527 file streams for input, in place of NCD files", v => app.MCA527FileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
             { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input\r\n\r\nLMMM HV control ********************", v => app.ReviewFileAssay = v != null }, 

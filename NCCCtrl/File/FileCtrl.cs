@@ -75,8 +75,8 @@ namespace NCCFile
                             SortedPulseFileAssay();
                         else if (NC.App.AppContext.PTRFileAssay)
                             PTRFilePairAssay();
-                        else if (NC.App.AppContext.NILAFileAssay)
-                            NILAFileAssay();
+                        else if (NC.App.AppContext.MCA527FileAssay)
+                            MCA527FileAssay();
                         else if (NC.App.AppContext.TestDataFileAssay)
                             TestDataAssay();
                         else if (NC.App.AppContext.ReviewFileAssay)
@@ -98,8 +98,8 @@ namespace NCCFile
                             SortedPulseFileToNCD();
                         else if (NC.App.AppContext.PTRFileNCD)
                             PTRFilePairToNCD();
-                        else if (NC.App.AppContext.NILAFileNCD)
-                            NILAFilePairToNCD();
+                        else if (NC.App.AppContext.MCA527FileNCD)
+                            MCA527FileToNCD();
                         // todo: and why not go both ways, by converting NCD files into these pulse files
                         FireEvent(EventType.ActionFinished, this);
                         break;
@@ -123,11 +123,6 @@ namespace NCCFile
             }
         }
 
-
-        protected void NILAFileAssay()
-        {
-
-        }
 
         void Replay(Measurement m, ConstructedSource src)
         {
@@ -546,9 +541,9 @@ namespace NCCFile
             return ok ? file : null;
         }
 
-        protected void NILAFilePairToNCD()
+        protected void MCA527FileToNCD()
         {
-            PTRFilePairToNCD(); // TBD
+            PTRFilePairToNCD(); // NEXT:
         }
 
 
@@ -601,11 +596,11 @@ namespace NCCFile
 
                 try
                 {
-                    string issue = String.Empty;
+                    string issue = string.Empty;
                     //read the header from the BIN file
                     ptr32file.Events.ReadHeader();
                     ShakeTime = 0;
-                    while (ptr32file.Channels.read < ptr32file.Channels.fulllen && String.IsNullOrEmpty(issue))
+                    while (ptr32file.Channels.read < ptr32file.Channels.fulllen && string.IsNullOrEmpty(issue))
                     {
                         NumProcessedRawDataBuffers++;
 
@@ -796,18 +791,20 @@ namespace NCCFile
                     }
 
                     rdt.NumProcessedRawDataBuffers = 0;
-                    string issue = String.Empty;
+                    string issue = string.Empty;
 
                     //read the header from the BIN file
                     ptrFile.Events.ReadHeader();
                     ShakeTime = 0;
+					cycle.TS = TimeSpan.FromSeconds(ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
+					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
                     //Add this as check. We should have this count - big T as final count rate
-                    pps.PTRReportedCountTime += ptrFile.Events.ReportedCountTime;
+                    pps.PTRReportedCountTime += ptrFile.Events.ReportedCountTimeSecs;
                     if (!ptrFile.Channels.Active)
                     {
                         ptrFile.Channels.fulllen = ptrFile.Events.stream.Length;
                     }
-                    while (ptrFile.Channels.read < ptrFile.Channels.fulllen && String.IsNullOrEmpty(issue))
+                    while (ptrFile.Channels.read < ptrFile.Channels.fulllen && string.IsNullOrEmpty(issue))
                     {
                         rdt.NumProcessedRawDataBuffers++;
 
@@ -941,6 +938,230 @@ namespace NCCFile
 
         }
 
+		protected void MCA527FileAssay()
+        {
+
+            List<string> ext = new List<string>() { ".mca" };
+            FileList<MCAFile> hdlr = new FileList<MCAFile>();
+            FileList<MCAFile> files = null;
+            hdlr.Init(ext, datalog);
+
+            // initialize operation timer here
+            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            FireEvent(EventType.ActionPrep, this);
+            NC.App.Opstate.StampOperationStartTime();
+
+
+            // get the list of files from the named folder, or use the supplied list
+            if (NC.App.AppContext.FileInputList == null)
+                files = (FileList<MCAFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
+            else
+                files = (FileList<MCAFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
+            if (files == null || files.Count() < 1)
+            {
+                NC.App.Opstate.StopTimer(0);
+                return;
+            }
+
+            Measurement meas = NC.App.Opstate.Measurement;
+
+            PseudoInstrument = new LMDAQ.LMInstrument(meas.Detectors[0]);  // psuedo LM until we can map from user or deduce from file content at run-time
+            PseudoInstrument.selected = true;
+            if (!Instruments.Active.Contains(PseudoInstrument))
+                Instruments.Active.Add(PseudoInstrument); // add to global runtime list
+
+            // Force RDT.State to be a LM mcaFile file RDT, this shows a design failure, so need to rework the entire scheme, (like there is still time . . .)
+            LMRawDataTransform rdt = (PseudoInstrument as LMDAQ.LMInstrument).RDT;
+            rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm);
+            MCA527FileProcessingState c = new MCA527FileProcessingState(rdt.State.maxValuesInBuffer * 2, (LMProcessingState)PseudoInstrument.RDT.State);  // expects 8 bytes, we only use 4
+            PseudoInstrument.RDT.State = c;
+            rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
+            rdt.RawDataBuff = null;// free it back up, don't need it
+
+            NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
+            DataSourceIdentifier did = meas.Detectors[0].Id;
+            rdt.SetupCountingAnalyzerHandler(NC.App.Config, did.source.TimeBase(did.SRType), // 1e-7 expected here, normally
+                        (string s) =>
+                        {
+                            PseudoInstrument.PendingComplete();
+                            ctrllog.TraceEvent(LogLevels.Verbose, 439, "Neutron counting processing complete: '" + s + "'");
+                        },
+                        (string s) =>
+                        {
+                            PseudoInstrument.PendingComplete();
+                            ctrllog.TraceEvent(LogLevels.Error, 438, "Neutron counting processing stopped with error: '" + s + "'");
+                            rdt.EndAnalysisImmediately();
+                            throw new FatalNeutronCountingException(s);  // emergency exit, caught and noted in file processing loop below
+                        },
+                        (string s) =>
+                        {
+                            PseudoInstrument.PendingComplete();
+                            ctrllog.TraceEvent(LogLevels.Error, 437, "Neutron counting processing [Block] stopped with error: '" + s + "'");
+                            rdt.EndAnalysisImmediately();
+                            throw new FatalNeutronCountingException(s);  // emergency exit, caught and noted in file processing loop below
+                        }
+                    );
+
+
+            meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
+
+            rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
+            NC.App.Opstate.StopTimer(0);
+
+            FireEvent(EventType.ActionStart, this);
+
+            meas.CurrentRepetition = 0;
+            NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
+
+            MCA527FileProcessingState pps = PseudoInstrument.RDT.State as MCA527FileProcessingState;
+            foreach (var mcaFile in files)
+            {
+                if (NC.App.Opstate.IsQuitRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
+                    break;
+                if (!mcaFile.OpenForReading())
+                    continue;
+                PseudoInstrument.PendingReset();
+                if (meas.CurrentRepetition == 0)
+                {
+                    meas.MeasDate = new DateTimeOffset(mcaFile.DTO.Ticks, mcaFile.DTO.Offset);
+                    meas.Detectors[0].Id.source = ConstructedSource.MCA527File;
+                    PseudoInstrument.id.source = ConstructedSource.MCA527File;
+                }
+
+                Cycle cycle = new Cycle(ctrllog);
+                cycle.UpdateDataSourceId(ConstructedSource.MCA527File, InstrType.MCA527 /* revisit this, it could be from any source */,
+                                         mcaFile.DTO, mcaFile.Filename);
+                meas.Add(cycle);
+                rdt.StartCycle(cycle);
+                meas.CurrentRepetition++;
+                pps.Reset();
+                NC.App.Opstate.SOH = NCC.OperatingState.Living;
+                PseudoInstrument.id.FileName = mcaFile.Filename;
+
+                ctrllog.TraceEvent(LogLevels.Info, 3335, "Assaying with {0}", mcaFile.Filename);
+                /// unique here
+                Double ShakeTime; // like ptr32 files 10^e-8
+
+                int maxValuesInBuffer = (int)pps.maxValuesInBuffer;
+                try
+                {
+
+                    rdt.NumProcessedRawDataBuffers = 0;
+                    string issue = string.Empty;
+					int tbindex = 0; // event count
+
+                    //read the two headers from the MCA file
+                    mcaFile.ReadHeader();
+                    ShakeTime = 0;
+					rdt.ResetTickSizeInSeconds(mcaFile.TimeUnitNanoSec/1e9);
+					cycle.TS = TimeSpan.FromSeconds(mcaFile.MeasTime);  // requested or specified time in seconds
+					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
+					uint FBbytes = mcaFile.TotalBytes;
+					// read timestamps...
+					foreach (ulong deltaTime in mcaFile.EnumerateTimestamps()) 
+					{
+						ShakeTime += deltaTime; // accumulate total time
+						// fill up the processing buffer with events, this is like the bulk read for the other file formats
+						// read the times up to the buffer limit
+						if (tbindex < maxValuesInBuffer)
+						{
+							pps.timeInBuffer[tbindex++] = (uint)deltaTime;  
+							if (mcaFile.ReaderPosition > 0 && mcaFile.ReaderPosition < FBbytes)			// more bytes to read				
+								continue;
+						}
+						Console.WriteLine("total {0}; last delta {1}; event count {2}; file length time {3}; start {4}; seconds {5};", ShakeTime, deltaTime, tbindex, mcaFile.RealTime, mcaFile.StartTime, mcaFile.MeasTime);
+						if (NC.App.Opstate.IsQuitRequested)
+							break;
+
+						rdt.NumProcessedRawDataBuffers++;
+                        // push the time deltas through the convertor code and then the counting analyzer threads
+                        StreamStatusBlock ssb = rdt.PassBufferToTheCounters(tbindex);
+                        if (ssb != null)
+                        {
+                            rdt.ParseStatusBlock(ssb, cycle);
+                            ctrllog.TraceEvent(LogLevels.Verbose, 412, "End of stream, status message at byte {0}, len {1}", ssb.index, ssb.msglen);
+                        }
+
+						tbindex = 0;
+                        rdt.StartNewBuffer();
+
+                        ctrllog.TraceEvent(LogLevels.Verbose, 411, "[{0}] Counted {1} triggers, {2} hits, over {3} secs", rdt.NumProcessedRawDataBuffers, cycle.TotalEvents, cycle.Totals, cycle.TS.TotalSeconds);
+                        NC.App.Loggers.Flush();
+					}
+/*{
+
+
+
+
+                        if (NC.App.Opstate.IsQuitRequested)  // cancellation in between buffers
+                        {
+                            ctrllog.TraceEvent(LogLevels.Warning, 428, "Processing cancelled, stopped at " + BufferStateSnapshot(PseudoInstrument));
+                            break;
+                        }
+                    }*/
+                }
+                catch (FatalNeutronCountingException e)
+                {
+                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    ctrllog.TraceException(e);
+                    ctrllog.TraceEvent(LogLevels.Warning, 429, "Neutron counting incomplete: {0}, processing stopped at {1}", e.Message, BufferStateSnapshot(PseudoInstrument));
+                }
+                catch (Exception e)
+                {
+                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    ctrllog.TraceException(e, true);
+					ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + BufferStateSnapshot(PseudoInstrument));
+                }
+                finally
+                {
+                    mcaFile.CloseReader();
+                    if (meas.CurrentRepetition == 1)// this is the first file, create the results before they get used 
+                    {
+                        meas.PrepareINCCResults();
+                        meas.Persist();
+                    }
+                    rdt.EndOfCycleProcessing(meas);
+                    rdt.FlushCycleSummaryResults();
+                    NC.App.Loggers.Flush();
+                }
+                FireEvent(EventType.ActionInProgress, this);
+            } // loop over each MCA527file
+            rdt.EndOfCycleProcessing(meas, last:true);
+
+            PseudoInstrument.selected = false;
+
+            FireEvent(EventType.ActionInProgress, this);
+
+            NC.App.Opstate.StopTimer(0);
+
+            if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
+            { 
+                //if (meas.HasReportableData)
+                //{
+                // if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
+                NC.App.Opstate.ResetTimer(1, postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+
+                meas.CalculateMeasurementResults();
+
+                NC.App.Opstate.StopTimer(1);
+                FireEvent(EventType.ActionInProgress, this);
+
+                ReportMangler rm = new ReportMangler(ctrllog);
+                rm.GenerateReports(meas);
+
+                meas.SaveMeasurementResults();
+            }
+
+            NC.App.Opstate.ResetTokens();
+            Instruments.All.Remove(PseudoInstrument);
+
+            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.StampOperationStopTime();
+            FireEvent(EventType.ActionStop, this);
+
+        }
+
+
         protected void SortedPulseFileToNCD()
         {
 
@@ -979,8 +1200,8 @@ namespace NCCFile
                     chnbytes[a] = byt;
                     NumProcessedRawDataBuffers = 0;
                     long read = 0;
-                    string issue = String.Empty;
-                    while (!pf.reader.EndOfStream && String.IsNullOrEmpty(issue))
+                    string issue = string.Empty;
+                    while (!pf.reader.EndOfStream && string.IsNullOrEmpty(issue))
                     {
                         string s;
                         int rb = 0;
@@ -1125,8 +1346,8 @@ namespace NCCFile
                 {
                     pps.chnbytes[a] = byt;  // use the same rand value for all these files, makes for consistent per-channel rates counting
                     rdt.NumProcessedRawDataBuffers = 0;
-                    string issue = String.Empty;
-                    while (!sortedpulse.reader.EndOfStream && String.IsNullOrEmpty(issue))
+                    string issue = string.Empty;
+                    while (!sortedpulse.reader.EndOfStream && string.IsNullOrEmpty(issue))
                     {
                         string s;
                         int rb = 0;
@@ -1237,7 +1458,7 @@ namespace NCCFile
         {
             InstrumentStateSnapshot iss = new InstrumentStateSnapshot(inst);
 
-            String s = String.Format("buffer {0}, {1}", iss.asy.numProcessedRawDataBuffers, iss.ToString());
+            string s = string.Format("buffer {0}, {1}", iss.asy.numProcessedRawDataBuffers, iss.ToString());
 
             return s;
         }
@@ -1288,7 +1509,7 @@ namespace NCCFile
 
 		public string InstrStatusString(CombinedInstrumentProcessingStateSnapshot cipss, bool channels = false)
 		{
-			string s = String.Empty;
+			string s = string.Empty;
 			try
 			{
 				string id = cipss.iss.action.ToString() + " " + cipss.iss.ins.ToString();  // some identifying info
@@ -1296,7 +1517,7 @@ namespace NCCFile
 					s = cipss.iss.ins.Reason + ", " + id;
 				else
 				{
-					String ss = cipss.cs.ToString() + ";";
+					string ss = cipss.cs.ToString() + ";";
 					ss += cipss.iss.ToString();
 					s = ss + " " + id;
 					if (channels && cipss.iss.asy != null)
@@ -1327,16 +1548,16 @@ namespace NCCFile
         public string SuccinctInstrStatusString(object o)
         {
             if (o == null)
-				return String.Empty;
+				return string.Empty;
 
 			LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
 			return Elide(inst.id.FileName, 64);
         }
         public string FileProcStatusString(CombinedInstrumentProcessingStateSnapshot cipss, bool channels = false)
         {
-            string s = String.Empty;
-            string id = String.Empty;
-            string ss = String.Empty;
+            string s = string.Empty;
+            string id = string.Empty;
+            string ss = string.Empty;
             try
             {
                 if (cipss.HasIdent)
@@ -1618,8 +1839,8 @@ Declared - assay 235U mass (%)
     //        {
     //            NumProcessedRawDataBuffers = 0;
     //            Double time = 0, lasttime = 0;
-    //            string issue = String.Empty;
-    //            while (!pf.reader.EndOfStream && String.IsNullOrEmpty(issue))
+    //            string issue = string.Empty;
+    //            while (!pf.reader.EndOfStream && string.IsNullOrEmpty(issue))
     //            {
     //                Int32 tchn = 0, chn = 0;
     //                string s;

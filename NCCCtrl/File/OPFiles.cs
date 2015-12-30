@@ -70,13 +70,13 @@ namespace NCCFile
             foreach (string[] sa in csv.Lines)
             {
                 Isotopics i = new Isotopics();
-                String s = String.Empty;
+                string s = string.Empty;
                 double v = 0, err = 0;
                 foreach (NOPCol op in System.Enum.GetValues(typeof(NOPCol)))
                 {
                     try
                     {
-                        s = String.Empty;
+                        s = string.Empty;
                         s = sa[(int)op];  // might blow here when file was badly created
                         switch (op)
                         {
@@ -94,7 +94,7 @@ namespace NCCFile
                                 System.Enum.TryParse<Isotopics.SourceCode>(s, out i.source_code);
                                 break;
                             case NOPCol.IsoId:
-                                i.id = String.Copy(s);
+                                i.id = string.Copy(s);
                                 break;
                             case NOPCol.Pu238:
                                 Double.TryParse(s, out v); i.SetVal(Isotope.pu238, v);
@@ -154,7 +154,7 @@ namespace NCCFile
         void GenerateItemIds(CSVFile csv)
         {
             List<ItemId> l = NOPItemIds;  // local alias
-            String s = String.Empty;
+            string s = string.Empty;
             foreach (string[] sa in csv.Lines)
             {
                 ItemId iid = new ItemId();
@@ -162,30 +162,30 @@ namespace NCCFile
                 {
                     try
                     {
-                        s = String.Empty;
+                        s = string.Empty;
                         s = sa[(int)op];  // might blow here when file was badly created
                         switch (op)
                         {
                             case NOPCol.MBA:
-                                iid.mba = String.Copy(s);
+                                iid.mba = string.Copy(s);
                                 break;
                             case NOPCol.MatType:
-                                iid.material = String.Copy(s);
+                                iid.material = string.Copy(s);
                                 break;
                             case NOPCol.ItemId:
-                                iid.item = String.Copy(s);
+                                iid.item = string.Copy(s);
                                 break;
                             case NOPCol.StratumId:
-                                iid.stratum = String.Copy(s);
+                                iid.stratum = string.Copy(s);
                                 break;
                             case NOPCol.InvChangeCode:
-                                iid.inventoryChangeCode = String.Copy(s);
+                                iid.inventoryChangeCode = string.Copy(s);
                                 break;
                             case NOPCol.IOCode:
-                                iid.IOCode = String.Copy(s);
+                                iid.IOCode = string.Copy(s);
                                 break;
                             case NOPCol.IsoId:
-                                iid.isotopics = String.Copy(s);
+                                iid.isotopics = string.Copy(s);
                                 break;
                             case NOPCol.DecPuMassGr:
                                 Double.TryParse(s, out iid.declaredMass);
@@ -238,31 +238,31 @@ namespace NCCFile
             List<INCCAnalysisParams.cm_pu_ratio_rec> l = COPRatioRecs;  // local alias
 
             INCCAnalysisParams.cm_pu_ratio_rec cpr = new INCCAnalysisParams.cm_pu_ratio_rec();
-            String s = String.Empty;
+            string s = string.Empty;
             foreach (string[] sa in csv.Lines)
             {
                 foreach (COPCol op in System.Enum.GetValues(typeof(COPCol)))
                 {
                     try
                     {
-                        s = String.Empty;
+                        s = string.Empty;
                         s = sa[(int)op];  // might blow here when file was badly created
                         switch (op)
                         {
                             case COPCol.ItemId:
-                                //cpr.cm_id = String.Copy(s);
+                                //cpr.cm_id = string.Copy(s);
                                 break;
                             case COPCol.DecPuMassGr:
                                 //Double.TryParse(s, out cpr.cm_dcl_u235_mass);
                                 break;
                             case COPCol.InputBatchId:
-                                cpr.cm_input_batch_id = String.Copy(s);
+                                cpr.cm_input_batch_id = string.Copy(s);
                                 break;
                             case COPCol.LabelId:
-                                cpr.cm_id_label = String.Copy(s);
+                                cpr.cm_id_label = string.Copy(s);
                                 break;
                             case COPCol.Id:
-                                cpr.cm_id = String.Copy(s);
+                                cpr.cm_id = string.Copy(s);
                                 break;
                             case COPCol.DecU235MassGr:
                                 Double.TryParse(s, out cpr.cm_dcl_u235_mass);
@@ -303,9 +303,9 @@ namespace NCCFile
 				return;
             foreach (CSVFile csv in files)
             {
-                if (0 == String.Compare(csv.ThisSuffix, ".nop", true))
+                if (0 == string.Compare(csv.ThisSuffix, ".nop", true))
                     mPathToNOPFile.Add(csv.Filename, csv);
-                else if (0 == String.Compare(csv.ThisSuffix, ".cop", true))
+                else if (0 == string.Compare(csv.ThisSuffix, ".cop", true))
                     mPathToCOPFile.Add(csv.Filename, csv);
                 else continue;
                 csv.ProcessFile();  // split lines with scanner, construct istopics, item id and CmPu ratios

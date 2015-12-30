@@ -616,10 +616,10 @@ namespace NCCConfig
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileNCD, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileNCD, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.nilaFileNCD, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.mcaFileNCD, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.nilaFileAssay, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.dbDataAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.testDataFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ncdFileAssay, false, typeof(bool), retain: false);
@@ -664,7 +664,7 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || NILAFileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
         }
         public string FileInput
         {
@@ -775,10 +775,10 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.ptrFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.ptrFileAssay, value); }
         }
-        public bool NILAFileAssay
+        public bool MCA527FileAssay
         {
-            get { return (bool)getVal(NCCFlags.pulseFileAssay); }
-            set { MutuallyExclusiveFileActions(NCCFlags.pulseFileAssay, value); }
+            get { return (bool)getVal(NCCFlags.mcaFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
         }
         public bool SortPulseFile
         {
@@ -796,10 +796,10 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.ptrFileNCD); }
             set { MutuallyExclusiveFileActions(NCCFlags.ptrFileNCD, value); }
         }
-        public bool NILAFileNCD
+        public bool MCA527FileNCD
         {
-            get { return (bool)getVal(NCCFlags.nilaFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.nilaFileNCD, value); }
+            get { return (bool)getVal(NCCFlags.mcaFileNCD); }
+            set { MutuallyExclusiveFileActions(NCCFlags.mcaFileNCD, value); }
         }
 
         public string RootPath
@@ -1002,13 +1002,13 @@ namespace NCCConfig
                 setVal(NCCFlags.sortPulseFile, false);
                 setVal(NCCFlags.pulseFileNCD, false);
                 setVal(NCCFlags.ptrFileNCD, false);
-                setVal(NCCFlags.nilaFileNCD, false); 
+                setVal(NCCFlags.mcaFileNCD, false); 
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
-                setVal(NCCFlags.nilaFileAssay, false);
+                setVal(NCCFlags.mcaFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
@@ -1152,7 +1152,7 @@ namespace NCCConfig
             resetVal(NCCFlags.parseBufferSize, (UInt32)50, typeof(uint)); // 50 MB
             resetVal(NCCFlags.useAsyncFileIO, false, typeof(bool));
             resetVal(NCCFlags.useAsyncAnalysis, false, typeof(bool));
-            resetVal(NCCFlags.streamRawAnalysis, false, typeof(bool));
+            resetVal(NCCFlags.streamRawAnalysis, true, typeof(bool));
             resetVal(NCCFlags.broadcast, true, typeof(bool));
             resetVal(NCCFlags.port, 5011, typeof(int));
             resetVal(NCCFlags.broadcastport, 5000, typeof(int));
@@ -1744,6 +1744,19 @@ namespace NCCConfig
         }
     }
 
+	public class WPFEventArgs: EventArgs
+	{
+		public bool value;
+
+		//
+		// Summary:
+		//     Initializes a new instance of the System.EventArgs class.
+		public WPFEventArgs()
+		{
+			value = false;
+		}
+	}
+
     // loaded and configured in the exe.config file
     public class WPFListener : TraceListener
     {
@@ -1758,9 +1771,10 @@ namespace NCCConfig
         }
         ~WPFListener()
         {
+			Dispose(false);
         }
 
-        string current = String.Empty;
+        string current = string.Empty;
         int previous;
         ulong count = 0;
         bool header = true;

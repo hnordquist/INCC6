@@ -513,7 +513,7 @@ namespace LMDAQ
                 try
                 {
                     collog.TraceInformation("Connecting to " + instrument.id.DetectorId);
-                    if (instrument.id.SRType != InstrType.LMMM && instrument.id.SRType != InstrType.NILA && instrument.id.SRType != InstrType.PTR32)
+                    if (instrument.id.SRType != InstrType.LMMM && instrument.id.SRType != InstrType.MCA527 && instrument.id.SRType != InstrType.PTR32)
                     {
                         if (RetryCOM("COM" + instrument.id.SerialPort.ToString()))
                             instrument.Connect();

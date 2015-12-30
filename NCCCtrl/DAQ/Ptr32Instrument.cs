@@ -114,7 +114,7 @@ namespace LMDAQ
 			{
 				m_logger.TraceEvent(LogLevels.Error, 0, "PTR-32[{0}]: Digilent DpcUtils {1}", DeviceName, GetDpcUtilsVersion());
 				m_logger.Flush();
-				throw pex;
+				throw new Exception("PTR32 connect problem", pex);
 			} 
 
 			DAQState = DAQInstrState.Online;

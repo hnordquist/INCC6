@@ -514,7 +514,7 @@ namespace LMDAQ
             if (obj == null) return base.Equals(obj);
 
             if (!(obj is LMInstrument))
-                throw new InvalidCastException("The 'obj' argument is not a LMInstrument object.");
+                return false;
             else
                 return Equals(obj as LMInstrument);
         }
@@ -606,7 +606,7 @@ namespace LMDAQ
             if (obj == null) return base.Equals(obj);
 
             if (!(obj is SRInstrument))
-                throw new InvalidCastException("The 'obj' argument is not a SRInstrument object.");
+                return false; //throw new InvalidCastException("The 'obj' argument is not a SRInstrument object.");
             else
                 return Equals(obj as LMInstrument);
         }

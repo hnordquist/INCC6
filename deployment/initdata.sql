@@ -119,7 +119,7 @@ INSERT INTO "detector_types" (name, [description]) VALUES('LMMM','LMMM');
 GO
 INSERT INTO "detector_types" (name, [description]) VALUES('PTR32','PTR-32');
 GO
-INSERT INTO "detector_types" (name, [description]) VALUES('NILA','MTS');
+INSERT INTO "detector_types" (name, [description]) VALUES('MCA527','GBS Elektronik GmbH');
 GO
 INSERT INTO "detector_types" (name, [description]) VALUES('N1','N1');
 GO
@@ -181,7 +181,7 @@ INSERT INTO "HVCalibrationParams"  VALUES(3,5,2000,10,100,2000);
 GO
 INSERT INTO "stratum_id_detector" VALUES(3,1);
 GO
-INSERT INTO "LMNetComm" VALUES(3,1,5011,5000,'169.254.255.255',500,8,8192,50,0,0,0);
+INSERT INTO "LMNetComm" VALUES(3,1,5011,5000,'169.254.255.255',500,8,8192,50,0,1,0);
 GO
 INSERT INTO "LMHWParams" VALUES(3,1,1,0,1650,2,30);
 GO

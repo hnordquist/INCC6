@@ -871,7 +871,7 @@ namespace NCCTransfer
 
             AcquireParameters acq = meas.AcquireState;
             acq.detector_id = det.Id.DetectorId;
-            acq.meas_detector_id = String.Copy(det.Id.DetectorId);
+            acq.meas_detector_id = string.Copy(det.Id.DetectorId);
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
@@ -885,10 +885,10 @@ namespace NCCTransfer
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
-            meas.AcquireState.facility = new INCCDB.Descriptor(String.Copy(itf.facility_table[0].id), String.Copy(itf.facility_table[0].desc));
-            meas.AcquireState.mba = new INCCDB.Descriptor(String.Copy(itf.mba_table[0].id), String.Copy(itf.mba_table[0].desc));
+            meas.AcquireState.facility = new INCCDB.Descriptor(string.Copy(itf.facility_table[0].id), string.Copy(itf.facility_table[0].desc));
+            meas.AcquireState.mba = new INCCDB.Descriptor(string.Copy(itf.mba_table[0].id), string.Copy(itf.mba_table[0].desc));
             if (itf.stratum_id_names_rec_table.Count > 0)
-                meas.AcquireState.stratum_id = new INCCDB.Descriptor(String.Copy(itf.stratum_id_names_rec_table[0].id), String.Copy(itf.stratum_id_names_rec_table[0].desc));
+                meas.AcquireState.stratum_id = new INCCDB.Descriptor(string.Copy(itf.stratum_id_names_rec_table[0].id), string.Copy(itf.stratum_id_names_rec_table[0].desc));
 
             // stratum values
             meas.Stratum = new Stratum();
@@ -897,7 +897,7 @@ namespace NCCTransfer
             meas.Stratum.relative_std_dev = results.relative_std_dev;
             meas.Stratum.systematic_uncertainty = results.systematic_uncertainty;
 
-            INCCDB.Descriptor mtdesc = new INCCDB.Descriptor(String.Copy(acq.item_type), String.Empty);
+            INCCDB.Descriptor mtdesc = new INCCDB.Descriptor(string.Copy(acq.item_type), string.Empty);
             if (!NC.App.DB.Materials.Has(mtdesc) || overwrite)
             {
                 NC.App.DB.Materials.Update(mtdesc);
@@ -909,7 +909,7 @@ namespace NCCTransfer
 
             foreach (DescriptorPair dp in itf.facility_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (!NC.App.DB.Facilities.Has(idesc) || overwrite)
                 {
                     idesc.modified = true;
@@ -918,7 +918,7 @@ namespace NCCTransfer
             }
             foreach (DescriptorPair dp in itf.mba_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (!NC.App.DB.MBAs.Has(idesc) || overwrite)
                 {
                     idesc.modified = true;
@@ -927,7 +927,7 @@ namespace NCCTransfer
             }
             foreach (DescriptorPair dp in itf.stratum_id_names_rec_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (meas.Stratum != null) 
                 {
                    idesc.modified = true;
@@ -1708,7 +1708,7 @@ namespace NCCTransfer
                             ElementList els = ir.ToDBElementList();
                             DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
                             long resid = ar.Create(mid, els);
-                            mlogger.TraceEvent(LogLevels.Verbose, 34103, String.Format("Preserving {0} as {1}", ir.Table, resid));
+                            mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
                         }
                         break;
                     case AssaySelector.MeasurementOption.verification:
@@ -1738,7 +1738,7 @@ namespace NCCTransfer
                                         long resid = ar.Create(mid, els);
                                         ElementList mels = _imr.methodParams.ToDBElementList();
                                         long resmid = ar.CreateMethod(resid, mid, mels);
-                                        mlogger.TraceEvent(LogLevels.Verbose, 34101, String.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+                                        mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
                                     }
                                     catch (Exception e)
                                     {

@@ -236,7 +236,7 @@ namespace NCCFile
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = dto; acq.lm.TimeStamp = dto;
-            acq.detector_id = String.Copy(det.Id.DetectorId);
+            acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
             acq.num_runs = runs;
             int tx = def.comment.IndexOf(" (Original file name");
@@ -522,7 +522,7 @@ namespace NCCFile
             else
                 acq.comment = def.comment;
             acq.comment += " (Original file name " + System.IO.Path.GetFileName(irf.Path) + ")";
-            acq.detector_id = String.Copy(det.Id.DetectorId);
+            acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
 
             // iid should have been added from the NOP processing above

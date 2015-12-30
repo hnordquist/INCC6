@@ -41,7 +41,7 @@ namespace DetectorDefs
         JSR15,// aka HHMR, order taken from sr.h
         UNAP, // aka JSR16, the 40k box
         /* LM */
-        NPOD, LMMM, LMI = LMMM, PTR32, NILA,
+        NPOD, LMMM, LMI = LMMM, PTR32, MCA527,
         /* Simulated */
         MCNPX, N1,
         /* Emulation */
@@ -92,12 +92,12 @@ namespace DetectorDefs
 
         public static bool IsListMode(this InstrType itype)
         {
-            return itype >= InstrType.NPOD && itype <= InstrType.NILA;
+            return itype >= InstrType.NPOD && itype <= InstrType.MCA527;
         }
 
         public static bool IsSocketBasedLM(this InstrType itype)
         {
-            return itype == InstrType.NPOD || itype == InstrType.LMMM || itype == InstrType.NILA;
+            return itype == InstrType.NPOD || itype == InstrType.LMMM || itype == InstrType.MCA527;
         }
         public static bool IsUSBBasedLM(this InstrType itype)
         {
@@ -171,7 +171,7 @@ namespace DetectorDefs
     public enum ConstructedSource
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
-        NCDFile, SortedPulseTextFile, PTRFile, NILAFile,// List Mode file inputs 
+        NCDFile, SortedPulseTextFile, PTRFile, MCA527File, // List Mode file inputs 
         INCCTransferCopy, INCCTransfer, Æther
     };  //INCC transfer and room for more
 
@@ -209,15 +209,15 @@ namespace DetectorDefs
         {
             bool needsAdditionalSpecification =
                ((src == ConstructedSource.Live &&
-                (device >= InstrType.NPOD && device <= InstrType.NILA)) // it is a Live LM DAQ, or
+                (device >= InstrType.NPOD && device <= InstrType.MCA527)) // it is a Live LM DAQ, or
              ||
-               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.NILAFile));  // data from other source and the processing went through the raw counting code 
+               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.MCA527File));  // data from other source and the processing went through the raw counting code 
             return needsAdditionalSpecification;
         }
 
         public static bool LMFiles(this ConstructedSource src, InstrType device)
         {
-            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.NILAFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
+            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.MCA527File) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
             return ack;
         }
 
@@ -228,7 +228,7 @@ namespace DetectorDefs
             {
                 case InstrType.PTR32:
                 case InstrType.MCNPX:
-                case InstrType.NILA: // TODO: not yet defined Nov 2013 MTS
+                case InstrType.MCA527: // TODO: not yet verified Nov 2015 jfl
                 case InstrType.N1:
                     te = 1e-8;
                     break;
@@ -238,7 +238,7 @@ namespace DetectorDefs
             {
                 case ConstructedSource.PTRFile:
                 case ConstructedSource.SortedPulseTextFile:
-                case ConstructedSource.NILAFile:
+                case ConstructedSource.MCA527File:
                     te = 1e-8;
                     break;
             }
@@ -255,7 +255,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.CycleFile, "Disk file");
                 PrettyName.Add(ConstructedSource.PTRFile, "PTR-32 file pair");
                 PrettyName.Add(ConstructedSource.SortedPulseTextFile, "Pulse file");
-                PrettyName.Add(ConstructedSource.NILAFile, "NILA file group");
+                PrettyName.Add(ConstructedSource.MCA527File, "MCA-527 file");
                 PrettyName.Add(ConstructedSource.DB, "Database");
                 PrettyName.Add(ConstructedSource.Manual, "Manual entry");
                 PrettyName.Add(ConstructedSource.ReviewFile, "Review disk file");

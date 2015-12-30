@@ -261,10 +261,10 @@ namespace NewUI
                             converting = true;
                         }
                     }
-                    else if (this.Step2NILA2RadioBtn.Checked)
+                    else if (this.Step2MCA5272RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "NILA dual file streams in ";
-                        if (this.Step2ConvertNILAtoNCDCheckBox.Checked)
+                        this.Step4DataSourceTextBox.Text = "MCA527 dual file streams in ";
+                        if (this.Step2ConvertMCA527toNCDCheckBox.Checked)
                         {
                             converting = true;
                         }
@@ -1496,11 +1496,11 @@ namespace NewUI
                         Step2ConvertSPtoNCDCheckBox.Checked = NC.App.AppContext.PulseFileNCD;
                         ap.data_src = ConstructedSource.SortedPulseTextFile;
                     }
-                    else if (NC.App.AppContext.NILAFileAssay)
+                    else if (NC.App.AppContext.MCA527FileAssay)
                     {
-                        Step2NILA2RadioBtn.Checked = true;
-                        Step2ConvertNILAtoNCDCheckBox.Checked = NC.App.AppContext.NILAFileNCD;
-                        ap.data_src = ConstructedSource.NILAFile;
+                        Step2MCA5272RadioBtn.Checked = true;
+                        Step2ConvertMCA527toNCDCheckBox.Checked = NC.App.AppContext.MCA527FileNCD;
+                        ap.data_src = ConstructedSource.MCA527File;
                     }
                     else // always the default
                     {
@@ -1715,11 +1715,11 @@ namespace NewUI
                 NC.App.AppContext.modified = true; NC.App.AppContext.PTRFileNCD = ((RadioButton)sender).Checked;
             }
         }
-        private void Step2ConvertNILAtoNCDCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void Step2ConvertMCA527toNCDCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (NC.App.AppContext.NILAFileNCD != ((RadioButton)sender).Checked)
+            if (NC.App.AppContext.MCA527FileNCD != ((RadioButton)sender).Checked)
             {
-                NC.App.AppContext.modified = true; NC.App.AppContext.NILAFileNCD = ((RadioButton)sender).Checked;
+                NC.App.AppContext.modified = true; NC.App.AppContext.MCA527FileNCD = ((RadioButton)sender).Checked;
             }
         }
         private void Step2NCDRadioBtn_CheckedChanged(object sender, EventArgs e)
@@ -1747,14 +1747,14 @@ namespace NewUI
             if (NC.App.AppContext.PTRFileAssay)
                 ap.data_src = ConstructedSource.PTRFile;
         }
-        private void Step2NILARadioBtn_CheckedChanged(object sender, EventArgs e)
+        private void Step2MCA527RadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-            if (NC.App.AppContext.NILAFileAssay != ((RadioButton)sender).Checked)
+            if (NC.App.AppContext.MCA527FileAssay != ((RadioButton)sender).Checked)
             {
-                NC.App.AppContext.modified = true; NC.App.AppContext.NILAFileAssay = ((RadioButton)sender).Checked;
+                NC.App.AppContext.modified = true; NC.App.AppContext.MCA527FileAssay = ((RadioButton)sender).Checked;
             }
-            if (NC.App.AppContext.NILAFileAssay)
-                ap.data_src = ConstructedSource.NILAFile;
+            if (NC.App.AppContext.MCA527FileAssay)
+                ap.data_src = ConstructedSource.MCA527File;
         }
 
         private void Step2RecurseCheckBox_CheckedChanged(object sender, EventArgs e)

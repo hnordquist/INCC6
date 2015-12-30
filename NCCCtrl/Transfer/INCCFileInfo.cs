@@ -93,7 +93,7 @@ namespace NCCTransfer
 
         public void SetFilePath(string path)
         {
-            mpath = String.Copy(path);
+            mpath = string.Copy(path);
             mft = DetermineFileType(path);
         }
 
@@ -162,16 +162,9 @@ namespace NCCTransfer
                 return result;
             }
 
-            FileStream stream;
-            BinaryReader reader;
-            byte[] buff;
             FileInfo fi;
-
             try
             {
-                stream = File.OpenRead(source_path_filename);
-                reader = new BinaryReader(stream);
-                buff = new byte[stream.Length];
                 fi = new System.IO.FileInfo(source_path_filename);
             }
             catch (Exception e)
@@ -179,17 +172,31 @@ namespace NCCTransfer
                 mlogger.TraceException(e);
                 return result;
             }
-
-            if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed ||
-                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx"))
+            if (//(fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed ||
+                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
             {
                 result = eFileType.eZip;
                 mlogger.TraceEvent(LogLevels.Warning, 33039, "Compressed archive use is unavailable today {0}", source_path_filename);
-                reader.Close(); 
                 return result;
             }
 
-            int thisread = 0;
+
+            FileStream stream;
+            BinaryReader reader;
+            byte[] buff;
+			try
+            {
+                stream = fi.OpenRead();
+                reader = new BinaryReader(stream);
+                buff = new byte[stream.Length];
+            }
+            catch (Exception e)
+            {
+                mlogger.TraceException(e);
+                return result;
+            }
+
+			int thisread = 0;
             string str2, str2a,str2b;
             if (stream.Length < CALIBRATION_SAVE_RESTORE.Length)
             {
@@ -352,7 +359,7 @@ namespace NCCTransfer
 
         public void SetPath(string path)  // zip or folder
         {
-            fpath = String.Copy(path);
+            fpath = string.Copy(path);
             mft = DetermineFolderStateType(path);
             if (!(IsZip() || IsFolder()))
             {
@@ -364,7 +371,7 @@ namespace NCCTransfer
         {
             if (paths.Count() < 1)
                 return;
-            fpath = String.Copy(paths[0]);
+            fpath = string.Copy(paths[0]);
             this.paths = paths;
             mft = eFileType.eFileList;
         }
@@ -387,7 +394,7 @@ namespace NCCTransfer
                 {
                     IEnumerable<string> effs = null;
                     effs = from f in
-                               (String.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
+                               (string.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
                            select f;
 
                     if (effs == null || (effs.Count() <= 0))
@@ -489,7 +496,8 @@ namespace NCCTransfer
                 System.IO.FileInfo fi = null;
 
                 fi = new System.IO.FileInfo(source_path_filename);
-                if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed || fi.Extension.ToLower().Equals(".zip"))
+                if (//(fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed || fi.Extension.ToLower().Equals(".zip")
+					                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
                 {
                     result = eFileType.eZip;
                     mlogger.TraceEvent(LogLevels.Info, 33030, "Compressed archive found");

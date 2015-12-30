@@ -119,7 +119,7 @@ INSERT INTO "detector_types" (name, [description]) VALUES('LMMM','LMMM');
 GO
 INSERT INTO "detector_types" (name, [description]) VALUES('PTR32','PTR-32');
 GO
-INSERT INTO "detector_types" (name, [description]) VALUES('NILA','MTS');
+INSERT INTO "detector_types" (name, [description]) VALUES('MCA527','GBS Elektronik GmbH');
 GO
 INSERT INTO "detector_types" (name, [description]) VALUES('N1','N1');
 GO

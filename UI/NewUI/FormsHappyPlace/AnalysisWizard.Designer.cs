@@ -46,8 +46,8 @@
             this.Step2OutputDirectoryTextBox = new System.Windows.Forms.TextBox();
             this.Step2AutoOpenCheckBox = new System.Windows.Forms.CheckBox();
             this.InputFileTypeGroupBox = new System.Windows.Forms.GroupBox();
-            this.Step2ConvertNILAtoNCDCheckBox = new System.Windows.Forms.CheckBox();
-            this.Step2NILA2RadioBtn = new System.Windows.Forms.RadioButton();
+            this.Step2ConvertMCA527toNCDCheckBox = new System.Windows.Forms.CheckBox();
+            this.Step2MCA5272RadioBtn = new System.Windows.Forms.RadioButton();
             this.Step2ConvertPTR32toNCDCheckBox = new System.Windows.Forms.CheckBox();
             this.Step2ConvertSPtoNCDCheckBox = new System.Windows.Forms.CheckBox();
             this.Step2PTR32RadioBtn = new System.Windows.Forms.RadioButton();
@@ -344,8 +344,8 @@
             // 
             // InputFileTypeGroupBox
             // 
-            this.InputFileTypeGroupBox.Controls.Add(this.Step2ConvertNILAtoNCDCheckBox);
-            this.InputFileTypeGroupBox.Controls.Add(this.Step2NILA2RadioBtn);
+            this.InputFileTypeGroupBox.Controls.Add(this.Step2ConvertMCA527toNCDCheckBox);
+            this.InputFileTypeGroupBox.Controls.Add(this.Step2MCA5272RadioBtn);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2ConvertPTR32toNCDCheckBox);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2ConvertSPtoNCDCheckBox);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2PTR32RadioBtn);
@@ -358,28 +358,28 @@
             this.InputFileTypeGroupBox.TabStop = false;
             this.InputFileTypeGroupBox.Text = "Select List Mode data file type";
             // 
-            // Step2ConvertNILAtoNCDCheckBox
+            // Step2ConvertMCA527toNCDCheckBox
             // 
-            this.Step2ConvertNILAtoNCDCheckBox.AutoSize = true;
-            this.Step2ConvertNILAtoNCDCheckBox.Location = new System.Drawing.Point(27, 156);
-            this.Step2ConvertNILAtoNCDCheckBox.Name = "Step2ConvertNILAtoNCDCheckBox";
-            this.Step2ConvertNILAtoNCDCheckBox.Size = new System.Drawing.Size(149, 17);
-            this.Step2ConvertNILAtoNCDCheckBox.TabIndex = 7;
-            this.Step2ConvertNILAtoNCDCheckBox.Text = "Convert NILA files to NCD";
-            this.Step2ConvertNILAtoNCDCheckBox.UseVisualStyleBackColor = true;
-            this.Step2ConvertNILAtoNCDCheckBox.CheckedChanged += new System.EventHandler(this.Step2ConvertNILAtoNCDCheckBox_CheckedChanged);
+            this.Step2ConvertMCA527toNCDCheckBox.AutoSize = true;
+            this.Step2ConvertMCA527toNCDCheckBox.Location = new System.Drawing.Point(27, 156);
+            this.Step2ConvertMCA527toNCDCheckBox.Name = "Step2ConvertMCA527toNCDCheckBox";
+            this.Step2ConvertMCA527toNCDCheckBox.Size = new System.Drawing.Size(149, 17);
+            this.Step2ConvertMCA527toNCDCheckBox.TabIndex = 7;
+            this.Step2ConvertMCA527toNCDCheckBox.Text = "Convert MCA527 files to NCD";
+            this.Step2ConvertMCA527toNCDCheckBox.UseVisualStyleBackColor = true;
+            this.Step2ConvertMCA527toNCDCheckBox.CheckedChanged += new System.EventHandler(this.Step2ConvertMCA527toNCDCheckBox_CheckedChanged);
             // 
-            // Step2NILA2RadioBtn
+            // Step2MCA5272RadioBtn
             // 
-            this.Step2NILA2RadioBtn.AutoSize = true;
-            this.Step2NILA2RadioBtn.Location = new System.Drawing.Point(8, 133);
-            this.Step2NILA2RadioBtn.Name = "Step2NILA2RadioBtn";
-            this.Step2NILA2RadioBtn.Size = new System.Drawing.Size(127, 17);
-            this.Step2NILA2RadioBtn.TabIndex = 6;
-            this.Step2NILA2RadioBtn.TabStop = true;
-            this.Step2NILA2RadioBtn.Text = "NILA dual file streams";
-            this.Step2NILA2RadioBtn.UseVisualStyleBackColor = true;
-            this.Step2NILA2RadioBtn.CheckedChanged += new System.EventHandler(this.Step2NILARadioBtn_CheckedChanged);
+            this.Step2MCA5272RadioBtn.AutoSize = true;
+            this.Step2MCA5272RadioBtn.Location = new System.Drawing.Point(8, 133);
+            this.Step2MCA5272RadioBtn.Name = "Step2MCA5272RadioBtn";
+            this.Step2MCA5272RadioBtn.Size = new System.Drawing.Size(127, 17);
+            this.Step2MCA5272RadioBtn.TabIndex = 6;
+            this.Step2MCA5272RadioBtn.TabStop = true;
+            this.Step2MCA5272RadioBtn.Text = "MCA527 files";
+            this.Step2MCA5272RadioBtn.UseVisualStyleBackColor = true;
+            this.Step2MCA5272RadioBtn.CheckedChanged += new System.EventHandler(this.Step2MCA527RadioBtn_CheckedChanged);
             // 
             // Step2ConvertPTR32toNCDCheckBox
             // 
@@ -1601,8 +1601,8 @@
         private System.Windows.Forms.Button ReviewDetector;
         private System.Windows.Forms.ComboBox Step2ADetCB;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.CheckBox Step2ConvertNILAtoNCDCheckBox;
-        private System.Windows.Forms.RadioButton Step2NILA2RadioBtn;
+        private System.Windows.Forms.CheckBox Step2ConvertMCA527toNCDCheckBox;
+        private System.Windows.Forms.RadioButton Step2MCA5272RadioBtn;
         private System.Windows.Forms.CheckedListBox LMAnalyzers;
         private System.Windows.Forms.GroupBox MultConvAccTimingParamsGroupBox;
         private System.Windows.Forms.Label label4;

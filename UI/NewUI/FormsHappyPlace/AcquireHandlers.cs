@@ -395,10 +395,10 @@ namespace NewUI
                         dr = UIIntegration.GetUsersFilesFolder("Select PTR-32 files or folder", NC.App.AppContext.FileInput, "PTR-32", "bin", "chn");
                     }
                     break;
-                case ConstructedSource.NILAFile:
-                    NC.App.AppContext.NILAFileAssay = true;
+                case ConstructedSource.MCA527File:
+                    NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
-                    dr = UIIntegration.GetUsersFilesFolder("Select NILA files or folder", NC.App.AppContext.FileInput, "MTS NILA", "dat");
+                    dr = UIIntegration.GetUsersFilesFolder("Select MCA files or folder", NC.App.AppContext.FileInput, "MCA527", "mca");
                     //dr = DialogResult.Cancel;
                     break;
                 default:

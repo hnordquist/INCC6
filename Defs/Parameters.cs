@@ -1970,6 +1970,7 @@ namespace AnalysisDefs
         public LMMMNetComm()
             : base(NCCConfig.Config.ParameterBasis())
         {
+			//resetVal(NCCConfig.NCCFlags.streamRawAnalysis, true, typeof(bool));
         }
 
         public LMMMNetComm(LMMMNetComm src) : base(src)
@@ -2274,13 +2275,13 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("sortPulseFile", SortPulseFile));
             pb.ps.Add(new DBParamEntry("pulseFileNCD", PulseFileNCD));
             pb.ps.Add(new DBParamEntry("ptrFileNCD", PTRFileNCD));
-            pb.ps.Add(new DBParamEntry("nilaFileNCD", NILAFileNCD));
+            pb.ps.Add(new DBParamEntry("nilaFileNCD", MCA527FileNCD));
             pb.ps.Add(new DBParamEntry("pulseFileAssay", PulseFileAssay));
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
             pb.ps.Add(new DBParamEntry("dbDataAssay", DBDataAssay));
             pb.ps.Add(new DBParamEntry("reviewFileAssay", ReviewFileAssay));
-            pb.ps.Add(new DBParamEntry("nilaFileAssay", NILAFileAssay));
+            pb.ps.Add(new DBParamEntry("nilaFileAssay", MCA527FileAssay));
             pb.ps.Add(new DBParamEntry("opStatusPktInterval", StatusPacketCount));
             pb.ps.Add(new DBParamEntry("opStatusTimeInterval", StatusTimerMilliseconds));
             pb.ps.Add(new DBParamEntry("auxRatioReport", AuxRatioReport));

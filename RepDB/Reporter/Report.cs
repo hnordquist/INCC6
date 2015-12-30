@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -42,7 +42,7 @@ namespace NCCReporter
     // 
     // generate row content
     // save the results out to the file
-    public class TabularReport
+    public class TabularReport: IDisposable
     {
         public char separator;
         public string sepAsString;
@@ -187,8 +187,43 @@ namespace NCCReporter
 
         public void CloseOutputFile()
         {
-            f.CloseWriter();
+            f.Dispose();
+			f = null;
         }
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					CloseOutputFile();
+
+					rows = null;
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		// TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~TabularReport() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// TODO: uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+		#endregion
 
     }
 
@@ -315,7 +350,7 @@ namespace NCCReporter
     }
 
 
-    public class ResultsOutputFile
+    public class ResultsOutputFile: IDisposable
     {
         private LMLoggers.LognLM log;
 
@@ -398,5 +433,39 @@ namespace NCCReporter
                 if (log != null) log.TraceException(e);
             }
         }
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					CloseWriter();
+					writer = null;
+					stream = null;
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		// override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+		// ~ResultsOutputFile() {
+		//   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+		//   Dispose(false);
+		// }
+
+		// This code added to correctly implement the disposable pattern.
+		public void Dispose()
+		{
+			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+			Dispose(true);
+			// uncomment the following line if the finalizer is overridden above.
+			// GC.SuppressFinalize(this);
+		}
+		#endregion
     }
 }

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -173,11 +173,18 @@ namespace Analysis
                 hitsPerChn[i] = 0.0;
         }
 
-        public override void AccumulateCycleSummary() // accumulate any remaining data on the cycle object from the time/hits processor
+		/// <summary>
+		/// Accumulate any remaining data on the cycle object from the time/hits processor
+		/// Final high-voltage value is copied from data source 
+		/// time interval is either last neutron or requested time interval
+		/// </summary>
+        public override void AccumulateCycleSummary() 
         {
             base.AccumulateCycleSummary();
             if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
             {
+				if (cycle.TS.Ticks == 0L)
+				{ 
                 double timebase = sup.Handler.ticSizeInSeconds;
                 long tiks = 0;
                 // convert to a TimeSpan
@@ -185,8 +192,9 @@ namespace Analysis
                     tiks = (long)timeArray[(int)numValuesParsed - 1];
                 else if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
                     tiks = (long)(timeArray[(int)numValuesParsed - 1] / 10);
+					cycle.TS = TimeSpan.FromTicks(tiks);
+				}
 
-                cycle.TS = TimeSpan.FromTicks(tiks);
                 for (int i = 0; i < NC.ChannelCount; i++)
                     cycle.HitsPerChannel[i] += hitsPerChn[i];
             }
@@ -214,7 +222,7 @@ namespace Analysis
                 //    NC.App.Loggers.Flush();
                 //}
 
-                // dev note: review this code to move all un-needed steps, even copies
+                // dev note: review this code to remove all un-needed steps, even copies
                 Buffer.BlockCopy(rawDataBuff, index, uintHolder1, 0, 4);
                 index += 4;
                 Buffer.BlockCopy(rawDataBuff, index, uintHolder2, 0, 4); //get time of event from array
@@ -443,6 +451,11 @@ namespace Analysis
             logger.TraceEvent(LogLevels.Verbose, 146, "Neutron counting task running, {0} time base", tickSizeInSeconds);
         }
 
+		internal void ResetTickSizeInSeconds(double tickSizeInSeconds)
+		{
+			 State.Sup.ResetTickSizeInSeconds(tickSizeInSeconds);
+		}
+
         public override void EndAnalysisImmediately()
         {
             // dev note: this can only be called ONCE in response to AnalyzerHandler.NeutronOutOfSequenceErrorEvent or AnalyzerHandler.BlockCountMismatchErrorEvent
@@ -599,7 +612,7 @@ namespace Analysis
 
         /// <summary>
         ///  Resets stream IO buffer indexing and moves accumulated data to cycle 
-        ///  Prepares Timespan var cycle.TS using max encountered ticks or shakes
+        ///  Optionally prepares Timespan var cycle.TS using max encountered ticks or shakes
         /// </summary>
         public void StartNewBuffer()
         {
@@ -654,14 +667,14 @@ namespace Analysis
         /// <summary>
         /// file-based buffer processing
         /// </summary>
-        /// <param name="bytecount"></param>
+        /// <param name="count"></param>
         /// <returns></returns>
-        public StreamStatusBlock PassBufferToTheCounters(int bytecount)
+        public StreamStatusBlock PassBufferToTheCounters(int count)
         {
             StreamStatusBlock endofdata = null;
             logger.TraceEvent(LogLevels.Verbose, 220, "{0}: Starting data conversion on file stream. . .", NumProcessedRawDataBuffers);
 
-            endofdata = state.ConvertDataBuffer(bytecount);
+            endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
 
             if (State.usingStreamRawAnalysis)   // process by data blocks, e.g. buffered transfer underlying a stream.
@@ -897,7 +910,7 @@ namespace Analysis
             if (times.Length < timeArray.Count)
                 timeArray.RemoveRange(times.Length - 1, timeArray.Count - times.Length);
             else if (times.Length > timeArray.Count)
-                timeArray.AddRange(new ulong[channels.Length - neutronEventArray.Count]);
+                timeArray.AddRange(new ulong[channels.Length - timeArray.Count]);
 
             //Array.Resize(ref neutronEventArray, channels.Length);
             //Array.Resize(ref timeArray, times.Length);
@@ -1022,6 +1035,145 @@ namespace Analysis
 
     }
 
+	
+    public class MCA527FileProcessingState : LMProcessingState
+    {
+        public UInt32[] channels;
+        public Double[] times;
+        public Byte[] chnInBuffer;
+        public UInt32[] timeInBuffer;
+        public bool mergeDuplicatesTimeChannelHits = true; // dev note: create external flag to toggle the use of this
+        public int PTRReportedCountTime = 0;
+        internal MCA527FileProcessingState(uint Max, LMProcessingState src)
+        {
+            channels = new UInt32[Max];
+            times = new Double[Max];
+            chnInBuffer = new Byte[Max];
+            timeInBuffer = new UInt32[Max];
+            Reset();
 
+            // shallow copy src state vars
+            hitsPerChn = src.hitsPerChn;
+            chnmask = src.chnmask;
+            StartCycle(null);
+            assayPending = src.assayPending;
+
+            useAsynch = src.useAsynch;
+            includingGen2 = src.includingGen2;
+            usingStreamRawAnalysis = src.usingStreamRawAnalysis;
+
+            eventBufferLength = src.eventBufferLength;
+            rawDataBuff = src.rawDataBuff;
+            maxValuesInBuffer = src.maxValuesInBuffer;
+            timeArray = src.timeArray;
+            neutronEventArray = src.neutronEventArray;
+
+            Sup = src.Sup;
+        } 
+
+		// URGENT: finish this and PrepRawStreams. Should be a clean transfer because there is only the time event stream to deal with
+        public override StreamStatusBlock ConvertDataBuffer(int eventcount)
+        {
+            StreamStatusBlock ssb = null;
+            // Detect end of stream and build ssb
+            // The analyzer code uses the list lengths to know when to stop counting neutrons. The buffer may be n, but the last neutron is in n - k.
+            if (channels.Length < neutronEventArray.Count)
+                neutronEventArray.RemoveRange(channels.Length - 1, neutronEventArray.Count - channels.Length);
+            else if (channels.Length > neutronEventArray.Count)
+                neutronEventArray.AddRange(new uint[channels.Length - neutronEventArray.Count]);
+
+            if (times.Length < timeArray.Count)
+                timeArray.RemoveRange(times.Length - 1, timeArray.Count - times.Length);
+            else if (times.Length > timeArray.Count)
+                timeArray.AddRange(new ulong[channels.Length - timeArray.Count]);
+
+            string msg = PrepRawStreams(eventcount: (ulong)eventcount, combineDuplicateHits: mergeDuplicatesTimeChannelHits);
+            return ssb;
+        }
+
+        public void Reset()
+        {
+            FirstEventTimeInShakes = 0; TotalDups = 0; TotalEvents = 0; LastTimeInShakes = 0;
+        }
+
+        public UInt64 FirstEventTimeInShakes;
+        public UInt64 TotalDups;
+        public UInt64 TotalEvents;
+        public UInt64 LastTimeInShakes;
+
+        public string PrepRawStreams(ulong eventcount, bool combineDuplicateHits = false)
+        {
+            const ulong RollOverShakes = ulong.MaxValue;
+
+            string issue = String.Empty;
+            ulong dups = 0, events = 0;
+            double lasttime = 0;
+            ulong timeUI8B4 = 0ul;
+            ulong timeUI8 = 0ul, circuits = 0ul;
+            double firstread = 0;
+			ulong accum = 0ul;
+
+            try
+            {
+                foreach (uint time in timeInBuffer)
+                {
+                    events++;
+                    if (events > eventcount)
+                    {
+                        events--;
+                        break;
+                    }
+					timeUI8 = Convert.ToUInt64(time);
+                    if (events == 1)
+                    {
+                        if (FirstEventTimeInShakes == 0ul)
+                            FirstEventTimeInShakes = timeUI8;
+                        firstread = time;
+                    }
+                    if (accum >= RollOverShakes)  // first 184467440737.09551615 ... secs are handled quickly, but here we must do a moddiv
+                    {
+                        throw new Exception("Sorry, relative event times greater 184467440737 seconds are unsupported");
+                    }
+                    else if (timeUI8 == 0ul) // found a duplicate! 
+                    {
+                        dups++;
+						logger.TraceEvent(LogLevels.Verbose, 3337, "Skipping duplicate event {0} at time {1} {2}", events, timeUI8B4, accum);
+                        continue;
+                    }
+
+                    timeUI8B4 = timeUI8;
+
+                    hitsPerChn[0]++;  // always only one channel
+                            NumTotalsEncountered++;
+
+					accum = accum + timeUI8B4;
+                    timeArray[(int)NumValuesParsed] = accum;
+					neutronEventArray[(int)NumValuesParsed] = 1;
+
+                    if (!usingStreamRawAnalysis) // drop them in, one by one, use this option only for diagnostic testing
+                        Sup.HandleANeutronEvent(timeArray[(int)NumValuesParsed], neutronEventArray[(int)NumValuesParsed]);
+
+                    NumValuesParsed++;
+                    lasttime = accum;
+                }
+
+                logger.TraceEvent(LogLevels.Verbose, 3338, "Converted {0} hits ({1} events) between {2} and {3} shakes ({4} rollovers) ({5} duplicates skipped)({6})", events, NumValuesParsed, firstread, lasttime, circuits, dups, eventcount);
+            }
+            catch (Exception e)
+            {
+                logger.TraceEvent(LogLevels.Verbose, 3339, "Converted {0} hits ({1} events) between {2} and {3} shakes ({4} rollovers) ({5} duplicates skipped)({6})", events, NumValuesParsed, firstread, lasttime, circuits, dups, eventcount);
+                logger.TraceEvent(LogLevels.Warning, 3363, "Error parsing pulses encountered '{0}'", e.Message);
+                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                issue = e.Message;
+            }
+            TotalEvents += events;
+            TotalDups += dups;
+            LastTimeInShakes = timeUI8;
+            return issue;
+        }
+
+
+
+    }
 
 }

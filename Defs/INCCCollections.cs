@@ -3128,10 +3128,10 @@ namespace AnalysisDefs
                     {
                         string det = d.Id.DetectorName;
                         AcquireParameters ap = GetAcquireParmsFromDataRow(ref det, dr, resultsSubset:false, isLM:d.ListMode);
-                        acqParameters.Add(new AcquireSelector(d, ap.item_type, ap.MeasDateTime), ap);
+						AcquireSelector acs = new AcquireSelector(d, ap.item_type, ap.MeasDateTime);
+                        if (!acqParameters.ContainsKey(acs))
+							acqParameters.Add(acs, ap);
                     }
-
-
                 }
             }
             return acqParameters;
