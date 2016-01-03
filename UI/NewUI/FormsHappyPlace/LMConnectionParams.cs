@@ -72,7 +72,7 @@ namespace NewUI
         void RefreshDetectorTypeCombo()
         {
             AddDetectorTypeComboBox.Items.Clear();
-            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetList())
+            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetLMList())
             {
                 InstrType dty;
                 System.Enum.TryParse<InstrType>(dt.Name, out dty);
@@ -148,10 +148,21 @@ namespace NewUI
                     // Make edit panel visible
                     this.LMMMPanel.Visible = true;
                 }
-                else if (det.Id.SRType == InstrType.PTR32)
+                else if (det.Id.SRType == InstrType.PTR32 || det.Id.SRType == InstrType.MCA527)
                 {
                     this.PTR32Panel.Visible = true;
-                    this.PTR32Id.Text = String.Copy(det.Id.DetectorId);
+                    this.ConnIdField.Text = String.Copy(det.Id.DetectorId);
+					if (det.Id.SRType == InstrType.MCA527)
+					{
+						connIdLabel.Text = "MCA-527 serial number: ";
+						connLabel.Text = "MCA-527 Connection Parameters";
+					}
+					else
+					{ 
+						connIdLabel.Text = "PTR-32 instrument identifier: ";
+						connLabel.Text = "PTR-32 Connection Parameters";
+					}
+
                     //Warning: hack attack.  using extra fields here to store hv enabling and tolerance hn 2.3.2015
                     // OK, was logic error.  Checked box means HV disabled..... fixed.  hn 5.19.2015
                     LMConnectionInfo lmi = (LMConnectionInfo)(det.Id.FullConnInfo);
@@ -162,10 +173,7 @@ namespace NewUI
                     VoltageTolerance.Visible = true;
                            
                 }
-                else if (det.Id.SRType == InstrType.MCA527)
-                {
-                    this.PTR32Panel.Visible = true;
-                }
+
             }
         }
 
@@ -289,7 +297,7 @@ namespace NewUI
             //LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
             if (AddingNew)
             {
-                NC.App.DB.Detectors.Add(det);
+                NC.App.DB.Detectors.AddOnlyIfNotThere(det);
                 RefreshDetectorCombo();
                 AddingNew = false;
             }
@@ -464,7 +472,7 @@ namespace NewUI
             // set the params on the current PTR32 acquire and det def pair
             if (AddingNew)
             {
-                NC.App.DB.Detectors.Add(det);
+                NC.App.DB.Detectors.AddOnlyIfNotThere(det);
                 RefreshDetectorCombo();
                 AddingNew = false;
             }

@@ -2633,19 +2633,19 @@ namespace AnalysisDefs
             db = new DB.Descriptors(table);
         }
     }
-    public class DetectorTypes : DescListImpl
+    public class DetectorTypes // : DescListImpl
     {
         public DetectorTypes()
-            : base(DB.Pieces.DetectorTypes, "detector_types")
+           // : base(DB.Pieces.DetectorTypes, "detector_types")
         {
-            db = new DB.Descriptors(table);
+           // db = new DB.Descriptors(table);
         }
 
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
-        /// This funtion adds the JSR-15 to the list
+        /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
-
+        
         public List<INCCDB.Descriptor> GetINCC5SRList()
         {
             if (mlimited == null)
@@ -2662,7 +2662,27 @@ namespace AnalysisDefs
             return mlimited;
         }
 
+        public List<INCCDB.Descriptor> GetLMList()
+        {
+            if (lmlimited == null)
+            {
+                lmlimited = new List<INCCDB.Descriptor>();
+                INCCDB.Descriptor d = new INCCDB.Descriptor("LMMM", "LMMM (LANL)"); lmlimited.Add(d);
+                d = new INCCDB.Descriptor("PTR32", "PTR-32"); lmlimited.Add(d);
+                d = new INCCDB.Descriptor("MCA527", "GBS Elektronik GmbH"); lmlimited.Add(d);
+             }
+            return lmlimited;
+        }
         protected List<INCCDB.Descriptor> mlimited = null;
+        protected List<INCCDB.Descriptor> lmlimited = null;
+
+        public INCCDB.Descriptor Get()
+        {
+            GetINCC5SRList();
+            GetLMList();
+            return null;
+        }
+
     }
     public class IOCodes : DescListImpl
     {

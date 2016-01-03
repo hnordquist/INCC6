@@ -95,7 +95,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer(0);
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable Test data/Disk .dat files found");
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable Test data/Disk .dat or .cnn files found");
                 return;
             }
 

@@ -349,7 +349,7 @@ namespace NewUI
                 case ConstructedSource.CycleFile:
                     NC.App.AppContext.TestDataFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    dr = UIIntegration.GetUsersFile("Select a test data (disk) file", NC.App.AppContext.FileInput, "INCC5 Test data (disk)", "dat");
+                    dr = UIIntegration.GetUsersFile("Select a test data (disk) file", NC.App.AppContext.FileInput, "INCC5 Test data (disk)", "dat", "cnn");
                     break;
                 case ConstructedSource.ReviewFile:
                     NC.App.AppContext.ReviewFileAssay = true;

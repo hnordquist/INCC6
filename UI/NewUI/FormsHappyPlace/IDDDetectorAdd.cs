@@ -70,14 +70,14 @@ namespace NewUI
 
             // load the LM type combo selector
             LMTypes.Items.Clear();
-            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetList())
+            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetLMList())
             {
                 InstrType dty;
                 System.Enum.TryParse<InstrType>(dt.Name, out dty);
                 if (dty.IsListMode())
                     LMTypes.Items.Add(dty);
             }
-            LMTypes.SelectedItem = InstrType.LMMM;
+            LMTypes.SelectedItem = InstrType.MCA527;
         }
 
         private void CurrentDetectorsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,37 +88,41 @@ namespace NewUI
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(DetectorIdTextBox.Text))
+            if (String.IsNullOrEmpty(DetectorIdTextBox.Text))
             {
-                Detector newdet = null;
-                if (srtype)
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
+            Detector newdet = null;
+            if (srtype)
+            {
+                newdet = Integ.CreateDetectorWithAssociations(model, DetectorIdTextBox.Text, ElectronicsIdTextBox.Text, DetectorTypeTextBox.Text);
+                IDDShiftRegisterSetup f = new IDDShiftRegisterSetup(newdet); // copies updated SR Param value to the newdet instance, database persist follows below
+                f.ShowDialog();
+                if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
                 {
-                    newdet = Integ.CreateDetectorWithAssociations(model, DetectorIdTextBox.Text, ElectronicsIdTextBox.Text, DetectorTypeTextBox.Text);
-                    IDDShiftRegisterSetup f = new IDDShiftRegisterSetup(newdet); // copies updated SR PAram value to the newdet instance, database persist follows below
-                    f.ShowDialog();
-                    if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
-                    {
-                       // new behavior: newdet.SRParams has the changes already;
-                    }
-                }
-                else
-                {
-                    newdet = Integ.CreateDetectorWithAssociations(model, DetectorIdTextBox.Text, ElectronicsIdTextBox.Text, DetectorTypeTextBox.Text, (InstrType)LMTypes.SelectedItem);
-
-                    AcquireParameters acq = Integ.GetCurrentAcquireParams(); 
-                    LMConnectionParams f = new LMConnectionParams(newdet, acq, false);
-                    f.StartWithLMDetail();
-                    f.ShowDialog();
-                    if (f.DialogResult == DialogResult.OK)
-                    { 
-                    }
+                    // new behavior: newdet.SRParams has the changes already;
                 }
                 Integ.PersistDetectorAndAssociations(newdet);
-                RefreshDetectorCombo(); // Assuming the detector was added to the internal detector list by CreateDetectorWithAssociations, this will add a new detector to the detector list
-
-                this.DialogResult = System.Windows.Forms.DialogResult.OK;
-                this.Close();
             }
+            else
+            {
+                newdet = Integ.CreateDetectorWithAssociations(model, DetectorIdTextBox.Text, ElectronicsIdTextBox.Text, DetectorTypeTextBox.Text, (InstrType)LMTypes.SelectedItem);
+                Integ.PersistDetectorAndAssociations(newdet);
+
+                AcquireParameters acq = Integ.GetCurrentAcquireParams();
+                LMConnectionParams f = new LMConnectionParams(newdet, acq, isnew:true);
+                f.StartWithLMDetail();
+                f.ShowDialog();
+                if (f.DialogResult == DialogResult.OK)
+                {
+                }
+            }
+            RefreshDetectorCombo(); // Assuming the detector was added to the internal detector list by CreateDetectorWithAssociations, this will add a new detector to the detector list
+
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.Close();
+
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

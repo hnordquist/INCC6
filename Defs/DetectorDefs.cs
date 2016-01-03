@@ -115,7 +115,7 @@ namespace DetectorDefs
         }
 
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
-        /// This funtion adds the JSR-15 to the list
+        /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
         public static string INCC5ComboBoxString(this InstrType itype)

@@ -57,7 +57,7 @@ namespace NewUI
 			/* JFL added */
 			if (det.ListMode) 
 			{
-				foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetList()) {
+				foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetLMList()) {
 					InstrType dty;
 					Enum.TryParse<InstrType>(dt.Name, out dty);
 					if (dty.IsListMode())
