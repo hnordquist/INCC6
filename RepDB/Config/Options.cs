@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -120,20 +120,20 @@ namespace NCCConfig
   			//{ "resAutoPath|resultsAutoPath:",  "construct and use a daily results file folder name, optionally prepend the parent folder", 
            //     v => { cur.DailyResultsPath = true; cur.ConstructDailyResultsPath(v);} },
             { "includeConfig", "append copy of app config file to CSV results file, [false] ", b => acq.IncludeConfig = b != null}, 
-            { "ncd|raw=", "location of this assay's NCD raw data file output, overrides root", 
+            { "ncd|raw=", "location of this assay's MCA-527|PTR-32|pulse|LMMM NCD raw data file output, overrides root", 
                                             v => {if (v != null) acq.Raw = v; } },
             { "c|rep|cycles=", "{number} of cycles to run for this operation, defaults to 1, 0 means continuous",  (int n) => acq.Cycles = n },
             { "i|interval=", "interval or cycle time in {seconds}, defaults to 5", (double d) => acq.Interval = d}, 
-            { "sep=", "network buffer send separation in {milliseconds}, defaults to 0, \"set higher if network freezes\"", (int n) => acq.Separation = n}, 
-            { "feedback", "feedback flag, [false]", b => acq.Feedback = b != null},
+            { "sep=", "LMMM network buffer send separation in {milliseconds}, defaults to 0, \"set higher if network freezes\"", (int n) => acq.Separation = n}, 
+            { "feedback", "LMMM feedback flag, [false]", b => acq.Feedback = b != null},
             { "save|saveOnTerminate", "save results upon early termination, [true] ", b => acq.SaveOnTerminate = b != null}, 
-            { "precision=", "precison of floating point results mass reporting output, default to INCC standard",
+            { "precision=", "precison of floating point results mass reporting output, default to INCC5 standard",
                                             (UInt16 n) => app.FPPrecision = n},
             { "liveFileWrite", "Create data files for each interval during live List Mode data collection",  v => app.LiveFileWrite = v != null },                                                           
             { "gen5TestDataFile", "Create an INCC5 Test data file at the end of a measurement",  v => app.CreateINCC5TestDataFile = v != null },                                                           
 
              // this section is for various files for input (todo: expand this flag per requirements in FileCtrl.cs, move parsing and control to separate option processing module)
-            { "f|file|fileinput:", "start a file-based operation using the optional {location} for file input, location defaults to root, all matching files in the folder will be used", 
+            { "f|file|fileinput|datasource=", "start a file-based operation using the {location} for file input, all matching files in the folder will be used", 
                                             v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 7;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           
             { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },                                                           

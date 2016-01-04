@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -3019,22 +3019,22 @@ namespace NCCFile
         /// if this a single file then
         ///  if the file is an T file then
         ///    run with an T FileList of one file
-        ///  if the file is a compressed archive then
+        ///  NYI: if the file is a compressed archive then
         ///     unpack the archive all at once into a temp folder and then construct the list OR unpack 1 at a time as the list is processed?
         ///
         /// </summary>
-        /// <param name="dir">The root folder to examine for files</param>
+        /// <param name="dir">The root folder to examine for files, always NC.App.AppContext.FileInput</param>
         /// <param name="recurse">use subfolders or not</param>
         /// <returns>A List of T type files</returns>
         public List<T> BuildFileList(string dir, bool recurse, bool sort)
         {
 
             bool folder = false, singlefile = false, oneOfTheChosen = false, compressedfile = false, none = false;
-            folder = Directory.Exists(NC.App.AppContext.FileInput);
+            folder = Directory.Exists(dir);
             System.IO.FileInfo fi = null;
-            if (singlefile = File.Exists(NC.App.AppContext.FileInput))
+            if (singlefile = File.Exists(dir))
             {
-                fi = new System.IO.FileInfo(NC.App.AppContext.FileInput);
+                fi = new System.IO.FileInfo(dir);
                 if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
                 {
                     compressedfile = true;
@@ -3072,14 +3072,14 @@ namespace NCCFile
                            select f;
                 else if (compressedfile)
                 {
-                    log.TraceInformation(NC.App.AppContext.FileInput + " Compressed archives cannot be processed at this time");
+                    log.TraceInformation(dir + " Compressed archives cannot be processed at this time");
                 }
             }
 
             FileList<T> files = null;
             if (!folder && !singlefile)
             {
-                log.TraceInformation(NC.App.AppContext.FileInput + " cannot be processed, folder or file not found");
+                log.TraceInformation(dir + " cannot be processed, folder or file not found");
                 none = true;
             }
             else if (folder)
@@ -3088,23 +3088,24 @@ namespace NCCFile
                 {
                     string s = string.Empty;
                     Extensions.ForEach(i => s += i + ", ");
-                    log.TraceInformation("No {0} files found in {1}, see ya . . .", s, NC.App.AppContext.FileInput);
+					s = s.TrimEnd(new char[]  {' ',','});
+                    log.TraceInformation("No {0} files found in {1}, see ya . . .", s, dir);
                     none = true;
                 }
                 if (recurse)
-                    log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), NC.App.AppContext.FileInput);
+                    log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
                 else
-                    log.TraceInformation("Processing {0} files in {1}", effs.Count(), NC.App.AppContext.FileInput);
+                    log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
             }
             else if (singlefile)
             {
                 if (effs == null || (effs.Count() <= 0))
                 {
-                    log.TraceInformation("{0} cannot be processed, see ya . . .", NC.App.AppContext.FileInput);
+                    log.TraceInformation("{0} cannot be processed, see ya . . .", dir);
                     none = true;
                 }
                 else
-                    log.TraceInformation("Processing {0}", NC.App.AppContext.FileInput);
+                    log.TraceInformation("Processing {0}", dir);
             }
 
             if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files

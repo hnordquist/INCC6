@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -362,6 +362,13 @@ namespace NCCFile
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, true);
             else
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
+			if (files == null || files.Count < 1)
+            {
+                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StampOperationStopTime();
+                FireEvent(EventType.ActionStop, this);
+                return;
+            }
 
             // construct lists of isotopics and items from the NOP and COP files
             OPFiles opfiles = new OPFiles();

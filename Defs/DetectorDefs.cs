@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -498,45 +498,49 @@ namespace DetectorDefs
         public DateTimeOffset dt;
         public ConstructedSource source = ConstructedSource.Live;
 
-        public string IdentName()  // devnote: used to gen output files, so make sure no offending chars are included
-        {
-            string l = "Unknown";
-            switch (source)
-            {
-                case ConstructedSource.Live:
-                    l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
-                    break;
-                case ConstructedSource.NCDFile:
-                case ConstructedSource.SortedPulseTextFile:
-                case ConstructedSource.PTRFile:
-                    l = filename;
-                    break;
-                case ConstructedSource.INCCTransfer:
-                    l = filename + " (INCC transfer file, recalculated)";
-                    break;
-                case ConstructedSource.INCCTransferCopy:
-                    l = filename + " (INCC transfer file)";
-                    break;
-                case ConstructedSource.CycleFile:
-                    l = filename + " (INCC5 test data file)";
-                    break;
-                case ConstructedSource.DB:
-                    l = "DB Acquire";
-                    break;
-                case ConstructedSource.ReviewFile:
-                    l = filename + " (INCC Rad Review measurement data file)";
-                    break;
-                case ConstructedSource.Manual:
-                    l = "Manual";
-                    break;
-                case ConstructedSource.Æther:
-                    l += (" " + source.ToString());
-                    break;
+		public string IdentName()  // devnote: used to gen output files, so make sure no offending chars are included
+		{
+			string l = "Unknown";
+			if (string.IsNullOrEmpty(filename))
+				l = "No " + source.HappyFunName() + " or other type of file specified";
+			else
+				switch (source)
+				{
+				case ConstructedSource.Live:
+					l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+					break;
+				case ConstructedSource.NCDFile:
+				case ConstructedSource.SortedPulseTextFile:
+				case ConstructedSource.PTRFile:
+				case ConstructedSource.MCA527File:
+					l = filename;
+					break;
+				case ConstructedSource.INCCTransfer:
+					l = filename + " (INCC transfer file, recalculated)";
+					break;
+				case ConstructedSource.INCCTransferCopy:
+					l = filename + " (INCC transfer file)";
+					break;
+				case ConstructedSource.CycleFile:
+					l = filename + " (INCC5 test data file)";
+					break;
+				case ConstructedSource.DB:
+					l = "DB Acquire";
+					break;
+				case ConstructedSource.ReviewFile:
+					l = filename + " (INCC Rad Review measurement data file)";
+					break;
+				case ConstructedSource.Manual:
+					l = "Manual";
+					break;
+				case ConstructedSource.Æther:
+					l += (" " + source.ToString());
+					break;
 
-            }
-            return l;
-        }
-        public DataSourceIdentifier()
+				}
+			return l;
+		}
+		public DataSourceIdentifier()
         {
             iname = String.Empty;
             elecid = String.Empty;

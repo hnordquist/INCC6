@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -181,7 +181,6 @@ namespace NCCConfig
 
             string[] x = new string[500];
             int ix = 0;
-            x[ix++] = "";
             System.Configuration.Configuration config =
               ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             x[ix++] = "";
@@ -210,45 +209,53 @@ namespace NCCConfig
             Array.Resize(ref x, ix);
             return x;
         }
-        public static string[] ShowCfgLines(Config cfg, bool fullAssembly, bool flush)
-        {
-            string[] x = new string[4096];
-            int ix = 0;
-            x[ix++] = "";
+		public static string[] ShowCfgLines(Config cfg, bool fullAssembly, bool flush)
+		{
+			string[] x = new string[4096];
+			int ix = 0;
+			x[ix++] = "";
 
-            string[] a = cfg.ShowVersionLines(fullAssembly);
-            for (int i = 0; i < a.Length; i++)
-                x[ix++] = a[i];
-            if (flush)
-            {
-                cfg.RetainChanges();
-            }
+			string[] v = cfg.ShowVersionLines(fullAssembly);
+			for (int i = 0; i < v.Length; i++)
+				x[ix++] = v[i];
+			if (flush)
+			{
+				cfg.RetainChanges();
+			}
 
-            a = new string[0];
-            bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
-            System.Configuration.Configuration config =
-              ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            if (config.HasFile)
-            {
-                x[ix++] = ("Config source: " + config.FilePath);
-                if (richcontent)
-                    a = cfg.ShowAppCfgLines();
-            }
-            else
-            {
-                x[ix++] = ("Config source from internal default values");
-                if (richcontent)
-                    a = ShowDefCfgLines(cfg);
-            }
-            if (richcontent)
-                for (int i = 0; i < a.Length; i++)
-                    x[ix++] = a[i];
+			string[] a = new string[0];
+			string[] b = new string[0];
+			bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
+			System.Configuration.Configuration config =
+			  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			if (config.HasFile)
+			{
+				x[ix++] = ("Config source: " + config.FilePath);
+				if (richcontent)
+				{
+					a = cfg.ShowAppCfgLines();
+					for (int i = 0; i < a.Length; i++)
+						x[ix++] = a[i];
+				}
+			}
+			//else
+			{
+				if (richcontent)
+				{
+					x[ix++] = "";
+					x[ix++] = ("Config values from database, command line overrides and system defaults");
+					b = ShowDefCfgLines(cfg);
+					for (int i = 0; i < b.Length; i++)
+						x[ix++] = b[i];
+				}
+			}
 
-            x[ix++] = "";
-            Array.Resize(ref x, ix);
-            return x;
-        }
-        public static string[] ShowDefCfgLines(Config cfg)
+			x[ix++] = "";
+			Array.Resize(ref x, ix);
+			return x;
+		}
+
+		public static string[] ShowDefCfgLines(Config cfg)
         {
             string[] x = new string[100];
             int ix = 0;
@@ -1039,20 +1046,30 @@ namespace NCCConfig
                 x[ix++] = "  open results: " + OpenResults.ToString();
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
             x[ix++] = (Emulate ? "  use LM emulator server at: " + EmuLoc : "  no LM hardware emulation");
-            if (isSet(NCCFlags.fileinput))
+
+			if (isSet(NCCFlags.fileinput))
+			{
+				string fis = " for input: " + FileInput;
+				if (INCCXfer)
+					x[ix++] = ("  use INCC Transfer files" + fis);
+				else if (PulseFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (PTRFileAssay)
+					x[ix++] = ("  use PTR-32 file pairs" + fis);
+				else if (MCA527FileAssay)
+					x[ix++] = ("  use MCA-527 mca files" + fis);
+				else if (TestDataFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (ReviewFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (NCDFileAssay)
+					x[ix++] = ("  use LMMM NCD files" + fis);
+				else
+					x[ix++] = ("  (default) use LMMM NCD files" + fis);
+			}
+			if (!INCCXfer)
             {
-                if (INCCXfer)
-                    x[ix++] = ("  use INCC Transfer files for input: " + FileInput);
-                if (PulseFileAssay)
-                    x[ix++] = ("  use sorted pulse files for input: " + FileInput);
-                if (PTRFileAssay)
-                    x[ix++] = ("  use PTR-32 file pairs for input: " + FileInput);
-                if (!(PTRFileAssay || PulseFileAssay || INCCXfer))
-                    x[ix++] = ("  use NCD files for input: " + FileInput);
-            }
-            if (!INCCXfer)
-            {
-                if (Recurse) x[ix++] = "  search subfolders for NCD files";
+                if (Recurse) x[ix++] = "  search subfolders for files";
                 if (ParseGen2) x[ix++] = "  accept Gen. 2 NCD file format";
             }
             x[ix++] = (INCCParity ? "  INCC Parity, use INCC isotopics whole-day only decay constraint" : "  use isotopics fractional day decay calculations (more precise than INCC)");
@@ -1247,13 +1264,13 @@ namespace NCCConfig
         {
             string[] x = new string[100];
             int ix = 0;
-            x[ix++] = "  subnet: " + Subnet;
-            x[ix++] = "  sending port: " + Port;
-            x[ix++] = "  broadcast response wait delay: " + Wait;
-            x[ix++] = "  broadcast endpoint port: " + LMListeningPort;
-            x[ix++] = (Broadcast ? "  broadcast go" : "  synchronous start");
-            x[ix++] = "  connections: " + NumConnections;
-            x[ix++] = "  TCP/IP receive buffer: " + ReceiveBufferSize + " bytes";
+            x[ix++] = "  LMMM subnet: " + Subnet;
+            x[ix++] = "  LMMM sending port: " + Port;
+            x[ix++] = "  LMMM broadcast response wait delay: " + Wait;
+            x[ix++] = "  LMMM broadcast endpoint port: " + LMListeningPort;
+            x[ix++] = (Broadcast ? "  LMMM broadcast go" : "  LMMM synchronous start");
+            x[ix++] = "  LMMM connections: " + NumConnections;
+            x[ix++] = "  LMMM TCP/IP receive buffer: " + ReceiveBufferSize + " bytes";
             x[ix++] = "  event processing buffer: " + ParseBufferSize + " MB (1024*1024)";
             if (UsingStreamRawAnalysis)
                 x[ix++] = "  neutron counting event block count: " + StreamEventCount + " (" + StreamEventCount / (1024 * 1024) + " MB events)";
@@ -1649,7 +1666,8 @@ namespace NCCConfig
         {
             string[] x = new string[100];
             int ix = 0;
-            x[ix++] = "  LM #: " + c.LM;
+			if (c.LM >= 0)
+				x[ix++] = "  LMMM LM #: " + c.LM;
             x[ix++] = "  annotation message: " + "'" + c.Message + "'";
             //x[ix++] = "  raw NCD file location: " + (cfg == null ? c.Raw : cfg.Raw); fix lameness
             //x[ix++] = "  results file location: " + (cfg == null ? c.Results : cfg.Results);
@@ -1662,9 +1680,9 @@ namespace NCCConfig
             x[ix++] = "  assay feedback flag: " + c.Feedback;
             x[ix++] = "  assay type: " + c.PoliteName(c.AssayType);
             if (c.SaveOnTerminate)
-                x[ix++] = "   SaveOnTerminate: on cancellation or DAQ error, preserve results";
+                x[ix++] = "  SaveOnTerminate: on cancellation or DAQ error, preserve results";
             else
-                x[ix++] = "   SaveOnTerminate: on cancellation or DAQ error, abandon results";
+                x[ix++] = "  SaveOnTerminate: on cancellation or DAQ error, abandon results";
             x[ix++] = "";
             x[ix++] = "  HV calib minHV, maxHV, step: " + c.MinHV + ", " + c.MaxHV + ", " + c.Step + " volts";
             x[ix++] = "  HV calib step and delay duration: " + c.HVDuration + ", " + c.Delay + " seconds";

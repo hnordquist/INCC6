@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,7 +26,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -959,9 +958,9 @@ namespace LMRawAnalysis
         #endregion
 
         #region InputNeutronDataForAnalysis
-        public void HandleANeutronEvent(UInt64 timeOfNewEvent, UInt32 neutronsOfNewEvent)
+        public void HandleANeutronEvent(ulong timeOfNewEvent, uint neutronsOfNewEvent)
         {
-            UInt32 numNeutrons;
+            uint numNeutrons;
 
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot++;
@@ -1099,7 +1098,7 @@ namespace LMRawAnalysis
 
                     //place the new neutron data in the data-holder at the end of the list
                     aNeutronEvent = neutronsOfNewEvents[which];
-                    endOfNeutronEventList.eventTime = timeOfNewEvents[which];
+                    endOfNeutronEventList.eventTime = timeOfLastNeutronEvent;
                     endOfNeutronEventList.eventNeutrons = aNeutronEvent;
                     numNeutrons = 0;
                     while (aNeutronEvent != 0)

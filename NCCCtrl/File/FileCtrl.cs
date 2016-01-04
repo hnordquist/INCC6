@@ -1040,7 +1040,7 @@ namespace NCCFile
 
                 ctrllog.TraceEvent(LogLevels.Info, 3335, "Assaying with {0}", mcaFile.Filename);
                 /// unique here
-                Double ShakeTime; // like ptr32 files 10^e-8
+                ulong ShakeTime = 0, prevBuffLastShakeTime = 0; // like ptr32 files 10^e-8
 
                 int maxValuesInBuffer = (int)pps.maxValuesInBuffer;
                 try
@@ -1051,8 +1051,7 @@ namespace NCCFile
 					int tbindex = 0; // event count
 
                     //read the two headers from the MCA file
-                    mcaFile.ReadHeader();
-                    ShakeTime = 0;
+                    mcaFile.ReadHeader();                    
 					rdt.ResetTickSizeInSeconds(mcaFile.TimeUnitNanoSec/1e9);
 					cycle.TS = TimeSpan.FromSeconds(mcaFile.MeasTime);  // requested or specified time in seconds
 					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
@@ -1065,7 +1064,7 @@ namespace NCCFile
 						// read the times up to the buffer limit
 						if (tbindex < maxValuesInBuffer)
 						{
-							pps.timeInBuffer[tbindex++] = (uint)deltaTime;  
+							pps.timeInBuffer[tbindex++] = (uint)ShakeTime;  // accumulation occurs in the converter later
 							if (mcaFile.ReaderPosition > 0 && mcaFile.ReaderPosition < FBbytes)			// more bytes to read				
 								continue;
 						}
@@ -1074,6 +1073,7 @@ namespace NCCFile
 							break;
 
 						rdt.NumProcessedRawDataBuffers++;
+						pps.timeInBuffer[0] += (uint)prevBuffLastShakeTime; // a boundary delta increment
                         // push the time deltas through the convertor code and then the counting analyzer threads
                         StreamStatusBlock ssb = rdt.PassBufferToTheCounters(tbindex);
                         if (ssb != null)
@@ -1084,7 +1084,7 @@ namespace NCCFile
 
 						tbindex = 0;
                         rdt.StartNewBuffer();
-
+						prevBuffLastShakeTime = ShakeTime;
                         ctrllog.TraceEvent(LogLevels.Verbose, 411, "[{0}] Counted {1} triggers, {2} hits, over {3} secs", rdt.NumProcessedRawDataBuffers, cycle.TotalEvents, cycle.Totals, cycle.TS.TotalSeconds);
                         NC.App.Loggers.Flush();
 					}
