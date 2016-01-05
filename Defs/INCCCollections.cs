@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -2829,7 +2829,7 @@ namespace AnalysisDefs
                 {
                     {
                         DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.Detectors);
-                        detectors = new DetectorList();
+                        detectors = new   DetectorList();
                         foreach (DataRow dr in dt.Rows)
                         {
 
@@ -3540,7 +3540,7 @@ namespace AnalysisDefs
                     MeaId.Item.Copy(rec.item);
                     ms.Add(m);
                    if (m.INCCResultsFileNames != null && !string.IsNullOrEmpty(dr["FileName"].ToString()))
-                        m.INCCResultsFileNames.Add (dr["FileName"].ToString());
+                        m.INCCResultsFileNames.Add (new ResultFile(dr["FileName"].ToString()));
                 }
                 // TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
             }
@@ -3649,32 +3649,60 @@ namespace AnalysisDefs
         // URGENT: design db tables for LM-specific results and implement parameter generator here (per cycle results)
         // invoke at the appropriate time from the single cycle with return value entry point
 
-        public void AddResultsFileName(Measurement m)
+        public void AddResultsFileNames(Measurement m)
         {
-            string filename = m.ResultsFileName; // start with the LM csv default name, in case this is an LM measurement only
-            // But always use the first INCC5 filename for legacy consistency
+            string primaryFilename = string.Empty; 
+			bool skipTheFirstINCC5File = false;
+			// Always use the first INCC5 filename for legacy consistency
             if (m.INCCResultsFileNames != null && m.INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
-                filename = m.INCCResultsFileNames[0];
+			{
+                primaryFilename = m.INCCResultsFileNames[0].Path;
+				skipTheFirstINCC5File = true;
+			}
+            if (string.IsNullOrEmpty(primaryFilename))  // try the LM csv default name, this might be an LM measurement only
+                primaryFilename = m.ResultsFileName.Path;
+            if (string.IsNullOrEmpty(primaryFilename))  // only do the write if it's non-null
+				return;
 
-            if (!string.IsNullOrEmpty(filename))  // only do the write if it's non-null
-            { 
-                DB.Measurements ms = new DB.Measurements();
-                string type = m.MeasOption.ToString();
-                long id = ms.Lookup(m.AcquireState.detector_id, m.MeasDate, m.MeasOption.PrintName());
-                ms.UpdateFileName(filename, id);
-            }         
+			DB.Measurements ms = new DB.Measurements();
+            string type = m.MeasOption.ToString();
+            long mid = ms.Lookup(m.AcquireState.detector_id, m.MeasDate, m.MeasOption.PrintName());
+            ms.UpdateFileName(primaryFilename, mid);
+
+			// now add the remaining file names to the extended table
+			List<ResultFile> rfl = new List<ResultFile>();
+			if (skipTheFirstINCC5File && m.INCCResultsFileNames.Count() > 1)
+			{
+				if (!string.IsNullOrEmpty(m.ResultsFileName.Path))
+				{
+					rfl.Add(m.ResultsFileName);
+					rfl.AddRange(m.INCCResultsFileNames.GetRange(1,m.INCCResultsFileNames.Count() - 1));
+				}
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(m.ResultsFileName.Path))
+				{
+					rfl.Add(m.ResultsFileName);
+					rfl.AddRange(m.INCCResultsFileNames);
+				}
+			}
+			if (rfl.Count() > 0)
+				AddResultsFiles(rfl, mid, ms);
+      
         }
-        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, Measurement m)
+
+		public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, Measurement m)
         {
             DB.Measurements ms = new DB.Measurements();
             long mid = ms.Lookup(det.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
             if (mid <= 0)
                 return false;
 
-            return AddAnalysisMessages(msgs, det, mid, ms);
+            return AddAnalysisMessages(msgs, mid, ms);
         }
 
-        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, long mid, DB.Measurements db = null)
+        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, long mid, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -3687,6 +3715,22 @@ namespace AnalysisDefs
                 mlist.Add(c.ToDBElementList(generate: false));
             }
             db.AddMessages(mid, mlist);
+            return true;
+        }
+
+		public bool AddResultsFiles(List<ResultFile> names, long mid, DB.Measurements db = null)
+        {
+            if (db == null)
+                db = new DB.Measurements();
+            int imc = names.Count;
+            List<DB.ElementList> mlist = new List<DB.ElementList>();
+            for (int ic = 0; ic < imc; ic++)
+            {
+                ResultFile c = names[ic];
+                c.GenParamList();
+                mlist.Add(c.ToDBElementList(generate: false));
+            }
+            db.AddResultsFiles(mid, mlist);
             return true;
         }
 

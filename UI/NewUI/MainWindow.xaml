@@ -117,6 +117,8 @@
                 <MenuItem Header="_Calibration Measurements..." Click="ReportCalibrationMeasClick" ToolTip="Look at previous Calibration measurements." IsEnabled="True"/>
                 <MenuItem Header="_Holdup..." Click="ReportHoldupClick" ToolTip="Look at previous Holdup measurements." IsEnabled="True"/>
                 <Separator />
+                <MenuItem Header="_LM..." Click="ReportLMClick" ToolTip="Look at previous List mode measurements." IsEnabled="True"/>
+                <Separator />
                 <MenuItem Header="_Measurement Summary..." Click="ReportMeasSummaryClick" IsEnabled="False"/>
                 <MenuItem Header="_Verification Summary..." Click="ReportVerificationSummaryClick" IsEnabled="False"/>
                 <MenuItem Header="_Holdup Summary..." Click="ReportHoldupSummaryClick" IsEnabled="False"/>

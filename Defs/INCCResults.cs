@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -488,7 +488,7 @@ namespace AnalysisDefs
                 acq = new AcquireParameters(m.AcquireState);
                 st = new Stratum(m.Stratum);
                 messages = new AnalysisMessages(m.Messages);
-                det = new Detector(m.Detectors[0]);
+                det = new Detector(m.Detector);
                 iso = new Isotopics();
                 if (m.Isotopics != null) m.Isotopics.CopyTo(iso);
                 tests = new TestParameters(m.Tests);
@@ -1732,7 +1732,7 @@ namespace AnalysisDefs
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detectors[0].MultiplicityParams];  // devnote: multmult assuming only one detector here, doh
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];  // devnote: multmult assuming only one detector here, doh
 
                 sec.AddHeader(" Add-a-source results");  // section header
                 if (methodParams.use_truncated_mult) // && (m.->doubles <= methodParams.tm_dbls_rate_upper_limit)) // next: Where does double value come from? AAS results or summary results or where?

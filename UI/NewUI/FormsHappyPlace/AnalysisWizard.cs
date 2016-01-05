@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -81,7 +81,6 @@ namespace NewUI
                                                                          //  > 7: undefined
 
         private Boolean fromINCCAcquire = false;  // if called directly from INCC acquire, force user to select a multiplicity analyzer
-        private Boolean converting = false; // Used for UI formatting in Step 4.
 
         private int active = 0;         // Used to track which parameter is selected for use in mouserover™ highlighting in the diagrams.
 
@@ -243,31 +242,19 @@ namespace NewUI
                     // Fill in the input location text box, starting with the file type
                     if (this.Step2NCDRadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "NCD files in ";
+                        this.Step4DataSourceTextBox.Text = "LMMM NCD files in ";
                     }
                     else if (this.Step2SortedPulseRadioBtn.Checked)
                     {
                         this.Step4DataSourceTextBox.Text = "Sorted pulse files in ";
-                        if (this.Step2ConvertSPtoNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
                     }
                     else if (this.Step2PTR32RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "PTR32 dual file streams in ";
-                        if (this.Step2ConvertPTR32toNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
+                        this.Step4DataSourceTextBox.Text = "PTR-32 dual files in ";
                     }
                     else if (this.Step2MCA5272RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "MCA527 dual file streams in ";
-                        if (this.Step2ConvertMCA527toNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
+                        this.Step4DataSourceTextBox.Text = "MCA-527 files in ";
                     }
                     else
                     {
@@ -281,11 +268,6 @@ namespace NewUI
                     if (this.Step2RecurseCheckBox.Checked)
                     {
                         this.Step4DataSourceTextBox.Text += " (recursive)";
-                    }
-
-                    if (converting)
-                    {
-                        this.Step4DataSourceTextBox.Text += ", converting input files to NCD";
                     }
 
                     // Fill in the output location text box
@@ -1487,19 +1469,16 @@ namespace NewUI
                     if (NC.App.AppContext.PTRFileAssay)
                     {
                         Step2PTR32RadioBtn.Checked = true;
-                        Step2ConvertPTR32toNCDCheckBox.Checked = NC.App.AppContext.PTRFileNCD;
                         ap.data_src = ConstructedSource.PTRFile;
                     }
                     else if (NC.App.AppContext.PulseFileAssay)
                     {
                         Step2SortedPulseRadioBtn.Checked = true;
-                        Step2ConvertSPtoNCDCheckBox.Checked = NC.App.AppContext.PulseFileNCD;
                         ap.data_src = ConstructedSource.SortedPulseTextFile;
                     }
                     else if (NC.App.AppContext.MCA527FileAssay)
                     {
                         Step2MCA5272RadioBtn.Checked = true;
-                        Step2ConvertMCA527toNCDCheckBox.Checked = NC.App.AppContext.MCA527FileNCD;
                         ap.data_src = ConstructedSource.MCA527File;
                     }
                     else // always the default
@@ -1700,28 +1679,6 @@ namespace NewUI
             }
         }
 
-        private void Step2ConvertSPtoNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.PulseFileNCD != ((CheckBox)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.PulseFileNCD = ((CheckBox)sender).Checked;
-            }
-        }
-
-        private void Step2ConvertPTR32toNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.PTRFileNCD != ((RadioButton)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.PTRFileNCD = ((RadioButton)sender).Checked;
-            }
-        }
-        private void Step2ConvertMCA527toNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.MCA527FileNCD != ((RadioButton)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.MCA527FileNCD = ((RadioButton)sender).Checked;
-            }
-        }
         private void Step2NCDRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)

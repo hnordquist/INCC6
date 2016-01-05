@@ -422,7 +422,7 @@ namespace AnalysisDefs
             sec.AddTwo("Inventory change code:", meas.AcquireState.inventory_change_code);
             sec.AddTwo("I/O code:", meas.AcquireState.io_code);
             sec.AddTwo("Measurement date:", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-            sec.AddTwo("Results file name:", meas.INCCResultsFileNames[meas.INCCResultsFileNames.Count - 1]);
+            sec.AddTwo("Results file name:", meas.INCCResultsFileNames[meas.INCCResultsFileNames.Count - 1].Path);
             sec.AddTwo("Inspection number:", meas.AcquireState.campaign_id);
 
             if (AssaySelector.ForMass(meas.MeasOption) || meas.MeasOption == AssaySelector.MeasurementOption.rates)
@@ -472,7 +472,7 @@ namespace AnalysisDefs
         {
             base.StartReportGeneration(m, pretext, separator);
 
-            m.INCCResultsFileNames.Add(t.FullFilePath);  // save the full file path on this list for later
+            m.INCCResultsFileNames.Add(new ResultFile(t.FullFilePath));  // save the full file path on this list for later
         }
 
         public void GenerateReport(Measurement m)
@@ -491,7 +491,7 @@ namespace AnalysisDefs
                     ' ');  // make these text files
                 //Detector det = meas.Detectors.GetIt(moskey.SRParams); 
                 // now assuming only one detector on the list, so can use [0], the mos keys have specific values for virtual SR counting, overiding the detector 
-                Detector det = meas.Detectors[0];
+                Detector det = meas.Detector;
                 try
                 {
                     sections.Add(ConstructReportSection(INCCReportSection.Header, det));
@@ -899,7 +899,7 @@ namespace AnalysisDefs
 
                 //Detector det = meas.Detectors.GetIt(moskey.SRParams);
                 // now assuming only one detector on the list, so can use [0]
-                Detector det = meas.Detectors[0];
+                Detector det = meas.Detector;
                 try
                 {
                     sections.Add(ConstructReportSection(INCCTestDataSection.CycleSummary, det, moskey));

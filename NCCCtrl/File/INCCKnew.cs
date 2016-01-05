@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -797,7 +797,7 @@ namespace NCCTransfer
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
             meas.AcquireState.comment = "Original file name " + meas.MeasurementId.FileName;
-            meas.Detectors.Add(det);
+            meas.Detectors.Add(det);  // in practice this is a list with one element, e.g. meas.Detector
 
             TestParameters t = new TestParameters();
             t.accSnglTestRateLimit = results.r_acc_sngl_test_rate_limit;
@@ -1654,7 +1654,7 @@ namespace NCCTransfer
             long mid = meas.Persist();
 
             // save the warning and error messages from the results here, these rode on the results rec in INCC5
-            NC.App.DB.AddAnalysisMessages(msgs, det, mid);
+            NC.App.DB.AddAnalysisMessages(msgs, mid);
 
             // Store off Params
 

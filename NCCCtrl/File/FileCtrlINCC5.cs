@@ -3,9 +3,9 @@ Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -61,7 +61,7 @@ namespace NCCFile
                 meas.MeasDate = meas.Cycles[0].DataSourceId.dt;
                 meas.Persist();  // preserve the basic results record
                 FireEvent(EventType.ActionInProgress, this);
-                meas.Cycles.ResetStatus(meas.Detectors[0].MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
+                meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
                 ComputeFromINCC5SRData(meas);
                 FireEvent(EventType.ActionInProgress, this);
             }
@@ -100,7 +100,7 @@ namespace NCCFile
             }
 
             AcquireParameters orig_acq = new AcquireParameters(NC.App.Opstate.Measurement.AcquireState);
-            Detector curdet = NC.App.Opstate.Measurement.Detectors[0];
+            Detector curdet = NC.App.Opstate.Measurement.Detector;
             AssaySelector.MeasurementOption mo = NC.App.Opstate.Measurement.MeasOption;
 
             // Each .dat file is a separate measurement 
@@ -172,7 +172,7 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detectors[0]);
+                        AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         for (int n = 1; n <= aass.number_positions; n++)
                         {
                             /* number of good runs */
@@ -260,7 +260,7 @@ namespace NCCFile
             Cycle cycle = new Cycle(datalog);
             try
             {
-                cycle.UpdateDataSourceId(ConstructedSource.CycleFile, meas.Detectors[0].Id.SRType,
+                cycle.UpdateDataSourceId(ConstructedSource.CycleFile, meas.Detector.Id.SRType,
                         td.DTO.AddSeconds(run_seconds), td.Filename);
                 cycle.seq = run;
                 cycle.TS = TimeSpan.FromSeconds(run_count_time);  // dev note: check if this is always only in seconds, or fractions of a second
@@ -268,7 +268,7 @@ namespace NCCFile
                                                                   // Joe still has force to int.  bleck!
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detectors[0].MultiplicityParams, QCTestStatus.None); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.None); // multmult creates entry if not found
                 meas.Add(cycle, cfindex);
                 /* singles, reals + accidentals, accidentals */
                 string l = td.reader.ReadLine();
@@ -282,9 +282,9 @@ namespace NCCFile
                         v[z] = d;
                 }
                 cycle.Totals = (ulong)v[0];
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detectors[0].MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detectors[0].MultiplicityParams, mcr);  // multmult
-                mcr.AB.TransferIntermediates(meas.Detectors[0].AB);  // copy alpha beta onto the cycle's results 
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr);  // multmult
+                mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
                 mcr.ASum = v[4];
@@ -481,7 +481,7 @@ namespace NCCFile
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
                         ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because I am lame. " + "AAS ");
-                        //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detectors[0]);
+                        //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         //for (int n = 1; n <= aass.number_positions; n++)
                         //{
                         //    /* number of good runs */
@@ -575,19 +575,19 @@ namespace NCCFile
             Cycle cycle = new Cycle(datalog);
             try
             {
-                cycle.UpdateDataSourceId(ConstructedSource.ReviewFile, meas.Detectors[0].Id.SRType,
+                cycle.UpdateDataSourceId(ConstructedSource.ReviewFile, meas.Detector.Id.SRType,
                         rrep.dt, fn);
                 cycle.seq = (run.run_number > 0 ? run.run_number : i); // INCC run record sequence numbers start at 1
                 cycle.TS = TimeSpan.FromSeconds(run.run_count_time);
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detectors[0].MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult creates entry if not found
                 meas.Add(cycle);
                 /* singles, reals + accidentals, accidentals */
                 cycle.Totals = (ulong)run.run_singles;
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detectors[0].MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detectors[0].MultiplicityParams, mcr); // multmult
-                mcr.AB.TransferIntermediates(meas.Detectors[0].AB);  // copy alpha beta onto the cycle's results 
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr); // multmult
+                mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
                 mcr.ASum = run.run_acc;
@@ -663,7 +663,7 @@ namespace NCCFile
                 return; //bad match between detector and this file type.
             }
 
-            SRInstrument PseudoInstrument = new SRInstrument(m.Detectors[0]);
+            SRInstrument PseudoInstrument = new SRInstrument(m.Detector);
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
@@ -674,11 +674,11 @@ namespace NCCFile
             try
             {
                 // urgent: there is more work to do for the bins and AB here, AB can be copied from the detector values
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detectors[0].MultiplicityParams]; // multmult
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
                 Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
-                mcr.AB.TransferIntermediates(src: m.Detectors[0].AB);
+                mcr.AB.TransferIntermediates(src: m.Detector.AB);
 
                 foreach (AnalysisDefs.Cycle cycle in m.Cycles)
                 {
@@ -688,7 +688,7 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    cycle.SetQCStatus(m.Detectors[0].MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
+                    cycle.SetQCStatus(m.Detector.MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
@@ -697,7 +697,7 @@ namespace NCCFile
                 }
                 FireEvent(EventType.ActionInProgress, this);
                 // trim any None's that were not processed (occurs during a cancel/stop intervention)
-                m.Cycles.Trim(m.Detectors[0].MultiplicityParams); // multmult
+                m.Cycles.Trim(m.Detector.MultiplicityParams); // multmult
             }
             catch (Exception e)
             {

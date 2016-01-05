@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -129,7 +129,7 @@ namespace LMDAQ
             }
             // lookup the associated detector for the SRInstrument (match on DSID)
 
-            Detector det = meas.Detectors.GetIt(sr.id);
+            Detector det = meas.Detectors.GetIt(sr.id);  // in practice this is always the same as meas.Detector
             // must be there!
 
             srct = new SRControlThread(threads.Count + 1, logger, meas, det);
@@ -560,9 +560,9 @@ namespace LMDAQ
      * m.AcquireState.run_count_time = 10.0;
      * m.MeasurementId.SetSRType("JSR12");
      * m.MeasurementId.ID.ConnInfo = "0";
-     * m.Detectors[0].SRParams.highVoltage = 1599;
-     * m.Detectors[0].SRParams.predelay = 30; 
-     * m.Detectors[0].SRParams.gateLength = 640;
+     * m.Detector.SRParams.highVoltage = 1599;
+     * m.Detector.SRParams.predelay = 30; 
+     * m.Detector.SRParams.gateLength = 640;
      * td.take_sr_data(m);
      */
 

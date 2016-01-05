@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -701,7 +701,7 @@ namespace NCC
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
                 Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // hack: multmult just using the first one found, lame, shoud be using closest match
-                meas.Detectors[0].MultiplicityParams.CopyValues(mkey);
+                meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }
 

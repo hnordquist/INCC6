@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software. 
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -460,8 +460,8 @@ namespace AnalysisDefs
             get { return mid.MeasOption; }
             // set { mid.MeasOption = value; }
         }
-        public string ResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
-        public List<string> INCCResultsFileNames;  // INCC5-style text files; can have multiple output files if more than one SR params
+        public ResultFile ResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
+        public List<ResultFile> INCCResultsFileNames;  // INCC5-style text files; can have multiple output files if more than one SR params
 
         public double CountTimeInSeconds;
         public ushort CurrentRepetition;
@@ -484,14 +484,23 @@ namespace AnalysisDefs
         /// A Detector has its id, SR params and alpha-beta
         /// 
         /// With LM, an instrument is discovered and created for live DAQ, an associated detector is then created for each virtual SR specified by the user for that instrument.
-        /// For SR, a detector is first created by user, with specif Parms and a type and such, at run-time, whne a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
-        /// In both cases there is an instrument to SR spec relationship that always exists. Each instument can have one SR detector, and one or more virtual detectors in the context of a measurment. Muddy clear!
+        /// For SR, a detector is first created by user, with specific Parms and a type and such, at run-time, when a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
+        /// In both cases there is an instrument to SR spec relationship that always exists. Each instrument can have one SR detector, and one or more virtual detectors in the context of a measurment. Muddy clear!
         ///
         /// </summary>
         public DetectorList Detectors
         {
             get { return mt.Detectors; }
         }
+
+		/// <summary>
+		/// The single detector used for a measurement. Multiple active detectors are not used 
+		/// </summary>
+		public Detector Detector
+        {
+            get { return mt.Detectors[0]; }
+        }
+
         /// <summary>
         ///  The test params are global to all detectors involved in the measurement 
         /// </summary>
@@ -693,7 +702,7 @@ namespace AnalysisDefs
                 bool good = CountTimeInSeconds > 0.0;
                 if (good)
                 {
-                    if (Detectors[0].ListMode)
+                    if (Detector.ListMode)
                     {
                         if (AnalysisParams.HasMultiplicity())
                             good = Cycles.HasReportableCycles;
@@ -760,7 +769,8 @@ namespace AnalysisDefs
             cycles = new CycleList();
             Messages = new AnalysisMessages();
             cyclestatus = new MeasurementCycleStatusCounts();
-            INCCResultsFileNames = new List<string>();
+            INCCResultsFileNames = new List<ResultFile>();
+			ResultsFileName = new ResultFile();
         }
 
         /// <summary>
@@ -963,7 +973,7 @@ namespace AnalysisDefs
         {
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserving measurement ...");
             DB.Measurements dbm = new DB.Measurements();
-            long mid = dbm.Add(name: Detectors[0].Id.DetectorName,
+            long mid = dbm.Add(name: Detector.Id.DetectorName,
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
                                 mtype: MeasOption.PrintName(),
                                 filename: MeasurementId.FileName,  // the file names are generated at the end of the process, GenerateReports, update the database at the end
@@ -985,22 +995,23 @@ namespace AnalysisDefs
         /// </summary>
         public void PersistFileNames()
         {
-            string filename = ResultsFileName; // start with the LM csv default name, in case this is an LM measurement only
-            // But always use the first INCC5 filename for legacy consistency
-            if (INCCResultsFileNames != null && INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
-                filename = INCCResultsFileNames[0];
+			NC.App.DB.AddResultsFileNames(this);
+            //string filename = ResultsFileName.Path; // start with the LM csv default name, in case this is an LM measurement only
+            //// But always use the first INCC5 filename for legacy consistency
+            //if (INCCResultsFileNames != null && INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
+            //    filename = INCCResultsFileNames[0].Path;
 
-            if (!String.IsNullOrEmpty(filename))  // only do the write if it's non-null
-            {
-                DB.Measurements ms = new DB.Measurements();
-                string type = MeasOption.ToString();
-                long id;
-                int dupNum = 0;
-                id = ms.Lookup(AcquireState.detector_id, MeasDate, MeasOption.PrintName());
+            //if (!String.IsNullOrEmpty(filename))  // only do the write if it's non-null
+            //{
+            //    DB.Measurements ms = new DB.Measurements();
+            //    string type = MeasOption.ToString();
+            //    long id;
+            //    int dupNum = 0;
+            //    id = ms.Lookup(AcquireState.detector_id, MeasDate, MeasOption.PrintName());
 
-                logger.TraceEvent(LogLevels.Verbose, 34001, String.Format("Patching in the first file name...{0} " + filename, dupNum == 1 ? "Original measurement" : "Reanalysis #" + dupNum));
-                ms.UpdateFileName(filename, id);
-            }
+            //    logger.TraceEvent(LogLevels.Verbose, 34001, String.Format("Patching in the first file name...{0} " + filename, dupNum == 1 ? "Original measurement" : "Reanalysis #" + dupNum));
+            //    ms.UpdateFileName(filename, id);
+            //}
         }
 
         public void AdjustCycleCountsBaseOnStatus(bool curCycleIncomplete)

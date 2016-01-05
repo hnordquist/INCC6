@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using AnalysisDefs;
 using BigNum;
+using NCCReporter;
+
 namespace LMRawAnalysis
 {
     static public class RawAnalysisProperties
@@ -89,6 +91,7 @@ namespace LMRawAnalysis
      public class SDTMultiplicityCalculator
     {
         protected double ticSizeInSeconds;
+		public LMLoggers.LognLM Log {get; set; }
 
         public SDTMultiplicityCalculator(double theTicSizeInSeconds)
         {
@@ -299,6 +302,7 @@ namespace LMRawAnalysis
                                 axover = n;
                                 standard = false; k = n; n = n - 1; // redo the loop
                                 α = new BigFloat[biggestKey + 1];
+								Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                             }
                         }
                     }
@@ -365,6 +369,7 @@ namespace LMRawAnalysis
                                 bxover = n;
                                 standard = false; k = n; n = n - 1; // redo the loop
                                 β = new BigFloat[biggestKey + 1];
+								Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                             }
                         }
                     }
@@ -419,7 +424,8 @@ namespace LMRawAnalysis
                 {
                     result.alpha[i] = lastGoodD;
                     result.warnings.Add(String.Format("α[{0}] conversion failed on {1}", i, α[i].ToString()));
-                }
+ 					Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
+               }
                 else
                 {
                     lastGoodD = d;
@@ -435,6 +441,7 @@ namespace LMRawAnalysis
                 {
                     result.beta[i] = lastGoodD;
                     result.warnings.Add(String.Format("β[{0}] conversion failed on {1}", i, β[i].ToString()));  // URGENT: alpha/beta arrays are to be transformed from doubles to BigFloat types when this conversion happens to overflow                
+					Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                  }
                 else
                 {

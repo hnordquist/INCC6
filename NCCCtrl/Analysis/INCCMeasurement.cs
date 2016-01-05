@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -375,7 +375,7 @@ namespace AnalysisDefs
                             //  maybe if (INCCAnalysisState.Methods.Has(AnalysisMethod.TruncatedMultiplicity))
                             if (meas.Background.TMBkgParams.ComputeTMBkg)
                                 // Trunc Mult Bkg step, calc_tm_rates, sets TM bkg rates on Measurement.Background
-                                INCCAnalysis.calc_tm_rates(mkey, results, meas, meas.Background.TMBkgParams, meas.Detectors[0].Id.SRType);
+                                INCCAnalysis.calc_tm_rates(mkey, results, meas, meas.Background.TMBkgParams, meas.Detector.Id.SRType);
 
                             meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10181, "Background measurement complete");
                             break;
@@ -1253,7 +1253,7 @@ namespace AnalysisDefs
                     meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
                     MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
                     mcr.ComputeSums();
-                    INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detectors[0].Id.SRType);
+                    INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
                 }
             //    dtchoice++;
             //} while (dtchoice <= RatesAdjustments.DytlewskiDeadtimeCorrected);
@@ -1285,15 +1285,15 @@ namespace AnalysisDefs
 					{
                         case AssaySelector.MeasurementOption.background: // calculated in CalculateResults, update bkg and save the result to the DB
 							// save the background result to the bkg_parms_rec table under the current SR key
-							BackgroundParameters c = NC.App.DB.BackgroundParameters.Get(meas.Detectors[0]);
+							BackgroundParameters c = NC.App.DB.BackgroundParameters.Get(meas.Detector);
 							if (c != null)
 								c.Copy(meas.Background);  // copy changes back to original on user affirmation
 							else
 							{
 								c = meas.Background;
-								NC.App.DB.BackgroundParameters.GetMap().Add(meas.Detectors[0], c);
+								NC.App.DB.BackgroundParameters.GetMap().Add(meas.Detector, c);
 							}
-							NC.App.DB.BackgroundParameters.Set(meas.Detectors[0], c);
+							NC.App.DB.BackgroundParameters.Set(meas.Detector, c);
 							break;
                         case AssaySelector.MeasurementOption.initial: // calculated in CalculateResults, update norm and save the norm and init_src result to the DB
                             INCCResults.results_init_src_rec results_init_src = (INCCResults.results_init_src_rec)results;
@@ -1301,15 +1301,15 @@ namespace AnalysisDefs
                             // on pass, the normalization parameters are modified with the results_init_src_rec results, and so both are updated.
                             if (results_init_src.pass)
                             {
-                                NormParameters np = NC.App.DB.NormParameters.Get(meas.Detectors[0]);
+                                NormParameters np = NC.App.DB.NormParameters.Get(meas.Detector);
                                 if (np != null)
                                     np.Copy(meas.Norm);  // copy any changes made to Norm as defined for the current detector
                                 else
                                 {
                                     np = meas.Norm;
-                                    NC.App.DB.NormParameters.GetMap().Add(meas.Detectors[0], np);
+                                    NC.App.DB.NormParameters.GetMap().Add(meas.Detector, np);
                                 }
-                                NC.App.DB.NormParameters.Set(meas.Detectors[0], np);
+                                NC.App.DB.NormParameters.Set(meas.Detector, np);
                             }
                             SaveSpecificResultsForThisMeasurement(meas, results);
 							break;
@@ -1348,9 +1348,9 @@ namespace AnalysisDefs
         public static void SaveMeasurementCycles(this Measurement m)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detectors[0].Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
             //Could we actually not do this when reanalyzing? hn 9.21.2015
-            NC.App.DB.AddCycles(m.Cycles, m.Detectors[0].MultiplicityParams, mid, ms);
+            NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid, ms);
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, String.Format("{0} cycles stored", m.Cycles.Count));
 
         }
@@ -1365,7 +1365,7 @@ namespace AnalysisDefs
         static void SaveMethodResultsForThisMeasurement(this Measurement m, MeasOptionSelector moskey)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detectors[0].Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
 
             INCCMethodResults imrs;
             bool gotten = m.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
@@ -1395,7 +1395,7 @@ namespace AnalysisDefs
         static void SaveSpecificResultsForThisMeasurement(this Measurement m, INCCResult res)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detectors[0].Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
             DB.ElementList els = res.ToDBElementList(); // generates the Table property content too
             DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(res.Table, ms.db);
             long resid = ar.Create(mid, els);                          
@@ -1410,7 +1410,7 @@ namespace AnalysisDefs
         static void SaveSummaryResultsForThisMeasurement(this Measurement m, MeasOptionSelector moskey)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detectors[0].Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
 
             DB.Results dbres = new DB.Results(ms.db);
             // save results with mid as foreign key

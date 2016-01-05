@@ -1,14 +1,14 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
-Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
+Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided
 that the following conditions are met:
 •	Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
 disclaimer. 
@@ -68,7 +68,7 @@ namespace NewUI
 
         public static bool EmptyFile(Measurement m)
         {
-            return m.INCCResultsFileNames.Count <= 0 || String.IsNullOrEmpty(m.INCCResultsFileNames[0]);
+            return m.INCCResultsFileNames.Count <= 0 || String.IsNullOrEmpty(m.INCCResultsFileNames[0].Path);
         }
         private void PrintBtn_Click(object sender, EventArgs e)
         {
@@ -107,8 +107,8 @@ namespace NewUI
                 {
                     if (System.IO.File.Exists(notepadPath))
                     {
-                        if (mlist[lvi.Index].INCCResultsFileNames.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].INCCResultsFileNames[0]))
-                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].INCCResultsFileNames[0]);
+                        if (mlist[lvi.Index].INCCResultsFileNames.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].INCCResultsFileNames[0].Path))
+                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].INCCResultsFileNames[0].Path);
                         else
                             ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path did not exist or the filename was blank.");
                     }

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -78,8 +78,8 @@ namespace AnalysisDefs
                 string notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
                 if (System.IO.File.Exists(notepadPath))
                 {
-                    foreach (string fname in m.INCCResultsFileNames)
-                        System.Diagnostics.Process.Start(notepadPath, fname);
+                    foreach (ResultFile fname in m.INCCResultsFileNames)
+                        System.Diagnostics.Process.Start(notepadPath, fname.Path);
                 }
                 // todo:optional enablement
                 // Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
@@ -140,8 +140,8 @@ namespace AnalysisDefs
         {
             // create a unique file name for the output results 
             string name = pretext + meas.MeasDate.ToString("yyyyMMddHHmmss");
-            if (!String.IsNullOrEmpty(meas.Detectors[0].Id.DetectorId))
-                name = meas.Detectors[0].Id.DetectorId + " " + name;
+            if (!String.IsNullOrEmpty(meas.Detector.Id.DetectorId))
+                name = meas.Detector.Id.DetectorId + " " + name;
             name = CleansePotentialFilename(name);
             return name;
         }

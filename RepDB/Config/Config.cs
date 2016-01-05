@@ -621,9 +621,6 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCParity, true, typeof(bool), retain: true);
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.pulseFileNCD, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.ptrFileNCD, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.mcaFileNCD, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -791,22 +788,6 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.sortPulseFile); }
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
-        }
-        public bool PulseFileNCD
-        {
-            get { return (bool)getVal(NCCFlags.pulseFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.pulseFileNCD, value); }
-        }
-
-        public bool PTRFileNCD
-        {
-            get { return (bool)getVal(NCCFlags.ptrFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.ptrFileNCD, value); }
-        }
-        public bool MCA527FileNCD
-        {
-            get { return (bool)getVal(NCCFlags.mcaFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.mcaFileNCD, value); }
         }
 
         public string RootPath
@@ -1007,9 +988,6 @@ namespace NCCConfig
             {
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
-                setVal(NCCFlags.pulseFileNCD, false);
-                setVal(NCCFlags.ptrFileNCD, false);
-                setVal(NCCFlags.mcaFileNCD, false); 
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);

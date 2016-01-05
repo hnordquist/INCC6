@@ -3,9 +3,9 @@ Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -1736,6 +1736,13 @@ namespace NCCFile
 			case 5:
 				// General Mode = 'Timestamps recorder'
 				rheader = MCATimestampsRecorderModeHeader.Scan(reader);
+				long seekgap = header.ValidByteCount - 228;
+				if (seekgap > 0)	// Seek ahead header.ValidByteCount - 228 (a hard-coded value, the number of bytes in the rheader)
+									// This can be non-zero on files taken directly from the MCA-527 SD card storage
+				{
+					reader.BaseStream.Seek(header.ValidByteCount - 228, SeekOrigin.Current);
+					Log.TraceEvent(LogLevels.Verbose, 117, "Seek " + seekgap.ToString() + "bytes");
+				}
 				if (rheader.UsedMemorySize > 0 &&
 					(rheader.ExtensionPortPartAConfiguration == 0x5 ||
 					 rheader.ExtensionPortPartCConfiguration == 0x5)) {
@@ -3013,135 +3020,127 @@ namespace NCCFile
         }
 
 
-        /// <summary>
-        ///
-        /// get the list of files from the named folder, check for other conditions if not a folder
-        /// if this a single file then
-        ///  if the file is an T file then
-        ///    run with an T FileList of one file
-        ///  NYI: if the file is a compressed archive then
-        ///     unpack the archive all at once into a temp folder and then construct the list OR unpack 1 at a time as the list is processed?
-        ///
-        /// </summary>
-        /// <param name="dir">The root folder to examine for files, always NC.App.AppContext.FileInput</param>
-        /// <param name="recurse">use subfolders or not</param>
-        /// <returns>A List of T type files</returns>
-        public List<T> BuildFileList(string dir, bool recurse, bool sort)
-        {
+		/// <summary>
+		///
+		/// get the list of files from the named folder, check for other conditions if not a folder
+		/// if this a single file then
+		///  if the file is an T file then
+		///    run with an T FileList of one file
+		///  NYI: if the file is a compressed archive then
+		///     unpack the archive all at once into a temp folder and then construct the list OR unpack 1 at a time as the list is processed?
+		///
+		/// </summary>
+		/// <param name="dir">The root folder to examine for files, always NC.App.AppContext.FileInput</param>
+		/// <param name="recurse">use subfolders or not</param>
+		/// <returns>A List of T type files</returns>
+		public List<T> BuildFileList(string dir, bool recurse, bool sort)
+		{
 
-            bool folder = false, singlefile = false, oneOfTheChosen = false, compressedfile = false, none = false;
-            folder = Directory.Exists(dir);
-            System.IO.FileInfo fi = null;
-            if (singlefile = File.Exists(dir))
-            {
-                fi = new System.IO.FileInfo(dir);
-                if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
-                {
-                    compressedfile = true;
-                }
-                else
-                {
-                    if (Extensions.Exists(ext => ext.ToLower().EndsWith(fi.Extension.ToLower())))
-                    {
-                        oneOfTheChosen = true;
-                    }
-                }
-            }
+			bool folder = false, singlefile = false, oneOfTheChosen = false, none = false; // compressedPerhaps = false, 
+			folder = Directory.Exists(dir);
+			System.IO.FileInfo fi = null;
+			if (singlefile = File.Exists(dir))
+			{
+				fi = new System.IO.FileInfo(dir);
+				if (Extensions.Exists(ext => ext.ToLower().EndsWith(fi.Extension.ToLower())))
+				{
+					oneOfTheChosen = true;
+				}
+				//if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
+				//{
+				//	compressedPerhaps = true;
+				//}
+			}
 
-            SearchOption so = recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			SearchOption so = recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            IEnumerable<string> effs = null;
-            if (folder)
-            {
-                foreach (string extension in Extensions)
-                {
-                    var leffs = from f in
-                                    Directory.EnumerateFileSystemEntries(dir, "*" + extension, so)
-                                select f;
-                    if (effs == null)
-                        effs = leffs;
-                    else
-                        effs = effs.Concat(leffs);
-                }
-            }
-            else if (singlefile)
-            {
-                if (oneOfTheChosen)
-                    effs = from f in
-                               Directory.EnumerateFileSystemEntries(fi.DirectoryName, fi.Name)
-                           select f;
-                else if (compressedfile)
-                {
-                    log.TraceInformation(dir + " Compressed archives cannot be processed at this time");
-                }
-            }
+			IEnumerable<string> effs = null;
+			if (folder)
+			{
+				foreach (string extension in Extensions)
+				{
+					var leffs = from f in
+									Directory.EnumerateFileSystemEntries(dir, "*" + extension, so)
+								select f;
+					if (effs == null)
+						effs = leffs;
+					else
+						effs = effs.Concat(leffs);
+				}
+			} else if (singlefile)
+			{
+				if (oneOfTheChosen)
+					effs = from f in
+							   Directory.EnumerateFileSystemEntries(fi.DirectoryName, fi.Name)
+						   select f;
+				//if (compressedPerhaps)
+				//{
+				//	log.TraceInformation(dir + " might be compressed, or not. The API is ambiguous");
+				//}
+			}
 
-            FileList<T> files = null;
-            if (!folder && !singlefile)
-            {
-                log.TraceInformation(dir + " cannot be processed, folder or file not found");
-                none = true;
-            }
-            else if (folder)
-            {
-                if (effs == null || (effs.Count() <= 0))
-                {
-                    string s = string.Empty;
-                    Extensions.ForEach(i => s += i + ", ");
-					s = s.TrimEnd(new char[]  {' ',','});
-                    log.TraceInformation("No {0} files found in {1}, see ya . . .", s, dir);
-                    none = true;
-                }
-                if (recurse)
-                    log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
-                else
-                    log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
-            }
-            else if (singlefile)
-            {
-                if (effs == null || (effs.Count() <= 0))
-                {
-                    log.TraceInformation("{0} cannot be processed, see ya . . .", dir);
-                    none = true;
-                }
-                else
-                    log.TraceInformation("Processing {0}", dir);
-            }
+			FileList<T> files = null;
+			if (!folder && !singlefile)
+			{
+				log.TraceInformation(dir + " cannot be processed, folder or file not found");
+				none = true;
+			} else if (folder)
+			{
+				if (effs == null || (effs.Count() <= 0))
+				{
+					string s = string.Empty;
+					Extensions.ForEach(i => s += i + ", ");
+					s = s.TrimEnd(new char[] { ' ', ',' });
+					log.TraceInformation("No {0} files found in {1}, . . .", s, dir);
+					none = true;
+				}
+				if (recurse)
+					log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
+				else
+					log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
+			} else if (singlefile)
+			{
+				if (effs == null || (effs.Count() <= 0))
+				{
+					log.TraceInformation("{0} cannot be processed, . . .", dir);
+					none = true;
+				} else
+					log.TraceInformation("Processing {0}", dir);
+			}
 
-            if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files
-                none = true;
+			if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files
+				none = true;
 
-            if (none)
-                return null;
+			if (none)
+				return null;
 
-            files = new FileList<T>(Extensions, log);
+			files = new FileList<T>(Extensions, log);
 
-            files.state.cur = 0;
-            // Show files and build list
-            foreach (var f in effs)
-            {
-                string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
-                log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
-                T n = new T();
-                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
-                n.Num = files.state.cur++;
-                n.Filename = f;
-                n.ExtractDateFromFilename();
-                n.ThisSuffix = name.Substring(name.IndexOf('.'));
-                files.Add(n);
-            }
-            files.state.count = files.Count;
+			files.state.cur = 0;
+			// Show files and build list
+			foreach (var f in effs)
+			{
+				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
+				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
+				T n = new T();
+				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				n.Num = files.state.cur++;
+				n.Filename = f;
+				n.ExtractDateFromFilename();
+				n.ThisSuffix = name.Substring(name.IndexOf('.'));
+				files.Add(n);
+			}
+			files.state.count = files.Count;
 
-            if (sort)
-                files.Sort((f1, f2) =>
-                {
-                    return f1.DTO.CompareTo(f2.DTO);
-                });
+			if (sort)
+				files.Sort((f1, f2) => {
+					return f1.DTO.CompareTo(f2.DTO);
+				});
 
-            return files;
-        }
+			return files;
+		}
 
-        public List<T> BuildFileList(List<string> ufiles)
+		public List<T> BuildFileList(List<string> ufiles)
         {
 
             FileList<T> files = new FileList<T>(Extensions, log);

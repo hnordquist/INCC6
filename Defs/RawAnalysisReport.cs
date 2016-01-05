@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -172,13 +172,13 @@ namespace AnalysisDefs
                             while (iter.MoveNext())
                             {
                                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                                sec.Add(GenDetectorCalibrationRow(meas.Detectors[0], mkey));
+                                sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
                             }
                         }
                         else
                         {
                             hcrow.GenFromEnum(typeof(BaseDetectorCalibration), null, 0);
-                            sec.Add(GenDetectorCalibrationRow(meas.Detectors[0]));
+                            sec.Add(GenDetectorCalibrationRow(meas.Detector));
                         }
 
                         break;
@@ -382,7 +382,7 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Facility, meas.AcquireState.facility.ToString());
             row.Add((int)DescriptiveSummary.MBA, meas.AcquireState.mba.ToString());
             row.Add((int)DescriptiveSummary.MeasDate, meas.MeasDate.ToString());
-            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFileName);
+            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFileName.Path);
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
@@ -1500,7 +1500,7 @@ namespace AnalysisDefs
         {
             base.StartReportGeneration(m, pretext, separator);
 
-            m.ResultsFileName = t.FullFilePath;  // save the full file path on this single member var for later
+            m.ResultsFileName.Path = t.FullFilePath;  // save the full file path on this single member var for later
         }
 
 

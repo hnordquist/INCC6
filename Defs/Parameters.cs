@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -2273,9 +2273,6 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("replay", Replay));
             pb.ps.Add(new DBParamEntry("INCCParity", INCCParity));
             pb.ps.Add(new DBParamEntry("sortPulseFile", SortPulseFile));
-            pb.ps.Add(new DBParamEntry("pulseFileNCD", PulseFileNCD));
-            pb.ps.Add(new DBParamEntry("ptrFileNCD", PTRFileNCD));
-            pb.ps.Add(new DBParamEntry("nilaFileNCD", MCA527FileNCD));
             pb.ps.Add(new DBParamEntry("pulseFileAssay", PulseFileAssay));
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
@@ -2576,6 +2573,60 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("duration", HVDuration));
             ps.Add(new DBParamEntry("delay", DelayMS));
         }
+    }
+
+	public class ResultFile : ParameterBase,  IComparable<ResultFile>, IEquatable<ResultFile>
+    {
+		public string Path  // csv file or INCC5-style text files; can have multiple output files if more than one SR params
+		{
+            get;
+            set;
+        }
+        public ResultFile()
+        {
+			Path = string.Empty;
+        }
+        public ResultFile(string name)
+        {
+			Path = name;
+        }
+        public ResultFile(ResultFile src)
+        {
+            if (src == null)
+				Path = string.Empty;
+            else
+				Path = string.Copy(src.Path);
+        }
+
+        public void Copy(ResultFile src)
+        {
+            if (src == null)
+                return;
+		    Path = string.Copy(src.Path);
+        }
+        public static int Compare(ResultFile x, ResultFile y)
+        {
+            int res = x.Path.CompareTo(y.Path);
+            return res;
+        }
+
+        public int CompareTo(ResultFile other)
+        {
+            return Compare(this, other);
+        }
+
+		public bool Equals(ResultFile other)
+        {
+            return CompareTo(other) == 0;
+        }
+
+        public override void GenParamList()
+        {
+            base.GenParamList();
+            this.Table = "results_filenames";
+            this.ps.Add(new DBParamEntry("FileName", Path));
+        }
+
     }
 
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };

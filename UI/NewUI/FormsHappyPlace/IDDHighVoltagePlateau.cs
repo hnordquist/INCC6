@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
-NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
+NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED,
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works,
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -144,10 +144,10 @@ namespace NewUI
 
             UIIntegration.Controller.file = false;  // make sure to use the DAQ controller, not the file controller
             NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
-            if (NC.App.Opstate.Measurement.Detectors[0].ListMode)
+            if (NC.App.Opstate.Measurement.Detector.ListMode)
             {
-                if (NC.App.Opstate.Measurement.Detectors[0].Id.SRType == InstrType.PTR32) {
-                    Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detectors[0]);
+                if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.PTR32) {
+                    Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
                     instrument.DAQState = DAQInstrState.Offline;
                     instrument.selected = true;
                     instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
@@ -158,7 +158,7 @@ namespace NewUI
                 }
                 else {
                     // if ok, the analyzers are set up, so can kick it off now.
-                    LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detectors[0]);
+                    LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
                     lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                     lm.selected = false;  //must broadcast first to get it selected
                     if (!Instruments.All.Contains(lm))
@@ -167,7 +167,7 @@ namespace NewUI
             }
             else
             {
-                SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detectors[0]);
+                SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
                 sri.selected = true;
                 sri.Init(null, null);
                 if (!Instruments.All.Contains(sri))

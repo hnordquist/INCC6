@@ -1035,8 +1035,134 @@ namespace Analysis
 
     }
 
-	
-    public class MCA527FileProcessingState : LMProcessingState
+    
+public class MCA527FileProcessingState : LMProcessingState
+    {
+        public ulong[] timeInBuffer;
+        //New variable to track the reported count time in PTR file. HN 10.15.2015
+        public int ReportedCountTime = 0;
+        internal MCA527FileProcessingState(uint Max, LMProcessingState src)
+        {
+            timeInBuffer = new ulong[Max];
+            Reset();
+
+            // shallow copy src state vars
+            hitsPerChn = src.hitsPerChn;
+            chnmask = src.chnmask;
+            StartCycle(null);
+            assayPending = src.assayPending;
+
+            useAsynch = src.useAsynch;
+            includingGen2 = src.includingGen2;
+            usingStreamRawAnalysis = src.usingStreamRawAnalysis;
+
+            eventBufferLength = src.eventBufferLength;
+            rawDataBuff = src.rawDataBuff;
+            maxValuesInBuffer = src.maxValuesInBuffer;
+            timeArray = src.timeArray;
+            neutronEventArray = src.neutronEventArray;
+
+            Sup = src.Sup;
+        } 
+
+        public override StreamStatusBlock ConvertDataBuffer(int eventcount)
+        {
+            StreamStatusBlock ssb = null;
+            // NEXT: detect end of stream and build ssb
+
+            // URGENT: this rework might mess end up the stream end check, and could blow here
+            // The analyzer code uses the list lengths to know when to stop counting neutrons. The buffer may be n, but the last neutron is in n - k.
+            if (timeInBuffer.Length < neutronEventArray.Count)
+                neutronEventArray.RemoveRange(timeInBuffer.Length - 1, neutronEventArray.Count - timeInBuffer.Length);
+            else if (timeInBuffer.Length > neutronEventArray.Count)
+                neutronEventArray.AddRange(new uint[timeInBuffer.Length - neutronEventArray.Count]);
+
+            if (timeInBuffer.Length < timeArray.Count)
+                timeArray.RemoveRange(timeInBuffer.Length - 1, timeArray.Count - timeInBuffer.Length);
+            else if (timeInBuffer.Length > timeArray.Count)
+                timeArray.AddRange(new ulong[timeInBuffer.Length - timeArray.Count]);
+
+            string msg = PrepRawStreams(num: (ulong)eventcount, combineDuplicateHits: true);
+            return ssb;
+        }
+
+        public void Reset()
+        {
+            FirstEventTimeInShakes = 0; TotalDups = 0; TotalEvents = 0; LastTimeInShakes = 0;
+        }
+
+        public UInt64 FirstEventTimeInShakes;
+        public UInt64 TotalDups;
+        public UInt64 TotalEvents;
+        public UInt64 LastTimeInShakes;
+
+        public string PrepRawStreams(ulong num, bool combineDuplicateHits = false)
+        {
+            string issue = String.Empty;
+            ulong dups = 0, events = 0;
+            ulong lasttime = 0;
+            double firstread = 0;
+
+            try
+            {
+                foreach (ulong time in timeInBuffer)
+                {
+                    events++;
+
+                    if (events > num)
+                    {
+                        events--;
+                        break;
+                    }
+
+                    if (events == 1)
+                    {
+                        if (FirstEventTimeInShakes == 0)
+                            FirstEventTimeInShakes = time;
+                        firstread = time;
+                    }
+					if (lasttime > time) // ooops! 
+                    {
+                        throw new Exception(string.Format("{0}, {1} out-of-order, you forgot to sort", lasttime, time));
+                    }
+                    else if (lasttime == time) // found a duplicate! 
+                    {
+                        dups++;
+                        // logger.TraceEvent(LogLevels.Verbose, 3337, "Skipping duplicate event {0} [{1:x8}] at time {2} (due to rounding)", events, channels[events], timeUI8B4);
+                        continue;
+                    }
+
+                    // fill in the arrays for the analyzers
+                    neutronEventArray[(int)NumValuesParsed] = 1;  // always the same
+                    timeArray[(int)NumValuesParsed] = time;
+
+					hitsPerChn[0]++;
+                    NumTotalsEncountered++;
+
+                    if (!usingStreamRawAnalysis) // drop them in, one by one
+                        Sup.HandleANeutronEvent(timeArray[(int)NumValuesParsed], neutronEventArray[(int)NumValuesParsed]);
+
+                    NumValuesParsed++;
+                    lasttime = time;
+                }
+
+                logger.TraceEvent(LogLevels.Verbose, 3338, "Converted {0} hits ({1} events) between {2} and {3} shakes ({4} duplicates skipped)({5})", events, NumValuesParsed, firstread, lasttime, dups, num);
+            }
+            catch (Exception e)
+            {
+                logger.TraceEvent(LogLevels.Verbose, 3339, "Converted {0} hits ({1} events) between {2} and {3} shakes ({4} duplicates skipped)({5})", events, NumValuesParsed, firstread, lasttime, dups, num);
+                logger.TraceEvent(LogLevels.Warning, 3363, "Error parsing pulses encountered '{0}'", e.Message);
+                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                issue = e.Message;
+            }
+            TotalEvents += events;
+            TotalDups += dups;
+            LastTimeInShakes = lasttime;
+            return issue;
+        }
+    }
+ 
+	  public class brokenMCA527FileProcessingState : LMProcessingState
     {
         //public UInt32[] channels;
         //public Double[] times;
@@ -1044,7 +1170,7 @@ namespace Analysis
         public ulong[] timeInBuffer;
         public bool mergeDuplicatesTimeChannelHits = true; // dev note: create external flag to toggle the use of this
         public int PTRReportedCountTime = 0;
-        internal MCA527FileProcessingState(uint Max, LMProcessingState src)
+        internal brokenMCA527FileProcessingState(uint Max, LMProcessingState src)
         {
             //channels = new UInt32[Max];
             //times = new Double[Max];
