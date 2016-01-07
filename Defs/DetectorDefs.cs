@@ -221,31 +221,33 @@ namespace DetectorDefs
             return ack;
         }
 
-        public static double TimeBase(this ConstructedSource src, InstrType device)
-        {
-            double te = 1e-7;
-            switch (device)
-            {
-                case InstrType.PTR32:
-                case InstrType.MCNPX:
-                case InstrType.MCA527: // TODO: not yet verified Nov 2015 jfl
-                case InstrType.N1:
-                    te = 1e-8;
-                    break;
-            }
+		public static double TimeBase(this ConstructedSource src, InstrType device)
+		{
+			double te = 1e-7;  // JSR files, LMMM and MCA-527 use 100 ns units, but MCA-527 can change 
+			switch (device)
+			{
+			case InstrType.PTR32:
+			case InstrType.MCNPX:
+			case InstrType.N1:
+				te = 1e-8;
+				break;
+			}
 
-            switch (src)
-            {
-                case ConstructedSource.PTRFile:
-                case ConstructedSource.SortedPulseTextFile:
-                case ConstructedSource.MCA527File:
-                    te = 1e-8;
-                    break;
-            }
-            return te;
-        }
+			switch (src) // src takes precedence over the inst type
+			{
+			case ConstructedSource.PTRFile:
+			case ConstructedSource.SortedPulseTextFile:
+				te = 1e-8;
+				break;
+			case ConstructedSource.NCDFile:
+			case ConstructedSource.MCA527File: // LMMM and MCA-527 use 100 ns units, but MCA-527 can change (a header field value) 
+				te = 1e-7;
+				break;
+			}
+			return te;
+		}
 
-        static Dictionary<ConstructedSource, string> PrettyName;
+		static Dictionary<ConstructedSource, string> PrettyName;
 
         static ConstructedSourceExtensions()
         {
@@ -266,13 +268,12 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
                 PrettyName.Add(ConstructedSource.Æther, "Æthereal");
             }
-        }
+		}
 
         public static string HappyFunName(this ConstructedSource src)
         {
             return PrettyName[src];
         }
-
 
         public static ConstructedSource SrcToEnum(this string src)
         {

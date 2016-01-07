@@ -183,7 +183,7 @@
 			// Step1PostProcessButton
 			// 
 			this.Step1PostProcessButton.Location = new System.Drawing.Point(160, 53);
-			this.Step1PostProcessButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step1PostProcessButton.Margin = new System.Windows.Forms.Padding(4);
 			this.Step1PostProcessButton.Name = "Step1PostProcessButton";
 			this.Step1PostProcessButton.Size = new System.Drawing.Size(397, 28);
 			this.Step1PostProcessButton.TabIndex = 0;
@@ -194,7 +194,7 @@
 			// Step1RealTimeButton
 			// 
 			this.Step1RealTimeButton.Location = new System.Drawing.Point(160, 111);
-			this.Step1RealTimeButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step1RealTimeButton.Margin = new System.Windows.Forms.Padding(4);
 			this.Step1RealTimeButton.Name = "Step1RealTimeButton";
 			this.Step1RealTimeButton.Size = new System.Drawing.Size(397, 28);
 			this.Step1RealTimeButton.TabIndex = 1;
@@ -216,7 +216,7 @@
 			// Step1CancelBtn
 			// 
 			this.Step1CancelBtn.Location = new System.Drawing.Point(424, 213);
-			this.Step1CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step1CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step1CancelBtn.Name = "Step1CancelBtn";
 			this.Step1CancelBtn.Size = new System.Drawing.Size(133, 28);
 			this.Step1CancelBtn.TabIndex = 3;
@@ -233,7 +233,7 @@
 			this.Step1ControlsPanel.Controls.Add(this.Step1PostProcessButton);
 			this.Step1ControlsPanel.Controls.Add(this.Step1OrLabel);
 			this.Step1ControlsPanel.Location = new System.Drawing.Point(5, 7);
-			this.Step1ControlsPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step1ControlsPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step1ControlsPanel.Name = "Step1ControlsPanel";
 			this.Step1ControlsPanel.Size = new System.Drawing.Size(629, 258);
 			this.Step1ControlsPanel.TabIndex = 5;
@@ -259,7 +259,7 @@
 			this.Step2APanel.Controls.Add(this.Step2ADescriptionLabel);
 			this.Step2APanel.Controls.Add(this.Step2Label);
 			this.Step2APanel.Location = new System.Drawing.Point(5, 283);
-			this.Step2APanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2APanel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2APanel.Name = "Step2APanel";
 			this.Step2APanel.Size = new System.Drawing.Size(629, 578);
 			this.Step2APanel.TabIndex = 6;
@@ -271,7 +271,7 @@
             "Detectotron 5000 on COM1",
             "Neutrons-R-Us Fabulux Home Edition on COM6"});
 			this.Step2ADetCB.Location = new System.Drawing.Point(440, 20);
-			this.Step2ADetCB.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2ADetCB.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2ADetCB.Name = "Step2ADetCB";
 			this.Step2ADetCB.Size = new System.Drawing.Size(167, 24);
 			this.Step2ADetCB.TabIndex = 44;
@@ -290,7 +290,7 @@
 			// 
 			this.Step2SaveEarlyTermCheckBox.AutoSize = true;
 			this.Step2SaveEarlyTermCheckBox.Location = new System.Drawing.Point(30, 404);
-			this.Step2SaveEarlyTermCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2SaveEarlyTermCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2SaveEarlyTermCheckBox.Name = "Step2SaveEarlyTermCheckBox";
 			this.Step2SaveEarlyTermCheckBox.Size = new System.Drawing.Size(311, 21);
 			this.Step2SaveEarlyTermCheckBox.TabIndex = 42;
@@ -301,7 +301,7 @@
 			// FilePicker2
 			// 
 			this.FilePicker2.Location = new System.Drawing.Point(527, 311);
-			this.FilePicker2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.FilePicker2.Margin = new System.Windows.Forms.Padding(4);
 			this.FilePicker2.Name = "FilePicker2";
 			this.FilePicker2.Size = new System.Drawing.Size(39, 28);
 			this.FilePicker2.TabIndex = 41;
@@ -313,7 +313,7 @@
 			// 
 			this.Step2IncludeConfigCheckBox.AutoSize = true;
 			this.Step2IncludeConfigCheckBox.Location = new System.Drawing.Point(30, 348);
-			this.Step2IncludeConfigCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2IncludeConfigCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2IncludeConfigCheckBox.Name = "Step2IncludeConfigCheckBox";
 			this.Step2IncludeConfigCheckBox.Size = new System.Drawing.Size(451, 21);
 			this.Step2IncludeConfigCheckBox.TabIndex = 40;
@@ -335,7 +335,7 @@
 			// Step2OutputDirectoryTextBox
 			// 
 			this.Step2OutputDirectoryTextBox.Location = new System.Drawing.Point(30, 311);
-			this.Step2OutputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2OutputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2OutputDirectoryTextBox.Name = "Step2OutputDirectoryTextBox";
 			this.Step2OutputDirectoryTextBox.Size = new System.Drawing.Size(481, 22);
 			this.Step2OutputDirectoryTextBox.TabIndex = 38;
@@ -347,7 +347,7 @@
 			// 
 			this.Step2AutoOpenCheckBox.AutoSize = true;
 			this.Step2AutoOpenCheckBox.Location = new System.Drawing.Point(30, 376);
-			this.Step2AutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2AutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2AutoOpenCheckBox.Name = "Step2AutoOpenCheckBox";
 			this.Step2AutoOpenCheckBox.Size = new System.Drawing.Size(410, 21);
 			this.Step2AutoOpenCheckBox.TabIndex = 37;
@@ -362,10 +362,10 @@
 			this.InputFileTypeGroupBox.Controls.Add(this.Step2SortedPulseRadioBtn);
 			this.InputFileTypeGroupBox.Controls.Add(this.Step2NCDRadioBtn);
 			this.InputFileTypeGroupBox.Location = new System.Drawing.Point(29, 139);
-			this.InputFileTypeGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.InputFileTypeGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.InputFileTypeGroupBox.Name = "InputFileTypeGroupBox";
-			this.InputFileTypeGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.InputFileTypeGroupBox.Size = new System.Drawing.Size(261, 135);
+			this.InputFileTypeGroupBox.Padding = new System.Windows.Forms.Padding(4);
+			this.InputFileTypeGroupBox.Size = new System.Drawing.Size(290, 145);
 			this.InputFileTypeGroupBox.TabIndex = 36;
 			this.InputFileTypeGroupBox.TabStop = false;
 			this.InputFileTypeGroupBox.Text = "Select List Mode data file type";
@@ -374,7 +374,7 @@
 			// 
 			this.Step2MCA5272RadioBtn.AutoSize = true;
 			this.Step2MCA5272RadioBtn.Location = new System.Drawing.Point(11, 110);
-			this.Step2MCA5272RadioBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2MCA5272RadioBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2MCA5272RadioBtn.Name = "Step2MCA5272RadioBtn";
 			this.Step2MCA5272RadioBtn.Size = new System.Drawing.Size(136, 21);
 			this.Step2MCA5272RadioBtn.TabIndex = 6;
@@ -387,12 +387,12 @@
 			// 
 			this.Step2PTR32RadioBtn.AutoSize = true;
 			this.Step2PTR32RadioBtn.Location = new System.Drawing.Point(11, 81);
-			this.Step2PTR32RadioBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2PTR32RadioBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2PTR32RadioBtn.Name = "Step2PTR32RadioBtn";
-			this.Step2PTR32RadioBtn.Size = new System.Drawing.Size(186, 21);
+			this.Step2PTR32RadioBtn.Size = new System.Drawing.Size(191, 21);
 			this.Step2PTR32RadioBtn.TabIndex = 2;
 			this.Step2PTR32RadioBtn.TabStop = true;
-			this.Step2PTR32RadioBtn.Text = "PTR-32 dual (*.bin, *.chn";
+			this.Step2PTR32RadioBtn.Text = "PTR-32 dual (*.bin, *.chn)";
 			this.Step2PTR32RadioBtn.UseVisualStyleBackColor = true;
 			this.Step2PTR32RadioBtn.CheckedChanged += new System.EventHandler(this.Step2PTR32RadioBtn_CheckedChanged);
 			// 
@@ -400,7 +400,7 @@
 			// 
 			this.Step2SortedPulseRadioBtn.AutoSize = true;
 			this.Step2SortedPulseRadioBtn.Location = new System.Drawing.Point(11, 52);
-			this.Step2SortedPulseRadioBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2SortedPulseRadioBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2SortedPulseRadioBtn.Name = "Step2SortedPulseRadioBtn";
 			this.Step2SortedPulseRadioBtn.Size = new System.Drawing.Size(197, 21);
 			this.Step2SortedPulseRadioBtn.TabIndex = 1;
@@ -413,7 +413,7 @@
 			// 
 			this.Step2NCDRadioBtn.AutoSize = true;
 			this.Step2NCDRadioBtn.Location = new System.Drawing.Point(11, 23);
-			this.Step2NCDRadioBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2NCDRadioBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2NCDRadioBtn.Name = "Step2NCDRadioBtn";
 			this.Step2NCDRadioBtn.Size = new System.Drawing.Size(149, 21);
 			this.Step2NCDRadioBtn.TabIndex = 0;
@@ -426,7 +426,7 @@
 			// 
 			this.Step2RecurseCheckBox.AutoSize = true;
 			this.Step2RecurseCheckBox.Location = new System.Drawing.Point(31, 110);
-			this.Step2RecurseCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2RecurseCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2RecurseCheckBox.Name = "Step2RecurseCheckBox";
 			this.Step2RecurseCheckBox.Size = new System.Drawing.Size(157, 21);
 			this.Step2RecurseCheckBox.TabIndex = 7;
@@ -439,7 +439,7 @@
 			this.Step2ANextBtn.Enabled = false;
 			this.Step2ANextBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Step2ANextBtn.Location = new System.Drawing.Point(219, 526);
-			this.Step2ANextBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2ANextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2ANextBtn.Name = "Step2ANextBtn";
 			this.Step2ANextBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step2ANextBtn.TabIndex = 6;
@@ -450,7 +450,7 @@
 			// Step2BrowseBtn
 			// 
 			this.Step2BrowseBtn.Location = new System.Drawing.Point(529, 66);
-			this.Step2BrowseBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BrowseBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BrowseBtn.Name = "Step2BrowseBtn";
 			this.Step2BrowseBtn.Size = new System.Drawing.Size(39, 28);
 			this.Step2BrowseBtn.TabIndex = 5;
@@ -461,7 +461,7 @@
 			// Step2InputDirectoryTextBox
 			// 
 			this.Step2InputDirectoryTextBox.Location = new System.Drawing.Point(32, 69);
-			this.Step2InputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2InputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2InputDirectoryTextBox.Name = "Step2InputDirectoryTextBox";
 			this.Step2InputDirectoryTextBox.Size = new System.Drawing.Size(481, 22);
 			this.Step2InputDirectoryTextBox.TabIndex = 4;
@@ -471,7 +471,7 @@
 			// Step2CancelBtn
 			// 
 			this.Step2CancelBtn.Location = new System.Drawing.Point(424, 526);
-			this.Step2CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2CancelBtn.Name = "Step2CancelBtn";
 			this.Step2CancelBtn.Size = new System.Drawing.Size(133, 28);
 			this.Step2CancelBtn.TabIndex = 3;
@@ -482,7 +482,7 @@
 			// Step2BackBtn
 			// 
 			this.Step2BackBtn.Location = new System.Drawing.Point(32, 526);
-			this.Step2BackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BackBtn.Name = "Step2BackBtn";
 			this.Step2BackBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step2BackBtn.TabIndex = 2;
@@ -536,7 +536,7 @@
 			this.Step2BPanel.Controls.Add(this.Step2BDescriptionLabel);
 			this.Step2BPanel.Controls.Add(this.Step2BLabel);
 			this.Step2BPanel.Location = new System.Drawing.Point(5, 869);
-			this.Step2BPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BPanel.Name = "Step2BPanel";
 			this.Step2BPanel.Size = new System.Drawing.Size(629, 466);
 			this.Step2BPanel.TabIndex = 7;
@@ -545,7 +545,7 @@
 			// 
 			this.Step2BWriteDataFiles.AutoSize = true;
 			this.Step2BWriteDataFiles.Location = new System.Drawing.Point(32, 334);
-			this.Step2BWriteDataFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BWriteDataFiles.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BWriteDataFiles.Name = "Step2BWriteDataFiles";
 			this.Step2BWriteDataFiles.Size = new System.Drawing.Size(276, 21);
 			this.Step2BWriteDataFiles.TabIndex = 21;
@@ -558,7 +558,7 @@
 			// ReviewDetector
 			// 
 			this.ReviewDetector.Location = new System.Drawing.Point(423, 94);
-			this.ReviewDetector.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.ReviewDetector.Margin = new System.Windows.Forms.Padding(4);
 			this.ReviewDetector.Name = "ReviewDetector";
 			this.ReviewDetector.Size = new System.Drawing.Size(100, 28);
 			this.ReviewDetector.TabIndex = 20;
@@ -579,7 +579,7 @@
 			// CycleNumTextBox
 			// 
 			this.CycleNumTextBox.Location = new System.Drawing.Point(124, 388);
-			this.CycleNumTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CycleNumTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CycleNumTextBox.Name = "CycleNumTextBox";
 			this.CycleNumTextBox.Size = new System.Drawing.Size(47, 22);
 			this.CycleNumTextBox.TabIndex = 18;
@@ -610,7 +610,7 @@
 			// IntervalTextBox
 			// 
 			this.IntervalTextBox.Location = new System.Drawing.Point(223, 357);
-			this.IntervalTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.IntervalTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.IntervalTextBox.Name = "IntervalTextBox";
 			this.IntervalTextBox.Size = new System.Drawing.Size(47, 22);
 			this.IntervalTextBox.TabIndex = 15;
@@ -632,7 +632,7 @@
 			// 
 			this.Step2BSaveEarlyTermCheckBox.AutoSize = true;
 			this.Step2BSaveEarlyTermCheckBox.Location = new System.Drawing.Point(32, 294);
-			this.Step2BSaveEarlyTermCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BSaveEarlyTermCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BSaveEarlyTermCheckBox.Name = "Step2BSaveEarlyTermCheckBox";
 			this.Step2BSaveEarlyTermCheckBox.Size = new System.Drawing.Size(311, 21);
 			this.Step2BSaveEarlyTermCheckBox.TabIndex = 13;
@@ -644,7 +644,7 @@
 			// 
 			this.Step2BAutoOpenCheckBox.AutoSize = true;
 			this.Step2BAutoOpenCheckBox.Location = new System.Drawing.Point(32, 266);
-			this.Step2BAutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BAutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BAutoOpenCheckBox.Name = "Step2BAutoOpenCheckBox";
 			this.Step2BAutoOpenCheckBox.Size = new System.Drawing.Size(410, 21);
 			this.Step2BAutoOpenCheckBox.TabIndex = 12;
@@ -656,7 +656,7 @@
 			// 
 			this.Step2BIncludeConfigCheckBox.AutoSize = true;
 			this.Step2BIncludeConfigCheckBox.Location = new System.Drawing.Point(32, 238);
-			this.Step2BIncludeConfigCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BIncludeConfigCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BIncludeConfigCheckBox.Name = "Step2BIncludeConfigCheckBox";
 			this.Step2BIncludeConfigCheckBox.Size = new System.Drawing.Size(451, 21);
 			this.Step2BIncludeConfigCheckBox.TabIndex = 11;
@@ -667,7 +667,7 @@
 			// FilePicker5
 			// 
 			this.FilePicker5.Location = new System.Drawing.Point(529, 206);
-			this.FilePicker5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.FilePicker5.Margin = new System.Windows.Forms.Padding(4);
 			this.FilePicker5.Name = "FilePicker5";
 			this.FilePicker5.Size = new System.Drawing.Size(39, 28);
 			this.FilePicker5.TabIndex = 10;
@@ -678,7 +678,7 @@
 			// Step2BOutputDirectoryTextBox
 			// 
 			this.Step2BOutputDirectoryTextBox.Location = new System.Drawing.Point(32, 206);
-			this.Step2BOutputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BOutputDirectoryTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BOutputDirectoryTextBox.Name = "Step2BOutputDirectoryTextBox";
 			this.Step2BOutputDirectoryTextBox.Size = new System.Drawing.Size(481, 22);
 			this.Step2BOutputDirectoryTextBox.TabIndex = 9;
@@ -701,7 +701,7 @@
 			this.Step2BNextBtn.Enabled = false;
 			this.Step2BNextBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Step2BNextBtn.Location = new System.Drawing.Point(219, 417);
-			this.Step2BNextBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BNextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BNextBtn.Name = "Step2BNextBtn";
 			this.Step2BNextBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step2BNextBtn.TabIndex = 7;
@@ -712,7 +712,7 @@
 			// Step2BCancelBtn
 			// 
 			this.Step2BCancelBtn.Location = new System.Drawing.Point(424, 417);
-			this.Step2BCancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BCancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BCancelBtn.Name = "Step2BCancelBtn";
 			this.Step2BCancelBtn.Size = new System.Drawing.Size(133, 28);
 			this.Step2BCancelBtn.TabIndex = 6;
@@ -723,7 +723,7 @@
 			// Step2BBackBtn
 			// 
 			this.Step2BBackBtn.Location = new System.Drawing.Point(32, 417);
-			this.Step2BBackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BBackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BBackBtn.Name = "Step2BBackBtn";
 			this.Step2BBackBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step2BBackBtn.TabIndex = 5;
@@ -734,7 +734,7 @@
 			// DefineNewLM
 			// 
 			this.DefineNewLM.Location = new System.Drawing.Point(219, 123);
-			this.DefineNewLM.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DefineNewLM.Margin = new System.Windows.Forms.Padding(4);
 			this.DefineNewLM.Name = "DefineNewLM";
 			this.DefineNewLM.Size = new System.Drawing.Size(189, 28);
 			this.DefineNewLM.TabIndex = 4;
@@ -759,7 +759,7 @@
             "Detectotron 5000 on COM1",
             "Neutrons-R-Us Fabulux Home Edition on COM6"});
 			this.Step2BDetectorComboBox.Location = new System.Drawing.Point(219, 90);
-			this.Step2BDetectorComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step2BDetectorComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step2BDetectorComboBox.Name = "Step2BDetectorComboBox";
 			this.Step2BDetectorComboBox.Size = new System.Drawing.Size(195, 24);
 			this.Step2BDetectorComboBox.TabIndex = 2;
@@ -797,7 +797,7 @@
 			this.Step3Panel.Controls.Add(this.Step3DescriptionLabel);
 			this.Step3Panel.Controls.Add(this.Step3Label);
 			this.Step3Panel.Location = new System.Drawing.Point(643, 7);
-			this.Step3Panel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step3Panel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step3Panel.Name = "Step3Panel";
 			this.Step3Panel.Size = new System.Drawing.Size(1335, 716);
 			this.Step3Panel.TabIndex = 8;
@@ -805,7 +805,7 @@
 			// DefSR
 			// 
 			this.DefSR.Location = new System.Drawing.Point(27, 295);
-			this.DefSR.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DefSR.Margin = new System.Windows.Forms.Padding(4);
 			this.DefSR.Name = "DefSR";
 			this.DefSR.Size = new System.Drawing.Size(100, 57);
 			this.DefSR.TabIndex = 7;
@@ -822,7 +822,7 @@
 			this.panel1.Controls.Add(this.CMCCCTimingParamsGroupBox);
 			this.panel1.Controls.Add(this.DiagramPanel);
 			this.panel1.Location = new System.Drawing.Point(413, 16);
-			this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.panel1.Margin = new System.Windows.Forms.Padding(4);
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(917, 686);
 			this.panel1.TabIndex = 6;
@@ -837,9 +837,9 @@
 			this.MultConvAccTimingParamsGroupBox.Controls.Add(this.MultConvAccGateWidthTextBox);
 			this.MultConvAccTimingParamsGroupBox.Controls.Add(this.MultConvAccInitDelayTextBox);
 			this.MultConvAccTimingParamsGroupBox.Location = new System.Drawing.Point(7, 551);
-			this.MultConvAccTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultConvAccTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultConvAccTimingParamsGroupBox.Name = "MultConvAccTimingParamsGroupBox";
-			this.MultConvAccTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultConvAccTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.MultConvAccTimingParamsGroupBox.Size = new System.Drawing.Size(897, 110);
 			this.MultConvAccTimingParamsGroupBox.TabIndex = 4;
 			this.MultConvAccTimingParamsGroupBox.TabStop = false;
@@ -889,7 +889,7 @@
 			// MultConvAccClockWidthTextBox
 			// 
 			this.MultConvAccClockWidthTextBox.Location = new System.Drawing.Point(736, 30);
-			this.MultConvAccClockWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultConvAccClockWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultConvAccClockWidthTextBox.Name = "MultConvAccClockWidthTextBox";
 			this.MultConvAccClockWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultConvAccClockWidthTextBox.TabIndex = 2;
@@ -901,7 +901,7 @@
 			// MultConvAccGateWidthTextBox
 			// 
 			this.MultConvAccGateWidthTextBox.Location = new System.Drawing.Point(416, 30);
-			this.MultConvAccGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultConvAccGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultConvAccGateWidthTextBox.Name = "MultConvAccGateWidthTextBox";
 			this.MultConvAccGateWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultConvAccGateWidthTextBox.TabIndex = 1;
@@ -913,7 +913,7 @@
 			// MultConvAccInitDelayTextBox
 			// 
 			this.MultConvAccInitDelayTextBox.Location = new System.Drawing.Point(105, 30);
-			this.MultConvAccInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultConvAccInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultConvAccInitDelayTextBox.Name = "MultConvAccInitDelayTextBox";
 			this.MultConvAccInitDelayTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultConvAccInitDelayTextBox.TabIndex = 0;
@@ -932,9 +932,9 @@
 			this.MultFastAccTimingParamsGroupBox.Controls.Add(this.MultFastAccGateWidthTextBox);
 			this.MultFastAccTimingParamsGroupBox.Controls.Add(this.MultFastAccInitDelayTextBox);
 			this.MultFastAccTimingParamsGroupBox.Location = new System.Drawing.Point(7, 434);
-			this.MultFastAccTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultFastAccTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultFastAccTimingParamsGroupBox.Name = "MultFastAccTimingParamsGroupBox";
-			this.MultFastAccTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultFastAccTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.MultFastAccTimingParamsGroupBox.Size = new System.Drawing.Size(897, 110);
 			this.MultFastAccTimingParamsGroupBox.TabIndex = 3;
 			this.MultFastAccTimingParamsGroupBox.TabStop = false;
@@ -984,7 +984,7 @@
 			// MultFastAccClockWidthTextBox
 			// 
 			this.MultFastAccClockWidthTextBox.Location = new System.Drawing.Point(736, 30);
-			this.MultFastAccClockWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultFastAccClockWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultFastAccClockWidthTextBox.Name = "MultFastAccClockWidthTextBox";
 			this.MultFastAccClockWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultFastAccClockWidthTextBox.TabIndex = 2;
@@ -996,7 +996,7 @@
 			// MultFastAccGateWidthTextBox
 			// 
 			this.MultFastAccGateWidthTextBox.Location = new System.Drawing.Point(416, 30);
-			this.MultFastAccGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultFastAccGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultFastAccGateWidthTextBox.Name = "MultFastAccGateWidthTextBox";
 			this.MultFastAccGateWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultFastAccGateWidthTextBox.TabIndex = 1;
@@ -1008,7 +1008,7 @@
 			// MultFastAccInitDelayTextBox
 			// 
 			this.MultFastAccInitDelayTextBox.Location = new System.Drawing.Point(105, 30);
-			this.MultFastAccInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MultFastAccInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MultFastAccInitDelayTextBox.Name = "MultFastAccInitDelayTextBox";
 			this.MultFastAccInitDelayTextBox.Size = new System.Drawing.Size(132, 22);
 			this.MultFastAccInitDelayTextBox.TabIndex = 0;
@@ -1023,9 +1023,9 @@
 			this.FeynmanTimingParamsGroupBox.Controls.Add(this.SharedGateWidthLabel);
 			this.FeynmanTimingParamsGroupBox.Controls.Add(this.SharedGateWidthTextBox);
 			this.FeynmanTimingParamsGroupBox.Location = new System.Drawing.Point(7, 345);
-			this.FeynmanTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.FeynmanTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.FeynmanTimingParamsGroupBox.Name = "FeynmanTimingParamsGroupBox";
-			this.FeynmanTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.FeynmanTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.FeynmanTimingParamsGroupBox.Size = new System.Drawing.Size(897, 82);
 			this.FeynmanTimingParamsGroupBox.TabIndex = 2;
 			this.FeynmanTimingParamsGroupBox.TabStop = false;
@@ -1055,7 +1055,7 @@
 			// SharedGateWidthTextBox
 			// 
 			this.SharedGateWidthTextBox.Location = new System.Drawing.Point(104, 32);
-			this.SharedGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.SharedGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.SharedGateWidthTextBox.Name = "SharedGateWidthTextBox";
 			this.SharedGateWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.SharedGateWidthTextBox.TabIndex = 0;
@@ -1086,9 +1086,9 @@
 			this.CMCCCTimingParamsGroupBox.Controls.Add(this.CMCCCGateWidthTextBox);
 			this.CMCCCTimingParamsGroupBox.Controls.Add(this.CMCCCInitDelayTextBox);
 			this.CMCCCTimingParamsGroupBox.Location = new System.Drawing.Point(7, 226);
-			this.CMCCCTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CMCCCTimingParamsGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CMCCCTimingParamsGroupBox.Name = "CMCCCTimingParamsGroupBox";
-			this.CMCCCTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CMCCCTimingParamsGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.CMCCCTimingParamsGroupBox.Size = new System.Drawing.Size(897, 110);
 			this.CMCCCTimingParamsGroupBox.TabIndex = 1;
 			this.CMCCCTimingParamsGroupBox.TabStop = false;
@@ -1138,7 +1138,7 @@
 			// CMCCCLongDelayTextBox
 			// 
 			this.CMCCCLongDelayTextBox.Location = new System.Drawing.Point(736, 33);
-			this.CMCCCLongDelayTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CMCCCLongDelayTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CMCCCLongDelayTextBox.Name = "CMCCCLongDelayTextBox";
 			this.CMCCCLongDelayTextBox.Size = new System.Drawing.Size(132, 22);
 			this.CMCCCLongDelayTextBox.TabIndex = 2;
@@ -1150,7 +1150,7 @@
 			// CMCCCGateWidthTextBox
 			// 
 			this.CMCCCGateWidthTextBox.Location = new System.Drawing.Point(416, 33);
-			this.CMCCCGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CMCCCGateWidthTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CMCCCGateWidthTextBox.Name = "CMCCCGateWidthTextBox";
 			this.CMCCCGateWidthTextBox.Size = new System.Drawing.Size(132, 22);
 			this.CMCCCGateWidthTextBox.TabIndex = 1;
@@ -1162,7 +1162,7 @@
 			// CMCCCInitDelayTextBox
 			// 
 			this.CMCCCInitDelayTextBox.Location = new System.Drawing.Point(104, 33);
-			this.CMCCCInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CMCCCInitDelayTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CMCCCInitDelayTextBox.Name = "CMCCCInitDelayTextBox";
 			this.CMCCCInitDelayTextBox.Size = new System.Drawing.Size(132, 22);
 			this.CMCCCInitDelayTextBox.TabIndex = 0;
@@ -1174,7 +1174,7 @@
 			// DiagramPanel
 			// 
 			this.DiagramPanel.Location = new System.Drawing.Point(4, 4);
-			this.DiagramPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DiagramPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.DiagramPanel.Name = "DiagramPanel";
 			this.DiagramPanel.Size = new System.Drawing.Size(900, 215);
 			this.DiagramPanel.TabIndex = 0;
@@ -1184,7 +1184,7 @@
 			// Step3CancelBtn
 			// 
 			this.Step3CancelBtn.Location = new System.Drawing.Point(256, 295);
-			this.Step3CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step3CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step3CancelBtn.Name = "Step3CancelBtn";
 			this.Step3CancelBtn.Size = new System.Drawing.Size(100, 57);
 			this.Step3CancelBtn.TabIndex = 5;
@@ -1197,7 +1197,7 @@
 			this.Step3NextBtn.Enabled = false;
 			this.Step3NextBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Step3NextBtn.Location = new System.Drawing.Point(256, 242);
-			this.Step3NextBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step3NextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step3NextBtn.Name = "Step3NextBtn";
 			this.Step3NextBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step3NextBtn.TabIndex = 4;
@@ -1208,7 +1208,7 @@
 			// Step3BackBtn
 			// 
 			this.Step3BackBtn.Location = new System.Drawing.Point(24, 242);
-			this.Step3BackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step3BackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step3BackBtn.Name = "Step3BackBtn";
 			this.Step3BackBtn.Size = new System.Drawing.Size(100, 28);
 			this.Step3BackBtn.TabIndex = 3;
@@ -1220,9 +1220,9 @@
 			// 
 			this.groupBox1.Controls.Add(this.LMAnalyzers);
 			this.groupBox1.Location = new System.Drawing.Point(16, 53);
-			this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
 			this.groupBox1.Size = new System.Drawing.Size(340, 164);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
@@ -1239,7 +1239,7 @@
             "Event spacing",
             "Rossi-α (alpha)"});
 			this.LMAnalyzers.Location = new System.Drawing.Point(8, 11);
-			this.LMAnalyzers.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMAnalyzers.Margin = new System.Windows.Forms.Padding(4);
 			this.LMAnalyzers.Name = "LMAnalyzers";
 			this.LMAnalyzers.Size = new System.Drawing.Size(331, 140);
 			this.LMAnalyzers.TabIndex = 7;
@@ -1291,7 +1291,7 @@
 			this.Step4Panel.Controls.Add(this.label3);
 			this.Step4Panel.Controls.Add(this.label2);
 			this.Step4Panel.Location = new System.Drawing.Point(643, 731);
-			this.Step4Panel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4Panel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4Panel.Name = "Step4Panel";
 			this.Step4Panel.Size = new System.Drawing.Size(684, 400);
 			this.Step4Panel.TabIndex = 9;
@@ -1300,7 +1300,7 @@
 			// Step4SaveAndExit
 			// 
 			this.Step4SaveAndExit.Location = new System.Drawing.Point(155, 321);
-			this.Step4SaveAndExit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4SaveAndExit.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4SaveAndExit.Name = "Step4SaveAndExit";
 			this.Step4SaveAndExit.Size = new System.Drawing.Size(135, 62);
 			this.Step4SaveAndExit.TabIndex = 8;
@@ -1313,7 +1313,7 @@
 			this.Step4OutputDirTextBox.BackColor = System.Drawing.Color.White;
 			this.Step4OutputDirTextBox.Enabled = false;
 			this.Step4OutputDirTextBox.Location = new System.Drawing.Point(155, 134);
-			this.Step4OutputDirTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4OutputDirTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4OutputDirTextBox.Name = "Step4OutputDirTextBox";
 			this.Step4OutputDirTextBox.Size = new System.Drawing.Size(483, 22);
 			this.Step4OutputDirTextBox.TabIndex = 20;
@@ -1373,7 +1373,7 @@
 			// Step4BackBtn
 			// 
 			this.Step4BackBtn.Location = new System.Drawing.Point(47, 329);
-			this.Step4BackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4BackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4BackBtn.Name = "Step4BackBtn";
 			this.Step4BackBtn.Size = new System.Drawing.Size(100, 48);
 			this.Step4BackBtn.TabIndex = 14;
@@ -1384,7 +1384,7 @@
 			// Step4CancelBtn
 			// 
 			this.Step4CancelBtn.Location = new System.Drawing.Point(537, 329);
-			this.Step4CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4CancelBtn.Name = "Step4CancelBtn";
 			this.Step4CancelBtn.Size = new System.Drawing.Size(100, 48);
 			this.Step4CancelBtn.TabIndex = 13;
@@ -1395,7 +1395,7 @@
 			// Step4NextBtn
 			// 
 			this.Step4NextBtn.Location = new System.Drawing.Point(395, 321);
-			this.Step4NextBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4NextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4NextBtn.Name = "Step4NextBtn";
 			this.Step4NextBtn.Size = new System.Drawing.Size(135, 62);
 			this.Step4NextBtn.TabIndex = 12;
@@ -1409,7 +1409,7 @@
 			this.Step4Param3TextBox.Enabled = false;
 			this.Step4Param3TextBox.ForeColor = System.Drawing.Color.Black;
 			this.Step4Param3TextBox.Location = new System.Drawing.Point(155, 265);
-			this.Step4Param3TextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4Param3TextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4Param3TextBox.Name = "Step4Param3TextBox";
 			this.Step4Param3TextBox.Size = new System.Drawing.Size(132, 22);
 			this.Step4Param3TextBox.TabIndex = 11;
@@ -1421,7 +1421,7 @@
 			this.Step4Param2TextBox.Enabled = false;
 			this.Step4Param2TextBox.ForeColor = System.Drawing.Color.Black;
 			this.Step4Param2TextBox.Location = new System.Drawing.Point(155, 230);
-			this.Step4Param2TextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4Param2TextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4Param2TextBox.Name = "Step4Param2TextBox";
 			this.Step4Param2TextBox.Size = new System.Drawing.Size(132, 22);
 			this.Step4Param2TextBox.TabIndex = 10;
@@ -1433,7 +1433,7 @@
 			this.Step4Param1TextBox.Enabled = false;
 			this.Step4Param1TextBox.ForeColor = System.Drawing.Color.Black;
 			this.Step4Param1TextBox.Location = new System.Drawing.Point(155, 198);
-			this.Step4Param1TextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4Param1TextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4Param1TextBox.Name = "Step4Param1TextBox";
 			this.Step4Param1TextBox.Size = new System.Drawing.Size(132, 22);
 			this.Step4Param1TextBox.TabIndex = 9;
@@ -1445,7 +1445,7 @@
 			this.Step4AnalysisMethodTextBox.Enabled = false;
 			this.Step4AnalysisMethodTextBox.ForeColor = System.Drawing.Color.Black;
 			this.Step4AnalysisMethodTextBox.Location = new System.Drawing.Point(155, 166);
-			this.Step4AnalysisMethodTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4AnalysisMethodTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4AnalysisMethodTextBox.Name = "Step4AnalysisMethodTextBox";
 			this.Step4AnalysisMethodTextBox.Size = new System.Drawing.Size(483, 22);
 			this.Step4AnalysisMethodTextBox.TabIndex = 8;
@@ -1456,7 +1456,7 @@
 			this.Step4DataSourceTextBox.Enabled = false;
 			this.Step4DataSourceTextBox.ForeColor = System.Drawing.Color.Black;
 			this.Step4DataSourceTextBox.Location = new System.Drawing.Point(155, 102);
-			this.Step4DataSourceTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Step4DataSourceTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4DataSourceTextBox.Name = "Step4DataSourceTextBox";
 			this.Step4DataSourceTextBox.Size = new System.Drawing.Size(483, 22);
 			this.Step4DataSourceTextBox.TabIndex = 7;
@@ -1544,7 +1544,7 @@
 			this.Controls.Add(this.Step3Panel);
 			this.Controls.Add(this.Step2APanel);
 			this.Controls.Add(this.Step1ControlsPanel);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "AnalysisWizard";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "List Mode Data Analysis Wizard";

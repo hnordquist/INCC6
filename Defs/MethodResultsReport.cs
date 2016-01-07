@@ -376,7 +376,7 @@ namespace AnalysisDefs
                     case INCCReportSection.Reference:
                         sec = new INCCStyleSection(null, 1);
                         sec.AddHeader("Counting results, summaries and cycle counts file name");  // section header
-                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFileName);
+                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFileName.Path);
                         sec.Add(resline);
                         break;
                     default:

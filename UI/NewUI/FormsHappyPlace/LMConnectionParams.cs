@@ -151,14 +151,18 @@ namespace NewUI
                 else if (det.Id.SRType == InstrType.PTR32 || det.Id.SRType == InstrType.MCA527)
                 {
                     this.PTR32Panel.Visible = true;
-                    this.ConnIdField.Text = String.Copy(det.Id.DetectorId);
 					if (det.Id.SRType == InstrType.MCA527)
 					{
+						MCAName.Visible = true;
+						MCAName.Text = String.Copy(det.Id.DetectorId);
+						ConnIdField.Text = String.Copy(det.Id.ElectronicsId);
 						connIdLabel.Text = "MCA-527 serial number: ";
 						connLabel.Text = "MCA-527 Connection Parameters";
 					}
 					else
 					{ 
+						MCAName.Visible = false;
+						ConnIdField.Text = String.Copy(det.Id.DetectorId);
 						connIdLabel.Text = "PTR-32 instrument identifier: ";
 						connLabel.Text = "PTR-32 Connection Parameters";
 					}

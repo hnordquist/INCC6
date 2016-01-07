@@ -104,6 +104,8 @@
 			this.AddDetectorTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.AddDetectorTypeLabel = new System.Windows.Forms.Label();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.label1 = new System.Windows.Forms.Label();
+			this.MCAName = new System.Windows.Forms.TextBox();
 			this.PerformanceTuningGroupBox.SuspendLayout();
 			this.InstrumentDiscoveryGroupBox.SuspendLayout();
 			this.JoeIsTheCoolestGroupBox.SuspendLayout();
@@ -127,7 +129,7 @@
 			// LMMMSubnetTextBox
 			// 
 			this.LMMMSubnetTextBox.Location = new System.Drawing.Point(153, 39);
-			this.LMMMSubnetTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMSubnetTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMSubnetTextBox.Name = "LMMMSubnetTextBox";
 			this.LMMMSubnetTextBox.Size = new System.Drawing.Size(121, 22);
 			this.LMMMSubnetTextBox.TabIndex = 1;
@@ -148,7 +150,7 @@
 			// LMMMLocalPortTextBox
 			// 
 			this.LMMMLocalPortTextBox.Location = new System.Drawing.Point(153, 71);
-			this.LMMMLocalPortTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMLocalPortTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMLocalPortTextBox.Name = "LMMMLocalPortTextBox";
 			this.LMMMLocalPortTextBox.Size = new System.Drawing.Size(64, 22);
 			this.LMMMLocalPortTextBox.TabIndex = 3;
@@ -169,7 +171,7 @@
 			// LMMMDiscWaitTimeTextBox
 			// 
 			this.LMMMDiscWaitTimeTextBox.Location = new System.Drawing.Point(173, 80);
-			this.LMMMDiscWaitTimeTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMDiscWaitTimeTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMDiscWaitTimeTextBox.Name = "LMMMDiscWaitTimeTextBox";
 			this.LMMMDiscWaitTimeTextBox.Size = new System.Drawing.Size(72, 22);
 			this.LMMMDiscWaitTimeTextBox.TabIndex = 5;
@@ -204,7 +206,7 @@
 			this.LMMMBroadcastCheckBox.Checked = true;
 			this.LMMMBroadcastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.LMMMBroadcastCheckBox.Location = new System.Drawing.Point(92, 112);
-			this.LMMMBroadcastCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMBroadcastCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMBroadcastCheckBox.Name = "LMMMBroadcastCheckBox";
 			this.LMMMBroadcastCheckBox.Size = new System.Drawing.Size(94, 21);
 			this.LMMMBroadcastCheckBox.TabIndex = 8;
@@ -216,7 +218,7 @@
 			// LMMMRemotePortTextBox
 			// 
 			this.LMMMRemotePortTextBox.Location = new System.Drawing.Point(153, 103);
-			this.LMMMRemotePortTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMRemotePortTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMRemotePortTextBox.Name = "LMMMRemotePortTextBox";
 			this.LMMMRemotePortTextBox.Size = new System.Drawing.Size(64, 22);
 			this.LMMMRemotePortTextBox.TabIndex = 10;
@@ -242,7 +244,7 @@
             "diff/ribbon",
             "TTL"});
 			this.LMMMInModeComboBox.Location = new System.Drawing.Point(163, 26);
-			this.LMMMInModeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMInModeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMInModeComboBox.Name = "LMMMInModeComboBox";
 			this.LMMMInModeComboBox.Size = new System.Drawing.Size(92, 24);
 			this.LMMMInModeComboBox.TabIndex = 12;
@@ -252,7 +254,7 @@
 			// LMMMDiscoverBtn
 			// 
 			this.LMMMDiscoverBtn.Location = new System.Drawing.Point(139, 42);
-			this.LMMMDiscoverBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMDiscoverBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMDiscoverBtn.Name = "LMMMDiscoverBtn";
 			this.LMMMDiscoverBtn.Size = new System.Drawing.Size(108, 28);
 			this.LMMMDiscoverBtn.TabIndex = 13;
@@ -273,7 +275,7 @@
 			// LMMMIntervalTextBox
 			// 
 			this.LMMMIntervalTextBox.Location = new System.Drawing.Point(252, 26);
-			this.LMMMIntervalTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMIntervalTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMIntervalTextBox.Name = "LMMMIntervalTextBox";
 			this.LMMMIntervalTextBox.Size = new System.Drawing.Size(63, 22);
 			this.LMMMIntervalTextBox.TabIndex = 15;
@@ -287,7 +289,7 @@
 			this.LMMMFeedbackFlagCheckBox.AutoSize = true;
 			this.LMMMFeedbackFlagCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.LMMMFeedbackFlagCheckBox.Location = new System.Drawing.Point(147, 58);
-			this.LMMMFeedbackFlagCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMFeedbackFlagCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMFeedbackFlagCheckBox.Name = "LMMMFeedbackFlagCheckBox";
 			this.LMMMFeedbackFlagCheckBox.Size = new System.Drawing.Size(119, 21);
 			this.LMMMFeedbackFlagCheckBox.TabIndex = 16;
@@ -308,7 +310,7 @@
 			// LMMMConnectionsTextBox
 			// 
 			this.LMMMConnectionsTextBox.Location = new System.Drawing.Point(252, 86);
-			this.LMMMConnectionsTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMConnectionsTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMConnectionsTextBox.Name = "LMMMConnectionsTextBox";
 			this.LMMMConnectionsTextBox.Size = new System.Drawing.Size(64, 22);
 			this.LMMMConnectionsTextBox.TabIndex = 18;
@@ -329,7 +331,7 @@
 			// LMMMBufferTextBox
 			// 
 			this.LMMMBufferTextBox.Location = new System.Drawing.Point(252, 118);
-			this.LMMMBufferTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMBufferTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMBufferTextBox.Name = "LMMMBufferTextBox";
 			this.LMMMBufferTextBox.Size = new System.Drawing.Size(63, 22);
 			this.LMMMBufferTextBox.TabIndex = 20;
@@ -362,7 +364,7 @@
 			// LMMMEventBufferTextBox
 			// 
 			this.LMMMEventBufferTextBox.Location = new System.Drawing.Point(253, 150);
-			this.LMMMEventBufferTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMEventBufferTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMEventBufferTextBox.Name = "LMMMEventBufferTextBox";
 			this.LMMMEventBufferTextBox.Size = new System.Drawing.Size(61, 22);
 			this.LMMMEventBufferTextBox.TabIndex = 23;
@@ -388,7 +390,7 @@
 			this.LMMMSyncAnalysisCheckBox.Checked = true;
 			this.LMMMSyncAnalysisCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.LMMMSyncAnalysisCheckBox.Location = new System.Drawing.Point(99, 182);
-			this.LMMMSyncAnalysisCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMSyncAnalysisCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMSyncAnalysisCheckBox.Name = "LMMMSyncAnalysisCheckBox";
 			this.LMMMSyncAnalysisCheckBox.Size = new System.Drawing.Size(171, 21);
 			this.LMMMSyncAnalysisCheckBox.TabIndex = 25;
@@ -402,7 +404,7 @@
 			this.LMMMAsyncFileCheckBox.AutoSize = true;
 			this.LMMMAsyncFileCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.LMMMAsyncFileCheckBox.Location = new System.Drawing.Point(73, 210);
-			this.LMMMAsyncFileCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMAsyncFileCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMAsyncFileCheckBox.Name = "LMMMAsyncFileCheckBox";
 			this.LMMMAsyncFileCheckBox.Size = new System.Drawing.Size(197, 21);
 			this.LMMMAsyncFileCheckBox.TabIndex = 26;
@@ -418,7 +420,7 @@
 			this.LMMMStreamCheckBox.Checked = true;
 			this.LMMMStreamCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.LMMMStreamCheckBox.Location = new System.Drawing.Point(193, 239);
-			this.LMMMStreamCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMStreamCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMStreamCheckBox.Name = "LMMMStreamCheckBox";
 			this.LMMMStreamCheckBox.Size = new System.Drawing.Size(75, 21);
 			this.LMMMStreamCheckBox.TabIndex = 27;
@@ -432,7 +434,7 @@
 			// LMMMOKBtn
 			// 
 			this.LMMMOKBtn.Location = new System.Drawing.Point(679, 59);
-			this.LMMMOKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMOKBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMOKBtn.Name = "LMMMOKBtn";
 			this.LMMMOKBtn.Size = new System.Drawing.Size(100, 28);
 			this.LMMMOKBtn.TabIndex = 28;
@@ -443,7 +445,7 @@
 			// LMMMCancelBtn
 			// 
 			this.LMMMCancelBtn.Location = new System.Drawing.Point(679, 130);
-			this.LMMMCancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMCancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMCancelBtn.Name = "LMMMCancelBtn";
 			this.LMMMCancelBtn.Size = new System.Drawing.Size(100, 28);
 			this.LMMMCancelBtn.TabIndex = 29;
@@ -454,7 +456,7 @@
 			// LMMMHelpBtn
 			// 
 			this.LMMMHelpBtn.Location = new System.Drawing.Point(679, 166);
-			this.LMMMHelpBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMHelpBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMHelpBtn.Name = "LMMMHelpBtn";
 			this.LMMMHelpBtn.Size = new System.Drawing.Size(100, 28);
 			this.LMMMHelpBtn.TabIndex = 30;
@@ -479,9 +481,9 @@
 			this.PerformanceTuningGroupBox.Controls.Add(this.LMMMIntervalTextBox);
 			this.PerformanceTuningGroupBox.Controls.Add(this.IntervalLabel);
 			this.PerformanceTuningGroupBox.Location = new System.Drawing.Point(15, 218);
-			this.PerformanceTuningGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PerformanceTuningGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.PerformanceTuningGroupBox.Name = "PerformanceTuningGroupBox";
-			this.PerformanceTuningGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PerformanceTuningGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.PerformanceTuningGroupBox.Size = new System.Drawing.Size(375, 274);
 			this.PerformanceTuningGroupBox.TabIndex = 31;
 			this.PerformanceTuningGroupBox.TabStop = false;
@@ -505,9 +507,9 @@
 			this.InstrumentDiscoveryGroupBox.Controls.Add(this.LMMMDiscWaitTimeTextBox);
 			this.InstrumentDiscoveryGroupBox.Controls.Add(this.DiscWaitTimeLabel);
 			this.InstrumentDiscoveryGroupBox.Location = new System.Drawing.Point(343, 53);
-			this.InstrumentDiscoveryGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.InstrumentDiscoveryGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.InstrumentDiscoveryGroupBox.Name = "InstrumentDiscoveryGroupBox";
-			this.InstrumentDiscoveryGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.InstrumentDiscoveryGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.InstrumentDiscoveryGroupBox.Size = new System.Drawing.Size(320, 158);
 			this.InstrumentDiscoveryGroupBox.TabIndex = 32;
 			this.InstrumentDiscoveryGroupBox.TabStop = false;
@@ -522,9 +524,9 @@
 			this.JoeIsTheCoolestGroupBox.Controls.Add(this.LMMMSubnetTextBox);
 			this.JoeIsTheCoolestGroupBox.Controls.Add(this.SubnetLabel);
 			this.JoeIsTheCoolestGroupBox.Location = new System.Drawing.Point(15, 53);
-			this.JoeIsTheCoolestGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.JoeIsTheCoolestGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.JoeIsTheCoolestGroupBox.Name = "JoeIsTheCoolestGroupBox";
-			this.JoeIsTheCoolestGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.JoeIsTheCoolestGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.JoeIsTheCoolestGroupBox.Size = new System.Drawing.Size(316, 158);
 			this.JoeIsTheCoolestGroupBox.TabIndex = 33;
 			this.JoeIsTheCoolestGroupBox.TabStop = false;
@@ -542,7 +544,7 @@
 			this.LMMMPanel.Controls.Add(this.LMMMCancelBtn);
 			this.LMMMPanel.Controls.Add(this.LMMMOKBtn);
 			this.LMMMPanel.Location = new System.Drawing.Point(16, 160);
-			this.LMMMPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMPanel.Name = "LMMMPanel";
 			this.LMMMPanel.Size = new System.Drawing.Size(801, 512);
 			this.LMMMPanel.TabIndex = 34;
@@ -559,9 +561,9 @@
 			this.HWConfig.Controls.Add(this.LMMMInModeComboBox);
 			this.HWConfig.Controls.Add(this.LMMMInModeLabel);
 			this.HWConfig.Location = new System.Drawing.Point(420, 218);
-			this.HWConfig.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HWConfig.Margin = new System.Windows.Forms.Padding(4);
 			this.HWConfig.Name = "HWConfig";
-			this.HWConfig.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HWConfig.Padding = new System.Windows.Forms.Padding(4);
 			this.HWConfig.Size = new System.Drawing.Size(316, 274);
 			this.HWConfig.TabIndex = 34;
 			this.HWConfig.TabStop = false;
@@ -570,7 +572,7 @@
 			// LMMMLLDmV
 			// 
 			this.LMMMLLDmV.Location = new System.Drawing.Point(164, 86);
-			this.LMMMLLDmV.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMLLDmV.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMLLDmV.Name = "LMMMLLDmV";
 			this.LMMMLLDmV.Size = new System.Drawing.Size(63, 22);
 			this.LMMMLLDmV.TabIndex = 33;
@@ -594,7 +596,7 @@
 			this.LMMMLEDs.AutoSize = true;
 			this.LMMMLEDs.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.LMMMLEDs.Location = new System.Drawing.Point(113, 145);
-			this.LMMMLEDs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMLEDs.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMLEDs.Name = "LMMMLEDs";
 			this.LMMMLEDs.Size = new System.Drawing.Size(64, 21);
 			this.LMMMLEDs.TabIndex = 31;
@@ -606,7 +608,7 @@
 			// LMMMHV
 			// 
 			this.LMMMHV.Location = new System.Drawing.Point(164, 57);
-			this.LMMMHV.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMHV.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMHV.Name = "LMMMHV";
 			this.LMMMHV.Size = new System.Drawing.Size(63, 22);
 			this.LMMMHV.TabIndex = 30;
@@ -619,7 +621,7 @@
 			this.LMMMDebugFlag.AutoSize = true;
 			this.LMMMDebugFlag.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.LMMMDebugFlag.Location = new System.Drawing.Point(45, 117);
-			this.LMMMDebugFlag.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMDebugFlag.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMDebugFlag.Name = "LMMMDebugFlag";
 			this.LMMMDebugFlag.Size = new System.Drawing.Size(130, 21);
 			this.LMMMDebugFlag.TabIndex = 17;
@@ -642,7 +644,7 @@
 			// LMMMBackBtn
 			// 
 			this.LMMMBackBtn.Location = new System.Drawing.Point(679, 95);
-			this.LMMMBackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.LMMMBackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.LMMMBackBtn.Name = "LMMMBackBtn";
 			this.LMMMBackBtn.Size = new System.Drawing.Size(100, 28);
 			this.LMMMBackBtn.TabIndex = 35;
@@ -671,7 +673,7 @@
 			this.SelectorPanel.Controls.Add(this.DetectorTypeLabel);
 			this.SelectorPanel.Controls.Add(this.DetectorComboBox);
 			this.SelectorPanel.Location = new System.Drawing.Point(1, 2);
-			this.SelectorPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.SelectorPanel.Margin = new System.Windows.Forms.Padding(4);
 			this.SelectorPanel.Name = "SelectorPanel";
 			this.SelectorPanel.Size = new System.Drawing.Size(823, 133);
 			this.SelectorPanel.TabIndex = 35;
@@ -680,7 +682,7 @@
 			// 
 			this.DeleteBtn.Enabled = false;
 			this.DeleteBtn.Location = new System.Drawing.Point(467, 49);
-			this.DeleteBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DeleteBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.DeleteBtn.Name = "DeleteBtn";
 			this.DeleteBtn.Size = new System.Drawing.Size(196, 28);
 			this.DeleteBtn.TabIndex = 6;
@@ -691,7 +693,7 @@
 			// AddDetectorBtn
 			// 
 			this.AddDetectorBtn.Location = new System.Drawing.Point(467, 14);
-			this.AddDetectorBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddDetectorBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.AddDetectorBtn.Name = "AddDetectorBtn";
 			this.AddDetectorBtn.Size = new System.Drawing.Size(196, 28);
 			this.AddDetectorBtn.TabIndex = 5;
@@ -702,7 +704,7 @@
 			// HelpButt
 			// 
 			this.HelpButt.Location = new System.Drawing.Point(701, 49);
-			this.HelpButt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HelpButt.Margin = new System.Windows.Forms.Padding(4);
 			this.HelpButt.Name = "HelpButt";
 			this.HelpButt.Size = new System.Drawing.Size(100, 28);
 			this.HelpButt.TabIndex = 4;
@@ -713,7 +715,7 @@
 			// CancelButt
 			// 
 			this.CancelButt.Location = new System.Drawing.Point(701, 14);
-			this.CancelButt.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CancelButt.Margin = new System.Windows.Forms.Padding(4);
 			this.CancelButt.Name = "CancelButt";
 			this.CancelButt.Size = new System.Drawing.Size(100, 28);
 			this.CancelButt.TabIndex = 3;
@@ -725,7 +727,7 @@
 			// 
 			this.EditBtn.Enabled = false;
 			this.EditBtn.Location = new System.Drawing.Point(467, 85);
-			this.EditBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.EditBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.EditBtn.Name = "EditBtn";
 			this.EditBtn.Size = new System.Drawing.Size(196, 28);
 			this.EditBtn.TabIndex = 2;
@@ -750,7 +752,7 @@
             "LMMM",
             "PTR-32"});
 			this.DetectorComboBox.Location = new System.Drawing.Point(208, 16);
-			this.DetectorComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DetectorComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.DetectorComboBox.Name = "DetectorComboBox";
 			this.DetectorComboBox.Size = new System.Drawing.Size(239, 24);
 			this.DetectorComboBox.TabIndex = 0;
@@ -758,6 +760,8 @@
 			// 
 			// PTR32Panel
 			// 
+			this.PTR32Panel.Controls.Add(this.label1);
+			this.PTR32Panel.Controls.Add(this.MCAName);
 			this.PTR32Panel.Controls.Add(this.label8);
 			this.PTR32Panel.Controls.Add(this.VoltageTolerance);
 			this.PTR32Panel.Controls.Add(this.label7);
@@ -773,7 +777,7 @@
 			this.PTR32Panel.Controls.Add(this.PTR32Ok);
 			this.PTR32Panel.Controls.Add(this.connLabel);
 			this.PTR32Panel.Location = new System.Drawing.Point(879, 160);
-			this.PTR32Panel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PTR32Panel.Margin = new System.Windows.Forms.Padding(4);
 			this.PTR32Panel.Name = "PTR32Panel";
 			this.PTR32Panel.Size = new System.Drawing.Size(795, 512);
 			this.PTR32Panel.TabIndex = 36;
@@ -792,7 +796,7 @@
 			// VoltageTolerance
 			// 
 			this.VoltageTolerance.Location = new System.Drawing.Point(256, 244);
-			this.VoltageTolerance.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.VoltageTolerance.Margin = new System.Windows.Forms.Padding(4);
 			this.VoltageTolerance.Name = "VoltageTolerance";
 			this.VoltageTolerance.Size = new System.Drawing.Size(80, 22);
 			this.VoltageTolerance.TabIndex = 48;
@@ -812,7 +816,7 @@
 			// 
 			this.check_HV_set.AutoSize = true;
 			this.check_HV_set.Location = new System.Drawing.Point(59, 171);
-			this.check_HV_set.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.check_HV_set.Margin = new System.Windows.Forms.Padding(4);
 			this.check_HV_set.Name = "check_HV_set";
 			this.check_HV_set.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this.check_HV_set.Size = new System.Drawing.Size(148, 21);
@@ -845,7 +849,7 @@
 			// VoltageTimeout
 			// 
 			this.VoltageTimeout.Location = new System.Drawing.Point(256, 204);
-			this.VoltageTimeout.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.VoltageTimeout.Margin = new System.Windows.Forms.Padding(4);
 			this.VoltageTimeout.Name = "VoltageTimeout";
 			this.VoltageTimeout.Size = new System.Drawing.Size(80, 22);
 			this.VoltageTimeout.TabIndex = 42;
@@ -865,7 +869,7 @@
 			// ConnIdField
 			// 
 			this.ConnIdField.Location = new System.Drawing.Point(256, 129);
-			this.ConnIdField.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.ConnIdField.Margin = new System.Windows.Forms.Padding(4);
 			this.ConnIdField.Name = "ConnIdField";
 			this.ConnIdField.Size = new System.Drawing.Size(132, 22);
 			this.ConnIdField.TabIndex = 40;
@@ -874,7 +878,7 @@
 			// PTR32Back
 			// 
 			this.PTR32Back.Location = new System.Drawing.Point(672, 95);
-			this.PTR32Back.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PTR32Back.Margin = new System.Windows.Forms.Padding(4);
 			this.PTR32Back.Name = "PTR32Back";
 			this.PTR32Back.Size = new System.Drawing.Size(100, 28);
 			this.PTR32Back.TabIndex = 39;
@@ -885,7 +889,7 @@
 			// PTR32Help
 			// 
 			this.PTR32Help.Location = new System.Drawing.Point(672, 166);
-			this.PTR32Help.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PTR32Help.Margin = new System.Windows.Forms.Padding(4);
 			this.PTR32Help.Name = "PTR32Help";
 			this.PTR32Help.Size = new System.Drawing.Size(100, 28);
 			this.PTR32Help.TabIndex = 38;
@@ -896,7 +900,7 @@
 			// PTR32Cancel
 			// 
 			this.PTR32Cancel.Location = new System.Drawing.Point(672, 130);
-			this.PTR32Cancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PTR32Cancel.Margin = new System.Windows.Forms.Padding(4);
 			this.PTR32Cancel.Name = "PTR32Cancel";
 			this.PTR32Cancel.Size = new System.Drawing.Size(100, 28);
 			this.PTR32Cancel.TabIndex = 37;
@@ -907,7 +911,7 @@
 			// PTR32Ok
 			// 
 			this.PTR32Ok.Location = new System.Drawing.Point(672, 59);
-			this.PTR32Ok.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PTR32Ok.Margin = new System.Windows.Forms.Padding(4);
 			this.PTR32Ok.Name = "PTR32Ok";
 			this.PTR32Ok.Size = new System.Drawing.Size(100, 28);
 			this.PTR32Ok.TabIndex = 36;
@@ -935,7 +939,7 @@
 			this.AddDetectorTypePanel.Controls.Add(this.AddDetectorTypeComboBox);
 			this.AddDetectorTypePanel.Controls.Add(this.AddDetectorTypeLabel);
 			this.AddDetectorTypePanel.Location = new System.Drawing.Point(963, 25);
-			this.AddDetectorTypePanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddDetectorTypePanel.Margin = new System.Windows.Forms.Padding(4);
 			this.AddDetectorTypePanel.Name = "AddDetectorTypePanel";
 			this.AddDetectorTypePanel.Size = new System.Drawing.Size(509, 98);
 			this.AddDetectorTypePanel.TabIndex = 37;
@@ -944,7 +948,7 @@
 			// AddDetectorNameTextBox
 			// 
 			this.AddDetectorNameTextBox.Location = new System.Drawing.Point(164, 20);
-			this.AddDetectorNameTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddDetectorNameTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AddDetectorNameTextBox.Name = "AddDetectorNameTextBox";
 			this.AddDetectorNameTextBox.Size = new System.Drawing.Size(203, 22);
 			this.AddDetectorNameTextBox.TabIndex = 5;
@@ -964,7 +968,7 @@
 			// AddBackBtn
 			// 
 			this.AddBackBtn.Location = new System.Drawing.Point(396, 49);
-			this.AddBackBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddBackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.AddBackBtn.Name = "AddBackBtn";
 			this.AddBackBtn.Size = new System.Drawing.Size(100, 28);
 			this.AddBackBtn.TabIndex = 3;
@@ -976,7 +980,7 @@
 			// 
 			this.AddNextBtn.Enabled = false;
 			this.AddNextBtn.Location = new System.Drawing.Point(396, 14);
-			this.AddNextBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddNextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.AddNextBtn.Name = "AddNextBtn";
 			this.AddNextBtn.Size = new System.Drawing.Size(100, 28);
 			this.AddNextBtn.TabIndex = 2;
@@ -988,7 +992,7 @@
 			// 
 			this.AddDetectorTypeComboBox.FormattingEnabled = true;
 			this.AddDetectorTypeComboBox.Location = new System.Drawing.Point(164, 52);
-			this.AddDetectorTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AddDetectorTypeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AddDetectorTypeComboBox.Name = "AddDetectorTypeComboBox";
 			this.AddDetectorTypeComboBox.Size = new System.Drawing.Size(203, 24);
 			this.AddDetectorTypeComboBox.TabIndex = 1;
@@ -1004,6 +1008,26 @@
 			this.AddDetectorTypeLabel.TabIndex = 0;
 			this.AddDetectorTypeLabel.Text = "Detector type to add";
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(55, 101);
+			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(165, 17);
+			this.label1.TabIndex = 51;
+			this.label1.Text = "MCA-527 detector name ";
+			this.toolTip1.SetToolTip(this.label1, "Enter the identifier of your PTR-32 instrument here. ");
+			// 
+			// MCAName
+			// 
+			this.MCAName.Location = new System.Drawing.Point(256, 97);
+			this.MCAName.Margin = new System.Windows.Forms.Padding(4);
+			this.MCAName.Name = "MCAName";
+			this.MCAName.ReadOnly = true;
+			this.MCAName.Size = new System.Drawing.Size(132, 22);
+			this.MCAName.TabIndex = 50;
+			// 
 			// LMConnectionParams
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1015,7 +1039,7 @@
 			this.Controls.Add(this.PTR32Panel);
 			this.Controls.Add(this.SelectorPanel);
 			this.Controls.Add(this.LMMMPanel);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "LMConnectionParams";
 			this.Text = "List Mode Connection Parameters";
 			this.TopMost = true;
@@ -1116,5 +1140,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox VoltageTolerance;
-    }
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.TextBox MCAName;
+	}
 }

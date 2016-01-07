@@ -574,6 +574,7 @@ namespace LMDAQ
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
             // for the LMs
             // Start listening for instruments.
+			// URGENT: start here with the MCA connection divergence 
             StartLMDAQServer((LMConnectionInfo)lmi.id.FullConnInfo);   // NEXT: socket reset should occur here for robust restart and recovery            
             collog.TraceInformation("Broadcasting to LM instruments. . .");
 
@@ -629,51 +630,52 @@ namespace LMDAQ
             collog.TraceEvent(LogLevels.Info, 0, "Disconnected instruments");
         }
 
-        public void ApplyInstrumentSettings()
-        {
-            foreach (Instrument instrument in Instruments.Active) {
-                try {
-                    instrument.ApplySettings();
-                }
-                catch (Exception ex) {
-                    collog.TraceException(ex);
-                }
-            }
+		public void ApplyInstrumentSettings()
+		{
+			foreach (Instrument instrument in Instruments.Active)
+			{
+				try
+				{
+					instrument.ApplySettings();
+				} catch (Exception ex)
+				{
+					collog.TraceException(ex);
+				}
+			}
 
-            // for now, this is for the LMs only
-            if (!Instruments.Active.HasConnectedLM())
-                return;
+			// for now, this is for the LMs only
+			if (!Instruments.Active.HasConnectedLM())
+				return;
 
-            LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
-            LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
+			LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
+			LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
 
-            if (lm.SocketBased()) // it's an LMMM
-            {
-            // look for any flags requiring conditioning of the instrument prior to assay or HV
-            // e.g. input=0, the arg to each is already parsed in the command line processing state
-            //if (NC.App.Config.LMMM.isSet(LMFlags.input))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.input, lmc.DeviceConfig.Input);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.debug))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.leds))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.hv))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
-            }
-        }
-            else // its a PTR-32
-            {
-            }
-        }
+			if (lm.SocketBased()) // it's an LMMM
+			{
+				// look for any flags requiring conditioning of the instrument prior to assay or HV
+				// e.g. input=0, the arg to each is already parsed in the command line processing state
+				//if (NC.App.Config.LMMM.isSet(LMFlags.input))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.input, lmc.DeviceConfig.Input);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.debug))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.leds))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.hv))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
+				}
+			} else // its a PTR-32
+			{
+			}
+		}
 
-        public void Flush()
+		public void Flush()
         {
             NC.App.Loggers.Flush();
         }
