@@ -390,18 +390,13 @@ namespace AnalysisDefs
         }
         Row GenMeasurementDetailsRow()
         {
-            string s = meas.AcquireState.data_src.HappyFunName() + " " + meas.AcquireState.data_src.ToString();
-            if (meas.AcquireState.data_src.CompareTo(ConstructedSource.Live) != 0)
-                // The other flag you were using here seemed to always be true.  If not live, it is from a file, right? hn 5.13.2015
+            string s = meas.AcquireState.data_src.HappyFunName();			
+            if (meas.AcquireState.data_src == ConstructedSource.Live)
             {
-                if (N.App.AppContext.INCCXfer)
-                    s = "INCC transfer " + s;
-                else if (N.App.AppContext.PulseFileAssay)
-                    s = "Sorted pulse " + s;
-                else if (N.App.AppContext.PTRFileAssay)
-                    s = "PTR-32 dual " + s;
+                if (meas.Detector.ListMode)
+                    s = "Live " + meas.Detector.Id.SRType.ToString() + " List Mode";
                 else
-                    s = "NCD " + s;
+					s = "Live " + meas.Detector.Id.SRType.ToString() + " Shift register";
             }
             Row row = new Row();
             row.Add((int)MeasurementDetails.MeasType, meas.MeasOption.PrintName());

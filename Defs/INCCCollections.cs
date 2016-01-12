@@ -3667,6 +3667,8 @@ namespace AnalysisDefs
 			DB.Measurements ms = new DB.Measurements();
             string type = m.MeasOption.ToString();
             long mid = ms.Lookup(m.AcquireState.detector_id, m.MeasDate, m.MeasOption.PrintName());
+			if (mid < 0) // no such measurement
+				return;
             ms.UpdateFileName(primaryFilename, mid);
 
 			// now add the remaining file names to the extended table

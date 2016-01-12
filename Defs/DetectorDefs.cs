@@ -255,9 +255,9 @@ namespace DetectorDefs
             {
                 PrettyName = new Dictionary<ConstructedSource, string>();
                 PrettyName.Add(ConstructedSource.CycleFile, "Disk file");
-                PrettyName.Add(ConstructedSource.PTRFile, "PTR-32 file pair");
+                PrettyName.Add(ConstructedSource.PTRFile, "PTR-32 data file pair");
                 PrettyName.Add(ConstructedSource.SortedPulseTextFile, "Pulse file");
-                PrettyName.Add(ConstructedSource.MCA527File, "MCA-527 file");
+                PrettyName.Add(ConstructedSource.MCA527File, "MCA-527 data file");
                 PrettyName.Add(ConstructedSource.DB, "Database");
                 PrettyName.Add(ConstructedSource.Manual, "Manual entry");
                 PrettyName.Add(ConstructedSource.ReviewFile, "Review disk file");
