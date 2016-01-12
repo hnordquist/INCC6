@@ -732,7 +732,7 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="mkey"></param>
         /// <param name="mcr"></param>
-        public void PrepareINCCResults(AssaySelector.MeasurementOption option, Multiplicity mkey, MultiplicityCountingRes mcr)
+        public bool PrepareINCCResults(AssaySelector.MeasurementOption option, Multiplicity mkey, MultiplicityCountingRes mcr)
         {
             INCCResult newmcr;
             MeasOptionSelector ar = new MeasOptionSelector(option, mkey);
@@ -747,6 +747,7 @@ namespace AnalysisDefs
                 //   newmcr.idx = mcr.idx;
                 Results.Add(ar, newmcr);
             }
+			return good;
         }
 
         // this is silly, this is why we do OO design and I havent done it here
@@ -809,15 +810,15 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="mkey"></param>
         /// <param name="sel"></param>
-        public void PrepareINCCMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector sel, Measurement m)
+        public bool PrepareINCCMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector sel, Measurement m)
         {
             INCCMethodResults imr;
             AnalysisMethods am = m.INCCAnalysisState.Methods;
             if (am == null)//this shouldn't EVER happen hn 5.7.2015
                 am = new AnalysisMethods();
-            bool good = Results.MethodsResults.TryGetValue(mkey, out imr);
+            bool existed = Results.MethodsResults.TryGetValue(mkey, out imr);
             // first look for the incc results map
-            if (!good || imr == null) // add new method map to results for this key
+            if (!existed || imr == null) // add new method map to results for this key
             {
                 imr = new INCCMethodResults();
                 Results.MethodsResults.Add(mkey, imr);
@@ -896,7 +897,7 @@ namespace AnalysisDefs
                     }
                 }
             }
-
+			return existed;
             // done!
         }
     }
@@ -1925,7 +1926,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("input", Input));
             pb.ps.Add(new DBParamEntry("debug", Debug));
             pb.ps.Add(new DBParamEntry("hv", HV));
-            pb.ps.Add(new DBParamEntry("LLD", LLD));
+            pb.ps.Add(new DBParamEntry("LLD", LLD)); // alias for VoltageTolerance on PTR32 and MCA527
             pb.ps.Add(new DBParamEntry("hvtimeout", HVTimeout));
 
         }

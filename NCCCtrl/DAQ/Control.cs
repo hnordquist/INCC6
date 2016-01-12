@@ -119,11 +119,21 @@ namespace LMDAQ
         {
             if (det.Id.SRType.IsSocketBasedLM())
             {
-                LMInstrument lm = new LMInstrument(det);
-                lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
-                lm.selected = false;  //must broadcast first to get it selected
-                if (!Instruments.All.Contains(lm))
-                    Instruments.All.Add(lm); // add to global runtime list
+				if (det.Id.SRType == InstrType.LMMM)
+				{
+					LMInstrument lm = new LMInstrument(det);
+					lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+					lm.selected = false;  //must broadcast first to get it selected
+					if (!Instruments.All.Contains(lm))
+						Instruments.All.Add(lm); // add to global runtime list
+				} else if (det.Id.SRType == InstrType.MCA527)
+				{
+					MCA527Instrument mca = new MCA527Instrument(det);
+					mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+					mca.selected = false;  //must broadcast first to get it selected
+					if (!Instruments.All.Contains(mca))
+						Instruments.All.Add(mca); // add to global runtime list
+				}
             }
             else if (det.Id.SRType.IsUSBBasedLM())
             {
@@ -136,7 +146,7 @@ namespace LMDAQ
 
 
         /// <summary>
-		/// Threaded handler for Shift Regsiter DAQ support
+		/// Threaded handler for Shift Register DAQ support
 		/// </summary>
         private SRTakeDataHandler _sr;
         public SRTakeDataHandler SRWrangler
@@ -218,44 +228,95 @@ namespace LMDAQ
             GC.Collect();
         }
 
-        // need to call this AFTER the instruments are identified from the sys config
-        internal void ConnectSRInstruments()
+		
+        internal bool CheckCOMPortExistence(int comport)
         {
+			string check = "COM" + comport.ToString();
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
 
-            // start the control thread for each SR and and make sure it is waiting for a command
-            IEnumerator iter = Instruments.Active.GetSREnumerator();
-            while (iter.MoveNext())
+            foreach (string p in ports)
             {
-                SRInstrument sri = (SRInstrument)iter.Current;
-                sri.SRCtrl = SRWrangler.StartSRControl(sri, pceh: (sender, args) =>  // the report progress eh
-                    {
-                        SRControl srctrl = args.UserState as SRControl;
-                        if (srctrl.IsInitialized)
-                            SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 383, "{0}, SRControl {1}: SR status '{2}', SR Control Status '{3}' ({4})",
-                                args.ProgressPercentage, srctrl.Identifier,
-                                INCCSR.SRAPIReturnStatusCode(srctrl.LastSRStatus), INCCSR.SRAPIReturnStatusCode(srctrl.LastMeasStatus), srctrl.fraction);
-                        else
-                        {
-                            SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 384, "{0}, SRControl {1}", args.ProgressPercentage, srctrl.Identifier);
-                        }
-                    },
-                    // the operation complete eh
-                    opeh: SREventHandler
-                    );
+                if (p.CompareTo(check) == 0)
+                {
+                    return true;
+                }
             }
-
-            iter = Instruments.Active.GetSREnumerator();
-            // associate each new SR thread with the current measurement 
-            while (iter.MoveNext())
-            {
-                SRInstrument sri = (SRInstrument)iter.Current;
-                SRWrangler.StartSRActionAndWait(sri.id, SRTakeDataHandler.SROp.InitializeContext);
-            }
-
-            // devnote: the attempt to connect occurs in StartLMCAssay
+            return false;
         }
 
-        void DisconnectFromSRInstruments()
+		// need to call this AFTER the instruments are identified from the sys config
+		internal void ConnectSRInstruments()
+		{
+
+			// start the control thread for each SR and and make sure it is waiting for a command
+			IEnumerator iter = Instruments.Active.GetSREnumerator();
+			while (iter.MoveNext())
+			{
+				SRInstrument sri = (SRInstrument)iter.Current;
+				bool found = false;
+				try // Fix case where crashes because COM port doesn't exist any more..... hn 5.15.2015
+				{
+					if (sri.id.SRType.IsCOMPortBasedSR()) // always true if code gets you here 
+					{
+						if (!CheckCOMPortExistence(sri.id.SerialPort))  // if not found then emit error
+						{
+							collog.TraceInformation("The COM port {0} is no longer available. Instrument {1} cannot be connected. Please set a valid COM port.", sri.id.SerialPort.ToString(), sri.id.DetectorId);
+							string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
+							string ps = string.Empty;
+							if (ports.Length == 0)
+								ps = "No COM ports found";
+							else
+							{
+								ps = "These COM ports are available:";
+								foreach (string p in ports)
+								{
+									ps += (" " + p + ",");
+								}
+							}
+							collog.TraceInformation(ps);
+							sri.selected = false;
+						} else
+							found = true;
+					}
+				} catch (Exception ex)
+				{
+					collog.TraceException(ex);
+				}
+				if (!found)
+				{
+					Instruments.Active.RemoveAll(i => i.selected == false);
+					return;
+				}
+
+				sri.SRCtrl = SRWrangler.StartSRControl(sri, pceh: (sender, args) =>  // the report progress eh
+					{
+						SRControl srctrl = args.UserState as SRControl;
+						if (srctrl.IsInitialized)
+							SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 383, "{0}, SRControl {1}: SR status '{2}', SR Control Status '{3}' ({4})",
+								args.ProgressPercentage, srctrl.Identifier,
+								INCCSR.SRAPIReturnStatusCode(srctrl.LastSRStatus), INCCSR.SRAPIReturnStatusCode(srctrl.LastMeasStatus), srctrl.fraction);
+						else
+						{
+							SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 384, "{0}, SRControl {1}", args.ProgressPercentage, srctrl.Identifier);
+						}
+					},
+					// the operation complete eh
+					opeh: SREventHandler
+					);
+			}
+
+			iter = Instruments.Active.GetSREnumerator();
+			// associate each new SR thread with the current measurement 
+			while (iter.MoveNext())
+			{
+				SRInstrument sri = (SRInstrument)iter.Current;
+				SRWrangler.StartSRActionAndWait(sri.id, SRTakeDataHandler.SROp.InitializeContext);
+			}
+
+			// devnote: the attempt to connect occurs in StartLMCAssay
+		}
+
+		void DisconnectFromSRInstruments()
         {
             IEnumerator iter = Instruments.Active.GetSREnumerator();
             // stop all connected instruments and close the connections

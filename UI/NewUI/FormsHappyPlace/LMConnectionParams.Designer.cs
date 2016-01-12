@@ -82,6 +82,8 @@
 			this.DetectorTypeLabel = new System.Windows.Forms.Label();
 			this.DetectorComboBox = new System.Windows.Forms.ComboBox();
 			this.PTR32Panel = new System.Windows.Forms.Panel();
+			this.label1 = new System.Windows.Forms.Label();
+			this.MCAName = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.VoltageTolerance = new System.Windows.Forms.TextBox();
 			this.label7 = new System.Windows.Forms.Label();
@@ -104,8 +106,7 @@
 			this.AddDetectorTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.AddDetectorTypeLabel = new System.Windows.Forms.Label();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.label1 = new System.Windows.Forms.Label();
-			this.MCAName = new System.Windows.Forms.TextBox();
+			this.MCAComboBox = new System.Windows.Forms.ComboBox();
 			this.PerformanceTuningGroupBox.SuspendLayout();
 			this.InstrumentDiscoveryGroupBox.SuspendLayout();
 			this.JoeIsTheCoolestGroupBox.SuspendLayout();
@@ -760,6 +761,7 @@
 			// 
 			// PTR32Panel
 			// 
+			this.PTR32Panel.Controls.Add(this.MCAComboBox);
 			this.PTR32Panel.Controls.Add(this.label1);
 			this.PTR32Panel.Controls.Add(this.MCAName);
 			this.PTR32Panel.Controls.Add(this.label8);
@@ -782,6 +784,26 @@
 			this.PTR32Panel.Size = new System.Drawing.Size(795, 512);
 			this.PTR32Panel.TabIndex = 36;
 			this.PTR32Panel.Visible = false;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(55, 101);
+			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(165, 17);
+			this.label1.TabIndex = 51;
+			this.label1.Text = "MCA-527 detector name ";
+			this.toolTip1.SetToolTip(this.label1, "Enter the identifier of your PTR-32 instrument here. ");
+			// 
+			// MCAName
+			// 
+			this.MCAName.Location = new System.Drawing.Point(256, 97);
+			this.MCAName.Margin = new System.Windows.Forms.Padding(4);
+			this.MCAName.Name = "MCAName";
+			this.MCAName.ReadOnly = true;
+			this.MCAName.Size = new System.Drawing.Size(132, 22);
+			this.MCAName.TabIndex = 50;
 			// 
 			// label8
 			// 
@@ -1008,25 +1030,14 @@
 			this.AddDetectorTypeLabel.TabIndex = 0;
 			this.AddDetectorTypeLabel.Text = "Detector type to add";
 			// 
-			// label1
+			// MCAComboBox
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(55, 101);
-			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(165, 17);
-			this.label1.TabIndex = 51;
-			this.label1.Text = "MCA-527 detector name ";
-			this.toolTip1.SetToolTip(this.label1, "Enter the identifier of your PTR-32 instrument here. ");
-			// 
-			// MCAName
-			// 
-			this.MCAName.Location = new System.Drawing.Point(256, 97);
-			this.MCAName.Margin = new System.Windows.Forms.Padding(4);
-			this.MCAName.Name = "MCAName";
-			this.MCAName.ReadOnly = true;
-			this.MCAName.Size = new System.Drawing.Size(132, 22);
-			this.MCAName.TabIndex = 50;
+			this.MCAComboBox.FormattingEnabled = true;
+			this.MCAComboBox.Location = new System.Drawing.Point(395, 126);
+			this.MCAComboBox.Name = "MCAComboBox";
+			this.MCAComboBox.Size = new System.Drawing.Size(234, 24);
+			this.MCAComboBox.TabIndex = 52;
+			this.toolTip1.SetToolTip(this.MCAComboBox, "Identified MCA527 devices on the current network");
 			// 
 			// LMConnectionParams
 			// 
@@ -1142,5 +1153,6 @@
         private System.Windows.Forms.TextBox VoltageTolerance;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.TextBox MCAName;
+		private System.Windows.Forms.ComboBox MCAComboBox;
 	}
 }

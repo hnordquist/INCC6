@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -158,6 +158,8 @@ namespace NewUI
 						ConnIdField.Text = String.Copy(det.Id.ElectronicsId);
 						connIdLabel.Text = "MCA-527 serial number: ";
 						connLabel.Text = "MCA-527 Connection Parameters";
+						//Device.MCADeviceInfo[] deviceInfos = Device.MCADevice.QueryDevices();
+						//MCAComboBox.Visible = (deviceInfos.Length > 0);
 					}
 					else
 					{ 
@@ -173,7 +175,7 @@ namespace NewUI
                     check_HV_set.Checked = lmi.DeviceConfig.LEDs == 2 ? true : false;
                     VoltageTimeout.Visible = true;
                     VoltageTimeout.Text = lmi.DeviceConfig.HVTimeout.ToString();
-                    VoltageTolerance.Text = lmi.DeviceConfig.LLD.ToString();
+                    VoltageTolerance.Text = lmi.DeviceConfig.VoltageTolerance.ToString();
                     VoltageTolerance.Visible = true;
                            
                 }
@@ -563,10 +565,10 @@ namespace NewUI
         private void VoltageTolerance_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.DeviceConfig.LLD;
+            int i = l.DeviceConfig.VoltageTolerance;
             modified |= Format.ToNZInt(((TextBox)sender).Text, ref i);
             if (modified)
-                l.DeviceConfig.LLD = i;
+                l.DeviceConfig.VoltageTolerance = i;
         }
 
     }

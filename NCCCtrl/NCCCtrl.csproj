@@ -10,9 +10,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LM</RootNamespace>
     <AssemblyName>NCCCtrl</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,6 +68,8 @@
   <ItemGroup>
     <Compile Include="Analysis\INCCMeasurement.cs" />
     <Compile Include="Analysis\LMRDT.cs" />
+    <Compile Include="Analysis\MCA527ProcessingState.cs" />
+    <Compile Include="Analysis\MCA527RawDataTransform.cs" />
     <Compile Include="Analysis\Ptr32ProcessingState.cs" />
     <Compile Include="Analysis\Ptr32RawDataTransform.cs" />
     <Compile Include="Analysis\RDT.cs" />
@@ -86,9 +89,16 @@
     <Compile Include="DAQ\HV.cs" />
     <Compile Include="DAQ\INCCSR.cs" />
     <Compile Include="DAQ\Instr.cs" />
+    <Compile Include="DAQ\MCA527Instrument.cs" />
     <Compile Include="DAQ\Ptr32Instrument.cs" />
     <Compile Include="DAQ\SRDAQHandler.cs" />
     <Compile Include="DAQ\SREventHandler.cs" />
+    <Compile Include="Device\MCA.cs" />
+    <Compile Include="Device\MCA527.cs" />
+    <Compile Include="Device\MCA527Error.cs" />
+    <Compile Include="Device\MCA527Parser.cs" />
+    <Compile Include="Device\MCA527RateCounter.cs" />
+    <Compile Include="Device\MCA52Exception.cs" />
     <Compile Include="Device\Ptr32.cs" />
     <Compile Include="Device\Ptr32Error.cs" />
     <Compile Include="Device\Ptr32Exception.cs" />

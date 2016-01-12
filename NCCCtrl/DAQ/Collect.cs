@@ -389,15 +389,15 @@ namespace LMDAQ
                 if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
                 {
                     //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
-                    //if (CurState.Measurement.HasReportableData)
-                    //{
+                    if (CurState.Measurement.HasReportableData)
+                    {
                         CalculateMeasurementResults();
                         SaveMeasurementBasics();
                         SaveMeasurementResults();
                         //CurState.StopTimer(1);
                         FireEvent(EventType.ActionInProgress, this);
                         OutputResults(NCCAction.Assay);
-                    //}
+                    }
                 }
                 NC.App.Opstate.ResetTokens();
             }
@@ -508,31 +508,6 @@ namespace LMDAQ
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
 
-            foreach (Instrument instrument in Instruments.Active) // devnote: this SR-specific code belongs down in ConnectSRInstruments
-            {
-                try
-                {
-                    collog.TraceInformation("Connecting to " + instrument.id.DetectorId);
-                    if (instrument.id.SRType != InstrType.LMMM && instrument.id.SRType != InstrType.MCA527 && instrument.id.SRType != InstrType.PTR32)
-                    {
-                        if (RetryCOM("COM" + instrument.id.SerialPort.ToString()))
-                            instrument.Connect();
-                        else
-                        {
-                            collog.TraceInformation("The com port {0} is no longer available.  Instrument {1} cannot be connected.  Please set a valid COM port.", instrument.id.SerialPort.ToString(), instrument.id.DetectorId);
-                            Instruments.Active.Remove(instrument);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    collog.TraceException(ex);
-                }
-            }
-
-            // Fix case where crashes because COM port doesn't exist any more..... hn 5.15.2015
-
-
             // for the LMMMs
             ConnectLMMMInstruments();
 
@@ -550,21 +525,7 @@ namespace LMDAQ
                 collog.TraceEvent(LogLevels.Verbose, 10799, "No active SR instruments. . .");
             }
         }
-
-        public bool RetryCOM(string comport)
-        {
-
-            string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
-
-            foreach (string p in ports)
-            {
-                if (p.CompareTo(comport) == 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }    
+ 
         public void ConnectLMMMInstruments()
         {
             if (!Instruments.Active.HasSocketBasedLM())
@@ -650,7 +611,7 @@ namespace LMDAQ
 			LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
 			LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
 
-			if (lm.SocketBased()) // it's an LMMM
+			if (lm.id.SRType == InstrType.LMMM) // it's an LMMM
 			{
 				// look for any flags requiring conditioning of the instrument prior to assay or HV
 				// e.g. input=0, the arg to each is already parsed in the command line processing state
@@ -670,7 +631,9 @@ namespace LMDAQ
 				{
 					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
 				}
-			} else // its a PTR-32
+			} else if (lm.id.SRType == InstrType.PTR32) // its a PTR-32
+			{
+			} else if (lm.id.SRType == InstrType.MCA527)
 			{
 			}
 		}

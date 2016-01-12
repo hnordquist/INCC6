@@ -171,7 +171,7 @@ namespace DetectorDefs
     public enum ConstructedSource
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
-        NCDFile, SortedPulseTextFile, PTRFile, MCA527File, // List Mode file inputs 
+        NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
         INCCTransferCopy, INCCTransfer, Æther
     };  //INCC transfer and room for more
 
@@ -211,13 +211,13 @@ namespace DetectorDefs
                ((src == ConstructedSource.Live &&
                 (device >= InstrType.NPOD && device <= InstrType.MCA527)) // it is a Live LM DAQ, or
              ||
-               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.MCA527File));  // data from other source and the processing went through the raw counting code 
+               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile));  // data from other source and the processing went through the raw counting code 
             return needsAdditionalSpecification;
         }
 
         public static bool LMFiles(this ConstructedSource src, InstrType device)
         {
-            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.MCA527File) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
+            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
             return ack;
         }
 

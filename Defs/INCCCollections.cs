@@ -2858,7 +2858,7 @@ namespace AnalysisDefs
                                 DataRow drl = lmdt.Rows[0];
                                 lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
                                 lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
-                                lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]);
+                                lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
                                 lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
                                 lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
                                 try

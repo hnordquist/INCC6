@@ -1321,6 +1321,11 @@ namespace NCCConfig
             get { return (Int32)getVal(NCCFlags.LLD); }
             set { setVal(NCCFlags.LLD, value); }
         }
+		public Int32 VoltageTolerance
+        {
+            get { return (Int32)getVal(NCCFlags.LLD); }
+            set { setVal(NCCFlags.LLD, value); }
+        }
         public Int32 HVTimeout
         {
             get { Int32 v = (Int32)getVal(NCCFlags.hvtimeout); if (v < 5) v = 30; return v; }

@@ -693,7 +693,7 @@ namespace AnalysisDefs
         ///      at least one must have a cycle with a calculated status
         ///    else
         ///      one or more cycles exist
-        /// else (using SR data where there is always a multiplicity analzyer defined)
+        /// else (using SR data where there is always a multiplicity analyser defined)
         ///    at least one must have a cycle with a calculated status
 		/// </summary>
 		public bool HasReportableData
@@ -946,13 +946,16 @@ namespace AnalysisDefs
             IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
             while (iter.MoveNext())
             {
+				bool existed = false;
                 Multiplicity mcr = (Multiplicity)iter.Current;
                 try
                 {
-                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
-                    INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
-                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
-                    INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
+                    existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
+					if (!existed) // it was created in the method
+	                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
+                    existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
+ 					if (!existed) // it was created in the method
+						logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)
                 {

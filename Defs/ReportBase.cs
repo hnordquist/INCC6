@@ -54,9 +54,12 @@ namespace AnalysisDefs
 
         public void GenerateReports(Measurement m)
         {
-            RawAnalysisReport rep = new AnalysisDefs.RawAnalysisReport(ctrllog);
-            rep.GenerateReport(m);
-            ResultsReport = rep.replines;
+            if (m.Detector.ListMode) // generate list mode report if it is list mode, hey!
+			{
+				RawAnalysisReport rep = new AnalysisDefs.RawAnalysisReport(ctrllog);
+				rep.GenerateReport(m);
+				ResultsReport = rep.replines;
+			}
             MethodResultsReport mrep = new AnalysisDefs.MethodResultsReport(ctrllog);
             mrep.GenerateReport(m);
             foreach (List<string> r in mrep.INCCResultsReports)
@@ -196,7 +199,6 @@ namespace AnalysisDefs
             }
             return rows;
         }
-
     }
 
 }
