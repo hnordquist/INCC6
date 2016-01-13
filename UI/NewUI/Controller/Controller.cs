@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -148,7 +148,6 @@ namespace NewUI
             string[] fullargs = Environment.GetCommandLineArgs();
             string[] args = new string[fullargs.Length - 1];
             Array.Copy(fullargs, 1, args, 0, args.Length);
-
             
             NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
             NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext

@@ -32,110 +32,110 @@ using System.Diagnostics;
 
 namespace NCCCmd
 {
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    class AppEntry
-    {
+	class AppEntry
+	{
 
-        static void Main(string[] args)
-        {
-            new NC("INCC6 Console");
+		static void Main(string[] args)
+		{
+			new NC("INCC6 Console");
 
-            NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
-            NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
-            c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-            bool initialized = NC.App.Initialize(c);
-            // check return bool and exit here on error
-            if (!initialized)
-                return;
+			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
+			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
+			c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
+			// check return bool and exit here on error
+			bool initialized = NC.App.Initialize(c);
+			if (!initialized)
+				return;
 
-            if (NC.App.Config.Cmd.ShowVersion && !NC.App.Config.Cmd.Showcfg)
-            {
-                NC.App.Config.Cmd.ShowVersionOnConsole(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
-                return;
-            }
-            else if (NC.App.Config.Cmd.Showhelp)
-            {
-                NC.App.Config.ShowHelp();
-                return;
-            }
-            else if (NC.App.Config.Cmd.Showcfg)
-            {
-                NCCConfig.Config.ShowCfg(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
-                return;
-            }
+			if (NC.App.Config.Cmd.ShowVersion && !NC.App.Config.Cmd.Showcfg)
+			{
+				NC.App.Config.Cmd.ShowVersionOnConsole(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
+				return;
+			} else if (NC.App.Config.Cmd.Showhelp)
+			{
+				NC.App.Config.ShowHelp();
+				return;
+			} else if (NC.App.Config.Cmd.Showcfg)
+			{
+				NCCConfig.Config.ShowCfg(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
+				return;
+			}
 
-            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+			LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
-            applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
-            // TODO: log DB details at startup too 
-            try
-            {
-                BuildMeasurement();
-                if (NC.App.Config.App.UsingFileInput)
-                {
-                    if (NC.App.AppContext.AssayFromFiles)
-                        NC.App.Opstate.Action = NCC.NCCAction.Assay;
-                    else
-                        NC.App.Opstate.Action = NCC.NCCAction.File;
+			try
+			{
+				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
+				if (!String.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
+                    initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
+				if (!initialized)
+					goto frob;
+				BuildMeasurement();
+				if (NC.App.Config.App.UsingFileInput)
+				{
+					if (NC.App.AppContext.AssayFromFiles)
+						NC.App.Opstate.Action = NCC.NCCAction.Assay;
+					else
+						NC.App.Opstate.Action = NCC.NCCAction.File;
 
-                    // file processing for analysis and more
-                    FileControlBind filecontrol = new FileControlBind();
+					// file processing for analysis and more
+					FileControlBind filecontrol = new FileControlBind();
 
-                    filecontrol.SetupEventHandlers();
+					filecontrol.SetupEventHandlers();
 
-                    filecontrol.StartAction();  // step into the code and Run run run!
+					filecontrol.StartAction();  // step into the code and Run run run!
 
-                    NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-                }
-                else
-                {
-                    // NEXT: one of Assay, HV or Discover NC.App.Opstate.Action = NCC.NCCAction.;
-                    // DAQ + prompt
-                    DAQControlBind daqcontrol = new DAQControlBind((MLMEmulation.IEmulatorDiversion)(new LMProcessor.NullEmulation())); //<- here
+					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+				} else
+				{
+					// NEXT: one of Assay, HV or Discover NC.App.Opstate.Action = NCC.NCCAction.;
+					// DAQ + prompt
+					DAQControlBind daqcontrol = new DAQControlBind((MLMEmulation.IEmulatorDiversion)(new LMProcessor.NullEmulation())); //<- here
 
-                    daqcontrol.SetupTimerCallBacks();
-                    daqcontrol.SetupEventHandlers();
+					daqcontrol.SetupTimerCallBacks();
+					daqcontrol.SetupEventHandlers();
 
-                    DAQControlBind.ActivateDetector(NC.App.Opstate.Measurement.Detector);
+					DAQControlBind.ActivateDetector(NC.App.Opstate.Measurement.Detector);
 
-                    daqcontrol.StartAction(); // step into the code and Run run run!
+					daqcontrol.StartAction(); // step into the code and Run run run!
 
-                    NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-                }
-            }
-            catch (Exception e)
-            {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
-                applog.TraceException(e, true);
-                applog.EmitFatalErrorMsg();
-            }
-            finally
-            {
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-                NC.App.Config.RetainChanges();
-                applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " . . .");
-                NC.App.Loggers.Flush();
-            }
-        }
+					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+				}
+frob:
+				;
+			} catch (Exception e)
+			{
+				NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+				applog.TraceException(e, true);
+				applog.EmitFatalErrorMsg();
+			} finally
+			{
+				NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+				NC.App.Config.RetainChanges();
+				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " . . .");
+				NC.App.Loggers.Flush();
+			}
+		}
 
-        static void BuildMeasurement()
-        {
-            Detector det = null;
-            AcquireParameters ap = null;
-            AssaySelector.MeasurementOption mo = (AssaySelector.MeasurementOption)NC.App.Config.Cur.AssayType;
-            Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
-            INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
+		static void BuildMeasurement()
+		{
+			Detector det = null;
+			AcquireParameters ap = null;
+			AssaySelector.MeasurementOption mo = (AssaySelector.MeasurementOption)NC.App.Config.Cur.AssayType;
+			Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
 
-            NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
-            NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
+			NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
+			NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
 
-            // The acquire is set to occur, build up the measurement state 
-            Integ.BuildMeasurement(ap, det, mo);
+			// The acquire is set to occur, build up the measurement state 
+			Integ.BuildMeasurement(ap, det, mo);
 
-        }
-    }
+		}
+	}
 
 
 }

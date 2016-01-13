@@ -102,6 +102,11 @@ namespace ListModeDB
 
                 if (dr.Table.Columns.Contains("dbDataAssay"))
                     app.DBDataAssay = DB.Utils.DBBool(dr["dbDataAssay"]);
+				
+                if (dr.Table.Columns.Contains("resultsFilePath") && (!dr["resultsFilePath"].Equals(System.DBNull.Value)))
+                    app.ResultsFilePath = (string)(dr["resultsFilePath"]);
+                if (dr.Table.Columns.Contains("logFilePath") && (!dr["logFilePath"].Equals(System.DBNull.Value)))
+                    app.LogFilePath = (string)(dr["logFilePath"]);
                 return app;
             }
         }

@@ -1253,7 +1253,7 @@ namespace NCCFile
         {
             string name = (NC.App.AppContext.DBDataAssay ? "database" : "file");
             if (PseudoInstrument != null)
-                name = PseudoInstrument.id.IdentName();
+                name = PseudoInstrument.id.Identifier();
             ctrllog.TraceInformation("Cancelling the {0} {1} action", name, NC.App.Opstate.Action);
             if (PseudoInstrument != null)
                 PseudoInstrument.RDT.EndAnalysisImmediately();
@@ -1267,7 +1267,7 @@ namespace NCCFile
         {
             string name = (NC.App.AppContext.DBDataAssay ? "database" : "file");
             if (PseudoInstrument != null)
-                name = PseudoInstrument.id.IdentName();
+                name = PseudoInstrument.id.Identifier();
             ctrllog.TraceInformation("Stopping the {0} {1} action", name, NC.App.Opstate.Action);
             if (PseudoInstrument != null)
                 PseudoInstrument.RDT.EndAnalysisImmediately();
@@ -1281,7 +1281,7 @@ namespace NCCFile
         {
             string name = (NC.App.AppContext.DBDataAssay ? "database" : "file");
             if (PseudoInstrument != null)
-                name = PseudoInstrument.id.IdentName();
+                name = PseudoInstrument.id.Identifier();
             NC.App.Opstate.ResetTokens();
             ctrllog.TraceInformation("Starting the {0} {1} action", name, NC.App.Opstate.Action);
             NC.App.Opstate.SOH = NCC.OperatingState.Starting;
@@ -1345,7 +1345,7 @@ namespace NCCFile
             try
             {
                 if (cipss.HasIdent)
-                    id = cipss.iss.ins.dsid.IdentName();
+                    id = cipss.iss.ins.dsid.Identifier();
                 if (cipss.HasCounterStatus)
                     ss = cipss.cs.ToString() + ";";
                 //ss += cipss.iss.ToString();

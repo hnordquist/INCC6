@@ -818,7 +818,9 @@ CREATE TABLE LMINCCAppContext(
 	[autoCreateMissing] int NULL,
 	[overwriteDefs] int NULL,
 	[gen5RevDataFile] int NULL,
-	[liveFileWrite] int NULL
+	[liveFileWrite] int NULL,
+	[resultsFilePath] ntext NULL, 
+	[logFilePath] ntext NULL
 );
 GO
 /* for Feynman, Rossi, Time, etc. */

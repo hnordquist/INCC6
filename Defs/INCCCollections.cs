@@ -3887,7 +3887,7 @@ namespace AnalysisDefs
             
             if (!db.DefinitionExists(els))
             {
-                long id = db.Insert(det.Id.DetectorId, det.Id.IdentName(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
+                long id = db.Insert(det.Id.DetectorId, det.Id.Identifier(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34013, MakeIdFrag(id) + " for detector {0}", det.Id.DetectorName);
             }
             else

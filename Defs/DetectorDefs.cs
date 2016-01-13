@@ -499,12 +499,51 @@ namespace DetectorDefs
         public DateTimeOffset dt;
         public ConstructedSource source = ConstructedSource.Live;
 
-		public string IdentName()  // devnote: used to gen output files, so make sure no offending chars are included
+		/// <summary>
+		/// Returns a combined identification string meant to include data source, detector name and type
+		/// </summary>
+		/// <returns></returns>
+		public string Identifier() 
+		{
+			string l = string.IsNullOrEmpty(filename) ? "<file name>" : filename;
+			switch (source)
+			{
+			case ConstructedSource.Live:
+				l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+				break;
+			case ConstructedSource.NCDFile:
+			case ConstructedSource.SortedPulseTextFile:
+			case ConstructedSource.PTRFile:
+			case ConstructedSource.MCA527File:
+				break;
+			case ConstructedSource.INCCTransfer:
+				l += " (INCC transfer file, recalculated)";
+				break;
+			case ConstructedSource.INCCTransferCopy:
+				l += " (INCC transfer file)";
+				break;
+			case ConstructedSource.CycleFile:
+				l += " (INCC5 test data file)";
+				break;
+			case ConstructedSource.ReviewFile:
+				l += " (INCC Rad Review measurement data file)";
+				break;
+			case ConstructedSource.DB:
+				l = "DB Acquire";
+				break;
+			case ConstructedSource.Manual:
+				l = "Manual";
+				break;
+			case ConstructedSource.Æther:
+				l += (" " + source.ToString());
+				break;
+			}
+			return l;
+		}
+
+		public string SourceIdentName()  // devnote: used to gen output files, so make sure no offending chars are included
 		{
 			string l = "Unknown";
-			if (string.IsNullOrEmpty(filename))
-				l = "No " + source.HappyFunName() + " or other type of file specified";
-			else
 				switch (source)
 				{
 				case ConstructedSource.Live:
@@ -586,7 +625,7 @@ namespace DetectorDefs
                 & this.elecid.Equals(other.elecid)
                 & this.filename.Equals(other.filename)
                 & this.type.Equals(other.type)
-                & this.dt.Equals(other.dt) // time may not be the same due to in-memory creation compared with fossilized definitions from DB
+                & this.dt.Equals(other.dt) // dev note: time may not be the same due to in-memory creation compared with fossilized definitions from DB
                 & this.conninfo.Equals(other.conninfo))
             {
                 return true;
@@ -671,7 +710,7 @@ namespace DetectorDefs
             this.ps.Add(new DBParamEntry("electronics_id", ElectronicsId));
             this.ps.Add(new DBParamEntry("detector_type_freeform", Type));
             this.ps.Add(new DBParamEntry("detector_type_id", (Int32)SRType));
-            this.ps.Add(new DBParamEntry("detector_alias", IdentName()));
+            this.ps.Add(new DBParamEntry("detector_alias", Identifier()));
         }
 
         public DBParamEntry NewForINCC6Params

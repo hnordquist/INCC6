@@ -689,7 +689,7 @@ namespace LMDAQ
 				return String.Empty;
 
 			LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
-			return inst.id.IdentName();
+			return inst.id.Identifier();
         }
         #endregion status display
     }

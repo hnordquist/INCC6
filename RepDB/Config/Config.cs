@@ -602,13 +602,14 @@ namespace NCCConfig
             //resetVal(LMFlags.logAutoPath, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (Int32)TraceOptions.None, typeof(Int32));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
-            //resetVal(LMFlags.logFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
             resetVal(NCCFlags.rolloverSizeMB, 50, typeof(int)); /* (1024 * 1024), */
             resetVal(NCCFlags.logResults, (ushort)3, typeof(ushort)); // 0 none, 1 log file only, 2 console/UI only, 3 everywhere
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
-           
+            resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
+          
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
             resetVal(NCCFlags.emulatorapp, "MLMEmulator.exe", typeof(string)); ;
@@ -790,6 +791,18 @@ namespace NCCConfig
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
         }
 
+		public string LogFilePath
+        {
+            get { return (string)getVal(NCCFlags.logFileLoc); }
+            set { setVal(NCCFlags.logFileLoc, value); }
+        }
+
+		public string ResultsFilePath
+        {
+            get { return (string)getVal(NCCFlags.resultsFileLoc); }
+            set { setVal(NCCFlags.resultsFileLoc, value); }
+        }
+
         public string RootPath
         {
             get { return (string)getVal(NCCFlags.root); }
@@ -829,6 +842,19 @@ namespace NCCConfig
             get
             {
                     return RootPathOverride();
+            }
+            set
+            {
+                string warmed = TrimCmdLineFlagpath(value);
+                RootPath = value;
+            }
+        }
+
+		public string LogLoc // URGENT
+        {
+            get
+            {
+                    return RootLoc;
             }
             set
             {
@@ -1008,6 +1034,11 @@ namespace NCCConfig
                 x[ix++] = "  root: " + RootLoc;
             if (isSet(NCCFlags.dailyRootPath))
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
+			if (isSet(NCCFlags.logFileLoc))
+				x[ix++] = "  log file path: " + LogFilePath;
+			if (isSet(NCCFlags.resultsFileLoc))
+				x[ix++] = "  results path: " + ResultsFilePath;
+
             x[ix++] = "  logging: " + Logging;
             x[ix++] = "    log level: " + Level();
           //  x[ix++] = "    log folder: " + LogFileLoc;

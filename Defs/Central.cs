@@ -436,10 +436,6 @@ namespace NCC
 
                 loggers = new LMLoggers(cfg);
                 pest.logger = Logger(LMLoggers.AppSection.DB);
-
-                if (!String.IsNullOrEmpty(cfg.Cur.Detector) && !cfg.Cur.Detector.Equals("Default")) // command line set the value
-                    IntegrationHelpers.SetNewCurrentDetector(cfg.Cur.Detector);
-
             }
             return good;
         }
@@ -718,7 +714,7 @@ namespace NCC
             if (det == null || string.IsNullOrWhiteSpace(det.Id.DetectorName))
             {
                 det = new AnalysisDefs.Detector();
-                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32444, "Detector " + curdet + " is not defined in the database");
+                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
             }
 			if (det.ListMode)
 				det.MultiplicityParams.FA = acq.lm.FADefault;
@@ -813,23 +809,32 @@ namespace NCC
             return GetMethodSelections(acq.detector_id, acq.item_type);
         }
 
-        public static void SetNewCurrentDetector(string name)
+        public static bool SetNewCurrentDetector(string name, bool checkForExistence)
         {
             AcquireParameters acq = GetCurrentAcquireParams();
             Detector det = CentralizedState.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, name, true) == 0);
             if (det == null)
-                det = new AnalysisDefs.Detector();
-            acq.MeasDateTime = DateTime.Now;
-            if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                acq.detector_id = string.Copy(name);
-                acq.meas_detector_id = string.Copy(name);
-                CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
-            }
-            CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
+			{
+				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
+ 				if (checkForExistence)
+					return false;			
+				else
+					det = new AnalysisDefs.Detector();
+			}
+			acq.MeasDateTime = DateTime.Now;
+			if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
+			{
+				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");
+				acq.detector_id = string.Copy(name);
+				acq.meas_detector_id = string.Copy(name);
+				CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
+				CentralizedState.App.DB.Detectors.Add(det);
+			}
+			CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+			CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
 
-        }
+			return true;
+		}
     }
 
 

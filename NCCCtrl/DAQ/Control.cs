@@ -1,7 +1,7 @@
 /*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -381,7 +381,7 @@ namespace LMDAQ
                 else if (active is SRInstrument)
                 {
                     // tell the SR thread handler to cancel it
-                    ctrllog.TraceInformation("Stop SR {0}", active.id.IdentName());
+                    ctrllog.TraceInformation("Stop SR {0}", active.id.Identifier());
                     SRWrangler.StopThread(active as SRInstrument, true);
                     active.DAQState = DAQInstrState.Offline;
                 }
@@ -440,7 +440,7 @@ namespace LMDAQ
             {
                 if (active is SRInstrument)
                 {
-                    ctrllog.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.IdentName());
+                    ctrllog.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.Identifier());
                 }
                 active.DAQState = DAQInstrState.ReceivingData;
 

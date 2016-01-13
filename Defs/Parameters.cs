@@ -2287,6 +2287,8 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("overwriteDefs", OverwriteImportedDefs));
             pb.ps.Add(new DBParamEntry("gen5RevDataFile", CreateINCC5TestDataFile));
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
+            pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
+            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
         }
 
         public DB.ElementList ToDBElementList()

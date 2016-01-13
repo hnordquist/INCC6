@@ -616,7 +616,7 @@ namespace LMDAQ
 
         public string Identifier
         {
-            get { return (IsInitialized ? SR.Id.IdentName() : "New") + " #" + identifyingNumber.ToString(); }
+            get { return (IsInitialized ? SR.Id.Identifier() : "New") + " #" + identifyingNumber.ToString(); }
         }
         public bool IsInitialized
         {
