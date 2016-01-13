@@ -109,6 +109,7 @@ namespace NewUI
 
             det = candidate;
             this.acq = acq;
+			MCAComboBox.Visible = false;
             PopulateParamFields();
 
         }
@@ -158,8 +159,8 @@ namespace NewUI
 						ConnIdField.Text = String.Copy(det.Id.ElectronicsId);
 						connIdLabel.Text = "MCA-527 serial number: ";
 						connLabel.Text = "MCA-527 Connection Parameters";
-						//Device.MCADeviceInfo[] deviceInfos = Device.MCADevice.QueryDevices();
-						//MCAComboBox.Visible = (deviceInfos.Length > 0);
+						LoadtheMCACombobox();
+
 					}
 					else
 					{ 
@@ -183,10 +184,37 @@ namespace NewUI
             }
         }
 
+		async System.Threading.Tasks.Task LoadtheMCACombobox()
+		{
+			Device.MCADeviceInfo[] deviceInfos = null;
 
-  //// SELECTOR PANEL ////////////////////////////////////////////////////////////////////////////////////
-  
-        private void CancelButt_Click(object sender, EventArgs e)
+			try
+			{
+				deviceInfos = await Device.MCADevice.QueryDevices();
+				MCAComboBox.Items.Clear();
+				if (deviceInfos.Length > 0)
+				{
+					MCAComboBox.Visible = true;
+					// Populate the combobox in the selector panel
+					foreach (Device.MCADeviceInfo d in deviceInfos)
+					{
+						string s = string.Format("MCA-527#{0:5} on {1} FW# {2}", d.Serial, d.FirmwareVersion, d.Address);
+						int i = MCAComboBox.Items.Add(s);
+						//MCAComboBox.Items[i].Tag = d.Serial;
+					}
+				} else
+					MCAComboBox.Visible = false;
+			} catch (Exception e)
+			{
+				NCCReporter.LMLoggers.LognLM log = NC.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+				log.TraceException(e);
+			}
+		}
+
+
+		//// SELECTOR PANEL ////////////////////////////////////////////////////////////////////////////////////
+
+		private void CancelButt_Click(object sender, EventArgs e)
         {
             this.Close();
         }

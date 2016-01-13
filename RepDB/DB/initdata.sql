@@ -165,25 +165,47 @@ INSERT INTO "LMINCCAppContext" VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'MLMEmulat
 GO
 INSERT INTO "detectors" VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO
+INSERT INTO "detectors" VALUES(4,'MCA1153',16,'MCA527','01153','1 chn');
+GO
 INSERT INTO "add_a_source_setup_rec" VALUES(3,'None',1,0.0,0.0,1,'0,0,0,0,0',625.0,2,1,1,0,1.0,2.0,51.0,1.0,0);
+GO
+INSERT INTO "add_a_source_setup_rec" VALUES(4,'None',1,0.0,0.0,1,'0,0,0,0,0',625.0,2,1,1,0,1.0,2.0,51.0,1.0,0);
 GO
 INSERT INTO "alpha_beta_rec" VALUES(3,'','');
 GO
+INSERT INTO "alpha_beta_rec" VALUES(4,'','');
+GO
 INSERT INTO "bkg_parms_rec" VALUES(3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+GO
+INSERT INTO "bkg_parms_rec" VALUES(4,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 GO
 INSERT INTO "norm_parms_rec" VALUES(3,'',1.0,0.0,1,0.0,0.0,0.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
 GO
+INSERT INTO "norm_parms_rec" VALUES(4,'',1.0,0.0,1,0.0,0.0,0.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
+GO
 INSERT INTO "sr_parms_rec" VALUES(3,'AS710',15,NULL,45.0,640.0,NULL,1680.0,500.0,0.0001,0.0,0.0,0.0,0.0,0.0001,0.0001,NULL);
+GO
+INSERT INTO "sr_parms_rec" VALUES(4,'MCA1163',16,NULL,15,240.0,NULL,1680.0,500.0,0.0001,0.0,0.0,0.0,0.0,0.0001,0.0001,NULL);
 GO
 INSERT INTO "unattended_parms_rec" VALUES(3,600,1,0.0);
 GO
+INSERT INTO "unattended_parms_rec" VALUES(4,600,1,0.0);
+GO
 INSERT INTO "HVCalibrationParams"  VALUES(3,5,2000,10,100,2000);
 GO
+INSERT INTO "HVCalibrationParams"  VALUES(4,5,2000,10,100,2000);
+GO
 INSERT INTO "stratum_id_detector" VALUES(3,1);
+GO
+INSERT INTO "stratum_id_detector" VALUES(4,1);
 GO
 INSERT INTO "LMNetComm" VALUES(3,1,5011,5000,'169.254.255.255',500,8,8192,50,0,1,0);
 GO
 INSERT INTO "LMHWParams" VALUES(3,1,1,0,1650,2,30);
+GO
+INSERT INTO "LMNetComm" VALUES(4,1,5011,5000,'169.254.255.255',500,8,8192,50,0,1,0);
+GO
+INSERT INTO "LMHWParams" VALUES(4,1,1,0,1650,2,30);
 GO
 INSERT INTO "known_alpha_rec" VALUES(1,2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0.0,0.0,0.0,100000000.0,NULL,NULL,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
@@ -196,4 +218,6 @@ GO
 INSERT INTO "acquire_parms_rec" VALUES('Empty','Empty','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','AS710');
 GO
 INSERT INTO "LMAcquireParams" VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
+GO
+INSERT INTO "LMAcquireParams" VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
 GO

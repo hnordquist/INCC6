@@ -33,13 +33,13 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
-using NDesk.Options;
 using System.Text.RegularExpressions;
+using NDesk.Options;
 
 namespace NCCConfig
 {
 
-    public partial class Config
+	public partial class Config
     {
 
         public AppContextConfig App
@@ -672,14 +672,20 @@ namespace NCCConfig
         {
             get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
         }
-        public string FileInput
+
+		private string overridepath(NCCFlags flag)
+		{
+			if (isSet(flag))
+				return (string)getVal(flag);
+			else
+				return RootLoc;
+		}
+
+		public string FileInput
         {
             get
             {
-                if (isSet(NCCFlags.fileinput))
-                    return (string)getVal(NCCFlags.fileinput);
-                else
-                    return RootLoc;
+				return overridepath(NCCFlags.fileinput);
             }
             set
             {
@@ -794,19 +800,19 @@ namespace NCCConfig
 
 		public string LogFilePath
         {
-            get { return (string)getVal(NCCFlags.logFileLoc); }
+            get { return overridepath(NCCFlags.logFileLoc); }
             set { setVal(NCCFlags.logFileLoc, value); }
         }
 
 		public string ResultsFilePath
         {
-            get { return (string)getVal(NCCFlags.resultsFileLoc); }
+            get { return  overridepath(NCCFlags.resultsFileLoc); }
             set { setVal(NCCFlags.resultsFileLoc, value); }
         }
 
 		public string DataFilePath
         {
-            get { return (string)getVal(NCCFlags.dataFileLoc); }
+            get { return  overridepath(NCCFlags.dataFileLoc); }
             set { setVal(NCCFlags.dataFileLoc, value); }
         }
 
@@ -848,20 +854,7 @@ namespace NCCConfig
         {
             get
             {
-                    return RootPathOverride();
-            }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                RootPath = value;
-            }
-        }
-
-		public string LogLoc // URGENT
-        {
-            get
-            {
-                    return RootLoc;
+                return RootPathOverride();
             }
             set
             {
