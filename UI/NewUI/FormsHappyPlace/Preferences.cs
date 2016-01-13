@@ -44,8 +44,9 @@ namespace NewUI
             maybe.Add(NCCFlags.auxRatioReport, NC.App.AppContext.AuxRatioReport);
             maybe.Add(NCCFlags.autoCreateMissing, NC.App.AppContext.AutoCreateMissing);
             maybe.Add(NCCFlags.root, NC.App.AppContext.RootLoc);
-            maybe.Add(NCCFlags.logFileLoc, NC.App.AppContext.ResultsFilePath);
-            maybe.Add(NCCFlags.resultsFileLoc, NC.App.AppContext.LogFilePath);
+            maybe.Add(NCCFlags.logFileLoc, NC.App.AppContext.LogFilePath);
+            maybe.Add(NCCFlags.resultsFileLoc, NC.App.AppContext.ResultsFilePath);
+            maybe.Add(NCCFlags.dataFileLoc, NC.App.AppContext.DataFilePath);
             maybe.Add(NCCFlags.dailyRootPath, NC.App.AppContext.DailyRootPath);
             maybe.Add(NCCFlags.fpPrec, NC.App.AppContext.FPPrecision);
             maybe.Add(NCCFlags.INCCParity, NC.App.AppContext.INCCParity);
@@ -61,6 +62,7 @@ namespace NewUI
             WorkingDirTextBox.Tag = root.Tag = NCCFlags.root;
             LogFileLoc.Tag = logLoc.Tag = NCCFlags.logFileLoc;
             ResultsFileLoc.Tag = resultsLoc.Tag = NCCFlags.resultsFileLoc;
+            DataFileLoc.Tag = dataLoc.Tag = NCCFlags.dataFileLoc;
             DailyF0lder.Tag = NCCFlags.dailyRootPath;
             IsoFractionalDay.Tag = NCCFlags.INCCParity;
             PollTimer.Tag = NCCFlags.opStatusTimeInterval;
@@ -77,6 +79,7 @@ namespace NewUI
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
             LogFileLoc.Text = NC.App.AppContext.LogFilePath;
             ResultsFileLoc.Text = NC.App.AppContext.ResultsFilePath;
+            DataFileLoc.Text = NC.App.AppContext.DataFilePath;
             FPPrec.SelectedItem = NC.App.AppContext.FPPrecision.ToString();
             EnableAuxRatioReportingCheckBox.Checked = NC.App.AppContext.AuxRatioReport;
             EnableSilentFolderCreationCheckBox.Checked = NC.App.AppContext.AutoCreateMissing;
@@ -96,6 +99,7 @@ namespace NewUI
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.root] !=NC.App.AppContext.RootLoc);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.logFileLoc] !=NC.App.AppContext.LogFilePath);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.resultsFileLoc] !=NC.App.AppContext.ResultsFilePath);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.dataFileLoc] !=NC.App.AppContext.DataFilePath);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.dailyRootPath] !=NC.App.AppContext.DailyRootPath);
             NC.App.AppContext.modified |= ((UInt16)maybe[NCCFlags.fpPrec] !=NC.App.AppContext.FPPrecision);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.INCCParity] !=NC.App.AppContext.INCCParity);
@@ -116,6 +120,7 @@ namespace NewUI
             NC.App.AppContext.RootPath = (string)maybe[NCCFlags.root];
             NC.App.AppContext.LogFilePath = (string)maybe[NCCFlags.logFileLoc];
             NC.App.AppContext.ResultsFilePath = (string)maybe[NCCFlags.resultsFileLoc];
+            NC.App.AppContext.DataFilePath = (string)maybe[NCCFlags.dataFileLoc];
             NC.App.AppContext.DailyRootPath = (bool)maybe[NCCFlags.dailyRootPath];
             NC.App.AppContext.FPPrecision = (UInt16)maybe[NCCFlags.fpPrec];
             NC.App.AppContext.INCCParity = (bool)maybe[NCCFlags.INCCParity];
@@ -244,7 +249,6 @@ namespace NewUI
 		private void logLoc_Click(object sender, EventArgs e)
 		{
             string str = UIIntegration.GetUsersFolder("Log file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
-
             if (!String.IsNullOrEmpty(str))
             {
                 maybe[(NCCFlags)((Control)sender).Tag] = str;
@@ -256,11 +260,20 @@ namespace NewUI
 		private void resultsLoc_Click(object sender, EventArgs e)
 		{
             string str = UIIntegration.GetUsersFolder("Results file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
-
             if (!String.IsNullOrEmpty(str))
             {
                 maybe[(NCCFlags)((Control)sender).Tag] = str;
 				ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+		}
+
+		private void dataLoc_Click(object sender, EventArgs e)
+		{
+            string str = UIIntegration.GetUsersFolder("Data file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!String.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				DataFileLoc.Text = System.IO.Path.GetFullPath(str);
             }
 		}
 	}

@@ -602,13 +602,14 @@ namespace NCCConfig
             //resetVal(LMFlags.logAutoPath, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (Int32)TraceOptions.None, typeof(Int32));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
-            resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
             resetVal(NCCFlags.rolloverSizeMB, 50, typeof(int)); /* (1024 * 1024), */
             resetVal(NCCFlags.logResults, (ushort)3, typeof(ushort)); // 0 none, 1 log file only, 2 console/UI only, 3 everywhere
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
+            resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.dataFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
@@ -801,6 +802,12 @@ namespace NCCConfig
         {
             get { return (string)getVal(NCCFlags.resultsFileLoc); }
             set { setVal(NCCFlags.resultsFileLoc, value); }
+        }
+
+		public string DataFilePath
+        {
+            get { return (string)getVal(NCCFlags.dataFileLoc); }
+            set { setVal(NCCFlags.dataFileLoc, value); }
         }
 
         public string RootPath
@@ -1038,6 +1045,8 @@ namespace NCCConfig
 				x[ix++] = "  log file path: " + LogFilePath;
 			if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
+			if (isSet(NCCFlags.dataFileLoc))
+				x[ix++] = "  data path: " + DataFilePath;
 
             x[ix++] = "  logging: " + Logging;
             x[ix++] = "    log level: " + Level();

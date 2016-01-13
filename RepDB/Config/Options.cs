@@ -36,7 +36,7 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, rolloverSizeMB, rolloverIntervalMin, fpPrec,
+        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, dataFileLoc, openResults, rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
 
@@ -81,6 +81,7 @@ namespace NCCConfig
 
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
+            { "dataLoc=", "specify base {file location} for output data files, overrides root", d => app.DataFilePath = d},
   			//{ "logAutoPath:",  "construct and use a daily log file folder name, optionally prepend the parent folder", 
             //    v => { app.DailyLogPath = true; app.ConstructDailyLogPath(v);} },
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  

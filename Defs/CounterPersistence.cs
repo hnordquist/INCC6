@@ -107,6 +107,8 @@ namespace ListModeDB
                     app.ResultsFilePath = (string)(dr["resultsFilePath"]);
                 if (dr.Table.Columns.Contains("logFilePath") && (!dr["logFilePath"].Equals(System.DBNull.Value)))
                     app.LogFilePath = (string)(dr["logFilePath"]);
+                if (dr.Table.Columns.Contains("dataFilePath") && (!dr["dataFilePath"].Equals(System.DBNull.Value)))
+                    app.DataFilePath = (string)(dr["dataFilePath"]);
                 return app;
             }
         }

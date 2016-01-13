@@ -44,6 +44,8 @@
 			this.Replay = new System.Windows.Forms.CheckBox();
 			this.AutoOpenCheckBox = new System.Windows.Forms.CheckBox();
 			this.RevFileGen = new System.Windows.Forms.CheckBox();
+			this.LogFileLoc = new System.Windows.Forms.TextBox();
+			this.ResultsFileLoc = new System.Windows.Forms.TextBox();
 			this.FPPrec = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.EnableAuxRatioReportingCheckBox = new System.Windows.Forms.CheckBox();
@@ -51,11 +53,12 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.logLoc = new System.Windows.Forms.Button();
-			this.LogFileLoc = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this.resultsLoc = new System.Windows.Forms.Button();
-			this.ResultsFileLoc = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
+			this.dataLoc = new System.Windows.Forms.Button();
+			this.DataFileLoc = new System.Windows.Forms.TextBox();
+			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// WorkingDirLabel
@@ -71,7 +74,7 @@
 			// WorkingDirTextBox
 			// 
 			this.WorkingDirTextBox.Location = new System.Drawing.Point(148, 15);
-			this.WorkingDirTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.WorkingDirTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.WorkingDirTextBox.Name = "WorkingDirTextBox";
 			this.WorkingDirTextBox.Size = new System.Drawing.Size(256, 22);
 			this.WorkingDirTextBox.TabIndex = 1;
@@ -91,7 +94,7 @@
 			// OKBtn
 			// 
 			this.OKBtn.Location = new System.Drawing.Point(643, 12);
-			this.OKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OKBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.OKBtn.Name = "OKBtn";
 			this.OKBtn.Size = new System.Drawing.Size(100, 28);
 			this.OKBtn.TabIndex = 3;
@@ -102,7 +105,7 @@
 			// CancelBtn
 			// 
 			this.CancelBtn.Location = new System.Drawing.Point(643, 48);
-			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.CancelBtn.Name = "CancelBtn";
 			this.CancelBtn.Size = new System.Drawing.Size(100, 28);
 			this.CancelBtn.TabIndex = 4;
@@ -113,7 +116,7 @@
 			// root
 			// 
 			this.root.Location = new System.Drawing.Point(413, 12);
-			this.root.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.root.Margin = new System.Windows.Forms.Padding(4);
 			this.root.Name = "root";
 			this.root.Size = new System.Drawing.Size(100, 28);
 			this.root.TabIndex = 5;
@@ -125,7 +128,7 @@
 			// 
 			this.DailyF0lder.AutoSize = true;
 			this.DailyF0lder.Location = new System.Drawing.Point(523, 18);
-			this.DailyF0lder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.DailyF0lder.Margin = new System.Windows.Forms.Padding(4);
 			this.DailyF0lder.Name = "DailyF0lder";
 			this.DailyF0lder.Size = new System.Drawing.Size(101, 21);
 			this.DailyF0lder.TabIndex = 6;
@@ -138,8 +141,8 @@
 			// IsoFractionalDay
 			// 
 			this.IsoFractionalDay.AutoSize = true;
-			this.IsoFractionalDay.Location = new System.Drawing.Point(16, 169);
-			this.IsoFractionalDay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.IsoFractionalDay.Location = new System.Drawing.Point(16, 199);
+			this.IsoFractionalDay.Margin = new System.Windows.Forms.Padding(4);
 			this.IsoFractionalDay.Name = "IsoFractionalDay";
 			this.IsoFractionalDay.Size = new System.Drawing.Size(310, 21);
 			this.IsoFractionalDay.TabIndex = 8;
@@ -150,8 +153,8 @@
 			// 
 			// PollTimer
 			// 
-			this.PollTimer.Location = new System.Drawing.Point(291, 286);
-			this.PollTimer.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PollTimer.Location = new System.Drawing.Point(291, 316);
+			this.PollTimer.Margin = new System.Windows.Forms.Padding(4);
 			this.PollTimer.Name = "PollTimer";
 			this.PollTimer.Size = new System.Drawing.Size(76, 22);
 			this.PollTimer.TabIndex = 13;
@@ -161,8 +164,8 @@
 			// PollPacket
 			// 
 			this.PollPacket.AcceptsReturn = true;
-			this.PollPacket.Location = new System.Drawing.Point(643, 285);
-			this.PollPacket.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PollPacket.Location = new System.Drawing.Point(643, 315);
+			this.PollPacket.Margin = new System.Windows.Forms.Padding(4);
 			this.PollPacket.Name = "PollPacket";
 			this.PollPacket.Size = new System.Drawing.Size(76, 22);
 			this.PollPacket.TabIndex = 15;
@@ -173,8 +176,8 @@
 			// OverwriteImportedDefs
 			// 
 			this.OverwriteImportedDefs.AutoSize = true;
-			this.OverwriteImportedDefs.Location = new System.Drawing.Point(484, 197);
-			this.OverwriteImportedDefs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OverwriteImportedDefs.Location = new System.Drawing.Point(484, 227);
+			this.OverwriteImportedDefs.Margin = new System.Windows.Forms.Padding(4);
 			this.OverwriteImportedDefs.Name = "OverwriteImportedDefs";
 			this.OverwriteImportedDefs.Size = new System.Drawing.Size(209, 21);
 			this.OverwriteImportedDefs.TabIndex = 17;
@@ -186,8 +189,8 @@
 			// Replay
 			// 
 			this.Replay.AutoSize = true;
-			this.Replay.Location = new System.Drawing.Point(16, 141);
-			this.Replay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Replay.Location = new System.Drawing.Point(16, 171);
+			this.Replay.Margin = new System.Windows.Forms.Padding(4);
 			this.Replay.Name = "Replay";
 			this.Replay.Size = new System.Drawing.Size(223, 21);
 			this.Replay.TabIndex = 7;
@@ -200,8 +203,8 @@
 			// AutoOpenCheckBox
 			// 
 			this.AutoOpenCheckBox.AutoSize = true;
-			this.AutoOpenCheckBox.Location = new System.Drawing.Point(16, 197);
-			this.AutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AutoOpenCheckBox.Location = new System.Drawing.Point(16, 227);
+			this.AutoOpenCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AutoOpenCheckBox.Name = "AutoOpenCheckBox";
 			this.AutoOpenCheckBox.Size = new System.Drawing.Size(410, 21);
 			this.AutoOpenCheckBox.TabIndex = 38;
@@ -213,8 +216,8 @@
 			// RevFileGen
 			// 
 			this.RevFileGen.AutoSize = true;
-			this.RevFileGen.Location = new System.Drawing.Point(16, 226);
-			this.RevFileGen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.RevFileGen.Location = new System.Drawing.Point(16, 256);
+			this.RevFileGen.Margin = new System.Windows.Forms.Padding(4);
 			this.RevFileGen.Name = "RevFileGen";
 			this.RevFileGen.Size = new System.Drawing.Size(333, 21);
 			this.RevFileGen.TabIndex = 39;
@@ -222,6 +225,26 @@
 			this.toolTip1.SetToolTip(this.RevFileGen, "Creates a .dat INCC5 Test data file alongside any results output files.");
 			this.RevFileGen.UseVisualStyleBackColor = true;
 			this.RevFileGen.CheckedChanged += new System.EventHandler(this.RevFileGen_CheckedChanged);
+			// 
+			// LogFileLoc
+			// 
+			this.LogFileLoc.Location = new System.Drawing.Point(148, 67);
+			this.LogFileLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.LogFileLoc.Name = "LogFileLoc";
+			this.LogFileLoc.Size = new System.Drawing.Size(256, 22);
+			this.LogFileLoc.TabIndex = 41;
+			this.toolTip1.SetToolTip(this.LogFileLoc, "Specify file location for log files. Overrides the root location and daily folder" +
+        "");
+			// 
+			// ResultsFileLoc
+			// 
+			this.ResultsFileLoc.Location = new System.Drawing.Point(148, 100);
+			this.ResultsFileLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.ResultsFileLoc.Name = "ResultsFileLoc";
+			this.ResultsFileLoc.Size = new System.Drawing.Size(256, 22);
+			this.ResultsFileLoc.TabIndex = 44;
+			this.toolTip1.SetToolTip(this.ResultsFileLoc, "Specify results file location for all results files. Overrides the root location " +
+        "and daily folder");
 			// 
 			// FPPrec
 			// 
@@ -245,8 +268,8 @@
             "16",
             "17",
             "18"});
-			this.FPPrec.Location = new System.Drawing.Point(519, 251);
-			this.FPPrec.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.FPPrec.Location = new System.Drawing.Point(519, 281);
+			this.FPPrec.Margin = new System.Windows.Forms.Padding(4);
 			this.FPPrec.Name = "FPPrec";
 			this.FPPrec.Size = new System.Drawing.Size(60, 24);
 			this.FPPrec.TabIndex = 9;
@@ -255,7 +278,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(136, 255);
+			this.label1.Location = new System.Drawing.Point(136, 285);
 			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(352, 17);
@@ -265,8 +288,8 @@
 			// EnableAuxRatioReportingCheckBox
 			// 
 			this.EnableAuxRatioReportingCheckBox.AutoSize = true;
-			this.EnableAuxRatioReportingCheckBox.Location = new System.Drawing.Point(484, 169);
-			this.EnableAuxRatioReportingCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.EnableAuxRatioReportingCheckBox.Location = new System.Drawing.Point(484, 199);
+			this.EnableAuxRatioReportingCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EnableAuxRatioReportingCheckBox.Name = "EnableAuxRatioReportingCheckBox";
 			this.EnableAuxRatioReportingCheckBox.Size = new System.Drawing.Size(194, 21);
 			this.EnableAuxRatioReportingCheckBox.TabIndex = 12;
@@ -277,8 +300,8 @@
 			// EnableSilentFolderCreationCheckBox
 			// 
 			this.EnableSilentFolderCreationCheckBox.AutoSize = true;
-			this.EnableSilentFolderCreationCheckBox.Location = new System.Drawing.Point(484, 141);
-			this.EnableSilentFolderCreationCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.EnableSilentFolderCreationCheckBox.Location = new System.Drawing.Point(484, 171);
+			this.EnableSilentFolderCreationCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EnableSilentFolderCreationCheckBox.Name = "EnableSilentFolderCreationCheckBox";
 			this.EnableSilentFolderCreationCheckBox.Size = new System.Drawing.Size(257, 21);
 			this.EnableSilentFolderCreationCheckBox.TabIndex = 11;
@@ -289,7 +312,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(25, 290);
+			this.label2.Location = new System.Drawing.Point(25, 320);
 			this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(254, 17);
@@ -299,7 +322,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(385, 289);
+			this.label3.Location = new System.Drawing.Point(385, 319);
 			this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(243, 17);
@@ -316,15 +339,6 @@
 			this.logLoc.Text = "Select...";
 			this.logLoc.UseVisualStyleBackColor = true;
 			this.logLoc.Click += new System.EventHandler(this.logLoc_Click);
-			// 
-			// LogFileLoc
-			// 
-			this.LogFileLoc.Location = new System.Drawing.Point(148, 67);
-			this.LogFileLoc.Margin = new System.Windows.Forms.Padding(4);
-			this.LogFileLoc.Name = "LogFileLoc";
-			this.LogFileLoc.Size = new System.Drawing.Size(256, 22);
-			this.LogFileLoc.TabIndex = 41;
-			this.toolTip1.SetToolTip(this.LogFileLoc, "Specify base {file location} for all input and output files");
 			// 
 			// label4
 			// 
@@ -347,30 +361,55 @@
 			this.resultsLoc.UseVisualStyleBackColor = true;
 			this.resultsLoc.Click += new System.EventHandler(this.resultsLoc_Click);
 			// 
-			// ResultsFileLoc
-			// 
-			this.ResultsFileLoc.Location = new System.Drawing.Point(148, 100);
-			this.ResultsFileLoc.Margin = new System.Windows.Forms.Padding(4);
-			this.ResultsFileLoc.Name = "ResultsFileLoc";
-			this.ResultsFileLoc.Size = new System.Drawing.Size(256, 22);
-			this.ResultsFileLoc.TabIndex = 44;
-			this.toolTip1.SetToolTip(this.ResultsFileLoc, "Specify base {file location} for all input and output files");
-			// 
 			// label5
 			// 
 			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(5, 103);
+			this.label5.Location = new System.Drawing.Point(4, 103);
 			this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(136, 17);
 			this.label5.TabIndex = 43;
 			this.label5.Text = "Results file directory";
 			// 
+			// dataLoc
+			// 
+			this.dataLoc.Location = new System.Drawing.Point(413, 129);
+			this.dataLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.dataLoc.Name = "dataLoc";
+			this.dataLoc.Size = new System.Drawing.Size(100, 28);
+			this.dataLoc.TabIndex = 48;
+			this.dataLoc.Text = "Select...";
+			this.dataLoc.UseVisualStyleBackColor = true;
+			this.dataLoc.Click += new System.EventHandler(this.dataLoc_Click);
+			// 
+			// DataFileLoc
+			// 
+			this.DataFileLoc.Location = new System.Drawing.Point(148, 132);
+			this.DataFileLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.DataFileLoc.Name = "DataFileLoc";
+			this.DataFileLoc.Size = new System.Drawing.Size(256, 22);
+			this.DataFileLoc.TabIndex = 47;
+			this.toolTip1.SetToolTip(this.DataFileLoc, "Specify data file location for all output data files. Overrides the root location and" +
+        " daily folder");
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(5, 135);
+			this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(119, 17);
+			this.label6.TabIndex = 46;
+			this.label6.Text = "Data file directory";
+			// 
 			// Preferences
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(757, 317);
+			this.ClientSize = new System.Drawing.Size(757, 345);
+			this.Controls.Add(this.dataLoc);
+			this.Controls.Add(this.DataFileLoc);
+			this.Controls.Add(this.label6);
 			this.Controls.Add(this.resultsLoc);
 			this.Controls.Add(this.ResultsFileLoc);
 			this.Controls.Add(this.label5);
@@ -397,7 +436,7 @@
 			this.Controls.Add(this.WorkingDirInstructionsLabel);
 			this.Controls.Add(this.WorkingDirTextBox);
 			this.Controls.Add(this.WorkingDirLabel);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "Preferences";
 			this.Text = "Preferences";
 			this.ResumeLayout(false);
@@ -434,5 +473,8 @@
 		private System.Windows.Forms.Button resultsLoc;
 		private System.Windows.Forms.TextBox ResultsFileLoc;
 		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Button dataLoc;
+		private System.Windows.Forms.TextBox DataFileLoc;
+		private System.Windows.Forms.Label label6;
 	}
 }

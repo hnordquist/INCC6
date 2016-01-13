@@ -2289,6 +2289,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
             pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
             pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
+            pb.ps.Add(new DBParamEntry("dataFilePath", DataFilePath)); 
         }
 
         public DB.ElementList ToDBElementList()
