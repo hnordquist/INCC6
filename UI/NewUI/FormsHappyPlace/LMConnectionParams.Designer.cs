@@ -82,6 +82,7 @@
 			this.DetectorTypeLabel = new System.Windows.Forms.Label();
 			this.DetectorComboBox = new System.Windows.Forms.ComboBox();
 			this.PTR32Panel = new System.Windows.Forms.Panel();
+			this.MCAComboBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.MCAName = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
@@ -106,7 +107,6 @@
 			this.AddDetectorTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.AddDetectorTypeLabel = new System.Windows.Forms.Label();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.MCAComboBox = new System.Windows.Forms.ComboBox();
 			this.PerformanceTuningGroupBox.SuspendLayout();
 			this.InstrumentDiscoveryGroupBox.SuspendLayout();
 			this.JoeIsTheCoolestGroupBox.SuspendLayout();
@@ -785,6 +785,16 @@
 			this.PTR32Panel.TabIndex = 36;
 			this.PTR32Panel.Visible = false;
 			// 
+			// MCAComboBox
+			// 
+			this.MCAComboBox.FormattingEnabled = true;
+			this.MCAComboBox.Location = new System.Drawing.Point(256, 158);
+			this.MCAComboBox.Name = "MCAComboBox";
+			this.MCAComboBox.Size = new System.Drawing.Size(360, 24);
+			this.MCAComboBox.TabIndex = 52;
+			this.toolTip1.SetToolTip(this.MCAComboBox, "Identified MCA527 devices on the current network");
+			this.MCAComboBox.SelectedIndexChanged += new System.EventHandler(this.MCAComboBox_SelectedIndexChanged);
+			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
@@ -1029,15 +1039,6 @@
 			this.AddDetectorTypeLabel.Size = new System.Drawing.Size(137, 17);
 			this.AddDetectorTypeLabel.TabIndex = 0;
 			this.AddDetectorTypeLabel.Text = "Detector type to add";
-			// 
-			// MCAComboBox
-			// 
-			this.MCAComboBox.FormattingEnabled = true;
-			this.MCAComboBox.Location = new System.Drawing.Point(395, 126);
-			this.MCAComboBox.Name = "MCAComboBox";
-			this.MCAComboBox.Size = new System.Drawing.Size(234, 24);
-			this.MCAComboBox.TabIndex = 52;
-			this.toolTip1.SetToolTip(this.MCAComboBox, "Identified MCA527 devices on the current network");
 			// 
 			// LMConnectionParams
 			// 

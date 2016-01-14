@@ -3898,10 +3898,30 @@ namespace AnalysisDefs
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
 
-            UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
-            UpdateDetectorαβ(det, db);
+			UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
+			UpdateDetectorαβ(det, db);
         }
-        // update the accumulated changes on the global list
+
+		
+        public bool UpdateDetectorFields(Detector det, DB.Detectors db = null)
+        {
+            if (db == null) db = new DB.Detectors();
+           
+            DB.ElementList els = null;
+            els = new DB.ElementList();
+            els.Add(new DB.Element("detector_name",det.Id.DetectorName)); 
+            bool b = false;
+            if (db.DefinitionExists(els))
+            {
+                DB.ElementList full = det.Id.ToDBElementList();
+                full.AddRange(els);
+                b = db.Update(det.Id.DetectorName, full);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
+            }
+			return b;
+        }
+
+		        // update the accumulated changes on the global list
         public void UpdateDetectors()
         {
             DB.Detectors db = new DB.Detectors();

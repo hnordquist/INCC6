@@ -149,7 +149,7 @@
                                 <ColumnDefinition Width="54*" />
                                 <ColumnDefinition Width="25*" />
                             </Grid.ColumnDefinitions>
-                            <ComboBox Name="logLevels" Width="83" Margin="112,4,0,8" HorizontalAlignment="Left" ToolTip="Specifiy log message severity level filter" IsEnabled="False" SelectionChanged="logLevels_SelectionChanged">
+                            <ComboBox Name="logLevels" Width="156" Margin="163,6,0,6" HorizontalAlignment="Left" ToolTip="Specifiy log message severity level filter" IsEnabled="False" SelectionChanged="logLevels_SelectionChanged">
                                 <ComboBoxItem Content="None" IsEnabled="False"/>
                                 <ComboBoxItem Content="Critical"/>
                                 <ComboBoxItem Content="Error" />
@@ -157,14 +157,14 @@
                                 <ComboBoxItem Content="Information" />
                                 <ComboBoxItem Content="Verbose" />
                             </ComboBox>
-                            <CheckBox Content="Logging" Name="EnableLog" Margin="0,7,554,11" Checked="EnableLog_Checked" ToolTip="Enable/disable logging" Unchecked="EnableLog_Unchecked" FlowDirection="RightToLeft" />
+                            <CheckBox Content="Logging" Name="EnableLog" Margin="21,8,513.2,3" Checked="EnableLog_Checked" ToolTip="Enable/disable logging" Unchecked="EnableLog_Unchecked" FlowDirection="RightToLeft" />
                             <ComboBox Height="Auto" Name="logResults" Width="75" ToolTip="Select how results are logged" IsEnabled="False" Margin="268,5,276,8" SelectionChanged="logResults_SelectionChanged" Visibility="Hidden">
                                 <ComboBoxItem Content="None" />
                                 <ComboBoxItem Content="File only" />
                                 <ComboBoxItem Content="UI/console only" />
                                 <ComboBoxItem Content="All log targets" />
                             </ComboBox>
-                            <Label Content="Level" Height="28" HorizontalAlignment="Left" Margin="71,2,0,0" Name="label1" VerticalAlignment="Top" />
+                            <Label Content="Level" Height="28" HorizontalAlignment="Left" Margin="115,3,0,0" Name="label1" VerticalAlignment="Top" />
                             <Label Content="Log results" Height="28" Margin="201,5,358,0" Name="label2" VerticalAlignment="Top" ToolTip="Include results in logs" Visibility="Hidden"/>
                         </Grid>
                     </GroupBox>

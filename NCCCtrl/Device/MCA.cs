@@ -731,7 +731,7 @@ namespace Device
 				return new MCAResponse { Bytes = bytes };
 			}
 			else if (endFlag != (ushort)EndFlagCode.Success) {
-				Console.WriteLine("EndFlagCode: {0}", endFlag);
+				// URGENT: use logger here Console.WriteLine("EndFlagCode: {0}", endFlag);
 				return null;
 			}
 			else if (length == 1018 + 6) { return null; } // CMD_QUERY_OSCI_SCREEN
@@ -2286,9 +2286,10 @@ namespace Device
 		public MCAClient()
 		{
 			// TODO: catch case where client cannot be created because port is not available!
-			Console.WriteLine("Creating UDP port");
-			Udp = new UdpClient(MCA_PORT_NUMBER);
+			//Console.WriteLine("Creating UDP port");
+			Udp = new UdpClient(0);
 			Port = ((IPEndPoint)Udp.Client.LocalEndPoint).Port;
+			Udp.EnableBroadcast = true;
 			Receive();
 		}
 
@@ -2302,6 +2303,7 @@ namespace Device
 				BroadcastSendIPs = new List<IPEndPoint>();
 				foreach (NetworkInterface networkInterface in NetworkInterface.GetAllNetworkInterfaces()) {
 					if (networkInterface.NetworkInterfaceType == NetworkInterfaceType.Loopback) { continue; }
+					if (networkInterface.OperationalStatus != OperationalStatus.Up) { continue; }
 					foreach (UnicastIPAddressInformation unicastAddress in networkInterface.GetIPProperties().UnicastAddresses) {
 						// the MCA 527 does IPv4 only
 						if (unicastAddress.Address.AddressFamily == AddressFamily.InterNetwork) {
@@ -2317,6 +2319,7 @@ namespace Device
 					}
 				}
 			}
+			BroadcastSendIPs.Add(new IPEndPoint(IPAddress.Broadcast, MCA_PORT_NUMBER));
 			return BroadcastSendIPs;
 		}
 	
