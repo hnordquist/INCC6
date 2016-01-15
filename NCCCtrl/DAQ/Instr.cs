@@ -99,7 +99,7 @@ namespace LMDAQ
         }
         public bool HasConnectedLM()
         {
-            return this.Exists(i => { return (i is LMInstrument &&   ((LMInstrument)i).SocketBased() && (i as LMInstrument).DAQState == DAQInstrState.Online); });
+            return this.Exists(i => { return (i is LMInstrument && ((LMInstrument)i).SocketBased() && (i as LMInstrument).DAQState == DAQInstrState.Online); });
         }
         public Instrument AConnectedLM()
         {

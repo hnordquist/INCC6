@@ -124,16 +124,17 @@ namespace LMDAQ
 			try 
 			{ 
 				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
-				//m_device.CallbackObject = new MCADeviceCallbackObject();
+				//m_device.CallbackObject = new MCADeviceCallbackObject();  // URGENT next fill this callback in
 				m_device.Initialize().Wait();
+				DAQState = DAQInstrState.Online;
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
 			}
 			catch (Exception pex) 
 			{
+				DAQState = DAQInstrState.Offline;
 				throw new Exception("MCA527 connect problem", pex);
 			} 
 
-			DAQState = DAQInstrState.Online;
-			m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
 			m_logger.Flush();
 
         }
@@ -183,9 +184,9 @@ namespace LMDAQ
                 long total = 0;
 
                 //m_device.Reset();
-                //stopwatch.Start();
-                //m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
-                //while (stopwatch.Elapsed < duration) {
+                stopwatch.Start();
+                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+                while (stopwatch.Elapsed < duration) {
                 //    cancellationToken.ThrowIfCancellationRequested();
 
                 //    if (m_device.Available > 0) {
@@ -196,7 +197,7 @@ namespace LMDAQ
                 //            total += bytesRead;
                 //        }
                 //    }
-                //}
+                }
 
                 stopwatch.Stop();
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());

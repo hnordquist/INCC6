@@ -229,7 +229,7 @@ namespace LMDAQ
             return some;
         }
 
-        public void ConnectWithRetries(bool batch, int retry)
+        public async void ConnectWithRetries(bool batch, int retry)
         {
             //NC.App.Opstate.ResetTimer(0, instconnect, (AssayState)NC.App.Opstate, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
@@ -244,7 +244,7 @@ namespace LMDAQ
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
             {
                 if (attempts == 0)
-                    ConnectInstruments();  // try to connect to any and all instruemnt (LMMM, PTR-32, MCA-527 and SR) the first time
+                    await ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
                     Thread.Sleep(500);              
@@ -507,11 +507,11 @@ namespace LMDAQ
                     break;
             }
         }
-        public void ConnectInstruments()
+        public async System.Threading.Tasks.Task ConnectInstruments()
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
 
-			ConnectMCAInstruments();
+			await ConnectMCAInstruments();
 
             // for the LMMMs
             ConnectLMMMInstruments();
@@ -531,16 +531,16 @@ namespace LMDAQ
             }
         }
 
-		public async void ConnectMCAInstruments()
+		public async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> ConnectMCAInstruments()
         {
-            if (!Instruments.Active.HasSocketBasedLM())
-                return;
+ 			Device.MCADeviceInfo[] deviceInfos = null;
+           if (!Instruments.Active.HasSocketBasedLM())
+                return deviceInfos;
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
 			if (lmi.id.SRType != InstrType.MCA527)
-				return;
+				return deviceInfos;
             collog.TraceInformation("Broadcasting to MCA instruments. . .");
 
-			Device.MCADeviceInfo[] deviceInfos = null;
 			try
 			{
 				deviceInfos = await Device.MCADevice.QueryDevices();
@@ -561,7 +561,7 @@ namespace LMDAQ
 						}
 					}
 					if (thisone == null)
-						return;
+						return deviceInfos;
 					((MCA527Instrument)lmi).DeviceInfo = thisone;
 					lmi.Connect();
 				}
@@ -569,6 +569,7 @@ namespace LMDAQ
 			{
 				collog.TraceException(e);
 			}
+			return deviceInfos;
         }
  
         public void ConnectLMMMInstruments()
@@ -620,7 +621,7 @@ namespace LMDAQ
         }
         protected void DisconnectInstruments()
         {
-            foreach (Instrument active in Instruments.Active)
+            foreach (Instrument active in Instruments.Active)  // disconnect PTR-32 and MCA-527
 			{
 				active.Disconnect();
             }
