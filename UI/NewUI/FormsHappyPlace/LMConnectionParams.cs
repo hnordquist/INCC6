@@ -161,7 +161,7 @@ namespace NewUI
                 else if (det.Id.SRType == InstrType.PTR32)
                 {
                     PTR32Panel.Visible = true;
-					MCAName.Visible = false;
+					MCANameLabel.Visible = MCAName.Visible = false;
 					ConnIdField.Text = string.Copy(det.Id.DetectorId);
 					connIdLabel.Text = "PTR-32 instrument identifier: ";
 					connLabel.Text = "PTR-32 Connection Parameters";
@@ -185,7 +185,7 @@ namespace NewUI
 			if (det != null && det.Id.SRType == InstrType.MCA527)
 			{
 				PTR32Panel.Visible = true;
-				MCAName.Visible = true;
+				MCANameLabel.Visible = MCAName.Visible = true;
 				MCAName.Text = string.Copy(det.Id.DetectorId);
 				ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
 				connIdLabel.Text = "MCA-527 serial number: ";

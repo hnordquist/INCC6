@@ -83,7 +83,7 @@
 			this.DetectorComboBox = new System.Windows.Forms.ComboBox();
 			this.PTR32Panel = new System.Windows.Forms.Panel();
 			this.MCAComboBox = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
+			this.MCANameLabel = new System.Windows.Forms.Label();
 			this.MCAName = new System.Windows.Forms.TextBox();
 			this.label8 = new System.Windows.Forms.Label();
 			this.VoltageTolerance = new System.Windows.Forms.TextBox();
@@ -762,7 +762,7 @@
 			// PTR32Panel
 			// 
 			this.PTR32Panel.Controls.Add(this.MCAComboBox);
-			this.PTR32Panel.Controls.Add(this.label1);
+			this.PTR32Panel.Controls.Add(this.MCANameLabel);
 			this.PTR32Panel.Controls.Add(this.MCAName);
 			this.PTR32Panel.Controls.Add(this.label8);
 			this.PTR32Panel.Controls.Add(this.VoltageTolerance);
@@ -795,16 +795,16 @@
 			this.toolTip1.SetToolTip(this.MCAComboBox, "Identified MCA527 devices on the current network");
 			this.MCAComboBox.SelectedIndexChanged += new System.EventHandler(this.MCAComboBox_SelectedIndexChanged);
 			// 
-			// label1
+			// MCANameLabel
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(55, 101);
-			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(165, 17);
-			this.label1.TabIndex = 51;
-			this.label1.Text = "MCA-527 detector name ";
-			this.toolTip1.SetToolTip(this.label1, "Enter the identifier of your PTR-32 instrument here. ");
+			this.MCANameLabel.AutoSize = true;
+			this.MCANameLabel.Location = new System.Drawing.Point(55, 101);
+			this.MCANameLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.MCANameLabel.Name = "MCANameLabel";
+			this.MCANameLabel.Size = new System.Drawing.Size(165, 17);
+			this.MCANameLabel.TabIndex = 51;
+			this.MCANameLabel.Text = "MCA-527 detector name ";
+			this.toolTip1.SetToolTip(this.MCANameLabel, "Enter the identifier of your PTR-32 instrument here. ");
 			// 
 			// MCAName
 			// 
@@ -1152,7 +1152,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox VoltageTolerance;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label MCANameLabel;
 		private System.Windows.Forms.TextBox MCAName;
 		private System.Windows.Forms.ComboBox MCAComboBox;
 	}

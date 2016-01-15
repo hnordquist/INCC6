@@ -115,7 +115,7 @@ namespace LMDAQ
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
-                case NCCAction.Discover: // for LM only, not needed for SR AFAIKT
+                case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
                     ConnectInstruments();
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
