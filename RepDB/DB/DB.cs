@@ -821,8 +821,20 @@ namespace DB
             }
         }
 
-
-    }
+		/// <summary>
+		/// 6.0.0.1			db.TableHasColumn("LMINCCAppContext","dataFilePath");
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public bool TableHasColumn(string table, string col)
+		{
+			string sql = "select " + col + " from " + table;
+			DataTable dt = DT(sql);
+			DataRow r =  dt.Rows.Find(col);
+			return dt.Rows.Count > 0;
+		}
+	}
 
     public class DB2 : IDB, IDisposable
     {
