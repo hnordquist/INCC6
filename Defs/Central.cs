@@ -812,9 +812,11 @@ namespace NCC
         public static bool SetNewCurrentDetector(string name, bool checkForExistence)
         {
             AcquireParameters acq = GetCurrentAcquireParams();
+			bool exists = true;
             Detector det = CentralizedState.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, name, true) == 0);
             if (det == null)
 			{
+				exists = false;
 				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
  				if (checkForExistence)
 					return false;			
@@ -824,11 +826,14 @@ namespace NCC
 			acq.MeasDateTime = DateTime.Now;
 			if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
 			{
-				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");
+				// change detector on current acquire parms state
+				if (!exists)
+					CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
 				acq.detector_id = string.Copy(name);
 				acq.meas_detector_id = string.Copy(name);
 				CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
-				CentralizedState.App.DB.Detectors.Add(det);
+				if (!exists)
+					CentralizedState.App.DB.Detectors.Add(det);
 			}
 			CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
 			CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);

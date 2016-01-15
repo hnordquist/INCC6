@@ -156,14 +156,33 @@ namespace NewUI
                         Instruments.Active.Add(instrument);
                     }
                 }
-                else {
-                    // if ok, the analyzers are set up, so can kick it off now.
-                    LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
-                    lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
-                    lm.selected = false;  //must broadcast first to get it selected
-                    if (!Instruments.All.Contains(lm))
-                        Instruments.All.Add(lm); // add to global runtime list
-                }
+                         else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
+                            {
+                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                                mca.DAQState = DAQInstrState.Offline; 
+                                mca.selected = true;
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+                                if (!Instruments.Active.Contains(mca))
+                                    Instruments.Active.Add(mca);                                
+                            } 
+                            else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
+                            {
+                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                                mca.DAQState = DAQInstrState.Offline; 
+                                mca.selected = true;
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+                                if (!Instruments.Active.Contains(mca))
+                                    Instruments.Active.Add(mca);                                
+                            } 
+							else // LMMM
+							{
+                                LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
+                                lm.DAQState = DAQInstrState.Offline; 
+                                lm.selected = false;  //must broadcast first to get it selected
+                                if (!Instruments.All.Contains(lm))
+                                    Instruments.All.Add(lm); // add to global runtime list		
+							}
+                              
             }
             else
             {

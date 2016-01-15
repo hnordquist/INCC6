@@ -36,7 +36,7 @@ namespace Analysis
     /// <summary>
     /// Converts raw data from a PTR-32.
     /// </summary>
-    public class MCA527ProcessingState : LMProcessingState
+    public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
     {
 
         /// <summary>
@@ -65,6 +65,28 @@ namespace Analysis
                 file = (NCCFile.MCAFile)param;
             }
         }
+
+				public void BeginSweep(uint sweepNumber)
+		{
+			Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
+		}
+
+		public void FinishedSweep(uint sweepNumber, double sweepDuration)
+		{
+			Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDuration);
+		}
+
+		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
+		{
+			//Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
+			//bool first = true;
+			//foreach (uint timestamp in timestamps) {
+			//	if (first == false) { Console.Write(", "); }
+			//	Console.Write(timestamp);
+			//	first = false;
+			//}
+			//Console.WriteLine();
+		}
 
         /// <summary>
         /// Converts data in the raw data buffer.

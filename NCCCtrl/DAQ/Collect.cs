@@ -244,14 +244,14 @@ namespace LMDAQ
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
             {
                 if (attempts == 0)
-                    ConnectInstruments();  // do LMMM, PTR-32 and SR the first time
+                    ConnectInstruments();  // try to connect to any and all instruemnt (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
                     Thread.Sleep(500);              
                     if (Instruments.Active.HasSocketBasedLM()) 
                         FireEvent(EventType.PreAction, NC.App.Opstate);
                 }
-                ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based needs more retries based on testing
+                ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
                
                 attempts++;
             }
@@ -398,6 +398,9 @@ namespace LMDAQ
                         FireEvent(EventType.ActionInProgress, this);
                         OutputResults(NCCAction.Assay);
                     }
+					else
+						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
+
                 }
                 NC.App.Opstate.ResetTokens();
             }
@@ -508,6 +511,8 @@ namespace LMDAQ
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
 
+			ConnectMCAInstruments();
+
             // for the LMMMs
             ConnectLMMMInstruments();
 
@@ -525,37 +530,77 @@ namespace LMDAQ
                 collog.TraceEvent(LogLevels.Verbose, 10799, "No active SR instruments. . .");
             }
         }
+
+		public async void ConnectMCAInstruments()
+        {
+            if (!Instruments.Active.HasSocketBasedLM())
+                return;
+            LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
+			if (lmi.id.SRType != InstrType.MCA527)
+				return;
+            collog.TraceInformation("Broadcasting to MCA instruments. . .");
+
+			Device.MCADeviceInfo[] deviceInfos = null;
+			try
+			{
+				deviceInfos = await Device.MCADevice.QueryDevices();
+				if (deviceInfos.Length > 0)
+				{   
+					Device.MCADeviceInfo thisone = null;
+					// Match based on Electronics Id field
+					foreach (Device.MCADeviceInfo d in deviceInfos)
+					{
+						string id =  d.Serial.ToString("D5");
+						string s = string.Format("MCA-527#{0}  FW# {1}  HW# {2} on {3}", id, d.FirmwareVersion, d.HardwareVersion, d.Address);
+						collog.TraceInformation("Checking " + s);
+						if (string.Equals(id, lmi.id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
+						{
+							collog.TraceInformation("Connecting to " + s);
+							thisone = d;
+							break;
+						}
+					}
+					if (thisone == null)
+						return;
+					((MCA527Instrument)lmi).DeviceInfo = thisone;
+					lmi.Connect();
+				}
+			} catch (Exception e)
+			{
+				collog.TraceException(e);
+			}
+        }
  
         public void ConnectLMMMInstruments()
         {
-            if (!Instruments.Active.HasSocketBasedLM())
-            {
+            if (!Instruments.Active.HasLMMM())
                 return;
-            }
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
+			if (lmi.id.SRType != InstrType.LMMM)
+				return;
             // for the LMs
             // Start listening for instruments.
-			// URGENT: start here with the MCA connection divergence 
             StartLMDAQServer((LMConnectionInfo)lmi.id.FullConnInfo);   // NEXT: socket reset should occur here for robust restart and recovery            
-            collog.TraceInformation("Broadcasting to LM instruments. . .");
+            collog.TraceInformation("Broadcasting to LMMM instruments. . .");
 
             // broadcast message to all subnet (configurable, defaulting to 169.254.x.x) addresses. This is the instrument group.
             // look for the number of requested instruments
             DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.broadcast);
-            collog.TraceInformation("Sent broadcast. Waiting for LM instruments to connect");
+            collog.TraceInformation("Sent broadcast. Waiting for LMMM instruments to connect");
 
             // wait until enough time has elapsed to be sure live instruments can report back
             Thread.Sleep(lmi.id.FullConnInfo.Wait);  // todo: configure this with a unique wait parameter value
             if (!LMMMComm.LMServer.IsRunning)
-                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LM support running");
-
+                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LMMM support running");
         }
+
         public void ConnectPTR32Instruments()
         {
-            if (!Instruments.Active.HasUSBBasedLM())
-            {
+			bool exists = Instruments.Active.Exists( lm => { return lm.id.SRType == InstrType.PTR32; });
+			if (!exists)
+				return;
+            if (!Instruments.Active.HasUSBBasedLM()) // USB support only
                 return;
-            }
 
             foreach (Instrument instrument in Instruments.Active)
             {
@@ -575,16 +620,12 @@ namespace LMDAQ
         }
         protected void DisconnectInstruments()
         {
-            foreach (Instrument instrument in Instruments.Active) {
-                try {
-                    instrument.Disconnect();
-                }
-                catch (Exception ex) {
-                    collog.TraceException(ex);
-                }
+            foreach (Instrument active in Instruments.Active)
+			{
+				active.Disconnect();
             }
 
-            DisconnectFromLMInstruments();
+            DisconnectFromLMMMInstruments();
             DisconnectFromSRInstruments();
             Instruments.All.Clear();
             collog.TraceInformation("Offline");

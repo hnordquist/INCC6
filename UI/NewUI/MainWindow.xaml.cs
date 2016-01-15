@@ -615,21 +615,27 @@ namespace NewUI
                                 Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
                                 instrument.DAQState = DAQInstrState.Offline;
                                 instrument.selected = true;
-                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
-
+                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));  // todo: is this reduntant?
                                 if (!Instruments.Active.Contains(instrument))
-                                {
                                     Instruments.Active.Add(instrument);
-                                }
                             }
-                            else
+                            else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
                             {
+                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                                mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+                                mca.selected = true;
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+                                if (!Instruments.Active.Contains(mca))
+                                    Instruments.Active.Add(mca);                                
+                            } 
+							else // LMMM
+							{
                                 LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
                                 lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                                 lm.selected = false;  //must broadcast first to get it selected
                                 if (!Instruments.All.Contains(lm))
-                                    Instruments.All.Add(lm); // add to global runtime list
-                            }
+                                    Instruments.All.Add(lm); // add to global runtime list		
+							}
                         }
                         else
                         {

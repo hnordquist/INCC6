@@ -27,9 +27,9 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-
 using AnalysisDefs;
 using Device;
 using NCC;
@@ -38,13 +38,12 @@ using NCCReporter;
 
 namespace LMDAQ
 {
+	using NC = NCC.CentralizedState;
 
-    using NC = NCC.CentralizedState;
-
-    /// <summary>
-    /// Represents a MCA-527 device 
-    /// </summary>
-    public class MCA527Instrument : LMInstrument, IEquatable<MCA527Instrument>
+	/// <summary>
+	/// Represents a MCA-527 device 
+	/// </summary>
+	public class MCA527Instrument : LMInstrument, IEquatable<MCA527Instrument>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MCA527Instrument"/> class.
@@ -67,7 +66,23 @@ namespace LMDAQ
         /// </summary>
         public string DeviceName
         {
-            get { return id.DetectorId; } // URGENT: map to electronics id for this HW
+            get { return id.DetectorId; }
+        }
+
+		/// <summary>
+        /// Gets the device electronics id.
+        /// </summary>
+        public string ElectronicsId
+        {
+            get { return id.ElectronicsId; }
+        }
+
+		/// <summary>
+        /// The device IP endpoint.
+        /// </summary>
+        public Device.MCADeviceInfo DeviceInfo
+        {
+            get; set;
         }
 
         /// <summary>
@@ -108,21 +123,18 @@ namespace LMDAQ
 
 			try 
 			{ 
-				m_device = new MCA527(DeviceName);
+				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
+				//m_device.CallbackObject = new MCADeviceCallbackObject();
+				m_device.Initialize().Wait();
 			}
 			catch (Exception pex) 
 			{
-				m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Digilent DpcUtils {1}", DeviceName, GetDpcUtilsVersion());
-				m_logger.Flush();
 				throw new Exception("MCA527 connect problem", pex);
 			} 
 
 			DAQState = DAQInstrState.Online;
-            m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Using Digilent DpcUtils version {1}", DeviceName, GetDpcUtilsVersion());
-			m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected, MCA527 firmware version is {1}", DeviceName, m_device.FirmwareVersion);
+			m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
 			m_logger.Flush();
-			(file as PTRFilePair).FirmwareIdent = m_device.FirmwareVersion;
-
 
         }
 
@@ -156,35 +168,35 @@ namespace LMDAQ
         /// <param name="measurement">The measurement.</param>
         /// <param name="cancellationToken">The cancellation token to observe.</param>
         /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+        protected async void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
                 m_logger.Flush();
 
-                if (m_setvoltage)
-                    SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+                //if (m_setvoltage)
+                //   await SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
             
                 Stopwatch stopwatch = new Stopwatch();
                 TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
                 byte[] buffer = new byte[1024 * 1024];
                 long total = 0;
 
-                m_device.Reset();
-                stopwatch.Start();
-                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
-                while (stopwatch.Elapsed < duration) {
-                    cancellationToken.ThrowIfCancellationRequested();
+                //m_device.Reset();
+                //stopwatch.Start();
+                //m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+                //while (stopwatch.Elapsed < duration) {
+                //    cancellationToken.ThrowIfCancellationRequested();
 
-                    if (m_device.Available > 0) {
-                        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+                //    if (m_device.Available > 0) {
+                //        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
 
-                        if (bytesRead > 0) {
-                            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
-                            total += bytesRead;
-                        }
-                    }
-                }
+                //        if (bytesRead > 0) {
+                //            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
+                //            total += bytesRead;
+                //        }
+                //    }
+                //}
 
                 stopwatch.Stop();
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());
@@ -266,7 +278,7 @@ namespace LMDAQ
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
         /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
+        private async void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
@@ -278,7 +290,7 @@ namespace LMDAQ
                 counter.TakeMeasurement(duration, cancellationToken);
 
                 HVControl.HVStatus status = new HVControl.HVStatus();
-                status.HVread = m_device.Voltage;
+                status.HVread = (int) await m_device.GetHighVoltage();
                 status.HVsetpt = voltage;
 
                 for (int i = 0; i < MCA527.ChannelCount; i++) {
@@ -340,7 +352,7 @@ namespace LMDAQ
                 return;
             }
 
-            m_device.SetVoltage(0);
+            //m_device.SetVoltage(0);
             m_device.Close();
             m_device = null;
 
@@ -368,36 +380,14 @@ namespace LMDAQ
         private void SetVoltage(int voltage, TimeSpan timeout, CancellationToken cancellationToken)
         {
             m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Setting voltage to {1} volts, timeout is {2}, tolerance is {3}...", DeviceName, voltage, MaxSetVoltageTime.ToString("g"), VoltageTolerance);
-            if (m_device.VoltageCorrectionFactors != null)
-                m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage correction factors {1}, {2}...", DeviceName, m_device.VoltageCorrectionFactors[0], m_device.VoltageCorrectionFactors[1]);
             m_logger.Flush();
 
             // set the voltage and check it, loop for timeout seconds waiting for it to settle at the desired value
-            m_device.SetVoltage(voltage);
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            int lrvoltage = m_device.Voltage; // JFL: An inline eval in the inner loop below sometimes changed so fast the output had an incorrect follow-on voltage
-            while (Math.Abs(lrvoltage - voltage) > VoltageTolerance) {
-                if (cancellationToken.IsCancellationRequested) {
-                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Cancellation requested while setting voltage", DeviceName);
-                    m_logger.Flush();
-
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
-                else if (stopwatch.Elapsed > timeout) {
-                    m_logger.TraceEvent(LogLevels.Warning, 0, "MCA527[{0}]: Timed out while setting voltage (last seen {1} volts)", DeviceName, lrvoltage);
-                    m_logger.Flush();
-
-                    throw new TimeoutException("Timed out while setting voltage");
-                }
-                lrvoltage = m_device.Voltage;  // the register read occurs here
-                if (stopwatch.Elapsed.Milliseconds % 10000 == 0)
-                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: At {1} volts", DeviceName, lrvoltage);
-                Thread.Yield();
-                Thread.Sleep(500);
-            }
-            m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage set to {1} volts (Elapsed time: {2})",
-                DeviceName, lrvoltage, stopwatch.Elapsed.ToString("g"));
-            m_logger.Flush();
+            //return m_device.SetHighVoltage(0, BiasInhibitInput.InhibitOff).Wait();
+			           
+            //m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage set to {1} volts (Elapsed time: {2})",
+            //    DeviceName, lrvoltage, stopwatch.Elapsed.ToString("g"));
+            //m_logger.Flush();
         }
 
 				/// <summary>
@@ -510,7 +500,7 @@ namespace LMDAQ
         //private const int VoltageTolerance = 1;
 
         private CancellationTokenSource m_cancellationTokenSource;
-        private MCA527 m_device;
+        private MCADevice m_device;
         private LMLoggers.LognLM m_logger = CentralizedState.App.Logger(LMLoggers.AppSection.Collect);
         private object m_monitor = new object();
         private int m_voltage;

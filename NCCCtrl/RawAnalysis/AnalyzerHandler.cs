@@ -1047,7 +1047,7 @@ namespace LMRawAnalysis
             uint numNeutrons, aNeutronEvent;
             int which, numEvents;
 
-            if (timeOfNewEvents.Count != neutronsOfNewEvents.Count)  // URGENT: new list semantics, was this conditional is unneeded now the actualEventCount param is in use
+            if (timeOfNewEvents.Count != neutronsOfNewEvents.Count)  // note: new list semantics, this conditional may be unneeded now that the actualEventCount param is in use
             {
                 String theProblem = "Array lengths unequal: time[" + timeOfNewEvents.Count + "] neutrons[" + neutronsOfNewEvents.Count + "]";
                 FireBlockCountMismatchErrorEvent(theProblem);

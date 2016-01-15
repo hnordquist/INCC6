@@ -43,7 +43,7 @@ namespace Device
         /// </summary>
         /// <param name="device">The <see cref="MCA527"/> device from which to take measurements.</param>
         /// <exception cref="ArgumentNullException"><paramref name="device"/> is <c>null</c>.</exception>
-        public MCA527RateCounter(MCA527 device)
+        public MCA527RateCounter(MCADevice device)
         {
             if (device == null) {
                 throw new ArgumentNullException("device");
@@ -113,41 +113,41 @@ namespace Device
             byte[] buffer = new byte[1024 * 1024];
             Stopwatch stopwatch = new Stopwatch();
 
-            m_device.Reset();
-            m_parser.Reset((ulong) duration.Ticks * 10);
-            stopwatch.Start();
+            //m_device.Reset();
+            //m_parser.Reset((ulong) duration.Ticks * 10);
+            //stopwatch.Start();
 
-            while (stopwatch.Elapsed < duration) {
-                cancellationToken.ThrowIfCancellationRequested();
+            //while (stopwatch.Elapsed < duration) {
+            //    cancellationToken.ThrowIfCancellationRequested();
 
-                if (m_device.Available > 0) {
-                    int bytesRead = m_device.Read(buffer, 0, buffer.Length);
-                    if (bytesRead > 0) {
-                        m_byteCount += bytesRead;
-                        m_parser.Parse(buffer, 0, bytesRead);
-                    }
-                }
+            //    if (m_device.Available > 0) {
+            //        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+            //        if (bytesRead > 0) {
+            //            m_byteCount += bytesRead;
+            //            m_parser.Parse(buffer, 0, bytesRead);
+            //        }
+            //    }
 
-                Thread.Yield();
-            }
+            //    Thread.Yield();
+            //}
 
-            stopwatch.Stop();
-            m_parser.Flush();
+            //stopwatch.Stop();
+            //m_parser.Flush();
 
-            m_time += stopwatch.Elapsed;
-            double totalSeconds = m_time.TotalSeconds;
+            //m_time += stopwatch.Elapsed;
+            //double totalSeconds = m_time.TotalSeconds;
 
-            if (totalSeconds > 0) {
-                for (int i = 0; i < MCA527.ChannelCount; i++) {
-                    m_channelRates[i] = m_channelCounts[i] / totalSeconds;
-                }
+            //if (totalSeconds > 0) {
+            //    for (int i = 0; i < MCA527.ChannelCount; i++) {
+            //        m_channelRates[i] = m_channelCounts[i] / totalSeconds;
+            //    }
 
-                m_rate = m_count / totalSeconds;
-            }
-            else {
-                Array.Clear(m_channelRates, 0, MCA527.ChannelCount);
-                m_rate = 0;
-            }
+            //    m_rate = m_count / totalSeconds;
+            //}
+            //else {
+            //    Array.Clear(m_channelRates, 0, MCA527.ChannelCount);
+            //    m_rate = 0;
+            //}
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Device
         private long[] m_channelCounts = new long[MCA527.ChannelCount];
         private double[] m_channelRates = new double[MCA527.ChannelCount];
         private long m_count;
-        private MCA527 m_device;
+        private MCADevice m_device;
         private MCA527Parser m_parser;
         private double m_rate;
         private TimeSpan m_time;

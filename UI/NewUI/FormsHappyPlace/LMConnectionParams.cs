@@ -110,12 +110,21 @@ namespace NewUI
             det = candidate;
             this.acq = acq;
 			MCAComboBox.Visible = false;
-            PopulateParamFields();
+			if (det != null)
+			{
+				if (det.Id.SRType == InstrType.MCA527)
+				{
+					PopulateMCA527ParamFields();
+				} else
+				{
+					PopulateLMMM_PTR32ParamFields();
+				}
+			}
 
-        }
+		}
 
         // Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
-        private async System.Threading.Tasks.Task PopulateParamFields() 
+        private void PopulateLMMM_PTR32ParamFields() 
         {
             if (det != null)
             {
@@ -149,26 +158,13 @@ namespace NewUI
                     // Make edit panel visible
                     LMMMPanel.Visible = true;
                 }
-                else if (det.Id.SRType == InstrType.PTR32 || det.Id.SRType == InstrType.MCA527)
+                else if (det.Id.SRType == InstrType.PTR32)
                 {
                     PTR32Panel.Visible = true;
-					if (det.Id.SRType == InstrType.MCA527)
-					{
-						MCAName.Visible = true;
-						MCAName.Text = string.Copy(det.Id.DetectorId);
-						ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
-						connIdLabel.Text = "MCA-527 serial number: ";
-						connLabel.Text = "MCA-527 Connection Parameters";
-						await LoadtheMCACombobox();
-
-					}
-					else
-					{ 
-						MCAName.Visible = false;
-						ConnIdField.Text = string.Copy(det.Id.DetectorId);
-						connIdLabel.Text = "PTR-32 instrument identifier: ";
-						connLabel.Text = "PTR-32 Connection Parameters";
-					}
+					MCAName.Visible = false;
+					ConnIdField.Text = string.Copy(det.Id.DetectorId);
+					connIdLabel.Text = "PTR-32 instrument identifier: ";
+					connLabel.Text = "PTR-32 Connection Parameters";
 
                     //Warning: hack attack.  using extra fields here to store hv enabling and tolerance hn 2.3.2015
                     // OK, was logic error.  Checked box means HV disabled..... fixed.  hn 5.19.2015
@@ -183,6 +179,29 @@ namespace NewUI
 
             }
         }
+
+		private async System.Threading.Tasks.Task PopulateMCA527ParamFields()
+		{
+			if (det != null && det.Id.SRType == InstrType.MCA527)
+			{
+				PTR32Panel.Visible = true;
+				MCAName.Visible = true;
+				MCAName.Text = string.Copy(det.Id.DetectorId);
+				ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
+				connIdLabel.Text = "MCA-527 serial number: ";
+				connLabel.Text = "MCA-527 Connection Parameters";
+				await LoadtheMCACombobox();
+
+
+				LMConnectionInfo lmi = (LMConnectionInfo)(det.Id.FullConnInfo);
+				check_HV_set.Checked = lmi.DeviceConfig.LEDs == 2 ? true : false;
+				VoltageTimeout.Visible = true;
+				VoltageTimeout.Text = lmi.DeviceConfig.HVTimeout.ToString();
+				VoltageTolerance.Text = lmi.DeviceConfig.VoltageTolerance.ToString();
+				VoltageTolerance.Visible = true;
+			}
+		}
+
 
 		//// SELECTOR PANEL ////////////////////////////////////////////////////////////////////////////////////
 
@@ -208,7 +227,16 @@ namespace NewUI
             if (DetectorComboBox.SelectedItem != null)
             {
                 det = (Detector)DetectorComboBox.SelectedItem;
-                PopulateParamFields();
+				if (det != null)
+				{
+					if (det.Id.SRType == InstrType.MCA527)
+					{
+						PopulateMCA527ParamFields();
+					} else
+					{
+						PopulateLMMM_PTR32ParamFields();
+					}
+				}
                 Text = oTitle + (" for " + det.Id.DetectorName);
             }
         }
@@ -267,8 +295,16 @@ namespace NewUI
             det = new Detector(did, mkey, null);
 
             // Jump to an edit panel for the parameters of the appropriate type
-           PopulateParamFields();
-           AddingNew = true;
+			if (det != null)
+			{
+				if (det.Id.SRType == InstrType.MCA527)
+				{
+					PopulateMCA527ParamFields();
+				} else
+				{
+					PopulateLMMM_PTR32ParamFields();
+				}
+			}           AddingNew = true;
 
         }
 

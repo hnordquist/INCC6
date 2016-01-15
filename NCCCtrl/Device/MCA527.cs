@@ -41,7 +41,7 @@ namespace Device
         /// <summary>
         /// The number of channels.
         /// </summary>
-        public const int ChannelCount = 32;
+        public const int ChannelCount = 1;
 
         /// <summary>
         /// The clock frequency in hertz (Hz).

@@ -45,7 +45,7 @@ namespace NCCCmd
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
 			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
 			c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-			// check return bool and exit here on error
+													  // check return bool and exit here on error
 			bool initialized = NC.App.Initialize(c);
 			if (!initialized)
 				return;
@@ -70,7 +70,7 @@ namespace NCCCmd
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
 				if (!String.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
-                    initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
+					initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
 					goto frob;
 				BuildMeasurement();

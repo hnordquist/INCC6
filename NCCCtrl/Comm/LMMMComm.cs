@@ -149,20 +149,20 @@ namespace LMComm
          
 
         //
-        // "Send" wrapper hiding socket and the looping over list of LMs
+        // "Send" wrapper hiding socket and the looping over list of LMMMs
         //
-        private void SendToLM(string cmd, Int32 specificLMIndex = -1)
+        private void SendToLMMM(string cmd, Int32 specificLMIndex = -1)
         {
             if (!LMDAQ.Instruments.Active.HasSocketBasedLM())
             {
-                commlog.TraceEvent(LogLevels.Warning, 325, "No LM instruments available to receive '" + cmd + "'");
+                commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
                 return;
             }
             try
             {
                 if (CurrentLM == -1 && specificLMIndex == -1)  // all of them
                 {
-                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LM instruments on the subnet");
+                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
                     IEnumerator iter = LMDAQ.Instruments.Active.GetLMEnumerator();
                     while (iter.MoveNext())
                     {
@@ -175,10 +175,10 @@ namespace LMComm
                 {
                     int index = specificLMIndex > -1 ? specificLMIndex : CurrentLM;  // index override from live call in main code, not from command line
                     // make sure the element is actually there
-                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LM instrument {0} on the subnet", index);
+                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
                     LMDAQ.LMInstrument lmi = LMDAQ.Instruments.Active.FindByIndexer(index);
                     if (lmi == null) // index must always be less than Count, the list is 0 based
-                        commlog.TraceEvent(LogLevels.Warning, 325, "No LM instrument {0} available", index);
+                        commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
                     else
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent); 
                 }
@@ -261,7 +261,7 @@ namespace LMComm
                     string cmds = cmdprocessor.ComposeCommandStrings(cmd, arg);
                     if (cmds.Length > 0)
                     {
-                        SendToLM(cmds, LMRankPosition);
+                        SendToLMMM(cmds, LMRankPosition);
                     }
                 }
                 catch (Exception e)

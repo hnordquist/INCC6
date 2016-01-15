@@ -122,17 +122,26 @@ namespace LMDAQ
 				if (det.Id.SRType == InstrType.LMMM)
 				{
 					LMInstrument lm = new LMInstrument(det);
-					lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+					lm.DAQState = DAQInstrState.Offline; 
 					lm.selected = false;  //must broadcast first to get it selected
 					if (!Instruments.All.Contains(lm))
 						Instruments.All.Add(lm); // add to global runtime list
-				} else if (det.Id.SRType == InstrType.MCA527)
+				} 
+				else if (det.Id.SRType == InstrType.MCA527)
 				{
-					MCA527Instrument mca = new MCA527Instrument(det);
-					mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
-					mca.selected = false;  //must broadcast first to get it selected
-					if (!Instruments.All.Contains(mca))
-						Instruments.All.Add(mca); // add to global runtime list
+                    MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                    mca.DAQState = DAQInstrState.Offline; 
+                    mca.selected = true;
+                    if (!Instruments.Active.Contains(mca))
+                        Instruments.Active.Add(mca);   
+				}
+				else if (det.Id.SRType == InstrType.PTR32)
+				{
+                    MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                    mca.DAQState = DAQInstrState.Offline;
+                    mca.selected = true;
+                    if (!Instruments.Active.Contains(mca))
+                        Instruments.Active.Add(mca);   
 				}
             }
             else if (det.Id.SRType.IsUSBBasedLM())
@@ -327,10 +336,9 @@ namespace LMDAQ
             }
         }
 
-        void DisconnectFromLMInstruments()
+        void DisconnectFromLMMMInstruments()
         {
-
-            if (Instruments.Active.HasSocketBasedLM())
+            if (Instruments.Active.HasLMMM())
             {
                 if (_SL == null)
                     return;
@@ -341,7 +349,7 @@ namespace LMDAQ
                 while (iter.MoveNext())
                 {
                     LMInstrument lmi = (LMInstrument)iter.Current;
-                    if (lmi.id.SRType.IsSocketBasedLM())
+                    if (lmi.id.SRType.IsSocketBasedLM())   /// URGENT: implement a new interface implemented for LMMM and MCA-527 separately
                         _SL.StopClient(lmi.instrSocketEvent);
                 }
             }
@@ -477,9 +485,9 @@ namespace LMDAQ
                         SRWrangler.StartSRActionAndWait((active as SRInstrument).id, SRTakeDataHandler.SROp.InitializeSR);
                     }
                     else
-                        if (active is LMInstrument && ((LMInstrument)active).SocketBased())
+                        if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
                     {
-                        // send go commands to the instruments
+                        // send go commands to the LMMM instruments
                         //string output = null;
                         // this is outdated, there can never be more than one virtual LM on current systems (late 2010, mid 2011)
                         // for each networked instrument.
@@ -509,9 +517,9 @@ namespace LMDAQ
             Thread.Sleep(250); // wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
             // PTR-32
-            // This loop works for PTR-32 instruments, based on an improved instrument and control design
+            // This loop works for PTR-32 (and soon MCA-527) instruments, based on an improved instrument and control design
 
-            // devnote: rewrite SR and LMMM to use the PTR-32 abstractions for measurement control
+            // devnote: rewrite SR and LMMM sections below to use the StartAssay virtual method abstraction for measurement control
             foreach (Instrument instrument in Instruments.Active) {
                 try {
                     instrument.StartAssay(CurState.Measurement);
@@ -523,7 +531,7 @@ namespace LMDAQ
 
             // The following sections are for SR and LMMM 
             // LMMM
-            if (Instruments.Active.HasSocketBasedLM())  // send to a plurality of thresholding units, err, I mean, LM Instruments
+            if (Instruments.Active.HasLMMM())  // send to a plurality of thresholding units, err, I mean, LMMM Instruments
             {
                 if (CurState.broadcastGo) // send go
                 {
