@@ -29,14 +29,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using INCCCore;
-using DetectorDefs;
 
 namespace AnalysisDefs
 {
-    using Tuple = AnalysisDefs.VTuple;
-    using NC = NCC.CentralizedState;
-    using Integ = NCC.IntegrationHelpers;
-    public static class MeasurementExtensions
+	using Tuple = AnalysisDefs.VTuple;
+	using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	public static class MeasurementExtensions
     {
 
         #region INCC calculation control methods

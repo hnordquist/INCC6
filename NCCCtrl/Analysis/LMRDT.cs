@@ -51,16 +51,14 @@ namespace Analysis
             }
         }
 
-        internal void InitParseBuffers(uint parsebufflenMb)
+        internal void InitParseBuffers(uint parsebufflenMb, uint unitbytes, bool useRawDataBuff)
         {
             eventBufferLength = parsebufflenMb * 1024 * 1024;
-            rawDataBuff = new byte[eventBufferLength];
-            maxValuesInBuffer = eventBufferLength / 8;
-            timeArray = new List<ulong>((int)maxValuesInBuffer);
-            timeArray.AddRange(new ulong[maxValuesInBuffer]);
-            neutronEventArray = new List<uint>((int)maxValuesInBuffer);
-            neutronEventArray.AddRange(new uint[maxValuesInBuffer]);
-
+			if (useRawDataBuff)
+				rawDataBuff = new byte[eventBufferLength];
+            maxValuesInBuffer = eventBufferLength / unitbytes;
+            timeArray = new List<ulong>(new ulong[maxValuesInBuffer]);
+            neutronEventArray = new List<uint>(new uint[maxValuesInBuffer]);
             sup = new Supporter();
         }
 
@@ -327,7 +325,6 @@ namespace Analysis
         public byte[] RawDataBuff
         {
             get { return State.rawDataBuff; }
-            set { State.rawDataBuff = value; }
         }
 
         public new LMProcessingState State
@@ -480,13 +477,13 @@ namespace Analysis
             base.Init(datalogger, alogger);
         }
 
-        public void SetLMState(NCCConfig.LMMMNetComm config)
+        public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
         {
             State.useAsynch = config.UseAsynchAnalysis;
             State.includingGen2 = NC.App.AppContext.ParseGen2;
             State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
             statusCheckCount = NC.App.AppContext.StatusPacketCount;
-            State.InitParseBuffers(config.ParseBufferSize);
+            State.InitParseBuffers(config.ParseBufferSize, unitbytes, useRawBuff);
         }
 
 
@@ -658,11 +655,10 @@ namespace Analysis
             return endofdata;
         }
 
-        private ulong numProcessedRawDataBuffers;
         public ulong NumProcessedRawDataBuffers
         {
-            get { return numProcessedRawDataBuffers; }
-            set { numProcessedRawDataBuffers = value; }
+            get ;
+            set ;
         }
         /// <summary>
         /// file-based buffer processing
@@ -910,7 +906,7 @@ namespace Analysis
             if (times.Length < timeArray.Count)
                 timeArray.RemoveRange(times.Length - 1, timeArray.Count - times.Length);
             else if (times.Length > timeArray.Count)
-                timeArray.AddRange(new ulong[channels.Length - timeArray.Count]);
+                timeArray.AddRange(new ulong[times.Length - timeArray.Count]);
 
             //Array.Resize(ref neutronEventArray, channels.Length);
             //Array.Resize(ref timeArray, times.Length);

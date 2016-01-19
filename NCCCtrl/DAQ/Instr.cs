@@ -466,7 +466,7 @@ namespace LMDAQ
         }
 
         /// <summary>
-        /// LMMM-specific contructor for live instrument uptake while doing discovery on a local network
+        /// LMMM-specific constructor for live instrument uptake while doing discovery on a local network
         /// </summary>
         /// <param name="e">socket event struct</param>
         /// <param name="EndpointPort">the source port</param>

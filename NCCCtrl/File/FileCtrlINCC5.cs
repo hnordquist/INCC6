@@ -712,10 +712,12 @@ namespace NCCFile
 
             if (!NC.App.Opstate.IsAbortRequested)  // stop/quit means continue with what is available
             { 
-                // todo: 			if (meas.HasReportableData)
-                m.CalculateMeasurementResults();
-                new ReportMangler(ctrllog).GenerateReports(m);
-                m.SaveMeasurementResults();
+                if (m.HasReportableData)
+				{
+					m.CalculateMeasurementResults();
+					new ReportMangler(ctrllog).GenerateReports(m);
+					m.SaveMeasurementResults();
+				}
             }
             NC.App.Opstate.ResetTokens();
             Instruments.All.Remove(PseudoInstrument);

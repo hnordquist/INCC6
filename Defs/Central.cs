@@ -133,6 +133,21 @@ namespace NCC
             get { return csa.IsStopRequested; }
         }
 
+		public OperatingState Requested
+		{
+			get
+			{
+				if (csa.IsCancellationRequested)
+					return OperatingState.Cancelling;
+				else if (csa.IsAbortRequested)
+					return OperatingState.Cancelling;
+				else if (csa.IsStopRequested)
+					return OperatingState.Stopping;
+				else
+					return SOH;
+			}
+		}
+
         public string CancelStopAbortStateRep
         {
             get { return csa.StateString; }

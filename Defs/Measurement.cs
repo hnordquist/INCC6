@@ -686,42 +686,37 @@ namespace AnalysisDefs
         }
         public bool FirstCycle; // reset at first cycle
 
-        /// <summary>
+		/// <summary>
 		/// True iff there is at least one complete cycle with non-zero total elapsed time.
-        /// And if list mode 
-        ///    and a multiplicity analyzer is defined
-        ///      at least one must have a cycle with a calculated status
-        ///    else
-        ///      one or more cycles exist
-        /// else (using SR data where there is always a multiplicity analyser defined)
-        ///    at least one must have a cycle with a calculated status
+		/// And if list mode 
+		///    and a multiplicity analyzer is defined
+		///      at least one must have a cycle with a calculated status
+		///    else
+		///      one or more cycles exist
+		/// else (using SR data where there is always a multiplicity analyser defined)
+		///    at least one must have a cycle with a calculated status
 		/// </summary>
 		public bool HasReportableData
-        {
-            get {
-                bool good = CountTimeInSeconds > 0.0;
-                if (good)
-                {
-                    if (Detector.ListMode)
-                    {
-                        if (AnalysisParams.HasMultiplicity())
-                            good = Cycles.HasReportableCycles;
-                        else
-                            good = Cycles.Count > 0;
-                    }
-                    else
-                        good = Cycles.HasReportableCycles;
-                }
-                return good;
-			}	  
+		{
+			get
+			{
+				if (Detector.ListMode)
+				{
+					if (AnalysisParams.HasMultiplicity())
+						return Cycles.HasReportableCycles;
+					else
+						return Cycles.Count > 0;
+				} else
+					return Cycles.HasReportableCycles;
+			}
 		}
 
-        /// <summary>
-        /// Constructs a new Measurement object with default values
-        /// </summary>
-        /// <param name="at">The measurement method or goal</param>
-        /// <param name="logger">the logger handle</param>
-        public Measurement(AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
+		/// <summary>
+		/// Constructs a new Measurement object with default values
+		/// </summary>
+		/// <param name="at">The measurement method or goal</param>
+		/// <param name="logger">the logger handle</param>
+		public Measurement(AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
         {
             mt = new MeasurementTuple();
             this.logger = logger;
@@ -951,10 +946,10 @@ namespace AnalysisDefs
                 try
                 {
                     existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
-					if (!existed) // it was created in the method
+					if (!existed) // it was created just now in PrepareINCCResults
 	                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
                     existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
- 					if (!existed) // it was created in the method
+ 					if (!existed) // it was created just now in PrepareINCCMethodResults
 						logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)

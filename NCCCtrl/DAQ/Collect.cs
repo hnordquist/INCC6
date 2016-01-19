@@ -389,7 +389,7 @@ namespace LMDAQ
                 if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
                 {
                     //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
-                    if (CurState.Measurement.HasReportableData)
+                    if (CurState.Measurement.HasReportableData) // urgent test this
                     {
                         CalculateMeasurementResults();
                         SaveMeasurementBasics();

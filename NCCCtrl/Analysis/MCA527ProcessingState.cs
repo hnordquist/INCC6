@@ -44,7 +44,7 @@ namespace Analysis
         /// </summary>
         public MCA527ProcessingState()
         {
-            InitParseBuffers(1);
+            InitParseBuffers(1,4, false);
             m_parser = new MCA527Parser(Analyze);
             m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
