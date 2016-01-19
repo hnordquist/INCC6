@@ -232,7 +232,7 @@ namespace NCCFile
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, DateTimeOffset dto, ushort runs, string path)
         {
-            AcquireParameters acq = NC.App.DB.LastAcquireFor(det);
+            AcquireParameters acq = NC.App.DB.LastAcquireFor(det, def.item_type);
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = dto; acq.lm.TimeStamp = dto;
@@ -518,7 +518,7 @@ namespace NCCFile
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, INCCReviewFile irf)
         {
-            AcquireParameters acq = NC.App.DB.LastAcquireFor(det);
+            AcquireParameters acq = NC.App.DB.LastAcquireFor(det, def.item_type);
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = irf.dt; acq.lm.TimeStamp = irf.dt;

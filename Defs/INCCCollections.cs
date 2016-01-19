@@ -814,8 +814,8 @@ namespace AnalysisDefs
         }
         public List<ItemId> GetList()
         {
-            //if (items == null)
-            //{
+            if (items == null)
+            {
                 items = new List<ItemId>();
                 DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.Items);
                 foreach (DataRow dr in dt.Rows)
@@ -823,7 +823,7 @@ namespace AnalysisDefs
                     ItemId ito = GetItemIdByRow(dr,false);
                     items.Add(ito);
                 }
-           // }
+            }
             return items;
         }
         public List<ItemId> GetListByStratumID(string value)
@@ -3123,7 +3123,20 @@ namespace AnalysisDefs
             return new AcquireParameters();
     }
 
-        public AcquireParameters LastAcquireFor(Detector d)
+        public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
+        {
+            List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
+                                    (from aq in NC.App.DB.AcquireParametersMap()
+                                     where (string.Equals(d.Id.DetectorId, aq.Value.detector_id) && string.Equals(mtl_type, aq.Value.item_type))
+                                     orderby aq.Value.MeasDateTime descending
+                                     select aq).ToList();  // force eval
+            if (res.Count > 0)
+                return res.First().Value;  // get the newest, it is the first on the sorted list
+            else
+                return null;
+        }
+
+		public AcquireParameters LastAcquireFor(Detector d)
         {
             List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
                                     (from aq in NC.App.DB.AcquireParametersMap()
