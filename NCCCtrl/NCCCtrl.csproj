@@ -108,6 +108,7 @@
     <Compile Include="File\CSVFile.cs" />
     <Compile Include="File\FileCtrl.cs" />
     <Compile Include="File\INCCKnew.cs" />
+    <Compile Include="File\IsoFiles.cs" />
     <Compile Include="File\NeutronDataFiles.cs" />
     <Compile Include="File\OPFiles.cs" />
     <Compile Include="LM\IAction.cs" />

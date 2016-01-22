@@ -29,13 +29,12 @@ using System;
 using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
-using System.Collections.Generic;
 namespace NewUI
 {
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    public partial class IDDAcquireAssay : Form
+	public partial class IDDAcquireAssay : Form
     {
         //NEXT: use NumericTextBox to validate input on this dialog.  hn 5.14.2015
         AcquireHandlers ah;
@@ -191,7 +190,7 @@ namespace NewUI
 
         private void CompositeIsotopicsBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Not yet implement, but we are working on it.");
+            MessageBox.Show("Not yet implemented");
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -200,7 +199,7 @@ namespace NewUI
                 MessageBox.Show("You must enter an item id for this assay.", "ERROR");
             else
             {
-                if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
+                if (ah.OKButton_Click(sender, e) == DialogResult.OK)
                 {
                     //This is fubar. Must save changed parameters before running analysis. HN 9.10.2015
                     AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
@@ -211,12 +210,13 @@ namespace NewUI
                         // if Verif + cal curve get U235 percent
                         // if Verif + (cal curve or KA) get heavy metal data
                         // if Verif + collar  get collar data
+
                         // if Verif + curium ratio, get cm_pu_ratio w dlg; 
                         if (am.Has(AnalysisMethod.CuriumRatio))
                         {
                             new IDDCmPuRatio(ah.ap).ShowDialog();
                         }
-                        this.Visible = false;
+                        Visible = false;
                         // Add strata update to measurement object.    HN 9.23.2015              
 
                         //user can cancel in here during LM set-up, account for it.

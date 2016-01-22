@@ -280,6 +280,15 @@ namespace AnalysisDefs
              return null;
         }
 
+		/// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+			isotopics = null;
+			GetList();
+        }
+
         public void Replace(Isotopics riso)
         {
             Isotopics i = Get(riso.id);
@@ -753,6 +762,7 @@ namespace AnalysisDefs
 
     public class ItemIdListImpl : IAPI<ItemId>
     {
+
         public ItemIdListImpl()
         {
         }
@@ -945,6 +955,13 @@ namespace AnalysisDefs
         {
             DB.Items itodb = new DB.Items();
             return itodb.Update(itodb.PrimaryKey(old), NewId);
+        }
+
+		
+        public void Refresh()
+        {
+			items = null;
+			GetList();
         }
     }
 

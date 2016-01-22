@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -1418,7 +1418,23 @@ namespace AnalysisDefs
 
         }
 
-    }
-
+		/// <summary>
+        /// Check runtime status and if there is good measurement data, create a new measurement in the database
+		/// </summary>
+        /// <param name="m">The measurement to preserve</param>
+        /// <param name="buffCount">count of data blocks processed so far, must be > 0 to force persistence</param>
+        /// <param name="id">database id of persisted measurement, must be 0 to force transaction</param>
+		public static void StartSavingMeasurement(this Measurement m, ulong buffCount, ref long id)
+		{
+			if (NC.App.Opstate.Continue && // stop and save OR no intervention
+			buffCount > 0 && // there is data and state to save with this measuremnt
+			id == 0 &&   // and the new measurement has not been preserved yet
+			NC.App.Opstate.SOH == NCC.OperatingState.Living) // the operation was running so create the results data structures and create the basic measurement record in the DB
+			{
+				m.PrepareINCCResults();
+				id = m.Persist();
+			}
+		}
+	}
 
 }

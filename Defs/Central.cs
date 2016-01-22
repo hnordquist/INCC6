@@ -111,6 +111,16 @@ namespace NCC
             get { return csa.IsQuitRequested; }
         }
 
+		public bool IsCancelAbortRequested
+        {
+            get { return csa.IsCancelAbortRequested; }
+        }
+
+		public bool Continue
+        {
+            get { return csa.Continue; }
+        }
+
         /// <summary>
         /// User requests the current operation be cancelled without persisting or completing 
         /// </summary>
@@ -221,24 +231,28 @@ namespace NCC
         /// </summary>
         public bool IsQuitRequested { get { return IsAbortRequested || IsCancellationRequested || IsStopRequested; } }
 
+		public bool IsCancelAbortRequested { get { return IsAbortRequested || IsCancellationRequested ; } }
+
+		public bool Continue { get { return !IsCancelAbortRequested; } }
+
+
         public CancellationToken CancellationToken { get { return CancellationTokenSource.Token; } }
         public CancellationTokenSource CancellationTokenSource { get; set; }
-
-        /// <summary>
+		/// <summary>
         /// User requests the current operation be cancelled without persisting or completing 
         /// </summary>
         public bool IsCancellationRequested { get { return CancellationTokenSource.IsCancellationRequested; } }
+
         public CancellationToken StopToken { get { return StopTokenSource.Token; } }
         public CancellationTokenSource StopTokenSource { get; set; }
-
-        /// <summary>
+		/// <summary>
         /// User requests stopping current measurement processing, saving and completing the measurement with any existing data 
         /// </summary>
         public bool IsStopRequested { get { return StopTokenSource.IsCancellationRequested; } }
-        public CancellationToken AbortToken { get { return AbortTokenSource.Token; } }
-        public CancellationTokenSource AbortTokenSource { get; set; }
 
-        /// <summary>
+		public CancellationToken AbortToken { get { return AbortTokenSource.Token; } }
+        public CancellationTokenSource AbortTokenSource { get; set; }
+		/// <summary>
         /// User requests aborting current measurement without completing existing data calculations or preserving results
         /// </summary>
         public bool IsAbortRequested { get { return AbortTokenSource.IsCancellationRequested; } }

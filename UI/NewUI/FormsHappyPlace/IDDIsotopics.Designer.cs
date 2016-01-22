@@ -276,7 +276,6 @@
             // 
             // ReadFromFileBtn
             // 
-            this.ReadFromFileBtn.Enabled = false;
             this.ReadFromFileBtn.Location = new System.Drawing.Point(416, 164);
             this.ReadFromFileBtn.Name = "ReadFromFileBtn";
             this.ReadFromFileBtn.Size = new System.Drawing.Size(187, 23);

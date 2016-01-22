@@ -27,14 +27,13 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-    using NC = NCC.CentralizedState;
+	using NC = NCC.CentralizedState;
 
-    public partial class IDDIsotopics : Form
+	public partial class IDDIsotopics : Form
     {
 
         void RefreshIsoCodeCombo()
@@ -338,12 +337,39 @@ namespace NewUI
 
         private void ReadFromFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("We still haven't implemented this, but we're working on it.", "NOT IMPLEMENTED....YET");
-        }
+			OpenFileDialog RestoreFileDialog = new OpenFileDialog();
+            List<string> paths = new List<string>();
+            RestoreFileDialog.CheckFileExists = false;
+			RestoreFileDialog.Filter = "NCC isotopic files (*.*)|*.*";
+            RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
+            RestoreFileDialog.Title = "Select an isotopics file";
+            RestoreFileDialog.Multiselect = false;
+            RestoreFileDialog.RestoreDirectory = true;
+            DialogResult r = DialogResult.No;
+            r = RestoreFileDialog.ShowDialog();
+            if (r != DialogResult.OK)
+				return;            
+			NCCFile.IsoFiles possibleIsoAndCompIsoFilesToAttemptProcessingUpon = new NCCFile.IsoFiles();
+			possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Process(new List<string>(RestoreFileDialog.FileNames));
+			foreach (Isotopics iso in possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics) // add all new values into the database
+			{
+				iso.modified = true;
+				if (NC.App.DB.Isotopics.Set(iso) >= 0)
+				{
+					applog.TraceInformation("'" + iso.id + "' isotopics updated/added");
+				}
+			}
+			int count = possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics.Count;
+			if (count > 0)
+			{
+				NC.App.DB.Isotopics.Refresh();  // update isotopics in-memory list from the freshly updated database 
+				RefreshIdComboWithDefaultOrSet(possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics[count-1].id);  // make the last read iso the currrent iso
+			}
+         }
 
         private void WriteToFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("We still haven't implemented this, but we're working on it.", "NOT IMPLEMENTED....YET");
+            MessageBox.Show("NYI", "NOT IMPLEMENTED....YET");
         }
 
         private void AddNewSetBtn_Click(object sender, EventArgs e)

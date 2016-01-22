@@ -830,7 +830,6 @@ namespace NCCFile
             }
 
             Measurement meas = NC.App.Opstate.Measurement;
-			long measPersisted = 0;
             PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
@@ -878,6 +877,7 @@ namespace NCCFile
             meas.CurrentRepetition = 0;
             NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
+			long newMeasId = 0;
 			MCAFile[] afiles = files.ToArray();
 			ulong totalBuffersProcessed = 0;
             for (int i = 0; i < afiles.Length; i++)
@@ -981,11 +981,7 @@ namespace NCCFile
                     mcaFile.CloseReader();
                     rdt.EndOfCycleProcessing(meas);
                     rdt.FlushCycleSummaryResults();
-                    if (!NC.App.Opstate.IsQuitRequested && measPersisted == 0 && rdt.NumProcessedRawDataBuffers > 0 && NC.App.Opstate.SOH == NCC.OperatingState.Living) // this is the first usable file, not exisintg for any other reason, create the results data structures and create the basic measurement record in the DB
-                    {
-                        meas.PrepareINCCResults();
-                        meas.Persist();
-                    }
+					meas.StartSavingMeasurement(rdt.NumProcessedRawDataBuffers, ref newMeasId);
 					NC.App.Loggers.Flush();
                 }
                 FireEvent(EventType.ActionInProgress, this);
@@ -1026,7 +1022,9 @@ namespace NCCFile
 
         }
 
-        protected void SortedPulseFileAssay()
+
+
+		protected void SortedPulseFileAssay()
         {
 
             List<string> ext = new List<string>() { ".pulse.sorted", ".txt.sorted" };

@@ -438,6 +438,8 @@ namespace NCCFile
                     NC.App.DB.ItemIds.Set(f);
                 }
             }
+			// regen ItemId list from new db content
+			NC.App.DB.ItemIds.Refresh();
         }
         protected void StratumIds()
         {

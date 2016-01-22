@@ -593,6 +593,11 @@ namespace AnalysisDefs
             return ret;
         }
 
+		public void SetError(Isotope iso, double val)
+        {
+            isotopes[(int)iso].sigma = val;
+        }
+
         public CompositeIsotopics()
         {
             pu_date = new DateTime(2010, 1, 1);
