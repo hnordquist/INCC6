@@ -84,7 +84,7 @@ namespace LMRawAnalysis
                     }
                     else
                     {
-                        result = String.Format("{0:##.%}, processed {1:N0} of {2:N0} neutron events", pct, numNeutronEventsProcessed, numNeutronEventsReceived);
+                        result = string.Format("{0:##.%}, processed {1:N0} of {2:N0} neutron events", pct, numNeutronEventsProcessed, numNeutronEventsReceived);
                     }
                     break;
                 case StatusCode.WaitingForNeutrons:

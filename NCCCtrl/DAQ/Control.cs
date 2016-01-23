@@ -135,13 +135,9 @@ namespace LMDAQ
                     if (!Instruments.Active.Contains(mca))
                         Instruments.Active.Add(mca);   
 				}
-				else if (det.Id.SRType == InstrType.PTR32)
+				else
 				{
-                    MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
-                    mca.DAQState = DAQInstrState.Offline;
-                    mca.selected = true;
-                    if (!Instruments.Active.Contains(mca))
-                        Instruments.Active.Add(mca);   
+                    // LMMM and MCA-527 are the only socket-based devices supported
 				}
             }
             else if (det.Id.SRType.IsUSBBasedLM())

@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 1
-October 15, 2015
+January 22, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -10,7 +10,7 @@ Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and
 LA-CC-14-009. This software was exported from the United States in accordance with the Export
 Administration Regulations. Diversion contrary to U.S. law prohibited.
 
-Copyright 2015, Los Alamos National Security, LLC. This software application and associated
+Copyright 2016, Los Alamos National Security, LLC. This software application and associated
 material ("The Software") was prepared by the Los Alamos National Security, LLC. (LANS), under
 Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE). All rights in the software
 application and associated material are reserved by DOE on behalf of the Government and LANS
