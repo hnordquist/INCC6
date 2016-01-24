@@ -875,21 +875,6 @@ namespace NCCConfig
             set { setVal(NCCFlags.logging, value); }
         }
 
-//
-        //public void ConstructDailyLogPath(String parent)
-        //{
-        //    string part = DateTime.Now.ToString("yyyy-MMdd");
-        //    if (parent == null)
-        //    {
-        //        LogFileLoc = Path.Combine(LogFileLoc, part);
-        //    }
-        //    else
-        //    {
-        //        LogFileLoc = Path.Combine(parent, part);
-        //    }
-        //}
-
-
         /// <summary>
         /// integer representation of enum TraceOptions bitmap flag  
         /// </summary>
@@ -1381,6 +1366,7 @@ namespace NCCConfig
             Cycles = src.Cycles; Interval = src.Interval; MinHV = src.MinHV; MaxHV = src.MaxHV;
             Step = src.Step; HVDuration = src.HVDuration; Delay = src.Delay; HVX = src.HVX;
             AssayType = src.AssayType; Detector = String.Copy(src.Detector);
+            ItemId = src.ItemId; Material = String.Copy(src.Material);
         }
         public LMAcquireConfig(Hashtable _parms)
         {
@@ -1408,41 +1394,13 @@ namespace NCCConfig
             resetVal(NCCFlags.lm, (Int32)(-1), typeof(int));
 
             resetVal(NCCFlags.detector, "Default", typeof(string));
+            resetVal(NCCFlags.item, "", typeof(string));
+            resetVal(NCCFlags.material, "Pu", typeof(string));
 
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)
         private Int32 action = 0;
-
-        //public string Results
-        //{
-        //    get { return (string)getVal(LMFlags.results); }
-        //    set
-        //    {
-        //        string warmed = TrimCmdLineFlagpath(value);
-        //        setVal(LMFlags.results, warmed);
-        //    }
-        //}
-
-
-        //public bool DailyResultsPath
-        //{
-        //    get { return (bool)getVal(LMFlags.resultsAutoPath); }
-        //    set { setVal(LMFlags.resultsAutoPath, value); }
-        //}
-        //public void ConstructDailyResultsPath(String parent)
-        //{
-        //    string part = DateTime.Now.ToString("yyyy-MMdd");
-        //    if (parent == null)
-        //    {
-        //        Results = Path.Combine(Results, part);
-        //    }
-        //    else
-        //    {
-        //        Results = Path.Combine(parent, part);
-        //    }
-        //}
-
 
         public bool IncludeConfig
         {
@@ -1454,6 +1412,18 @@ namespace NCCConfig
         {
             get { return (string)getVal(NCCFlags.detector); }
             set { setVal(NCCFlags.detector, value); }
+        }
+
+        public string ItemId
+        {
+            get { return (string)getVal(NCCFlags.item); }
+            set { setVal(NCCFlags.item, value); }
+        }
+
+        public string Material
+        {
+            get { return (string)getVal(NCCFlags.material); }
+            set { setVal(NCCFlags.material, value); }
         }
 
         public string Message
@@ -1714,16 +1684,6 @@ namespace NCCConfig
             return LMAcquireConfig.ToLines(null, c);
         }
 
-        //public static string ToString(Config cfg)
-        //{
-        //    string[] x = ToLines(cfg, cfg.cur);
-        //    string s = "";
-        //    for (int i = 0; i < x.Length; i++)
-        //    {
-        //        s += (x[i] + Eol);
-        //    }
-        //    return s;
-        //}
 
         override public string ToString()
         {
@@ -1743,7 +1703,7 @@ namespace NCCConfig
         {
             this._parms = _parms;
             resetVal(NCCFlags.MyProviderName, "System.Data.SQLite", typeof(string));
-            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;", typeof(string));
+            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;foreign_keys=on;", typeof(string));
         }
 
         public string MyProviderName

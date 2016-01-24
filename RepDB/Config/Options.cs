@@ -50,7 +50,7 @@ namespace NCCConfig
         cycles, interval, separation, feedback,
         minHV, maxHV, step, hvduration, delay, hvx,
 
-        detector, saveOnTerminate,
+        detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
         sortPulseFile, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
@@ -119,8 +119,9 @@ namespace NCCConfig
             { "a|assay:", "start an assay using the current assay parameters, default type is Rates (0)\r\n           0 Rates, 1 Background, 2 InitialSource, 3 Normalization, 4 Precision, 5 Verification, 6 Calib", 
                                             v => { acq.Action = 3; if (v != null) acq.asAssayType(v); } },
             { "d|det=", "detector for the subsequent operations",  v => {if (v != null) acq.Detector = v; } },
-  			//{ "resAutoPath|resultsAutoPath:",  "construct and use a daily results file folder name, optionally prepend the parent folder", 
-           //     v => { cur.DailyResultsPath = true; cur.ConstructDailyResultsPath(v);} },
+            { "item=", "Item identifer to be used in assay",  v => {if (v != null) acq.ItemId = v; } },
+            { "mat|material=", "Material or item type to be used in calibration or verification assay",
+                    v => {if (v != null) acq.Material = v; } },
             { "includeConfig", "append copy of app config file to CSV results file, [false] ", b => acq.IncludeConfig = b != null}, 
             { "ncd|raw=", "location of this assay's MCA-527|PTR-32|pulse|LMMM NCD raw data file output, overrides root", 
                                             v => {if (v != null) acq.Raw = v; } },

@@ -869,6 +869,38 @@ namespace NCC
 
 			return true;
 		}
+
+        public static bool SetNewCurrentMaterial(string name, bool checkForExistence)
+        {
+            AcquireParameters acq = GetCurrentAcquireParams();
+            Detector det = GetCurrentAcquireDetector();
+            bool exists = true;
+            INCCDB.Descriptor desc = CentralizedState.App.DB.Materials.Get(name);
+            if (desc == null)
+            {
+                exists = false;
+                CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
+                if (checkForExistence)
+                    return false;
+                else
+                    desc = new INCCDB.Descriptor(name,name);
+            }
+            acq.MeasDateTime = DateTime.Now;
+            if (!acq.item_type.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                // change material on current acquire parms state
+                if (!exists)
+                    CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
+                acq.item_type = string.Copy(name);
+                CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
+                if (!exists)
+                    CentralizedState.App.DB.Materials.Update(desc);
+            }
+            CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
+
+            return true;
+        }
     }
 
 

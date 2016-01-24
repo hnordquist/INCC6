@@ -2169,7 +2169,10 @@ namespace AnalysisDefs
                 res = x.Delay.CompareTo(y.Delay);
             if (res == 0)
                 res = x.HVX.CompareTo(y.HVX);
-
+            if (res == 0)
+                res = x.ItemId.CompareTo(y.ItemId);
+            if (res == 0)
+                res = x.Material.CompareTo(y.Material);
             return res;
         }
 

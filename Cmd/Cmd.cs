@@ -73,7 +73,13 @@ namespace NCCCmd
 					initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
 					goto frob;
-				BuildMeasurement();
+
+                if (!String.IsNullOrEmpty(c.Cur.Material) && !c.Cur.Material.Equals("Pu")) // command line set the value
+                    initialized = NCC.IntegrationHelpers.SetNewCurrentMaterial(c.Cur.Material, true);
+                if (!initialized)
+                    goto frob;
+                
+                BuildMeasurement();
 				if (NC.App.Config.App.UsingFileInput)
 				{
 					if (NC.App.AppContext.AssayFromFiles)
