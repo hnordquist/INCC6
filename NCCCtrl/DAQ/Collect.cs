@@ -62,15 +62,14 @@ namespace LMDAQ
             applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
             collog = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
-            netlog = NC.App.Loggers.Logger(LMLoggers.AppSection.Net);
             datalog = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 
             // JFL was set on cmd line prior to exec here, and it still is, upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
-            LMMMComm = LMMMComm ?? new TalkToLMMMM(NC.App.Loggers.Logger(LMLoggers.AppSection.LMComm));  // a singleton
+            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton
 
-            emu.SetLogger(NC.App.Loggers.Logger(LMLoggers.AppSection.LMComm));
+            emu.SetLogger(collog);
             LMMMComm.EmulatorInstance = emu;
 
             CurState.SOH = NCC.OperatingState.Starting;

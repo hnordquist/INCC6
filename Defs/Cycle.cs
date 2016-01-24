@@ -369,7 +369,7 @@ namespace AnalysisDefs
                 }
                 else
                 {
-                    x = new string[1];
+                    x = new string[1] { "" };
                     //Martyn says this is useless. HN 10-6-2015
                     //x[j++] = "No multiplicity data for JSR-12 instruments.";
                 }

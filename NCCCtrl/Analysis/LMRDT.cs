@@ -513,7 +513,7 @@ namespace Analysis
                 try
                 {
                     // reset the counters 
-                    State.Sup.ResetCompletely(last);
+                    State.Sup.ResetCompletely(closeCounters:true);
                 }
                 catch (Exception ex)
                 {
@@ -552,7 +552,7 @@ namespace Analysis
                 try
                 {
                     // reset the counters 
-                    State.Sup.ResetCompletely(last);
+                    State.Sup.ResetCompletely(closeCounters:false);
                 }
                 catch (Exception ex)
                 {

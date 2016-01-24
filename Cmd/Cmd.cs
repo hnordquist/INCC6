@@ -116,8 +116,9 @@ frob:
 				NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				NC.App.Config.RetainChanges();
 				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " . . .");
-				NC.App.Loggers.Flush();
-			}
+				NC.App.Loggers.Flush();  
+                if (NC.App.AppContext.OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
+            }
 		}
 
 		static void BuildMeasurement()

@@ -1871,7 +1871,7 @@ namespace NCCConfig
             }
             Write(message);
         }
-        static string[] prefixes = { "===", "DB", "Control", "Data", "Analysis", "App", "Net", "LMComm" };
+        static string[] prefixes = { "===", "DB", "Control", "Data", "Analysis", "App"};
         bool ExternalPrefix(string message)
         {
             bool res = true;

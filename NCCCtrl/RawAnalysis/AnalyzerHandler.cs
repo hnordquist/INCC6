@@ -65,7 +65,7 @@ namespace LMRawAnalysis
         private UInt64 numNeutronEventsReceived;
         private UInt64 numNeutronEventsReceivedWhetherProcessedOrNot;
         private UInt32 numCircuits;
-        private UInt64 numNeutronEventsCompleted;
+        private UInt64 numNeutronEventsCompleted, accumuNumNeutronEventsCompleted;
 
         private UInt64 timeOfLastNeutronEvent;
 
@@ -120,8 +120,8 @@ namespace LMRawAnalysis
             verboseTrace = log.ShouldTrace(LogLevels.Verbose);
             numNeutronEventsReceived = 0;
             numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0;
-            numCircuits = 0;
+            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
+          numCircuits = 0;
             timeOfLastNeutronEvent = 0;
 
 #if USE_SPINTIME
@@ -558,7 +558,7 @@ namespace LMRawAnalysis
 
                         //FINISHED passing this neutron event to all the analyzers.
                         numNeutronEventsCompleted += (UInt64)numEventsThisBlock;
-
+                        accumuNumNeutronEventsCompleted += (UInt64)numEventsThisBlock;
                         //See if there are any more neutron events
                         PermissionToUseEndOfEventsWait();
                         //see if we have processed the last neutron...
@@ -1200,6 +1200,7 @@ namespace LMRawAnalysis
             //get technical-performance info
             status.numNeutronEventsReceived = numNeutronEventsReceived;
             status.numNeutronEventsProcessed = numNeutronEventsCompleted;
+            status.accumuNumNeutronEventsCompleted = accumuNumNeutronEventsCompleted;
             status.capacityOfQueue = (UInt64)numEventsInCircularLinkedList;
             status.numCircuits = numCircuits;
             status.numNeutronEventsReceivedWhetherProcessedOrNot = numNeutronEventsReceivedWhetherProcessedOrNot;

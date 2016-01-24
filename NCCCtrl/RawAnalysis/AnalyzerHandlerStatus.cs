@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -53,34 +53,34 @@ namespace LMRawAnalysis
         public int numCoincidenceSlowBackgroundAnalyzers;
 
         //technical performance info about the AnalyzerHandler NeutronEvent queue
-        public UInt64 numNeutronEventsReceived;
-        public UInt64 numNeutronEventsProcessed, numNeutronEventsReceivedWhetherProcessedOrNot;
-        public UInt64 capacityOfQueue;
-        public UInt32 numCircuits;
+        public ulong numNeutronEventsReceived;
+        public ulong numNeutronEventsProcessed, numNeutronEventsReceivedWhetherProcessedOrNot, accumuNumNeutronEventsCompleted;
+        public ulong capacityOfQueue;
+        public uint numCircuits;
 
-        public Double PercentComplete
+        public double PercentComplete
         {
             get { return (numNeutronEventsReceived > 0) ? (double)numNeutronEventsProcessed / (double)numNeutronEventsReceived : 0.0; }
     
         }
 
 
-        public new String ToString() // new or override?
+        public new string ToString() // new or override?
         {
-            String result;
+            string result;
             switch (presentStatus)
             {
                 case StatusCode.Indeterminate:
                     result = "We're hangin' out";
                     break;
                 case StatusCode.FinishedProcessingNeutrons:
-                    result = "Finished processing " + numNeutronEventsProcessed + " neutron events";
+                    result = "Finished processing " + accumuNumNeutronEventsCompleted + " neutron events";
                     break;
                 case StatusCode.NowProcessingNeutrons:
                     double pct = PercentComplete;
                     if (pct == 0.0)
                     {
-                        result = String.Format("Preparing to process {0:N0} neutron events", numNeutronEventsReceived);
+                        result = string.Format("Preparing to process {0:N0} neutron events", numNeutronEventsReceived);
                     }
                     else
                     {
