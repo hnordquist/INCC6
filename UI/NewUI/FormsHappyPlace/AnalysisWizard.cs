@@ -42,7 +42,7 @@ namespace NewUI
         // State diagram for wizard is as follows:
         //
         //  Step 1:     user selects either to post-process existing data (goto Step 2A) or to process real time data from an attached detector (goto Step 2B)
-        //  Step 2A:    user selects a dataset to post-process.  If dataset is invalid, throw error dialog and return to Step 2A.  Otherwise, goto Step 3.
+        //  Step 2A:    user selects a dataset to post-process. If dataset is invalid, throw error dialog and return to Step 2A.  Otherwise, goto Step 3.
         //  Step 2B:    user selects a detector configuration from a list of pre-defined detectors or can launch the detector configuration.  Goto Step 3.
         //  Step 3:     user selects an analysis method from a list, goto Step 4.
         //  Step 4:     user selects analysis parameters appropriate for the previously selected method.  Goto Step 5
@@ -879,7 +879,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            co.SR.predelay = x; co.modified = true;
+								co.SR.predelay = x; co.modified = true;
                         }
                         ((TextBox)sender).Text = co.SR.predelay.ToString();
                     }
@@ -891,7 +891,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -903,7 +903,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -1042,8 +1042,8 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            co.SR.predelay = x; co.modified = true;
-                        }
+								co.SR.predelay = x; co.modified = true;
+						}
                         ((TextBox)sender).Text = co.SR.predelay.ToString();
                     }
                     break;
@@ -1054,8 +1054,8 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
-                        }
+								m.SR.predelay = x; m.modified = true;
+						}
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
                     break;
@@ -1066,7 +1066,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -1486,7 +1486,7 @@ namespace NewUI
                         Step2NCDRadioBtn.Checked = true;
                     }
 
-                    Step2OutputDirectoryTextBox.Text = ap.lm.Results; // jfl todo: expand to full path (if relative?)
+                    Step2OutputDirectoryTextBox.Text = ap.lm.Results;
                     RefreshDetectorCombo(Step2ADetCB);
                     break;
                 case AnalysisWizard.AWSteps.Step2B:
@@ -1497,7 +1497,7 @@ namespace NewUI
                         IntervalTextBox.Text = ap.run_count_time.ToString();
                     else
                         IntervalTextBox.Text = ap.lm.Interval.ToString();
-                    Step2BOutputDirectoryTextBox.Text = ap.lm.Results; // jfl todo: expand to full path (if relative?)
+                    Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     if (fromINCCAcquire)
                         CycleNumTextBox.Text = ap.num_runs.ToString();
                     else
@@ -1508,9 +1508,12 @@ namespace NewUI
                     RefreshDetectorCombo(Step2BDetectorComboBox);
                     break;
                 case AnalysisWizard.AWSteps.Step3:
+					if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
+						Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+					if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
+						Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     SetCheckListBoxAnalyzers();
                     ShowCurrentAnalzyerSelection();
-
                     break;
                 case AnalysisWizard.AWSteps.Step4:
                     // step 4 next creates the selected analyzer and adds it to the ap var
@@ -1818,7 +1821,7 @@ namespace NewUI
             Multiplicity m0 = alt.GetFirstMult(FA, out addedIfNotPresent);
             if (addedIfNotPresent)
             {
-                m0.SR.CopyValues(det.SRParams);  // merge default values wth this analyzer
+                m0.SR.CopyValues(det.SRParams);  // merge default values with this analyzer
                 m0.SetGateWidthTics(det.SRParams.gateLength);
             }
             return m0;
