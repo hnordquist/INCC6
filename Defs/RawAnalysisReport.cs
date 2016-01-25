@@ -87,7 +87,10 @@ namespace AnalysisDefs
         {
             C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27, C28, C29, C30, C31, C32
         };
-
+        enum MCAChannelCounts
+        {
+            C1
+        };
 
         public SimpleRawReport(NCCReporter.LMLoggers.LognLM ctrllog)
             : base(ctrllog)
@@ -155,7 +158,7 @@ namespace AnalysisDefs
                         break;
                     case ReportSections.MeasurementDetails:
                         sec = new Section(typeof(MeasurementDetails), 0, 1, 1);
-                        sec.Add(GenMeasurementDetailsRow());
+                        sec.Add(GenMeasurementDetailsRow(meas.CountingAnalysisResults.HasMultiplicity));
                         break;
                     case ReportSections.DetectorCalibration:
 
@@ -388,7 +391,7 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
             return row;
         }
-        Row GenMeasurementDetailsRow()
+        Row GenMeasurementDetailsRow(bool hasMultiplicity)
         {
             string s = meas.AcquireState.data_src.HappyFunName();			
             if (meas.AcquireState.data_src == ConstructedSource.Live)
@@ -402,10 +405,19 @@ namespace AnalysisDefs
             row.Add((int)MeasurementDetails.MeasType, meas.MeasOption.PrintName());
             row.Add((int)MeasurementDetails.DetectorConfig, ""); // what was this supposed to be?
             row.Add((int)MeasurementDetails.DataSource, s);
-            row.Add((int)MeasurementDetails.QCTests, meas.AcquireState.qc_tests ? "On" : "Off");
-            row.Add((int)MeasurementDetails.ErrorCalc, meas.AcquireState.error_calc_method.ToString());
-            // ErrorCalculationTechniqueExtensions.Override(meas.AcquireState.error_calc_method, meas.MeasOption, meas.Detectors.GetIt(mkey.sr)).ToString());
-            row.Add((int)MeasurementDetails.AccidentalsMethod, meas.Tests.accidentalsMethod.ToString() + "d");
+			if (hasMultiplicity)
+			{
+				row.Add((int)MeasurementDetails.QCTests, meas.AcquireState.qc_tests ? "On" : "Off");
+				row.Add((int)MeasurementDetails.ErrorCalc, meas.AcquireState.error_calc_method.ToString());
+				// ErrorCalculationTechniqueExtensions.Override(meas.AcquireState.error_calc_method, meas.MeasOption, meas.Detectors.GetIt(mkey.sr)).ToString());
+				row.Add((int)MeasurementDetails.AccidentalsMethod, meas.Tests.accidentalsMethod.ToString() + "d");
+			}
+			else
+			{
+				row.Add((int)MeasurementDetails.QCTests, "");
+				row.Add((int)MeasurementDetails.ErrorCalc,"");
+				row.Add((int)MeasurementDetails.AccidentalsMethod, "");
+			}
             row.Add((int)MeasurementDetails.CycleCount, meas.Cycles.Count.ToString());
             row.Add((int)MeasurementDetails.TotalCountTime, meas.CountTimeInSeconds.ToString());  // an averaged time 
             return row;
@@ -478,7 +490,7 @@ namespace AnalysisDefs
             return rows;
         }
 
-        Row GenRawSumsRow(CountingResultsMap map)  // done: uses # of analyzers and goes across
+        Row GenRawSumsRow(CountingResultsMap map)  // uses # of analyzers and goes across
         {
             Row row = new Row();
             IEnumerator iter = map.GetMultiplicityEnumerator();

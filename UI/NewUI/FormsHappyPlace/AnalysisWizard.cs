@@ -128,13 +128,12 @@ namespace NewUI
             det = lmdet;
             ap = lmap;
 
-            if (startHere == AWSteps.Step1)  // fresh List Mode only
+            if (startHere == AWSteps.Step3)  // fresh List Mode only
             {
                 ResetMeasurement();
                 Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
             }
 
-            //cntap = CountingAnalysisParameters.Copy(NC.App.Opstate.Measurement.AnalysisParams);
             alt = CountingAnalysisParameters.Copy(NC.App.Opstate.Measurement.AnalysisParams);
 
             InitializeComponent();
@@ -150,10 +149,10 @@ namespace NewUI
             this.Step4Panel.Top = 6;
 
             state = startHere;
-            if (state != AWSteps.Step1)
+            if (state == AWSteps.Step2A || state == AWSteps.Step2B)
             {
                 fromINCCAcquire = true;
-                ap.data_src = (state == AWSteps.Step2B ? ConstructedSource.Live : ConstructedSource.NCDFile);  // default file type is NCD, updated in UI from acquire param details
+                ap.data_src = (state == AWSteps.Step2B ? ConstructedSource.Live : ConstructedSource.PTRFile);  // default file type is PTR-32, updated in UI from acquire param details
             }
             CycleIntervalPatch(); // guard for bad LM cycle and interval
             // Set the visibilities correctly for the initial state 
@@ -229,6 +228,7 @@ namespace NewUI
             {
                 this.Step4Panel.Visible = true;
                 this.Step4SaveAndExit.Enabled = true;
+				Comment.Text = ap.comment;
                 // Fill in data source and output
                 if (ap.data_src.Live())
                 {
@@ -1824,6 +1824,15 @@ namespace NewUI
             return m0;
         }
 
-    }
+		private void Comment_Leave(object sender, EventArgs e)
+		{
+            bool thisonechanged = (string.Compare(ap.comment,((TextBox)sender).Text) != 0);
+			if (thisonechanged)
+			{
+				ap.modified = true;
+				ap.comment = string.Copy(((TextBox)sender).Text);
+			}
+		}
+	}
 
 }

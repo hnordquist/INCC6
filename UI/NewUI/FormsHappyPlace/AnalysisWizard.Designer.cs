@@ -145,6 +145,8 @@
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.Comment = new System.Windows.Forms.TextBox();
+			this.label5 = new System.Windows.Forms.Label();
 			this.Step1ControlsPanel.SuspendLayout();
 			this.Step2APanel.SuspendLayout();
 			this.InputFileTypeGroupBox.SuspendLayout();
@@ -1290,16 +1292,18 @@
 			this.Step4Panel.Controls.Add(this.Step4DataSourceLabel);
 			this.Step4Panel.Controls.Add(this.label3);
 			this.Step4Panel.Controls.Add(this.label2);
+			this.Step4Panel.Controls.Add(this.Comment);
+			this.Step4Panel.Controls.Add(this.label5);
 			this.Step4Panel.Location = new System.Drawing.Point(643, 731);
 			this.Step4Panel.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4Panel.Name = "Step4Panel";
-			this.Step4Panel.Size = new System.Drawing.Size(684, 400);
+			this.Step4Panel.Size = new System.Drawing.Size(684, 482);
 			this.Step4Panel.TabIndex = 9;
 			this.Step4Panel.Visible = false;
 			// 
 			// Step4SaveAndExit
 			// 
-			this.Step4SaveAndExit.Location = new System.Drawing.Point(155, 321);
+			this.Step4SaveAndExit.Location = new System.Drawing.Point(155, 360);
 			this.Step4SaveAndExit.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4SaveAndExit.Name = "Step4SaveAndExit";
 			this.Step4SaveAndExit.Size = new System.Drawing.Size(135, 62);
@@ -1372,7 +1376,7 @@
 			// 
 			// Step4BackBtn
 			// 
-			this.Step4BackBtn.Location = new System.Drawing.Point(47, 329);
+			this.Step4BackBtn.Location = new System.Drawing.Point(47, 368);
 			this.Step4BackBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4BackBtn.Name = "Step4BackBtn";
 			this.Step4BackBtn.Size = new System.Drawing.Size(100, 48);
@@ -1383,7 +1387,7 @@
 			// 
 			// Step4CancelBtn
 			// 
-			this.Step4CancelBtn.Location = new System.Drawing.Point(537, 329);
+			this.Step4CancelBtn.Location = new System.Drawing.Point(537, 368);
 			this.Step4CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4CancelBtn.Name = "Step4CancelBtn";
 			this.Step4CancelBtn.Size = new System.Drawing.Size(100, 48);
@@ -1394,7 +1398,7 @@
 			// 
 			// Step4NextBtn
 			// 
-			this.Step4NextBtn.Location = new System.Drawing.Point(395, 321);
+			this.Step4NextBtn.Location = new System.Drawing.Point(395, 360);
 			this.Step4NextBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.Step4NextBtn.Name = "Step4NextBtn";
 			this.Step4NextBtn.Size = new System.Drawing.Size(135, 62);
@@ -1532,13 +1536,35 @@
 			this.label2.TabIndex = 0;
 			this.label2.Text = "Step 4:";
 			// 
+			// Comment
+			// 
+			this.Comment.BackColor = System.Drawing.Color.White;
+			this.Comment.Enabled = true;
+			this.Comment.ForeColor = System.Drawing.Color.Black;
+			this.Comment.Location = new System.Drawing.Point(154, 296);
+			this.Comment.Margin = new System.Windows.Forms.Padding(4);
+			this.Comment.Name = "Comment";
+			this.Comment.Size = new System.Drawing.Size(483, 22);
+			this.Comment.TabIndex = 22;
+			this.Comment.Leave += new System.EventHandler(this.Comment_Leave);
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(59, 300);
+			this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(67, 17);
+			this.label5.TabIndex = 21;
+			this.label5.Text = "Comment";
+			// 
 			// AnalysisWizard
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(1827, 923);
+			this.ClientSize = new System.Drawing.Size(2038, 1118);
 			this.Controls.Add(this.Step4Panel);
 			this.Controls.Add(this.Step2BPanel);
 			this.Controls.Add(this.Step3Panel);
@@ -1695,6 +1721,7 @@
         private System.Windows.Forms.Button DefSR;
         private System.Windows.Forms.CheckBox Step2BWriteDataFiles;
 		private System.Windows.Forms.Button Step4SaveAndExit;
-
-    }
+		private System.Windows.Forms.TextBox Comment;
+		private System.Windows.Forms.Label label5;
+	}
 }

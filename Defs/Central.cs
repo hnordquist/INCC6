@@ -401,7 +401,7 @@ namespace NCC
     // global state for synchronized operations and access to singleton class instances for logging, configuration, DB access API+parameters
     public class CentralizedState
     {
-        public const Int32 ChannelCount = 32; // forever
+        public const Int32 ChannelCount = 32; // forever, but what about MCA-527 single channel now eh?
 
         static public CentralizedState App
         {

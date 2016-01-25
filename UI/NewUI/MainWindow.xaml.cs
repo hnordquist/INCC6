@@ -588,7 +588,7 @@ namespace NewUI
                 MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
                 return;
             }
-            NewUI.AnalysisWizard f = new NewUI.AnalysisWizard(NewUI.AnalysisWizard.AWSteps.Step1, acq, det);
+            AnalysisWizard f = new AnalysisWizard(AnalysisWizard.AWSteps.Step3, acq, det);
             System.Windows.Forms.DialogResult dr = f.ShowDialog();
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
