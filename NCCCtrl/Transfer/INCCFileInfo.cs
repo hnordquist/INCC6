@@ -402,7 +402,7 @@ namespace NCCTransfer
                         mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);
                     }
 
-                    mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC transfer file processing", effs.Count(), fpath);
+                    mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
 
                     // Show files and build list
                     foreach (var f in effs)
@@ -430,7 +430,7 @@ namespace NCCTransfer
             }
             else if (mft == eFileType.eFileList)
             {
-                mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC transfer file processing", paths.Count());
+                mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC review and transfer file processing", paths.Count());
 
                 // Show files and build list
                 foreach (var f in paths)

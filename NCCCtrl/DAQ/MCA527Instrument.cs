@@ -391,23 +391,6 @@ namespace LMDAQ
             //m_logger.Flush();
         }
 
-				/// <summary>
-        /// Gets a string identifying the DpcUtil.dll version.
-        /// </summary>
-        /// <returns>A string identifying the DpcUtil.dll version or a 'not found' text.</returns>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        protected static string GetDpcUtilsVersion()
-        {
-			string dllpath = System.IO.Path.Combine(Environment.SystemDirectory, "dpcutil.dll");
-			if (System.IO.File.Exists(dllpath)) 
-			{ 
-				System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllpath);
-				 return fvi.FileVersion;
-			}
-			else
-				return "... MCA527 USB driver not found " + dllpath;           
-        }
-
         /// <summary>
         /// Determines whether the current object is equal to another object of the same type.
         /// </summary>

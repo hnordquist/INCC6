@@ -69,16 +69,21 @@ namespace NCCCmd
 			try
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
-				if (!String.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
+				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
 					goto frob;
 
-                if (!String.IsNullOrEmpty(c.Cur.Material) && !c.Cur.Material.Equals("Pu")) // command line set the value
+                if (!string.IsNullOrEmpty(c.Cur.Material) && !c.Cur.Material.Equals("Pu")) // command line set the value
                     initialized = NCC.IntegrationHelpers.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
                     goto frob;
-                
+
+                if (!string.IsNullOrEmpty(c.Cur.ItemId)) // command line set the item value, use it to override the material and other acquire params
+                    initialized = NCC.IntegrationHelpers.SetNewCurrentMaterial(c.Cur.Material, true);
+                if (!initialized)
+                    goto frob;
+
                 BuildMeasurement();
 				if (NC.App.Config.App.UsingFileInput)
 				{
