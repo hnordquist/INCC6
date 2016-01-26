@@ -2635,7 +2635,26 @@ namespace AnalysisDefs
         }
 
     }
+	public class ResultFiles :  List<ResultFile>
+	{
+		// INCC5-style text files; can have multiple output files if more than one SR params
+        public ResultFile CSVResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
 
+		public ResultFile PrimaryINCC5Filename
+		{
+			get {
+				if (Count > 0)
+					return this[0];
+				else
+					return new ResultFile(); // empty
+			}
+		}
+
+		public ResultFiles() : base()
+		{
+			CSVResultsFileName = new ResultFile();
+		}
+	}
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };
     public class DBParamList
     {

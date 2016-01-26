@@ -376,7 +376,7 @@ namespace AnalysisDefs
                     case INCCReportSection.Reference:
                         sec = new INCCStyleSection(null, 1);
                         sec.AddHeader("Counting results, summaries and cycle counts file name");  // section header
-                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFileName.Path);
+                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFiles.CSVResultsFileName.Path);
                         sec.Add(resline);
                         break;
                     default:
@@ -422,7 +422,7 @@ namespace AnalysisDefs
             sec.AddTwo("Inventory change code:", meas.AcquireState.inventory_change_code);
             sec.AddTwo("I/O code:", meas.AcquireState.io_code);
             sec.AddTwo("Measurement date:", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-            sec.AddTwo("Results file name:", meas.INCCResultsFileNames[meas.INCCResultsFileNames.Count - 1].Path);
+            sec.AddTwo("Results file name:", meas.ResultsFiles[meas.ResultsFiles.Count - 1].Path);
             sec.AddTwo("Inspection number:", meas.AcquireState.campaign_id);
 
             if (AssaySelector.ForMass(meas.MeasOption) || meas.MeasOption == AssaySelector.MeasurementOption.rates)
@@ -472,7 +472,7 @@ namespace AnalysisDefs
         {
             base.StartReportGeneration(m, pretext, separator);
 
-            m.INCCResultsFileNames.Add(new ResultFile(t.FullFilePath));  // save the full file path on this list for later
+            m.ResultsFiles.Add(new ResultFile(t.FullFilePath));  // save the full file path on this list for later
         }
 
         public void GenerateReport(Measurement m)

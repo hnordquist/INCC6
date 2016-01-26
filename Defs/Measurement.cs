@@ -460,8 +460,7 @@ namespace AnalysisDefs
             get { return mid.MeasOption; }
             // set { mid.MeasOption = value; }
         }
-        public ResultFile ResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
-        public List<ResultFile> INCCResultsFileNames;  // INCC5-style text files; can have multiple output files if more than one SR params
+        public ResultFiles ResultsFiles; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis,  INCC5-style text files; can have multiple output files if more than one SR params
 
         public double CountTimeInSeconds;
         public ushort CurrentRepetition;
@@ -764,8 +763,7 @@ namespace AnalysisDefs
             cycles = new CycleList();
             Messages = new AnalysisMessages();
             cyclestatus = new MeasurementCycleStatusCounts();
-            INCCResultsFileNames = new List<ResultFile>();
-			ResultsFileName = new ResultFile();
+			ResultsFiles = new ResultFiles();
         }
 
         /// <summary>

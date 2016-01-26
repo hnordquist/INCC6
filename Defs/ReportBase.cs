@@ -81,7 +81,7 @@ namespace AnalysisDefs
                 string notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
                 if (System.IO.File.Exists(notepadPath))
                 {
-                    foreach (ResultFile fname in m.INCCResultsFileNames)
+                    foreach (ResultFile fname in m.ResultsFiles)
                         System.Diagnostics.Process.Start(notepadPath, fname.Path);
                 }
                 // todo:optional enablement

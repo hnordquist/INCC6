@@ -63,7 +63,7 @@ namespace NewUI
 
         public static bool EmptyFile(Measurement m)
         {
-            return m.INCCResultsFileNames.Count <= 0 || String.IsNullOrEmpty(m.INCCResultsFileNames[0].Path);
+            return m.ResultsFiles.Count <= 0 || String.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
         }
         private void listView1_DoubleClick(object sender, EventArgs e)
         {
@@ -78,8 +78,8 @@ namespace NewUI
                 {
                     if (System.IO.File.Exists(notepadPath))
                     {
-                        if (mlist[lvi.Index].INCCResultsFileNames.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].INCCResultsFileNames[0].Path))
-                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].INCCResultsFileNames[0].Path);
+                        if (mlist[lvi.Index].ResultsFiles.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path))
+                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path);
                         else
                             ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path did not exist or the filename was blank.");
                     }

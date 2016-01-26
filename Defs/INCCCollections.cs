@@ -3569,8 +3569,8 @@ namespace AnalysisDefs
                     Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
                     MeaId.Item.Copy(rec.item);
                     ms.Add(m);
-                   if (m.INCCResultsFileNames != null && !string.IsNullOrEmpty(dr["FileName"].ToString()))
-                        m.INCCResultsFileNames.Add (new ResultFile(dr["FileName"].ToString()));
+                   if (m.ResultsFiles != null && !string.IsNullOrEmpty(dr["FileName"].ToString()))
+                        m.ResultsFiles.Add (new ResultFile(dr["FileName"].ToString()));
                 }
                 // TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
             }
@@ -3684,13 +3684,13 @@ namespace AnalysisDefs
             string primaryFilename = string.Empty; 
 			bool skipTheFirstINCC5File = false;
 			// Always use the first INCC5 filename for legacy consistency
-            if (m.INCCResultsFileNames != null && m.INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
+            if (m.ResultsFiles != null && m.ResultsFiles.Count > 0) // need a defined filename and fully initialized Measurement here
 			{
-                primaryFilename = m.INCCResultsFileNames[0].Path;
+                primaryFilename = m.ResultsFiles.PrimaryINCC5Filename.Path;
 				skipTheFirstINCC5File = true;
 			}
             if (string.IsNullOrEmpty(primaryFilename))  // try the LM csv default name, this might be an LM measurement only
-                primaryFilename = m.ResultsFileName.Path;
+                primaryFilename = m.ResultsFiles.CSVResultsFileName.Path;
             if (string.IsNullOrEmpty(primaryFilename))  // only do the write if it's non-null
 				return;
 
@@ -3703,20 +3703,20 @@ namespace AnalysisDefs
 
 			// now add the remaining file names to the extended table
 			List<ResultFile> rfl = new List<ResultFile>();
-			if (skipTheFirstINCC5File && m.INCCResultsFileNames.Count() > 1)
+			if (skipTheFirstINCC5File && m.ResultsFiles.Count() > 1)
 			{
-				if (!string.IsNullOrEmpty(m.ResultsFileName.Path))
+				if (!string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
 				{
-					rfl.Add(m.ResultsFileName);
-					rfl.AddRange(m.INCCResultsFileNames.GetRange(1,m.INCCResultsFileNames.Count() - 1));
+					rfl.Add(m.ResultsFiles.CSVResultsFileName);
+					rfl.AddRange(m.ResultsFiles.GetRange(1,m.ResultsFiles.Count() - 1));
 				}
 			}
 			else
 			{
-				if (!string.IsNullOrEmpty(m.ResultsFileName.Path))
+				if (!string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
 				{
-					rfl.Add(m.ResultsFileName);
-					rfl.AddRange(m.INCCResultsFileNames);
+					rfl.Add(m.ResultsFiles.CSVResultsFileName);
+					rfl.AddRange(m.ResultsFiles);
 				}
 			}
 			if (rfl.Count() > 0)

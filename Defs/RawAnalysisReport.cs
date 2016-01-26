@@ -385,7 +385,7 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Facility, meas.AcquireState.facility.ToString());
             row.Add((int)DescriptiveSummary.MBA, meas.AcquireState.mba.ToString());
             row.Add((int)DescriptiveSummary.MeasDate, meas.MeasDate.ToString());
-            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFileName.Path);
+            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFiles.CSVResultsFileName.Path);
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
@@ -1507,7 +1507,7 @@ namespace AnalysisDefs
         {
             base.StartReportGeneration(m, pretext, separator);
 
-            m.ResultsFileName.Path = t.FullFilePath;  // save the full file path on this single member var for later
+            m.ResultsFiles.CSVResultsFileName.Path = t.FullFilePath;  // save the full file path on this single member var for later
         }
 
 

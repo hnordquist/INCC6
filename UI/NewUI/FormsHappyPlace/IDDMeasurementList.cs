@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -41,11 +41,13 @@ namespace NewUI
     {
         private List<Measurement> mlist;
         protected LMLoggers.LognLM ctrllog;
+		bool allmea = false;
 
         public IDDMeasurementList(string filter = "")
         {
             InitializeComponent();
-            this.Text = filter == ""?"All Measurements":filter + " Measurements";
+			allmea =  filter == "";
+            this.Text = allmea?"All Measurements":filter + " Measurements";
             Detector det = Integ.GetCurrentAcquireDetector();
             mlist = NC.App.DB.MeasurementsFor(det,filter);
             mlist.RemoveAll(EmptyFile);
@@ -56,9 +58,13 @@ namespace NewUI
                 if (Path.GetFileName(m.MeasurementId.FileName).Contains("_"))
                     //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
                     ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
-                ListViewItem lvi = new ListViewItem(new string[] { ItemWithNumber, String.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Empty" : m.AcquireState.stratum_id.Name, m.MeasDate.DateTime.ToString("MM.dd.yy"), m.MeasDate.DateTime.ToString("HH:mm:ss") });
+                ListViewItem lvi = new ListViewItem(new string[] { ItemWithNumber,
+					String.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Empty" : m.AcquireState.stratum_id.Name, m.MeasDate.DateTime.ToString("MM.dd.yy"), m.MeasDate.DateTime.ToString("HH:mm:ss"),
+					m.MeasOption.PrintName() });
                 listView1.Items.Add(lvi);
             }
+			if (!allmea)
+				listView1.Columns[listView1.Columns.Count -1].Width = 0;
             if (mlist.Count == 0)
             {
                 string msg = string.Format("There were no measurements for {0} of type {1} found.", det.Id.DetectorId, filter=="Rates"?"Rates Only": filter);
@@ -68,7 +74,7 @@ namespace NewUI
 
         public static bool EmptyFile(Measurement m)
         {
-            return m.INCCResultsFileNames.Count <= 0 || String.IsNullOrEmpty(m.INCCResultsFileNames[0].Path);
+            return m.ResultsFiles.Count <= 0 || String.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
         }
         private void PrintBtn_Click(object sender, EventArgs e)
         {
@@ -79,7 +85,7 @@ namespace NewUI
             s.Write (String.Format ("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n","Item id","Stratum id","Measurement Type","Measurement Date","Measurement Time"));
             foreach (ListViewItem lvi in listView1.Items)
             {
-                s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text, lvi.SubItems[4].Text));
+                s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[4].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text));
             }
             f.Close();
             PrintForm pf = new PrintForm(path, this.Text, "Print List");
@@ -107,8 +113,8 @@ namespace NewUI
                 {
                     if (System.IO.File.Exists(notepadPath))
                     {
-                        if (mlist[lvi.Index].INCCResultsFileNames.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].INCCResultsFileNames[0].Path))
-                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].INCCResultsFileNames[0].Path);
+                        if (mlist[lvi.Index].ResultsFiles.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path))
+                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path);
                         else
                             ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path did not exist or the filename was blank.");
                     }
