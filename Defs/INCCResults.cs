@@ -448,6 +448,7 @@ namespace AnalysisDefs
             public double total_good_count_time, net_drum_weight, db_version;
             public AssaySelector.MeasurementOption meas_option;
             public bool completed;
+			public long MeasId {get; set; }
             //private Dictionary<Multiplicity, MultiplicityCountingRes> mcrmap;
 
 
@@ -538,12 +539,6 @@ namespace AnalysisDefs
                     primary = imr.primaryMethod;
             }
 
-            //public void AddMultiplicityResults(Multiplicity mul, MultiplicityCountingRes mcr)
-            //{ 
-            //    mcrmap = mcrmap ?? new Dictionary<Multiplicity, MultiplicityCountingRes>();
-
-            //    mcrmap.Add(mul, mcr);
-            //}
 
             /// <summary>
             /// Match the results rec with the measurement id's type and timestamp.

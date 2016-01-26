@@ -609,10 +609,11 @@ namespace AnalysisDefs
             set;
         }
         /// <summary>
-        /// Uniquely identifies measurment with shared datetime and option properties 
+        /// Uniquely identifies measurement with shared datetime and option properties 
         /// In INCC5, the time 1s increment coupled with the file name seemed to cover this case
+		/// In INCC6, use the measurement sinternal unique key value
         /// </summary>
-        public int UniqueId
+        public long UniqueId
         {
             get;
             set;
@@ -642,6 +643,7 @@ namespace AnalysisDefs
             MeasDateTime = new DateTimeOffset(src.MeasDateTime.Ticks, src.MeasDateTime.Offset);
             Item = new ItemId(src.Item);
             FileName = string.Copy(src.FileName);
+			UniqueId = src.UniqueId;
         }
         public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, ItemId it = null)
         {
@@ -651,11 +653,12 @@ namespace AnalysisDefs
             FileName = string.Empty;
         }
 
-        public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, string fn)
+        public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, string fn, long mid)
         {
             MeasOption = op;
             MeasDateTime = new DateTimeOffset(dt.Ticks, dt.Offset);
             FileName = String.Copy(fn);
+			UniqueId = mid;
             Item = new ItemId();
         }
         // expanded info
@@ -682,6 +685,8 @@ namespace AnalysisDefs
             if (res == 0)
                 res = MeasDateTime.CompareTo(other.MeasDateTime);
             if (res == 0)
+                res = UniqueId.CompareTo(other.UniqueId);
+            if (res == 0)
                 res = FileName.CompareTo(other.FileName);
             if (res == 0 && Item != null && other.Item != null)
                 res = Item.CompareTo(other.Item);
@@ -696,6 +701,8 @@ namespace AnalysisDefs
             res = MeasOption.Equals(other.MeasOption);
             if (res)
                 res = MeasDateTime.Equals(other.MeasDateTime);
+            if (res)
+                res = UniqueId.Equals(other.UniqueId);
             if (res)
                 res = FileName.Equals(other.FileName);
             //if (res && Item != null && other.Item != null)
@@ -2653,6 +2660,16 @@ namespace AnalysisDefs
 		public ResultFiles() : base()
 		{
 			CSVResultsFileName = new ResultFile();
+		}
+
+		public void Add(bool LMOnly, string path)
+		{
+			if (LMOnly)
+				if (path.EndsWith(".csv",true, System.Globalization.CultureInfo.InstalledUICulture))
+					CSVResultsFileName.Path = path;
+				else
+					Add(new ResultFile(path));
+
 		}
 	}
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };

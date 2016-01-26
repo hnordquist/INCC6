@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -38,18 +38,18 @@ namespace NewUI
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList("Hold Up");
+            IDDMeasurementList measlist = new IDDMeasurementList("Holdup");
             measlist.ShowDialog();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
+			Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
         }
         private void InspectionNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -93,8 +93,8 @@ namespace NewUI
             disclaimer.InitialDelay = 1000;
             disclaimer.ReshowDelay = 2000;
             disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(this.OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(this.HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
+            disclaimer.SetToolTip(OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
+            disclaimer.SetToolTip(HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
         }
 
 

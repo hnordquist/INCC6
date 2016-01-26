@@ -83,18 +83,18 @@ namespace NCCFile
                             INCCReviewFileProcessing();
                         else if (NC.App.AppContext.DBDataAssay)
                             DBDataAssay();
-                        //else if (NC.App.AppContext.ManualDataAssay)
+                        //else if (NC.App.AppContext.ManualDataAssay) // todo:
                         //    DBDataAssay();
                         else
                             NCDFileAssay();
-                        FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.File:
                         if (NC.App.AppContext.INCCXfer)
                             INCCTransferFileProcessing();
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
-                        FireEvent(EventType.ActionFinished, this);
+                        else
+							FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.Nothing:
                         ctrllog.TraceInformation("Specify an action (e.g. '-assay:0') for file-based input processing");
@@ -287,7 +287,7 @@ namespace NCCFile
 
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
                 NC.App.Opstate.StampOperationStopTime();
-                FireEvent(EventType.ActionStop, this);
+                FireEvent(EventType.ActionFinished, this);
 
             }
         }
@@ -485,44 +485,46 @@ namespace NCCFile
 
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
 
         }
 
 
-        protected void PulseFileSort()
-        {
+		protected void PulseFileSort()
+		{
 
-            //uint eventBufferLength = 50 * 1024 * 1024;
+			//uint eventBufferLength = 50 * 1024 * 1024;
 
-            FileList<UnsortedPulseFile> hdlr = new FileList<UnsortedPulseFile>();
-            hdlr.Init(UnsortedPulseFile.ExtensionList, ctrllog);
+			FileList<UnsortedPulseFile> hdlr = new FileList<UnsortedPulseFile>();
+			hdlr.Init(UnsortedPulseFile.ExtensionList, ctrllog);
 
-            // get the list of files from the named folder
-            FileList<UnsortedPulseFile> files = (FileList<UnsortedPulseFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
-            if (files == null || files.Count() < 1)
-            {
-                return;
-            }
+			// get the list of files from the named folder
+			FileList<UnsortedPulseFile> files = (FileList<UnsortedPulseFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
+			if (files == null || files.Count() < 1)
+			{
+				return;
+			}
 
-            foreach (var pf in files)
-            {
-                if (NC.App.Opstate.IsQuitRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
-                    break;
+			foreach (var pf in files)
+			{
+				if (NC.App.Opstate.IsQuitRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
+					break;
 
-                string derivedDataFilenamePrefix = pf.GenerateDerivedName();
-                ctrllog.TraceEvent(LogLevels.Verbose, 3330, "Sorting {0} to {1}", pf.Filename, derivedDataFilenamePrefix + ".sorted");
+				string derivedDataFilenamePrefix = pf.GenerateDerivedName();
+				ctrllog.TraceEvent(LogLevels.Verbose, 3330, "Sorting {0} to {1}", pf.Filename, derivedDataFilenamePrefix + ".sorted");
 
-                var opt = new ExternalMergeSort.Options(ExternalMergeSort.sizeFromMB(50), ExternalMergeSort.sizeFromMB(10 /*0*/ /*10*/) / 10, 1024 * 10);
-                opt.SkipInitialSort = false; // a single file only, so no external merge at this time, save that feature for later
-                opt.RemoveIntermediateFiles = true; // no merge here, we are breaking up a single pulse file into n temp files, so we need to remove the n temp files
-                ExternalMergeSort.Logger = pf.Log;
-                ExternalMergeSort.Sort(pf.Filename, derivedDataFilenamePrefix + ".sorted", NC.App.Config.RootLoc, opt);
+				var opt = new ExternalMergeSort.Options(ExternalMergeSort.sizeFromMB(50), ExternalMergeSort.sizeFromMB(10 /*0*/ /*10*/) / 10, 1024 * 10);
+				opt.SkipInitialSort = false; // a single file only, so no external merge at this time, save that feature for later
+				opt.RemoveIntermediateFiles = true; // no merge here, we are breaking up a single pulse file into n temp files, so we need to remove the n temp files
+				ExternalMergeSort.Logger = pf.Log;
+				ExternalMergeSort.Sort(pf.Filename, derivedDataFilenamePrefix + ".sorted", NC.App.Config.RootLoc, opt);
 
-            } // loop over each file
-        }
+			} // loop over each file
+			FireEvent(EventType.ActionFinished, this);
 
-        internal static NCDFile PrepNCDFile(string opath, NeutronDataFile spf, int idx)
+		}
+
+		internal static NCDFile PrepNCDFile(string opath, NeutronDataFile spf, int idx)
         {
             NCDFile file = new NCDFile();
             file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
@@ -802,7 +804,7 @@ namespace NCCFile
 
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
 
         }
 
@@ -1018,7 +1020,7 @@ namespace NCCFile
 
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
 
         }
 
@@ -1225,7 +1227,7 @@ namespace NCCFile
 
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
 
         }
 

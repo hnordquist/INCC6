@@ -69,7 +69,7 @@ namespace NCCFile
             NC.App.Opstate.ResetTokens();
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+            FireEvent(EventType.ActionFinished, this);
         }
 
 
@@ -227,7 +227,7 @@ namespace NCCFile
             NC.App.Opstate.ResetTokens();
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
         }
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, DateTimeOffset dto, ushort runs, string path)
@@ -513,7 +513,7 @@ namespace NCCFile
             NC.App.Opstate.ResetTokens();
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
         }
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, INCCReviewFile irf)

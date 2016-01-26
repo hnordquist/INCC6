@@ -1346,10 +1346,9 @@ namespace AnalysisDefs
         /// <param name="m">The measurement containing the cycles to preserve</param>
         public static void SaveMeasurementCycles(this Measurement m)
         {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = m.MeasurementId.UniqueId;
             //Could we actually not do this when reanalyzing? hn 9.21.2015
-            NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid, ms);
+            NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, String.Format("{0} cycles stored", m.Cycles.Count));
 
         }
@@ -1364,7 +1363,7 @@ namespace AnalysisDefs
         static void SaveMethodResultsForThisMeasurement(this Measurement m, MeasOptionSelector moskey)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = m.MeasurementId.UniqueId;
 
             INCCMethodResults imrs;
             bool gotten = m.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
@@ -1393,10 +1392,9 @@ namespace AnalysisDefs
         /// <param name="res">The subclassed specific results instance</param> 
         static void SaveSpecificResultsForThisMeasurement(this Measurement m, INCCResult res)
         {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = m.MeasurementId.UniqueId;
             DB.ElementList els = res.ToDBElementList(); // generates the Table property content too
-            DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(res.Table, ms.db);
+            DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(res.Table);
             long resid = ar.Create(mid, els);                          
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, String.Format("Results {0} preserved ({1})",resid, res.Table));
         }
@@ -1408,10 +1406,8 @@ namespace AnalysisDefs
         /// <param name="moskey">The option selector+multiplicity key for the method results map</param> 
         static void SaveSummaryResultsForThisMeasurement(this Measurement m, MeasOptionSelector moskey)
         {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(m.Detector.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
-
-            DB.Results dbres = new DB.Results(ms.db);
+            long mid = m.MeasurementId.UniqueId;
+            DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
             bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList());
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");

@@ -982,6 +982,13 @@ namespace AnalysisDefs
             long rid = dbres.Create(mid, this.INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 
+			long c = dbm.CountOf(name: Detector.Id.DetectorName,
+                                dt: MeasDate, 
+                                type: MeasOption.PrintName());
+
+			dbm.UpdateNote(c.ToString(),mid);
+			MeasurementId.UniqueId = mid;
+
             return mid;
         }
 
@@ -992,22 +999,6 @@ namespace AnalysisDefs
         public void PersistFileNames()
         {
 			NC.App.DB.AddResultsFileNames(this);
-            //string filename = ResultsFileName.Path; // start with the LM csv default name, in case this is an LM measurement only
-            //// But always use the first INCC5 filename for legacy consistency
-            //if (INCCResultsFileNames != null && INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
-            //    filename = INCCResultsFileNames[0].Path;
-
-            //if (!String.IsNullOrEmpty(filename))  // only do the write if it's non-null
-            //{
-            //    DB.Measurements ms = new DB.Measurements();
-            //    string type = MeasOption.ToString();
-            //    long id;
-            //    int dupNum = 0;
-            //    id = ms.Lookup(AcquireState.detector_id, MeasDate, MeasOption.PrintName());
-
-            //    logger.TraceEvent(LogLevels.Verbose, 34001, String.Format("Patching in the first file name...{0} " + filename, dupNum == 1 ? "Original measurement" : "Reanalysis #" + dupNum));
-            //    ms.UpdateFileName(filename, id);
-            //}
         }
 
         public void AdjustCycleCountsBaseOnStatus(bool curCycleIncomplete)

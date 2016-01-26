@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -52,7 +52,7 @@ namespace NewUI
                 {
                     DateTime dt;
                     DateTime.TryParseExact (lvi.SubItems[4].Text + lvi.SubItems[5].Text,"yyyy/MM/ddHH:mm:ss",null,System.Globalization.DateTimeStyles.None, out dt);
-                    success = meas.Delete(lvi.SubItems[0].Text, dt, lvi.SubItems[1].Text) || success;
+                    success = meas.Delete((long)lvi.Tag) || success;
                     LoadMeasurementList();
                 }
             }
@@ -82,6 +82,7 @@ namespace NewUI
                             rr.acq.stratum_id.ToString() == String.Empty ? "Default" : rr.acq.stratum_id.ToString(), rr.acq.MeasDateTime.ToString("yyyy/MM/dd"), rr.acq.MeasDateTime.ToString("HH:mm:ss") });
                         lvi.Name = rr.acq.MeasDateTime.ToString();
                         MeasurementView.Items.Add(lvi);
+						lvi.Tag = rr.MeasId;
                     }
             }
             this.Refresh();
