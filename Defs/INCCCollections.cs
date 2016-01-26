@@ -1580,7 +1580,21 @@ namespace AnalysisDefs
             return rec;
         }
 
-		public INCCResults.results_rec Get(long mid)
+        public List<INCCResults.results_rec> GetResultsFor(string detname)
+        {
+            DB.Results r = new DB.Results();
+            DataTable dt = r.ResultsForDet(detname);
+            List<INCCResults.results_rec> res = new List<INCCResults.results_rec>();
+            string curr_det = string.Empty;
+            foreach (DataRow dr in dt.Rows)
+            {
+                res.Add(RowParser(dr, ref curr_det));
+            }   
+            return res;
+        }
+
+
+        public INCCResults.results_rec Get(long mid)
 		{
 			DB.Results r = new DB.Results();
 			DataTable dt = r.Result(mid);
@@ -1595,7 +1609,7 @@ namespace AnalysisDefs
 		}
 
 
-		public INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
+		INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
 		{
             INCCResults.results_rec resrec = new INCCResults.results_rec();
             // reconstruct the acquire params used for this measurement result

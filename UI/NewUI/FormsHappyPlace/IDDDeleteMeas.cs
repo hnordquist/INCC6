@@ -31,10 +31,12 @@ using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
+    using Integ = NCC.IntegrationHelpers;
+    using NC = NCC.CentralizedState;
+
     public partial class IDDDeleteMeas : Form
     {
-        ResultsRecs results;
-        Dictionary<string, List<INCCResults.results_rec>> recs;
+        private List<Measurement> mlist;
 
         public IDDDeleteMeas()
         {
@@ -44,18 +46,20 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            DB.Measurements meas = new DB.Measurements ();
-            bool success = true;
-            foreach (ListViewItem lvi in MeasurementView.Items)
-            {
-                if (lvi.Selected)
-                {
-                    DateTime dt;
-                    DateTime.TryParseExact (lvi.SubItems[4].Text + lvi.SubItems[5].Text,"yyyy/MM/ddHH:mm:ss",null,System.Globalization.DateTimeStyles.None, out dt);
-                    success = meas.Delete((long)lvi.Tag) || success;
-                    LoadMeasurementList();
-                }
-            }
+            return;
+            //  NEXT: delete from collections, then delte fomr DB.
+            //DB.Measurements meas = new DB.Measurements ();
+            //bool success = true;
+            //foreach (ListViewItem lvi in MeasurementView.Items)
+            //{
+            //    if (lvi.Selected)
+            //    {
+            //        DateTime dt;
+            //        DateTime.TryParseExact (lvi.SubItems[4].Text + lvi.SubItems[5].Text,"yyyy/MM/ddHH:mm:ss",null,System.Globalization.DateTimeStyles.None, out dt);
+            //        success = meas.Delete((long)lvi.Tag) || success;
+            //        LoadMeasurementList();
+            //    }
+            //}
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -69,23 +73,23 @@ namespace NewUI
         }
         private void LoadMeasurementList()
         {
-            MeasurementView.Items.Clear();
-            results = new ResultsRecs();
-            recs = results.GetMap();
-            foreach (var key in recs.Keys)
+            Detector det = Integ.GetCurrentAcquireDetector();
+            mlist = NC.App.DB.MeasurementsFor(det, "");
+            MeasurementView.ShowItemToolTips = true;
+
+            foreach (Measurement m in mlist)
             {
-                List<INCCResults.results_rec> list = new List<INCCResults.results_rec>();
-                if (recs.TryGetValue(key, out list))
-                    foreach (INCCResults.results_rec rr in list)
-                    {
-                        ListViewItem lvi = new ListViewItem(new string[6] { rr.acq.detector_id.ToString(), rr.meas_option.PrintName(), rr.acq.item_id.ToString(),
-                            rr.acq.stratum_id.ToString() == String.Empty ? "Default" : rr.acq.stratum_id.ToString(), rr.acq.MeasDateTime.ToString("yyyy/MM/dd"), rr.acq.MeasDateTime.ToString("HH:mm:ss") });
-                        lvi.Name = rr.acq.MeasDateTime.ToString();
-                        MeasurementView.Items.Add(lvi);
-						lvi.Tag = rr.MeasId;
-                    }
+                ListViewItem lvi = new ListViewItem(new string[] {
+                    det.Id.DetectorName,
+                    m.MeasOption.PrintName(),
+                    m.AcquireState.item_id,
+                    m.AcquireState.stratum_id.Name == String.Empty ? "Default" : m.AcquireState.stratum_id.Name,
+                    m.MeasDate.ToString("yyyy/MM/dd"),
+                    m.MeasDate.ToString("HH:mm:ss") });
+                lvi.Tag = m.MeasurementId;
+                MeasurementView.Items.Add(lvi);
             }
-            this.Refresh();
+            Refresh();
             if (MeasurementView.Items.Count <= 0)
                 MessageBox.Show("There are no measurements in the database.", "WARNING");
         }
