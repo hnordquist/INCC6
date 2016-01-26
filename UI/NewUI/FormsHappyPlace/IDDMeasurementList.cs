@@ -50,8 +50,10 @@ namespace NewUI
             this.Text = allmea?"All Measurements":filter + " Measurements";
             Detector det = Integ.GetCurrentAcquireDetector();
             mlist = NC.App.DB.MeasurementsFor(det,filter);
-            mlist.RemoveAll(EmptyFile);
+            mlist.RemoveAll(EmptyFile); // I am conflicted on this step
             ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+			listView1.ShowItemToolTips = true;
+
             foreach (Measurement m in mlist)
             {
                 string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "Empty" : m.AcquireState.ItemId.item;
@@ -62,6 +64,9 @@ namespace NewUI
 					String.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Empty" : m.AcquireState.stratum_id.Name, m.MeasDate.DateTime.ToString("MM.dd.yy"), m.MeasDate.DateTime.ToString("HH:mm:ss"),
 					m.MeasOption.PrintName() });
                 listView1.Items.Add(lvi);
+				lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption);
+				if (string.IsNullOrEmpty(lvi.ToolTipText))
+					lvi.ToolTipText = "No results file available";
             }
 			if (!allmea)
 				listView1.Columns[listView1.Columns.Count -1].Width = 0;
@@ -74,7 +79,7 @@ namespace NewUI
 
         public static bool EmptyFile(Measurement m)
         {
-            return m.ResultsFiles.Count <= 0 || String.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
+            return m.ResultsFiles.Count <= 0 || string.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
         }
         private void PrintBtn_Click(object sender, EventArgs e)
         {
@@ -113,17 +118,31 @@ namespace NewUI
                 {
                     if (System.IO.File.Exists(notepadPath))
                     {
-                        if (mlist[lvi.Index].ResultsFiles.Count > 0 && !String.IsNullOrEmpty(mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path))
-                            System.Diagnostics.Process.Start(notepadPath, mlist[lvi.Index].ResultsFiles.PrimaryINCC5Filename.Path);
-                        else
-                            ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path did not exist or the filename was blank.");
+						string path = GetMainFilePath(mlist[lvi.Index].ResultsFiles, mlist[lvi.Index].MeasOption);
+                        if (File.Exists(path))
+                            System.Diagnostics.Process.Start(notepadPath, path);
+                        else if (!string.IsNullOrEmpty(path))
+                            ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
+                        else 
+                            ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
                     }
                     lvi.Selected = false;
                 }
             }
         }
 
-        private void CancelBtn_Click(object sender, EventArgs e)
+		private string GetMainFilePath(ResultFiles files, AssaySelector.MeasurementOption mo)
+		{
+			switch (mo)
+			{
+			case AssaySelector.MeasurementOption.unspecified:
+				return files.CSVResultsFileName.Path;
+			default:
+				return files.PrimaryINCC5Filename.Path;
+			}
+		}
+
+		private void CancelBtn_Click(object sender, EventArgs e)
         {
             this.Close();
         }
