@@ -275,8 +275,8 @@ namespace AnalysisDefs
                 }
             }
 
-            if (!match)  // non-null string that does not match, ry a direct conversion
-                System.Enum.TryParse<AssaySelector.MeasurementOption>(src, out res);
+            if (!match)  // non-null string that does not match, try a direct conversion
+				Enum.TryParse(src, out res);
             return res;
         }
     }

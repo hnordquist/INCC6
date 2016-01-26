@@ -44,7 +44,7 @@ namespace NewUI
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList("");
+            IDDMeasurementList measlist = new IDDMeasurementList("unspecified");
             measlist.ShowDialog();
         }
 
