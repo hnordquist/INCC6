@@ -46,6 +46,7 @@
 			this.RevFileGen = new System.Windows.Forms.CheckBox();
 			this.LogFileLoc = new System.Windows.Forms.TextBox();
 			this.ResultsFileLoc = new System.Windows.Forms.TextBox();
+			this.DataFileLoc = new System.Windows.Forms.TextBox();
 			this.FPPrec = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.EnableAuxRatioReportingCheckBox = new System.Windows.Forms.CheckBox();
@@ -57,7 +58,6 @@
 			this.resultsLoc = new System.Windows.Forms.Button();
 			this.label5 = new System.Windows.Forms.Label();
 			this.dataLoc = new System.Windows.Forms.Button();
-			this.DataFileLoc = new System.Windows.Forms.TextBox();
 			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -235,6 +235,7 @@
 			this.LogFileLoc.TabIndex = 41;
 			this.toolTip1.SetToolTip(this.LogFileLoc, "Specify file location for log files. Overrides the root location and daily folder" +
         "");
+			this.LogFileLoc.Leave += new System.EventHandler(this.LogFileLoc_Leave);
 			// 
 			// ResultsFileLoc
 			// 
@@ -245,6 +246,18 @@
 			this.ResultsFileLoc.TabIndex = 44;
 			this.toolTip1.SetToolTip(this.ResultsFileLoc, "Specify results file location for all results files. Overrides the root location " +
         "and daily folder");
+			this.ResultsFileLoc.Leave += new System.EventHandler(this.ResultsFileLoc_Leave);
+			// 
+			// DataFileLoc
+			// 
+			this.DataFileLoc.Location = new System.Drawing.Point(148, 132);
+			this.DataFileLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.DataFileLoc.Name = "DataFileLoc";
+			this.DataFileLoc.Size = new System.Drawing.Size(256, 22);
+			this.DataFileLoc.TabIndex = 47;
+			this.toolTip1.SetToolTip(this.DataFileLoc, "Specify data file location for all output data files. Overrides the root location" +
+        " and daily folder");
+			this.DataFileLoc.Leave += new System.EventHandler(this.DataFileLoc_Leave);
 			// 
 			// FPPrec
 			// 
@@ -381,16 +394,6 @@
 			this.dataLoc.Text = "Select...";
 			this.dataLoc.UseVisualStyleBackColor = true;
 			this.dataLoc.Click += new System.EventHandler(this.dataLoc_Click);
-			// 
-			// DataFileLoc
-			// 
-			this.DataFileLoc.Location = new System.Drawing.Point(148, 132);
-			this.DataFileLoc.Margin = new System.Windows.Forms.Padding(4);
-			this.DataFileLoc.Name = "DataFileLoc";
-			this.DataFileLoc.Size = new System.Drawing.Size(256, 22);
-			this.DataFileLoc.TabIndex = 47;
-			this.toolTip1.SetToolTip(this.DataFileLoc, "Specify data file location for all output data files. Overrides the root location and" +
-        " daily folder");
 			// 
 			// label6
 			// 

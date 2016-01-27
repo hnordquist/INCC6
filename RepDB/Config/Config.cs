@@ -609,7 +609,6 @@ namespace NCCConfig
             resetVal(NCCFlags.openResults, false, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.dataFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
@@ -808,12 +807,6 @@ namespace NCCConfig
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
             set { setVal(NCCFlags.resultsFileLoc, value); }
-        }
-
-		public string DataFilePath
-        {
-            get { return  overridepath(NCCFlags.dataFileLoc); }
-            set { setVal(NCCFlags.dataFileLoc, value); }
         }
 
         public string RootPath
@@ -1023,8 +1016,6 @@ namespace NCCConfig
 				x[ix++] = "  log file path: " + LogFilePath;
 			if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
-			if (isSet(NCCFlags.dataFileLoc))
-				x[ix++] = "  data path: " + DataFilePath;
 
             x[ix++] = "  logging: " + Logging;
             x[ix++] = "    log level: " + Level();

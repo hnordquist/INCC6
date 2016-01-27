@@ -46,7 +46,7 @@ namespace NewUI
             maybe.Add(NCCFlags.root, NC.App.AppContext.RootLoc);
             maybe.Add(NCCFlags.logFileLoc, NC.App.AppContext.LogFilePath);
             maybe.Add(NCCFlags.resultsFileLoc, NC.App.AppContext.ResultsFilePath);
-            maybe.Add(NCCFlags.dataFileLoc, NC.App.AppContext.DataFilePath);
+            maybe.Add(NCCFlags.fileinput, NC.App.AppContext.FileInput);
             maybe.Add(NCCFlags.dailyRootPath, NC.App.AppContext.DailyRootPath);
             maybe.Add(NCCFlags.fpPrec, NC.App.AppContext.FPPrecision);
             maybe.Add(NCCFlags.INCCParity, NC.App.AppContext.INCCParity);
@@ -62,7 +62,7 @@ namespace NewUI
             WorkingDirTextBox.Tag = root.Tag = NCCFlags.root;
             LogFileLoc.Tag = logLoc.Tag = NCCFlags.logFileLoc;
             ResultsFileLoc.Tag = resultsLoc.Tag = NCCFlags.resultsFileLoc;
-            DataFileLoc.Tag = dataLoc.Tag = NCCFlags.dataFileLoc;
+            DataFileLoc.Tag = dataLoc.Tag = NCCFlags.fileinput;
             DailyF0lder.Tag = NCCFlags.dailyRootPath;
             IsoFractionalDay.Tag = NCCFlags.INCCParity;
             PollTimer.Tag = NCCFlags.opStatusTimeInterval;
@@ -79,7 +79,7 @@ namespace NewUI
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
             LogFileLoc.Text = NC.App.AppContext.LogFilePath;
             ResultsFileLoc.Text = NC.App.AppContext.ResultsFilePath;
-            DataFileLoc.Text = NC.App.AppContext.DataFilePath;
+            DataFileLoc.Text = NC.App.AppContext.FileInput;
             FPPrec.SelectedItem = NC.App.AppContext.FPPrecision.ToString();
             EnableAuxRatioReportingCheckBox.Checked = NC.App.AppContext.AuxRatioReport;
             EnableSilentFolderCreationCheckBox.Checked = NC.App.AppContext.AutoCreateMissing;
@@ -99,7 +99,7 @@ namespace NewUI
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.root] !=NC.App.AppContext.RootLoc);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.logFileLoc] !=NC.App.AppContext.LogFilePath);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.resultsFileLoc] !=NC.App.AppContext.ResultsFilePath);
-            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.dataFileLoc] !=NC.App.AppContext.DataFilePath);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.fileinput] !=NC.App.AppContext.FileInput);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.dailyRootPath] !=NC.App.AppContext.DailyRootPath);
             NC.App.AppContext.modified |= ((UInt16)maybe[NCCFlags.fpPrec] !=NC.App.AppContext.FPPrecision);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.INCCParity] !=NC.App.AppContext.INCCParity);
@@ -120,7 +120,7 @@ namespace NewUI
             NC.App.AppContext.RootPath = (string)maybe[NCCFlags.root];
             NC.App.AppContext.LogFilePath = (string)maybe[NCCFlags.logFileLoc];
             NC.App.AppContext.ResultsFilePath = (string)maybe[NCCFlags.resultsFileLoc];
-            NC.App.AppContext.DataFilePath = (string)maybe[NCCFlags.dataFileLoc];
+            NC.App.AppContext.FileInput = (string)maybe[NCCFlags.fileinput];
             NC.App.AppContext.DailyRootPath = (bool)maybe[NCCFlags.dailyRootPath];
             NC.App.AppContext.FPPrecision = (UInt16)maybe[NCCFlags.fpPrec];
             NC.App.AppContext.INCCParity = (bool)maybe[NCCFlags.INCCParity];
@@ -252,7 +252,9 @@ namespace NewUI
             if (!String.IsNullOrEmpty(str))
             {
                 maybe[(NCCFlags)((Control)sender).Tag] = str;
-				LogFileLoc.Text = System.IO.Path.GetFullPath(str);
+				LogFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					LogFileLoc.Text = System.IO.Path.GetFullPath(str);
             }
 
 		}
@@ -263,7 +265,9 @@ namespace NewUI
             if (!String.IsNullOrEmpty(str))
             {
                 maybe[(NCCFlags)((Control)sender).Tag] = str;
-				ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
+				ResultsFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
             }
 		}
 
@@ -273,8 +277,46 @@ namespace NewUI
             if (!String.IsNullOrEmpty(str))
             {
                 maybe[(NCCFlags)((Control)sender).Tag] = str;
-				DataFileLoc.Text = System.IO.Path.GetFullPath(str);
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					DataFileLoc.Text = System.IO.Path.GetFullPath(str);
             }
+		}
+
+		private void LogFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.logFileLoc], true))
+			{
+				maybe[NCCFlags.logFileLoc] = str;
+				LogFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					LogFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
+		}
+
+		private void ResultsFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.resultsFileLoc], true))
+			{
+				maybe[NCCFlags.resultsFileLoc] = str;
+				ResultsFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
+		}
+
+		private void DataFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.fileinput], true))
+			{
+				maybe[NCCFlags.fileinput] = str;
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					DataFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
 		}
 	}
 }

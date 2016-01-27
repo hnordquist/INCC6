@@ -103,15 +103,20 @@ namespace ListModeDB
                 if (dr.Table.Columns.Contains("dbDataAssay"))
                     app.DBDataAssay = DB.Utils.DBBool(dr["dbDataAssay"]);
 				
-                if (dr.Table.Columns.Contains("resultsFilePath") && (!dr["resultsFilePath"].Equals(System.DBNull.Value)))
+                if (strvaluetest(dr, "resultsFilePath"))
                     app.ResultsFilePath = (string)(dr["resultsFilePath"]);
-                if (dr.Table.Columns.Contains("logFilePath") && (!dr["logFilePath"].Equals(System.DBNull.Value)))
+                if (strvaluetest(dr, "logFilePath"))
                     app.LogFilePath = (string)(dr["logFilePath"]);
-                if (dr.Table.Columns.Contains("dataFilePath") && (!dr["dataFilePath"].Equals(System.DBNull.Value)))
-                    app.DataFilePath = (string)(dr["dataFilePath"]);
                 return app;
             }
-        }
+		}
+        
+		static private bool strvaluetest(DataRow dr, string key)
+		{
+			return dr.Table.Columns.Contains(key) && (!dr[key].Equals(System.DBNull.Value)) && (!string.IsNullOrEmpty((string)dr[key]));
+		}
+
+
 
         private CountingAnalysisParameters CountingParameters(string detname)
         {

@@ -75,7 +75,7 @@ namespace NewUI
 
         public void CommentTextBox_Leave(object sender, EventArgs e)
         {
-            if (((((TextBox)sender).Text) != ap.comment))
+            if ((((TextBox)sender).Text) != ap.comment)
             {
                 ap.modified = true;
                 ap.comment = ((TextBox)sender).Text;

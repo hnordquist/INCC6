@@ -132,7 +132,7 @@ namespace NCCReporter
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
-                                listener.CustomLocation = cfg.App.RootLoc;
+                                listener.CustomLocation = cfg.App.LogFilePath;
                             }
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
                             // logdetails cmd line flag crudely enables this option set, only because the App.Config sharedListeners and switch source sections do not permit setting this attribute.

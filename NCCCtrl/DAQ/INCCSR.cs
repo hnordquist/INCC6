@@ -331,10 +331,13 @@ namespace LMDAQ
                     }
                     if (i != 0)
                         Thread.Sleep(1000); // 1 sec
+					if (lcts.IsCancellationRequested)  // punt here
+						break;
                     i++;
-                } while ((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&
-                  (status == sr_h.SR_SUCCESS) && (i < 100) && !lcts.IsCancellationRequested || status == sr_h.SR_TIMEOUT);
-                // When a timeout occurred, whas just exiting.  Check for TIMEOUT condition and try again up to 100 tries hn
+                } while (((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&  // while have not matched voltage
+						 (status == sr_h.SR_SUCCESS) && (i < 100)) // and the connection is good and we haven't yet tried 100 times 
+							|| status == sr_h.SR_TIMEOUT);                   // OR it simply timed out
+                // When a timeout occurred, was just exiting.  Check for TIMEOUT condition and try again up to 100 tries hn
                 if ((status != sr_h.SR_SUCCESS) || (i >= 100))
                 {
                     log.TraceEvent(LogLevels.Warning, 0x4f332, "{0}; Unable to set shift register high voltage", sr_h.SRFunctionReturnStatusCode(status));

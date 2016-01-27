@@ -2299,7 +2299,6 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
             pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
             pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
-            pb.ps.Add(new DBParamEntry("dataFilePath", DataFilePath)); 
         }
 
         public DB.ElementList ToDBElementList()
@@ -2664,11 +2663,12 @@ namespace AnalysisDefs
 
 		public void Add(bool LMOnly, string path)
 		{
-			if (LMOnly)
-				if (path.EndsWith(".csv",true, System.Globalization.CultureInfo.InstalledUICulture))
-					CSVResultsFileName.Path = path;
-				else
-					Add(new ResultFile(path));
+			if (path.EndsWith(".csv",true, System.Globalization.CultureInfo.InstalledUICulture) && string.IsNullOrEmpty(CSVResultsFileName.Path))
+			{
+				CSVResultsFileName.Path = path;
+			}
+			else
+				Add(new ResultFile(path));
 
 		}
 	}

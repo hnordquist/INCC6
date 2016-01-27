@@ -36,7 +36,7 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, dataFileLoc, openResults, rolloverSizeMB, rolloverIntervalMin, fpPrec,
+        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
 
@@ -81,7 +81,6 @@ namespace NCCConfig
 
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
-            { "dataLoc=", "specify base {file location} for output data files, overrides root", d => app.DataFilePath = d},
   			//{ "logAutoPath:",  "construct and use a daily log file folder name, optionally prepend the parent folder", 
             //    v => { app.DailyLogPath = true; app.ConstructDailyLogPath(v);} },
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
@@ -135,7 +134,7 @@ namespace NCCConfig
             { "liveFileWrite", "Create data files for each interval during live List Mode data collection",  v => app.LiveFileWrite = v != null },                                                           
             { "gen5TestDataFile", "Create an INCC5 Test data file at the end of a measurement",  v => app.CreateINCC5TestDataFile = v != null },                                                           
 
-             // this section is for various files for input (todo: expand this flag per requirements in FileCtrl.cs, move parsing and control to separate option processing module)
+             // this section is for various files for input
             { "f|file|fileinput|datasource=", "start a file-based operation using the {location} for file input, all matching files in the folder will be used", 
                                             v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 7;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           

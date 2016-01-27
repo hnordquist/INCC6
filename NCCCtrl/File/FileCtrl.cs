@@ -297,17 +297,17 @@ namespace NCCFile
         /// </summary>
         void NCDFileAssay()
         {
-            if (!NC.App.Opstate.Measurement.Detector.ListMode)
-                ctrllog.TraceEvent(LogLevels.Warning, 439, NC.App.Opstate.Measurement.Detector.Id.DetectorName + " is not a list mode detector.");
-
             List<string> ext = new List<string>() { ".ncd" };
             FileList<NCDFile> hdlr = new FileList<NCDFile>();
             hdlr.Init(ext, ctrllog);
             FileList<NCDFile> files = null;
 
-            /// this section now occurs in the caller, the state is set up earlier
-            Measurement meas = NC.App.Opstate.Measurement;
-
+			Measurement meas = NC.App.Opstate.Measurement;
+			if (!meas.Detector.ListMode)
+			{
+				ctrllog.TraceEvent(LogLevels.Warning, 430, "LMMM NCD data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
+				return;
+			}
             PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
@@ -320,17 +320,6 @@ namespace NCCFile
             NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
-
-            // get the list of files from the named folder, or use the supplied list
-            if (NC.App.AppContext.FileInputList == null)
-                files = (FileList<NCDFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
-            else
-                files = (FileList<NCDFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
-            if (files == null || files.Count() < 1)
-            {
-                NC.App.Opstate.StopTimer(0);
-                return;
-            }
 
             NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
 
@@ -552,7 +541,6 @@ namespace NCCFile
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
-
             // get the list of files from the named folder, or use the supplied list
             if (NC.App.AppContext.FileInputList == null)
                 files = (FileList<PTRFilePair>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
@@ -570,8 +558,12 @@ namespace NCCFile
                 return;
             }
 
-            Measurement meas = NC.App.Opstate.Measurement;
-
+			Measurement meas = NC.App.Opstate.Measurement;
+			if (!meas.Detector.ListMode)
+			{
+				ctrllog.TraceEvent(LogLevels.Warning, 430, "PTR-32 data file processing a List Mode detector; '" + meas.Detector.ToString() + "' is not");
+				return;
+			}
             PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
@@ -831,8 +823,13 @@ namespace NCCFile
                 return;
             }
 
-            Measurement meas = NC.App.Opstate.Measurement;
-            PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
+			Measurement meas = NC.App.Opstate.Measurement;
+			if (!meas.Detector.ListMode)
+			{
+				ctrllog.TraceEvent(LogLevels.Warning, 430, "MCA-527 data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
+				return;
+			}
+			PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
@@ -1047,8 +1044,12 @@ namespace NCCFile
                 return;
             }
 
-            Measurement meas = NC.App.Opstate.Measurement;
-
+			Measurement meas = NC.App.Opstate.Measurement;
+			if (!meas.Detector.ListMode)
+			{
+				ctrllog.TraceEvent(LogLevels.Warning, 430, "Pulse data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
+				return;
+			}
             PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
