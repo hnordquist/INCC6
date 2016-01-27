@@ -40,15 +40,15 @@
             this.listBox1.MultiColumn = true;
             this.listBox1.Name = "listBox1";
             this.listBox1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBox1.Size = new System.Drawing.Size(285, 212);
+            this.listBox1.Size = new System.Drawing.Size(344, 160);
             this.listBox1.TabIndex = 0;
             // 
             // CancelBut
             // 
             this.CancelBut.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.CancelBut.Location = new System.Drawing.Point(13, 227);
+            this.CancelBut.Location = new System.Drawing.Point(23, 167);
             this.CancelBut.Name = "CancelBut";
-            this.CancelBut.Size = new System.Drawing.Size(75, 23);
+            this.CancelBut.Size = new System.Drawing.Size(75, 32);
             this.CancelBut.TabIndex = 2;
             this.CancelBut.Text = "Cancel";
             this.CancelBut.UseVisualStyleBackColor = true;
@@ -56,9 +56,9 @@
             // OkBut
             // 
             this.OkBut.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.OkBut.Location = new System.Drawing.Point(197, 227);
+            this.OkBut.Location = new System.Drawing.Point(220, 167);
             this.OkBut.Name = "OkBut";
-            this.OkBut.Size = new System.Drawing.Size(75, 23);
+            this.OkBut.Size = new System.Drawing.Size(75, 32);
             this.OkBut.TabIndex = 1;
             this.OkBut.Text = "OK";
             this.OkBut.UseVisualStyleBackColor = true;
@@ -67,12 +67,13 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(346, 208);
             this.Controls.Add(this.OkBut);
             this.Controls.Add(this.CancelBut);
             this.Controls.Add(this.listBox1);
             this.Name = "FileSel";
             this.Text = "Files Selected for Analysis";
+            this.TopMost = true;
             this.ResumeLayout(false);
 
         }

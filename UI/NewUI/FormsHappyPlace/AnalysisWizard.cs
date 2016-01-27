@@ -239,22 +239,27 @@ namespace NewUI
                 }
                 else
                 {
+                    string a = "";
+                    if (NC.App.AppContext.FileInputList == null)
+                        a = " files in " + Step2InputDirectoryTextBox.Text;
+                    else
+                        a = " " + NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
                     // Fill in the input location text box, starting with the file type
                     if (this.Step2NCDRadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "LMMM NCD files in ";
+                            a = "LMMM NCD" + a;
                     }
                     else if (this.Step2SortedPulseRadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "Sorted pulse files in ";
+                            a = "Sorted pulse" + a; 
                     }
                     else if (this.Step2PTR32RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "PTR-32 dual files in ";
+                            a = "PTR-32 dual" + a;
                     }
                     else if (this.Step2MCA5272RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "MCA-527 files in ";
+                            a = "MCA-527" + a;
                     }
                     else
                     {
@@ -262,7 +267,7 @@ namespace NewUI
                     }
 
                     // Add the input file directory string
-                    this.Step4DataSourceTextBox.Text += this.Step2InputDirectoryTextBox.Text;
+                    this.Step4DataSourceTextBox.Text = a;
 
                     // Make note of any input file special handling checkboxes
                     if (this.Step2RecurseCheckBox.Checked)
@@ -432,15 +437,43 @@ namespace NewUI
 
         private void Step2BrowseBtn_Click(object sender, EventArgs e)
         {
-            string s = UIIntegration.GetUsersFolder("Select Input Folder", NC.App.AppContext.FileInput);
-            if (!String.IsNullOrEmpty(s))
+            DialogResult dr = GetUsersInputSelection();
+            if (dr == DialogResult.OK)
             {
-                NC.App.AppContext.FileInput = s;
-                NC.App.AppContext.modified = true;
-                Step2InputDirectoryTextBox.Text = s;
+                if (NC.App.AppContext.FileInputList == null)
+                    Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+                else
+                    Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
             }
-            else
-                Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+            else Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;        
+        }
+
+        DialogResult GetUsersInputSelection()
+        {
+            string a = string.Empty, b = string.Empty, c = string.Empty, d = string.Empty;
+            switch (ap.data_src)
+            {
+                case ConstructedSource.MCA527File:
+                    a = "Select MCA files or folder";
+                    b = "MCA527"; c = "mca";
+                    break;
+                case ConstructedSource.NCDFile:
+                    a = "Select NCD files or folder";
+                    b = "LMMM NCD"; c = "ncd";
+                    break;
+                case ConstructedSource.PTRFile:
+                    a = "Select PTR-32 files or folder";
+                    b = "PTR-32"; c = "bin"; d = "chn";
+                    break;
+                case ConstructedSource.SortedPulseTextFile:
+                    a = "Select pulse files or folder";
+                    b = "pulse"; c = "txt";
+                    break;  
+            }
+
+            DialogResult dr = UIIntegration.GetUsersFilesFolder(a, NC.App.AppContext.FileInput, b, c, d);
+            return dr;
+
         }
 
         private void FilePicker2_Click(object sender, EventArgs e)
@@ -1508,9 +1541,14 @@ namespace NewUI
                     RefreshDetectorCombo(Step2BDetectorComboBox);
                     break;
                 case AnalysisWizard.AWSteps.Step3:
-					if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
-						Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
-					if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
+                    if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
+                    {
+                        if (NC.App.AppContext.FileInputList == null)
+                            Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+                        else
+                            Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
+                    }
+                    if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
 						Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     SetCheckListBoxAnalyzers();
                     ShowCurrentAnalzyerSelection();
