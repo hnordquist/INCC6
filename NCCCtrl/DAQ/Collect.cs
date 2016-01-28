@@ -48,7 +48,6 @@ namespace LMDAQ
 
         protected LMLoggers.LognLM collog;
         protected LMLoggers.LognLM ctrllog;
-        protected LMLoggers.LognLM netlog;
         protected LMLoggers.LognLM datalog;
         protected LMLoggers.LognLM applog;
         public bool gui;
@@ -105,7 +104,7 @@ namespace LMDAQ
         //    start HV Calib, (LM only)
         //    broadcast go and/or 
         //    wait at command prompt for individual queries against the LMMMMMM
-        public void Run()
+        public async void Run()
         {
             ShiftRegisterRuntimeInit();
             switch (NC.App.Opstate.Action)  // these are the actions available from the command line only
@@ -115,7 +114,7 @@ namespace LMDAQ
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
                 case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
-                    ConnectInstruments();
+                    await ConnectInstruments();
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
@@ -235,10 +234,6 @@ namespace LMDAQ
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
                 LogConfig();
 
-            if (!Instruments.Active.HasLM())
-            {
-                collog.TraceInformation("No active LM instruments. . .");
-            }
             int attempts = 0;
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
             {
@@ -388,7 +383,7 @@ namespace LMDAQ
                 if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
                 {
                     //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
-                    if (CurState.Measurement.HasReportableData) // urgent test this
+                    if (CurState.Measurement.HasReportableData)
                     {
                         CalculateMeasurementResults();
                         SaveMeasurementBasics();
@@ -523,10 +518,6 @@ namespace LMDAQ
             {
                 PrepSRDAQHandler();
                 ConnectSRInstruments();
-            }
-            else
-            {
-                collog.TraceEvent(LogLevels.Verbose, 10799, "No active SR instruments. . .");
             }
         }
 

@@ -203,7 +203,7 @@ namespace LMDAQ
                 lmn = lmc.NetComm;
 
                 _SL = new Server(lmn.Port, lmn.NumConnections, lmn.ReceiveBufferSize, lmn.subnetip);
-                _SL.Logger = netlog;
+                _SL.Logger = collog;
                 LMMMComm.LMServer = _SL;  // server root visible to COMM class 
                 _SL.clientConnected += SL_ClientConnected;
                 _SL.DataReceived += SL_DataReceived;
@@ -367,10 +367,10 @@ namespace LMDAQ
             foreach (Instrument active in Instruments.Active)
             {
                 //This new from USB version incc6, commenting out has no effect on doubles/triples errors hn 9/22/2014
-                active.StopAssay();
+                active.StopAssay(); // for PTR-32 and MCA527
 
                 // send cancel command to the LMMM instruments
-                if (active is LMInstrument && ((LMInstrument)active).SocketBased())
+                if (active is LMInstrument && (active.id.SRType == InstrType.LMMM))
                 {
                     LMInstrument lmi = active as LMInstrument;
                     LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.cancel, 0, Instruments.Active.RankPositionInList(lmi)); // send to all active, 1 by 1
@@ -480,28 +480,9 @@ namespace LMDAQ
                         // kick off the thread to try and init the SR
                         SRWrangler.StartSRActionAndWait((active as SRInstrument).id, SRTakeDataHandler.SROp.InitializeSR);
                     }
-                    else
-                        if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
+                    else if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
                     {
-                        // send go commands to the LMMM instruments
-                        //string output = null;
-                        // this is outdated, there can never be more than one virtual LM on current systems (late 2010, mid 2011)
-                        // for each networked instrument.
-                        //     1) Each slave instrument should be set up first and get ready.
-                        //     2) Tell the master (last instrument)    to go.
-                        //if (Instruments.Active.Count > 1 && !CurState.broadcastGo) // the instruments need to be synched 
-                        //{
-                        //    if (active == Instruments.Active.LastActive(typeof(LMInstrument)))  // oooh tricky
-                        //    {
-                        //        output += "master" + LMComm.LMMMLingo.eol;
-                        //    }
-                        //    else // tell other instruments to act as pupils
-                        //    {
-                        //        output += "slave" + LMComm.LMMMLingo.eol;
-                        //    }
-                        //}
-
-                        DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LM
+						DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LMMM
                     }
 
                     // devnote: index might be wrong if some of multiple LMs are disabled via UI. This will require a revisit at integration time 

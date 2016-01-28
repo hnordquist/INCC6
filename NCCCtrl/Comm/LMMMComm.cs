@@ -153,7 +153,7 @@ namespace LMComm
         //
         private void SendToLMMM(string cmd, Int32 specificLMIndex = -1)
         {
-            if (!LMDAQ.Instruments.Active.HasSocketBasedLM())
+            if (!LMDAQ.Instruments.Active.HasLMMM())
             {
                 commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
                 return;

@@ -1541,15 +1541,24 @@ namespace NewUI
                     RefreshDetectorCombo(Step2BDetectorComboBox);
                     break;
                 case AnalysisWizard.AWSteps.Step3:
-                    if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
-                    {
-                        if (NC.App.AppContext.FileInputList == null)
-                            Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
-                        else
-                            Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
-                    }
-                    if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
-						Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
+					if (ap.data_src.Live())
+					{
+						if (string.IsNullOrEmpty(Step2BDetectorComboBox.Text))
+						{
+							RefreshDetectorCombo(Step2BDetectorComboBox);
+							Step2BDetectorComboBox.SelectedItem = det;
+						}
+					} else
+					if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
+					{
+
+						if (NC.App.AppContext.FileInputList == null)
+							Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+						else
+							Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
+					}
+					if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
+							Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     SetCheckListBoxAnalyzers();
                     ShowCurrentAnalzyerSelection();
                     break;

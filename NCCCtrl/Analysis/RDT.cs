@@ -61,16 +61,11 @@ namespace Analysis
         public void Decode(byte[] srcbuff)
         {
             byterep = new byte[msglen];
+			if (srcbuff == null || byterep == null)
+				return;
             Buffer.BlockCopy(srcbuff, index, byterep, 0, msglen);
             msg = System.Text.Encoding.ASCII.GetString(byterep, 0, msglen);
         }
-
-        //public void Decode(int msglen, int index, byte[] srcbuff)
-        //{
-        //    this.msglen = msglen;
-        //    this.index = index;
-        //    Decode(srcbuff);
-        //}
 
         public int msglen;  // length of message text in status block
         public int index;  // start block index in the buffer used to find the block

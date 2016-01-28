@@ -700,7 +700,7 @@ namespace Analysis
             if (sb != null)
             {
                 sb.Decode(State.rawDataBuff);
-                if (!String.IsNullOrEmpty(sb.msg))
+                if (!String.IsNullOrEmpty(sb.msg))  // urgent: this needs expansion
                 {
                     if (text.StartsWith("Assay Cancelled."))  // dev note: string constants that should live in the LMMMLingo class.
                         stat = CycleDAQStatus.Cancelled;

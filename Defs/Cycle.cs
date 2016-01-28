@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -52,7 +52,7 @@ namespace AnalysisDefs
         private VTuple singles; // aka totals in INCC
         private double rawsinglesrate;
         private ulong totalevents;  // events at time t
-        Double[] hitsPerChn; // NC.ChannelCount
+        double[] hitsPerChn; // NC.ChannelCount
         private string message; // NCD file or DAQ stream status block
         // dev note: get per-channel HV during LMMM DAQ too, not doing that yet!
         private double highVoltage; // dev note: carried over from INCC runs, a single channel of HV values, could expand to n channels to support the channel count of the collecting instrument or the virtual detector's channel count
@@ -168,9 +168,11 @@ namespace AnalysisDefs
             set { rawsinglesrate = value; }
         }
         // hits per channel, can be huge for a long cycle ;`)
-        public Double[] HitsPerChannel
+        public double[] HitsPerChannel
         {
             get { return hitsPerChn; }
+			set { hitsPerChn = value; }
+
         }
         // normally this is the status block from an NCD file or interval from a live DAQ
         public string Message
@@ -200,7 +202,7 @@ namespace AnalysisDefs
             countresults = new CountingResults();
             daqStatus = CycleDAQStatus.None;
             this.logger = logger;
-            hitsPerChn = new Double[NC.ChannelCount];
+            hitsPerChn = new double[NC.ChannelCount];
         }
 
         public bool Transfer(AnalysisDefs.BaseRate ba, RateResult rates)
@@ -470,8 +472,7 @@ namespace AnalysisDefs
 
             if (DataSourceId.SRType.IsListMode())
             {
-                // ps.Add(new DBParamEntry("chnhits", HitsPerChannel)); requires DB upgrade for new column
-                logger.TraceEvent(NCCReporter.LogLevels.Verbose, 7832, "Save LM chnhits"); 
+                ps.Add(new DBParamEntry("chnhits", HitsPerChannel));
             }
         }
 

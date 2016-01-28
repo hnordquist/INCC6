@@ -82,33 +82,33 @@ namespace NewUI
         }
 
 
-        // Constructor including initialization of comboboxen in the various panels
-        public LMConnectionParams(Detector candidate, AcquireParameters acq, bool isnew)
-        {
-            AddingNew = isnew;
-            InitializeComponent();
-            oTitle = Text;
+		// Constructor including initialization of comboboxen in the various panels
+		public LMConnectionParams(Detector candidate, AcquireParameters acq, bool isnew)
+		{
+			AddingNew = isnew;
+			InitializeComponent();
+			oTitle = Text;
 
-            // Reposition the various panels on top of each other
-            SelectorPanel.Top = 4;
-            SelectorPanel.Left = 6;
-            LMMMPanel.Top = 4;
-            LMMMPanel.Left = 6;
-            PTR32Panel.Top = 4;
-            PTR32Panel.Left = 6;
-            AddDetectorTypePanel.Top = 4;
-            AddDetectorTypePanel.Left = 6;
-            AddDetectorTypePanel.Top = 4;
-            AddDetectorTypePanel.Left = 6;
+			// Reposition the various panels on top of each other
+			SelectorPanel.Top = 4;
+			SelectorPanel.Left = 6;
+			LMMMPanel.Top = 4;
+			LMMMPanel.Left = 6;
+			PTR32Panel.Top = 4;
+			PTR32Panel.Left = 6;
+			AddDetectorTypePanel.Top = 4;
+			AddDetectorTypePanel.Left = 6;
+			AddDetectorTypePanel.Top = 4;
+			AddDetectorTypePanel.Left = 6;
 
-            RefreshDetectorCombo();
-            DetectorComboBox.SelectedItem = candidate;
+			RefreshDetectorCombo();
+			DetectorComboBox.SelectedItem = candidate;
 
-            RefreshDetectorTypeCombo();
-            AddDetectorTypeComboBox.SelectedItem = candidate.Id.SRType;
+			RefreshDetectorTypeCombo();
+			AddDetectorTypeComboBox.SelectedItem = candidate.Id.SRType;
 
-            det = candidate;
-            this.acq = acq;
+			det = candidate;
+			this.acq = acq;
 			MCAComboBox.Visible = false;
 			if (det != null)
 			{
@@ -120,11 +120,10 @@ namespace NewUI
 					PopulateLMMM_PTR32ParamFields();
 				}
 			}
-
 		}
 
-        // Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
-        private void PopulateLMMM_PTR32ParamFields() 
+		// Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
+		private void PopulateLMMM_PTR32ParamFields() 
         {
             if (det != null)
             {
@@ -221,12 +220,12 @@ namespace NewUI
             DeleteBtn.Enabled = true;
         }
 
-        private void EditBtn_Click(object sender, EventArgs e)
-        {
-            SelectorPanel.Visible = false;
-            if (DetectorComboBox.SelectedItem != null)
-            {
-                det = (Detector)DetectorComboBox.SelectedItem;
+		private void EditBtn_Click(object sender, EventArgs e)
+		{
+			SelectorPanel.Visible = false;
+			if (DetectorComboBox.SelectedItem != null)
+			{
+				det = (Detector)DetectorComboBox.SelectedItem;
 				if (det != null)
 				{
 					if (det.Id.SRType == InstrType.MCA527)
@@ -237,11 +236,11 @@ namespace NewUI
 						PopulateLMMM_PTR32ParamFields();
 					}
 				}
-                Text = oTitle + (" for " + det.Id.DetectorName);
-            }
-        }
+				Text = oTitle + (" for " + det.Id.DetectorName);
+			}
+		}
 
-        private void DeleteBtn_Click(object sender, EventArgs e)
+		private void DeleteBtn_Click(object sender, EventArgs e)
         {
             if (NCC.IntegrationHelpers.DeleteDetectorAndAssociations(det)) // removes from DB then from Detectors list, also punts teh related parameters
                 det = null;
@@ -278,23 +277,23 @@ namespace NewUI
         }
 
         bool AddingNew;
-        private void AddNextBtn_Click(object sender, EventArgs e)
-        {
-            SelectorPanel.Visible = false;
-            AddDetectorTypePanel.Visible = false;
+		private void AddNextBtn_Click(object sender, EventArgs e)
+		{
+			SelectorPanel.Visible = false;
+			AddDetectorTypePanel.Visible = false;
 
-            // Create new detector with default parameters for the selected type
-            DataSourceIdentifier did = new DataSourceIdentifier();
-            did.DetectorName = AddDetectorNameTextBox.Text;
-            InstrType dt;
-            INCCDB.Descriptor desc = (INCCDB.Descriptor)AddDetectorTypeComboBox.SelectedItem;
-            System.Enum.TryParse<InstrType>(desc.Name, out dt);
-            did.SRType = dt;
-            did.FullConnInfo = new LMConnectionInfo();
-            Multiplicity mkey = new Multiplicity(InstrTypeExtensions.DefaultFAFor(did.SRType));
-            det = new Detector(did, mkey, null);
+			// Create new detector with default parameters for the selected type
+			DataSourceIdentifier did = new DataSourceIdentifier();
+			did.DetectorName = AddDetectorNameTextBox.Text;
+			InstrType dt;
+			INCCDB.Descriptor desc = (INCCDB.Descriptor)AddDetectorTypeComboBox.SelectedItem;
+			System.Enum.TryParse<InstrType>(desc.Name, out dt);
+			did.SRType = dt;
+			did.FullConnInfo = new LMConnectionInfo();
+			Multiplicity mkey = new Multiplicity(InstrTypeExtensions.DefaultFAFor(did.SRType));
+			det = new Detector(did, mkey, null);
 
-            // Jump to an edit panel for the parameters of the appropriate type
+			// Jump to an edit panel for the parameters of the appropriate type
 			if (det != null)
 			{
 				if (det.Id.SRType == InstrType.MCA527)
@@ -304,11 +303,11 @@ namespace NewUI
 				{
 					PopulateLMMM_PTR32ParamFields();
 				}
-			}           AddingNew = true;
+			}
+			AddingNew = true;
+		}
 
-        }
-
-        private void AddBackBtn_Click(object sender, EventArgs e)
+		private void AddBackBtn_Click(object sender, EventArgs e)
         {
             AddingNew = false;
             AddDetectorTypePanel.Visible = false;

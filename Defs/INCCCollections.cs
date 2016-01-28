@@ -3595,7 +3595,18 @@ namespace AnalysisDefs
                 c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
                 c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
                 c.seq = seq;
-                c.HitsPerChannel[0] = c.Totals;
+                if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(System.DBNull.Value)))
+				{
+					double[] att =  DB.Utils.ReifyDoubles((string)dr["chnhits"]);
+					if (att.Length > 0)  // there was something there, use it
+						c.HitsPerChannel = att;
+					else
+						c.HitsPerChannel[0] = c.Totals;
+				}
+				else
+				{
+	                c.HitsPerChannel[0] = c.Totals;
+				}
 
                 c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(det.MultiplicityParams.FA, 0);

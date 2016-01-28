@@ -81,8 +81,6 @@ namespace NCCConfig
 
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
-  			//{ "logAutoPath:",  "construct and use a daily log file folder name, optionally prepend the parent folder", 
-            //    v => { app.DailyLogPath = true; app.ConstructDailyLogPath(v);} },
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
                                            (Int32 n) => app.LoggingDetails = n},
             { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (UInt16 n) => app.LogResults = n},
@@ -163,12 +161,10 @@ namespace NCCConfig
             { "hvi|hvintervals|hvtimes=", "step duration and delay after step is complete in {seconds:seconds}, defaults to 1 and 2 seconds\r\n\r\nLMMM emulation for testing ********************", 
                                             (b, s) => acq.HVTime(b, s) },   
 
-            { "emu|emo|emulator:", "start and use the LMMM emulator process at {file location}", l => { app.Emulate = true; if (l != null) app.EmuLoc = l;}},
- 
+            { "m|msg|message=", "annotation for this action", v => {if (v != null) acq.Message = v; } },       // todo: message retention and use
 
-            // { "c|cfg=", "LM configuration {file location}", c => app.ConfigFileLoc = c},
-            { "m|msg|message=", "annotation for this action",      // todo: message retention and use
-                                            v => {if (v != null) acq.Message = v; } },  
+			{ "emu|emo|emulator:", "start and use the LMMM emulator process at {file location}", l => { app.Emulate = true; if (l != null) app.EmuLoc = l;}},  // todo: this vestige should go away
+
             };
 
             try
@@ -180,7 +176,7 @@ namespace NCCConfig
             {
                 Console.Write(AppContextConfig.AppName + " bonk: ");
                 Console.WriteLine(e.Message);
-                Console.WriteLine("Try `cmd --help' for more information");
+                Console.WriteLine("Try `incccmd --help' for more information");
                 return false;
             }
             return true;
