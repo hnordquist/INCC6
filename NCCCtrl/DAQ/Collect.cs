@@ -235,17 +235,17 @@ namespace LMDAQ
                 LogConfig();
 
             int attempts = 0;
-            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
+            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
                 if (attempts == 0)
                     await ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
-                    Thread.Sleep(500);              
-                    if (Instruments.Active.HasSocketBasedLM()) 
-                        FireEvent(EventType.PreAction, NC.App.Opstate);
+                    Thread.Sleep(120);              
+                   // if (Instruments.Active.HasLMMM()) 
+                   //     FireEvent(EventType.PreAction, NC.App.Opstate);
                 }
-                ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
+                //ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
                
                 attempts++;
             }
@@ -505,7 +505,7 @@ namespace LMDAQ
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
 
-			await ConnectMCAInstruments();
+			ConnectMCAInstruments();
 
             // for the LMMMs
             ConnectLMMMInstruments();
@@ -524,7 +524,7 @@ namespace LMDAQ
 		public async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> ConnectMCAInstruments()
         {
  			Device.MCADeviceInfo[] deviceInfos = null;
-           if (!Instruments.Active.HasSocketBasedLM())
+           if (!Instruments.Active.HasMCA())
                 return deviceInfos;
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
 			if (lmi.id.SRType != InstrType.MCA527)
