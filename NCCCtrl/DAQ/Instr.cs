@@ -85,6 +85,10 @@ namespace LMDAQ
         {
             return this.Exists(i => { return (i is LMInstrument) && ((LMInstrument)i).SocketBased(); });
         }
+		public bool HasMCA()
+        {
+            return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.MCA527; });
+        }
 		public bool HasLMMM()
         {
             return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.LMMM; });

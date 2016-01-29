@@ -227,25 +227,24 @@ namespace LMDAQ
             return some;
         }
 
-        public async void ConnectWithRetries(bool batch, int retry)
+        public async System.Threading.Tasks.Task ConnectWithRetries(bool batch, int retry)
         {
-            //NC.App.Opstate.ResetTimer(0, instconnect, (AssayState)NC.App.Opstate, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
                 LogConfig();
 
             int attempts = 0;
-            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
+            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
                 if (attempts == 0)
                     await ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
-                    Thread.Sleep(500);              
-                    if (Instruments.Active.HasSocketBasedLM()) 
-                        FireEvent(EventType.PreAction, NC.App.Opstate);
+                    Thread.Sleep(120);              
+                   // if (Instruments.Active.HasLMMM()) 
+                   //     FireEvent(EventType.PreAction, NC.App.Opstate);
                 }
-                ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
+                //ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
                
                 attempts++;
             }
@@ -305,12 +304,12 @@ namespace LMDAQ
 
         // the third requirement from Doug (DONE!)
         // dev note: does this need a progress timer? yes but only while waiting for a step/response, the response is a progress update in and of itself
-        private void DoHVCalib()
+        private async void DoHVCalib()
         {
             applog.TraceInformation("Starting High Voltage Calibration Plateau");
             FireEvent(EventType.ActionPrep, this);
 
-            ConnectWithRetries(true, 5);
+            await ConnectWithRetries(true, 5);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -426,10 +425,10 @@ namespace LMDAQ
 
 
         // self-threaded for console
-        private void DoAnAssay()
+        private async void DoAnAssay()
         {
             applog.TraceInformation("Starting " + CurState.Measurement.MeasOption.PrintName() + " Assay");
-            ConnectWithRetries(true, 5);
+            await ConnectWithRetries(true, 5);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -524,13 +523,12 @@ namespace LMDAQ
 		public async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> ConnectMCAInstruments()
         {
  			Device.MCADeviceInfo[] deviceInfos = null;
-           if (!Instruments.Active.HasSocketBasedLM())
+           if (!Instruments.Active.HasMCA())
                 return deviceInfos;
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
 			if (lmi.id.SRType != InstrType.MCA527)
 				return deviceInfos;
             collog.TraceInformation("Broadcasting to MCA instruments. . .");
-
 			try
 			{
 				deviceInfos = await Device.MCADevice.QueryDevices();
