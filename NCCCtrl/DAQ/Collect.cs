@@ -504,7 +504,7 @@ namespace LMDAQ
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
 
-			await ConnectMCAInstruments();
+			ConnectMCAInstruments();
 
             // for the LMMMs
             ConnectLMMMInstruments();
