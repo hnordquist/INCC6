@@ -339,7 +339,8 @@ namespace NCCFile
 
         /// <summary>
         /// Process one or more .NCC Review measurement data files, with related .NOP/.COP files.
-        /// see Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
+		/// Presence of NOP/COP files is optional
+        /// See Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
         /// See Operator Declaration File Format p. 87, 
         /// See Operator Declaration File Format for Curium Ratio Measurements p. 88, 
         /// See Radiation Review Measurement Data File Format p. 93, INCC Software Users Manual, March 29, 2009
@@ -356,25 +357,21 @@ namespace NCCFile
             FileList<CSVFile> hdlr = new FileList<CSVFile>();
             hdlr.Init(exts, ctrllog);
             FileList<CSVFile> files = null;
+			OPFiles opfiles = new OPFiles();
 
             // The INCC5 semantics
             if (NC.App.AppContext.FileInputList == null)
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, true);
             else
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
-			if (files == null || files.Count < 1)
+			if (files != null && files.Count > 0)
             {
-                NC.App.Opstate.StopTimer(0);
-                NC.App.Opstate.StampOperationStopTime();
-                FireEvent(EventType.ActionStop, this);
-                return;
+				// construct lists of isotopics and items from the NOP and COP files
+				opfiles.Process(files);
+	            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.NOPItemIds.Count);
             }
-
-            // construct lists of isotopics and items from the NOP and COP files
-            OPFiles opfiles = new OPFiles();
-            opfiles.Process(files);
-
-            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.NOPItemIds.Count);
+			else
+	            ctrllog.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, proceeding with nervous excitement");
 
             // process the NCC files only
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog, "*.NCC");
@@ -400,7 +397,6 @@ namespace NCCFile
                 return DateTime.Compare((rf1 as INCCReviewFile).dt, (rf2 as INCCReviewFile).dt);
             });
             /// end here > The sorted, filtered and processed list here would be returned to the UI for display and interactive selection
-
             if (res == null || res.Count < 1)
             {
                 NC.App.Opstate.StopTimer(0);

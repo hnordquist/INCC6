@@ -3094,10 +3094,13 @@ namespace NCCFile
 					log.TraceInformation("No {0} files found in {1}, . . .", s, dir);
 					none = true;
 				}
-				if (recurse)
-					log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
-				else
-					log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
+				if (!none)
+				{
+					if (recurse)
+						log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
+					else
+						log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
+				}
 			} else if (singlefile)
 			{
 				if (effs == null || (effs.Count() <= 0))

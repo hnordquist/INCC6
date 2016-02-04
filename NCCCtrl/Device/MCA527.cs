@@ -69,10 +69,7 @@ namespace Device
         static MCA527()
         {
             MCA527Error error;
-            if (!DpcInit(out error))
-            {
-                throw new MCA527Exception(error);
-            }
+
         }
 
         /// <summary>
@@ -82,17 +79,8 @@ namespace Device
         public static IEnumerable<string> GetDeviceNames()
         {
             MCA527Error error;
-            int count = DvmgGetDevCount(out error);
+            return null;
 
-            for (int i = 0; i < count; i++)
-            {
-                StringBuilder name = new StringBuilder(256);
-
-                if (DvmgGetDevName(i, name, out error))
-                {
-                    yield return name.ToString();
-                }
-            }
         }
 
         /// <summary>
@@ -109,12 +97,7 @@ namespace Device
             }
 
             MCA527Error error;
-            // undocumented feature picks up first Digilent USB-connected device.
-            // According to DB 2014, no more than one will ever be connected to a specific machine, so the name doesn't matter here.
-            if (!DpcOpenData(out m_handle, @"Auto Detect", out error, IntPtr.Zero))
-            {
-                throw new MCA527Exception(error);
-            }
+
 
             m_deviceName = deviceName;
             m_firmwareVersion = GetFirmwareVersion();
@@ -247,7 +230,6 @@ namespace Device
                 }
 
                 MCA527Error error;
-                DpcCloseData(m_handle, out error);
 
                 m_disposed = true;
             }
@@ -509,13 +491,6 @@ namespace Device
 
                 MCA527Error error;
 
-                fixed (byte* p = buffer)
-                {
-                    if (!DpcGetRegRepeat(m_handle, m_register, p + offset, count, out error, IntPtr.Zero))
-                    {
-                        throw new MCA527Exception(error);
-                    }
-                }
 
                 return count;
             }
@@ -571,13 +546,6 @@ namespace Device
 
                 MCA527Error error;
 
-                fixed (byte* p = buffer)
-                {
-                    if (!DpcPutRegRepeat(m_handle, m_register, p + offset, count, out error, IntPtr.Zero))
-                    {
-                        throw new MCA527Exception(error);
-                    }
-                }
             }
 
             private IntPtr m_handle;

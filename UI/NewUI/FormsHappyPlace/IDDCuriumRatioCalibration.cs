@@ -116,6 +116,7 @@ namespace NewUI
             cm_ratio = (INCCAnalysisParams.curium_ratio_rec)mp.imd;
             mp.cev = cm_ratio.cev;
             FieldFiller(cm_ratio.cev);
+			FieldFiller();
         }
 
         private void UseSinglesRadioButton_CheckedChanged(object sender, EventArgs e)
