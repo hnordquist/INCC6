@@ -56,6 +56,8 @@ namespace NewUI
             maybe.Add(NCCFlags.overwriteImportedDefs, NC.App.AppContext.OverwriteImportedDefs);
             maybe.Add(NCCFlags.openResults, NC.App.AppContext.OpenResults);
             maybe.Add(NCCFlags.gen5TestDataFile, NC.App.AppContext.CreateINCC5TestDataFile);    
+            maybe.Add(NCCFlags.results8Char, NC.App.AppContext.Results8Char);    
+            maybe.Add(NCCFlags.assayTypeSuffix, NC.App.AppContext.AssayTypeSuffix);    
 
             InitializeComponent();
 
@@ -73,7 +75,8 @@ namespace NewUI
             EnableSilentFolderCreationCheckBox.Tag = NCCFlags.autoCreateMissing;
             OverwriteImportedDefs.Tag = NCCFlags.overwriteImportedDefs;
             AutoOpenCheckBox.Tag = NCCFlags.openResults;
-            RevFileGen.Tag = NCCFlags.gen5TestDataFile;
+			Use8Char.Tag = NCCFlags.results8Char;
+			UseINCC5Suffix.Tag = NCCFlags.assayTypeSuffix;
 
             DailyF0lder.Checked = NC.App.AppContext.DailyRootPath;
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
@@ -90,6 +93,10 @@ namespace NewUI
             Replay.Checked = NC.App.AppContext.Replay;
             PollPacket.Text = NC.App.AppContext.StatusPacketCount.ToString();
             PollTimer.Text = NC.App.AppContext.StatusTimerMilliseconds.ToString();
+			Use8Char.Checked = NC.App.AppContext.Results8Char;
+			UseINCC5Suffix.Checked = NC.App.AppContext.AssayTypeSuffix;
+			Use8Char.Text = "Use INCC5 results file naming (" + AnalysisDefs.MethodResultsReport.EightCharConvert(DateTimeOffset.Now) + ")";
+
 
         }
         private void OKBtn_Click(object sender, EventArgs e)
@@ -109,6 +116,8 @@ namespace NewUI
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.overwriteImportedDefs] != NC.App.AppContext.OverwriteImportedDefs);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.openResults] != NC.App.AppContext.OpenResults);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.gen5TestDataFile] != NC.App.AppContext.CreateINCC5TestDataFile);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.results8Char] != NC.App.AppContext.Results8Char);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.assayTypeSuffix] != NC.App.AppContext.AssayTypeSuffix);
             if (!NC.App.AppContext.modified)  // nothing 
             {
                 Close();
@@ -130,6 +139,8 @@ namespace NewUI
             NC.App.AppContext.OverwriteImportedDefs = (bool)maybe[NCCFlags.overwriteImportedDefs];
             NC.App.AppContext.OpenResults = (bool)maybe[NCCFlags.openResults];
             NC.App.AppContext.CreateINCC5TestDataFile = (bool)maybe[NCCFlags.gen5TestDataFile];
+			NC.App.AppContext.Results8Char = (bool)maybe[NCCFlags.results8Char];
+			NC.App.AppContext.AssayTypeSuffix = (bool)maybe[NCCFlags.assayTypeSuffix];
             NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
             Close();
         }
@@ -317,6 +328,17 @@ namespace NewUI
 				if (!string.IsNullOrEmpty(str))
 					DataFileLoc.Text = System.IO.Path.GetFullPath(str);
 			}
+		}
+
+		private void Use8Char_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+
+		}
+
+		private void UseINCC5Suffix_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
 		}
 	}
 }

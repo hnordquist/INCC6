@@ -161,7 +161,7 @@ INSERT INTO "LMNetComm" VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO "LMHWParams" VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO "LMINCCAppContext" VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'MLMEmulator.exe',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','');
+INSERT INTO "LMINCCAppContext" VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'MLMEmulator.exe',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',0,0);
 GO
 INSERT INTO "detectors" VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO
@@ -215,7 +215,7 @@ INSERT INTO "analysis_method_rec" VALUES(4,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,NULL,NU
 GO
 INSERT INTO "cal_curve_rec" VALUES(1,2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
-INSERT INTO "acquire_parms_rec" VALUES('Empty','Empty','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','AS710');
+INSERT INTO "acquire_parms_rec" VALUES(1, 'Empty','Empty','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
 GO
 INSERT INTO "LMAcquireParams" VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO

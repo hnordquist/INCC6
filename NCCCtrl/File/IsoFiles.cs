@@ -175,52 +175,52 @@ namespace NCCFile
 						i.id = string.Copy(s);
 						break;
 					case IsoCol.Pu238:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu238, v);
 						break;
 					case IsoCol.Pu239:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu239, v);
 						break;
 					case IsoCol.Pu240:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu240, v);
 						break;
 					case IsoCol.Pu241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu241, v);
 						break;
 					case IsoCol.Pu242:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu242, v);
 						break;
 					case IsoCol.Am241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.am241, v);
 						break;
 					case IsoCol.Pu238err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu238, err);
 						break;
 					case IsoCol.Pu239err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu239, err);
 						break;
 					case IsoCol.Pu240err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu240, err);
 						break;
 					case IsoCol.Pu241err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu241, err);
 						break;
 					case IsoCol.Pu242err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu242, err);
 						break;
 					case IsoCol.Am241err:
-						Double.TryParse(s, out err);
-						i.SetVal(Isotope.am241, err);
+						double.TryParse(s, out err);
+						i.SetError(Isotope.am241, err);
 						break;
 					}
 				} catch (Exception ex)
@@ -267,51 +267,51 @@ namespace NCCFile
 						i.pu_mass = sv;
 						break;
 					case CompIsCol.Pu238:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu238, v);
 						break;
 					case CompIsCol.Pu239:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu239, v);
 						break;
 					case CompIsCol.Pu240:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu240, v);
 						break;
 					case CompIsCol.Pu241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu241, v);
 						break;
 					case CompIsCol.Pu242:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu242, v);
 						break;
 					case CompIsCol.Am241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.am241, v);
 						break;
 					case CompIsCol.Pu238err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu238, err);
 						break;
 					case CompIsCol.Pu239err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu239, err);
 						break;
 					case CompIsCol.Pu240err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu240, err);
 						break;
 					case CompIsCol.Pu241err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu241, err);
 						break;
 					case CompIsCol.Pu242err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu242, err);
 						break;
 					case CompIsCol.Am241err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetVal(Isotope.am241, err);
 						break;
 					}
@@ -359,51 +359,51 @@ namespace NCCFile
 						i.pu_mass = sv;
 						break;
 					case CompIsCol.Pu238:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu238, v);
 						break;
 					case CompIsCol.Pu239:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu239, v);
 						break;
 					case CompIsCol.Pu240:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu240, v);
 						break;
 					case CompIsCol.Pu241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu241, v);
 						break;
 					case CompIsCol.Pu242:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu242, v);
 						break;
 					case CompIsCol.Am241:
-						Double.TryParse(s, out v);
+						double.TryParse(s, out v);
 						i.SetVal(Isotope.am241, v);
 						break;
 					case CompIsCol.Pu238err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu238, err);
 						break;
 					case CompIsCol.Pu239err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu239, err);
 						break;
 					case CompIsCol.Pu240err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu240, err);
 						break;
 					case CompIsCol.Pu241err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu241, err);
 						break;
 					case CompIsCol.Pu242err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetError(Isotope.pu242, err);
 						break;
 					case CompIsCol.Am241err:
-						Double.TryParse(s, out err);
+						double.TryParse(s, out err);
 						i.SetVal(Isotope.am241, err);
 						break;
 					}

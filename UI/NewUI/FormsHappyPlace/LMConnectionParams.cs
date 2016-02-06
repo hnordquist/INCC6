@@ -345,8 +345,7 @@ namespace NewUI
             NC.App.DB.UpdateDetector(det);
             if (acq.modified)
             {
-                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
-                NC.App.DB.AcquireParametersMap()[new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime)] = acq;
+                NC.App.DB.ReplaceAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
             }
             LMMMPanel.Visible = false;  // like the back button
             SelectorPanel.Visible = true;
@@ -527,8 +526,7 @@ namespace NewUI
 
             if (acq.modified)
             {
-                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
-                NC.App.DB.AcquireParametersMap()[new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime)] = acq;
+                NC.App.DB.ReplaceAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
             }
             PTR32Panel.Visible = false;  // like the back button
             SelectorPanel.Visible = true;

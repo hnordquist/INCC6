@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -111,6 +111,7 @@ namespace NewUI
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
+            ItemIdComboBox.SelectedItem = ah.ap.item_id;
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
@@ -166,6 +167,9 @@ namespace NewUI
                 ah.ap.max_num_runs = (ushort)MaxNumCyclesTextBox.Value; ah.ap.modified = true;
             }
 
+            // save/update item id changes only when user selects OK
+            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list
             if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
             {
                 //user can cancel in here during LM set-up, account for it.
@@ -188,13 +192,13 @@ namespace NewUI
         private void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selItem = ((ComboBox)sender).Text;
-            if (NC.App.DB.ItemIds.Has (selItem))
+            ItemId Cur = NC.App.DB.ItemIds.Get(selItem);
+            if (Cur == null)
             {
-                //They selected an item that does exist in DB.  Fill in the dialog accordingly. HN 6.15.2015
-                ItemId id = NC.App.DB.ItemIds.Get (selItem);
-                ah.ap.ApplyItemId(id);
-                FieldFiller();
+                return; 
             }
+            ah.ap.ApplyItemId(Cur);
+            FieldFillerOnItemId();
         }
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -234,8 +238,7 @@ namespace NewUI
 
         private void IsotopicsBtn_Click(object sender, EventArgs e)
         {
-            IDDIsotopics f = new IDDIsotopics(ah.ap.isotopics_id);
-            f.ShowDialog();
+            UpdateIsotopics(straight: true);
         }
 
         private void CompositeIsotopicsBtn_Click(object sender, EventArgs e)
@@ -314,6 +317,73 @@ namespace NewUI
             ah.CommentTextBox_Leave(sender, e);
         }
 
+        private void FieldFillerOnItemId()
+        {
+            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
+            DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
+        }
 
+        private void ItemIdComboBox_Leave(object sender, EventArgs e)
+        {
+            // save new item id to DB only when user selects OK, save to in-memory list for transient use
+            ItemId Cur = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
+            if (Cur == null)
+            {
+                // new items need the isotopics specified
+                UpdateIsotopics(straight: false);
+                //Add the item id if not found in DB. Use the current values on the dialog for the item id content
+                ah.ItemIdComboBox_Leave(sender, e);  // put the new id on the acq helper
+                Cur = ah.ap.ItemId;  // the dlg and acq parms are the same, use the ItemId helper to construct. Create a new object if there is no match.
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+                NC.App.DB.ItemIds.GetList().Add(Cur);   // add only to in-memory, save to DB on user OK/exit
+
+                FieldFillerOnItemId();  // refresh the dialog
+
+                ItemIdComboBox.Items.Add(ItemIdComboBox.Text);  // rebuild combo box and select the new time
+                ItemIdComboBox.Items.Clear();
+                foreach (ItemId id in NC.App.DB.ItemIds.GetList())
+                {
+                    ItemIdComboBox.Items.Add(id.item);
+                }
+            }
+        }
+
+        void UpdateIsotopics(bool straight)      // straight means from iso button
+        {
+            IDDIsotopics f = new IDDIsotopics(ah.ap.isotopics_id);
+            DialogResult dlg = f.ShowDialog();
+            Isotopics selected = f.GetSelectedIsotopics;
+            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
+            {
+                ah.ap.isotopics_id = selected.id;
+                // do new item id stuff right after this
+            }
+            else if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
+            {
+                // isotopic settings will be loaded from DB prior to running measurement
+
+                // change the isotopics setting on the current item id state
+                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                if (Cur == null)                         // blank or unspecified somehow
+                    return;
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+                NC.App.DB.ItemIds.Set(Cur);
+                NC.App.DB.ItemIds.Refresh();    // save and update the list of items
+            }
+        }
+
+        private void DeclaredMassTextBox_Leave(object sender, EventArgs e)
+        {
+            ah.DeclaredMassTextBox_Leave(sender, e);
+            // mass changed, update the current item id associated field, but save it off only when user presses OK
+            ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+            if (Cur == null)                         // blank or unspecified somehow
+                return;
+            if (Cur.declaredMass != ah.ap.mass)
+            {
+                Cur.declaredMass = ah.ap.mass;
+                Cur.modified = true;
+            }
+        }
     }
 }

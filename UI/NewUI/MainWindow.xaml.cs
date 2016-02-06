@@ -596,8 +596,7 @@ namespace NewUI
                 {
                     INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, DateTime.Now);
                     acq.MeasDateTime = sel.TimeStamp; acq.lm.TimeStamp = sel.TimeStamp;
-                    NC.App.DB.AcquireParametersMap().Add(sel, acq);  // it's a new one, not the existing one modified
-                    NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+                    NC.App.DB.AddAcquireParams(sel, acq);  // it's a new one, not the existing one modified
                 }
 
                 switch (NC.App.Opstate.Measurement.AcquireState.data_src)  // global access to latest acq here, same as acq set in wizard

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -30,6 +30,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DetectorDefs;
 using NCCReporter;
+using NCCConfig;
 namespace AnalysisDefs
 {
     using Tuple = VTuple;
@@ -183,7 +184,14 @@ namespace AnalysisDefs
                                             }
                                             rl = imr.ToLines(meas);
                                             sec.AddRange(rl);
-                                            // todo: optional use of END_PRIMARY_RESULT as in some INCC report formats, but not others
+                                            // devnote: optional use of END_PRIMARY_RESULT as in some INCC report formats, but not others
+											if (ai.Current.Key.Equals(imrs.primaryMethod))
+                                            {
+                                                sec.Add(new Row());
+                                                Row rh = new Row();
+                                                rh.Add(0, "          END PRIMARY RESULT");
+                                                sec.Add(rh);
+                                            }
                                         }
                                     }
                                 }
@@ -468,9 +476,22 @@ namespace AnalysisDefs
             sec.AddTwo("Passive comment:", meas.AcquireState.comment);
         }
 
+        public override string GenBaseFileName(string pretext)
+		{
+			string path;
+			if (N.App.AppContext.Results8Char)
+				path =  MethodResultsReport.EightCharConvert(meas.MeasDate);
+			else
+				path = base.GenBaseFileName(pretext);
+
+
+			return path;
+		}
+
+
         public override void StartReportGeneration(Measurement m, string pretext, char separator, string suffixoverride = null)  // space char as separator forces text report generation
         {
-            base.StartReportGeneration(m, pretext, separator);
+            base.StartReportGeneration(m, pretext, separator, suffixoverride);
 
             m.ResultsFiles.Add(new ResultFile(t.FullFilePath));  // save the full file path on this list for later
         }
@@ -488,7 +509,7 @@ namespace AnalysisDefs
                 // create one results for each SR key
                 StartReportGeneration(m, m.MeasOption.PrintName() + " INCC " +
                     (m.INCCAnalysisResults.Count > 1 ? "[" + moskey.MultiplicityParams.ShortName() + "] " : ""), // add an identifying signature to each file name if more than one active virtual SR
-                    ' ');  // make these text files
+                    ' ',(N.App.AppContext.AssayTypeSuffix ? m.MeasOption.INCC5Suffix() : null));  // make these text files
                 //Detector det = meas.Detectors.GetIt(moskey.SRParams); 
                 // now assuming only one detector on the list, so can use [0], the mos keys have specific values for virtual SR counting, overiding the detector 
                 Detector det = meas.Detector;
@@ -543,6 +564,59 @@ namespace AnalysisDefs
             // capture the Row array before exit
             INCCResultsReports.Add(t.lines);
         }
+
+		
+		/* INCC5 file naming scheme
+			YMDHMMSS
+			Y = last digit of the year
+			M = month (0-9, A-C)
+			D = day (0-9, A-V)
+			H = hour (A-X)
+			MM = minutes (00-59)
+			SS = seconds (00-59)
+		*/
+		static public string EightCharConvert(DateTimeOffset dto)
+		{
+			Char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+			string y = dto.ToString("yy");
+			char Y = y[y.Length-1];
+			string M = string.Format("{0:X1}", dto.Month);
+			char D = table[dto.Day];
+			char H = table[dto.Hour + 10];
+			string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
+
+			return s;
+		}
+
+		static public bool TryEightCharConvert(string s, int decade, out DateTimeOffset result)
+		{
+			bool ret = false;
+			result = new DateTimeOffset();
+			if (s.Length < 8)
+				return ret;
+			try
+			{
+				s = s.Substring(0, 8);
+				int Y = s[0] - 48;
+				int M = s[1] - 65 + 10;  // try for the letter first
+				if (M < 0)   // oh it was a number, adjust accordingly
+					M = s[1] - 48;
+				int D = s[2] - 65 + 10;  // try for the letter first
+				if (D < 0)   // oh it was a number, adjust accordingly
+					D = s[2] - 48;
+				int H = s[3] - 65;
+				int MM = 0;
+				int SS = 0;
+				int.TryParse(s.Substring(4, 2), out MM);
+				int.TryParse(s.Substring(6, 2), out SS);
+				ret = true;
+				result = new DateTimeOffset(decade + Y, M, D, H, MM, SS, new TimeSpan());
+			} catch (Exception)
+			{ }
+			return ret;
+		}
+
+		static public int NowDecade { get {return  DateTimeOffset.Now.Year - (DateTimeOffset.Now.Year % 10); } }
     }
 
     public class INCCStyleSection : Section
@@ -939,11 +1013,6 @@ namespace AnalysisDefs
             INCCTestDataFiles.Add(t.lines);
         }
     }
-
-
-
-
-
 }
 
 

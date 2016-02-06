@@ -866,7 +866,14 @@ namespace AnalysisDefs
             }
             return id;
         }
-
+        public void Set()
+        {
+            GetList();
+            foreach (ItemId itid in items)
+            {
+                Set(itid);
+            }
+        }
         public long SetList(List<ItemId> vals = null)
         {
             long res = -1;
@@ -2965,6 +2972,8 @@ namespace AnalysisDefs
 
             ap.drum_empty_weight = DB.Utils.DBDouble(dr["drum_empty_weight"].ToString());
             ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);
+            if (dr.Table.Columns.Contains("CheckDate"))
+                ap.CheckDateTime = DB.Utils.DBDateTimeOffset(dr["CheckDate"]);
             ap.meas_detector_id = dr["meas_detector_id"].ToString();
 
             if (isLM)  // named detector is an LM, get the xtra params, unless they failed to get in DB
@@ -2982,8 +2991,6 @@ namespace AnalysisDefs
                     ap.lm.HVX = DB.Utils.DBBool(dr["hvx"]);
                     ap.lm.Feedback = DB.Utils.DBBool(dr["feedback"]);
                     ap.lm.SaveOnTerminate = DB.Utils.DBBool(dr["saveOnTerminate"]);
-                    //ap.lm.DailyResultsPath = DB.Utils.DBBool(dr["resultsAutoPath"]);
-
                     if (!dr["results"].Equals(System.DBNull.Value))
                         ap.lm.Results = (string)(dr["results"]);
                     ap.lm.IncludeConfig = DB.Utils.DBBool(dr["includeConfig"]);
@@ -3000,10 +3007,8 @@ namespace AnalysisDefs
                 catch (ArgumentException)
                 {
                 }
-                //DateTimeOffset.TryParse(dr["MeasDate"].ToString(), out ap.lm.TimeStamp);
                 ap.lm.TimeStamp = ap.MeasDateTime;
-
-            }
+             }
             return ap;
         }
 
@@ -3116,11 +3121,10 @@ namespace AnalysisDefs
     }
     public AcquireParameters LastAcquire()
     {
-        var res =   // this finds all acquire params, then sorts the saved params by date
-                    (from aq in NC.App.DB.AcquireParametersMap()
-                     orderby aq.Value.MeasDateTime descending
+         List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion key
+                    (from aq in NC.App.DB.AcquireParametersMap
+                     orderby aq.Value.CheckDateTime descending
                      select aq).ToList();  // force eval
-        List<KeyValuePair<AcquireSelector, AcquireParameters>> l = res.ToList(); 
         if (l.Count > 0)
             return l.First().Value; // get the newest, it is the first on the sorted list
         else
@@ -3130,9 +3134,9 @@ namespace AnalysisDefs
         public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
         {
             List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
-                                    (from aq in NC.App.DB.AcquireParametersMap()
+                                    (from aq in NC.App.DB.AcquireParametersMap
                                      where (string.Equals(d.Id.DetectorId, aq.Value.detector_id) && string.Equals(mtl_type, aq.Value.item_type))
-                                     orderby aq.Value.MeasDateTime descending
+                                     orderby aq.Value.CheckDateTime descending
                                      select aq).ToList();  // force eval
             if (res.Count > 0)
                 return res.First().Value;  // get the newest, it is the first on the sorted list
@@ -3143,9 +3147,9 @@ namespace AnalysisDefs
 		public AcquireParameters LastAcquireFor(Detector d)
         {
             List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
-                                    (from aq in NC.App.DB.AcquireParametersMap()
+                                    (from aq in NC.App.DB.AcquireParametersMap
                                      where string.Equals(d.Id.DetectorId, aq.Value.detector_id)
-                                     orderby aq.Value.MeasDateTime descending
+                                     orderby aq.Value.CheckDateTime descending
                                      select aq).ToList();  // force eval
             if (res.Count > 0)
                 return res.First().Value;  // get the newest, it is the first on the sorted list
@@ -3153,25 +3157,28 @@ namespace AnalysisDefs
                 return null;
         }
 
-        public Dictionary<AcquireSelector, AcquireParameters> AcquireParametersMap()
+        public Dictionary<AcquireSelector, AcquireParameters> AcquireParametersMap
         {
-            if (acqParameters == null)
+            get
             {
-                acqParameters = new Dictionary<AcquireSelector, AcquireParameters>();
-                foreach (Detector d in Detectors)
+                if (acqParameters == null)
                 {
-                    DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.AcquireParams, d.Id.DetectorName);
-                    foreach (DataRow dr in dt.Rows)
+                    acqParameters = new Dictionary<AcquireSelector, AcquireParameters>();
+                    foreach (Detector d in Detectors)
                     {
-                        string det = d.Id.DetectorName;
-                        AcquireParameters ap = GetAcquireParmsFromDataRow(ref det, dr, resultsSubset:false, isLM:d.ListMode);
-						AcquireSelector acs = new AcquireSelector(d, ap.item_type, ap.MeasDateTime);
-                        if (!acqParameters.ContainsKey(acs))
-							acqParameters.Add(acs, ap);
+                        DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.AcquireParams, d.Id.DetectorName);
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            string det = d.Id.DetectorName;
+                            AcquireParameters ap = GetAcquireParmsFromDataRow(ref det, dr, resultsSubset: false, isLM: d.ListMode);
+                            AcquireSelector acs = new AcquireSelector(d, ap.item_type, ap.MeasDateTime);
+                            if (!acqParameters.ContainsKey(acs))
+                                acqParameters.Add(acs, ap);
+                        }
                     }
                 }
+                return acqParameters;
             }
-            return acqParameters;
         }
         private Stratums stratums;
         public Stratums Stratums
@@ -3772,7 +3779,7 @@ namespace AnalysisDefs
             DB.AcquireParams aqdb = new DB.AcquireParams();
             AnalysisDefs.AcquireParameters acq = null;            
             var res =   // this finds the acquire params for the given detector and acquire type
-                    from aq in this.AcquireParametersMap()
+                    from aq in AcquireParametersMap
                     where aq.Value.detector_id == det.Id.DetectorId
                     orderby aq.Value.MeasDateTime descending
                     select aq;
@@ -3782,16 +3789,32 @@ namespace AnalysisDefs
                 UpdateAcquireParams(acq, det.ListMode,aqdb);
             }
         }
+        public void AddAcquireParams(AcquireSelector sel, AcquireParameters acq)
+        {
+            AcquireParametersMap.Add(sel, acq);
+            UpdateAcquireParams(acq, sel.Detector.ListMode);
+        }
+        public void ReplaceAcquireParams(AcquireSelector sel, AcquireParameters acq)
+        { 
+            if (AcquireParametersMap.ContainsKey(sel))
+            {
+                AcquireParametersMap.Remove(sel);
+            }
+            AcquireParametersMap.Add(sel, acq);
+            UpdateAcquireParams(acq, sel.Detector.ListMode);
+        }
 
         public void UpdateAcquireParams(AcquireParameters acq, bool isLM = false, DB.AcquireParams aqdb = null)
         {
             if (aqdb == null)
                 aqdb = new DB.AcquireParams();
             DB.ElementList saParams;
+            DateTimeOffset pre = acq.CheckDateTime;     // devnote, internal timestamp always set here and only here
+            acq.CheckDateTime = DateTimeOffset.Now;
             saParams = acq.ToDBElementList();
             bool ok = false;
             bool acqThere = aqdb.Has(acq.MeasDateTime, acq.detector_id, acq.item_type);
-            if (!acqThere) // item not there, so add it
+            if (!acqThere) // acq not there, so add it
             {
                 ok = aqdb.Create(saParams);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34011, MakeFrag(ok) + " new acquisition state {0} {1}", acq.MeasDateTime, acq.detector_id);
@@ -3803,6 +3826,8 @@ namespace AnalysisDefs
             }
             if (ok)
                 acq.modified = false;
+            else // restore the check date, the acq record did not get saved
+                acq.CheckDateTime = pre;
 
             if (isLM)
             {

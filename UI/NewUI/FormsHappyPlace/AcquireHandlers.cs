@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -25,12 +25,12 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
 using LMDAQ;
 using NCCReporter;
+using System;
+using System.Windows.Forms;
 namespace NewUI
 {
 
@@ -101,7 +101,14 @@ namespace NewUI
                 ap.item_id = ((TextBox)sender).Text;
             }
         }
-
+        public void ItemIdComboBox_Leave(object sender, EventArgs e)
+        {
+            if ((((ComboBox)sender).Text) != ap.item_id)
+            {
+                ap.modified = true;
+                ap.item_id = ((ComboBox)sender).Text;
+            }
+        }
         public void MeasurementPrecisionTextBox_Leave(object sender, EventArgs e)
         {
             // Try to convert the text to a positive, non-zero number            
@@ -251,8 +258,7 @@ namespace NewUI
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
-                NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
-                NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
+                NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
             }
 
             // The acquire is set to occur, build up the measurement state 

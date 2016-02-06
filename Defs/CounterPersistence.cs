@@ -100,14 +100,18 @@ namespace ListModeDB
                 app.CreateINCC5TestDataFile = DB.Utils.DBBool(dr["gen5RevDataFile"]);
                 app.LiveFileWrite = DB.Utils.DBBool(dr["liveFileWrite"]);
 
-                if (dr.Table.Columns.Contains("dbDataAssay"))
+                if (existtest(dr, "dbDataAssay"))
                     app.DBDataAssay = DB.Utils.DBBool(dr["dbDataAssay"]);
 				
                 if (strvaluetest(dr, "resultsFilePath"))
                     app.ResultsFilePath = (string)(dr["resultsFilePath"]);
                 if (strvaluetest(dr, "logFilePath"))
                     app.LogFilePath = (string)(dr["logFilePath"]);
-                return app;
+                if (existtest(dr, "results8Char"))
+					app.Results8Char = DB.Utils.DBBool(dr["results8Char"]);
+                if (existtest(dr, "assayTypeSuffix"))
+					app.AssayTypeSuffix = DB.Utils.DBBool(dr["assayTypeSuffix"]);
+               return app;
             }
 		}
         
@@ -116,7 +120,10 @@ namespace ListModeDB
 			return dr.Table.Columns.Contains(key) && (!dr[key].Equals(System.DBNull.Value)) && (!string.IsNullOrEmpty((string)dr[key]));
 		}
 
-
+		static private bool existtest(DataRow dr, string key)
+		{
+			return dr.Table.Columns.Contains(key);
+		}
 
         private CountingAnalysisParameters CountingParameters(string detname)
         {

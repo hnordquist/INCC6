@@ -140,8 +140,7 @@ frob:
 			Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
 			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
 
-			NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
-			NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
+			NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
 
 			// The acquire is set to occur, build up the measurement state 
 			Integ.BuildMeasurement(ap, det, mo);

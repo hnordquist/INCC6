@@ -974,7 +974,7 @@ namespace AnalysisDefs
         public string io_code;
         public bool collar_mode;
         public double drum_empty_weight;
-        protected DateTimeOffset _MeasDateTime;
+        protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;
 
         public LMAcquireParams lm;
@@ -1009,7 +1009,8 @@ namespace AnalysisDefs
             error_calc_method = ErrorCalculationTechnique.Theoretical;
             inventory_change_code = String.Empty;
             io_code = String.Empty;
-            _MeasDateTime = new DateTimeOffset(2010, 1, 1, 0, 0, 0, DateTimeOffset.Now.Offset);
+            _MeasDateTime = new DateTimeOffset(2016, 2, 6, 0, 0, 0, DateTimeOffset.Now.Offset);
+            _CheckDateTime = DateTimeOffset.Now;
             meas_detector_id = "XXXX/XXX/YY";
             lm = new LMAcquireParams(_MeasDateTime);
             lm.Cycles = num_runs;
@@ -1030,9 +1031,21 @@ namespace AnalysisDefs
             }
         }
 
+        /// Timestamp for last content modification of this acquire record
+        /// not the measuremnt timestamp
+        public DateTimeOffset CheckDateTime
+        {
+            get
+            {
+                return _CheckDateTime;
+            }
+            set
+            {
+                _CheckDateTime = value;
+            }
+        }
         public AcquireParameters(AcquireParameters src)
         {
-
             facility = new INCCDB.Descriptor(src.facility);
             mba = new INCCDB.Descriptor(src.mba);
             detector_id = String.Copy(src.detector_id);
@@ -1072,6 +1085,7 @@ namespace AnalysisDefs
             collar_mode = src.collar_mode;
             drum_empty_weight = src.drum_empty_weight;
             _MeasDateTime = new DateTimeOffset(src._MeasDateTime.Ticks, src._MeasDateTime.Offset);
+            _CheckDateTime = new DateTimeOffset(src._CheckDateTime.Ticks, src._CheckDateTime.Offset);
             meas_detector_id = String.Copy(src.meas_detector_id);
             lm = new LMAcquireParams(src.lm);
         }
@@ -1154,6 +1168,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("collar_mode", collar_mode));
             this.ps.Add(new DBParamEntry("drum_empty_weight", drum_empty_weight));
             this.ps.Add(new DBParamEntry("MeasDate", _MeasDateTime));
+            this.ps.Add(new DBParamEntry("CheckDate", _CheckDateTime));
             this.ps.Add(new DBParamEntry("meas_detector_id", meas_detector_id));
         }
 
@@ -1660,9 +1675,10 @@ namespace AnalysisDefs
         {
             length = 1;
             item = itemName;
-            material = String.Empty; isotopics = String.Empty; stratum = String.Empty; mba = string.Empty;
+            material = String.Empty; stratum = String.Empty; mba = string.Empty;
             inventoryChangeCode = String.Empty; IOCode = String.Empty;
             //We should always put the measurements pu and am dates in the item structure.  hn 11.5.2014
+            isotopics = string.Copy(measIso.id);
             pu_date = measIso.pu_date;
             am_date = measIso.am_date;
         }
@@ -1680,6 +1696,15 @@ namespace AnalysisDefs
             inventoryChangeCode = String.Empty; IOCode = String.Empty;
             pu_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
             am_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
+        }
+
+        public void IsoApply(Isotopics measIso)
+        {
+            if (measIso == null)
+                return;
+            isotopics = string.Copy(measIso.id);   // redundant i am sure
+            pu_date = measIso.pu_date;
+            am_date = measIso.am_date;
         }
 
         public void Copy(ItemId src)
@@ -2299,6 +2324,8 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
             pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
             pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
+            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix)); 
+            pb.ps.Add(new DBParamEntry("results8Char", Results8Char)); 
         }
 
         public DB.ElementList ToDBElementList()

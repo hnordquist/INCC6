@@ -607,6 +607,8 @@ namespace NCCConfig
             resetVal(NCCFlags.logResults, (ushort)3, typeof(ushort)); // 0 none, 1 log file only, 2 console/UI only, 3 everywhere
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
+            resetVal(NCCFlags.results8Char, true, typeof(bool));
+            resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
           
@@ -894,6 +896,38 @@ namespace NCCConfig
             set { setVal(NCCFlags.fpPrec, value); }
         }
 
+		/// <summary>
+		/// Eight ASCII char file name scheme encodes date and time to 1s precision 
+		///   YMDHMMSS
+		/// Y = last digit of the year
+		/// M = month (0-9, A-C)
+		/// D = day (0-9, A-V)
+		/// H = hour (A-X)
+		/// MM = minutes (00-59)
+		/// SS = seconds (00-59)
+		/// </summary>
+		public bool Results8Char
+        {
+            get { return (bool)getVal(NCCFlags.results8Char); }
+            set { setVal(NCCFlags.results8Char, value); }
+        }
+
+		/// <summary>
+		/// Rates only files have a suffix of .RTS
+		/// Background files have a suffix of .BKG
+		/// Initial source files have a suffix of .INS
+		/// Normalization files have a suffix of .NOR
+		/// Precision files have a suffix of .PRE
+		/// Verification files have a suffix of .VER
+		/// Calibration files have a suffix of .CAL
+		/// Holdup files have a suffix of .HUP
+		/// </summary>
+		public bool AssayTypeSuffix
+        {
+            get { return (bool)getVal(NCCFlags.assayTypeSuffix); }
+            set { setVal(NCCFlags.assayTypeSuffix, value); }
+        }
+
         public bool OpenResults
         {
             get { return (bool)getVal(NCCFlags.openResults); }
@@ -1031,6 +1065,11 @@ namespace NCCConfig
 
             if (isSet(NCCFlags.openResults))
                 x[ix++] = "  open results: " + OpenResults.ToString();
+            if (isSet(NCCFlags.assayTypeSuffix))
+                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
+            if (isSet(NCCFlags.results8Char))
+                x[ix++] = "  INCC5 suffix scheme: " + AssayTypeSuffix.ToString();
+
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
             x[ix++] = (Emulate ? "  use LM emulator server at: " + EmuLoc : "  no LM hardware emulation");
 

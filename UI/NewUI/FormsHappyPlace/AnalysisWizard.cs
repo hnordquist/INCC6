@@ -1414,8 +1414,7 @@ namespace NewUI
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
-                NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
-                NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
+                NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
             }
             this.Close();
         }

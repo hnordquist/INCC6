@@ -36,7 +36,8 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, rolloverSizeMB, rolloverIntervalMin, fpPrec,
+        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
 
@@ -71,9 +72,9 @@ namespace NCCConfig
   			{ "h|?|help",  "show this message and exit", v => cmd.Showhelp = v != null },
             
              { "v:", "filter console output with {level}: default is 4, CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5",  
-                                            v => { if (v != null) { UInt16 uiv = 4; if (UInt16.TryParse(v, out uiv)) app.SetVerbose(uiv); } } },
+                                            v => { if (v != null) { ushort uiv = 4; if (ushort.TryParse(v, out uiv)) app.SetVerbose(uiv); } } },
             { "log:", "enable logging with filter {level} (see -v)",  
-                                            l => {app.Logging = true; if (l != null) app.SetLevel(UInt16.Parse(l)); }},
+                                            l => {app.Logging = true; if (l != null) app.SetLevel(ushort.Parse(l)); }},
 
             { "root=", "specify base {file location} for all input and output files", c => app.RootLoc = c},
   			{ "rootAutoPath",  "append a daily root file folder name to the current root file folder specification", 
@@ -82,9 +83,11 @@ namespace NCCConfig
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
-                                           (Int32 n) => app.LoggingDetails = n},
-            { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (UInt16 n) => app.LogResults = n},
+                                           (int n) => app.LoggingDetails = n},
+            { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (ushort n) => app.LogResults = n},
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
+            { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode reuslts scheme", b => app.Results8Char = b != null},
+            { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },
@@ -128,7 +131,7 @@ namespace NCCConfig
             { "feedback", "LMMM feedback flag, [false]", b => acq.Feedback = b != null},
             { "save|saveOnTerminate", "save results upon early termination, [true] ", b => acq.SaveOnTerminate = b != null}, 
             { "precision=", "precison of floating point results mass reporting output, default to INCC5 standard",
-                                            (UInt16 n) => app.FPPrecision = n},
+                                            (ushort n) => app.FPPrecision = n},
             { "liveFileWrite", "Create data files for each interval during live List Mode data collection",  v => app.LiveFileWrite = v != null },                                                           
             { "gen5TestDataFile", "Create an INCC5 Test data file at the end of a measurement",  v => app.CreateINCC5TestDataFile = v != null },                                                           
 
@@ -152,7 +155,7 @@ namespace NCCConfig
          
             // HV Calibration action and parameters
             { "hv|hvcalib:", "start an HV calibration using the current HV parameters", 
-                                            v => {acq.Action = 4; if (v != null) acq.LM = Int32.Parse(v); } },
+                                            v => {acq.Action = 4; if (v != null) acq.LM = int.Parse(v); } },
             { "hvx", "send HV calibration steps to Excel, might confuse user though", v => acq.HVX = v != null },                                                           
             { "hvrange=", "HV calibration minHV, maxHV voltages, defaults to 0, 2000 respectively",  
                                             (b, s) => acq.HVRange(b, s) },

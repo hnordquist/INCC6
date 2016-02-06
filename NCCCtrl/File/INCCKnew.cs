@@ -1663,14 +1663,12 @@ namespace NCCTransfer
             NC.App.DB.BackgroundParameters.Set(det, meas.Background); 
  
             INCCDB.AcquireSelector acqsel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(acqsel) && overwrite)
+            if (overwrite)
             {
-                NC.App.DB.AcquireParametersMap().Remove(acqsel);
-                NC.App.DB.AcquireParametersMap().Add(acqsel, acq);
+                NC.App.DB.ReplaceAcquireParams(acqsel, acq);
             }
             else
-                NC.App.DB.AcquireParametersMap().Add(acqsel, acq); // gotta add it to the global map, then push it to the DB
-            NC.App.DB.UpdateAcquireParams(acq);
+                NC.App.DB.AddAcquireParams(acqsel, acq); // gotta add it to the global map, then push it to the DB
 
             if (meas.Tests != null) // added only if not found on the list
 				NC.App.DB.TestParameters.Set(meas.Tests);

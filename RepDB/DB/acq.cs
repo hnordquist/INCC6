@@ -94,6 +94,8 @@ namespace DB
             string sSQL = sSQL1 + sParams.ColumnEqValueList + wh;
             return db.Execute(sSQL);
         }
+  
+
 
     }
 

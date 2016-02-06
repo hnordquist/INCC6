@@ -246,12 +246,7 @@ namespace NCCFile
                 acq.comment = def.comment;
             acq.comment += " (Original file name " + System.IO.Path.GetFileName(path) + ")";
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, dto);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(sel))  // only one allowed, same for actual measurement
-            {
-                NC.App.DB.AcquireParametersMap().Remove(sel);
-            }
-            NC.App.DB.AcquireParametersMap().Add(sel, acq);
-            NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
         }
 
@@ -547,12 +542,7 @@ namespace NCCFile
             // todo: also need to account for iid UMass to mass condition
 
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, irf.dt);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(sel))  // only one allowed, same for actual measurement
-            {
-                NC.App.DB.AcquireParametersMap().Remove(sel);
-            }
-            NC.App.DB.AcquireParametersMap().Add(sel, acq);
-            NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
         }
 

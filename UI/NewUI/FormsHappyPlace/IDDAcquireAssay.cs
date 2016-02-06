@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -51,6 +51,16 @@ namespace NewUI
             ToolTip mustSelect = new ToolTip();
             mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
             mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
+        }
+
+        private void FieldFillerOnItemId()
+        {
+            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            MBAComboBox.SelectedItem = ah.ap.mba;
+            InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
+            IOCodeComboBox.SelectedItem = ah.ap.io_code;
+            DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");  
         }
 
         private void FieldFiller()
@@ -165,27 +175,31 @@ namespace NewUI
 
         private void IsotopicsBtn_Click(object sender, EventArgs e)
         {
+            UpdateIsotopics(straight: true);
+        }
+
+        void UpdateIsotopics(bool straight)      // straight means from iso button
+        {
             IDDIsotopics f = new IDDIsotopics(ah.ap.isotopics_id);
             DialogResult dlg = f.ShowDialog();
-            //check to see if they changed the isotopic id hn 5.12.2015
             Isotopics selected = f.GetSelectedIsotopics;
             if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
             {
-                selected.modified = true;
-                NC.App.DB.Isotopics.Set(selected);
-                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
-                Cur.isotopics = selected.id;
-                Cur.modified = true;
-                //force item for new id.... hn 5.13.2015
-                NC.App.DB.ItemIds.Set(Cur);
-                ah.ap.ApplyItemId(Cur);
                 ah.ap.isotopics_id = selected.id;
+                // do new item id stuff right after this
             }
-            else
+            else  if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
             {
-                //refresh isotopic settings?? Will these now load from DB prior to running measurement?  Let's see hn 5.13.2015
+                // isotopic settings will be loaded from DB prior to running measurement
+
+                // change the isotopics setting on the current item id state
+                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                if (Cur == null)                         // blank or unspecified somehow
+                    return;
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+                Cur.modified = true;
+
             }
-            
         }
 
         private void CompositeIsotopicsBtn_Click(object sender, EventArgs e)
@@ -195,10 +209,13 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            if (ItemIdComboBox.Text == String.Empty)
+            if (string.IsNullOrEmpty(ItemIdComboBox.Text))
                 MessageBox.Show("You must enter an item id for this assay.", "ERROR");
             else
             {
+                // save/update item id changes only when user selects OK
+                NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+                NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
                 if (ah.OKButton_Click(sender, e) == DialogResult.OK)
                 {
                     //This is fubar. Must save changed parameters before running analysis. HN 9.10.2015
@@ -250,60 +267,26 @@ namespace NewUI
 
         private void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ItemId iid = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
-            if (iid == null)
+            ItemId Cur = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
+            if (Cur == null)
             {
-                //Add the item id if not found in DB.
-                iid = new ItemId(ItemIdComboBox.Text);  // Create a new object if there is no match.
-                iid.stratum = StratumIdComboBox.Text;
-                iid.modified = true;
-
-                NC.App.DB.ItemIds.Set(iid); 
-
-                //Again, check "item_id" issues. What if they switch item_id for previously measured item hn 9.10.2015
-                ItemIdComboBox.Items.Add(ItemIdComboBox.Text);
-                ah.ap.isotopics_id = iid.isotopics;
-                ah.ap.ApplyItemId(iid); // set the item Id and let them pick the isotopics.... hn 5.14.2015
-                IsotopicsBtn_Click(sender, e);
-
-                FieldFiller();
-                // Missing step of adding declared mass from item..... hn 5.13.2015
-                DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
+                return; // 
             }
-            else /*if (iid.item != ah.ap.item_id)*/ // This did not catch situation in which isotopics had changed for item. hn 5.12.2015
-            {
+  /*      
+           Copy the value back after an existing item id is selected from the combo box
+                */
+        //    else /*if (iid.item != ah.ap.item_id)*/ // This did not catch situation in which isotopics had changed for item. hn 5.12.2015
+        //    {
                 //existing item id.....just update hn 5.14.2015
-                ah.ap.isotopics_id = iid.isotopics;
-                iid.stratum = StratumIdComboBox.Text;
-                ah.ap.ApplyItemId(iid);
-                DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
-                NC.App.DB.ItemIds.Set(iid);
-            }
+                ah.ap.ApplyItemId(Cur);
+                FieldFillerOnItemId();
+        //    }
 
-        }
-
-        private void StratumIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //Was not storying stratum id. hn 9.21.2015
-            ah.StratumIdComboBox_SelectedIndexChanged(sender, e);
-            int itemIndex = ((ComboBox)sender).SelectedIndex;
-            ah.ap.ItemId.stratum = ((ComboBox)sender).Items[itemIndex].ToString();
-            ItemId iid = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
-            if (iid != null)
-            {
-                iid.stratum = ah.ap.ItemId.stratum;
-                iid.modified = true;
-                NC.App.DB.ItemIds.Set(iid);
-                ah.ap.ApplyItemId(iid);
-            }
         }
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Was not storying material type. hn 9.21.2015
-            ah.MaterialTypeComboBox_SelectedIndexChanged(sender, e);
-            int itemIndex = ((ComboBox)sender).SelectedIndex;
-            ah.ap.item_type = ((ComboBox)sender).Items[itemIndex].ToString();
+            ah.MaterialTypeComboBox_SelectedIndexChanged(sender, e);;
         }
 
         private void UseNumCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -412,19 +395,6 @@ namespace NewUI
 
         }
 
-        private void DeclaredMassTextBox_Leave(object sender, EventArgs e)
-        {
-            ah.DeclaredMassTextBox_Leave(sender, e);
-            ItemId iid = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
-            if (iid != null)
-            {
-                iid.declaredMass = Double.Parse(DeclaredMassTextBox.Text);
-                iid.modified = true;
-                NC.App.DB.ItemIds.Set(iid);
-                ah.ap.ApplyItemId(iid);
-            }
-        }
-
         private void CommentTextBox_Leave(object sender, EventArgs e)
         {
             ah.CommentTextBox_Leave(sender, e);
@@ -465,9 +435,57 @@ namespace NewUI
             ah.DrumEmptyWeightTextBox_Leave(sender, e);
         }
 
-        private void ItemIdComboBox_Leave(object sender, EventArgs e)
+        private void DeclaredMassTextBox_Leave(object sender, EventArgs e)
         {
-            ItemIdComboBox_SelectedIndexChanged(sender, e);
+            ah.DeclaredMassTextBox_Leave(sender, e);
+            // mass changed, update the current item id associated field, but save it off only when user presses OK
+            ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+            if (Cur == null)                         // blank or unspecified somehow
+                return;
+            if (Cur.declaredMass != ah.ap.mass)
+            {
+                Cur.declaredMass = ah.ap.mass;
+                Cur.modified = true;
+            }
+        }
+
+        private void StratumIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ah.StratumIdComboBox_SelectedIndexChanged(sender, e);
+            // stratum id changes, update the current item id associated field, but save it off only when user presses OK
+            ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+            if (Cur == null)                         // blank or unspecified somehow
+                return;
+            if (Cur.stratum.CompareTo(ah.ap.stratum_id.Name) != 0)  // id changed, save it on the item 
+            {
+                Cur.stratum = string.Copy(ah.ap.stratum_id.Name);
+                Cur.modified = true;
+            }
+        }
+
+        private void ItemIdComboBox_Leave(object sender, EventArgs e)
+        {  
+            // save new item id to DB only when user selects OK, save to in-memory list for transient use
+            ItemId Cur = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
+            if (Cur == null)
+            {
+                // new items need the isotopics specified
+                UpdateIsotopics(straight:false);
+                //Add the item id if not found in DB. Use the current values on the dialog for the item id content
+                ah.ItemIdComboBox_Leave(sender, e);  // put the new id on the acq helper
+                Cur = ah.ap.ItemId;  // the dlg and acq parms are the same, use the ItemId helper to construct. Create a new object if there is no match.
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+                NC.App.DB.ItemIds.GetList().Add(Cur);   // add only to in-memory, save to DB on user OK/exit
+
+                FieldFillerOnItemId();  // refresh the dialog
+
+                ItemIdComboBox.Items.Add(ItemIdComboBox.Text);  // rebuild combo box and select the new time
+                ItemIdComboBox.Items.Clear();
+                foreach (ItemId id in NC.App.DB.ItemIds.GetList())
+                {
+                    ItemIdComboBox.Items.Add(id.item);
+                }
+            }
         }
 
         private void MaterialTypeComboBox_KeyPress(object sender, KeyPressEventArgs e)

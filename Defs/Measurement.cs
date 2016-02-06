@@ -233,6 +233,7 @@ namespace AnalysisDefs
     {
 
         static Dictionary<AssaySelector.MeasurementOption, string> PrintableName;
+        static Dictionary<AssaySelector.MeasurementOption, string> Suffix;
 
         static AssaySelectorExtensions()
         {
@@ -249,12 +250,32 @@ namespace AnalysisDefs
                 PrintableName.Add(AssaySelector.MeasurementOption.holdup, "Holdup");
                 PrintableName.Add(AssaySelector.MeasurementOption.unspecified, "Unspecified");
             }
+
+			if (Suffix == null)
+            {
+                Suffix = new Dictionary<AssaySelector.MeasurementOption, string>();
+                Suffix.Add(AssaySelector.MeasurementOption.rates, "RTS");
+                Suffix.Add(AssaySelector.MeasurementOption.background, "BKG");
+                Suffix.Add(AssaySelector.MeasurementOption.initial, "INS");
+                Suffix.Add(AssaySelector.MeasurementOption.normalization, "NOR");
+                Suffix.Add(AssaySelector.MeasurementOption.precision, "PRE");
+                Suffix.Add(AssaySelector.MeasurementOption.verification, "VER");
+                Suffix.Add(AssaySelector.MeasurementOption.calibration, "CAL");
+                Suffix.Add(AssaySelector.MeasurementOption.holdup, "HUP");
+                Suffix.Add(AssaySelector.MeasurementOption.unspecified, "txt");
+            }
         }
 
         public static string PrintName(this AssaySelector.MeasurementOption src)
         {
             return PrintableName[src];
         }
+
+		public static string INCC5Suffix(this AssaySelector.MeasurementOption src)
+        {
+            return Suffix[src];
+        }
+
 
 
         public static AssaySelector.MeasurementOption SrcToEnum(this string src)

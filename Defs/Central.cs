@@ -853,19 +853,21 @@ namespace NCC
 					det = new AnalysisDefs.Detector();
 			}
 			acq.MeasDateTime = DateTime.Now;
-			if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
+            if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
 			{
 				// change detector on current acquire parms state
 				if (!exists)
 					CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
 				acq.detector_id = string.Copy(name);
 				acq.meas_detector_id = string.Copy(name);
-				CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
+                INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
+                CentralizedState.App.DB.AddAcquireParams(sel, acq);
 				if (!exists)
 					CentralizedState.App.DB.Detectors.Add(det);
 			}
-			CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-			CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
+            else    // update existing entry
+                CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
 
 			return true;
 		}
@@ -892,11 +894,12 @@ namespace NCC
                 if (!exists)
                     CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
                 acq.item_type = string.Copy(name);
-                CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
+                CentralizedState.App.DB.AddAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
                 if (!exists)
                     CentralizedState.App.DB.Materials.Update(desc);
             }
-            CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            else
+                CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
             CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
 
             return true;

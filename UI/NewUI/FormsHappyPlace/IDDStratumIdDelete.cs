@@ -82,11 +82,11 @@ namespace NewUI
             ItemIdListImpl il = new ItemIdListImpl();
             List<ItemId> ItemList = il.GetListByStratumID(name);
             if (ItemList.Count > 0)
-                if (MessageBox.Show("There are items associated with this stratum.  Do you still want to delete?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.No)
+                if (MessageBox.Show("There are items associated with this stratum. Do you still want to delete?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
             //Check acquire_recs for the stratum id, warn if used
             List<AcquireParameters> acq_with_stratum = new List<AcquireParameters>();
-            Dictionary <INCCDB.AcquireSelector, AcquireParameters> all_acq = NC.App.DB.AcquireParametersMap();
+            Dictionary <INCCDB.AcquireSelector, AcquireParameters> all_acq = NC.App.DB.AcquireParametersMap;
             foreach (KeyValuePair<INCCDB.AcquireSelector, AcquireParameters> kv in all_acq)
             {
                 if (((AcquireParameters)kv.Value).stratum_id.Name == name)
@@ -94,7 +94,7 @@ namespace NewUI
             }
             if (acq_with_stratum.Count > 0)
             {
-                if (MessageBox.Show("There are acquisition records associated with this stratum.  Do you still want to delete?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.No)
+                if (MessageBox.Show("There are acquisition records associated with this stratum. Do you still want to delete?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.No)
                     return;
             }
             //they have chosen to go ahead with the delete, remove detector associations
