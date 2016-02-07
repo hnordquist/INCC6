@@ -7,7 +7,13 @@ using NCCConfig;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NCCCtrl")]
-[assembly: AssemblyDescription("INCC6 file and live DAQ, application logic")]
+[assembly: AssemblyDescription(
+#if NETFX_45
+"INCC6 file and live DAQ, application logic"
+#else
+"INCC6 file and live DAQ (no MCA57), application logic"
+#endif
+    )]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
@@ -32,4 +38,8 @@ using NCCConfig;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
+#if NETFX_45
+[assembly: AssemblyVersion("6.0.1.527")]
+#else
 [assembly: AssemblyVersion("6.0.1.0")]
+#endif

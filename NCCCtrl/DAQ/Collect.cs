@@ -101,7 +101,10 @@ namespace DAQ
         //    start HV Calib, (LM only)
         //    broadcast go and/or 
         //    wait at command prompt for individual queries against the LMMMMMM
-        public async void Run()
+#if NETFX_45
+            async
+#endif
+        public void Run()
         {
             ShiftRegisterRuntimeInit();
             switch (NC.App.Opstate.Action)  // these are the actions available from the command line only
@@ -111,7 +114,10 @@ namespace DAQ
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
                 case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
-                    await ConnectInstruments();
+#if NETFX_45
+                    await
+#endif
+                         ConnectInstruments();
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
@@ -224,7 +230,13 @@ namespace DAQ
             return some;
         }
 
-        public async System.Threading.Tasks.Task ConnectWithRetries(bool batch, int retry)
+        public
+            #if NETFX_45
+            async System.Threading.Tasks.Task
+            #else
+            void
+            #endif
+            ConnectWithRetries(bool batch, int retry)
         {
 
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
@@ -234,7 +246,10 @@ namespace DAQ
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
                 if (attempts == 0)
-                    await ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
+#if NETFX_45
+                    await 
+#endif
+                    ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
                     Thread.Sleep(120);              
@@ -301,12 +316,18 @@ namespace DAQ
 
         // the third requirement from Doug (DONE!)
         // dev note: does this need a progress timer? yes but only while waiting for a step/response, the response is a progress update in and of itself
-        private async void DoHVCalib()
+        private
+#if NETFX_45
+            async 
+#endif
+            void DoHVCalib()
         {
             applog.TraceInformation("Starting High Voltage Calibration Plateau");
             FireEvent(EventType.ActionPrep, this);
-
-            await ConnectWithRetries(true, 5);
+#if NETFX_45
+            await
+#endif
+            ConnectWithRetries(true, 5);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -422,10 +443,17 @@ namespace DAQ
 
 
         // self-threaded for console
-        private async void DoAnAssay()
+        private          
+#if NETFX_45
+            async 
+#endif
+        void DoAnAssay()
         {
             applog.TraceInformation("Starting " + CurState.Measurement.MeasOption.PrintName() + " Assay");
-            await ConnectWithRetries(true, 5);
+#if NETFX_45
+            await
+#endif
+            ConnectWithRetries(true, 5);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -497,11 +525,19 @@ namespace DAQ
                     break;
             }
         }
-        public async System.Threading.Tasks.Task ConnectInstruments()
+        public
+#if NETFX_45
+            async System.Threading.Tasks.Task
+#else
+            void 
+#endif
+        ConnectInstruments()
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
-
-			await ConnectMCAInstruments();
+#if NETFX_45
+            await
+#endif
+                ConnectMCAInstruments();
 
             // for the LMMMs
             ConnectLMMMInstruments();
@@ -517,7 +553,13 @@ namespace DAQ
             }
         }
 
-		public async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> ConnectMCAInstruments()
+		public
+#if NETFX_45
+            async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> 
+#else
+            Device.MCADeviceInfo[]
+#endif
+        ConnectMCAInstruments()
         {
  			Device.MCADeviceInfo[] deviceInfos = null;
            if (!Instruments.Active.HasMCA())
@@ -528,7 +570,11 @@ namespace DAQ
             collog.TraceInformation("Broadcasting to MCA instruments. . .");
 			try
 			{
-				deviceInfos = await Device.MCADevice.QueryDevices();
+				deviceInfos =
+#if NETFX_45
+                    await
+#endif
+                    Device.MCADevice.QueryDevices();
 				if (deviceInfos.Length > 0)
 				{   
 					Device.MCADeviceInfo thisone = null;
@@ -680,7 +726,7 @@ namespace DAQ
         }
 
 
-        #region status display
+#region status display
 
 		public string InstrStatusString(CombinedInstrumentProcessingStateSnapshot cipss, bool channels = false)
 		{
@@ -718,6 +764,6 @@ namespace DAQ
 			Instr.Instrument inst = (Instr.Instrument)o;
 			return inst.id.Identifier();
         }
-        #endregion status display
+#endregion status display
     }
 }

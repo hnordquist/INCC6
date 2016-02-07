@@ -1537,13 +1537,23 @@ namespace Device
             set { Client.DefaultRetryCount = value; }
         }
 
-		public static async Task<MCADeviceInfo[]> QueryDevices()
+		public static
+        #if NETFX_45
+            async Task<MCADeviceInfo[]>
+        #else
+            MCADeviceInfo[]
+        #endif
+        QueryDevices()
 		{
 			List<MCADeviceInfo> devicesList = new List<MCADeviceInfo>();
 			MCAClient client = new MCAClient();
 			const int retryCount = 3;
 			for (int i = 0; i < retryCount; i++) {
-				MCAResponse[] responses = await client.SendBroadcastAsync(MCACommand.QueryState527());
+				MCAResponse[] responses =
+                #if NETFX_45 
+                    await
+                #endif
+                    client.SendBroadcastAsync(MCACommand.QueryState527());
 				if (responses.Length > 0) {
 					foreach (QueryState527Response response in responses) {
                         devicesList.Add(new MCADeviceInfo {
@@ -1590,8 +1600,12 @@ namespace Device
 
         // try to contact once every 5 seconds
 		static TimeSpan HeartbeatTimeSpan = TimeSpan.FromSeconds(5);
-		async void HeartbeatRunloop()
+#if NETFX_45
+        async 
+#endif
+            void HeartbeatRunloop()
 		{
+#if NETFX_45
             try {
 			    while (CancelTokenSource.Token.IsCancellationRequested == false) {
 				    await Task.Delay(HeartbeatTimeSpan, CancelTokenSource.Token);                
@@ -1600,12 +1614,20 @@ namespace Device
 				    heartbeatSemaphore.Release();
 			    }
             } catch (TaskCanceledException) { }
+#endif
 			HeartbeatDone.SetResult(true);
 		}
 
-		public async Task Initialize()
-		{
-			heartbeatSemaphore.Wait();
+		public
+#if NETFX_45
+            async Task
+#else
+            void
+#endif
+            Initialize()
+        {
+#if NETFX_45
+            heartbeatSemaphore.Wait();
 			try {
 				MCAResponse response = null;
 				response = await Client.SendAsync(MCACommand.Init());
@@ -1646,45 +1668,94 @@ namespace Device
 			finally {
 				heartbeatSemaphore.Release();
 			}
-		}
-
-        public async Task SetTimestampMode(TimestampMode mode)
-        {
-            MCAResponse response = await Client.SendAsync(MCACommand.SetGeneralMode((Mode)((uint)mode)));
-            if (response == null) { throw new MCADeviceLostConnectionException(); }
+#endif
         }
 
-        public async Task<TimestampMode> GetTimestampMode()
+
+        public
+#if NETFX_45
+            async Task
+#else
+            void
+#endif
+        SetTimestampMode(TimestampMode mode)
         {
+#if NETFX_45
+            MCAResponse response = await Client.SendAsync(MCACommand.SetGeneralMode((Mode)((uint)mode)));
+            if (response == null) { throw new MCADeviceLostConnectionException(); }
+#endif
+        }
+
+        public
+#if NETFX_45
+        async Task<TimestampMode> 
+#else
+        void
+#endif
+        GetTimestampMode()
+        {
+#if NETFX_45
             QueryState527Response response = (QueryState527Response) await Client.SendAsync(MCACommand.QueryState527());
             if (response == null) { throw new MCADeviceLostConnectionException(); }
             return (TimestampMode)response.GeneralMCAMode;
+#endif
         }
 
-        public async Task SetHighVoltage(ushort value, BiasInhibitInput inhibitSignal)
+        public
+#if NETFX_45
+        async Task
+#else
+        void
+#endif
+          SetHighVoltage(ushort value, BiasInhibitInput inhibitSignal)
         {
             if (HasPowerModule == false) { return; }
             if (value > MaximumHighVoltage) { throw new ArgumentOutOfRangeException(); }
+#if NETFX_45
             MCAResponse response = await Client.SendAsync(MCACommand.SetBias(value, inhibitSignal));
             if (response == null) { throw new MCADeviceLostConnectionException(); }
+#endif
         }
 
-        public async Task<uint> GetHighVoltage()
+        public
+#if NETFX_45
+            async Task<uint> 
+#else
+            uint
+#endif
+            GetHighVoltage()
         {
+#if NETFX_45
             QueryPowerResponse response = (QueryPowerResponse) await Client.SendAsync(MCACommand.QueryPower());
             if (response == null) { throw new MCADeviceLostConnectionException(); }
             return response.CurrentHighVoltage;
+#else
+            return 0;
+#endif
         }
 
-		static DateTime MCA527EpochTime = new DateTime(1969, 12, 31, 16, 0, 0);
+        static DateTime MCA527EpochTime = new DateTime(1969, 12, 31, 16, 0, 0);
 
-		public Task Measure(uint sweeps, uint secondsPerSweep)
+		public
+#if NETFX_45
+            Task
+#else
+            int
+#endif
+            Measure(uint sweeps, uint secondsPerSweep)
 		{
 			return Measure(sweeps, secondsPerSweep, null);
 		}
 
-		public async Task Measure(uint sweeps, uint secondsPerSweep, string captureToFile, CancellationToken cancellationToken = default(CancellationToken))
-		{
+		public
+#if NETFX_45
+            async Task
+#else
+            int
+#endif
+            Measure(uint sweeps, uint secondsPerSweep, string captureToFile, CancellationToken cancellationToken = default(CancellationToken))
+        {
+#if NETFX_45
 			heartbeatSemaphore.Wait();
 			try {
 
@@ -1862,9 +1933,12 @@ namespace Device
 			finally {
 				heartbeatSemaphore.Release();
 			}
-		}
+#else
+            return 0;
+#endif
+        }
 
-		uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
+        uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
 		{
 			uint offset = 0;
 			uint timestampIndex = 0;
@@ -2380,8 +2454,12 @@ namespace Device
 		}
 
 		List<TaskQueue<MCAResponse>> ResponseQueues = new List<TaskQueue<MCAResponse>>();
-		async void Receive()
+#if NETFX_45
+        async
+#endif
+        void Receive()
 		{
+#if NETFX_45
 			while (true) {
 				UdpReceiveResult result;
 				try {
@@ -2402,31 +2480,60 @@ namespace Device
 					}
 				}
 			}
-		}
+#endif
+        }
 
-        public Task<MCAResponse> SendAsync(MCACommand command)
+        public
+#if NETFX_45
+        Task<MCAResponse>
+#else
+         MCAResponse
+#endif
+        SendAsync(MCACommand command)
         {
             return SendAsync(command, DefaultTimeout);
         }
 
-        public Task<MCAResponse> SendAsync(MCACommand command, TimeSpan timeout)
+        public
+#if NETFX_45
+            Task<MCAResponse>
+#else
+            MCAResponse
+#endif
+            SendAsync(MCACommand command, TimeSpan timeout)
         {
             return SendAsync(command, timeout, DefaultRetryCount);
         }
 
-		public async Task<MCAResponse> SendAsync(MCACommand command, TimeSpan timeout, uint retryCount)
+		public
+#if NETFX_45
+            async Task<MCAResponse>
+#else
+            MCAResponse
+#endif
+            SendAsync(MCACommand command, TimeSpan timeout, uint retryCount)
 		{
 			if (retryCount == 0)
 				return null;
 			MCAResponse response = null;
 			while (response == null && retryCount > 0) {
-				response = await SendAsyncInternal(command, timeout);
+				response =
+#if NETFX_45
+            await
+#endif
+                SendAsyncInternal(command, timeout);
 				retryCount -= 1;
 			}
 			return response;
 		}
 
-		async Task<MCAResponse> SendAsyncInternal(MCACommand command, TimeSpan timeout)
+
+#if NETFX_45
+        async Task<MCAResponse>
+#else
+        MCAResponse
+#endif
+        SendAsyncInternal(MCACommand command, TimeSpan timeout)
 		{
 			if (SendIP == null) {
 				return null;
@@ -2435,8 +2542,10 @@ namespace Device
 			lock (ResponseQueues) {
 				ResponseQueues.Add(queue);
 			}
-			await Udp.SendAsync(command.Bytes, command.Bytes.Length, SendIP);
-			DateTime endTime = DateTime.UtcNow + timeout;
+#if NETFX_45
+            await Udp.SendAsync(command.Bytes, command.Bytes.Length, SendIP);
+#endif
+            DateTime endTime = DateTime.UtcNow + timeout;
 			MCAResponse response = null;
 			while (timeout > TimeSpan.Zero) {
 				Task<MCAResponse> responseTask = queue.Dequeue();
@@ -2454,24 +2563,40 @@ namespace Device
 			return response;
 		}
 
-		public Task<MCAResponse[]> SendBroadcastAsync(MCACommand command)
+
+		public
+#if NETFX_45
+            Task<MCAResponse[]>
+#else
+            MCAResponse[]
+#endif
+            SendBroadcastAsync(MCACommand command)
 		{
 			return SendBroadcastAsync(command, new TimeSpan(0, 0, 1));
 		}
 
-		public async Task<MCAResponse[]> SendBroadcastAsync(MCACommand command, TimeSpan timeout)
+		public
+#if NETFX_45
+            async Task<MCAResponse[]> 
+#else
+            MCAResponse[]
+#endif
+        SendBroadcastAsync(MCACommand command, TimeSpan timeout)
 		{
 			TaskQueue<MCAResponse> queue = new TaskQueue<MCAResponse>();
 			lock (ResponseQueues) {
 				ResponseQueues.Add(queue);
 			}
 			List<Task<int>> sendTasks = new List<Task<int>>();
+#if NETFX_45
 			foreach (IPEndPoint sendIP in GetBroadcastSendIPs()) {
 				Task<int> sendTask = Udp.SendAsync(command.Bytes, command.Bytes.Length, sendIP);
 				sendTasks.Add(sendTask);
 			}
-			await Task.WhenAll(sendTasks);
-			DateTime endTime = DateTime.UtcNow + timeout;
+			await
+            Task.WhenAll(sendTasks);
+#endif
+            DateTime endTime = DateTime.UtcNow + timeout;
 			List<MCAResponse> responseList = new List<MCAResponse>();
 			while (timeout > TimeSpan.Zero) {
 				Task<MCAResponse> responseTask = queue.Dequeue();

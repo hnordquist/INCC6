@@ -120,7 +120,7 @@ namespace Instr
                 // Already connected
                 return;
             }
-
+#if NETFX_45
 			try 
 			{ 
 				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
@@ -136,7 +136,7 @@ namespace Instr
 			} 
 
 			m_logger.Flush();
-
+#endif
         }
 
         /// <summary>
@@ -169,7 +169,10 @@ namespace Instr
         /// <param name="measurement">The measurement.</param>
         /// <param name="cancellationToken">The cancellation token to observe.</param>
         /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        protected async void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+#if NETFX_45
+    async
+#endif
+            protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
@@ -279,7 +282,11 @@ namespace Instr
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
         /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        private async void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
+        private
+#if NETFX_45
+            async
+#endif
+        void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
@@ -291,7 +298,11 @@ namespace Instr
                 counter.TakeMeasurement(duration, cancellationToken);
 
                 HVControl.HVStatus status = new HVControl.HVStatus();
-                status.HVread = (int) await m_device.GetHighVoltage();
+                status.HVread = (int)
+#if NETFX_45
+                    await 
+#endif
+                    m_device.GetHighVoltage();
                 status.HVsetpt = voltage;
 
                 for (int i = 0; i < MCA527.ChannelCount; i++) {
