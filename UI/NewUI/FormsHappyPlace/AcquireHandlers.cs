@@ -27,7 +27,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
+using Instr;
 using NCCReporter;
 using System;
 using System.Windows.Forms;

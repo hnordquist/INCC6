@@ -35,8 +35,8 @@ using Device;
 using NCC;
 using NCCFile;
 using NCCReporter;
-
-namespace LMDAQ
+using DAQ;
+namespace Instr
 {
 	using NC = NCC.CentralizedState;
 

@@ -29,10 +29,10 @@ using System;
 using System.Collections.Generic;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
 using NCC;
 using NCCReporter;
 using NCCTransfer;
+using Instr;
 namespace NCCFile
 {
     using NC = NCC.CentralizedState;

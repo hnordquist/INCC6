@@ -31,8 +31,8 @@ using System.Text;
 using System.Threading;
 using DetectorDefs;
 using NCCReporter;
-
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
     public partial class DAQControl

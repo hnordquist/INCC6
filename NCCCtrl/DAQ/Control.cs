@@ -31,10 +31,10 @@ using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
 using LMComm;
-using LMDAQServer;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
 	using NC = NCC.CentralizedState;
@@ -603,10 +603,10 @@ namespace LMDAQ
 
         static public string MeasStatusString(Measurement m)
         {
-            LMProcessor.MeasurementStatus ms = new LMProcessor.MeasurementStatus();
+            MeasurementStatus ms = new MeasurementStatus();
             return MeasStatusString(ms);
         }
-        static public string MeasStatusString(LMProcessor.MeasurementStatus ms)
+        static public string MeasStatusString(MeasurementStatus ms)
         {
             return ms.ToString();
         }

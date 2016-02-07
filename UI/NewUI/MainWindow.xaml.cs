@@ -26,19 +26,20 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
+using DAQ;
+using Instr;
 using NCCReporter;
 namespace NewUI
 {
 
     using Integ = NCC.IntegrationHelpers;
     using NC = NCC.CentralizedState;
-    using System.IO;
-    using System.IO.Compression;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml

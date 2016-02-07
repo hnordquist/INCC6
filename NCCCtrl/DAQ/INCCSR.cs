@@ -33,7 +33,7 @@ using DetectorDefs;
 using LMSR;
 using NCCReporter;
 using NCCTransfer;
-namespace LMDAQ
+namespace DAQ
 {
 
     using SR = INCCSR;

@@ -26,7 +26,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using LMDAQ;
+using DAQ;
 using NCC;
 using NCCReporter;
 namespace NCCCmd
@@ -53,8 +53,8 @@ namespace NCCCmd
     /// </summary>
     public class DAQControlBind : DAQControl
     {
-        public DAQControlBind(MLMEmulation.IEmulatorDiversion emu)
-            : base(emu, false)
+        public DAQControlBind()
+            : base(false)
         {
             ApplyCmdLineOverrideAgain();
         }

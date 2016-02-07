@@ -34,7 +34,7 @@ using AnalysisDefs;
 using DetectorDefs;
 using NCCFile;
 using NCCReporter;
-namespace LMDAQ
+namespace Instr
 {
 
     using NC = NCC.CentralizedState;
@@ -594,7 +594,7 @@ namespace LMDAQ
             }
         }
 
-        public SRControl SRCtrl
+        public DAQ.SRControl SRCtrl
         {
             get { return (RDT as SRCycleDataTransform).SRCtrl; }
             set { (RDT as SRCycleDataTransform).SRCtrl = value; }

@@ -32,11 +32,10 @@ using System.Threading;
 using Analysis;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
-using LMProcessor;
 using NCC;
 using NCCReporter;
 using NCCTransfer;
+using Instr;
 namespace NCCFile
 {
 
@@ -308,7 +307,7 @@ namespace NCCFile
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "LMMM NCD data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
 				return;
 			}
-            PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
+            PseudoInstrument = new LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
@@ -564,13 +563,13 @@ namespace NCCFile
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "PTR-32 data file processing a List Mode detector; '" + meas.Detector.ToString() + "' is not");
 				return;
 			}
-            PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
+            PseudoInstrument = new Instr.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             // Force RDT.State to be a LM ptrFile file RDT, this shows a design failure, so need to rework the entire scheme, (like there is still time . . .)
-            LMRawDataTransform rdt = (PseudoInstrument as LMDAQ.LMInstrument).RDT;
+            LMRawDataTransform rdt = (PseudoInstrument as Instr.LMInstrument).RDT;
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, 4); // 4 bytes per event, contrast with 8 bytes contiguous for LMMM
             PTRFileProcessingState c = new PTRFileProcessingState(rdt.State.maxValuesInBuffer, (LMProcessingState)PseudoInstrument.RDT.State);
             PseudoInstrument.RDT.State = c;
@@ -829,13 +828,13 @@ namespace NCCFile
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "MCA-527 data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
 				return;
 			}
-			PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
+			PseudoInstrument = new Instr.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             // Force RDT.State to be a LM mcaFile file RDT, this shows a design failure, so need to rework the entire scheme
-            LMRawDataTransform rdt = (PseudoInstrument as LMDAQ.LMInstrument).RDT;
+            LMRawDataTransform rdt = (PseudoInstrument as Instr.LMInstrument).RDT;
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, 4);
             MCA527FileProcessingState fps = new MCA527FileProcessingState(rdt.State.maxValuesInBuffer, (LMProcessingState)PseudoInstrument.RDT.State);
             PseudoInstrument.RDT.State = fps;
@@ -1050,13 +1049,13 @@ namespace NCCFile
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "Pulse data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
 				return;
 			}
-            PseudoInstrument = new LMDAQ.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
+            PseudoInstrument = new Instr.LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             // Force RDT.State To be a pulse file RDT, this shows a design failure, so need to rework the entire scheme
-            LMRawDataTransform rdt = (PseudoInstrument as LMDAQ.LMInstrument).RDT;
+            LMRawDataTransform rdt = (PseudoInstrument as Instr.LMInstrument).RDT;
             PulseProcessingState c = new PulseProcessingState(rdt.State.maxValuesInBuffer);
             PseudoInstrument.RDT.State = null;
             PseudoInstrument.RDT.State = c;
@@ -1317,7 +1316,7 @@ namespace NCCFile
 
 		public string LoggableInstrStatusString(object o, bool channels = false)
         {
-            LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
+            Instrument inst = (Instrument)o;
             CombinedInstrumentProcessingStateSnapshot cps = new CombinedInstrumentProcessingStateSnapshot(inst);
             return FileProcStatusString(cps, channels);
         }
@@ -1335,7 +1334,7 @@ namespace NCCFile
             if (o == null)
 				return string.Empty;
 
-			LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
+			Instrument inst = (Instrument)o;
 			return Elide(inst.id.FileName, 64);
         }
         public string FileProcStatusString(CombinedInstrumentProcessingStateSnapshot cipss, bool channels = false)
@@ -1363,7 +1362,7 @@ namespace NCCFile
 
         static public string MeasStatusString(Measurement m)
         {
-            LMProcessor.MeasurementStatus ms = new LMProcessor.MeasurementStatus();
+            MeasurementStatus ms = new MeasurementStatus();
             return MeasStatusString(ms);
         }
         static public string MeasStatusString(MeasurementStatus ms)

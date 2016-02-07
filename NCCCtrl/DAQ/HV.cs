@@ -32,7 +32,8 @@ using DetectorDefs;
 using LMComm;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
@@ -323,7 +324,7 @@ namespace LMDAQ
 
             return row;
         }
-        public void GenerateReport(LMDAQ.HVControl.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
+        public void GenerateReport(DAQ.HVControl.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
         {
 
             TabularReport t = new TabularReport(typeof(HVVals), NC.App.Loggers);  // default file output type is CSV

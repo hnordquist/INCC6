@@ -75,10 +75,8 @@
     <Compile Include="Analysis\RDT.cs" />
     <Compile Include="Analysis\RTAnalysis.cs" />
     <Compile Include="Analysis\SRRDT.cs" />
-    <Compile Include="Comm\IEmulatorDiversion.cs" />
     <Compile Include="Comm\Lingo.cs" />
     <Compile Include="Comm\LMMMComm.cs" />
-    <Compile Include="Comm\NullEmulation.cs" />
     <Compile Include="DAQServer\BufferPool.cs" />
     <Compile Include="DAQServer\ExtensionMethods.cs" />
     <Compile Include="DAQServer\Server.cs" />

@@ -33,7 +33,6 @@ namespace NCCCmd
 {
 
     using NC = NCC.CentralizedState;
-    using AnalysisDefs;
 
     // The control API is simple: CancelCurrentAction();StopCurrentAction();StartAction();
     //

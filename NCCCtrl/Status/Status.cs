@@ -28,9 +28,9 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
-using NCC;
-namespace LMProcessor
+using DAQ;
+using Instr;
+namespace NCC
 {
 
     using NC = NCC.CentralizedState;
@@ -117,9 +117,9 @@ namespace LMProcessor
                 case NCCAction.Discover:
                 case NCCAction.HVCalibration:
                 case NCCAction.Assay:
-                    if (NC.App.Opstate is LMDAQ.DAQControl.AssayState)
+                    if (NC.App.Opstate is DAQControl.AssayState)
                     {
-                        LMDAQ.DAQControl.AssayState a = LMDAQ.DAQControl.CurState;
+                        DAQControl.AssayState a = DAQControl.CurState;
                         State = a.State;
                     }
                     CurrentRepetition = NC.App.Opstate.Measurement.CurrentRepetition;
@@ -180,17 +180,17 @@ namespace LMProcessor
     {
         public CombinedInstrumentProcessingStateSnapshot(Instrument inst)
         {
-            iss = new LMProcessor.InstrumentStateSnapshot(inst);
+            iss = new InstrumentStateSnapshot(inst);
             if (!iss.ins.IsSuspect)
             {
                 if (inst is LMInstrument)
                 {
                     LMInstrument lm = inst as LMInstrument;
-                    cs = new LMProcessor.CountersStatus(lm.RDT.ReadCountingProcessorStatus());
+                    cs = new CountersStatus(lm.RDT.ReadCountingProcessorStatus());
                 }
                 else if (inst is SRInstrument)
                 {
-                    cs = new LMProcessor.CountersStatus(null);
+                    cs = new CountersStatus(null);
                 }
             }
         }

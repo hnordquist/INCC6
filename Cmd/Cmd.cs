@@ -102,20 +102,9 @@ namespace NCCCmd
 					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				} else
 				{
-					// NEXT: one of Assay, HV or Discover NC.App.Opstate.Action = NCC.NCCAction.;
-					// DAQ + prompt
-					DAQControlBind daqcontrol = new DAQControlBind((MLMEmulation.IEmulatorDiversion)(new LMProcessor.NullEmulation())); //<- here
-
-					daqcontrol.SetupTimerCallBacks();
-					daqcontrol.SetupEventHandlers();
-
-					DAQControlBind.ActivateDetector(NC.App.Opstate.Measurement.Detector);
-
-					daqcontrol.StartAction(); // step into the code and Run run run!
-
-					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-				}
-frob:
+                    applog.TraceInformation("==== File operations only, baby!");
+                }
+                frob:
 				;
 			} catch (Exception e)
 			{

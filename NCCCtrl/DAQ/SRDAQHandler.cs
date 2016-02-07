@@ -35,7 +35,8 @@ using DetectorDefs;
 using LMSR;
 using NCCReporter;
 using NCCTransfer;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
     
     using NC = NCC.CentralizedState;

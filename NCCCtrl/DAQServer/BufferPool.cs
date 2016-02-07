@@ -29,7 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace LMDAQServer
+namespace LMComm
 {
     /// <summary>
     /// This class creates a single large buffer which can be divided up 

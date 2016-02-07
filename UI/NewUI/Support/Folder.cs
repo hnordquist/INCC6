@@ -2,7 +2,7 @@
 using System.Reflection;
 
 
-namespace FolderSelect
+namespace NewUI.FolderSelect
 {
 	/// <summary>
 	/// This class is from the Front-End for Dosbox and is used to present a 'vista' dialog box to select folders.

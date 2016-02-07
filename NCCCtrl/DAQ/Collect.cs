@@ -30,10 +30,10 @@ using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
 using LMComm;
-using LMProcessor;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
@@ -52,7 +52,7 @@ namespace LMDAQ
         protected LMLoggers.LognLM applog;
         public bool gui;
 
-        public DAQControl(MLMEmulation.IEmulatorDiversion emu, bool usingGui)
+        public DAQControl(bool usingGui)
         {
             gui = usingGui;
 
@@ -67,9 +67,6 @@ namespace LMDAQ
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
             LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton
-
-            emu.SetLogger(collog);
-            LMMMComm.EmulatorInstance = emu;
 
             CurState.SOH = NCC.OperatingState.Starting;
 
@@ -357,7 +354,7 @@ namespace LMDAQ
             ctrlHVCalib.HVCalibRun();
         }
 
-        public void AppendHVCalibration(LMDAQ.HVControl.HVStatus hvst)
+        public void AppendHVCalibration(DAQ.HVControl.HVStatus hvst)
         {
             ctrlHVCalib.AddStepData(hvst);
         }
@@ -708,7 +705,7 @@ namespace LMDAQ
 
 		public string InstrStatusString(object o, bool channels = false)
         {
-            LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
+            Instr.Instrument inst = (Instr.Instrument)o;
             CombinedInstrumentProcessingStateSnapshot cps = new CombinedInstrumentProcessingStateSnapshot(inst);
             return InstrStatusString(cps, channels);
         }
@@ -718,7 +715,7 @@ namespace LMDAQ
             if (o == null)
 				return String.Empty;
 
-			LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
+			Instr.Instrument inst = (Instr.Instrument)o;
 			return inst.id.Identifier();
         }
         #endregion status display

@@ -29,14 +29,13 @@ using System;
 using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
 using NCCReporter;
+using Instr;
+using DAQ;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
-
-
+    using NC = NCC.CentralizedState;        
 
     // NEXT: connect this to SR and LM HV params respectively
     public partial class IDDHighVoltagePlateau : Form

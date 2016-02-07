@@ -38,7 +38,6 @@ The MCA-527 INCC integration source code is distributed under the New BSD licens
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Device

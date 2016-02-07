@@ -34,8 +34,8 @@ using System.Text;
 using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQServer;
 using NCCReporter;
+using Instr;
 namespace LMComm
 {
 
@@ -105,7 +105,7 @@ namespace LMComm
         {
             cmdprocessor.SplitBroadcastResponse(received, ref itype, ref iname, ref iversion);
         }
-        public void SplitCStatusResponse(string received, ref LMDAQ.LMInstrStatus st)
+        public void SplitCStatusResponse(string received, ref Instr.LMInstrStatus st)
         {
             cmdprocessor.SplitCStatusResponse(received, ref st);
         }
@@ -113,7 +113,7 @@ namespace LMComm
         {
             cmdprocessor.SplitHVReadResponse(received, ref hv);
         }
-        public void SplitHVCalibResponse(string received, ref LMDAQ.HVControl.HVStatus hvst)
+        public void SplitHVCalibResponse(string received, ref DAQ.HVControl.HVStatus hvst)
         {
             cmdprocessor.SplitHVCalibResponse(received, ref hvst);
         }
@@ -121,11 +121,11 @@ namespace LMComm
         {
             cmdprocessor.SplitLLDReadResponse(received, ref hv);
         }
-        public void SplitRatesReadResponse(string received,  ref LMDAQ.RatesStatus p)
+        public void SplitRatesReadResponse(string received,  ref Instr.RatesStatus p)
         {
             cmdprocessor.SplitRatesReadResponse(received, ref p);
         }
-        public void SplitPowerReadResponse(string received, ref LMDAQ.PowerStatus p)
+        public void SplitPowerReadResponse(string received, ref Instr.PowerStatus p)
         {
             cmdprocessor.SplitPowerReadResponse(received, ref p);
         }
@@ -153,7 +153,7 @@ namespace LMComm
         //
         private void SendToLMMM(string cmd, Int32 specificLMIndex = -1)
         {
-            if (!LMDAQ.Instruments.Active.HasLMMM())
+            if (!Instruments.Active.HasLMMM())
             {
                 commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
                 return;
@@ -163,11 +163,11 @@ namespace LMComm
                 if (CurrentLM == -1 && specificLMIndex == -1)  // all of them
                 {
                     commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
-                    IEnumerator iter = LMDAQ.Instruments.Active.GetLMEnumerator();
+                    IEnumerator iter = Instruments.Active.GetLMEnumerator();
                     while (iter.MoveNext())
                     {
-                        LMDAQ.LMInstrument lmi = (LMDAQ.LMInstrument)iter.Current;
-                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + LMDAQ.Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
+                        LMInstrument lmi = (LMInstrument)iter.Current;
+                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent);
                     }
                 }
@@ -176,7 +176,7 @@ namespace LMComm
                     int index = specificLMIndex > -1 ? specificLMIndex : CurrentLM;  // index override from live call in main code, not from command line
                     // make sure the element is actually there
                     commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
-                    LMDAQ.LMInstrument lmi = LMDAQ.Instruments.Active.FindByIndexer(index);
+                    LMInstrument lmi = Instruments.Active.FindByIndexer(index);
                     if (lmi == null) // index must always be less than Count, the list is 0 based
                         commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
                     else
@@ -207,7 +207,6 @@ namespace LMComm
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
-                DivertToEmulation(op, 0, -1);
             }
             else
             try {
@@ -252,7 +251,6 @@ namespace LMComm
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
-                DivertToEmulation(op, arg, LMRankPosition);
             }
             else
             {
@@ -272,7 +270,7 @@ namespace LMComm
             return res;
         }
 
-        internal Thread ProcessUserCommand(LMMMLingo.OpDesc cmdt, string tline, LMDAQ.DAQControl control, ref bool keepgoing)
+        internal Thread ProcessUserCommand(LMMMLingo.OpDesc cmdt, string tline, DAQ.DAQControl control, ref bool keepgoing)
         {
             Thread t = null;
             // each prompt command might have a '=' followed by a single numeric argument e.g. cmd = 1
@@ -360,29 +358,11 @@ namespace LMComm
 
         public void Settle()  // this could go into the dispose or finalize#
         {
-            if (emulator != null)
-                emulator.Stop();
+
         }
         
-        bool DivertToEmulation(LMMMLingo.OpDesc op, Int32 arg, Int32 LMIndex)
-        {
-            if (emulator != null)
-            {
-                return emulator.DivertToEmulation(op, arg, LMIndex);
-            }
-            else
-            {
-                return false;
-            }
-        }
 
-        private MLMEmulation.IEmulatorDiversion emulator = null;
 
-        internal MLMEmulation.IEmulatorDiversion EmulatorInstance
-        {
-            get { return emulator; }
-            set { emulator = value; }
-        }
         int CurrentLM
         { get { return NC.App.Opstate.Measurement.AcquireState.lm.LM; } set { NC.App.Opstate.Measurement.AcquireState.lm.LM = value; } }
          //

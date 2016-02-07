@@ -28,7 +28,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Net.Sockets;
 
-namespace LMDAQServer
+namespace LMComm
 {
     /// <summary>
     /// Represents one of the new Socket xxxAsync methods in .NET 3.5.

@@ -29,7 +29,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using AnalysisDefs;
-using LMProcessor;
+using DAQ;
 using NCC;
 using NCCFile;
 using NCCReporter;
@@ -44,7 +44,7 @@ namespace NewUI
 
     public partial class Controller
     {
-        LMProcessor.MeasurementStatus measStatus;
+        NCC.MeasurementStatus measStatus;
         public Boolean updateGUIWithNewData = true;
         public bool updateGUIWithChannelRatesData = false;
 
@@ -187,7 +187,7 @@ namespace NewUI
             {
                 InitializeFileController();
                 InitializeDAQController();
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
             }
         }
 
@@ -250,7 +250,7 @@ namespace NewUI
 
             fctrlbind.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
             {
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
@@ -278,7 +278,7 @@ namespace NewUI
                 if (o != null && o is FileCtrl)
                 {
                     FileCtrl f = (FileCtrl)o;
-                        measStatus = new LMProcessor.MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
+                        measStatus = new MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
                         measStatus.UpdateWithMeasurement();
                         s = FileCtrl.MeasStatusString(measStatus);
                         updateGUIWithChannelRatesData = true;
@@ -306,13 +306,13 @@ namespace NewUI
         public bool InitializeDAQController()
         {
             // DAQ
-            daqbind = new DAQBind((MLMEmulation.IEmulatorDiversion)(new LMProcessor.NullEmulation()));
+            daqbind = new DAQBind();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
 
             daqbind.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
 				daqbind.mProgressTracker.ReportProgress(0, s);//"...");
             });
 
@@ -320,24 +320,24 @@ namespace NewUI
             {
                 string s = "Action Prep: ";
                 //can also look at active instrument list here LogLevels.Verbose,
-                s = s + LMDAQ.Instruments.Active.Count + " devices found, [" + NC.App.Opstate.SOH + "] " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K");
+                s = s + Instr.Instruments.Active.Count + " devices found, [" + NC.App.Opstate.SOH + "] " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K");
                 applog.TraceEvent(LogLevels.Verbose, 0xABCE, "Action Prep: SOH " + o.ToString() + "'");
 				daqbind.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
                 enablecontrols(false);
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
                 daqbind.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
             {
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
-                string s2 = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
 				daqbind.mProgressTracker.ReportProgress(per, // a % est of files
 					String.Format("{0} of {1} ({2})", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
@@ -345,31 +345,31 @@ namespace NewUI
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
                 string s = "";
-                if (o != null && o is LMDAQ.DAQControl)
+                if (o != null && o is DAQControl)
                 {
-                    LMDAQ.DAQControl f = (LMDAQ.DAQControl)o;
-                    measStatus = new LMProcessor.MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
+                    DAQControl f = (DAQControl)o;
+                    measStatus = new MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
                     measStatus.UpdateWithMeasurement();
-                    s = LMDAQ.DAQControl.MeasStatusString(measStatus);
+                    s = DAQControl.MeasStatusString(measStatus);
                     updateGUIWithChannelRatesData = true;
                     UpdateGUIWithNewdata();
                 }
                 else
                 {
-                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
+                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
                 }
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
@@ -488,13 +488,13 @@ namespace NewUI
     /// <summary>
     /// Class for controlling live DAQ from a UI or other controlling client code
     /// </summary>
-    public class DAQBind : LMDAQ.DAQControl
+    public class DAQBind : DAQ.DAQControl
     {
         public Task task;
         public ProgressTracker mProgressTracker;
 
-        public DAQBind(MLMEmulation.IEmulatorDiversion emu)
-            : base(emu, true)
+        public DAQBind()
+            : base(true)
         {            
             mProgressTracker = new ProgressTracker();
         }

@@ -37,7 +37,7 @@ namespace Analysis
     public class SRProcessingState : ProcessingState
     {
 
-        public LMDAQ.SRControl SRCtrl;
+        public DAQ.SRControl SRCtrl;
 
         internal SRProcessingState()
         {
@@ -107,7 +107,7 @@ namespace Analysis
             set { state.cycle = value; }
         }
 
-        public LMDAQ.SRControl SRCtrl
+        public DAQ.SRControl SRCtrl
         {
             get { return (state as SRProcessingState).SRCtrl; }
             set { (state as SRProcessingState).SRCtrl = value; }

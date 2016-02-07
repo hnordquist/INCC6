@@ -28,7 +28,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
 
