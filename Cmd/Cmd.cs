@@ -49,8 +49,10 @@ namespace NCCCmd
             if (possiblepaths.Length > 2)
             {
                 NC.App.AppContext.FileInput = possiblepaths[0];
-                NC.App.AppContext.ResultsFilePath = possiblepaths[1];
-                NC.App.AppContext.LogFilePath = possiblepaths[2];
+                if (System.IO.Directory.Exists(possiblepaths[1]))
+                    NC.App.AppContext.ResultsFilePath = possiblepaths[1];
+                if (System.IO.Directory.Exists(possiblepaths[2]))
+                    NC.App.AppContext.LogFilePath = possiblepaths[2];
             }
             // check return bool and exit here on error
             bool initialized = NC.App.Initialize(c);
@@ -109,7 +111,7 @@ namespace NCCCmd
 					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				} else
 				{
-                    applog.TraceInformation("==== File operations only, baby!");
+                    applog.TraceInformation("==== File operations only!");
                 }
                 frob:
 				;
