@@ -47,6 +47,8 @@
 			this.LogFileLoc = new System.Windows.Forms.TextBox();
 			this.ResultsFileLoc = new System.Windows.Forms.TextBox();
 			this.DataFileLoc = new System.Windows.Forms.TextBox();
+			this.Use8Char = new System.Windows.Forms.CheckBox();
+			this.UseINCC5Suffix = new System.Windows.Forms.CheckBox();
 			this.FPPrec = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.EnableAuxRatioReportingCheckBox = new System.Windows.Forms.CheckBox();
@@ -59,8 +61,10 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.dataLoc = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
-			this.Use8Char = new System.Windows.Forms.CheckBox();
-			this.UseINCC5Suffix = new System.Windows.Forms.CheckBox();
+			this.incc5IniLoc = new System.Windows.Forms.Button();
+			this.Incc5IniFileLoc = new System.Windows.Forms.TextBox();
+			this.UseINCC5IniLocLabel = new System.Windows.Forms.Label();
+			this.UseINCC5Ini = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// WorkingDirLabel
@@ -155,7 +159,7 @@
 			// 
 			// PollTimer
 			// 
-			this.PollTimer.Location = new System.Drawing.Point(291, 347);
+			this.PollTimer.Location = new System.Drawing.Point(291, 389);
 			this.PollTimer.Margin = new System.Windows.Forms.Padding(4);
 			this.PollTimer.Name = "PollTimer";
 			this.PollTimer.Size = new System.Drawing.Size(76, 22);
@@ -166,7 +170,7 @@
 			// PollPacket
 			// 
 			this.PollPacket.AcceptsReturn = true;
-			this.PollPacket.Location = new System.Drawing.Point(643, 346);
+			this.PollPacket.Location = new System.Drawing.Point(643, 388);
 			this.PollPacket.Margin = new System.Windows.Forms.Padding(4);
 			this.PollPacket.Name = "PollPacket";
 			this.PollPacket.Size = new System.Drawing.Size(76, 22);
@@ -178,7 +182,7 @@
 			// OverwriteImportedDefs
 			// 
 			this.OverwriteImportedDefs.AutoSize = true;
-			this.OverwriteImportedDefs.Location = new System.Drawing.Point(443, 227);
+			this.OverwriteImportedDefs.Location = new System.Drawing.Point(541, 227);
 			this.OverwriteImportedDefs.Margin = new System.Windows.Forms.Padding(4);
 			this.OverwriteImportedDefs.Name = "OverwriteImportedDefs";
 			this.OverwriteImportedDefs.Size = new System.Drawing.Size(209, 21);
@@ -261,6 +265,32 @@
         " and daily folder");
 			this.DataFileLoc.Leave += new System.EventHandler(this.DataFileLoc_Leave);
 			// 
+			// Use8Char
+			// 
+			this.Use8Char.AutoSize = true;
+			this.Use8Char.Location = new System.Drawing.Point(541, 256);
+			this.Use8Char.Margin = new System.Windows.Forms.Padding(4);
+			this.Use8Char.Name = "Use8Char";
+			this.Use8Char.Size = new System.Drawing.Size(260, 21);
+			this.Use8Char.TabIndex = 49;
+			this.Use8Char.Text = "Use 8 char INCC5 results file naming";
+			this.toolTip1.SetToolTip(this.Use8Char, "Encoded date and time in an 8 char file name");
+			this.Use8Char.UseVisualStyleBackColor = true;
+			this.Use8Char.CheckedChanged += new System.EventHandler(this.Use8Char_CheckedChanged);
+			// 
+			// UseINCC5Suffix
+			// 
+			this.UseINCC5Suffix.AutoSize = true;
+			this.UseINCC5Suffix.Location = new System.Drawing.Point(541, 285);
+			this.UseINCC5Suffix.Margin = new System.Windows.Forms.Padding(4);
+			this.UseINCC5Suffix.Name = "UseINCC5Suffix";
+			this.UseINCC5Suffix.Size = new System.Drawing.Size(217, 21);
+			this.UseINCC5Suffix.TabIndex = 50;
+			this.UseINCC5Suffix.Text = "Use INCC5 results file suffixes";
+			this.toolTip1.SetToolTip(this.UseINCC5Suffix, "Text result suffixes: .RTS, .BKG, .INS, .NOR, .PRE, .VER, .CAL, .HUP");
+			this.UseINCC5Suffix.UseVisualStyleBackColor = true;
+			this.UseINCC5Suffix.CheckedChanged += new System.EventHandler(this.UseINCC5Suffix_CheckedChanged);
+			// 
 			// FPPrec
 			// 
 			this.FPPrec.FormattingEnabled = true;
@@ -283,7 +313,7 @@
             "16",
             "17",
             "18"});
-			this.FPPrec.Location = new System.Drawing.Point(519, 312);
+			this.FPPrec.Location = new System.Drawing.Point(519, 354);
 			this.FPPrec.Margin = new System.Windows.Forms.Padding(4);
 			this.FPPrec.Name = "FPPrec";
 			this.FPPrec.Size = new System.Drawing.Size(60, 24);
@@ -293,7 +323,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(136, 316);
+			this.label1.Location = new System.Drawing.Point(136, 358);
 			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(352, 17);
@@ -303,7 +333,7 @@
 			// EnableAuxRatioReportingCheckBox
 			// 
 			this.EnableAuxRatioReportingCheckBox.AutoSize = true;
-			this.EnableAuxRatioReportingCheckBox.Location = new System.Drawing.Point(443, 199);
+			this.EnableAuxRatioReportingCheckBox.Location = new System.Drawing.Point(541, 199);
 			this.EnableAuxRatioReportingCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EnableAuxRatioReportingCheckBox.Name = "EnableAuxRatioReportingCheckBox";
 			this.EnableAuxRatioReportingCheckBox.Size = new System.Drawing.Size(194, 21);
@@ -315,7 +345,7 @@
 			// EnableSilentFolderCreationCheckBox
 			// 
 			this.EnableSilentFolderCreationCheckBox.AutoSize = true;
-			this.EnableSilentFolderCreationCheckBox.Location = new System.Drawing.Point(443, 171);
+			this.EnableSilentFolderCreationCheckBox.Location = new System.Drawing.Point(541, 171);
 			this.EnableSilentFolderCreationCheckBox.Margin = new System.Windows.Forms.Padding(4);
 			this.EnableSilentFolderCreationCheckBox.Name = "EnableSilentFolderCreationCheckBox";
 			this.EnableSilentFolderCreationCheckBox.Size = new System.Drawing.Size(257, 21);
@@ -327,7 +357,7 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(25, 351);
+			this.label2.Location = new System.Drawing.Point(25, 393);
 			this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(254, 17);
@@ -337,7 +367,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(385, 350);
+			this.label3.Location = new System.Drawing.Point(385, 392);
 			this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(243, 17);
@@ -407,37 +437,60 @@
 			this.label6.TabIndex = 46;
 			this.label6.Text = "Data file directory";
 			// 
-			// Use8Char
+			// incc5IniLoc
 			// 
-			this.Use8Char.AutoSize = true;
-			this.Use8Char.Location = new System.Drawing.Point(443, 256);
-			this.Use8Char.Margin = new System.Windows.Forms.Padding(4);
-			this.Use8Char.Name = "Use8Char";
-			this.Use8Char.Size = new System.Drawing.Size(260, 21);
-			this.Use8Char.TabIndex = 49;
-			this.Use8Char.Text = "Use 8 char INCC5 results file naming";
-			this.toolTip1.SetToolTip(this.Use8Char, "Encoded date and time in an 8 char file name");
-			this.Use8Char.UseVisualStyleBackColor = true;
-			this.Use8Char.CheckedChanged += new System.EventHandler(this.Use8Char_CheckedChanged);
+			this.incc5IniLoc.Location = new System.Drawing.Point(413, 319);
+			this.incc5IniLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.incc5IniLoc.Name = "incc5IniLoc";
+			this.incc5IniLoc.Size = new System.Drawing.Size(100, 28);
+			this.incc5IniLoc.TabIndex = 53;
+			this.incc5IniLoc.Text = "Select...";
+			this.incc5IniLoc.UseVisualStyleBackColor = true;
+			this.incc5IniLoc.Click += new System.EventHandler(this.incc5IniLoc_Click);
 			// 
-			// UseINCC5Suffix
+			// Incc5IniFileLoc
 			// 
-			this.UseINCC5Suffix.AutoSize = true;
-			this.UseINCC5Suffix.Location = new System.Drawing.Point(443, 285);
-			this.UseINCC5Suffix.Margin = new System.Windows.Forms.Padding(4);
-			this.UseINCC5Suffix.Name = "UseINCC5Suffix";
-			this.UseINCC5Suffix.Size = new System.Drawing.Size(217, 21);
-			this.UseINCC5Suffix.TabIndex = 50;
-			this.UseINCC5Suffix.Text = "Use INCC5 results file suffixes";
-			this.toolTip1.SetToolTip(this.UseINCC5Suffix, "Text result suffixes: .RTS, .BKG, .INS, .NOR, .PRE, .VER, .CAL, .HUP");
-			this.UseINCC5Suffix.UseVisualStyleBackColor = true;
-			this.UseINCC5Suffix.CheckedChanged += new System.EventHandler(this.UseINCC5Suffix_CheckedChanged);
+			this.Incc5IniFileLoc.Location = new System.Drawing.Point(166, 322);
+			this.Incc5IniFileLoc.Margin = new System.Windows.Forms.Padding(4);
+			this.Incc5IniFileLoc.Name = "Incc5IniFileLoc";
+			this.Incc5IniFileLoc.Size = new System.Drawing.Size(238, 22);
+			this.Incc5IniFileLoc.TabIndex = 52;
+			this.toolTip1.SetToolTip(this.Incc5IniFileLoc, "Specify data file location for all output data files. Overrides the root location" +
+        " and daily folder");
+			// 
+			// UseINCC5IniLocLabel
+			// 
+			this.UseINCC5IniLocLabel.AutoSize = true;
+			this.UseINCC5IniLocLabel.Enabled = false;
+			this.UseINCC5IniLocLabel.Location = new System.Drawing.Point(5, 325);
+			this.UseINCC5IniLocLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this.UseINCC5IniLocLabel.Name = "UseINCC5IniLocLabel";
+			this.UseINCC5IniLocLabel.Size = new System.Drawing.Size(153, 17);
+			this.UseINCC5IniLocLabel.TabIndex = 51;
+			this.UseINCC5IniLocLabel.Text = "INCC5 incc.ini directory";
+			// 
+			// UseINCC5Ini
+			// 
+			this.UseINCC5Ini.AutoSize = true;
+			this.UseINCC5Ini.Location = new System.Drawing.Point(16, 293);
+			this.UseINCC5Ini.Margin = new System.Windows.Forms.Padding(4);
+			this.UseINCC5Ini.Name = "UseINCC5Ini";
+			this.UseINCC5Ini.Size = new System.Drawing.Size(221, 21);
+			this.UseINCC5Ini.TabIndex = 54;
+			this.UseINCC5Ini.Text = "Use paths in INCC5 incc.ini file";
+			this.toolTip1.SetToolTip(this.UseINCC5Ini, "Use the path entries in an INCC5 incc.ini file. Apparently this is a thing");
+			this.UseINCC5Ini.UseVisualStyleBackColor = true;
+			this.UseINCC5Ini.CheckedChanged += new System.EventHandler(this.UseINCC5Ini_CheckedChanged);
 			// 
 			// Preferences
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(757, 377);
+			this.ClientSize = new System.Drawing.Size(813, 416);
+			this.Controls.Add(this.UseINCC5Ini);
+			this.Controls.Add(this.incc5IniLoc);
+			this.Controls.Add(this.Incc5IniFileLoc);
+			this.Controls.Add(this.UseINCC5IniLocLabel);
 			this.Controls.Add(this.UseINCC5Suffix);
 			this.Controls.Add(this.Use8Char);
 			this.Controls.Add(this.dataLoc);
@@ -511,5 +564,9 @@
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.CheckBox Use8Char;
 		private System.Windows.Forms.CheckBox UseINCC5Suffix;
+		private System.Windows.Forms.Button incc5IniLoc;
+		private System.Windows.Forms.TextBox Incc5IniFileLoc;
+		private System.Windows.Forms.Label UseINCC5IniLocLabel;
+		private System.Windows.Forms.CheckBox UseINCC5Ini;
 	}
 }

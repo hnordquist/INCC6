@@ -553,7 +553,7 @@
 			this.Step2BWriteDataFiles.TabIndex = 21;
 			this.Step2BWriteDataFiles.Text = "Save pulse data files during acquisition";
 			this.Step2BWriteDataFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-			this.toolTip1.SetToolTip(this.Step2BWriteDataFiles, "Save data files in the format native to the instrument (LMMM, PTR-32)");
+			this.toolTip1.SetToolTip(this.Step2BWriteDataFiles, "Save data files in the format native to the instrument (MCA-527, PTR-32, LMMM)");
 			this.Step2BWriteDataFiles.UseVisualStyleBackColor = true;
 			this.Step2BWriteDataFiles.CheckedChanged += new System.EventHandler(this.Step2BWriteDataFiles_CheckedChanged);
 			// 

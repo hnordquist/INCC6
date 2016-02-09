@@ -95,7 +95,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer(0);
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable Test data/Disk .dat or .cnn files found");
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Test data/Disk .dat or .cnn files found");
                 return;
             }
 
@@ -331,16 +331,56 @@ namespace NCCFile
             }
         }
 
+        static public string[] ProcessINCC5IniFile(LMLoggers.LognLM ctrllog)
+		{
+			string [] paths = new string[] { string.Empty };
+			if (!NC.App.AppContext.UseINCC5Ini)
+				return paths;
+			string filename = System.IO.Path.Combine(NC.App.AppContext.INCC5IniLoc, "incc.ini");
+			if (!System.IO.File.Exists(filename))
+			{
+				if (ctrllog != null)
+					ctrllog.TraceEvent(LogLevels.Warning, 112, "Ooof! File does not exist or cannot be opened: " + filename);
+				return paths;
+			}
+			string inputpath = string.Empty;
+			using (System.IO.StreamReader sr = new System.IO.StreamReader(filename))
+			{
+				string line;
+				// Read and display lines from the file until the end of 
+				// the file is reached.
+				while ((line = sr.ReadLine()) != null)
+				{
+					string tline = line.TrimStart();
+					if (tline.StartsWith(@"//") || tline.StartsWith(@"#"))
+						continue;
+					if (tline.TrimStart().StartsWith("RT_COMMON_DATABASE_PATH")) // lolz
+					{
+						string[] otkens = line.Split();
+						inputpath = otkens.Length > 1 ? otkens[1] : string.Empty;
+						break;
+					}
+				}
+			}
+			if (!string.IsNullOrEmpty(inputpath))
+			{
+                System.IO.DirectoryInfo parentpath = System.IO.Directory.GetParent(inputpath.TrimEnd(new char[] {'\\', '/'}));
+				paths = new string[] { inputpath,   // as specified in the ini file entry
+                                        System.IO.Path.Combine(System.IO.Path.GetFullPath("./"), @"Data"),  // todo: hard-coded path from examples in iRAP, but could be wrong
+                                        System.IO.Path.Combine(parentpath.FullName, @"output") }; // log file goes into the final sweep output path
+			}
+			return paths;
+		}
 
-        /// <summary>
-        /// Process one or more .NCC Review measurement data files, with related .NOP/.COP files.
+		/// <summary>
+		/// Process one or more .NCC Review measurement data files, with related .NOP/.COP files.
 		/// Presence of NOP/COP files is optional
-        /// See Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
-        /// See Operator Declaration File Format p. 87, 
-        /// See Operator Declaration File Format for Curium Ratio Measurements p. 88, 
-        /// See Radiation Review Measurement Data File Format p. 93, INCC Software Users Manual, March 29, 2009
-        /// </summary>
-        void INCCReviewFileProcessing()
+		/// See Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
+		/// See Operator Declaration File Format p. 87, 
+		/// See Operator Declaration File Format for Curium Ratio Measurements p. 88, 
+		/// See Radiation Review Measurement Data File Format p. 93, INCC Software Users Manual, March 29, 2009
+		/// </summary>
+		void INCCReviewFileProcessing()
         {
 
             FireEvent(EventType.ActionPrep, this);
@@ -366,7 +406,7 @@ namespace NCCFile
 	            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.NOPItemIds.Count);
             }
 			else
-	            ctrllog.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, proceeding with nervous excitement");
+	            ctrllog.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, continuing with default values");
 
             // process the NCC files only
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog, "*.NCC");
@@ -397,7 +437,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer(0);
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
                 return;
             }
 
@@ -471,7 +511,7 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because I am lame. " + "AAS ");
+                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. " + "AAS ");
                         //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         //for (int n = 1; n <= aass.number_positions; n++)
                         //{
@@ -527,7 +567,7 @@ namespace NCCFile
             ItemId iid = NC.App.DB.ItemIds.Get(irf.item);
             if (iid == null)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database");
+                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database. Item type will default to " + acq.item_type);
             }
             else
             {

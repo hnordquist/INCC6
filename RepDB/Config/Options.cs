@@ -86,7 +86,7 @@ namespace NCCConfig
                                            (int n) => app.LoggingDetails = n},
             { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (ushort n) => app.LogResults = n},
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
-            { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode reuslts scheme", b => app.Results8Char = b != null},
+            { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode results scheme", b => app.Results8Char = b != null},
             { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
@@ -166,8 +166,7 @@ namespace NCCConfig
 
             { "m|msg|message=", "annotation for this action", v => {if (v != null) acq.Message = v; } },       // todo: message retention and use
 
-			{ "emu|emo|emulator:", "start and use the LMMM emulator process at {file location}", l => { app.Emulate = true; if (l != null) app.EmuLoc = l;}},  // todo: this vestige should go away
-
+			{ "INCC5Ini|emu|emo|emulator:", "Use INCC5 ini file for /import path source at {file location}", l => { app.UseINCC5Ini = true; if (l != null) app.INCC5IniLoc = l;}},
             };
 
             try

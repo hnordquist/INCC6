@@ -902,3 +902,5 @@ CREATE INDEX  alpha_beta_recixdid on alpha_beta_rec(detector_id);
 GO
 CREATE INDEX LMHWParamsixdid on LMHWParams(detector_id);
 GO
+CREATE INDEX LMAcquireParamsixdid on LMAcquireParams(MeasDate);
+GO

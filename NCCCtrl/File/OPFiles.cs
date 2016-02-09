@@ -130,7 +130,7 @@ namespace NCCFile
                                 Double.TryParse(s, out err); i.SetError(Isotope.pu242, err);
                                 break;
                             case NOPCol.Am241err:
-                                Double.TryParse(s, out err); i.SetVal(Isotope.am241, err);
+                                Double.TryParse(s, out err); i.SetError(Isotope.am241, err);
                                 break;
                             case NOPCol.Norm:
                                 // todo: the values in this field are related to COP file usage, bu I don't quite understand this yet, appears it should be looking for "Cf" in this field according to the documentation

@@ -202,7 +202,7 @@ namespace LMComm
         {
             bool res = true;
 
-            if (NC.App.AppContext.Emulate)
+            if (NC.App.AppContext.UseINCC5Ini)
             { // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;
@@ -246,7 +246,7 @@ namespace LMComm
         {
             bool res = true;
 
-            if (NC.App.AppContext.Emulate)
+            if (NC.App.AppContext.UseINCC5Ini)
             {   // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;

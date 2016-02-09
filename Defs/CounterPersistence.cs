@@ -76,8 +76,8 @@ namespace ListModeDB
                 app.FPPrecision = DB.Utils.DBUInt16(dr["fpPrec"]);
                 app.OpenResults = DB.Utils.DBBool(dr["openResults"]);
                 app.SetVerbose(DB.Utils.DBUInt16(dr["verbose"]));
-                app.EmuLoc = (string)(dr["emulatorapp"]);
-                app.Emulate = DB.Utils.DBBool(dr["serveremulation"]);
+                app.INCC5IniLoc = (string)(dr["emulatorapp"]);
+                app.UseINCC5Ini = DB.Utils.DBBool(dr["serveremulation"]);
                 app.FileInputDBSetter = (string)(dr["fileinput"]);
                 app.Recurse = DB.Utils.DBBool(dr["recurse"]);
                 app.ParseGen2 = DB.Utils.DBBool(dr["parseGen2"]);

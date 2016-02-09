@@ -499,7 +499,10 @@ namespace NewUI
             mProgressTracker = new ProgressTracker();
         }
 
-        public new async void Run()
+#if NETFX_45
+						async
+#endif
+		public new void Run()
         {
             try
             {
@@ -507,20 +510,29 @@ namespace NewUI
                 {
                     case NCCAction.Discover:
                         FireEvent(EventType.PreAction, this);
-                        await ConnectWithRetries(false, 5);
+						#if NETFX_45
+						await 
+						#endif
+						ConnectWithRetries(false, 5);
                         ApplyInstrumentSettings();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.HVCalibration:
                         FireEvent(EventType.PreAction, this);
-                        await ConnectWithRetries(false, 5);
+						#if NETFX_45
+						await 
+						#endif
+                        ConnectWithRetries(false, 5);
                         ApplyInstrumentSettings();
                         HVCoreOp();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.Assay:
                         FireEvent(EventType.PreAction, this);
-                        await ConnectWithRetries(false, 5);
+						#if NETFX_45
+						await 
+						#endif
+						ConnectWithRetries(false, 5);
                         ApplyInstrumentSettings();
                         AssayCoreOp();
                         DisconnectInstruments();

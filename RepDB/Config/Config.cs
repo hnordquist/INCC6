@@ -614,7 +614,7 @@ namespace NCCConfig
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
-            resetVal(NCCFlags.emulatorapp, "MLMEmulator.exe", typeof(string)); ;
+            resetVal(NCCFlags.emulatorapp, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.serveremulation, false, typeof(bool));
 
             ResetFileInput();
@@ -802,14 +802,21 @@ namespace NCCConfig
 		public string LogFilePath
         {
             get { return overridepath(NCCFlags.logFileLoc); }
-            set { setVal(NCCFlags.logFileLoc, value); }
+            set { setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
 		public string ResultsFilePath
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
-            set { setVal(NCCFlags.resultsFileLoc, value); }
+            set { setIfNotOverride(NCCFlags.resultsFileLoc, value); }
         }
+
+		private void setIfNotOverride(NCCFlags flag, string path)
+		{
+			// do not set if it is the override value
+			if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
+				setVal(flag, path);
+		}
 
         public string RootPath
         {
@@ -1005,12 +1012,12 @@ namespace NCCConfig
             set { setVal(NCCFlags.opStatusPktInterval, value); }
         }
 
-        public bool Emulate
+        public bool UseINCC5Ini
         {
             get { return (bool)getVal(NCCFlags.serveremulation); }
             set { setVal(NCCFlags.serveremulation, value); }
         }
-        public string EmuLoc
+        public string INCC5IniLoc
         {
             get { return (string)getVal(NCCFlags.emulatorapp); }
             set
@@ -1071,7 +1078,7 @@ namespace NCCConfig
                 x[ix++] = "  INCC5 suffix scheme: " + AssayTypeSuffix.ToString();
 
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
-            x[ix++] = (Emulate ? "  use LM emulator server at: " + EmuLoc : "  no LM hardware emulation");
+            x[ix++] = (UseINCC5Ini ? "  use INCC5 ini file at: " + INCC5IniLoc : "  no INCC5 ini file use");
 
 			if (isSet(NCCFlags.fileinput))
 			{

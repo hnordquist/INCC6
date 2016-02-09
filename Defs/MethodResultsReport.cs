@@ -30,7 +30,6 @@ using System.Collections;
 using System.Collections.Generic;
 using DetectorDefs;
 using NCCReporter;
-using NCCConfig;
 namespace AnalysisDefs
 {
     using Tuple = VTuple;
@@ -312,8 +311,8 @@ namespace AnalysisDefs
                                 meas.Isotopics.CopyTo(curiso);
                                 ctrllog.TraceEvent(LogLevels.Warning, 82034,  "Using incorrect updated defaults for " + meas.Isotopics.id);
                             }
-                            sec.AddTwo("Isotopics id:", meas.Isotopics.id);
-                            sec.AddTwo("Isotopics source code:", meas.Isotopics.source_code.ToString());
+                            sec.AddTwo("Isotopics id: ", meas.Isotopics.id);
+                            sec.AddTwo("Isotopics source code: ", meas.Isotopics.source_code.ToString());
                             sec.AddDualNumericRow("Pu238:", meas.Isotopics[Isotope.pu238], curiso[Isotope.pu238]);
                             sec.AddDualNumericRow("Pu239:", meas.Isotopics[Isotope.pu239], curiso[Isotope.pu239]);
                             sec.AddDualNumericRow("Pu240:", meas.Isotopics[Isotope.pu240], curiso[Isotope.pu240]);
@@ -422,25 +421,26 @@ namespace AnalysisDefs
         protected void ConstructContextContent(INCCStyleSection sec, Detector det)
         {
 
-            sec.AddTwo("Facility:", meas.AcquireState.facility.Name);
-            sec.AddTwo("Material balance area:", meas.AcquireState.mba.Name);
-            sec.AddTwo("Detector type:", det.Id.Type); // todo: revisit this, there can be multiple detectors because there can be multiple physical and virtual SR Params used to create results
-            sec.AddTwo("Detector id:", det.Id.DetectorId);
-            sec.AddTwo("Electronics id:", det.Id.ElectronicsId);
-            sec.AddTwo("Inventory change code:", meas.AcquireState.inventory_change_code);
-            sec.AddTwo("I/O code:", meas.AcquireState.io_code);
-            sec.AddTwo("Measurement date:", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-            sec.AddTwo("Results file name:", meas.ResultsFiles[meas.ResultsFiles.Count - 1].Path);
-            sec.AddTwo("Inspection number:", meas.AcquireState.campaign_id);
+            sec.AddTwo("Facility: ", meas.AcquireState.facility.Name);
+            sec.AddTwo("Material balance area: ", meas.AcquireState.mba.Name);
+            sec.AddTwo("Detector type: ", det.Id.Type); // todo: revisit this, there can be multiple detectors because there can be multiple physical and virtual SR Params used to create results
+            sec.AddTwo("Detector id: ", det.Id.DetectorId);
+            sec.AddTwo("Electronics id: ", det.Id.ElectronicsId);
+            sec.AddTwo("Inventory change code: ", meas.AcquireState.inventory_change_code);
+            sec.AddTwo("I/O code: ", meas.AcquireState.io_code);
+            sec.AddTwo("Measurement date: ", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
+			string name = System.IO.Path.GetFileName( meas.ResultsFiles.PrimaryINCC5Filename.Path);
+            sec.AddTwo("Results file name: ", name);
+            sec.AddTwo("Inspection number: ", meas.AcquireState.campaign_id);
 
             if (AssaySelector.ForMass(meas.MeasOption) || meas.MeasOption == AssaySelector.MeasurementOption.rates)
                 /* item id only if an assay, calibration, holdup or rates only */
                 //todo: need to check why item_id not stored in Measurement object directly....hn 5.14.2015
                 // it is located on the AcquireParameters 
-                sec.AddTwo("Item id:", meas.AcquireState.item_id); // or       sec.AddTwo("Item id:",m.AcquireState.item);
+                sec.AddTwo("Item id: ", meas.AcquireState.item_id); // or       sec.AddTwo("Item id:",m.AcquireState.item);
             if (AssaySelector.HasStratum(meas.MeasOption))
             {
-                sec.AddTwo("Stratum id:", meas.AcquireState.stratum_id.Name);
+                sec.AddTwo("Stratum id: ", meas.AcquireState.stratum_id.Name);
                 if (meas.Stratum != null)
                 {
                     sec.AddTwo("Bias uncertainty:", meas.Stratum.bias_uncertainty);
@@ -458,21 +458,21 @@ namespace AnalysisDefs
             }
             if (AssaySelector.ForMass(meas.MeasOption))
             {
-                sec.AddTwo("Material type:", meas.AcquireState.item_type);
+                sec.AddTwo("Material type: ", meas.AcquireState.item_type);
                 sec.AddTwo("Original declared mass:", meas.AcquireState.mass);
             }
-            sec.AddTwo("Measurement option:", meas.MeasOption.PrintName());
+            sec.AddTwo("Measurement option: ", meas.MeasOption.PrintName());
             if (AssaySelector.DougsBasics(meas.MeasOption))
             {           /* well configuration */
-                sec.AddTwo("Detector configuration:", meas.AcquireState.well_config.ToString());
+                sec.AddTwo("Detector configuration: ", meas.AcquireState.well_config.ToString());
             }
-            sec.AddTwo("Data source:", det.Id.source.ToString());
-            sec.AddTwo("QC tests:", meas.AcquireState.qc_tests ? "On" : "Off");
+            sec.AddTwo("Data source: ", det.Id.source.ToString());
+            sec.AddTwo("QC tests: ", meas.AcquireState.qc_tests ? "On" : "Off");
             ErrorCalculationTechnique ect = meas.AcquireState.error_calc_method.Override(meas.MeasOption, det.Id.SRType);
             if (ect != ErrorCalculationTechnique.None)
-                sec.AddTwo("Error calculation:", ect.ToString() + " method");
-            sec.AddTwo("Accidentals method:", meas.Tests.accidentalsMethod != AccidentalsMethod.None ? (meas.Tests.accidentalsMethod.ToString() + "d") : "Not set");
-            sec.AddTwo("Inspector name:", meas.AcquireState.user_id);
+                sec.AddTwo("Error calculation: ", ect.ToString() + " method");
+            sec.AddTwo("Accidentals method: ", meas.Tests.accidentalsMethod != AccidentalsMethod.None ? (meas.Tests.accidentalsMethod.ToString() + "d") : "Not set");
+            sec.AddTwo("Inspector name: ", meas.AcquireState.user_id);
             sec.AddTwo("Passive comment:", meas.AcquireState.comment);
         }
 
@@ -666,7 +666,7 @@ namespace AnalysisDefs
             switch (sectiontype) // INCC5 spacing hard-coded and enforced here
             {
                 case ReportSection.Standard:
-                    s = String.Format("{0,24}", label);
+                    s = String.Format("{0,29}", label);
                     break;
                 case ReportSection.MethodResults:
                     s = String.Format("{0,41}", label);

@@ -45,8 +45,15 @@ namespace NCCCmd
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
 			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
 			c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-													  // check return bool and exit here on error
-			bool initialized = NC.App.Initialize(c);
+            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(NC.App.Logger(LMLoggers.AppSection.Control));
+            if (possiblepaths.Length > 2)
+            {
+                NC.App.AppContext.FileInput = possiblepaths[0];
+                NC.App.AppContext.ResultsFilePath = possiblepaths[1];
+                NC.App.AppContext.LogFilePath = possiblepaths[2];
+            }
+            // check return bool and exit here on error
+            bool initialized = NC.App.Initialize(c);
 			if (!initialized)
 				return;
 
@@ -129,7 +136,7 @@ namespace NCCCmd
 			Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
 			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
 
-			NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
+			NC.App.DB.ReplaceAcquireParams(sel, ap); // add new or replace existing with new
 
 			// The acquire is set to occur, build up the measurement state 
 			Integ.BuildMeasurement(ap, det, mo);

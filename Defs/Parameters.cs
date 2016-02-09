@@ -2137,7 +2137,10 @@ namespace AnalysisDefs
         {
             get
             {
-                if (String.IsNullOrEmpty(results))
+				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && 
+					!string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))
+					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
+				else if (string.IsNullOrEmpty(results))
                 {
                     return NCC.CentralizedState.App.AppContext.RootPathOverride();
                 }
@@ -2154,7 +2157,7 @@ namespace AnalysisDefs
                         }
                     }
                 }                
-                // else use the path exactly as user has specifeid, it is not overridden by the daily flag
+                // else use the path exactly as user has specified, it is not overridden by the daily flag
                 return results;
             }
             set
@@ -2301,8 +2304,8 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("openResults", OpenResults));
             i = (int)Verbose();
             pb.ps.Add(new DBParamEntry("verbose", i));
-            pb.ps.Add(new DBParamEntry("emulatorapp", EmuLoc));
-            pb.ps.Add(new DBParamEntry("serveremulation", Emulate));
+            pb.ps.Add(new DBParamEntry("emulatorapp", INCC5IniLoc));
+            pb.ps.Add(new DBParamEntry("serveremulation", UseINCC5Ini));
             pb.ps.Add(new DBParamEntry("fileinput", FileInput));
             pb.ps.Add(new DBParamEntry("recurse", Recurse));
             pb.ps.Add(new DBParamEntry("parseGen2", ParseGen2));

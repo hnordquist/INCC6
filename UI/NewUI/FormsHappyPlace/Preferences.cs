@@ -58,6 +58,8 @@ namespace NewUI
             maybe.Add(NCCFlags.gen5TestDataFile, NC.App.AppContext.CreateINCC5TestDataFile);    
             maybe.Add(NCCFlags.results8Char, NC.App.AppContext.Results8Char);    
             maybe.Add(NCCFlags.assayTypeSuffix, NC.App.AppContext.AssayTypeSuffix);    
+            maybe.Add(NCCFlags.serveremulation, NC.App.AppContext.UseINCC5Ini);    
+            maybe.Add(NCCFlags.emulatorapp, NC.App.AppContext.INCC5IniLoc);    
 
             InitializeComponent();
 
@@ -67,6 +69,7 @@ namespace NewUI
             DataFileLoc.Tag = dataLoc.Tag = NCCFlags.fileinput;
             DailyF0lder.Tag = NCCFlags.dailyRootPath;
             IsoFractionalDay.Tag = NCCFlags.INCCParity;
+			RevFileGen.Tag = NCCFlags.gen5TestDataFile;
             PollTimer.Tag = NCCFlags.opStatusTimeInterval;
             PollPacket.Tag = NCCFlags.opStatusPktInterval;
             Replay.Tag = NCCFlags.replay;
@@ -77,6 +80,8 @@ namespace NewUI
             AutoOpenCheckBox.Tag = NCCFlags.openResults;
 			Use8Char.Tag = NCCFlags.results8Char;
 			UseINCC5Suffix.Tag = NCCFlags.assayTypeSuffix;
+			UseINCC5Ini.Tag = NCCFlags.serveremulation;
+			Incc5IniFileLoc.Tag = NCCFlags.emulatorapp;
 
             DailyF0lder.Checked = NC.App.AppContext.DailyRootPath;
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
@@ -96,6 +101,8 @@ namespace NewUI
 			Use8Char.Checked = NC.App.AppContext.Results8Char;
 			UseINCC5Suffix.Checked = NC.App.AppContext.AssayTypeSuffix;
 			Use8Char.Text = "Use INCC5 results file naming (" + AnalysisDefs.MethodResultsReport.EightCharConvert(DateTimeOffset.Now) + ")";
+			UseINCC5Ini.Checked = NC.App.AppContext.UseINCC5Ini;
+			Incc5IniFileLoc.Text = NC.App.AppContext.INCC5IniLoc;
 
 
         }
@@ -118,6 +125,8 @@ namespace NewUI
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.gen5TestDataFile] != NC.App.AppContext.CreateINCC5TestDataFile);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.results8Char] != NC.App.AppContext.Results8Char);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.assayTypeSuffix] != NC.App.AppContext.AssayTypeSuffix);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.emulatorapp] != NC.App.AppContext.INCC5IniLoc);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.serveremulation] != NC.App.AppContext.UseINCC5Ini);
             if (!NC.App.AppContext.modified)  // nothing 
             {
                 Close();
@@ -141,6 +150,8 @@ namespace NewUI
             NC.App.AppContext.CreateINCC5TestDataFile = (bool)maybe[NCCFlags.gen5TestDataFile];
 			NC.App.AppContext.Results8Char = (bool)maybe[NCCFlags.results8Char];
 			NC.App.AppContext.AssayTypeSuffix = (bool)maybe[NCCFlags.assayTypeSuffix];
+			NC.App.AppContext.INCC5IniLoc = (string)maybe[NCCFlags.emulatorapp];
+            NC.App.AppContext.UseINCC5Ini = (bool)maybe[NCCFlags.serveremulation];
             NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
             Close();
         }
@@ -339,6 +350,26 @@ namespace NewUI
 		private void UseINCC5Suffix_CheckedChanged(object sender, EventArgs e)
 		{
             maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+		}
+
+		private void incc5IniLoc_Click(object sender, EventArgs e)
+		{
+			string str = UIIntegration.GetUsersFolder("Data file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!string.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					incc5IniLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+		}
+
+		private void UseINCC5Ini_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+			UseINCC5IniLocLabel.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			Incc5IniFileLoc.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			incc5IniLoc.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
 		}
 	}
 }
