@@ -1844,6 +1844,7 @@ namespace NCCFile
 				if (writer != null) {
 					writer.Flush();
 					writer.Close();
+					writer = null;
 				}
 				CloseStream();
 			} catch (Exception e) {
