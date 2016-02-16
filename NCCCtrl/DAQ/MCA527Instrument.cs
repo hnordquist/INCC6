@@ -129,10 +129,15 @@ namespace Instr
 				DAQState = DAQInstrState.Online;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
 			}
+			catch (MCADeviceLostConnectionException mex)
+			{
+				DAQState = DAQInstrState.Offline;
+				throw mex;
+			}
 			catch (Exception pex) 
 			{
 				DAQState = DAQInstrState.Offline;
-				throw new Exception("MCA527 connect problem", pex);
+				throw pex;
 			} 
 
 			m_logger.Flush();
@@ -160,7 +165,7 @@ namespace Instr
             }
 
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
+            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
         }
 
         /// <summary>
@@ -172,7 +177,7 @@ namespace Instr
 #if NETFX_45
     async
 #endif
-            protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+        protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);

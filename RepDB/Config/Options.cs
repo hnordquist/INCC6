@@ -137,7 +137,7 @@ namespace NCCConfig
 
              // this section is for various files for input
             { "f|file|fileinput|datasource=", "start a file-based operation using the {location} for file input, all matching files in the folder will be used", 
-                                            v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 7;} },
+                                            v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 6;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           
             { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },                                                           
             { "sortPulseFile", "sort and save pulse files, (line-delimited fixed-point strings, unsorted)", v => app.SortPulseFile = v != null },                                                           

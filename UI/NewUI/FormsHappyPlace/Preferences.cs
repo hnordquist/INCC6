@@ -104,7 +104,10 @@ namespace NewUI
 			UseINCC5Ini.Checked = NC.App.AppContext.UseINCC5Ini;
 			Incc5IniFileLoc.Text = NC.App.AppContext.INCC5IniLoc;
 
-
+			// hide these if the relevant flag is not set
+			UseINCC5IniLocLabel.Visible =  NC.App.AppContext.UseINCC5Ini;
+			Incc5IniFileLoc.Visible =  NC.App.AppContext.UseINCC5Ini;
+			incc5IniLoc.Visible = NC.App.AppContext.UseINCC5Ini;
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
@@ -367,9 +370,9 @@ namespace NewUI
 		private void UseINCC5Ini_CheckedChanged(object sender, EventArgs e)
 		{
             maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
-			UseINCC5IniLocLabel.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
-			Incc5IniFileLoc.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
-			incc5IniLoc.Enabled = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			UseINCC5IniLocLabel.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			Incc5IniFileLoc.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			incc5IniLoc.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
 		}
 	}
 }

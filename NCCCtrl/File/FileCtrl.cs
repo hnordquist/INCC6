@@ -49,6 +49,12 @@ namespace NCCFile
         public Instrument PseudoInstrument;
         public bool gui;
 
+        CountdownEvent _completed;
+        public CountdownEvent Completed
+		{
+			get { return _completed; }
+		}
+
         public FileCtrl(bool usingGui)
         {
             ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
@@ -61,6 +67,7 @@ namespace NCCFile
         {
             try
             {
+				_completed = new CountdownEvent(1);
                 switch (NC.App.Opstate.Action)
                 {
                     case NCCAction.Assay:
@@ -104,11 +111,13 @@ namespace NCCFile
                 }
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
                 NC.App.Loggers.Flush();
+				_completed.Signal();
             }
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+				_completed.Signal();
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
                 FireEvent(EventType.ActionFinished, this);
@@ -316,11 +325,11 @@ namespace NCCFile
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, useRawBuff:true);
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
-            NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
+            NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
 
             rdt.SetupCountingAnalyzerHandler(NC.App.Config, did.source.TimeBase(did.SRType),  // 1e-7 for LMMM/NCD
                         (string s) =>
@@ -348,12 +357,12 @@ namespace NCCFile
             meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             FireEvent(EventType.ActionStart, this);
 			ulong totalBuffersProcessed = 0;
 			meas.CurrentRepetition = 0;
-            NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
             foreach (var ncd in files)
             {
                 if (NC.App.Opstate.IsQuitRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
@@ -448,17 +457,17 @@ namespace NCCFile
 
             FireEvent(EventType.ActionInProgress, this);
 
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
             if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
             {
                 if (meas.HasReportableData && totalBuffersProcessed > 0) // todo: test 
                 {
 					// if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
-					NC.App.Opstate.ResetTimer(1, postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+					NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
 					meas.CalculateMeasurementResults();
 
-					NC.App.Opstate.StopTimer(1);
+					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
 					ReportMangler rm = new ReportMangler(ctrllog);
@@ -536,7 +545,7 @@ namespace NCCFile
             hdlr.Init(ext, datalog);
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -547,13 +556,13 @@ namespace NCCFile
                 files = (FileList<PTRFilePair>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
             if (files == null || files.Count() < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 return;
             }
             int removed = files.RemoveAll(f => f.PairEntryFileExtension(".chn"));
             if (files.Count() < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 return;
             }
 
@@ -575,7 +584,7 @@ namespace NCCFile
             PseudoInstrument.RDT.State = c;
             rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
 
-            NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
+            NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
             rdt.SetupCountingAnalyzerHandler(NC.App.Config, did.source.TimeBase(did.SRType), // 1e-8 expected here
                         (string s) =>
@@ -603,12 +612,12 @@ namespace NCCFile
             meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             FireEvent(EventType.ActionStart, this);
 
             meas.CurrentRepetition = 0;
-            NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
 			ulong totalBuffersProcessed = 0;
             PTRFileProcessingState pps = PseudoInstrument.RDT.State as PTRFileProcessingState;
             foreach (var ptrFile in files)
@@ -769,18 +778,18 @@ namespace NCCFile
 
             FireEvent(EventType.ActionInProgress, this);
 
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
             { 
                 if (meas.HasReportableData && totalBuffersProcessed > 0) // todo: test 
                 {
 					// if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
-					NC.App.Opstate.ResetTimer(1, postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+					NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
 					meas.CalculateMeasurementResults();
 
-					NC.App.Opstate.StopTimer(1);
+					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
 					ReportMangler rm = new ReportMangler(ctrllog);
@@ -807,7 +816,7 @@ namespace NCCFile
             hdlr.Init( new List<string>() { ".mca" }, datalog);
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -818,7 +827,7 @@ namespace NCCFile
                 files = (FileList<MCAFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
             if (files == null || files.Count() < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 return;
             }
 
@@ -840,7 +849,7 @@ namespace NCCFile
             PseudoInstrument.RDT.State = fps;
             rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
 
-            NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
+            NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
             rdt.SetupCountingAnalyzerHandler(NC.App.Config, did.source.TimeBase(did.SRType), // 1e-7 expected here, normally, but the actual value is found in each file, see mcaFile.TimeUnitNanoSec
                         (string s) =>
@@ -868,12 +877,12 @@ namespace NCCFile
             meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             FireEvent(EventType.ActionStart, this);
 
             meas.CurrentRepetition = 0;
-            NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
 			long newMeasId = 0;
 			MCAFile[] afiles = files.ToArray();
@@ -990,18 +999,18 @@ namespace NCCFile
 
             FireEvent(EventType.ActionInProgress, this);
 
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
             {
                 if (meas.HasReportableData && totalBuffersProcessed > 0) // todo: test 
                 {
 					// if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
-					NC.App.Opstate.ResetTimer(1, postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+					NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
 					meas.CalculateMeasurementResults();
 
-					NC.App.Opstate.StopTimer(1);
+					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
 					ReportMangler rm = new ReportMangler(ctrllog);
@@ -1031,7 +1040,7 @@ namespace NCCFile
             FileList<SortedPulseFile> files = null;
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -1039,7 +1048,7 @@ namespace NCCFile
             files = (FileList<SortedPulseFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, true);
             if (files == null || files.Count() < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 return;
             }
 
@@ -1062,7 +1071,7 @@ namespace NCCFile
             rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm);
 
-            NC.App.Opstate.ResetTimer(0, this.neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
+            NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
             rdt.SetupCountingAnalyzerHandler(NC.App.Config, did.source.TimeBase(did.SRType), // 1e-8 expected here
                         (string s) =>
@@ -1090,12 +1099,12 @@ namespace NCCFile
             meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
 
             FireEvent(EventType.ActionStart, this);
 
             meas.CurrentRepetition = 0;
-            NC.App.Opstate.ResetTimer(0, filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
             Random rand = new Random();
             int a = rand.Next(0, 3);
@@ -1203,17 +1212,17 @@ namespace NCCFile
 
             FireEvent(EventType.ActionInProgress, this);
 
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
             if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
             {
                 if (meas.HasReportableData && totalBuffersProcessed > 0) // todo: test 
                 { 
                 // if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
-                NC.App.Opstate.ResetTimer(1, postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+                NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
                 meas.CalculateMeasurementResults();
 
-                NC.App.Opstate.StopTimer(1);
+                NC.App.Opstate.StopTimer();
                 FireEvent(EventType.ActionInProgress, this);
 
                 ReportMangler rm = new ReportMangler(ctrllog);

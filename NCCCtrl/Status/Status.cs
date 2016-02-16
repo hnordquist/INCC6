@@ -110,8 +110,6 @@ namespace NCC
             {
                 case NCCAction.Nothing:
                 case NCCAction.Prompt:
-                case NCCAction.Maintenance:
-                case NCCAction.Analysis:
                     // nothing more right now
                     break;
                 case NCCAction.Discover:

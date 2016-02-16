@@ -75,7 +75,7 @@
 			this.WorkingDirLabel.Name = "WorkingDirLabel";
 			this.WorkingDirLabel.Size = new System.Drawing.Size(119, 17);
 			this.WorkingDirLabel.TabIndex = 0;
-			this.WorkingDirLabel.Text = "Working directory";
+			this.WorkingDirLabel.Text = "Working folder";
 			// 
 			// WorkingDirTextBox
 			// 
@@ -393,7 +393,7 @@
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(113, 17);
 			this.label4.TabIndex = 40;
-			this.label4.Text = "Log file directory";
+			this.label4.Text = "Log file folder";
 			// 
 			// resultsLoc
 			// 
@@ -414,7 +414,7 @@
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(136, 17);
 			this.label5.TabIndex = 43;
-			this.label5.Text = "Results file directory";
+			this.label5.Text = "Results file folder";
 			// 
 			// dataLoc
 			// 
@@ -435,7 +435,7 @@
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(119, 17);
 			this.label6.TabIndex = 46;
-			this.label6.Text = "Data file directory";
+			this.label6.Text = "Data file folder";
 			// 
 			// incc5IniLoc
 			// 
@@ -467,7 +467,7 @@
 			this.UseINCC5IniLocLabel.Name = "UseINCC5IniLocLabel";
 			this.UseINCC5IniLocLabel.Size = new System.Drawing.Size(153, 17);
 			this.UseINCC5IniLocLabel.TabIndex = 51;
-			this.UseINCC5IniLocLabel.Text = "INCC5 incc.ini directory";
+			this.UseINCC5IniLocLabel.Text = "INCC5 incc.ini folder";
 			// 
 			// UseINCC5Ini
 			// 

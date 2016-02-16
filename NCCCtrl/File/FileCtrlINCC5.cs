@@ -41,7 +41,7 @@ namespace NCCFile
         // Acquire from Database and Manual data work the same from this point 
         void DBDataAssay()
         {
-            NC.App.Opstate.ResetTimer(0, filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -82,7 +82,7 @@ namespace NCCFile
             FileList<TestDataFile> files = null;
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -92,7 +92,7 @@ namespace NCCFile
                 files = (FileList<TestDataFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
             if (files == null || files.Count < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
                 ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Test data/Disk .dat or .cnn files found");
@@ -434,7 +434,7 @@ namespace NCCFile
             /// end here > The sorted, filtered and processed list here would be returned to the UI for display and interactive selection
             if (res == null || res.Count < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
                 ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));

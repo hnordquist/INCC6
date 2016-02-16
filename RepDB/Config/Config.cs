@@ -814,8 +814,12 @@ namespace NCCConfig
 		private void setIfNotOverride(NCCFlags flag, string path)
 		{
 			// do not set if it is the override value
+			Match m = PathMatch(path);
+			if (m.Success) // if it is a daily path match, do not save it
+				return;
+			// if not a daily path match and not the current root path, go ahead and save it
 			if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
-				setVal(flag, path);
+					setVal(flag, path);	
 		}
 
         public string RootPath
@@ -833,7 +837,7 @@ namespace NCCConfig
                     return RootPath;
                 else
                 {
-                    Match m = Regex.Match(RootPath, "\\d{4}-\\d{4}$");
+                    Match m = PathMatch(RootPath);
                     if (m.Success)
                     {
                         // strip and replace
@@ -848,6 +852,12 @@ namespace NCCConfig
             else
                 return RootPath;
         }
+
+		Match PathMatch(string path)
+		{ 
+			Match m = Regex.Match(path, "\\d{4}-\\d{4}$");
+			return m;			
+		}
 
         /// <summary>
         /// resolved with daily path generation every time this is called

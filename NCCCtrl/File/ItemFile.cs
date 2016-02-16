@@ -36,65 +36,68 @@ namespace NCCFile
     using NC = NCC.CentralizedState;
 
     /// <summary>
-    /// Manager for INCC5 isotopic and composite isotopic input files (.iso etc)
-    /// See Isotopics Data File Format p. 100, INCC Software Users Manual, March 29, 2009
-    /// See Composite Isotopics Data File Format p. 101, INCC Software Users Manual, March 29, 2009
+    /// Manager for INCC5 NCC_Dat
+    /// See Item Relevant Data File Format p. 85, INCC Software Users Manual, March 29, 2009
     /// </summary>
-    public class IsoFiles
+    public class ItemFile
     {
 
-        public IsoFiles()
+        public ItemFile()
         {
             Init();
         }
 
         public void Init()
         {
-            mPathToIsoFile = new Dictionary<string, CSVFile>();
-            mPathToCompFile = new Dictionary<string, CSVFile>();
+            mPathToItemFile = new Dictionary<string, CSVFile>();
             IsoIsotopics = new List<AnalysisDefs.Isotopics>();
-            CompIsoIsotopics = new List<AnalysisDefs.CompositeIsotopics>();
+			ItemIds = new List<ItemId>();
+			Facilities = new List<string>();
+			MBAs = new List<string>();
+			Strata = new List<string>();
+			InventoryChangeCodes = new List<string>();
+			IOCodes = new List<string>();
+			MaterialTypes = new List<string>();
             yyyymmdd = new Regex("^\\d{4}\\d{2}\\d{2}$");
             mlogger = NCC.CentralizedState.App.Loggers.Logger(LMLoggers.AppSection.Control);
         }
   
-
         /// <summary>
-        /// Enum of positional column ids for the INCC5 isotopics file format
+        /// Enum of positional column ids 
         /// </summary>
-        enum IsoCol
+        enum ItemCol
         {
-			IsoId, IsoSourceCode, Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err
+            Facility, MBA, ItemId, StratumId, InvChangeCode, IOCode, MatType, IsoSourceCode, ItemType, IsoId,  // AnalysisDefs.Isotopics.SourceCode
+			DeclRodLen,    DeclRodLenErr,
+			DeclTotalPu,   DeclTotalPuErr,
+			DeclDepletedU, DeclDepletedUErr,
+			DeclNaturalU,  DeclNaturalUErr,
+			DeclEnrichedU, DeclEnrichedUErr,
+			DeclTotalU235, DeclTotalU235Err,
+			DeclTotalU238, DeclTotalU238Err,
+			Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err,
+			IsoType,
+			DeclTotalRods, DeclTotalPoisonRods, DeclTotalPoisonPercent, DeclTotalPoisonPercentErr, DeclRodType
         }
 
-        /// <summary>
-        /// Enum of positional column ids for the INCC5 composite isotopics file format
-		/// CompIsoCol is the smae save for the first enum
-        /// </summary>
-        enum CompIsCol
-        {
-			IsoId, IsoSourceCode, PuMass, Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err
-        }
 
-		enum KindKind
+		enum ItemTypeIndicator
         {
-			Iso, CompIso, CompIsoSummary
-        }
+			Blank, P, C, L
+		}
 
-		KindKind IngestLine(List<string[]> tokens)
+		ItemTypeIndicator IngestLine(List<string[]> tokens)
 		{
 			return 0;
-
 		}
 
 
-
-         /// <summary>
-        /// Scan a set of iso and comp iso files.
-        /// Creates a list of Isotopics from the iso files.
-        /// Creates a list of CompositeIsotopics from the comp files.
-        /// </summary>
-        /// <param name="files">List of nop and cop files to process</param>
+        /// <summary>
+        /// Scan a set of dat files.
+		/// New facilities, MBAs, strata, inventory change codes, I/O codes, material types, isotopics,
+		///     collar data and item ids will automatically be created if necessary. Already existing items will automatically be overwritten.        
+		/// </summary>
+        /// <param name="files">List of dat files to process</param>
         public void Process(List<string> files)
         {
 			if (files == null) 
@@ -113,27 +116,18 @@ namespace NCCFile
 					csv.ProcessFile();  // split lines with scanner
 					foreach (string[] entry in csv.Lines)
 					{
+						PopulateSingletons(entry);
 						Isotopics iso = GenIso(entry);
-						//CompositeIsotopics ciso = null;
 						if (iso != null)
 						{
 							mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
 							mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
 							IsoIsotopics.Add(iso);
+							ItemId ii = GenItemId(entry, iso);
+
 						}
 						else
-						{ 
-							//ciso = CompositeIsotopics(entry, headtest:true);
-							//if (ciso != null)  // got a header of a comp iso file, process the rest of the lines
-							//{
-							//	mlogger.TraceEvent(LogLevels.Verbose, 34100, "got a header of a comp iso file, process the rest of the lines " + System.IO.Path.GetFileName(l));
-							//}
-							//else  // a CSV file but not an iso or comp iso file
-							//{
-							//	//ciso = CompositeIsotopics(entry, headtest:false);
-							//	mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
-							//	break;
-							//}
+						{ 	
 							mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped non-iso token entry");
 						}
 					}
@@ -144,13 +138,10 @@ namespace NCCFile
 				}           
 
         }
-
-		Isotopics GenIso(string[] sa)
+		void PopulateSingletons(string[] sa)
 		{
-			Isotopics i = new Isotopics();
 			string s = string.Empty;
-			double v = 0, err = 0;
-			foreach (IsoCol op in System.Enum.GetValues(typeof(IsoCol)))
+			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -158,67 +149,104 @@ namespace NCCFile
 					s = sa[(int)op];  // might blow here when file was badly created
 					switch (op)
 					{
-					case IsoCol.AmDate:
+					case ItemCol.Facility:
+						Facilities.Add(s);
+						break;
+					case ItemCol.StratumId:
+						Strata.Add(s);
+						break;
+					case ItemCol.MBA:
+						MBAs.Add(s);
+						break;
+					case ItemCol.MatType:
+						MaterialTypes.Add(s);
+						break;
+					case ItemCol.InvChangeCode:
+						InventoryChangeCodes.Add(s);
+						break;
+					}
+				} catch (Exception ex)
+				{
+					mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
+					return;
+				}
+			}
+		}
+
+		Isotopics GenIso(string[] sa)
+		{
+			Isotopics i = new Isotopics();
+			string s = string.Empty;
+			double v = 0, err = 0;
+			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			{
+				try
+				{
+					s = string.Empty;
+					s = sa[(int)op];  // might blow here when file was badly created
+					switch (op)
+					{
+					case ItemCol.AmDate:
 						Match amd = yyyymmdd.Match(s);
 						if (amd.Success)
 							i.am_date = GenFromYYYYMMDD(s);
 						break;
-					case IsoCol.PuDate:
+					case ItemCol.PuDate:
 						Match pud = yyyymmdd.Match(s);
 						if (pud.Success)
 							i.pu_date = GenFromYYYYMMDD(s);
 						break;
-					case IsoCol.IsoSourceCode:
+					case ItemCol.IsoSourceCode:
 						System.Enum.TryParse<Isotopics.SourceCode>(s, out i.source_code);
 						break;
-					case IsoCol.IsoId:
+					case ItemCol.IsoId:
 						i.id = string.Copy(s);
 						break;
-					case IsoCol.Pu238:
+					case ItemCol.Pu238:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu238, v);
 						break;
-					case IsoCol.Pu239:
+					case ItemCol.Pu239:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu239, v);
 						break;
-					case IsoCol.Pu240:
+					case ItemCol.Pu240:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu240, v);
 						break;
-					case IsoCol.Pu241:
+					case ItemCol.Pu241:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu241, v);
 						break;
-					case IsoCol.Pu242:
+					case ItemCol.Pu242:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu242, v);
 						break;
-					case IsoCol.Am241:
+					case ItemCol.Am241:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.am241, v);
 						break;
-					case IsoCol.Pu238err:
+					case ItemCol.Pu238err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.pu238, err);
 						break;
-					case IsoCol.Pu239err:
+					case ItemCol.Pu239err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.pu239, err);
 						break;
-					case IsoCol.Pu240err:
+					case ItemCol.Pu240err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.pu240, err);
 						break;
-					case IsoCol.Pu241err:
+					case ItemCol.Pu241err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.pu241, err);
 						break;
-					case IsoCol.Pu242err:
+					case ItemCol.Pu242err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.pu242, err);
 						break;
-					case IsoCol.Am241err:
+					case ItemCol.Am241err:
 						double.TryParse(s, out err);
 						i.SetError(Isotope.am241, err);
 						break;
@@ -232,12 +260,12 @@ namespace NCCFile
 			return i;
 		}
 
-		CompositeIsotopics CompositeIsotopics(string[] sa, bool headtest)
+
+		ItemId GenItemId(string[] sa, Isotopics iso)
 		{
-			CompositeIsotopics i = new CompositeIsotopics();
+			ItemId i = new ItemId();
 			string s = string.Empty;
-			double v = 0, err = 0;
-			foreach (CompIsCol op in System.Enum.GetValues(typeof(CompIsCol)))
+			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -245,79 +273,37 @@ namespace NCCFile
 					s = sa[(int)op];  // might blow here when file was badly created
 					switch (op)
 					{
-					case CompIsCol.AmDate:
-						Match amd = yyyymmdd.Match(s);
-						if (amd.Success)
-							i.am_date = GenFromYYYYMMDD(s);
+					case ItemCol.IsoId:
+						i = new ItemId(s, iso);			
 						break;
-					case CompIsCol.PuDate:
-						Match pud = yyyymmdd.Match(s);
-						if (pud.Success)
-							i.pu_date = GenFromYYYYMMDD(s);
+					case ItemCol.IsoSourceCode:
+						i.IOCode = s;
 						break;
-					case CompIsCol.IsoSourceCode:
-						System.Enum.TryParse<CompositeIsotopics.SourceCode>(s, out i.source_code);
+					case ItemCol.IOCode:
+						i.inventoryChangeCode = s;
 						break;
-					case CompIsCol.IsoId:
-						if (headtest) i.id = string.Copy(s);
+					case ItemCol.MBA:
+						i.mba = s;
 						break;
-					case CompIsCol.PuMass:
-						Single sv = 0;
-						Single.TryParse(s, out sv);
-						i.pu_mass = sv;
+					case ItemCol.MatType:
+						i.material = s;
 						break;
-					case CompIsCol.Pu238:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu238, v);
+					case ItemCol.StratumId:
+						i.stratum = s;
 						break;
-					case CompIsCol.Pu239:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu239, v);
+					case ItemCol.DeclRodLen:
+                        double.TryParse(s, out i.length);
 						break;
-					case CompIsCol.Pu240:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu240, v);
+					case ItemCol.DeclTotalPu:
+                        double.TryParse(s, out i.declaredMass);
 						break;
-					case CompIsCol.Pu241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu241, v);
-						break;
-					case CompIsCol.Pu242:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu242, v);
-						break;
-					case CompIsCol.Am241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.am241, v);
-						break;
-					case CompIsCol.Pu238err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu238, err);
-						break;
-					case CompIsCol.Pu239err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu239, err);
-						break;
-					case CompIsCol.Pu240err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu240, err);
-						break;
-					case CompIsCol.Pu241err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu241, err);
-						break;
-					case CompIsCol.Pu242err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu242, err);
-						break;
-					case CompIsCol.Am241err:
-						double.TryParse(s, out err);
-						i.SetVal(Isotope.am241, err);
+					case ItemCol.DeclEnrichedU:
+                        double.TryParse(s, out i.declaredUMass);
 						break;
 					}
 				} catch (Exception ex)
 				{
-					mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
+					mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as item element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -325,105 +311,13 @@ namespace NCCFile
 		}
 
 
-		CompositeIsotopics GenCompIso(string[] sa)
-		{
-			CompositeIsotopics i = new CompositeIsotopics();
-			string s = string.Empty;
-			double v = 0, err = 0;
-			foreach (CompIsCol op in System.Enum.GetValues(typeof(CompIsCol)))
-			{
-				try
-				{
-					s = string.Empty;
-					s = sa[(int)op];  // might blow here when file was badly created
-					switch (op)
-					{
-						case CompIsCol.IsoId:  // skip this for body lines						
-						break;
-					case CompIsCol.AmDate:
-						Match amd = yyyymmdd.Match(s);
-						if (amd.Success)
-							i.am_date = GenFromYYYYMMDD(s);
-						break;
-					case CompIsCol.PuDate:
-						Match pud = yyyymmdd.Match(s);
-						if (pud.Success)
-							i.pu_date = GenFromYYYYMMDD(s);
-						break;
-					case CompIsCol.IsoSourceCode:
-						System.Enum.TryParse<CompositeIsotopics.SourceCode>(s, out i.source_code);
-						break;
-					case CompIsCol.PuMass:
-						Single sv = 0;
-						Single.TryParse(s, out sv);
-						i.pu_mass = sv;
-						break;
-					case CompIsCol.Pu238:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu238, v);
-						break;
-					case CompIsCol.Pu239:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu239, v);
-						break;
-					case CompIsCol.Pu240:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu240, v);
-						break;
-					case CompIsCol.Pu241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu241, v);
-						break;
-					case CompIsCol.Pu242:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu242, v);
-						break;
-					case CompIsCol.Am241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.am241, v);
-						break;
-					case CompIsCol.Pu238err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu238, err);
-						break;
-					case CompIsCol.Pu239err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu239, err);
-						break;
-					case CompIsCol.Pu240err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu240, err);
-						break;
-					case CompIsCol.Pu241err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu241, err);
-						break;
-					case CompIsCol.Pu242err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu242, err);
-						break;
-					case CompIsCol.Am241err:
-						double.TryParse(s, out err);
-						i.SetVal(Isotope.am241, err);
-						break;
-					}
-				} catch (Exception ex)
-				{
-					mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
-					return null;
-				}
-			}
-			return i;
-		}
-
-
-		// The results of processing a folder with nop and cop files
+		// The results of processing a folder with dat files
 		public List<Isotopics> IsoIsotopics;
-        public List<CompositeIsotopics> CompIsoIsotopics;
-
+		public List<ItemId> ItemIds;
+		public List<string> Facilities, MBAs, Strata, InventoryChangeCodes, IOCodes, MaterialTypes;
+		///urgent: collar data
         // private vars used for processing
-        private Dictionary<string, CSVFile> mPathToIsoFile;
-        private Dictionary<string, CSVFile> mPathToCompFile;
+        private Dictionary<string, CSVFile> mPathToItemFile;
         private Regex yyyymmdd;
         private LMLoggers.LognLM mlogger;
 

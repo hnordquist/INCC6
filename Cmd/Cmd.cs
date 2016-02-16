@@ -93,13 +93,13 @@ namespace NCCCmd
                 if (!initialized)
                     goto frob;
 
-                BuildMeasurement();
-				if (NC.App.Config.App.UsingFileInput)
+				if (NC.App.Config.App.UsingFileInput || NC.App.Opstate.Action != NCC.NCCAction.Assay)
 				{
+	                BuildMeasurement();
 					if (NC.App.AppContext.AssayFromFiles)
 						NC.App.Opstate.Action = NCC.NCCAction.Assay;
-					else
-						NC.App.Opstate.Action = NCC.NCCAction.File;
+					//else
+					//	NC.App.Opstate.Action = NCC.NCCAction.File;
 
 					// file processing for analysis and more
 					FileControlBind filecontrol = new FileControlBind();

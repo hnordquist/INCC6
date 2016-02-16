@@ -252,23 +252,25 @@ namespace DAQ
                     ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
                 else if (attempts > 0)
                 {
-                    Thread.Sleep(120);              
-                   // if (Instruments.Active.HasLMMM()) 
-                   //     FireEvent(EventType.PreAction, NC.App.Opstate);
-                }
-                //ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based LMMM needs more retries based on testing
-               
+                    Thread.Sleep(120);     // wait a moment
+                    await ConnectInstruments();  // try again
+
+                }             
                 attempts++;
             }
-            NC.App.Opstate.StopTimer(0);
+            NC.App.Opstate.StopTimer();
         }
 
         // set only when all assay or HVCalib cycles are completed
-        CountdownEvent completed;
+        CountdownEvent _completed;
+        public CountdownEvent Completed
+		{
+			get { return _completed; }
+		}
 
         public void MajorOperationCompleted()
         {
-            completed.Signal();
+            _completed.Signal();
             Flush();
             FireEvent(EventType.ActionStop, this);
         }
@@ -283,7 +285,7 @@ namespace DAQ
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.HVCalibration;
             bool ok = HVCalibInception(); // the current thread pends in this method until the active instrument completes HV processing
-            CurState.StopTimer(1); // started in StartHVCalib
+            CurState.StopTimer(); // started in StartHVCalib
             if (ok)
             {
                 OutputResults(NCCAction.HVCalibration);
@@ -301,7 +303,7 @@ namespace DAQ
 
         private bool HVCalibInception()
         {
-            completed = new CountdownEvent(Instruments.Active.Count);
+            _completed = new CountdownEvent(Instruments.Active.Count);
             ApplyInstrumentSettings();
             bool going = StartHVCalib();
             if (going)
@@ -320,14 +322,14 @@ namespace DAQ
 #if NETFX_45
             async 
 #endif
-            void DoHVCalib()
+        void DoHVCalib()
         {
             applog.TraceInformation("Starting High Voltage Calibration Plateau");
             FireEvent(EventType.ActionPrep, this);
 #if NETFX_45
             await
 #endif
-            ConnectWithRetries(true, 5);
+            ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -388,7 +390,10 @@ namespace DAQ
         public void AssayCoreOp()
         {
             if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
+			{
+				NC.App.Opstate.SOH = OperatingState.Stopped;
                 return;  //nothing to do
+			}
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.Assay;
             NC.App.Opstate.SOH = NCC.OperatingState.Living;
@@ -405,7 +410,6 @@ namespace DAQ
                         CalculateMeasurementResults();
                         SaveMeasurementBasics();
                         SaveMeasurementResults();
-                        //CurState.StopTimer(1);
                         FireEvent(EventType.ActionInProgress, this);
                         OutputResults(NCCAction.Assay);
                     }
@@ -425,7 +429,7 @@ namespace DAQ
         }
         public bool AssayInception()
         {
-            completed = new CountdownEvent(Instruments.Active.Count);
+            _completed = new CountdownEvent(Instruments.Active.Count);
             ApplyInstrumentSettings();
             var task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
             if (task)
@@ -434,8 +438,8 @@ namespace DAQ
                 foreach (ManualResetEventSlim mres in me)
                    if (mres != null) mres.Wait(); // wait for signal from DAQ + Analyzer on each active instrument.
             }
-            completed.Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
-            CurState.StopTimer(1); // started in StartAssay > ResetForMeasurement
+            _completed.Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
+            CurState.StopTimer(); // started in StartAssay > ResetForMeasurement
             Thread.Sleep(500);  // todo: separately config the various waits, grep for Thread.Sleep to find them
             return task;
         }
@@ -453,7 +457,7 @@ namespace DAQ
 #if NETFX_45
             await
 #endif
-            ConnectWithRetries(true, 5);
+            ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -555,33 +559,33 @@ namespace DAQ
 
 		public
 #if NETFX_45
-            async System.Threading.Tasks.Task<Device.MCADeviceInfo[]> 
+            async System.Threading.Tasks.Task<Device.MCADeviceInfo[]>
 #else
             Device.MCADeviceInfo[]
 #endif
-        ConnectMCAInstruments()
-        {
- 			Device.MCADeviceInfo[] deviceInfos = null;
-           if (!Instruments.Active.HasMCA())
-                return deviceInfos;
-            LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
+		ConnectMCAInstruments()
+		{
+			Device.MCADeviceInfo[] deviceInfos = null;
+			if (!Instruments.Active.HasMCA())
+				return deviceInfos;
+			LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
 			if (lmi.id.SRType != InstrType.MCA527)
 				return deviceInfos;
-            collog.TraceInformation("Broadcasting to MCA instruments. . .");
+			collog.TraceInformation("Broadcasting to MCA instruments. . .");
 			try
 			{
 				deviceInfos =
 #if NETFX_45
-                    await
+					await
 #endif
-                    Device.MCADevice.QueryDevices();
+					Device.MCADevice.QueryDevices();
 				if (deviceInfos.Length > 0)
-				{   
+				{
 					Device.MCADeviceInfo thisone = null;
 					// Match based on Electronics Id field
 					foreach (Device.MCADeviceInfo d in deviceInfos)
 					{
-						string id =  d.Serial.ToString("D5");
+						string id = d.Serial.ToString("D5");
 						string s = string.Format("MCA-527#{0}  FW# {1}  HW# {2} on {3}", id, d.FirmwareVersion, d.HardwareVersion, d.Address);
 						collog.TraceInformation("Checking " + s);
 						if (string.Equals(id, lmi.id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
@@ -596,14 +600,19 @@ namespace DAQ
 					((MCA527Instrument)lmi).DeviceInfo = thisone;
 					lmi.Connect();
 				}
-			} catch (Exception e)
+			} 
+			catch (AggregateException ex)
+			{
+				collog.TraceException(ex.InnerException);
+			}
+			catch (Exception e)
 			{
 				collog.TraceException(e);
 			}
 			return deviceInfos;
-        }
- 
-        public void ConnectLMMMInstruments()
+		}
+
+		public void ConnectLMMMInstruments()
         {
             if (!Instruments.Active.HasLMMM())
                 return;

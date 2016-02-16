@@ -1330,7 +1330,7 @@
 			this.Step4OutputDirLabel.Name = "Step4OutputDirLabel";
 			this.Step4OutputDirLabel.Size = new System.Drawing.Size(110, 17);
 			this.Step4OutputDirLabel.TabIndex = 19;
-			this.Step4OutputDirLabel.Text = "Output directory";
+			this.Step4OutputDirLabel.Text = "Output folder";
 			// 
 			// Step4Param3UnitsLabel
 			// 

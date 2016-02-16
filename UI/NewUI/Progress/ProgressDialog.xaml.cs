@@ -26,13 +26,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
 using NCC;
-using System.Collections;
-
 namespace NewUI.Progress
 {
     /// <summary>
@@ -52,8 +48,23 @@ namespace NewUI.Progress
             }
 
             InitializeComponent();
-            task.ContinueWith(_ => Close(), TaskScheduler.FromCurrentSynchronizationContext());
+						// devnote: ContinueWith doesn't behave with async await
+
+			while (UIIntegration.Controller.Waiter == null && (UIIntegration.Controller.SOH != OperatingState.Stopped))
+			{
+				//System.Threading.Thread.Sleep(125);
+				System.Threading.Thread.Yield();
+			}
+			task.ContinueWith(_ => frob(), TaskScheduler.FromCurrentSynchronizationContext());
         }
+
+		void frob()
+		{
+			// devnote: ContinueWith doesn't behave with async await
+			if (UIIntegration.Controller.Waiter != null)
+				UIIntegration.Controller.Waiter.Wait();
+			Close();
+		}
 
         /// <summary>
         /// Displays a progress dialog for the specified task.

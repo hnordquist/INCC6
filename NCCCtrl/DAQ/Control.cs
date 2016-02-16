@@ -588,7 +588,7 @@ namespace DAQ
             if (Instruments.Active.Count > 0)
             { 
                 FireEvent(EventType.ActionInProgress, this);
-                collog.TraceEvent(LogLevels.Info, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
+                collog.TraceEvent(LogLevels.Verbose, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
             }
             return Instruments.Active.Count;
         }

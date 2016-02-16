@@ -64,7 +64,7 @@ namespace NewUI
 
         public Controller(EnableFunc ef)
         {
-            this.enablecontrols = ef;
+            enablecontrols = ef;
         }
 
         // access global state, but layered apart from form space
@@ -89,6 +89,17 @@ namespace NewUI
             }
         }
 
+		public System.Threading.CountdownEvent Waiter
+        {
+            get
+            {
+                if (file)
+                    return fctrlbind.Completed;
+                else
+                    return daqbind.Completed;
+            }
+        }
+
         public string FileInput
         {
             get { return NC.App.AppContext.FileInput; }
@@ -105,7 +116,7 @@ namespace NewUI
         public void ActivateDetector(Detector det = null)
         {
             if (!file)
-                DAQBind.ActivateDetector(det);
+                ActivateDetector(det);
         }
 
         /// <summary>
@@ -255,7 +266,8 @@ namespace NewUI
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
                 string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
-				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
+				if (!string.IsNullOrEmpty(s2))
+					s2 = "(" + s2 + ")";				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
                 fctrlbind.mProgressTracker.ReportProgress(per, // a % est of files
 					String.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
             });
@@ -274,7 +286,7 @@ namespace NewUI
 
             fctrlbind.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
-                String s = "";
+                string s = "";
                 if (o != null && o is FileCtrl)
                 {
                     FileCtrl f = (FileCtrl)o;
@@ -338,9 +350,11 @@ namespace NewUI
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
                 string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+				if (!string.IsNullOrEmpty(s2))
+					s2 = "(" + s2 + ")";
 				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
 				daqbind.mProgressTracker.ReportProgress(per, // a % est of files
-					String.Format("{0} of {1} ({2})", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
+					string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
@@ -386,7 +400,7 @@ namespace NewUI
 
         public void UpdateGUIWithNewData(MainWindow df)
         {
-            this.updateGUIWithNewData = true;
+            updateGUIWithNewData = true;
             NC.App.Logger(LMLoggers.AppSection.App).TraceInformation("!!!!");
         }
 
@@ -402,7 +416,7 @@ namespace NewUI
 
         public void Close()
         {
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+            NC.App.Opstate.SOH = OperatingState.Stopped;
             NC.App.Config.RetainChanges();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
             applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
@@ -417,7 +431,7 @@ namespace NewUI
     /// <summary>
     /// Class for controlling file processing from a UI or other controlling client code
     /// </summary>
-    public class FCtrlBind : NCCFile.FileCtrl
+    public class FCtrlBind : FileCtrl
     {
 
         public Task task;
@@ -434,7 +448,7 @@ namespace NewUI
         {
             mProgressTracker = new ProgressTracker();
 
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
             string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") +
                                 (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
@@ -443,13 +457,13 @@ namespace NewUI
         public new void CancelCurrentAction()
         {
             base.CancelCurrentAction();
-            base.Cleanup();
+            Cleanup();
         }
 
         public new void StopCurrentAction()
         {
             base.StopCurrentAction();
-            base.Cleanup();
+            Cleanup();
         }
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
@@ -466,12 +480,12 @@ namespace NewUI
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }
-            base.Cleanup();
+            Cleanup();
         }
 
         void Done(object sender, RunWorkerCompletedEventArgs e)
         {
-            base.Cleanup();
+            Cleanup();
         }
 
         public OperatingState SOH
@@ -488,7 +502,7 @@ namespace NewUI
     /// <summary>
     /// Class for controlling live DAQ from a UI or other controlling client code
     /// </summary>
-    public class DAQBind : DAQ.DAQControl
+    public class DAQBind : DAQControl
     {
         public Task task;
         public ProgressTracker mProgressTracker;
@@ -572,15 +586,15 @@ namespace NewUI
 
         void Done(object sender, RunWorkerCompletedEventArgs e)
         {
-			base.Cleanup();
+			Cleanup();
         }
 
         public new void StartAction()
         {
             mProgressTracker = new ProgressTracker();
+            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
-
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
             Progress.ProgressDialog.Show(null, "DAQ " + NC.App.Opstate.Action.ToString(), NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
 
         }
@@ -588,13 +602,13 @@ namespace NewUI
         public new void CancelCurrentAction()
         {
             base.CancelCurrentAction();
-			base.Cleanup();
+			Cleanup();
         }
 
         public new void StopCurrentAction()
         {
             base.StopCurrentAction();
-			base.Cleanup();
+			Cleanup();
         }
 
         public NCCAction CurAction

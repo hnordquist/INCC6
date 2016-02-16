@@ -1662,7 +1662,12 @@ namespace Device
                     MaximumHighVoltage = state527Response.MaximumAllowedHighVoltage;
                 }
                 await SetHighVoltage(0, BiasInhibitInput.InhibitOff);
-			} catch {
+			} 
+			catch (MCADeviceLostConnectionException ex)
+			{
+				throw ex;
+			}
+			catch {
 				throw;
 			}
 			finally {
@@ -2566,13 +2571,13 @@ namespace Device
 
 		public
 #if NETFX_45
-            Task<MCAResponse[]>
+           async Task<MCAResponse[]>
 #else
             MCAResponse[]
 #endif
             SendBroadcastAsync(MCACommand command)
 		{
-			return SendBroadcastAsync(command, new TimeSpan(0, 0, 1));
+			return await SendBroadcastAsync(command, new TimeSpan(0, 0, 1));
 		}
 
 		public
@@ -2593,8 +2598,7 @@ namespace Device
 				Task<int> sendTask = Udp.SendAsync(command.Bytes, command.Bytes.Length, sendIP);
 				sendTasks.Add(sendTask);
 			}
-			await
-            Task.WhenAll(sendTasks);
+			int[] t = await Task.WhenAll(sendTasks);
 #endif
             DateTime endTime = DateTime.UtcNow + timeout;
 			List<MCAResponse> responseList = new List<MCAResponse>();

@@ -50,7 +50,7 @@ namespace NCC
     public enum OperatingState { Void, Starting, Living, Stopping, Cancelling, Stopped, Trouble };
 
     // tasks to perform with the NCC6 code
-    public enum NCCAction { Nothing = 0, Prompt = 1, Discover = 2, Assay = 3, HVCalibration = 4, Analysis = 5, Maintenance = 6, File = 7, Bonk = 99 }
+    public enum NCCAction { Nothing = 0, Prompt = 1, Discover = 2, Assay = 3, HVCalibration = 4, Analysis = 5, File = 6, Bonk = 99 }
 
 
     // carries current status and support state like 
@@ -64,8 +64,8 @@ namespace NCC
 
         public OperatingState SOH
         {
-            get; //{ return soh; }
-            set;// { soh = value; }
+            get;
+            set;
         }
         public Measurement Measurement
         {
@@ -73,33 +73,26 @@ namespace NCC
             set { meas = value; }
         }
 		
-        public void ResetTimer(int i, TimerCallback callback, object state = null, int dueTime = Timeout.Infinite, int period = Timeout.Infinite)
+        public void ResetTimer(TimerCallback callback, object state = null, int dueTime = Timeout.Infinite, int period = Timeout.Infinite)
         {
-            StopTimer(i);
+            StopTimer();
             if (callback != null)
-                statusTimer[i] = new Timer(callback, state, dueTime, period);
+                statusTimer = new Timer(callback, state, dueTime, period);
         }
 
-        public void StopTimer(int i)
+        public void StopTimer()
         {
-            if (statusTimer[i] != null)
-                statusTimer[i].Change(Timeout.Infinite, Timeout.Infinite);
+            if (statusTimer != null)
+                statusTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         public void ClearTimers()
         {
-            if (statusTimer[0] != null)
+            if (statusTimer != null)
             {
-                statusTimer[0].Change(Timeout.Infinite, Timeout.Infinite);
-                statusTimer[0].Dispose();
-                statusTimer[0] = null;
-            }
-        
-            if (statusTimer[1] != null)
-            { 
-                statusTimer[1].Change(Timeout.Infinite, Timeout.Infinite);
-                statusTimer[1].Dispose();
-                statusTimer[1] = null;
+                statusTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                statusTimer.Dispose();
+                statusTimer = null;
             }
         }
 
@@ -200,7 +193,6 @@ namespace NCC
         {
             csa = new CancelStopAbort();
             SOH = OperatingState.Void;
-            statusTimer = new Timer[2];
         }
 
         public OperationalState(OperationalState src)
@@ -215,7 +207,7 @@ namespace NCC
 
         protected Measurement meas;
         protected CancelStopAbort csa;
-        protected Timer[] statusTimer; // ok, I let you have two at the same time
+        protected Timer statusTimer; // ok, I let you have two at the same time
 
     }
     public class CancelStopAbort

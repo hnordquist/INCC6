@@ -505,7 +505,7 @@ namespace DetectorDefs
 		/// <returns></returns>
 		public string Identifier() 
 		{
-			string l = string.IsNullOrEmpty(filename) ? "<file name>" : filename;
+			string l = string.IsNullOrEmpty(filename) ? "*" : filename;
 			switch (source)
 			{
 			case ConstructedSource.Live:
