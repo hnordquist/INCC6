@@ -236,32 +236,26 @@ namespace DAQ
             #else
             void
             #endif
-            ConnectWithRetries(bool batch, int retry)
+            ConnectWithRetries(bool batch, ushort retry)
         {
 
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
                 LogConfig();
 
-            int attempts = 0;
+            ushort attempts = 0;
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
-                if (attempts == 0)
 #if NETFX_45
-                    await 
+                await 
 #endif
-                    ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) the first time
-                else if (attempts > 0)
-                {
-                    Thread.Sleep(120);     // wait a moment
-                    await ConnectInstruments();  // try again
-
-                }             
+                ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) 
+				Thread.Sleep(90);      // wait a moment
                 attempts++;
             }
             NC.App.Opstate.StopTimer();
         }
 
-        // set only when all assay or HVCalib cycles are completed
+        // set only when all assay or HVCalib cycles are completed, or cancelled
         CountdownEvent _completed;
         public CountdownEvent Completed
 		{

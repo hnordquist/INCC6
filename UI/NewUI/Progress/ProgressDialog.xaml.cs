@@ -48,21 +48,28 @@ namespace NewUI.Progress
             }
 
             InitializeComponent();
-						// devnote: ContinueWith doesn't behave with async await
-
+			// devnote: ContinueWith doesn't behave with async await
 			while (UIIntegration.Controller.Waiter == null && (UIIntegration.Controller.SOH != OperatingState.Stopped))
 			{
-				//System.Threading.Thread.Sleep(125);
+				System.Threading.Thread.Sleep(60);
 				System.Threading.Thread.Yield();
 			}
-			task.ContinueWith(_ => frob(), TaskScheduler.FromCurrentSynchronizationContext());
+			//task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
+			task.ContinueWith(_ => WaitForCompletion(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
-		void frob()
+		void WaitForCompletion()
 		{
 			// devnote: ContinueWith doesn't behave with async await
+			while (UIIntegration.Controller.Waiter == null && (UIIntegration.Controller.SOH != OperatingState.Stopped))
+			{
+				System.Threading.Thread.Sleep(60);
+				System.Threading.Thread.Yield();
+			}
 			if (UIIntegration.Controller.Waiter != null)
-				UIIntegration.Controller.Waiter.Wait();
+				do {
+					System.Threading.Thread.Yield();
+				} while (!UIIntegration.Controller.Waiter.Wait(60));
 			Close();
 		}
 

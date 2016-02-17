@@ -425,7 +425,7 @@ namespace Analysis
                 State.Sup.Construct((string s) =>
                 {
                     AssayPendingComplete();
-                    logger.TraceEvent(LogLevels.Info, 139, "Neutron counting processing complete: '" + s + "'");
+                    logger.TraceEvent(LogLevels.Info, 139, "Neutron counting: '" + s + "'");
                 },
                 (string s) =>
                 {
@@ -700,7 +700,7 @@ namespace Analysis
             if (sb != null)
             {
                 sb.Decode(State.rawDataBuff);
-                if (!String.IsNullOrEmpty(sb.msg))  // urgent: this needs expansion
+                if (!String.IsNullOrEmpty(sb.msg))  // dev note: this needs expansion to support other data stream end conditions, not just the orignal LMMM
                 {
                     if (text.StartsWith("Assay Cancelled."))  // dev note: string constants that should live in the LMMMLingo class.
                         stat = CycleDAQStatus.Cancelled;
@@ -721,7 +721,7 @@ namespace Analysis
     } // LMRawDataTransform
 
 
-    // Dev note TODO: input is typically in fractional shakes, but we want to capture those fractional times within the same shake, so two units are needed, shakes and a higher precision to count within regions
+    // Dev note: input is typically in fractional shakes, but we want to capture those fractional times within the same shake, so two units are needed, shakes and a higher precision to count within regions
     public class PulseProcessingState : LMProcessingState
     {
         public double[] timeInBuffer;
@@ -1035,7 +1035,7 @@ namespace Analysis
 public class MCA527FileProcessingState : LMProcessingState
     {
         public ulong[] timeInBuffer;
-        //New variable to track the reported count time in PTR file. HN 10.15.2015
+        // Track the reported count time
         public int ReportedCountTime = 0;
         internal MCA527FileProcessingState(uint Max, LMProcessingState src)
         {

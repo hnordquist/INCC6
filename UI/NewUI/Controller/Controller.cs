@@ -116,7 +116,7 @@ namespace NewUI
         public void ActivateDetector(Detector det = null)
         {
             if (!file)
-                ActivateDetector(det);
+                DAQControl.ActivateDetector(det);
         }
 
         /// <summary>
