@@ -14,7 +14,7 @@
                 </MenuItem>
                 <MenuItem Header="_Get External Data..." Click="GetExternalDataClick">
                     <MenuItem Header="_Stratum Authority File..." Click="StratumAuthorityFileClick" IsEnabled="False"/>
-                    <MenuItem Header="_Item Relevant Data File..." Click="ItemRelevantDataClick" IsEnabled="False"/>
+                    <MenuItem Header="_Item Relevant Data File..." Click="ItemRelevantDataClick" IsEnabled="True"/>
                     <MenuItem Header="_Transfer..." Click="TransferFileInClick" ToolTip="Import saved transfer files into current INCC database."/>
                     <MenuItem Header="_Initial Data..." Click="InitialDataSelectorClick" ToolTip="Import inital data files (detector and calibration) into the current INCC database." />
                 </MenuItem>

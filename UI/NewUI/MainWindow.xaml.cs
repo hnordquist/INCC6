@@ -32,7 +32,6 @@ using System.Windows;
 using System.Windows.Controls;
 using AnalysisDefs;
 using DetectorDefs;
-using DAQ;
 using Instr;
 using NCCReporter;
 namespace NewUI
@@ -607,8 +606,6 @@ namespace NewUI
                         NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
                         if (NC.App.Opstate.Measurement.Detector.ListMode)
                         {
-                            //  NC.App.DB.UpdateAcquireParams(ap, det.ListMode); //update it again
-                            //   NC.App.DB.UpdateDetector(det);
                             // if ok, the analyzers are set up, so can kick it off now.
                             if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.PTR32)
                             {
@@ -819,17 +816,34 @@ namespace NewUI
 
         private void ItemRelevantDataClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			System.Windows.Forms.OpenFileDialog aDlg =  new System.Windows.Forms.OpenFileDialog();
+			aDlg.CheckFileExists = true;
+			aDlg.FileName = "NCC_Item.dat";
+            aDlg.Filter = "Dat files (*.dat)|*.dat|CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            aDlg.DefaultExt = ".dat";
+            aDlg.InitialDirectory = NC.App.AppContext.FileInput;
+            aDlg.Title = "Select an Item Relevant Data file";
+            aDlg.Multiselect = false;
+            aDlg.RestoreDirectory = true;
+			System.Windows.Forms.DialogResult qw = aDlg.ShowDialog();
+            if (qw == System.Windows.Forms.DialogResult.OK)
+			{
+				NCCFile.ItemFile onefile = new NCCFile.ItemFile();
+				string path = System.IO.Path.GetFullPath(aDlg.FileName);
+				onefile.Process(path);
+				// URGENT: now do something with the results
+			}
+			
         }
 
         private void BackupAllDataClick(object sender, RoutedEventArgs e)
         {
             string dest = UIIntegration.GetUsersFolder("Select Destination", "Select a path to backup data.");
-            if (dest != String.Empty)
+            if (!string.IsNullOrEmpty(dest))
             {
                 string source = System.IO.Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
                 string destFileName;
-                destFileName = String.Format("\\INCC-{0}", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
+                destFileName = string.Format("\\INCC-{0}", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
                 FileStream fs = File.Create (dest + destFileName + ".gz");
                 GZipStream compressionStream = new GZipStream(fs, CompressionMode.Compress);
                 DirectoryInfo selectedDir = new DirectoryInfo(source);
