@@ -165,7 +165,13 @@ namespace Instr
             }
 
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta, 
+					#if NETFX_45
+					TaskCreationOptions.DenyChildAttach, 
+					#else
+					TaskCreationOptions.PreferFairness, 
+					#endif
+					TaskScheduler.Default);
         }
 
         /// <summary>

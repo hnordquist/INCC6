@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -48,28 +48,65 @@ namespace NewUI.Progress
             }
 
             InitializeComponent();
-			// devnote: ContinueWith doesn't behave with async await
-			while (UIIntegration.Controller.Waiter == null && (UIIntegration.Controller.SOH != OperatingState.Stopped))
-			{
-				System.Threading.Thread.Sleep(60);
-				System.Threading.Thread.Yield();
-			}
-			//task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
-			task.ContinueWith(_ => WaitForCompletion(), TaskContinuationOptions.ExecuteSynchronously);
+			_task = task;
+			Go();
         }
+		Task _task;
+		
+		#if NETFX_45
+		async
+		#endif
+		public void Go()
+		{
+			while (UIIntegration.Controller.ConnWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+			{
+				#if NETFX_45
+					await Task.Yield();
+				#else
+					System.Threading.Thread.Yield();
+				#endif
+			}
+			while (UIIntegration.Controller.MeasWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+			{
+				#if NETFX_45
+					await Task.Yield();
+				#else
+					System.Threading.Thread.Yield();
+				#endif
+			}
+			#if NETFX_45
+			await 
+			#endif
+			_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
+		}
 
+#if NETFX_45
+		async
+#endif
 		void WaitForCompletion()
 		{
-			// devnote: ContinueWith doesn't behave with async await
-			while (UIIntegration.Controller.Waiter == null && (UIIntegration.Controller.SOH != OperatingState.Stopped))
+			if (!UIIntegration.Controller.ConnWaiter.IsSet)
+			do
 			{
-				System.Threading.Thread.Sleep(60);
-				System.Threading.Thread.Yield();
-			}
-			if (UIIntegration.Controller.Waiter != null)
-				do {
+				#if NETFX_45
+					await Task.Yield();
+				#else
 					System.Threading.Thread.Yield();
-				} while (!UIIntegration.Controller.Waiter.Wait(60));
+				#endif
+				}
+			while (!UIIntegration.Controller.ConnWaiter.Wait(600));
+
+			if (!UIIntegration.Controller.MeasWaiter.IsSet)
+			do
+			{
+				#if NETFX_45
+					await Task.Yield();
+				#else
+					System.Threading.Thread.Yield();
+				#endif
+			}
+			while (!UIIntegration.Controller.MeasWaiter.Wait(600));
+
 			Close();
 		}
 
@@ -126,9 +163,15 @@ namespace NewUI.Progress
 
             }
             if (progressTracker.m_modal)
+			{
+				dialog.Go();
                 dialog.ShowDialog();
+			}
             else
+			{
+				dialog.Go();
                 dialog.Show();
+			}
         }
 
     }

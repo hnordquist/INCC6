@@ -49,10 +49,15 @@ namespace NCCFile
         public Instrument PseudoInstrument;
         public bool gui;
 
-        CountdownEvent _completed;
-        public CountdownEvent Completed
+        CountdownEvent [] _completed = {  new CountdownEvent(0), new CountdownEvent(0) };
+
+        public CountdownEvent MeasCompleted
 		{
-			get { return _completed; }
+			get { return _completed[0]; }
+		}
+        public CountdownEvent ConnCompleted
+		{
+			get { return _completed[1]; }
 		}
 
         public FileCtrl(bool usingGui)
@@ -67,7 +72,7 @@ namespace NCCFile
         {
             try
             {
-				_completed = new CountdownEvent(1);
+				_completed[0].Reset(1);
                 switch (NC.App.Opstate.Action)
                 {
                     case NCCAction.Assay:
@@ -111,13 +116,13 @@ namespace NCCFile
                 }
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
                 NC.App.Loggers.Flush();
-				_completed.Signal();
+				_completed[0].Signal();
             }
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
-				_completed.Signal();
+				_completed[0].Signal();
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
                 FireEvent(EventType.ActionFinished, this);

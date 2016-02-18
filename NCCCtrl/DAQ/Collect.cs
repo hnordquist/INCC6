@@ -241,7 +241,7 @@ namespace DAQ
 
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
                 LogConfig();
-
+            _completed[1].Reset(1);
             ushort attempts = 0;
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
@@ -252,19 +252,24 @@ namespace DAQ
 				Thread.Sleep(90);      // wait a moment
                 attempts++;
             }
+			_completed[1].Signal();
             NC.App.Opstate.StopTimer();
         }
 
         // set only when all assay or HVCalib cycles are completed, or cancelled
-        CountdownEvent _completed;
-        public CountdownEvent Completed
-		{
-			get { return _completed; }
-		}
+        CountdownEvent [] _completed = {  new CountdownEvent(0), new CountdownEvent(0) };
 
+        public CountdownEvent MeasCompleted
+		{
+			get { return _completed[0]; }
+		}
+        public CountdownEvent ConnCompleted
+		{
+			get { return _completed[1]; }
+		}
         public void MajorOperationCompleted()
         {
-            _completed.Signal();
+            _completed[0].Signal();
             Flush();
             FireEvent(EventType.ActionStop, this);
         }
@@ -297,7 +302,7 @@ namespace DAQ
 
         private bool HVCalibInception()
         {
-            _completed = new CountdownEvent(Instruments.Active.Count);
+            _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
             bool going = StartHVCalib();
             if (going)
@@ -423,7 +428,7 @@ namespace DAQ
         }
         public bool AssayInception()
         {
-            _completed = new CountdownEvent(Instruments.Active.Count);
+            _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
             var task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
             if (task)
@@ -432,7 +437,7 @@ namespace DAQ
                 foreach (ManualResetEventSlim mres in me)
                    if (mres != null) mres.Wait(); // wait for signal from DAQ + Analyzer on each active instrument.
             }
-            _completed.Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
+            _completed[0].Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
             CurState.StopTimer(); // started in StartAssay > ResetForMeasurement
             Thread.Sleep(500);  // todo: separately config the various waits, grep for Thread.Sleep to find them
             return task;

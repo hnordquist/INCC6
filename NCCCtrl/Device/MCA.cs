@@ -2576,9 +2576,13 @@ namespace Device
             MCAResponse[]
 #endif
             SendBroadcastAsync(MCACommand command)
-		{
-			return await SendBroadcastAsync(command, new TimeSpan(0, 0, 1));
-		}
+			{
+				return
+				#if NETFX_45
+					await 
+				#endif
+					SendBroadcastAsync(command, new TimeSpan(0, 0, 1));
+			}
 
 		public
 #if NETFX_45

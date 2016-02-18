@@ -89,17 +89,26 @@ namespace NewUI
             }
         }
 
-		public System.Threading.CountdownEvent Waiter
+		public System.Threading.CountdownEvent ConnWaiter
         {
             get
             {
                 if (file)
-                    return fctrlbind.Completed;
+                    return fctrlbind.ConnCompleted;
                 else
-                    return daqbind.Completed;
+                    return daqbind.ConnCompleted;
             }
         }
-
+		public System.Threading.CountdownEvent MeasWaiter
+        {
+            get
+            {
+                if (file)
+                    return fctrlbind.MeasCompleted;
+                else
+                    return daqbind.MeasCompleted;
+            }
+        }
         public string FileInput
         {
             get { return NC.App.AppContext.FileInput; }
@@ -448,9 +457,14 @@ namespace NewUI
         {
             mProgressTracker = new ProgressTracker();
 
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
-            string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") +
-                                (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
+					#if NETFX_45
+					TaskCreationOptions.DenyChildAttach, 
+					#else
+					TaskCreationOptions.PreferFairness, 
+					#endif				
+					TaskScheduler.Default);
+            string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") + (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
         }
 
@@ -527,7 +541,7 @@ namespace NewUI
 						#if NETFX_45
 						await 
 						#endif
-						ConnectWithRetries(false, 5);
+						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         FireEvent(EventType.ActionFinished, this);
                         break;
@@ -536,7 +550,7 @@ namespace NewUI
 						#if NETFX_45
 						await 
 						#endif
-                        ConnectWithRetries(false, 5);
+                        ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         HVCoreOp();
                         FireEvent(EventType.ActionFinished, this);
@@ -546,7 +560,7 @@ namespace NewUI
 						#if NETFX_45
 						await 
 						#endif
-						ConnectWithRetries(false, 5);
+						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         AssayCoreOp();
                         DisconnectInstruments();
@@ -594,7 +608,13 @@ namespace NewUI
             mProgressTracker = new ProgressTracker();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
+					#if NETFX_45
+					TaskCreationOptions.DenyChildAttach, 
+					#else
+					TaskCreationOptions.PreferFairness, 
+					#endif				
+					TaskScheduler.Default);
             Progress.ProgressDialog.Show(null, "DAQ " + NC.App.Opstate.Action.ToString(), NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
 
         }

@@ -710,7 +710,7 @@ namespace LMRawAnalysis
         void AHWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AHWorkerHasCompleted = true;
-            FireAnalysesCompletedEvent("list mode data analyzer handling thread completed.");
+            FireAnalysesCompletedEvent("list mode analysis completed.");
         }
         #endregion
 
