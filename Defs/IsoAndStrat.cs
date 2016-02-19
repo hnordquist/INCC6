@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -218,7 +218,7 @@ namespace AnalysisDefs
                 pu_date = new DateTime(iso.pu_date.Ticks);
                 am_date = new DateTime(iso.am_date.Ticks);
                 isotopes = CopyArray(iso.isotopes);
-                id = String.Copy(iso.id);
+                id = string.Copy(iso.id);
                 source_code = iso.source_code;
             }
         }
@@ -228,7 +228,7 @@ namespace AnalysisDefs
             pu_date = new DateTime(src.pu_date.Ticks);
             am_date = new DateTime(src.am_date.Ticks);
             isotopes = CopyArray(src.isotopes);
-            id = String.Copy(src.id);
+            id = string.Copy(src.id);
             source_code = src.source_code;
         }
 
@@ -237,7 +237,7 @@ namespace AnalysisDefs
             dest.pu_date = new DateTime(pu_date.Ticks);
             dest.am_date = new DateTime(am_date.Ticks);
             dest.isotopes = CopyArray(isotopes);
-            dest.id = String.Copy(id);
+            dest.id = string.Copy(id);
             dest.source_code = source_code;
             dest.modified = true;
         }
@@ -537,10 +537,27 @@ namespace AnalysisDefs
 
         public static readonly DateTime ZeroIAEATime;
         public static readonly double[] Halflives;
+
+		        // INCC5-style getters
+        public double pu238 { get { return this[Isotope.pu238].v; } }
+        public double pu239 { get { return this[Isotope.pu239].v; } }
+        public double pu240 { get { return this[Isotope.pu240].v; } }
+        public double pu241 { get { return this[Isotope.pu241].v; } }
+        public double pu242 { get { return this[Isotope.pu242].v; } }
+        public double am241 { get { return this[Isotope.am241].v; } }
+
         static CompositeIsotopics()
         {
             ZeroIAEATime = new DateTime(1952, 1, 1);
             Halflives = new double[] { 0, PU238HL, PU239HL, PU240HL, PU241HL, PU242HL, AM241HL, CF252HL, CMHL, U235HL, 1.0 };
+        }
+
+		public void InitVals()
+        {
+            pu_date = new DateTime(2010, 1, 1);
+            am_date = new DateTime(2010, 1, 1);
+            isotopes = MakeArray();
+            isotopes[(int)Isotope.pu240].v = 100.0;
         }
 
         Tuple[] isotopes;
@@ -626,7 +643,7 @@ namespace AnalysisDefs
                 pu_date = new DateTime(iso.pu_date.Ticks);
                 am_date = new DateTime(iso.am_date.Ticks);
                 isotopes = CopyArray(iso.isotopes);
-                id = String.Copy(iso.id);
+                id = string.Copy(iso.id);
                 source_code = iso.source_code;
                 pu_mass = iso.pu_mass;
             }
@@ -637,7 +654,7 @@ namespace AnalysisDefs
             pu_date = new DateTime(src.pu_date.Ticks);
             am_date = new DateTime(src.am_date.Ticks);
             isotopes = CopyArray(src.isotopes);
-            id = String.Copy(src.id);
+            id = string.Copy(src.id);
             source_code = src.source_code;
             pu_mass = src.pu_mass;
         }
@@ -647,7 +664,7 @@ namespace AnalysisDefs
             dest.pu_date = new DateTime(pu_date.Ticks);
             dest.am_date = new DateTime(am_date.Ticks);
             dest.isotopes = CopyArray(isotopes);
-            dest.id = String.Copy(id);
+            dest.id = string.Copy(id);
             dest.source_code = source_code;
             dest.modified = true;
             dest.pu_mass = pu_mass;

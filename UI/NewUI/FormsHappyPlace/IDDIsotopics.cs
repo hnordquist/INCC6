@@ -351,7 +351,7 @@ namespace NewUI
 				return;            
 			NCCFile.IsoFiles possibleIsoAndCompIsoFilesToAttemptProcessingUpon = new NCCFile.IsoFiles();
 			possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Process(new List<string>(RestoreFileDialog.FileNames));
-			foreach (Isotopics iso in possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics) // add all new values into the database
+			foreach (Isotopics iso in possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Results.IsoIsotopics) // add all new values into the database
 			{
 				iso.modified = true;
 				if (NC.App.DB.Isotopics.Set(iso) >= 0)
@@ -359,11 +359,11 @@ namespace NewUI
 					applog.TraceInformation("'" + iso.id + "' isotopics updated/added");
 				}
 			}
-			int count = possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics.Count;
+			int count = possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Results.IsoIsotopics.Count;
 			if (count > 0)
 			{
 				NC.App.DB.Isotopics.Refresh();  // update isotopics in-memory list from the freshly updated database 
-				RefreshIdComboWithDefaultOrSet(possibleIsoAndCompIsoFilesToAttemptProcessingUpon.IsoIsotopics[count-1].id);  // make the last read iso the currrent iso
+				RefreshIdComboWithDefaultOrSet(possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Results.IsoIsotopics[count-1].id);  // make the last read iso the currrent iso
 			}
          }
 

@@ -200,6 +200,7 @@ namespace Instr
                 //m_device.Reset();
                 stopwatch.Start();
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+				Thread.Sleep((int)duration.TotalMilliseconds);
                 while (stopwatch.Elapsed < duration) {
                 //    cancellationToken.ThrowIfCancellationRequested();
 
@@ -210,7 +211,9 @@ namespace Instr
                 //            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
                 //            total += bytesRead;
                 //        }
-                //    }
+                //    } else {
+				//       Sleep(0);
+				//     }
                 }
 
                 stopwatch.Stop();
