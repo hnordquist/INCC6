@@ -151,8 +151,6 @@ namespace NewUI
 
     public partial class MainWindow : Window
     {
-        //System.Timers.Timer oneSecondTimer;  //This GUI-scoped timer helps control updating the display of information in the GUI
-
 
         public void OneSecondGuiUpdate(object source, System.Timers.ElapsedEventArgs e)
         {

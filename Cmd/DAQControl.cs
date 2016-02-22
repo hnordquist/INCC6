@@ -56,10 +56,10 @@ namespace NCCCmd
         public DAQControlBind()
             : base(false)
         {
-            ApplyCmdLineOverrideAgain();
+            ApplyCmdLineOverride();
         }
 
-        public void ApplyCmdLineOverrideAgain()
+        public void ApplyCmdLineOverride()
         {
             NC.App.Opstate.Action = (NCCAction)NC.App.Config.Cur.Action;  // command line flag can set this, the override above makes sure the cmd line is the state
         }
@@ -80,42 +80,42 @@ namespace NCCCmd
             LMLoggers.LognLM applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
             /// set up the 7 magic event handlers
             /// here I have a base handler that does the same thing for every event (writes a string to the log) 
-            SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
+            SetEventHandler(EventType.PreAction, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.PreAction, applog, LogLevels.Verbose, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
+            SetEventHandler(EventType.ActionPrep, (object o) =>
             {
-				string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
+				string s = LogAndSkimDAQProcessingStatus(EventType.ActionPrep, applog, LogLevels.Verbose, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
+            SetEventHandler(EventType.ActionStart, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStart, applog, LogLevels.Verbose, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
+            SetEventHandler(EventType.ActionInProgress, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionInProgress, applog, LogLevels.Verbose, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
+            SetEventHandler(EventType.ActionStop, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStop, applog, LogLevels.Warning, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
+            SetEventHandler(EventType.ActionCancel, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionCancel, applog, LogLevels.Warning, o);
             });
-            SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
+            SetEventHandler(EventType.ActionFinished, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Info, o);
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionFinished, applog, LogLevels.Info, o);
+                NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 NC.App.Loggers.Flush();
             });
 
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+            NC.App.Opstate.SOH = OperatingState.Stopped;
         }
 
 
-        // prior to calling StartAction, set up the state via the config classes
+        // devnote: prior to calling StartAction, set up the state via the config classes
         public new void StartAction()
         {
             base.StartAction();

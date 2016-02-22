@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -25,7 +25,6 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
 
 namespace NewUI
 {
@@ -34,40 +33,40 @@ namespace NewUI
 
         private const string Sci = "G4";
         private const string F2 = "F2";
-        static public String Rend(Int32 d)
+        static public string Rend(int d)
         {
             return d.ToString();
         }
-        static public String Rend(Int64 d)
+        static public string Rend(long d)
         {
             return d.ToString();
         }
-        static public String Rend(Double d)
+        static public string Rend(double d)
         {
             return d.ToString();
         }
 
-        static public String Rend(Single d)
+        static public string Rend(float d)
         {
             return d.ToString();
         }
-        static public String Rend(UInt64 d)
+        static public string Rend(ulong d)
         {
             return d.ToString();
         }
-        static public String Rend(UInt32 d)
+        static public string Rend(uint d)
         {
             return d.ToString();
         }
-        static public String Rend(UInt16 d)
+        static public string Rend(ushort d)
         {
             return d.ToString();
         }
-        static public String Rend(Int16 d)
+        static public string Rend(short d)
         {
             return d.ToString();
         }
-        static public String Rend(Byte d)
+        static public string Rend(byte d)
         {
             return d.ToString();
         }
@@ -75,10 +74,10 @@ namespace NewUI
         // Convert a string to a positive, non-zero double if possible
         // If the value is legal, place it into the TargetValue reference and return true.  Otherwise, return false.
 
-        static public Boolean ToPNZ(String s, ref Double TargetValue)
+        static public bool ToPNZ(string s, ref double TargetValue)
         {
-            Double NewValue;
-            if (Double.TryParse(s, out NewValue))
+            double NewValue;
+            if (double.TryParse(s, out NewValue))
             {
                 if (NewValue > 0.0 && NewValue != TargetValue)
                 {
@@ -89,7 +88,7 @@ namespace NewUI
             return false;
         }
 
-        static public Boolean ToPNZ(String s, ref ushort TargetValue)
+        static public bool ToPNZ(string s, ref ushort TargetValue)
         {
             ushort NewValue;
             if (ushort.TryParse(s, out NewValue))
@@ -104,7 +103,7 @@ namespace NewUI
         }
 
 
-        static public Boolean ToPNZ(String s, ref int TargetValue)
+        static public bool ToPNZ(string s, ref int TargetValue)
         {
             int NewValue;
             if (int.TryParse(s, out NewValue))
@@ -121,10 +120,10 @@ namespace NewUI
 
         // Convert a string to a double between 0.0 and 100.0, inclusive, if possible.
         // If the value is legal, place it into the TargetValue reference and return true.  Otherwise, return false.
-        static public Boolean ToPct(String s, ref Double TargetValue)
+        static public bool ToPct(string s, ref double TargetValue)
         {
-            Double NewValue;
-            if (Double.TryParse(s, out NewValue))
+            double NewValue;
+            if (double.TryParse(s, out NewValue))
             {
                 if (NewValue >= 0.0 && NewValue <= 100.0 && NewValue != TargetValue)
                 {
@@ -137,10 +136,10 @@ namespace NewUI
 
         // Convert a string to a non-negative double, if possible.
         // If the value is legal, place it into the TargetValue reference and return true.  Otherwise, return false.
-        static public Boolean ToNN(String s, ref Double TargetValue)
+        static public bool ToNN(string s, ref double TargetValue)
         {
-            Double NewValue;
-            if (Double.TryParse(s, out NewValue))
+            double NewValue;
+            if (double.TryParse(s, out NewValue))
             {
                 if (NewValue >= 0.0 && NewValue != TargetValue)
                 {
@@ -153,7 +152,7 @@ namespace NewUI
 
         // Convert a string to a non-negative uint, if possible.
         // If the value is legal, place it into the TargetValue reference and return true.  Otherwise, return false.
-        static public Boolean ToNN(String s, ref uint TargetValue)
+        static public bool ToNN(string s, ref uint TargetValue)
         {
             uint NewValue;
             if (uint.TryParse(s, out NewValue))
@@ -167,7 +166,7 @@ namespace NewUI
             return false;
         }
 
-        static public Boolean ToInt(String s, ref int TargetValue)
+        static public bool ToInt(string s, ref int TargetValue)
         {
             int NewValue;
             if (int.TryParse(s, out NewValue) && NewValue != TargetValue)
@@ -178,7 +177,7 @@ namespace NewUI
             return false;
         }
 
-        static public Boolean ToUInt(String s, ref uint TargetValue)
+        static public bool ToUInt(string s, ref uint TargetValue)
         {
             uint NewValue;
             if (uint.TryParse(s, out NewValue) && NewValue != TargetValue)
@@ -196,7 +195,7 @@ namespace NewUI
         /// <param name="s"></param>
         /// <param name="TargetValue"></param>
         /// <returns> If the value is legal, place it into the TargetValue reference and return true. Otherwise, return false.</returns>
-        static public Boolean ToNZInt(String s, ref int TargetValue)
+        static public bool ToNZInt(string s, ref int TargetValue)
         {
             int NewValue;
             if (int.TryParse(s, out NewValue) && NewValue != TargetValue)
@@ -213,7 +212,7 @@ namespace NewUI
         /// <param name="s"></param>
         /// <param name="TargetValue"></param>
         /// <returns> If the value is legal, place it into the TargetValue reference and return true. Otherwise, return false.</returns>
-        static public Boolean ToNN(String s, ref ushort TargetValue)
+        static public bool ToNN(string s, ref ushort TargetValue)
         {
             ushort NewValue;
             if (ushort.TryParse(s, out NewValue))
@@ -226,7 +225,7 @@ namespace NewUI
             }
             return false;
         }
-        static public Boolean ToNN(String s, ref ulong TargetValue)
+        static public bool ToNN(string s, ref ulong TargetValue)
         {
             ulong NewValue;
             if (ulong.TryParse(s, out NewValue))
@@ -240,10 +239,10 @@ namespace NewUI
             return false;
         }
 
-        static public Boolean ToDbl(String s, ref Double TargetValue, double low = double.MinValue, double high = double.MaxValue)
+        static public bool ToDbl(string s, ref double TargetValue, double low = double.MinValue, double high = double.MaxValue)
         {
-            Double NewValue;
-            if (Double.TryParse(s, out NewValue))
+            double NewValue;
+            if (double.TryParse(s, out NewValue))
             {
                 if ((NewValue > low && NewValue < high) && NewValue != TargetValue)
                 {
@@ -255,10 +254,10 @@ namespace NewUI
         }
 
 
-        static public Boolean ToInt32(String s, ref Int32 TargetValue, Int32 low = Int32.MinValue, Int32 high = Int32.MaxValue)
+        static public bool ToInt32(string s, ref int TargetValue, int low = int.MinValue, int high = int.MaxValue)
         {
-            Int32 NewValue;
-            if (Int32.TryParse(s, out NewValue))
+            int NewValue;
+            if (int.TryParse(s, out NewValue))
             {
                 if ((NewValue >= low && NewValue <= high) && NewValue != TargetValue)
                 {
@@ -269,10 +268,10 @@ namespace NewUI
             return false;
         }
 
-        static public Boolean ToUInt64(String s, ref UInt64 TargetValue, UInt64 low = UInt64.MinValue, UInt64 high = UInt64.MaxValue)
+        static public bool ToUInt64(string s, ref ulong TargetValue, ulong low = ulong.MinValue, ulong high = ulong.MaxValue)
         {
-            UInt64 NewValue;
-            if (UInt64.TryParse(s, out NewValue))
+            ulong NewValue;
+            if (ulong.TryParse(s, out NewValue))
             {
                 if ((NewValue >= low && NewValue <= high) && NewValue != TargetValue)
                 {
@@ -284,10 +283,10 @@ namespace NewUI
         }
 
         public enum WTF { Good, NonNumeric, Range, Plotz }
-        static public WTF ToUInt64(ref string text, UInt64 low = UInt64.MinValue, UInt64 high = UInt64.MaxValue)
+        static public WTF ToUInt64(ref string text, ulong low = ulong.MinValue, ulong high = ulong.MaxValue)
         {
-            UInt64 d = 0;
-            bool modified = UInt64.TryParse(text, out d);
+            ulong d = 0;
+            bool modified = ulong.TryParse(text, out d);
             if (modified)
             {
                 if (d >= low && d <= high)
@@ -301,7 +300,7 @@ namespace NewUI
             return WTF.NonNumeric;
         }
 
-        static public Boolean Changed(String s, ref String TargetValue)
+        static public bool Changed(string s, ref string TargetValue)
         {
             if (!s.Equals(TargetValue))
             {

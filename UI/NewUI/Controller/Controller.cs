@@ -45,7 +45,7 @@ namespace NewUI
     public partial class Controller
     {
         NCC.MeasurementStatus measStatus;
-        public Boolean updateGUIWithNewData = true;
+        public bool updateGUIWithNewData = true;
         public bool updateGUIWithChannelRatesData = false;
 
         // DAQ operations

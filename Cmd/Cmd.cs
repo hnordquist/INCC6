@@ -79,21 +79,21 @@ namespace NCCCmd
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
-					initialized = NCC.IntegrationHelpers.SetNewCurrentDetector(c.Cur.Detector, true);
+					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
 					goto frob;
 
                 if (!string.IsNullOrEmpty(c.Cur.Material) && !c.Cur.Material.Equals("Pu")) // command line set the value
-                    initialized = NCC.IntegrationHelpers.SetNewCurrentMaterial(c.Cur.Material, true);
+                    initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
                     goto frob;
 
                 if (!string.IsNullOrEmpty(c.Cur.ItemId)) // command line set the item value, use it to override the material and other acquire params
-                    initialized = NCC.IntegrationHelpers.SetNewCurrentMaterial(c.Cur.Material, true);
+                    initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
                     goto frob;
 
-				if (NC.App.Config.App.UsingFileInput || NC.App.Opstate.Action != NCC.NCCAction.Assay)
+				if (NC.App.Config.App.UsingFileInput || NC.App.Opstate.Action == NCC.NCCAction.File)
 				{
 	                BuildMeasurement();
 					if (NC.App.AppContext.AssayFromFiles)
@@ -109,9 +109,17 @@ namespace NCCCmd
 					filecontrol.StartAction();  // step into the code and Run run run!
 
 					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-				} else
+				}
+				else
 				{
-                    applog.TraceInformation("==== File operations only!");
+					BuildMeasurement();
+					DAQControlBind control = new DAQControlBind();
+					
+                    //control.SetupTimerCallBacks();
+                    DAQControlBind.ActivateDetector(NC.App.Opstate.Measurement.Detector);
+					control.SetupEventHandlers();
+					control.StartAction();
+					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
                 }
                 frob:
 				;
