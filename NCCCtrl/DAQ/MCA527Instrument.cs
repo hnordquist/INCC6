@@ -200,9 +200,9 @@ namespace Instr
                 //m_device.Reset();
                 stopwatch.Start();
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
-				Thread.Sleep((int)duration.TotalMilliseconds);
                 while (stopwatch.Elapsed < duration) {
-                //    cancellationToken.ThrowIfCancellationRequested();
+					Thread.Sleep((int)duration.TotalMilliseconds/10);
+					cancellationToken.ThrowIfCancellationRequested();
 
                 //    if (m_device.Available > 0) {
                 //        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
@@ -231,20 +231,17 @@ namespace Instr
                 DAQControl.HandleEndOfCycleProcessing(this, new Analysis.StreamStatusBlock(@"MCA527 Done"));
             }
             catch (OperationCanceledException) {
-                //Analysis.StreamStatusBlock ssb = new Analysis.StreamStatusBlock(@"Assay Cancelled.");
-                //DAQControl.HandleEndOfCycleProcessing(this, ssb);
-
-                m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Stopped assay", DeviceName);
+                m_logger.TraceEvent(LogLevels.Warning, 767, "MCA527[{0}]: Stopping assay", DeviceName);
                 m_logger.Flush();
                 DAQControl.StopActiveAssayImmediately();
-                throw;
+                //throw; cannot catch easily due to 4.5 task mdel or my c^&p coding, so just log and stop the task
             }
             catch (Exception ex) {
                 m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during assay: {1}", DeviceName, ex.Message);
                 m_logger.TraceException(ex, true);
                 m_logger.Flush();
                 DAQControl.HandleFatalGeneralError(this, ex);
-                throw;
+                //throw; cannot catch upthread due to 4.5 task model
             }
         }
 

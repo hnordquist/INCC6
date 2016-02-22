@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -323,7 +323,7 @@ namespace DAQ
         }
         /// <summary>
         /// Handle a fatal exception from the neutron counting code during live DAQ
-        /// Stop current assay, finish cycle summary, close NCD file, and signal controller to close down and write summary output
+        /// Stop current assay, finish cycle summary, close data file, and signal controller to close down and write summary output
         /// </summary>
         /// <param name="activeInstr">Instrument source of data under analysis that raised the exception</param>
         /// <param name="e">exception instance raised, carries message for status recording</param>
@@ -343,14 +343,14 @@ namespace DAQ
         // test: this hasn't been tested well, and probably needs some work
         /// <summary>
         /// Handle a cancellation from the neutron counting code during live DAQ
-        /// Stop current assay, dont wait for more data, close NCD file, and signal controller to close down and write summary output
+        /// Stop current assay, dont wait for more data, close data file, and signal controller to close down and write summary output
         /// </summary>
         /// <param name="activeInstr">Instrument source of data that was active when cancellation request dectected</param>
         internal static void StopActiveAssayImmediately()
         {
             CurState.Measurement.RequestedRepetitions = CurState.Measurement.CurrentRepetition; // will this work ? ;)
             CurState.State = DAQInstrState.Online; // remaining buffers should now bypass DAQ section
-            gControl.StopLMCAssay(false); // stop the instruments and close the NCD file
+            gControl.StopLMCAssay(false); // stop the instruments and close the data file
             gControl.collog.TraceEvent(LogLevels.Info, 428, "DAQ cancelled");
             foreach (Instrument activeInstr in Instruments.Active)
             {
