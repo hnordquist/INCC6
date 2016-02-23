@@ -296,23 +296,6 @@ namespace Device
             GetRegisterWriter(0).Write((byte)0);
         }
 
-        /// <summary>
-        /// Sets the desired voltage in volts (V).
-        /// </summary>
-        /// <param name="voltage">The desired voltage in volts (V).</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="voltage"/> is negative or greater than <see cref="MaxVoltage"/>.</exception>
-        /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        public void SetVoltage(int voltage)
-        {
-            if (voltage < 0 || voltage > MaxVoltage)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            CheckDisposed();
-            GetRegisterWriter(5).Write((short)voltage);
-        }
 
         /// <summary>
         /// Throws an <see cref="ObjectDisposedException"/> if the device has been closed.

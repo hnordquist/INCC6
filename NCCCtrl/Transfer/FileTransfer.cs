@@ -180,6 +180,9 @@ namespace NCCTransfer
                 Marshal.SizeOf(bkg_parms) + Marshal.SizeOf(norm_parms) +
                 Marshal.SizeOf(add_a_source_setup) + Marshal.SizeOf(tm_bkg_parms);
 
+			
+            // long size_version_6_detector_parms = size_version_5_detector_parms + List mode stuff added;
+
             bool result = false;
             FileStream stream;
             BinaryReader reader;

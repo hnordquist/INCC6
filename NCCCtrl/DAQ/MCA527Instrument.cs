@@ -54,7 +54,7 @@ namespace Instr
         {
             LMMMConfig lm = ((DetectorDefs.LMConnectionInfo)(detector.Id.FullConnInfo)).DeviceConfig;
             m_setvoltage = ((lm.LEDs == 2) || (lm.LEDs == 0)) ? false : true;
-            m_voltage = (int)detector.MultiplicityParams.SR.highVoltage;
+            m_voltage = (ushort)detector.MultiplicityParams.SR.highVoltage;
             file = new MCAFile();
             file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             MaxSetVoltageTime = TimeSpan.FromSeconds(((DetectorDefs.LMConnectionInfo)(detector.Id.FullConnInfo)).DeviceConfig.HVTimeout);
@@ -189,17 +189,19 @@ namespace Instr
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
                 m_logger.Flush();
 
-                //if (m_setvoltage)
-                //   await SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+                if (m_setvoltage)
+#if NETFX_45
+                    await 
+#endif	                   
+						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
             
                 Stopwatch stopwatch = new Stopwatch();
                 TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
                 byte[] buffer = new byte[1024 * 1024];
                 long total = 0;
 
-                //m_device.Reset();
                 stopwatch.Start();
-                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time", DateTime.Now.ToString());
                 while (stopwatch.Elapsed < duration) {
 					Thread.Sleep((int)duration.TotalMilliseconds/10);
 					cancellationToken.ThrowIfCancellationRequested();
@@ -217,7 +219,7 @@ namespace Instr
                 }
 
                 stopwatch.Stop();
-                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());
+                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
 
                 lock (m_monitor) {
                     m_cancellationTokenSource.Dispose();
@@ -302,8 +304,11 @@ namespace Instr
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
                 m_logger.Flush();
-
-                SetVoltage(voltage, MaxSetVoltageTime, cancellationToken);
+                uint x = 
+#if NETFX_45
+                    await 
+#endif				
+					SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
 
                 MCA527RateCounter counter = new MCA527RateCounter(m_device);
                 counter.TakeMeasurement(duration, cancellationToken);
@@ -338,7 +343,7 @@ namespace Instr
                 m_logger.Flush();
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 PendingComplete();
-                throw;
+                //throw;
             }
             catch (Exception ex) {
                 m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
@@ -346,7 +351,7 @@ namespace Instr
                 m_logger.Flush();
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 PendingComplete();
-                throw;
+                //throw;
             }
         }
 
@@ -383,42 +388,64 @@ namespace Instr
             m_logger.Flush();
         }
 
-        /// <summary>
-        /// Sets the voltage.
-        /// </summary>
-        /// <param name="voltage">The voltage to set in volts.</param>
-        /// <param name="timeout">The maximum length of time to wait for the voltage to be set.</param>
-        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
-        /// <exception cref="OperationCanceledException">Cancellation was requested through <paramref name="cancellationToken"/>.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        /// <exception cref="TimeoutException">The voltage was not set within the allotted time.</exception>
-        /// <remarks>
-        /// This method does not return until one of the following occurs:
-        /// <list type="number">
-        /// <item><description>The voltage is within <see cref="VoltageTolerance"/> volts of <paramref name="voltage"/>.</description></item>
-        /// <item><description>More than <paramref name="timeout"/> time has elapsed.</description></item>
-        /// <item><description>Cancellation is requested through <paramref name="cancellationToken"/>.</description></item>
-        /// </list>
-        /// </remarks>
-        private void SetVoltage(int voltage, TimeSpan timeout, CancellationToken cancellationToken)
-        {
-            m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Setting voltage to {1} volts, timeout is {2}, tolerance is {3}...", DeviceName, voltage, MaxSetVoltageTime.ToString("g"), VoltageTolerance);
+		/// <summary>
+		/// Sets the voltage.
+		/// </summary>
+		/// <param name="voltage">The voltage to set in volts.</param>
+		/// <param name="timeout">The maximum length of time to wait for the voltage to be set.</param>
+		/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+		/// <exception cref="OperationCanceledException">Cancellation was requested through <paramref name="cancellationToken"/>.</exception>
+		/// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="TimeoutException">The voltage was not set within the allotted time.</exception>
+		/// <remarks>
+		/// This method does not return until one of the following occurs:
+		/// <list type="number">
+		/// <item><description>The voltage is within <see cref="VoltageTolerance"/> volts of <paramref name="voltage"/>.</description></item>
+		/// <item><description>More than <paramref name="timeout"/> time has elapsed.</description></item>
+		/// <item><description>Cancellation is requested through <paramref name="cancellationToken"/>.</description></item>
+		/// </list>
+		/// </remarks>
+		private async Task<uint> SetVoltage(ushort voltage, TimeSpan timeout, CancellationToken cancellationToken)
+		{
+			m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Setting voltage to {1} volts, timeout is {2}, tolerance is {3}...", DeviceName, voltage, MaxSetVoltageTime.ToString("g"), VoltageTolerance);
+			m_logger.Flush();
+			Stopwatch stopwatch = Stopwatch.StartNew();
+
+			m_device.SetHighVoltage(voltage, BiasInhibitInput.InhibitOff);  // don't wait here, but loop and report, permitting cancel at any time in case the HW hose-ed
+
+			Task<uint> hvx = m_device.GetHighVoltage();
+
+			while (Math.Abs(hvx.Result - voltage) > VoltageTolerance) {
+                if (cancellationToken.IsCancellationRequested) {
+                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Cancellation requested while setting voltage", DeviceName);
+                    m_logger.Flush();
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+                else if (stopwatch.Elapsed > timeout) {
+                    m_logger.TraceEvent(LogLevels.Warning, 0, "MCA527[{0}]: Timed out while setting voltage (last seen {1} volts)", DeviceName, hvx.Result);
+                    m_logger.Flush();
+
+                    throw new TimeoutException("Timed out while setting voltage");
+                }
+				hvx = m_device.GetHighVoltage();
+				hvx.Wait();
+                if (stopwatch.Elapsed.Milliseconds % 10000 == 0)
+                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: At {1} volts", DeviceName, hvx.Result);
+				Task.Delay(100).Wait();
+            }
+            m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage set to {1} volts (Elapsed time: {2})",
+                DeviceName, hvx.Result, stopwatch.Elapsed.ToString("g"));
             m_logger.Flush();
+			return hvx.Result;
+		}
 
-            // set the voltage and check it, loop for timeout seconds waiting for it to settle at the desired value
-            //return m_device.SetHighVoltage(0, BiasInhibitInput.InhibitOff).Wait();
-			           
-            //m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage set to {1} volts (Elapsed time: {2})",
-            //    DeviceName, lrvoltage, stopwatch.Elapsed.ToString("g"));
-            //m_logger.Flush();
-        }
-
-        /// <summary>
-        /// Determines whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">The object to compare with the current object.</param>
-        /// <returns><c>true</c> if the current object is equal to <paramref name="other"/>; otherwise, <c>false</c>.</returns>
-        public bool Equals(MCA527Instrument other)
+		/// <summary>
+		/// Determines whether the current object is equal to another object of the same type.
+		/// </summary>
+		/// <param name="other">The object to compare with the current object.</param>
+		/// <returns><c>true</c> if the current object is equal to <paramref name="other"/>; otherwise, <c>false</c>.</returns>
+		public bool Equals(MCA527Instrument other)
         {
             return base.Equals((LMInstrument) other);
         }
@@ -507,9 +534,9 @@ namespace Instr
 
         private CancellationTokenSource m_cancellationTokenSource;
         private MCADevice m_device;
-        private LMLoggers.LognLM m_logger = CentralizedState.App.Logger(LMLoggers.AppSection.Collect);
+        private LMLoggers.LognLM m_logger = NC.App.Logger(LMLoggers.AppSection.Collect);
         private object m_monitor = new object();
-        private int m_voltage;
+        private ushort m_voltage;
         private bool m_setvoltage;
         private int VoltageTolerance;
     }

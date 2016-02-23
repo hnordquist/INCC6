@@ -30,12 +30,14 @@ using System.Windows.Forms;
 
 namespace NewUI
 {
+    using Integ = NCC.IntegrationHelpers;
     public partial class IDDReviewHoldup : Form
     {
         public IDDReviewHoldup()
         {
             InitializeComponent();
-        }
+			this.Text += " for Detector " + Integ.GetCurrentAcquireDetector().Id.DetectorId;
+		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
             IDDMeasurementList measlist = new IDDMeasurementList("Holdup");

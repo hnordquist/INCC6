@@ -26,13 +26,12 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
 
-    using NC = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
 
     public partial class IDDReviewAll : Form
     {
@@ -43,7 +42,8 @@ namespace NewUI
         {
             InitializeComponent();
 			bLMOnly = LMOnly;
-            
+  			Detector det = Integ.GetCurrentAcquireDetector();
+			this.Text += " for Detector " + det.Id.DetectorId;          
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {

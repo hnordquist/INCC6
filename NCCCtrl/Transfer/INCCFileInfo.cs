@@ -53,7 +53,9 @@ namespace NCCTransfer
         public static readonly string OLD_REVIEW = "RAW";
 
         static public string DETECTOR_SAVE_RESTORE = "DETECT";	/* id for detector save/restore files */
+        static public string DETECTOR_SAVE_REST6RE = "DETEC6";	/* id for INCC6 detector save/restore files */
         static public string CALIBRATION_SAVE_RESTORE = "CAL  "; /* id for calibration save/restore files */
+        static public string CALIBRATION_SAVE_REST6RE = "CAL6 "; /* id for INCC6 calibration save/restore files */
         public static string[] Extensions = new string[] {".BKG",		/* background measurement file extension */
                                                 ".INS",		/* initial source file extension */
                                                  ".NOR",			/* bias measurement file extension */

@@ -67,7 +67,7 @@ namespace NCCFile
             }
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
             FireEvent(EventType.ActionFinished, this);
         }
@@ -117,8 +117,8 @@ namespace NCCFile
                         break;
                     UInt32 run_seconds;
 
-                    UInt16 number_good_runs = 0;
-                    UInt16 total_number_runs = 0;
+                    ushort number_good_runs = 0;
+                    ushort total_number_runs = 0;
                     double run_count_time = 0;
                     double total_good_count_time = 0;
 
@@ -126,7 +126,7 @@ namespace NCCFile
                     {
                         /* number of good runs */
                         string l = td.reader.ReadLine();
-                        UInt16.TryParse(l, out number_good_runs);
+                        ushort.TryParse(l, out number_good_runs);
                         if (number_good_runs == 0)
                         {
                             ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
@@ -161,7 +161,7 @@ namespace NCCFile
                     for (int i = 0; i < number_good_runs; i++)
                     {
                         /* run date and time (IAEA format) */
-                        run_seconds = (UInt32)(i * (UInt16)run_count_time); // from start time
+                        run_seconds = (UInt32)(i * (ushort)run_count_time); // from start time
                         AddTestDataCycle(i, run_seconds, run_count_time, meas, td);
                         if (i % 8 == 0)
                             FireEvent(EventType.ActionInProgress, this);
@@ -181,7 +181,7 @@ namespace NCCFile
                             {
                                 ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. " + "AAS p" + n.ToString());
                             }
-                            UInt16.TryParse(l, out number_good_runs);
+                            ushort.TryParse(l, out number_good_runs);
                             if (number_good_runs == 0)
                             {
                                 ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. " + "AAS p" + n.ToString());
@@ -199,7 +199,7 @@ namespace NCCFile
                             for (int i = 0; i < number_good_runs; i++)
                             {
                                 /* run date and time (IAEA format) */
-                                run_seconds = (UInt32)((n + 1) * (i + 1) * (UInt16)run_count_time); // from start time
+                                run_seconds = (UInt32)((n + 1) * (i + 1) * (ushort)run_count_time); // from start time
                                 AddTestDataCycle(i, run_seconds, run_count_time, meas, td, " AAS p" + n.ToString(), n);
                                 if (i % 8 == 0)
                                     FireEvent(EventType.ActionInProgress, this);
@@ -210,7 +210,7 @@ namespace NCCFile
                 }
                 catch (Exception e)
                 {
-                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    NC.App.Opstate.SOH = OperatingState.Trouble;
                     ctrllog.TraceException(e, true);
                     ctrllog.TraceEvent(LogLevels.Error, 437, "Test data file processing stopped with error: '" + e.Message + "'");
                 }
@@ -225,7 +225,7 @@ namespace NCCFile
             }
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
 			FireEvent(EventType.ActionFinished, this);
         }
@@ -295,8 +295,8 @@ namespace NCCFile
 
                 /* number of multiplicity values */
                 string mv = td.reader.ReadLine();
-                UInt16 k = 0;
-                UInt16.TryParse(mv, out k);
+                ushort k = 0;
+                ushort.TryParse(mv, out k);
                 if (k == 0)  // test data files require an entry with 1 bin set 0s for the absence of multiplicity, go figure
                 {
                     ctrllog.TraceEvent(LogLevels.Error, 440, "This" + pivot + " cycle " + run.ToString() + " has no good multiplicity data.");
@@ -307,7 +307,7 @@ namespace NCCFile
                 mcr.NormedAMult = new ulong[k];
                 mcr.UnAMult = new ulong[k]; // todo: compute this
                 /* multiplicity values */
-                for (UInt16 j = 0; j < k; j++)
+                for (ushort j = 0; j < k; j++)
                 {
                     string ra = td.reader.ReadLine();
                     string[] blorks = ra.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
@@ -478,7 +478,7 @@ namespace NCCFile
                 try
                 {
 
-                    UInt16 total_number_runs = 0;
+					ushort total_number_runs = 0;
                     double run_count_time = 0;
                     double total_good_count_time = 0;
 
@@ -527,7 +527,7 @@ namespace NCCFile
                 }
                 catch (Exception e)
                 {
-                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    NC.App.Opstate.SOH = OperatingState.Trouble;
                     ctrllog.TraceException(e, true);
                     ctrllog.TraceEvent(LogLevels.Error, 437, "NCC file processing stopped with error: '" + e.Message + "'");
                 }
@@ -542,7 +542,7 @@ namespace NCCFile
 
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
 			FireEvent(EventType.ActionFinished, this);
         }
@@ -641,7 +641,7 @@ namespace NCCFile
                 mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
 
                 // copy the bin values, if any
-                for (UInt16 j = 0; j < mcr.MaxBins; j++)
+                for (ushort j = 0; j < mcr.MaxBins; j++)
                 {
                     mcr.RAMult[j] = (ulong)run.run_mult_reals_plus_acc[j];
                     mcr.NormedAMult[j] = (ulong)run.run_mult_acc[j];
@@ -727,7 +727,7 @@ namespace NCCFile
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 ctrllog.TraceException(e, true);
                 ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
             }

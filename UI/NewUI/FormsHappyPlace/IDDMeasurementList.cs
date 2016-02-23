@@ -49,6 +49,7 @@ namespace NewUI
 			allmea =  filter == "";
             this.Text = allmea?"All Measurements":filter + " Measurements";
             Detector det = Integ.GetCurrentAcquireDetector();
+			this.Text += " for Detector " + det.Id.DetectorId;
             mlist = NC.App.DB.MeasurementsFor(det,filter);
 			if (filter.CompareTo("unspecified") == 0)  // LMOnly
 				mlist.RemoveAll(EmptyCSVFile); // I am conflicted on this step
