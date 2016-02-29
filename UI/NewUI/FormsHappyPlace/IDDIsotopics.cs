@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -102,7 +102,7 @@ namespace NewUI
         private void IsotopicsSourceCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox cb = (ComboBox)sender;
-            System.Enum.TryParse<Isotopics.SourceCode>((string)cb.SelectedItem, out m_iso.source_code);
+            System.Enum.TryParse((string)cb.SelectedItem, out m_iso.source_code);
             if (string.Compare(m_iso.source_code.ToString(), cb.Text, StringComparison.OrdinalIgnoreCase) != 0)
                 modified = m_iso.modified = true;
         }
@@ -142,7 +142,7 @@ namespace NewUI
             }
             if ((isotopic_sum > isomax) || (isotopic_sum < isomin))
             {
-                String s = String.Format("Error: Isotopics total = {0}%\r\nIsotopics total must be within {1}% and {2}%",
+                string s = string.Format("Error: Isotopics total = {0}%\r\nIsotopics total must be within {1}% and {2}%",
                     isotopic_sum, isomin, isomax);
                 MessageBox.Show(s, m_iso.id);
                 return false;
@@ -205,7 +205,7 @@ namespace NewUI
         private void Am241PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Am241PercentTextBox.Text, out temp);
+            double.TryParse(Am241PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.am241 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -216,7 +216,7 @@ namespace NewUI
         private void Pu242PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu242PercentTextBox.Text, out temp);
+            double.TryParse(Pu242PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu242 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -227,7 +227,7 @@ namespace NewUI
         private void Pu241PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu241PercentTextBox.Text, out temp);
+            double.TryParse(Pu241PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu241 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -238,7 +238,7 @@ namespace NewUI
         private void Pu240PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu240PercentTextBox.Text, out temp);
+            double.TryParse(Pu240PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu240 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -249,7 +249,7 @@ namespace NewUI
         private void Pu239PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu239PercentTextBox.Text, out temp);
+            double.TryParse(Pu239PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu239 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -260,7 +260,7 @@ namespace NewUI
         private void Pu238PercentTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu238PercentTextBox.Text, out temp);
+            double.TryParse(Pu238PercentTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu238 - temp) < TOLERANCE))
             {
                 modified = true;
@@ -271,7 +271,7 @@ namespace NewUI
         private void Am241ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Am241ErrorTextBox.Text, out temp);
+            double.TryParse(Am241ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.am241_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -282,7 +282,7 @@ namespace NewUI
         private void Pu242ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu242ErrorTextBox.Text, out temp);
+            double.TryParse(Pu242ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu242_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -293,7 +293,7 @@ namespace NewUI
         private void Pu241ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu241ErrorTextBox.Text, out temp);
+            double.TryParse(Pu241ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu241_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -304,7 +304,7 @@ namespace NewUI
         private void Pu240ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu240ErrorTextBox.Text, out temp);
+            double.TryParse(Pu240ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu240_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -315,7 +315,7 @@ namespace NewUI
         private void Pu238ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu238ErrorTextBox.Text, out temp);
+            double.TryParse(Pu238ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu238_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -326,7 +326,7 @@ namespace NewUI
         private void Pu239ErrorTextBox_Leave(object sender, EventArgs e)
         {
             double temp;
-            Double.TryParse(Pu239ErrorTextBox.Text, out temp);
+            double.TryParse(Pu239ErrorTextBox.Text, out temp);
             if (!(Math.Abs(m_iso.pu239_err - temp) < TOLERANCE))
             {
                 modified = true;
@@ -375,7 +375,7 @@ namespace NewUI
         private void AddNewSetBtn_Click(object sender, EventArgs e)
         {
             IDDIsotopicsAdd ia = new IDDIsotopicsAdd();
-            if (ia.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (ia.ShowDialog() == DialogResult.OK)
             {
 				if (string.IsNullOrEmpty(ia.ID))
 					return;
@@ -384,7 +384,7 @@ namespace NewUI
 				if (!NC.App.DB.Isotopics.Has(ia.ID))
 				{
                     Isotopics iso = new Isotopics(m_iso); // copy current values to new iso
-                    iso.id = String.Copy(ia.ID);
+                    iso.id = string.Copy(ia.ID);
                     modified = iso.modified = true;
                     NC.App.DB.Isotopics.Revert(m_iso);  // revert originating selection on in-memory list back to DB values
 
@@ -433,7 +433,7 @@ namespace NewUI
         private void EditIdBtn_Click(object sender, EventArgs e)
         {
             IDDIsotopicsEdit ia = new IDDIsotopicsEdit(m_iso.id);
-            if (ia.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (ia.ShowDialog() == DialogResult.OK)
             {
                 string oldId = m_iso.id;
                 m_iso.id = String.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
@@ -450,9 +450,9 @@ namespace NewUI
 
         private void DeleteSetBtn_Click(object sender, EventArgs e)
         {
-            String s = String.Format("Delete {0} isotopics data set?", m_iso.id);
+            string s = string.Format("Delete {0} isotopics data set?", m_iso.id);
             DialogResult r = MessageBox.Show(s, NC.App.Name, MessageBoxButtons.YesNo);
-            if (r == System.Windows.Forms.DialogResult.Yes)
+            if (r == DialogResult.Yes)
             {
                 if (NC.App.DB.Isotopics.Delete(m_iso)) // deletes from in-memory list and database
                 {
@@ -461,7 +461,6 @@ namespace NewUI
                 }
                 else
                     applog.TraceInformation("Unable to delete " + m_iso.id + " isotopics");
-
             }
         }
 

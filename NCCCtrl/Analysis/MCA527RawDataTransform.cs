@@ -30,16 +30,16 @@ using AnalysisDefs;
 namespace Analysis
 {
     /// <summary>
-    /// Converts raw data a PTR-32.
+    /// Bridging class to connect raw data to the transforming methods elsewhere, kinda lame. Needs a total rewrite
     /// </summary>
-    public class MCA527RawDataTransform : Analysis.LMRawDataTransform
+    public class MCA527RawDataTransform : LMRawDataTransform
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MCA527RawDataTransform"/> class.
         /// </summary>
         public MCA527RawDataTransform()
         {
-            state = new Analysis.MCA527ProcessingState();
+            state = new MCA527ProcessingState();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Analysis
         /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
         public override bool EndOfCycleProcessing(Measurement measurement, bool last = false)
         {
-            ((Analysis.MCA527ProcessingState) state).EndOfCycleProcessing();
+            ((MCA527ProcessingState) state).EndOfCycleProcessing();
             return base.EndOfCycleProcessing(measurement,last);
         }
     }

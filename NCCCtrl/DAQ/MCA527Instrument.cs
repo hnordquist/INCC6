@@ -27,17 +27,17 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Diagnostics;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Analysis;
 using AnalysisDefs;
+using DAQ;
 using Device;
-using NCC;
 using NCCFile;
 using NCCReporter;
-using DAQ;
 namespace Instr
 {
+
 	using NC = NCC.CentralizedState;
 
 	/// <summary>
@@ -88,9 +88,9 @@ namespace Instr
         /// <summary>
         /// Gets or sets the raw data transform (RDT).
         /// </summary>
-        public new Analysis.MCA527RawDataTransform RDT
+        public new MCA527RawDataTransform RDT
         {
-            get { return (Analysis.MCA527RawDataTransform) base.RDT; }
+            get { return (MCA527RawDataTransform) base.RDT; }
             set { base.RDT = value; }
         }
 
@@ -102,7 +102,7 @@ namespace Instr
         public override void Init(LMLoggers.LognLM dataLog, LMLoggers.LognLM analysisLog)
         {
             if (RDT == null) {
-                RDT = new Analysis.MCA527RawDataTransform();
+                RDT = new MCA527RawDataTransform();
                 RDT.Init(
                     (dataLog != null) ? dataLog : NC.App.Logger(LMLoggers.AppSection.Data),
                     (analysisLog != null) ? analysisLog : NC.App.Logger(LMLoggers.AppSection.Analysis));
@@ -144,113 +144,125 @@ namespace Instr
 #endif
         }
 
-        /// <summary>
-        /// Starts an assay operation.
-        /// </summary>
-        /// <param name="measurement">The measurement.</param>
-        /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartAssay(Measurement measurement)
-        {
-            m_logger.TraceEvent(LogLevels.Info, 0,
-                "MCA527[{0}]: Starting {1}s assay...",
-                DeviceName, measurement.AcquireState.lm.Interval);
-            m_logger.Flush();
+		/// <summary>
+		/// Starts an assay operation.
+		/// </summary>
+		/// <param name="measurement">The measurement.</param>
+		/// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
+		public override Task StartAssay(Measurement measurement)
+		{
+			m_logger.TraceEvent(LogLevels.Info, 0,
+				"MCA527[{0}]: Starting {1}s assay...",
+				DeviceName, measurement.AcquireState.lm.Interval);
+			m_logger.Flush();
 
-            lock (m_monitor) {
-                if (m_cancellationTokenSource != null) {
-                    throw new InvalidOperationException("An operation is already in progress.");
-                }
+			lock (m_monitor)
+			{
+				if (m_cancellationTokenSource != null)
+				{
+					throw new InvalidOperationException("An operation is already in progress.");
+				}
 
-                m_cancellationTokenSource = new CancellationTokenSource();
-            }
+				m_cancellationTokenSource = new CancellationTokenSource();
+			}
 
-            CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta, 
-					#if NETFX_45
-					TaskCreationOptions.DenyChildAttach, 
-					#else
+			CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
+			return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
+#if NETFX_45
+					TaskCreationOptions.DenyChildAttach,
+#else
 					TaskCreationOptions.PreferFairness, 
-					#endif
-					TaskScheduler.Default);
-        }
-
-        /// <summary>
-        /// Performs an assay operation.
-        /// </summary>
-        /// <param name="measurement">The measurement.</param>
-        /// <param name="cancellationToken">The cancellation token to observe.</param>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-#if NETFX_45
-    async
 #endif
-        protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
-        {
-            try {
-                m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
-                m_logger.Flush();
+					TaskScheduler.Default);
+		}
 
-                if (m_setvoltage)
+		/// <summary>
+		/// Performs an assay operation.
+		/// </summary>
+		/// <param name="measurement">The measurement.</param>
+		/// <param name="cancellationToken">The cancellation token to observe.</param>
+		/// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
 #if NETFX_45
-                    await 
-#endif	                   
-						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
-            
-                Stopwatch stopwatch = new Stopwatch();
-                TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
-                byte[] buffer = new byte[1024 * 1024];
-                long total = 0;
+		async
+#endif
+		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+		{
+			try
+			{
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
+				m_logger.Flush();
 
-                stopwatch.Start();
-                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time", DateTime.Now.ToString());
-                while (stopwatch.Elapsed < duration) {
-					Thread.Sleep((int)duration.TotalMilliseconds/10);
+				if (m_setvoltage)
+#if NETFX_45
+					await
+#endif
+						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+
+				Stopwatch stopwatch = new Stopwatch();
+				TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
+				byte[] buffer = new byte[1024 * 1024];
+				long total = 0;
+				MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
+				if (ps == null)
+					throw new Exception("Big L bogus state");
+
+				ps.BeginSweep(measurement.CurrentRepetition);
+
+				stopwatch.Start();
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time", DateTime.Now.ToString());
+				while (stopwatch.Elapsed < duration)
+				{
+					Thread.Sleep((int)duration.TotalMilliseconds / 10);
 					cancellationToken.ThrowIfCancellationRequested();
 
-                //    if (m_device.Available > 0) {
-                //        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+					//    if (m_device.Available > 0) {
+					//        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
 
-                //        if (bytesRead > 0) {
-                //            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
-                //            total += bytesRead;
-                //        }
-                //    } else {
-				//       Sleep(0);
-				//     }
-                }
+					//        if (bytesRead > 0) {
+					//            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
+					//            total += bytesRead;
+					//        }
+					//    } else {
+					//       Sleep(0);
+					//     }
+				}
 
-                stopwatch.Stop();
-                m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
+				stopwatch.Stop();
+				ps.FinishedSweep(measurement.CurrentRepetition, stopwatch.Elapsed.TotalSeconds);
 
-                lock (m_monitor) {
-                    m_cancellationTokenSource.Dispose();
-                    m_cancellationTokenSource = null;
-                }
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
 
-                m_logger.TraceEvent(LogLevels.Info, 0,
-                    "MCA527[{0}]: Finished assay; read {1} bytes in {2}s",
-                    DeviceName, total, stopwatch.Elapsed.TotalSeconds);
-                m_logger.Flush();
-                DAQControl.HandleEndOfCycleProcessing(this, new Analysis.StreamStatusBlock(@"MCA527 Done"));
-            }
-            catch (OperationCanceledException) {
-                m_logger.TraceEvent(LogLevels.Warning, 767, "MCA527[{0}]: Stopping assay", DeviceName);
-                m_logger.Flush();
-                DAQControl.StopActiveAssayImmediately();
-                //throw; cannot catch easily due to 4.5 task mdel or my c^&p coding, so just log and stop the task
-            }
-            catch (Exception ex) {
-                m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during assay: {1}", DeviceName, ex.Message);
-                m_logger.TraceException(ex, true);
-                m_logger.Flush();
-                DAQControl.HandleFatalGeneralError(this, ex);
-                //throw; cannot catch upthread due to 4.5 task model
-            }
-        }
+				lock (m_monitor)
+				{
+					m_cancellationTokenSource.Dispose();
+					m_cancellationTokenSource = null;
+				}
 
-        /// <summary>
-        /// Stops the currently executing assay operation.
-        /// </summary>
-        public override void StopAssay()
+				m_logger.TraceEvent(LogLevels.Info, 0,
+					"MCA527[{0}]: Finished assay; read {1} bytes in {2}s",
+					DeviceName, total, stopwatch.Elapsed.TotalSeconds);
+				m_logger.Flush();
+				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
+			} catch (OperationCanceledException)
+			{
+				m_logger.TraceEvent(LogLevels.Warning, 767, "MCA527[{0}]: Stopping assay", DeviceName);
+				m_logger.Flush();
+				DAQControl.StopActiveAssayImmediately();
+				//throw; cannot catch easily due to 4.5 task model or my c^&p coding, so just log and stop the task
+			} catch (Exception ex)
+			{
+				m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during assay: {1}", DeviceName, ex.Message);
+				m_logger.TraceException(ex, true);
+				m_logger.Flush();
+				DAQControl.HandleFatalGeneralError(this, ex);
+				//throw; cannot catch upthread due to 4.5 task model
+			}
+		}
+
+		/// <summary>
+		/// Stops the currently executing assay operation.
+		/// </summary>
+		public override void StopAssay()
         {
             m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}] Stopping assay...", DeviceName);
             m_logger.Flush();
@@ -530,7 +542,6 @@ namespace Instr
         }
 
         private readonly TimeSpan MaxSetVoltageTime;
-        //private const int VoltageTolerance = 1;
 
         private CancellationTokenSource m_cancellationTokenSource;
         private MCADevice m_device;

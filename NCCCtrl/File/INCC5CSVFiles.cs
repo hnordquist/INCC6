@@ -32,8 +32,46 @@ using AnalysisDefs;
 using NCCReporter;
 namespace NCCFile
 {
+	using Microsoft.VisualBasic.FileIO;
+	using NC = NCC.CentralizedState;
 
-    using NC = NCC.CentralizedState;
+	public class CSVFile : NeutronDataFile
+    {
+
+        private List<string[]> mLines;
+
+        public CSVFile()
+        {
+            Init();
+        }
+
+        public void Init()
+        {
+            stream = null;
+            mLines = new List<string[]>();
+        }
+
+        public int LineCount { get { return mLines.Count; } }
+
+        public List<string[]> Lines { get { return mLines; } }
+
+        public void ProcessFile()
+        {
+            TextFieldParser tfp = new TextFieldParser(this.Filename);
+            tfp.HasFieldsEnclosedInQuotes = true;
+            tfp.Delimiters = new string[] { ",", "\t" };
+            string[] line;
+
+            while (!tfp.EndOfData)
+            {
+                line = tfp.ReadFields();
+                mLines.Add(line);
+            }
+            tfp.Close();
+        }
+
+    }
+
 
     /// <summary>
     /// Manager for INCC5 isotopic and composite isotopic input files (.iso etc)
@@ -117,7 +155,7 @@ namespace NCCFile
 							}
 							else  // a CSV file but not an iso or comp iso file
 							{
-								ciso = CompositeIsotopics(entry, headtest:false);  /// urgtent: this Composite part is not yet done
+								ciso = CompositeIsotopics(entry, headtest:false);  /// urgent: this Composite part is not yet done
 								Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
 								break;
 							}
@@ -134,14 +172,17 @@ namespace NCCFile
 
 		Isotopics GenIso(string[] sa)
 		{
+			Array ev = Enum.GetValues(typeof(IsoCol));
+			if (sa.Length < ev.Length)
+				return null;
 			Isotopics i = new Isotopics();
 			string s = string.Empty;
 			double v = 0, err = 0;
-			foreach (IsoCol op in System.Enum.GetValues(typeof(IsoCol)))
+			foreach (IsoCol op in ev)
 			{
 				try
 				{
-					s = sa[(int)op];  // might blow here when file was badly created
+					s = sa[(int)op];
 					switch (op)
 					{
 					case IsoCol.AmDate:
@@ -205,7 +246,8 @@ namespace NCCFile
 						i.SetError(Isotope.am241, err);
 						break;
 					}
-				} catch (Exception ex)
+				} 
+				catch (Exception ex)
 				{
 					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
 					return null;
@@ -216,106 +258,40 @@ namespace NCCFile
 
 		CompositeIsotopics CompositeIsotopics(string[] sa, bool headtest)
 		{
+			Array ev = Enum.GetValues(typeof(CompIsCol));
+			if (headtest)  // full iso line
+			{
+				if (sa.Length < ev.Length - 1)
+					return null;
+			}
+			else  // comp line
+			{
+				if (sa.Length < ev.Length - 2)
+					return null;
+			}
 			CompositeIsotopics i = new CompositeIsotopics();
 			string s = string.Empty;
 			double v = 0, err = 0;
-			foreach (CompIsCol op in System.Enum.GetValues(typeof(CompIsCol)))
+			foreach (CompIsCol op in ev)
 			{
 				try
 				{
-					s = string.Empty;
-					s = sa[(int)op];  // might blow here when file was badly created
+					s = sa[(int)op]; 
 					switch (op)
 					{
-					case CompIsCol.AmDate:
-						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.am_date);
-						break;
-					case CompIsCol.PuDate:
-						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.pu_date);
-						break;
 					case CompIsCol.IsoSourceCode:
-						System.Enum.TryParse<CompositeIsotopics.SourceCode>(s, out i.source_code);
+						if (headtest) Enum.TryParse(s, out i.source_code);
 						break;
 					case CompIsCol.IsoId:
 						if (headtest) i.id = string.Copy(s);
 						break;
 					case CompIsCol.PuMass:
-						Single sv = 0;
-						Single.TryParse(s, out sv);
-						i.pu_mass = sv;
-						break;
-					case CompIsCol.Pu238:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu238, v);
-						break;
-					case CompIsCol.Pu239:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu239, v);
-						break;
-					case CompIsCol.Pu240:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu240, v);
-						break;
-					case CompIsCol.Pu241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu241, v);
-						break;
-					case CompIsCol.Pu242:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu242, v);
-						break;
-					case CompIsCol.Am241:
-						double.TryParse(s, out v);
-						i.SetVal(Isotope.am241, v);
-						break;
-					case CompIsCol.Pu238err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu238, err);
-						break;
-					case CompIsCol.Pu239err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu239, err);
-						break;
-					case CompIsCol.Pu240err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu240, err);
-						break;
-					case CompIsCol.Pu241err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu241, err);
-						break;
-					case CompIsCol.Pu242err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.pu242, err);
-						break;
-					case CompIsCol.Am241err:
-						double.TryParse(s, out err);
-						i.SetError(Isotope.am241, err);
-						break;
-					}
-				} catch (Exception ex)
-				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
-					return null;
-				}
-			}
-			return i;
-		}
-
-
-		CompositeIsotopics GenCompIso(string[] sa)
-		{
-			CompositeIsotopics i = new CompositeIsotopics();
-			string s = string.Empty;
-			double v = 0, err = 0;
-			foreach (CompIsCol op in System.Enum.GetValues(typeof(CompIsCol)))
-			{
-				try
-				{
-					s = sa[(int)op];  // might blow here when file was badly created
-					switch (op)
-					{
-						case CompIsCol.IsoId:  // skip this for body lines						
+						if (!headtest)  // comp iso lines start with mass
+						{ 
+							float sv = 0f;
+							float.TryParse(s, out sv);
+							i.pu_mass = sv;
+						}
 						break;
 					case CompIsCol.AmDate:
 						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.am_date);
@@ -323,14 +299,6 @@ namespace NCCFile
 					case CompIsCol.PuDate:
 						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.pu_date);
 						break;
-					case CompIsCol.IsoSourceCode:
-						Enum.TryParse(s, out i.source_code);
-						break;
-					case CompIsCol.PuMass:
-						Single sv = 0;
-						Single.TryParse(s, out sv);
-						i.pu_mass = sv;
-						break;
 					case CompIsCol.Pu238:
 						double.TryParse(s, out v);
 						i.SetVal(Isotope.pu238, v);
@@ -380,7 +348,8 @@ namespace NCCFile
 						i.SetError(Isotope.am241, err);
 						break;
 					}
-				} catch (Exception ex)
+				} 
+				catch (Exception ex)
 				{
 					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
 					return null;
@@ -388,8 +357,6 @@ namespace NCCFile
 			}
 			return i;
 		}
-
-
 		// The results of processing a folder with iso files
 		public INCC5FileImportUtils Results;
 
@@ -716,7 +683,6 @@ SourceCodes
 			{
 				try
 				{
-					s = string.Empty;
 					s = sa[(int)op]; 
 					switch (op)
 					{

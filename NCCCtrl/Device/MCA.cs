@@ -1458,7 +1458,7 @@ namespace Device
 	{
 		void BeginSweep(uint sweepNumber);
 		void ReadTimestamps(uint sweepNumber, uint[] timestamps);
-		void FinishedSweep(uint sweepNumber, double sweepDuration);
+		void FinishedSweep(uint sweepNumber, double sweepDurationSeconds);
 	}
 
 	class MCADeviceLostConnectionException : Exception { }
@@ -1927,9 +1927,9 @@ namespace Device
 
 						uint realTime = qsdr.RealTimeOfPreviousSweep;
 						uint realTimeMilliseconds = qsdr.FractionalDigitOfTheRealTimeOfPreviousSweep;
-						double sweepDuration= ((double)realTime + (double)realTimeMilliseconds * 1e-3);
+						double sweepDurationSeconds = ((double)realTime + (double)realTimeMilliseconds * 1e-3);
 
-						CallbackObject.FinishedSweep(i, sweepDuration);
+						CallbackObject.FinishedSweep(i, sweepDurationSeconds);
 					}
 				}
 			} catch {

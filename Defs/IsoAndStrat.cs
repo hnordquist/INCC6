@@ -556,6 +556,7 @@ namespace AnalysisDefs
         {
             pu_date = new DateTime(2010, 1, 1);
             am_date = new DateTime(2010, 1, 1);
+            ref_date = new DateTime(2010, 1, 1);
             isotopes = MakeArray();
             isotopes[(int)Isotope.pu240].v = 100.0;
         }
@@ -563,6 +564,7 @@ namespace AnalysisDefs
         Tuple[] isotopes;
         public DateTime pu_date;
         public DateTime am_date;
+        public DateTime ref_date;
         public string id;
         public SourceCode source_code;
         public float pu_mass;
@@ -619,6 +621,7 @@ namespace AnalysisDefs
         {
             pu_date = new DateTime(2010, 1, 1);
             am_date = new DateTime(2010, 1, 1);
+            ref_date = new DateTime(2010, 1, 1);
             isotopes = MakeArray();
             isotopes[(int)Isotope.pu240].v = 100.0;
             id = "Default";
@@ -632,6 +635,7 @@ namespace AnalysisDefs
             {
                 pu_date = new DateTime(2010, 1, 1);
                 am_date = new DateTime(2010, 1, 1);
+                ref_date = new DateTime(2010, 1, 1);
                 isotopes = MakeArray();
                 isotopes[(int)Isotope.pu240].v = 100.0;
                 id = "Default";
@@ -642,6 +646,7 @@ namespace AnalysisDefs
             {
                 pu_date = new DateTime(iso.pu_date.Ticks);
                 am_date = new DateTime(iso.am_date.Ticks);
+                ref_date = new DateTime(iso.ref_date.Ticks);
                 isotopes = CopyArray(iso.isotopes);
                 id = string.Copy(iso.id);
                 source_code = iso.source_code;
@@ -653,6 +658,7 @@ namespace AnalysisDefs
         {
             pu_date = new DateTime(src.pu_date.Ticks);
             am_date = new DateTime(src.am_date.Ticks);
+            ref_date = new DateTime(src.ref_date.Ticks);
             isotopes = CopyArray(src.isotopes);
             id = string.Copy(src.id);
             source_code = src.source_code;
@@ -663,6 +669,7 @@ namespace AnalysisDefs
         {
             dest.pu_date = new DateTime(pu_date.Ticks);
             dest.am_date = new DateTime(am_date.Ticks);
+            dest.ref_date = new DateTime(ref_date.Ticks);
             dest.isotopes = CopyArray(isotopes);
             dest.id = string.Copy(id);
             dest.source_code = source_code;
@@ -680,16 +687,15 @@ namespace AnalysisDefs
                 res = (DateTime.Compare(x.am_date, y.am_date));
 
             if (res == 0)
+                res = (DateTime.Compare(x.ref_date, y.ref_date));
+
+			if (res == 0)
             {
                 // how to meaningfully diff the % here? Try this
                 int re2 = 0;
                 for (int i = 0; (re2 == 0) && i < x.isotopes.Length; i++)
                 {
                     re2 = x.isotopes[i].v.CompareTo(y.isotopes[i].v);
-                }
-                for (int i = 0; (re2 == 0) && i < x.isotopes.Length; i++)
-                {
-                    re2 = x.isotopes[i].err.CompareTo(y.isotopes[i].err);
                 }
                 res = re2;
             }
@@ -816,33 +822,11 @@ namespace AnalysisDefs
 
             newcompiso.pu_date = new DateTime(ref_date.Ticks);
             newcompiso.am_date = new DateTime(ref_date.Ticks);
+            newcompiso.ref_date = new DateTime(ref_date.Ticks);
             for (Isotope iso = Isotope.pu238; iso <= Isotope.am241; iso++)
             {
                 newcompiso[iso].v = 100.0 * cur_mass[(int)iso].v / cur_mass_sum;
             }
-            //todo: composite isotopics have no err values? hn
-            /*for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-            {
-                if (curiso[iso].v != 0)
-                    newcompiso[iso].sigma = curiso[iso].sigma * newcompiso[iso].v / curiso[iso].v;
-                else
-                    newcompiso[iso].sigma = curiso[iso].sigma;
-
-            }*/
-            //todo: composite isotopics have no err values? hn
-            /*if (curiso[Isotope.am241].v != 0.0)
-            {
-                x = (decay_fract_am_to_now[(int)Isotope.am241].v / 100.0) * temp_sum *
-                   curiso[Isotope.am241].sigma;
-                temp = decay_fract_pu_to_am[(int)Isotope.pu241].v *
-                    (decay_fract_am_to_now[(int)Isotope.am241].v - decay_fract_am_to_now[(int)Isotope.pu241].v)
-                    * (LN2 / PU241HL) / ((LN2 / PU241HL) - (LN2 / AM241HL));
-                y = temp * (pu_mass / 100.0) * curiso[Isotope.pu241].sigma;
-                newcompiso[Isotope.am241].sigma = Math.Sqrt(x * x + y * y) / cur_mass_sum * 100.0;
-            }
-            else
-                newcompiso[Isotope.am241].sigma = curiso[Isotope.am241].sigma;*/
-
             return (newcompiso);
 
         }
@@ -935,6 +919,7 @@ namespace AnalysisDefs
             ps.AddRange(DBParamList.TuplePair("am241", this[Isotope.am241]));
             this.ps.Add(new DBParamEntry("pu_date", pu_date.ToString("yyyy-MM-dd")));
             this.ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
+            this.ps.Add(new DBParamEntry("ref_date", ref_date));
             this.ps.Add(new DBParamEntry("isotopics_id", id));
             this.ps.Add(new DBParamEntry("isotopics_source_code", source_code.ToString()));
             this.ps.Add(new DBParamEntry("pu_mass", pu_mass));

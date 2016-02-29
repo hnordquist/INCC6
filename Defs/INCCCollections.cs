@@ -487,14 +487,15 @@ namespace AnalysisDefs
                 foreach (DataRow dr in dt.Rows)
                 {
                     CompositeIsotopics iso = new CompositeIsotopics();
-                    /*foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+                    foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
                     {
                         if (dt.Columns.IndexOf(v.ToString()) >= 0)
-                            iso.SetValueError((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]), DB.Utils.DBDouble(dr[v.ToString() + "_err"]));
-                    }*/
+                            iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]));
+                    }
                     iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
                     iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
-                    System.Enum.TryParse<CompositeIsotopics.SourceCode>(dr["ci_isotopics_source_code"].ToString(), out  iso.source_code);
+                    iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
+                    System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
                     iso.id = dr["ci_isotopics_id"].ToString();
                     comp_isotopics.Add(iso);
                 }

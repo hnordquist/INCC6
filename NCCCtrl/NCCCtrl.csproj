@@ -107,7 +107,6 @@
     <Compile Include="Device\Ptr32Parser.cs" />
     <Compile Include="Device\Ptr32RateCounter.cs" />
     <Compile Include="File\FileCtrlINCC5.cs" />
-    <Compile Include="File\CSVFile.cs" />
     <Compile Include="File\FileCtrl.cs" />
     <Compile Include="File\INCCKnew.cs" />
     <Compile Include="File\INCC5CSVFiles.cs" />

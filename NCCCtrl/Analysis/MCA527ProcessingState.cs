@@ -52,6 +52,7 @@ namespace Analysis
         /// Perform initialization at the start of a new cycle.
         /// </summary>
         /// <param name="cycle">The cycle.</param>
+        /// <param name="param">optional output file (MCAFile) class instance.</param>
         public override void StartCycle(Cycle cycle, object param = null)
         {
             base.StartCycle(cycle, param);
@@ -66,14 +67,14 @@ namespace Analysis
             }
         }
 
-				public void BeginSweep(uint sweepNumber)
+		public void BeginSweep(uint sweepNumber)
 		{
 			Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
 		}
 
-		public void FinishedSweep(uint sweepNumber, double sweepDuration)
+		public void FinishedSweep(uint sweepNumber, double sweepDurationSeconds)
 		{
-			Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDuration);
+			Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDurationSeconds);
 		}
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
