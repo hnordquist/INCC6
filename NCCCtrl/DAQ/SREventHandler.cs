@@ -124,7 +124,7 @@ namespace DAQ
                 {
                     // will blow if not really an Assay subclass, e.g. not running in the context of the full DAQCOntrol class 
                     CurState.State = DAQInstrState.Offline; // remaining buffers should now bypass DAQ section
-                    gControl.StopLMCAssay(removeCurNCDFile: false); // stop the instruments
+                    gControl.StopLMCAssay(removeCurLMDataFile: false); // stop the instruments
                     gControl.collog.TraceException(oddex, false);
                     gControl.collog.TraceEvent(LogLevels.Info, 429, "DAQ processing incomplete: {0}, processing stopped", oddex.Message);
                     //activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement);

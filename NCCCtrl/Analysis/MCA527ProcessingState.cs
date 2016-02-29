@@ -111,7 +111,7 @@ namespace Analysis
         }
 
         /// <summary>
-        /// Analyzes a sequence of events. Optionally writes data file pair
+        /// Analyzes a sequence of events. Optionally writes data file 
         /// </summary>
         /// <param name="times">The event times in clock ticks.</param>
         /// <param name="channelMasks">The event channel masks.</param>
@@ -138,13 +138,14 @@ namespace Analysis
 
             if (m_writingFile)
             {
+				// URGENT file write processing gets inserted here file
                 //file.Channels.Write(channelMasks, 0, count);
                 //file.Events.Write(times, 0, count);
             }
         }
 
         private MCA527Parser m_parser;
-        private NCCFile.MCAFile file;
+        public NCCFile.MCAFile file;
         private bool m_writingFile;
 
     }

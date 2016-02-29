@@ -62,10 +62,10 @@ namespace NewUI
             {
                 string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "Empty" : m.AcquireState.ItemId.item;
                 if (Path.GetFileName(m.MeasurementId.FileName).Contains("_"))
-                    //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
+                    //scan file name to display subsequent reanalysis number...... hn 9.21.2015
                     ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
                 ListViewItem lvi = new ListViewItem(new string[] { ItemWithNumber,
-					String.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Empty" : m.AcquireState.stratum_id.Name, m.MeasDate.DateTime.ToString("MM.dd.yy"), m.MeasDate.DateTime.ToString("HH:mm:ss"),
+					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Empty" : m.AcquireState.stratum_id.Name, m.MeasDate.DateTime.ToString("MM.dd.yy"), m.MeasDate.DateTime.ToString("HH:mm:ss"),
 					m.MeasOption.PrintName() });
                 listView1.Items.Add(lvi);
 				lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption);

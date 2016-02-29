@@ -3542,36 +3542,37 @@ namespace AnalysisDefs
                 // get the traditional results rec that matches the measurement id 
                 //This does not, in fact, get an item id......hn 9.10.2015
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId); //resultsList.Find(d => d.MeasurementIdMatch(MeaId));
-                
-                if (rec != null)
-                { 
-                    Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
-                    MeaId.Item.Copy(rec.item);
-                    ms.Add(m);
-                    if (m.ResultsFiles != null)
+
+				if (rec != null)
+				{
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+					MeaId.Item.Copy(rec.item);
+					ms.Add(m);
+					if (m.ResultsFiles != null)
 					{
+						bool LMOnly = (option == AssaySelector.MeasurementOption.unspecified);
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
-						   m.ResultsFiles.Add (option == AssaySelector.MeasurementOption.unspecified, dr["FileName"].ToString());
-						List<ResultFile> lrf = NC.App.DB.GetResultFiles(MeaId);
-						foreach (ResultFile rf in lrf)
-							m.ResultsFiles.Add(rf);
+							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+						List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+						foreach (string rfpath in lrfpaths)
+							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
-                }
-                // TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
-            }
+				}
+				// TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
+			}
 
             return ms;
         }
 
-		List<ResultFile> GetResultFiles(MeasId id)
+		List<string> GetResultFiles(MeasId id)
 		{
-			List<ResultFile> l = new List<ResultFile> ();
+			List<string> l = new List<string> ();
 
             DB.Measurements ms = new DB.Measurements();
             DataTable dt = ms.GetResultFiles(id.UniqueId);  // this specific measurement id's results files
             foreach (DataRow dr in dt.Rows)
             {
-				l.Add(new ResultFile(dr["FileName"].ToString()));
+				l.Add(dr["FileName"].ToString());
 			}
 			return l;
 		}

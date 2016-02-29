@@ -782,9 +782,9 @@ namespace NCCFile
         public int thisread;
         public long read, fulllen;
 
-        public UInt16 CycleNumber;
-        //byte[] BitsSetTable256;
-        public PTRChannelFile()
+        public ushort CycleNumber;
+
+		public PTRChannelFile()
         {
    
         }
@@ -1135,8 +1135,8 @@ namespace NCCFile
         public PTRChannelFile Channels;
         public PTREventFile Events;
         public bool SoloBinFile;
-        public UInt16 CycleNumber;
-        public string FirmwareIdent // NEXT: get this from instrument.m_device.FirmwareVersion 
+        public ushort CycleNumber;
+        public string FirmwareIdent // this is from instrument.m_device.FirmwareVersion 
         {
             get;
             set;
@@ -1478,6 +1478,21 @@ namespace NCCFile
 				};
 				return header;
 			}
+
+			public void Write(MCAFile mca)
+			{
+				// jump to the beginning of the stream...
+				mca.stream.Seek(0, SeekOrigin.Begin);
+				ValidByteCount = MCAFile.BasisBlockSize;
+				mca.Write(FileIdentification, 14);
+				mca.Write(ValidByteCount);
+				mca.Write(FirmwareVersion);
+				mca.Write(HardwareVersion);
+				mca.Write(FirmwareModification);
+				mca.Write(HardwareModification);
+				mca.Write(SerialNumber);
+				mca.Write(GeneralMode);
+			}
 		}
 
 		protected class MCATimestampsRecorderModeHeader
@@ -1494,7 +1509,7 @@ namespace NCCFile
 			public ushort PreamplifierPowerSwitches;
 			public byte TTLLowLevel;
 			public byte TTLHighLevel;
-			public ushort AmplifierCourseGain;
+			public ushort AmplifierCoarseGain;
 			public ushort ADCInputPolarity;
 			public ushort ShapingTimeChoice;
 			public byte TriggerFilterForLowShapingTime;
@@ -1524,15 +1539,15 @@ namespace NCCFile
 			public byte Minus12VActualValueAtStop;
 			public byte Plus24VActualValueAtStop;
 			public byte Minus24VActualValueAtStop;
-			public ushort VoltageOnSUBD9Pin3AtStop;
-			public ushort VoltageOnSUBD9Pin5AtStop;
-			public ushort CurrentSourceStateOnSUBD9Pin5;
-			public ushort CurrentSourceValueOnSUBD9Pin5;
-			public ushort InputResistanceOnSUBD9Pin5;
-			public sbyte ADCCorrectionOffsetOnSUBD9Pin5;
-			public sbyte GainCorrectionFactorOnSUBD9Pin5;
-			public sbyte ADCCorrectionOffsetOnSUBD9Pin3;
-			public sbyte GainCorrectionFactorOnSUBD9Pin3;
+			public ushort VoltageOnSubD9Pin3AtStop;
+			public ushort VoltageOnSubD9Pin5AtStop;
+			public ushort CurrentSourceStateOnSubD9Pin5;
+			public ushort CurrentSourceValueOnSubD9Pin5;
+			public ushort InputResistanceOnSubD9Pin5;
+			public sbyte ADCCorrectionOffsetOnSubD9Pin5;
+			public sbyte GainCorrectionFactorOnSubD9Pin5;
+			public sbyte ADCCorrectionOffsetOnSubD9Pin3;
+			public sbyte GainCorrectionFactorOnSubD9Pin3;
 			public short MCATemperatureAtStop;
 			public short DetectorTemperatureAtStop;
 			public short PowerModuleTemperatureAtStop;
@@ -1572,7 +1587,7 @@ namespace NCCFile
 					" - preamp power switches: " + PreamplifierPowerSwitches + "\n" +
 					" - ttl low level: " + TTLLowLevel + "\n" +
 					" - ttl high level: " + TTLHighLevel + "\n" +
-					" - amp course gain: " + AmplifierCourseGain + "\n" +
+					" - amp coarse gain: " + AmplifierCoarseGain + "\n" +
 					" - adc input polarity: " + ADCInputPolarity + "\n" +
 					" - shaping time choice: " + ShapingTimeChoice + "\n" +
 					" - trigger filter for low shaping time: " + TriggerFilterForLowShapingTime + "\n" +
@@ -1600,15 +1615,15 @@ namespace NCCFile
 					" - -12v actual val at stop: " + Minus12VActualValueAtStop + "\n" +
 					" - +24v actual val at stop: " + Plus24VActualValueAtStop + "\n" +
 					" - -24v actual val at stop: " + Minus24VActualValueAtStop + "\n" +
-					" - volt on SUB-D9 pin 3 at stop: " + VoltageOnSUBD9Pin3AtStop + "\n" +
-					" - volt on SUB-D9 pin 5 at stop: " + VoltageOnSUBD9Pin5AtStop + "\n" +
-					" - cur source state on SUB-D9 pin 5: " + CurrentSourceStateOnSUBD9Pin5 + "\n" +
-					" - cur source val on SUB-D9 pin 5: " + CurrentSourceValueOnSUBD9Pin5 + "\n" +
-					" - input resist on SUB-D9 pin 5: " + InputResistanceOnSUBD9Pin5 + "\n" +
-					" - adc correct offset on SUB-D9 pin 5: " + ADCCorrectionOffsetOnSUBD9Pin5 + "\n" +
-					" - gain correct fact on SUB-D9 pin 5: " + GainCorrectionFactorOnSUBD9Pin5 + "\n" +
-					" - adc correct offset on SUB-D9 pin 3: " + ADCCorrectionOffsetOnSUBD9Pin3 + "\n" +
-					" - gain correct fact on SUB-D9 pin 3: " + GainCorrectionFactorOnSUBD9Pin3 + "\n" +
+					" - volt on SUB-D9 pin 3 at stop: " + VoltageOnSubD9Pin3AtStop + "\n" +
+					" - volt on SUB-D9 pin 5 at stop: " + VoltageOnSubD9Pin5AtStop + "\n" +
+					" - cur source state on SUB-D9 pin 5: " + CurrentSourceStateOnSubD9Pin5 + "\n" +
+					" - cur source val on SUB-D9 pin 5: " + CurrentSourceValueOnSubD9Pin5 + "\n" +
+					" - input resist on SUB-D9 pin 5: " + InputResistanceOnSubD9Pin5 + "\n" +
+					" - adc correct offset on SUB-D9 pin 5: " + ADCCorrectionOffsetOnSubD9Pin5 + "\n" +
+					" - gain correct fact on SUB-D9 pin 5: " + GainCorrectionFactorOnSubD9Pin5 + "\n" +
+					" - adc correct offset on SUB-D9 pin 3: " + ADCCorrectionOffsetOnSubD9Pin3 + "\n" +
+					" - gain correct fact on SUB-D9 pin 3: " + GainCorrectionFactorOnSubD9Pin3 + "\n" +
 					" - mca temp at stop: " + MCATemperatureAtStop + "\n" +
 					" - detect temp at stop: " + DetectorTemperatureAtStop + "\n" +
 					" - power module temp at stop: " + PowerModuleTemperatureAtStop + "\n" +
@@ -1644,7 +1659,7 @@ namespace NCCFile
 					PreamplifierPowerSwitches = br.ReadUInt16(),
 					TTLLowLevel = br.ReadByte(),
 					TTLHighLevel = br.ReadByte(),
-					AmplifierCourseGain = br.ReadUInt16(),
+					AmplifierCoarseGain = br.ReadUInt16(),
 					ADCInputPolarity = br.ReadUInt16(),
 					ShapingTimeChoice = br.ReadUInt16(),
 					TriggerFilterForLowShapingTime = br.ReadByte(),
@@ -1674,15 +1689,15 @@ namespace NCCFile
 					Minus12VActualValueAtStop = br.ReadByte(),
 					Plus24VActualValueAtStop = br.ReadByte(),
 					Minus24VActualValueAtStop = br.ReadByte(),
-					VoltageOnSUBD9Pin3AtStop = br.ReadUInt16(),
-					VoltageOnSUBD9Pin5AtStop = br.ReadUInt16(),
-					CurrentSourceStateOnSUBD9Pin5 = br.ReadUInt16(),
-					CurrentSourceValueOnSUBD9Pin5 = br.ReadUInt16(),
-					InputResistanceOnSUBD9Pin5 = br.ReadUInt16(),
-					ADCCorrectionOffsetOnSUBD9Pin5 = br.ReadSByte(),
-					GainCorrectionFactorOnSUBD9Pin5 = br.ReadSByte(),
-					ADCCorrectionOffsetOnSUBD9Pin3 = br.ReadSByte(),
-					GainCorrectionFactorOnSUBD9Pin3 = br.ReadSByte(),
+					VoltageOnSubD9Pin3AtStop = br.ReadUInt16(),
+					VoltageOnSubD9Pin5AtStop = br.ReadUInt16(),
+					CurrentSourceStateOnSubD9Pin5 = br.ReadUInt16(),
+					CurrentSourceValueOnSubD9Pin5 = br.ReadUInt16(),
+					InputResistanceOnSubD9Pin5 = br.ReadUInt16(),
+					ADCCorrectionOffsetOnSubD9Pin5 = br.ReadSByte(),
+					GainCorrectionFactorOnSubD9Pin5 = br.ReadSByte(),
+					ADCCorrectionOffsetOnSubD9Pin3 = br.ReadSByte(),
+					GainCorrectionFactorOnSubD9Pin3 = br.ReadSByte(),
 					MCATemperatureAtStop = br.ReadInt16(),
 					DetectorTemperatureAtStop = br.ReadInt16(),
 					PowerModuleTemperatureAtStop = br.ReadInt16(),
@@ -1705,6 +1720,78 @@ namespace NCCFile
 					DataCodingMethod = br.ReadUInt16()
 				};
 				return header;
+			}
+			public void Write(MCAFile mca)
+			{
+				DataCodingMethod = 0;
+				
+				mca.Write(ApplicationIdentification, 32);
+				mca.Write(TimeUnitLengthNanoSec);
+				mca.Write(Preset);
+				mca.Write(PresetValue);
+				mca.Write(PresetMemorySize);
+				mca.Write(UsedMemorySize);
+				mca.Write(HighVoltage);
+				mca.Write(HighVoltagePolarity);
+				mca.Write(HVInhibitMode);
+				mca.Write(PreamplifierPowerSwitches);
+				mca.Write(TTLLowLevel);
+				mca.Write(TTLHighLevel);
+				mca.Write(AmplifierCoarseGain);
+				mca.Write(ADCInputPolarity);
+				mca.Write(ShapingTimeChoice);
+				mca.Write(TriggerFilterForLowShapingTime);
+				mca.Write(TriggerFilterForHighShapingTime);
+				mca.Write(OffsetDAC);
+				mca.Write(TriggerLevelForAutomaticThresholdCalculation);
+				mca.Write(SetTriggerThreshold);
+				mca.Write(ExtensionPortPartAConfiguration);
+				mca.Write(ExtensionPortPartBConfiguration);
+				mca.Write(ExtensionPortPartCConfiguration);
+				mca.Write(ExtensionPortPartFConfiguration);
+				mca.Write(ExtensionPortRS232BaudRate);
+				mca.Write(ExtensionPortRS232Flags);
+				mca.Write(StartFlag);
+				mca.Write(StartTime);
+				mca.Write(RealTime);
+				mca.Write(BatteryCurrentAtStop);
+				mca.Write(ChargerCurrentAtStop);
+				mca.Write(HVPrimaryCurrentAtStop);
+				mca.Write(Plus12VPrimaryCurrentAtStop);
+				mca.Write(Minus12VPrimaryCurrentAtStop);
+				mca.Write(Plus24VPrimaryCurrentAtStop);
+				mca.Write(Minus24VPrimaryCurrentAtStop);
+				mca.Write(BatteryVoltageAtStop);
+				mca.Write(HighVoltageAtStop);
+				mca.Write(Plus12VActualValueAtStop);
+				mca.Write(Minus12VActualValueAtStop);
+				mca.Write(Plus24VActualValueAtStop);
+				mca.Write(Minus24VActualValueAtStop);
+				mca.Write(VoltageOnSubD9Pin3AtStop);
+				mca.Write(VoltageOnSubD9Pin5AtStop);
+				mca.Write(CurrentSourceStateOnSubD9Pin5);
+				mca.Write(CurrentSourceValueOnSubD9Pin5);
+				mca.Write(InputResistanceOnSubD9Pin5);
+				mca.Write(ADCCorrectionOffsetOnSubD9Pin5);
+				mca.Write(GainCorrectionFactorOnSubD9Pin5);
+				mca.Write(MCATemperatureAtStop);
+				mca.Write(DetectorTemperatureAtStop);
+				mca.Write(PowerModuleTemperatureAtStop);
+				mca.Write(RepeatMode);
+				mca.Write(RepeatModeOptions);
+				mca.Write(RepeatValue);
+				mca.Write(AHRCGroup0Width);
+				mca.Write(AHRCGroup1Width);
+				mca.Write(AHRCGroup2Width);
+				mca.Write(AHRCGroup3Width);
+				mca.Write(AHRCGroup4Width);
+				mca.Write(AHRCGroup5Width);
+				mca.Write(AHRCGroup6Width);
+				mca.Write(AHRCGroup7Width);
+				mca.Write(AHRCGroup8Width);
+				mca.Write(AHRCGroup9Width);
+				mca.Write(AHRCTriggerThreshold);
+				mca.Write(DataCodingMethod);
 			}
 		}
 
@@ -1819,7 +1906,10 @@ namespace NCCFile
 		{
 			bool ok = base.CreateForWriting();
 			if (ok)
+			{
 				writer = new BinaryWriter(stream);
+				AdvanceToTimestampsBlock();  // move file pointer to first timestamp location
+			}
 			return ok;
 		}
 
@@ -1852,6 +1942,88 @@ namespace NCCFile
 					Log.TraceException(e);
 			}
 		}
+
+		const ushort BasisBlockSize = 228;
+
+		// create, then call this, write timestamps, at end seek back and write final header
+		public void AdvanceToTimestampsBlock()
+        {
+            writer.Seek(BasisBlockSize, SeekOrigin.Begin);
+        }
+
+		public void Write(string str, int length)
+        {
+			int len = 0;
+			if (str != null) {
+				byte[] bytes = Encoding.UTF8.GetBytes(str);
+				len = Math.Min(length, bytes.Length);
+				writer.Write(bytes, 0, len);
+			}
+			while (len++ < length) { writer.Write((byte)0); }
+		}
+
+        public void Write(sbyte value)
+        {
+            Write((byte)value);
+        }
+
+        public void Write(byte value)
+        {
+            writer.Write(value);
+        }
+
+		public void Write(ushort value)
+		{           
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+		}
+
+        public void Write(short value)
+        {
+            Write((ushort)value);
+        }
+
+		public void Write(uint value)
+		{
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+			writer.Write((byte)((value >> 16) & 0xff));
+			writer.Write((byte)((value >> 24) & 0xff));
+		}
+
+        public void Write(int value)
+        {
+            Write((uint)value);
+        }
+
+        public void Write(long value)
+        {
+            Write((ulong)value);
+        }
+
+		private void Write(ulong value)
+		{
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+			writer.Write((byte)((value >> 16) & 0xff));
+			writer.Write((byte)((value >> 24) & 0xff));
+			writer.Write((byte)((value >> 32) & 0xff));
+			writer.Write((byte)((value >> 40) & 0xff));
+			writer.Write((byte)((value >> 48) & 0xff));
+			writer.Write((byte)((value >> 56) & 0xff));
+		}
+
+		private void Write(double value)
+		{
+			Write(BitConverter.DoubleToInt64Bits(value));
+		}
+
+		public void WriteHeader()
+		{
+			header.Write(this);
+			rheader.Write(this);
+		}
+
 
 
 		public long FirstEventTimeInTics;

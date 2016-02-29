@@ -187,6 +187,7 @@ namespace Instr
 #endif
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
+			m_device.mHeartbeatSemaphore.Wait();
 			try
 			{
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
@@ -198,13 +199,27 @@ namespace Instr
 #endif
 						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
 
+				MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
+				if (ps == null)
+					throw new Exception("Big L bogus state");
+
+				if (measurement.CurrentRepetition == 1)  // init HW on first cycle
+				{
+					MCAResponse response = null;
+					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData0));
+					if (response == null) { throw new MCADeviceLostConnectionException(); }
+					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData1));
+					if (response == null) { throw new MCADeviceLostConnectionException(); }
+					response = await m_device.Client.SendAsync(MCACommand.SetPresets(Presets.Real, (uint)measurement.AcquireState.lm.Interval));
+					if (response == null) { throw new MCADeviceLostConnectionException(); }
+					response = await m_device.Client.SendAsync(MCACommand.SetRepeat(1));
+					if (response == null) { throw new MCADeviceLostConnectionException(); }
+				}
+
 				Stopwatch stopwatch = new Stopwatch();
 				TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
 				byte[] buffer = new byte[1024 * 1024];
 				long total = 0;
-				MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
-				if (ps == null)
-					throw new Exception("Big L bogus state");
 
 				ps.BeginSweep(measurement.CurrentRepetition);
 
@@ -228,8 +243,9 @@ namespace Instr
 				}
 
 				stopwatch.Stop();
+				//CompleteCycle(ps.m);
 				ps.FinishedSweep(measurement.CurrentRepetition, stopwatch.Elapsed.TotalSeconds);
-
+				
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
 
 				lock (m_monitor)
@@ -257,6 +273,36 @@ namespace Instr
 				DAQControl.HandleFatalGeneralError(this, ex);
 				//throw; cannot catch upthread due to 4.5 task model
 			}
+			finally
+			{
+				m_device.mHeartbeatSemaphore.Release();
+			}
+		}
+
+#if NETFX_45
+		async
+#endif
+			void CompleteCycle(MCAFile file)
+		{
+			QuerySystemDataResponse qsdr = (QuerySystemDataResponse) await m_device.Client.SendAsync(MCACommand.QuerySystemData());
+			if (qsdr == null) { throw new MCADeviceLostConnectionException(); }
+
+            if (file.stream != null) {
+                QueryStateResponse stateResponse = (QueryStateResponse) await m_device.Client.SendAsync(MCACommand.QueryState());
+                if (stateResponse == null) { throw new MCADeviceLostConnectionException(); }
+                QueryState527ExResponse state527ExResponse = (QueryState527ExResponse) await m_device.Client.SendAsync(MCACommand.QueryState527Ex());
+                QueryState527Response state527Response = (QueryState527Response) await m_device.Client.SendAsync(MCACommand.QueryState527());
+                QueryPowerResponse powerResponse = (QueryPowerResponse) await m_device.Client.SendAsync(MCACommand.QueryPower());
+                QueryState527Ex2Response state527Ex2Response = (QueryState527Ex2Response) await m_device.Client.SendAsync(MCACommand.QueryState527Ex2());
+                MCATimestampsBasisFileBlock basisFileBlock = MCATimestampsBasisFileBlock.Create(stateResponse, state527ExResponse, state527Response, powerResponse, state527Ex2Response);
+                basisFileBlock.DataCodingMethod = 0;
+
+                basisFileBlock.RepeatMode = (sbyte)(StartFlag.SpectrumClearedNewStartTime);
+                basisFileBlock.RepeatModeOptions = 0;
+                // urgent file.WriteHeader(basisFileBlock);
+                file.CloseWriter();
+            }
+
 		}
 
 		/// <summary>

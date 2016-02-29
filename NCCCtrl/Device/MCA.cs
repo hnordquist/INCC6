@@ -1579,7 +1579,8 @@ namespace Device
 			return device;
 		}
 
-		MCAClient Client = new MCAClient();
+		internal MCAClient Client = new MCAClient();
+
 		MCADevice(IPAddress address)
 		{
             Client.BoundAddress = address;
@@ -1596,7 +1597,7 @@ namespace Device
 			Client.Close();
 		}
 
-		SemaphoreSlim heartbeatSemaphore = new SemaphoreSlim(1);
+		public SemaphoreSlim mHeartbeatSemaphore = new SemaphoreSlim(1);
 
         // try to contact once every 5 seconds
 		static TimeSpan HeartbeatTimeSpan = TimeSpan.FromSeconds(5);
@@ -1609,9 +1610,9 @@ namespace Device
             try {
 			    while (CancelTokenSource.Token.IsCancellationRequested == false) {
 				    await Task.Delay(HeartbeatTimeSpan, CancelTokenSource.Token);                
-				    heartbeatSemaphore.Wait();
+				    mHeartbeatSemaphore.Wait();
 				    QueryStateResponse qsr = (QueryStateResponse) await Client.SendAsync(MCACommand.QueryState());
-				    heartbeatSemaphore.Release();
+				    mHeartbeatSemaphore.Release();
 			    }
             } catch (TaskCanceledException) { }
 #endif
@@ -1627,7 +1628,7 @@ namespace Device
             Initialize()
         {
 #if NETFX_45
-            heartbeatSemaphore.Wait();
+            mHeartbeatSemaphore.Wait();
 			try {
 				MCAResponse response = null;
 				response = await Client.SendAsync(MCACommand.Init());
@@ -1671,7 +1672,7 @@ namespace Device
 				throw;
 			}
 			finally {
-				heartbeatSemaphore.Release();
+				mHeartbeatSemaphore.Release();
 			}
 #endif
         }
@@ -1761,7 +1762,7 @@ namespace Device
             Measure(uint sweeps, uint secondsPerSweep, string captureToFile, CancellationToken cancellationToken = default(CancellationToken))
         {
 #if NETFX_45
-			heartbeatSemaphore.Wait();
+			mHeartbeatSemaphore.Wait();
 			try {
 
 				MCAResponse response = null;
@@ -1936,7 +1937,7 @@ namespace Device
 				throw;
 			}
 			finally {
-				heartbeatSemaphore.Release();
+				mHeartbeatSemaphore.Release();
 			}
 #else
             return 0;
@@ -2165,7 +2166,7 @@ namespace Device
 		OrtecHPGeMode = -1
 	}
 
-	class MCACommand
+	internal class MCACommand
 	{
 		public readonly byte[] Bytes;
 		MCACommand(CommandName command)
@@ -2388,7 +2389,7 @@ namespace Device
 		}
 	}
 
-	class MCAClient : IDisposable
+	internal class MCAClient : IDisposable
 	{
 		const int MCA_PORT_NUMBER = 50000;
 

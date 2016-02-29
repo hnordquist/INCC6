@@ -357,8 +357,8 @@ namespace DAQ
         /// <summary>
         /// send the cancel command to each LMMM, set the instrument state Online to prevent data processing of any additional packets 
         /// </summary>
-        /// <param name="removeCurNCDFile">delete the current NCD files created for the current interval</param>
-        private void StopLMCAssay(bool removeCurNCDFile)
+        /// <param name="removeCurLMDataFile">delete the current LM data files created for the current interval</param>
+        private void StopLMCAssay(bool removeCurLMDataFile)
         {
             collog.TraceEvent(LogLevels.Info, 0, "Stopping assay...");
             CurState.State = DAQInstrState.Online;
@@ -377,7 +377,7 @@ namespace DAQ
                     if (collectingFileData && lmi.file != null)
                     {
                         lmi.file.CloseWriter();
-                        if (removeCurNCDFile)
+                        if (removeCurLMDataFile)
                             lmi.file.Delete();
                     }
                     active.DAQState = DAQInstrState.Online;
