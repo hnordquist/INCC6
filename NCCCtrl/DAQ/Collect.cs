@@ -386,7 +386,13 @@ namespace DAQ
 
 
         // The Assay op control
-        public void AssayCoreOp()
+		public
+		#if NETFX_45
+            async System.Threading.Tasks.Task
+        #else
+            void
+        #endif
+        AssayCoreOp()
         {
             if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
 			{
@@ -396,7 +402,7 @@ namespace DAQ
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.Assay;
             NC.App.Opstate.SOH = NCC.OperatingState.Living;
-            bool ok = AssayInception();
+            bool ok = await AssayInception();
             if (ok)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -414,23 +420,16 @@ namespace DAQ
                     }
 					else
 						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
-
                 }
                 NC.App.Opstate.ResetTokens();
             }
             NC.App.Opstate.Action = x;
         }
-        public Thread AssayOperation()
-        {
-            Thread at = new Thread(AssayCoreOp);
-            at.Start();
-            return at;
-        }
-        public bool AssayInception()
+		public async System.Threading.Tasks.Task<bool> AssayInception()
         {
             _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
-            var task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
+            bool task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
             if (task)
             {
                 ManualResetEventSlim[] me = GetTheAssayWaitTokens(); // each active Instr has it's own analysis handler wait handle
@@ -443,6 +442,49 @@ namespace DAQ
             return task;
         }
 
+
+
+
+		public void ThreadAssayCoreOp()
+        {
+            if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
+			{
+				NC.App.Opstate.SOH = OperatingState.Stopped;
+                return;  //nothing to do
+			}
+            NCCAction x = NC.App.Opstate.Action;
+            NC.App.Opstate.Action = NCCAction.Assay;
+            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            bool ok = false;// AssayInception();
+            if (ok)
+            {
+                FireEvent(EventType.ActionStart, this);
+                FireEvent(EventType.ActionInProgress, this);
+                if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
+                {
+                    //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
+                    if (CurState.Measurement.HasReportableData)
+                    {
+                        CalculateMeasurementResults();
+                        SaveMeasurementBasics();
+                        SaveMeasurementResults();
+                        FireEvent(EventType.ActionInProgress, this);
+                        OutputResults(NCCAction.Assay);
+                    }
+					else
+						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
+                }
+                NC.App.Opstate.ResetTokens();
+            }
+            NC.App.Opstate.Action = x;
+        }
+
+        public Thread AssayOperation()
+        {
+            Thread at = new Thread(ThreadAssayCoreOp);
+            at.Start();
+            return at;
+        }
 
 
         // self-threaded for console

@@ -1439,7 +1439,7 @@ namespace NCCFile
 			}
 		}
 
-		protected class MCAHeader
+		public class MCAHeader
 		{
 			public string FileIdentification;
 			public ushort ValidByteCount;
@@ -1495,7 +1495,7 @@ namespace NCCFile
 			}
 		}
 
-		protected class MCATimestampsRecorderModeHeader
+		public class MCATimestampsRecorderModeHeader
 		{
 			public string ApplicationIdentification;
 			public ushort TimeUnitLengthNanoSec;
@@ -1554,7 +1554,7 @@ namespace NCCFile
 			// since version 1.00.0007
 			public sbyte RepeatMode;
 			public sbyte RepeatModeOptions;
-			public short RepeatValue;
+			public ushort RepeatValue; // binary data format docs say this is short, firmware commands say it is ushort
 			// since version 1.00.0000
 			public uint AHRCGroup0Width;
 			public uint AHRCGroup1Width;
@@ -1704,7 +1704,7 @@ namespace NCCFile
 					// since version 1.00.0007
 					RepeatMode = br.ReadSByte(),
 					RepeatModeOptions = br.ReadSByte(),
-					RepeatValue = br.ReadInt16(),
+					RepeatValue = br.ReadUInt16(),
 					// since version 1.00.0000
 					AHRCGroup0Width = br.ReadUInt32(),
 					AHRCGroup1Width = br.ReadUInt32(),
@@ -1795,8 +1795,8 @@ namespace NCCFile
 			}
 		}
 
-		protected MCAHeader header;
-		protected MCATimestampsRecorderModeHeader rheader;
+		internal MCAHeader header;
+		internal MCATimestampsRecorderModeHeader rheader;
 		internal MCATimestamp mca;
 
 		public BinaryWriter writer;
@@ -1913,6 +1913,23 @@ namespace NCCFile
 			return ok;
 		}
 
+		public bool OpenForWriting()
+		{
+            if (Log != null) Log.TraceEvent(LogLevels.Info, 111, "opening existing file for writing: " + Filename);
+			try
+			{ 
+				stream = File.OpenWrite(Filename);
+				writer = new BinaryWriter(stream);					
+			}
+			catch (Exception e) 
+			{
+				if (Log != null)
+					Log.TraceException(e);
+				return false;
+			}
+			return true;
+		}
+
 		public override void ConstructFullPathName(string opt = "")
 		{
 			base.ConstructFullPathName(opt);
@@ -1937,6 +1954,7 @@ namespace NCCFile
 					writer = null;
 				}
 				CloseStream();
+				stream = null;
 			} catch (Exception e) {
 				if (Log != null)
 					Log.TraceException(e);
@@ -1949,6 +1967,11 @@ namespace NCCFile
 		public void AdvanceToTimestampsBlock()
         {
             writer.Seek(BasisBlockSize, SeekOrigin.Begin);
+        }
+
+		public void WriteTimestampsRawDataChunk(byte[] rawDataChunk, int offset, int count)
+        {
+            Write(rawDataChunk, offset, count);
         }
 
 		public void Write(string str, int length)
@@ -2023,7 +2046,6 @@ namespace NCCFile
 			header.Write(this);
 			rheader.Write(this);
 		}
-
 
 
 		public long FirstEventTimeInTics;

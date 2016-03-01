@@ -124,7 +124,7 @@ namespace Instr
 			try 
 			{ 
 				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
-				//m_device.CallbackObject = new MCADeviceCallbackObject();  // URGENT next fill this callback in
+				//m_device.CallbackObject = new MCADeviceCallbackObject();  // URGENT: next fill this callback in
 				m_device.Initialize().Wait();
 				DAQState = DAQInstrState.Online;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
@@ -177,7 +177,7 @@ namespace Instr
 		}
 
 		/// <summary>
-		/// Performs an assay operation.
+		/// Performs a single cycle assay operation.
 		/// </summary>
 		/// <param name="measurement">The measurement.</param>
 		/// <param name="cancellationToken">The cancellation token to observe.</param>
@@ -188,8 +188,12 @@ namespace Instr
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
 			m_device.mHeartbeatSemaphore.Wait();
+			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
+
 			try
 			{
+				if (ps == null)
+					throw new Exception("Big L bogus state");
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
 				m_logger.Flush();
 
@@ -199,13 +203,10 @@ namespace Instr
 #endif
 						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
 
-				MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
-				if (ps == null)
-					throw new Exception("Big L bogus state");
-
+				MCAResponse response = null;
 				if (measurement.CurrentRepetition == 1)  // init HW on first cycle
 				{
-					MCAResponse response = null;
+					ps.device = m_device;
 					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData0));
 					if (response == null) { throw new MCADeviceLostConnectionException(); }
 					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData1));
@@ -214,6 +215,8 @@ namespace Instr
 					if (response == null) { throw new MCADeviceLostConnectionException(); }
 					response = await m_device.Client.SendAsync(MCACommand.SetRepeat(1));
 					if (response == null) { throw new MCADeviceLostConnectionException(); }
+
+					Thread.Sleep(120);
 				}
 
 				Stopwatch stopwatch = new Stopwatch();
@@ -223,13 +226,115 @@ namespace Instr
 
 				ps.BeginSweep(measurement.CurrentRepetition);
 
+				// a5 5a 42 00 01 00 ae d5 44 56 b9 9b
+				// flags: 0x0001 => spectrum is cleared and a new start time is set
+				// start time: 0x5644d5ae => seconds since Dec 31, 1969, 16:00:00 GMT
+				uint secondsSinceEpoch = (uint)(Math.Abs(Math.Round((DateTime.UtcNow - MCADevice.MCA527EpochTime).TotalSeconds)));
+  				response = await m_device.Client.SendAsync(MCACommand.Start(StartFlag.SpectrumClearedNewStartTime,
+																false, false, false, secondsSinceEpoch));
+				if (response == null) { throw new MCADeviceLostConnectionException(); }
+
+				bool done = false;
+				const uint CommonMemoryBlockSize = 1440;
+				// what's the most that could be left over from a previous attempt to decode? => 3 bytes
+				byte[] rawBuffer = new byte[CommonMemoryBlockSize + 3];
+				uint[] timestampsBuffer = new uint[CommonMemoryBlockSize + 1];
+
+				uint commonMemoryReadIndex = 0;
+				uint rawBufferOffset = 0;
+
 				stopwatch.Start();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time", DateTime.Now.ToString());
 				while (stopwatch.Elapsed < duration)
 				{
-					Thread.Sleep((int)duration.TotalMilliseconds / 10);
 					cancellationToken.ThrowIfCancellationRequested();
 
+					QueryState527ExResponse qs527er = (QueryState527ExResponse) await m_device.Client.SendAsync(MCACommand.QueryState527Ex());
+					if (qs527er == null) { throw new MCADeviceLostConnectionException(); }
+
+					MCAState state = qs527er.MCAState;
+					done = state != MCAState.Run;
+
+					// pull off some data while we are waiting...
+					uint commonMemoryFillLevel = qs527er.CommonMemoryFillLevel;
+					uint bytesAvailable = commonMemoryFillLevel - commonMemoryReadIndex;
+
+					if (state != MCAState.Run && bytesAvailable == 0) {
+						break;
+					}
+
+					if (bytesAvailable >= CommonMemoryBlockSize) {
+						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) await m_device.Client.SendAsync(MCACommand.QueryCommonMemory(commonMemoryReadIndex / 2));
+						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
+						// bytesToCopy needs to always be even, so that commonMemoryReadIndex always stays even...
+						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
+						qcmr.CopyData(0, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
+
+                        if (ps.file.writer != null) {
+                            ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
+							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+                        }
+
+						rawBufferOffset += bytesToCopy;
+						commonMemoryReadIndex += bytesToCopy;
+						uint timestampsCount = 0;//TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
+
+						// make sure rawBufferOffset is never greater than 3 after transforming data
+						// => means something has gone wrong
+						if (rawBufferOffset > 3) {
+							throw new MCADeviceBadDataException();
+						}
+
+						// copy the data out...
+						if (timestampsCount > 0) {
+							uint[] timestamps = new uint[timestampsCount];
+							Array.Copy(timestampsBuffer, 0, timestamps, 0, timestampsCount);
+							if (m_device.CallbackObject != null) {
+								ps.ReadTimestamps(measurement.CurrentRepetition, timestamps);
+							}
+						}
+					} else if (bytesAvailable > 0 && state != MCAState.Run) {
+						// special case for when there's not a whole block left to read
+						// we can only read up to the address: CommonMemorySize - 1440
+						uint commonMemorySize = qs527er.CommonMemorySize;
+
+						uint readAddress = commonMemoryReadIndex;
+						uint readOffset = 0;
+						if (readAddress > commonMemorySize - 1440) {
+							readOffset = readAddress - (commonMemorySize - 1440);
+							readAddress -= readOffset;
+						}
+
+						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) await m_device.Client.SendAsync(MCACommand.QueryCommonMemory(readAddress / 2));
+						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
+						uint bytesToCopy = bytesAvailable;
+						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
+
+                        if (ps.file.writer != null) {
+                            ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
+							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+                        }
+
+						rawBufferOffset += bytesToCopy;
+						commonMemoryReadIndex += bytesToCopy;                            
+
+						uint timestampsCount = 0;//TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
+
+						//if (rawBufferOffset > 0) {
+                            // apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
+							//throw new MCADeviceBadDataException();
+						//}
+						if (timestampsCount > 0) {
+							uint[] timestamps = new uint[timestampsCount];
+							Array.Copy(timestampsBuffer, 0, timestamps, 0, timestampsCount);
+							if (m_device.CallbackObject != null) {
+								ps.ReadTimestamps(measurement.CurrentRepetition, timestamps);
+							}
+						}
+					} else {
+						// give the device a break
+						await Task.Delay(100); // 100 ms
+					}
 					//    if (m_device.Available > 0) {
 					//        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
 
@@ -243,7 +348,6 @@ namespace Instr
 				}
 
 				stopwatch.Stop();
-				//CompleteCycle(ps.m);
 				ps.FinishedSweep(measurement.CurrentRepetition, stopwatch.Elapsed.TotalSeconds);
 				
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
@@ -259,13 +363,16 @@ namespace Instr
 					DeviceName, total, stopwatch.Elapsed.TotalSeconds);
 				m_logger.Flush();
 				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
-			} catch (OperationCanceledException)
+				await m_device.CreateWriteHeaderAndClose(ps.file);
+			}
+			catch (OperationCanceledException)
 			{
 				m_logger.TraceEvent(LogLevels.Warning, 767, "MCA527[{0}]: Stopping assay", DeviceName);
 				m_logger.Flush();
 				DAQControl.StopActiveAssayImmediately();
 				//throw; cannot catch easily due to 4.5 task model or my c^&p coding, so just log and stop the task
-			} catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during assay: {1}", DeviceName, ex.Message);
 				m_logger.TraceException(ex, true);
@@ -277,33 +384,12 @@ namespace Instr
 			{
 				m_device.mHeartbeatSemaphore.Release();
 			}
+
 		}
 
 #if NETFX_45
 		async
 #endif
-			void CompleteCycle(MCAFile file)
-		{
-			QuerySystemDataResponse qsdr = (QuerySystemDataResponse) await m_device.Client.SendAsync(MCACommand.QuerySystemData());
-			if (qsdr == null) { throw new MCADeviceLostConnectionException(); }
-
-            if (file.stream != null) {
-                QueryStateResponse stateResponse = (QueryStateResponse) await m_device.Client.SendAsync(MCACommand.QueryState());
-                if (stateResponse == null) { throw new MCADeviceLostConnectionException(); }
-                QueryState527ExResponse state527ExResponse = (QueryState527ExResponse) await m_device.Client.SendAsync(MCACommand.QueryState527Ex());
-                QueryState527Response state527Response = (QueryState527Response) await m_device.Client.SendAsync(MCACommand.QueryState527());
-                QueryPowerResponse powerResponse = (QueryPowerResponse) await m_device.Client.SendAsync(MCACommand.QueryPower());
-                QueryState527Ex2Response state527Ex2Response = (QueryState527Ex2Response) await m_device.Client.SendAsync(MCACommand.QueryState527Ex2());
-                MCATimestampsBasisFileBlock basisFileBlock = MCATimestampsBasisFileBlock.Create(stateResponse, state527ExResponse, state527Response, powerResponse, state527Ex2Response);
-                basisFileBlock.DataCodingMethod = 0;
-
-                basisFileBlock.RepeatMode = (sbyte)(StartFlag.SpectrumClearedNewStartTime);
-                basisFileBlock.RepeatModeOptions = 0;
-                // urgent file.WriteHeader(basisFileBlock);
-                file.CloseWriter();
-            }
-
-		}
 
 		/// <summary>
 		/// Stops the currently executing assay operation.

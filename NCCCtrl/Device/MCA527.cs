@@ -316,14 +316,7 @@ namespace Device
         /// <returns>A <see cref="BinaryReader"/> that reads from the specified device register.</returns>
         protected BinaryReader GetRegisterReader(byte register)
         {
-            BinaryReader reader;
-
-            if (!m_readers.TryGetValue(register, out reader))
-            {
-                reader = new BinaryReader(new RegisterStream(m_handle, register));
-                m_readers.Add(register, reader);
-            }
-
+            BinaryReader reader = null;
             return reader;
         }
 
@@ -334,13 +327,8 @@ namespace Device
         /// <returns>A <see cref="BinaryWriter"/> that writes to the specified device register.</returns>
         protected BinaryWriter GetRegisterWriter(byte register)
         {
-            BinaryWriter writer;
+            BinaryWriter writer = null;
 
-            if (!m_writers.TryGetValue(register, out writer))
-            {
-                writer = new BinaryWriter(new RegisterStream(m_handle, register));
-                m_writers.Add(register, writer);
-            }
 
             return writer;
         }
@@ -537,7 +525,6 @@ namespace Device
         private string m_deviceName;
         private bool m_disposed;
         private string m_firmwareVersion;
-        private IntPtr m_handle;
         private IDictionary<byte, BinaryReader> m_readers = new Dictionary<byte, BinaryReader>();
         private double[] m_voltageCorrections;
         private IDictionary<byte, BinaryWriter> m_writers = new Dictionary<byte, BinaryWriter>();

@@ -562,7 +562,7 @@ namespace NewUI
 						#endif
 						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
-                        AssayCoreOp();
+                        await AssayCoreOp();
                         DisconnectInstruments();
                         FireEvent(EventType.ActionFinished, this);
                         break;

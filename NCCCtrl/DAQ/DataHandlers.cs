@@ -302,7 +302,7 @@ namespace DAQ
                 if ((CurState.Measurement.CurrentRepetition < CurState.Measurement.RequestedRepetitions) ||
                     (CurState.Measurement.RequestedRepetitions == 0) && !CurState.IsQuitRequested)
                 {
-                    // dev note: this could   be spawned in a task because the end processing can be time consuming, delaying the start of next DAQ iteration 
+                    // dev note: this method could be spawned in a task because the end processing can be time consuming, delaying the start of next DAQ iteration 
                     bool ok = activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement);
                     if (ok)  // start the next cycle
                     {

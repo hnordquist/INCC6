@@ -1740,7 +1740,7 @@ namespace Device
 #endif
         }
 
-        static DateTime MCA527EpochTime = new DateTime(1969, 12, 31, 16, 0, 0);
+        static public DateTime MCA527EpochTime = new DateTime(1969, 12, 31, 16, 0, 0);
 
 		public
 #if NETFX_45
@@ -2631,8 +2631,6 @@ namespace Device
         }
     }
 
-
-
 	class MCABasisFileBlockHeader
 	{
 		public string FileIdentification;
@@ -2660,5 +2658,143 @@ namespace Device
             };
         }
 	}
+
+	internal static class MCAFileExtensions
+	{
+
+		internal async static Task CreateWriteHeaderAndClose(this MCADevice device, NCCFile.MCAFile file)
+		{
+			file.Log.TraceEvent(NCCReporter.LogLevels.Verbose, 120, "CreateWriteHeaderAndClose entry");
+			QuerySystemDataResponse qsdr = (QuerySystemDataResponse) await device.Client.SendAsync(MCACommand.QuerySystemData());
+			if (qsdr == null) { throw new MCADeviceLostConnectionException(); }
+            if (file.stream == null)
+			{
+				file.Log.TraceEvent(NCCReporter.LogLevels.Verbose, 118, "CreateWriteHeaderAndClose reopen");
+				// reopen the closed file for this final operation
+				file.OpenForWriting();
+			}
+            if (file.stream != null)
+			{
+				file.Log.TraceEvent(NCCReporter.LogLevels.Verbose, 119, "CreateWriteHeaderAndClose write header");
+                QueryStateResponse stateResponse = (QueryStateResponse) await device.Client.SendAsync(MCACommand.QueryState());
+                if (stateResponse == null) { throw new MCADeviceLostConnectionException(); }
+                QueryState527ExResponse state527ExResponse = (QueryState527ExResponse) await device.Client.SendAsync(MCACommand.QueryState527Ex());
+                QueryState527Response state527Response = (QueryState527Response) await device.Client.SendAsync(MCACommand.QueryState527());
+                QueryPowerResponse powerResponse = (QueryPowerResponse) await device.Client.SendAsync(MCACommand.QueryPower());
+                QueryState527Ex2Response state527Ex2Response = (QueryState527Ex2Response) await device.Client.SendAsync(MCACommand.QueryState527Ex2());
+
+				file.CreatePrimaryHeader(state527Response,stateResponse);
+				file.CreateModeHeader(stateResponse,state527ExResponse,state527Response,powerResponse,state527Ex2Response);				
+                file.rheader.DataCodingMethod = 0;
+                file.rheader.RepeatMode = (sbyte)(StartFlag.SpectrumClearedNewStartTime);
+                file.rheader.RepeatModeOptions = 0;
+                file.WriteHeader();
+                file.CloseWriter();
+			}
+		}
+
+		internal static void CreateModeHeader(this NCCFile.MCAFile file,
+            QueryStateResponse stateResponse,
+            QueryState527ExResponse state527ExResponse,
+            QueryState527Response state527Response,
+            QueryPowerResponse powerResponse,
+            QueryState527Ex2Response state527Ex2Response
+        )       
+        {
+            file.rheader = new NCCFile.MCAFile.MCATimestampsRecorderModeHeader {
+                // sampling rate: kHz : 1000
+                // time unit length: ns : 1000000000
+                // 1000000000 / (sampling_rate / 1000)
+                // 1000000 / sampling_rate
+                TimeUnitLengthNanoSec = (ushort)(1000000 / state527ExResponse.ADCSamplingRate),
+                Preset = stateResponse.Preset,
+                PresetValue = stateResponse.PresetValue,
+                PresetMemorySize = state527ExResponse.CommonMemoryFillStop,
+                UsedMemorySize = state527ExResponse.CommonMemoryFillLevel,
+                HighVoltage = stateResponse.HighVoltage,
+                HighVoltagePolarity = stateResponse.HighVoltagePolarity,
+                HVInhibitMode = stateResponse.HVInhibitMode,
+                PreamplifierPowerSwitches = stateResponse.PowerSwitches,
+                TTLLowLevel = state527ExResponse.TTLLowLevel,
+                TTLHighLevel = state527ExResponse.TTLHighLevel,
+                AmplifierCoarseGain = stateResponse.AmplifierCourseGain,
+                ADCInputPolarity = stateResponse.ADCInputPolarity,
+                ShapingTimeChoice = stateResponse.ShapingTimeChoice,
+                TriggerFilterForLowShapingTime = state527Response.TriggerFilterForLowShapingTime,
+                TriggerFilterForHighShapingTime = state527Response.TriggerFilterForHighShapingTime,
+                OffsetDAC = state527Response.OffsetDAC,
+                TriggerLevelForAutomaticThresholdCalculation = state527Response.TriggerLevelForAutomaticThresholdCalculation,
+                SetTriggerThreshold = state527Response.SetTriggerThreshold,
+                ExtensionPortPartAConfiguration = state527ExResponse.ExtensionPortPartAConfiguration,
+                ExtensionPortPartBConfiguration = state527ExResponse.ExtensionPortPartBConfiguration,
+                ExtensionPortPartCConfiguration = state527ExResponse.ExtensionPortPartCConfiguration,
+                ExtensionPortPartFConfiguration = state527ExResponse.ExtensionPortPartFConfiguration,
+                ExtensionPortRS232BaudRate = state527ExResponse.ExtensionPortRS232BaudRate,
+                ExtensionPortRS232Flags = state527ExResponse.ExtensionPortRS232Flags,
+                StartFlag = stateResponse.StartFlag,
+                StartTime = stateResponse.StartTime,
+                RealTime = stateResponse.RealTime,
+                BatteryCurrentAtStop = powerResponse.BatteryCurrentAtStop,
+                ChargerCurrentAtStop = powerResponse.ChargerCurrentAtStop,
+                HVPrimaryCurrentAtStop = powerResponse.HVPrimaryCurrentAtStop,
+                Plus12VPrimaryCurrentAtStop = powerResponse.Plus12VPrimaryCurrentAtStop,
+                Minus12VPrimaryCurrentAtStop = powerResponse.Minus12VPrimaryCurrentAtStop,
+                Plus24VPrimaryCurrentAtStop = powerResponse.Plus24VPrimaryCurrentAtStop,
+                Minus24VPrimaryCurrentAtStop = powerResponse.Minus24VPrimaryCurrentAtStop,
+                BatteryVoltageAtStop = powerResponse.BatteryVoltageAtStop,
+                HighVoltageAtStop = powerResponse.HVAtStop,
+                Plus12VActualValueAtStop = powerResponse.Plus12VActualValueAtStop,
+                Minus12VActualValueAtStop = powerResponse.Minus12VActualValueAtStop,
+                Plus24VActualValueAtStop = powerResponse.Plus24VActualValueAtStop,
+                Minus24VActualValueAtStop = powerResponse.Minus24VActualValueAtStop,
+                VoltageOnSubD9Pin3AtStop = powerResponse.VoltageOnSubD9Pin3AtStop,
+                VoltageOnSubD9Pin5AtStop = powerResponse.VoltageOnSubD9Pin5AtStop,
+                CurrentSourceStateOnSubD9Pin5 = powerResponse.CurrentSourceStateOnSubD9Pin5,
+                CurrentSourceValueOnSubD9Pin5 = powerResponse.CurrentSourceValueOnSubD9Pin5,
+                InputResistanceOnSubD9Pin5 = powerResponse.InputResistanceOnSubD9Pin5,
+                ADCCorrectionOffsetOnSubD9Pin5 = powerResponse.ADCCorrectionOffsetOnSubD9Pin5,
+                GainCorrectionFactorOnSubD9Pin5 = powerResponse.GainCorrectionFactorOnSubD9Pin5,
+                ADCCorrectionOffsetOnSubD9Pin3 = powerResponse.ADCCorrectionOffsetOnSubD9Pin3,
+                GainCorrectionFactorOnSubD9Pin3 = powerResponse.GainCorrectionFactorOnSubD9Pin3,
+                MCATemperatureAtStop = state527Response.MCATemperatureAtStop,
+                DetectorTemperatureAtStop = state527Response.DetectorTemperatureAtStop,
+                PowerModuleTemperatureAtStop = state527Response.PowerModuleTemperatureAtStop,
+                // RepeatMode = ??
+                // RepeatModeOptions = ??
+                RepeatValue = stateResponse.RepeatValue,
+                AHRCGroup0Width = state527Ex2Response.AHRCGroup0Width,
+                AHRCGroup1Width = state527Ex2Response.AHRCGroup1Width,
+                AHRCGroup2Width = state527Ex2Response.AHRCGroup2Width,
+                AHRCGroup3Width = state527Ex2Response.AHRCGroup3Width,
+                AHRCGroup4Width = state527Ex2Response.AHRCGroup4Width,
+                AHRCGroup5Width = state527Ex2Response.AHRCGroup5Width,
+                AHRCGroup6Width = state527Ex2Response.AHRCGroup6Width,
+                AHRCGroup7Width = state527Ex2Response.AHRCGroup7Width,
+                AHRCGroup8Width = state527Ex2Response.AHRCGroup8Width,
+                AHRCGroup9Width = state527Ex2Response.AHRCGroup9Width,
+                AHRCTriggerThreshold = state527Ex2Response.AHRCTriggerThreshold,
+            };
+        }
+
+
+		internal static void CreatePrimaryHeader(this NCCFile.MCAFile file,
+            QueryState527Response state527Response,
+            QueryStateResponse stateResponse
+			
+        )
+        {
+           file.header = new NCCFile.MCAFile.MCAHeader {
+                FileIdentification = "MCA527BIN_APP",
+                FirmwareVersion = state527Response.MCAFirmwareVersion,
+                HardwareVersion = state527Response.MCAHardwareVersion,
+                FirmwareModification = state527Response.MCAFirmwareModification,
+                HardwareModification = state527Response.MCAHardwareModification,
+                SerialNumber = stateResponse.MCASerialNumber,
+                GeneralMode = (ushort)state527Response.GeneralMCAMode
+            };
+        }
+	}
+
+
 }
 

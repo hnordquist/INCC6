@@ -79,7 +79,7 @@ namespace Analysis
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
 		{
-			//Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
+			Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
 			//bool first = true;
 			//foreach (uint timestamp in timestamps) {
 			//	if (first == false) { Console.Write(", "); }
@@ -108,7 +108,7 @@ namespace Analysis
             m_parser.Flush();
             if (file != null)
                 file.CloseWriter();
-        }
+		}
 
         /// <summary>
         /// Analyzes a sequence of events. Optionally writes data file 
@@ -146,6 +146,7 @@ namespace Analysis
 
         private MCA527Parser m_parser;
         public NCCFile.MCAFile file;
+        public MCADevice device;
         private bool m_writingFile;
 
     }
