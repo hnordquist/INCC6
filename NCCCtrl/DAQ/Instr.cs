@@ -493,7 +493,7 @@ namespace Instr
         }
 
 
-        internal INeutronDataFile PrepFile(string prefix, int idx, LMLoggers.LognLM collog)
+        internal INeutronDataFile PrepOutputFile(string prefix, int idx, LMLoggers.LognLM collog)
         {
             if (!NC.App.AppContext.LiveFileWrite)
                 return null;

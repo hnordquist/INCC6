@@ -50,12 +50,12 @@ namespace NewUI
             this.Text = allmea?"All Measurements":filter + " Measurements";
             Detector det = Integ.GetCurrentAcquireDetector();
 			this.Text += " for Detector " + det.Id.DetectorId;
-            mlist = NC.App.DB.MeasurementsFor(det,filter);
+            mlist = NC.App.DB.MeasurementsFor(det, AssaySelectorExtensions.SrcToEnum(filter));
 			if (filter.CompareTo("unspecified") == 0)  // LMOnly
-				mlist.RemoveAll(EmptyCSVFile); // I am conflicted on this step
+				mlist.RemoveAll(EmptyCSVFile);    // cull those without LM CSV results
 			else
-				mlist.RemoveAll(EmptyINCC5File); // I am conflicted on this step
-            ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+				mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
+			ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
 			listView1.ShowItemToolTips = true;
 
             foreach (Measurement m in mlist)

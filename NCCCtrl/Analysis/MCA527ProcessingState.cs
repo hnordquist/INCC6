@@ -55,7 +55,7 @@ namespace Analysis
         /// <param name="param">optional output file (MCAFile) class instance.</param>
         public override void StartCycle(Cycle cycle, object param = null)
         {
-            base.StartCycle(cycle, param);
+           base.StartCycle(cycle, param);
 
             if (cycle != null) {
                 m_parser.Reset((ulong) (MCA527.Frequency * CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval));
@@ -69,12 +69,12 @@ namespace Analysis
 
 		public void BeginSweep(uint sweepNumber)
 		{
-			Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
+			//Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
 		}
 
 		public void FinishedSweep(uint sweepNumber, double sweepDurationSeconds)
 		{
-			Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDurationSeconds);
+			//Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDurationSeconds);
 		}
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)

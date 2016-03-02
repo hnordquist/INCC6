@@ -144,12 +144,34 @@ namespace Instr
 #endif
         }
 
+
+		async Task<bool> InitSettings(ushort cycle, uint secs)
+		{
+			MCAResponse response = null;
+			response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData0));
+			if (response == null)
+			{ throw new MCADeviceLostConnectionException(); }
+			response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData1));
+			if (response == null)
+			{ throw new MCADeviceLostConnectionException(); }
+			if (cycle == 1)  // init some values on first cycle
+			{
+				response = await m_device.Client.SendAsync(MCACommand.SetPresets(Presets.Real, secs));
+				if (response == null)
+				{ throw new MCADeviceLostConnectionException(); }
+				response = await m_device.Client.SendAsync(MCACommand.SetRepeat(1));
+				if (response == null)
+				{ throw new MCADeviceLostConnectionException(); }
+			}
+			return true;
+		}
+
 		/// <summary>
 		/// Starts an assay operation.
 		/// </summary>
 		/// <param name="measurement">The measurement.</param>
 		/// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-		public override Task StartAssay(Measurement measurement)
+		public async override Task StartAssay(Measurement measurement)
 		{
 			m_logger.TraceEvent(LogLevels.Info, 0,
 				"MCA527[{0}]: Starting {1}s assay...",
@@ -159,21 +181,18 @@ namespace Instr
 			lock (m_monitor)
 			{
 				if (m_cancellationTokenSource != null)
-				{
 					throw new InvalidOperationException("An operation is already in progress.");
-				}
-
 				m_cancellationTokenSource = new CancellationTokenSource();
 			}
-
 			CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-			return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
+			Task t = Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
 #if NETFX_45
 					TaskCreationOptions.DenyChildAttach,
 #else
 					TaskCreationOptions.PreferFairness, 
 #endif
 					TaskScheduler.Default);
+
 		}
 
 		/// <summary>
@@ -194,7 +213,8 @@ namespace Instr
 			{
 				if (ps == null)
 					throw new Exception("Big L bogus state");
-				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay", DeviceName);
+				ushort seq = measurement.CurrentRepetition;
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay {1}", DeviceName, seq);
 				m_logger.Flush();
 
 				if (m_setvoltage)
@@ -203,24 +223,13 @@ namespace Instr
 #endif
 						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
 
-				MCAResponse response = null;
-				if (measurement.CurrentRepetition == 1)  // init HW on first cycle
-				{
+				if (seq == 1)  // init var on first cycle
 					ps.device = m_device;
-					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData0));
-					if (response == null) { throw new MCADeviceLostConnectionException(); }
-					response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData1));
-					if (response == null) { throw new MCADeviceLostConnectionException(); }
-					response = await m_device.Client.SendAsync(MCACommand.SetPresets(Presets.Real, (uint)measurement.AcquireState.lm.Interval));
-					if (response == null) { throw new MCADeviceLostConnectionException(); }
-					response = await m_device.Client.SendAsync(MCACommand.SetRepeat(1));
-					if (response == null) { throw new MCADeviceLostConnectionException(); }
 
-					Thread.Sleep(120);
-				}
+				bool x = await InitSettings(seq, (uint)measurement.AcquireState.lm.Interval);  // truncate for discrete integer result
 
 				Stopwatch stopwatch = new Stopwatch();
-				TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
+				TimeSpan duration = TimeSpan.FromSeconds((uint)measurement.AcquireState.lm.Interval);
 				byte[] buffer = new byte[1024 * 1024];
 				long total = 0;
 
@@ -230,7 +239,7 @@ namespace Instr
 				// flags: 0x0001 => spectrum is cleared and a new start time is set
 				// start time: 0x5644d5ae => seconds since Dec 31, 1969, 16:00:00 GMT
 				uint secondsSinceEpoch = (uint)(Math.Abs(Math.Round((DateTime.UtcNow - MCADevice.MCA527EpochTime).TotalSeconds)));
-  				response = await m_device.Client.SendAsync(MCACommand.Start(StartFlag.SpectrumClearedNewStartTime,
+  				MCAResponse response = await m_device.Client.SendAsync(MCACommand.Start(StartFlag.SpectrumClearedNewStartTime,
 																false, false, false, secondsSinceEpoch));
 				if (response == null) { throw new MCADeviceLostConnectionException(); }
 
@@ -244,7 +253,7 @@ namespace Instr
 				uint rawBufferOffset = 0;
 
 				stopwatch.Start();
-				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time", DateTime.Now.ToString());
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
 				while (stopwatch.Elapsed < duration)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
@@ -348,22 +357,22 @@ namespace Instr
 				}
 
 				stopwatch.Stop();
-				ps.FinishedSweep(measurement.CurrentRepetition, stopwatch.Elapsed.TotalSeconds);
+				ps.FinishedSweep(seq, stopwatch.Elapsed.TotalSeconds);
 				
-				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time", DateTime.Now.ToString());
-
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Finished assay; read {1} bytes in {2}s for {3}", DeviceName, total, stopwatch.Elapsed.TotalSeconds, seq);
+				m_logger.Flush();
 				lock (m_monitor)
 				{
 					m_cancellationTokenSource.Dispose();
 					m_cancellationTokenSource = null;
 				}
-
-				m_logger.TraceEvent(LogLevels.Info, 0,
-					"MCA527[{0}]: Finished assay; read {1} bytes in {2}s",
-					DeviceName, total, stopwatch.Elapsed.TotalSeconds);
-				m_logger.Flush();
 				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
+				m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
+				m_logger.Flush();
 				await m_device.CreateWriteHeaderAndClose(ps.file);
+				m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
+				m_logger.Flush();
 			}
 			catch (OperationCanceledException)
 			{

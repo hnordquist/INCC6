@@ -3514,11 +3514,10 @@ namespace AnalysisDefs
         }
 
  
-        public List<Measurement> MeasurementsFor(Detector det, string MeasType = "")
+        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified)
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
-            AssaySelector.MeasurementOption option = AssaySelectorExtensions.SrcToEnum(MeasType);
             ResultsRecs recs = new ResultsRecs();
 
 			dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, det.Id.DetectorName);

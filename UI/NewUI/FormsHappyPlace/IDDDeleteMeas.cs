@@ -74,7 +74,7 @@ namespace NewUI
         private void LoadMeasurementList()
         {
             Detector det = Integ.GetCurrentAcquireDetector();
-            mlist = NC.App.DB.MeasurementsFor(det, "");
+            mlist = NC.App.DB.MeasurementsFor(det);
             MeasurementView.ShowItemToolTips = true;
 
             foreach (Measurement m in mlist)

@@ -451,13 +451,15 @@ namespace DAQ
                 Cycle cycle = new Cycle(ctrllog);
                 cycle.SetUpdatedDataSourceId(active.id); // where the cycle came from, but with updated timestamp
                 CurState.Measurement.Add(cycle);  // todo: this mixes the cycles from the different instruments onto one list, gotta change this now that we are at more than one instrument, well you can simply write iterators that select on specific instrument Ids, over the entire list, or use LINQ select * where dsid == whatever syntax on the list
+                ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0} init", cycle.seq);
 
                 // devnote: file writing is selectable via the UI, and raw analysis should be independently
                 // start the file capture
                 if (active is LMInstrument)
                 {
-                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
-                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32, but not for LMMM
+                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
+                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for LMMM
+                    ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
                 }
                 else
                     active.RDT.StartCycle(cycle);
@@ -491,7 +493,7 @@ namespace DAQ
 
             NC.App.Loggers.Flush();
             FireEvent(EventType.ActionInProgress, this);
-            Thread.Sleep(250); // wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
+            Thread.Sleep(250); // LMMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
             // PTR-32
             // This loop works for PTR-32 (and soon MCA-527) instruments, based on an improved instrument and control design

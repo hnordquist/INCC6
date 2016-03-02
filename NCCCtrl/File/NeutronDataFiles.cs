@@ -1252,6 +1252,7 @@ namespace NCCFile
         {
             Events.GenName(locPrefix, lm);
             Channels.Filename = Events.Filename.Replace(".bin", ".chn");
+			Filename = Events.Filename;
         }
 
         public void Delete()

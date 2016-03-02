@@ -1222,17 +1222,17 @@ namespace NCCFile
             {
                 if (meas.HasReportableData && totalBuffersProcessed > 0) // todo: test 
                 { 
-                // if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
-                NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
+					// if we have more than one cycle (one per file), and the cycles are combined into a 'measurement', then do the meta-processing across the results cycle list here
+					NC.App.Opstate.ResetTimer(postprocessing, meas, 50, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
-                meas.CalculateMeasurementResults();
+					meas.CalculateMeasurementResults();
 
-                NC.App.Opstate.StopTimer();
-                FireEvent(EventType.ActionInProgress, this);
+					NC.App.Opstate.StopTimer();
+					FireEvent(EventType.ActionInProgress, this);
 
-                ReportMangler rm = new ReportMangler(ctrllog);
-                rm.GenerateReports(meas);
-                meas.SaveMeasurementResults();
+					ReportMangler rm = new ReportMangler(ctrllog);
+					rm.GenerateReports(meas);
+					meas.SaveMeasurementResults();
                 }
             }
 
