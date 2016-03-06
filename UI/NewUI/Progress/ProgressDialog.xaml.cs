@@ -52,58 +52,33 @@ namespace NewUI.Progress
 			Go();
         }
 		Task _task;
-		
-		#if NETFX_45
-		async
-		#endif
+
 		public void Go()
 		{
 			while (UIIntegration.Controller.ConnWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
 			{
-				#if NETFX_45
-					await Task.Yield();
-				#else
 					System.Threading.Thread.Yield();
-				#endif
 			}
 			while (UIIntegration.Controller.MeasWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
 			{
-				#if NETFX_45
-					await Task.Yield();
-				#else
 					System.Threading.Thread.Yield();
-				#endif
-			}
-			#if NETFX_45
-			await 
-			#endif
+            }
 			_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-#if NETFX_45
-		async
-#endif
 		void WaitForCompletion()
 		{
 			if (!UIIntegration.Controller.ConnWaiter.IsSet)
 			do
 			{
-				#if NETFX_45
-					await Task.Yield();
-				#else
 					System.Threading.Thread.Yield();
-				#endif
-				}
+			}
 			while (!UIIntegration.Controller.ConnWaiter.Wait(600));
 
 			if (!UIIntegration.Controller.MeasWaiter.IsSet)
 			do
 			{
-				#if NETFX_45
-					await Task.Yield();
-				#else
-					System.Threading.Thread.Yield();
-				#endif
+				System.Threading.Thread.Yield();
 			}
 			while (!UIIntegration.Controller.MeasWaiter.Wait(600));
 

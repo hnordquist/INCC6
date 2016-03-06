@@ -458,11 +458,7 @@ namespace NewUI
             mProgressTracker = new ProgressTracker();
 
             task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
-					#if NETFX_45
-					TaskCreationOptions.DenyChildAttach, 
-					#else
-					TaskCreationOptions.PreferFairness, 
-					#endif				
+					TaskCreationOptions.PreferFairness, 	
 					TaskScheduler.Default);
             string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") + (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
@@ -527,9 +523,6 @@ namespace NewUI
             mProgressTracker = new ProgressTracker();
         }
 
-#if NETFX_45
-						async
-#endif
 		public new void Run()
         {
             try
@@ -537,19 +530,13 @@ namespace NewUI
                 switch (NC.App.Opstate.Action)  // these are the actions available from the GUI only
                 {
                     case NCCAction.Discover:
-                        FireEvent(EventType.PreAction, this);
-						#if NETFX_45
-						await 
-						#endif
+                        FireEvent(EventType.PreAction, this);  
 						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.HVCalibration:
                         FireEvent(EventType.PreAction, this);
-						#if NETFX_45
-						await 
-						#endif
                         ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         HVCoreOp();
@@ -557,12 +544,9 @@ namespace NewUI
                         break;
                     case NCCAction.Assay:
                         FireEvent(EventType.PreAction, this);
-						#if NETFX_45
-						await 
-						#endif
 						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
-                        await AssayCoreOp();
+                        AssayCoreOp();
                         DisconnectInstruments();
                         FireEvent(EventType.ActionFinished, this);
                         break;
@@ -609,11 +593,7 @@ namespace NewUI
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
             task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
-					#if NETFX_45
-					TaskCreationOptions.DenyChildAttach, 
-					#else
 					TaskCreationOptions.PreferFairness, 
-					#endif				
 					TaskScheduler.Default);
             Progress.ProgressDialog.Show(null, "DAQ " + NC.App.Opstate.Action.ToString(), NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
 

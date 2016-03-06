@@ -314,9 +314,8 @@ namespace Instr
         /// </summary>
         /// <param name="measurement">The measurement.</param>
         /// <exception cref="IOException">An error occurred communicating with the device.</exception>
-        public virtual Task StartAssay(Measurement measurement)
+        public virtual void StartAssay(Measurement measurement)
         {
-            return null;
         }
 
         /// <summary>
@@ -333,9 +332,8 @@ namespace Instr
         /// <param name="voltage">The voltage to set in volts.</param>
         /// <param name="duration">The length of the measurement to take.</param>
         /// <exception cref="IOException">An error occurred communicating with the device.</exception>
-        public virtual Task StartHVCalibration(int voltage, TimeSpan duration)
+        public virtual void StartHVCalibration(int voltage, TimeSpan duration)
         {
-            return null;
         }
 
         /// <summary>

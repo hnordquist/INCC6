@@ -120,12 +120,11 @@ namespace Instr
                 // Already connected
                 return;
             }
-#if NETFX_45
 			try 
 			{ 
 				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
 				//m_device.CallbackObject = new MCADeviceCallbackObject();  // URGENT: next fill this callback in
-				m_device.Initialize().Wait();
+				m_device.Initialize();
 				DAQState = DAQInstrState.Online;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);
 			}
@@ -141,25 +140,24 @@ namespace Instr
 			} 
 
 			m_logger.Flush();
-#endif
         }
 
 
-		async Task<bool> InitSettings(ushort cycle, uint secs)
+		bool InitSettings(ushort cycle, uint secs)
 		{
 			MCAResponse response = null;
-			response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData0));
+			response = m_device.Client.Send(MCACommand.Clear(ClearMode.ClearMeasurementData0));
 			if (response == null)
 			{ throw new MCADeviceLostConnectionException(); }
-			response = await m_device.Client.SendAsync(MCACommand.Clear(ClearMode.ClearMeasurementData1));
+			response = m_device.Client.Send(MCACommand.Clear(ClearMode.ClearMeasurementData1));
 			if (response == null)
 			{ throw new MCADeviceLostConnectionException(); }
 			if (cycle == 1)  // init some values on first cycle
 			{
-				response = await m_device.Client.SendAsync(MCACommand.SetPresets(Presets.Real, secs));
+				response = m_device.Client.Send(MCACommand.SetPresets(Presets.Real, secs));
 				if (response == null)
 				{ throw new MCADeviceLostConnectionException(); }
-				response = await m_device.Client.SendAsync(MCACommand.SetRepeat(1));
+				response = m_device.Client.Send(MCACommand.SetRepeat(1));
 				if (response == null)
 				{ throw new MCADeviceLostConnectionException(); }
 			}
@@ -171,7 +169,7 @@ namespace Instr
 		/// </summary>
 		/// <param name="measurement">The measurement.</param>
 		/// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-		public async override Task StartAssay(Measurement measurement)
+		public override void StartAssay(Measurement measurement)
 		{
 			m_logger.TraceEvent(LogLevels.Info, 0,
 				"MCA527[{0}]: Starting {1}s assay...",
@@ -185,12 +183,8 @@ namespace Instr
 				m_cancellationTokenSource = new CancellationTokenSource();
 			}
 			CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-			Task t = Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
-#if NETFX_45
-					TaskCreationOptions.DenyChildAttach,
-#else
+			Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
 					TaskCreationOptions.PreferFairness, 
-#endif
 					TaskScheduler.Default);
 
 		}
@@ -201,12 +195,9 @@ namespace Instr
 		/// <param name="measurement">The measurement.</param>
 		/// <param name="cancellationToken">The cancellation token to observe.</param>
 		/// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-#if NETFX_45
-		async
-#endif
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
-			m_device.mHeartbeatSemaphore.Wait();
+			//m_device.mHeartbeatSemaphore.Wait();
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
 
 			try
@@ -218,15 +209,12 @@ namespace Instr
 				m_logger.Flush();
 
 				if (m_setvoltage)
-#if NETFX_45
-					await
-#endif
 						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
 
 				if (seq == 1)  // init var on first cycle
 					ps.device = m_device;
 
-				bool x = await InitSettings(seq, (uint)measurement.AcquireState.lm.Interval);  // truncate for discrete integer result
+				bool x = InitSettings(seq, (uint)measurement.AcquireState.lm.Interval);  // truncate for discrete integer result
 
 				Stopwatch stopwatch = new Stopwatch();
 				TimeSpan duration = TimeSpan.FromSeconds((uint)measurement.AcquireState.lm.Interval);
@@ -239,7 +227,7 @@ namespace Instr
 				// flags: 0x0001 => spectrum is cleared and a new start time is set
 				// start time: 0x5644d5ae => seconds since Dec 31, 1969, 16:00:00 GMT
 				uint secondsSinceEpoch = (uint)(Math.Abs(Math.Round((DateTime.UtcNow - MCADevice.MCA527EpochTime).TotalSeconds)));
-  				MCAResponse response = await m_device.Client.SendAsync(MCACommand.Start(StartFlag.SpectrumClearedNewStartTime,
+  				MCAResponse response = m_device.Client.Send(MCACommand.Start(StartFlag.SpectrumClearedNewStartTime,
 																false, false, false, secondsSinceEpoch));
 				if (response == null) { throw new MCADeviceLostConnectionException(); }
 
@@ -258,7 +246,7 @@ namespace Instr
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
-					QueryState527ExResponse qs527er = (QueryState527ExResponse) await m_device.Client.SendAsync(MCACommand.QueryState527Ex());
+					QueryState527ExResponse qs527er = (QueryState527ExResponse)m_device.Client.Send(MCACommand.QueryState527Ex());
 					if (qs527er == null) { throw new MCADeviceLostConnectionException(); }
 
 					MCAState state = qs527er.MCAState;
@@ -273,7 +261,7 @@ namespace Instr
 					}
 
 					if (bytesAvailable >= CommonMemoryBlockSize) {
-						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) await m_device.Client.SendAsync(MCACommand.QueryCommonMemory(commonMemoryReadIndex / 2));
+						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse)m_device.Client.Send(MCACommand.QueryCommonMemory(commonMemoryReadIndex / 2));
 						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
 						// bytesToCopy needs to always be even, so that commonMemoryReadIndex always stays even...
 						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
@@ -314,7 +302,7 @@ namespace Instr
 							readAddress -= readOffset;
 						}
 
-						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) await m_device.Client.SendAsync(MCACommand.QueryCommonMemory(readAddress / 2));
+						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) m_device.Client.Send(MCACommand.QueryCommonMemory(readAddress / 2));
 						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
 						uint bytesToCopy = bytesAvailable;
 						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
@@ -342,7 +330,7 @@ namespace Instr
 						}
 					} else {
 						// give the device a break
-						await Task.Delay(100); // 100 ms
+						Thread.Sleep(100); // 100 ms
 					}
 					//    if (m_device.Available > 0) {
 					//        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
@@ -370,7 +358,7 @@ namespace Instr
 				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
 				m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
 				m_logger.Flush();
-				await m_device.CreateWriteHeaderAndClose(ps.file);
+				m_device.CreateWriteHeaderAndClose(ps.file);
 				m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
 				m_logger.Flush();
 			}
@@ -391,14 +379,11 @@ namespace Instr
 			}
 			finally
 			{
-				m_device.mHeartbeatSemaphore.Release();
+				//m_device.mHeartbeatSemaphore.Release();
 			}
 
 		}
 
-#if NETFX_45
-		async
-#endif
 
 		/// <summary>
 		/// Stops the currently executing assay operation.
@@ -421,7 +406,7 @@ namespace Instr
         /// <param name="voltage">The voltage to set in volts.</param>
         /// <param name="duration">The length of the measurement to take.</param>
         /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartHVCalibration(int voltage, TimeSpan duration)
+        public override void StartHVCalibration(int voltage, TimeSpan duration)
         {
             m_logger.TraceEvent(LogLevels.Info, 0,
                 "MCA527[{0}]: Starting HV calibration at {1}V for {2}s...",
@@ -437,7 +422,7 @@ namespace Instr
             }
 
             CancellationToken cancellationToken = m_cancellationTokenSource.Token;
-            return Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
+            Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
         }
 
         /// <summary>
@@ -448,30 +433,18 @@ namespace Instr
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
         /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
-        private
-#if NETFX_45
-            async
-#endif
-        void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
+        private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
                 m_logger.Flush();
-                uint x = 
-#if NETFX_45
-                    await 
-#endif				
-					SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
+                uint x = SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
 
                 MCA527RateCounter counter = new MCA527RateCounter(m_device);
                 counter.TakeMeasurement(duration, cancellationToken);
 
                 HVControl.HVStatus status = new HVControl.HVStatus();
-                status.HVread = (int)
-#if NETFX_45
-                    await 
-#endif
-                    m_device.GetHighVoltage();
+                status.HVread = (int) m_device.GetHighVoltage();
                 status.HVsetpt = voltage;
 
                 for (int i = 0; i < MCA527.ChannelCount; i++) {
@@ -558,7 +531,7 @@ namespace Instr
 		/// <item><description>Cancellation is requested through <paramref name="cancellationToken"/>.</description></item>
 		/// </list>
 		/// </remarks>
-		private async Task<uint> SetVoltage(ushort voltage, TimeSpan timeout, CancellationToken cancellationToken)
+		private uint SetVoltage(ushort voltage, TimeSpan timeout, CancellationToken cancellationToken)
 		{
 			m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Setting voltage to {1} volts, timeout is {2}, tolerance is {3}...", DeviceName, voltage, MaxSetVoltageTime.ToString("g"), VoltageTolerance);
 			m_logger.Flush();
@@ -566,9 +539,9 @@ namespace Instr
 
 			m_device.SetHighVoltage(voltage, BiasInhibitInput.InhibitOff);  // don't wait here, but loop and report, permitting cancel at any time in case the HW hose-ed
 
-			Task<uint> hvx = m_device.GetHighVoltage();
+			uint hvx = m_device.GetHighVoltage();
 
-			while (Math.Abs(hvx.Result - voltage) > VoltageTolerance) {
+			while (Math.Abs(hvx - voltage) > VoltageTolerance) {
                 if (cancellationToken.IsCancellationRequested) {
                     m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Cancellation requested while setting voltage", DeviceName);
                     m_logger.Flush();
@@ -576,21 +549,21 @@ namespace Instr
                     cancellationToken.ThrowIfCancellationRequested();
                 }
                 else if (stopwatch.Elapsed > timeout) {
-                    m_logger.TraceEvent(LogLevels.Warning, 0, "MCA527[{0}]: Timed out while setting voltage (last seen {1} volts)", DeviceName, hvx.Result);
+                    m_logger.TraceEvent(LogLevels.Warning, 0, "MCA527[{0}]: Timed out while setting voltage (last seen {1} volts)", DeviceName, hvx);
                     m_logger.Flush();
 
                     throw new TimeoutException("Timed out while setting voltage");
                 }
 				hvx = m_device.GetHighVoltage();
-				hvx.Wait();
+
                 if (stopwatch.Elapsed.Milliseconds % 10000 == 0)
-                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: At {1} volts", DeviceName, hvx.Result);
-				Task.Delay(100).Wait();
+                    m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: At {1} volts", DeviceName, hvx);
+				Thread.Sleep(100);
             }
             m_logger.TraceEvent(LogLevels.Verbose, 0, "MCA527[{0}]: Voltage set to {1} volts (Elapsed time: {2})",
-                DeviceName, hvx.Result, stopwatch.Elapsed.ToString("g"));
+                DeviceName, hvx, stopwatch.Elapsed.ToString("g"));
             m_logger.Flush();
-			return hvx.Result;
+			return hvx;
 		}
 
 		/// <summary>

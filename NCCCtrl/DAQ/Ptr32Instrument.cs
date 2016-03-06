@@ -131,7 +131,7 @@ namespace Instr
         /// </summary>
         /// <param name="measurement">The measurement.</param>
         /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartAssay(Measurement measurement)
+        public override void StartAssay(Measurement measurement)
         {
             m_logger.TraceEvent(LogLevels.Info, 0,
                 "PTR-32[{0}]: Starting {1}s assay...",
@@ -147,7 +147,7 @@ namespace Instr
             }
 
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
+            Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Instr
         /// <param name="voltage">The voltage to set in volts.</param>
         /// <param name="duration">The length of the measurement to take.</param>
         /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartHVCalibration(int voltage, TimeSpan duration)
+        public override void StartHVCalibration(int voltage, TimeSpan duration)
         {
             m_logger.TraceEvent(LogLevels.Info, 0,
                 "PTR-32[{0}]: Starting HV calibration at {1}V for {2}s...",
@@ -252,7 +252,7 @@ namespace Instr
             }
 
             CancellationToken cancellationToken = m_cancellationTokenSource.Token;
-            return Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
+            Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
         }
 
         /// <summary>

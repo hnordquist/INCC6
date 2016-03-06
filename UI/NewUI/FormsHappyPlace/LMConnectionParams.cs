@@ -179,13 +179,7 @@ namespace NewUI
             }
         }
 
-		private
-#if NETFX_45
-		async System.Threading.Tasks.Task 
-#else
-		void
-#endif
-		PopulateMCA527ParamFields()
+		private void PopulateMCA527ParamFields()
 		{
 			if (det != null && det.Id.SRType == InstrType.MCA527)
 			{
@@ -195,10 +189,7 @@ namespace NewUI
 				ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
 				connIdLabel.Text = "MCA-527 serial number: ";
 				connLabel.Text = "MCA-527 Connection Parameters";
-#if NETFX_45
-				await 
-#endif
-					LoadtheMCACombobox();
+				LoadtheMCACombobox();
 
 
 				LMConnectionInfo lmi = (LMConnectionInfo)(det.Id.FullConnInfo);
@@ -623,22 +614,13 @@ namespace NewUI
 			}
 		}
 
-#if NETFX_45
-		async System.Threading.Tasks.Task
-#else
-		void
-#endif
-		LoadtheMCACombobox()
+		void LoadtheMCACombobox()
 		{
 			Device.MCADeviceInfo[] deviceInfos = null;
 			int indexOfMyDesire = -1;
 			try
 			{
-				deviceInfos =
-					#if NETFX_45
-					await 
-					#endif
-					Device.MCADevice.QueryDevices();
+				deviceInfos = Device.MCADevice.QueryDevices();
 				MCAComboBox.Items.Clear();
 				if (deviceInfos.Length > 0)
 				{   
