@@ -112,7 +112,7 @@ namespace Instr
         /// <summary>
         /// Connects to the instrument.
         /// </summary>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+        /// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public override void Connect()
         {
             if (m_device != null)
@@ -143,6 +143,12 @@ namespace Instr
         }
 
 
+       /// <summary>
+        /// Prepare MCA-527 for a new sweep or cycle
+        /// </summary>
+        /// <param name="cycle">Cycle sequence number</param>
+        /// <param name="secs">Cycle length in seconds</param>
+        /// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
 		bool InitSettings(ushort cycle, uint secs)
 		{
 			MCAResponse response = null;
@@ -194,7 +200,8 @@ namespace Instr
 		/// </summary>
 		/// <param name="measurement">The measurement.</param>
 		/// <param name="cancellationToken">The cancellation token to observe.</param>
-		/// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceBadDataException">An error occurred with the raw data strem state.</exception>
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
 			//m_device.mHeartbeatSemaphore.Wait();
@@ -435,7 +442,7 @@ namespace Instr
         /// <param name="duration">The length of the measurement to take.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
             try {
@@ -524,7 +531,7 @@ namespace Instr
 		/// <param name="timeout">The maximum length of time to wait for the voltage to be set.</param>
 		/// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
 		/// <exception cref="OperationCanceledException">Cancellation was requested through <paramref name="cancellationToken"/>.</exception>
-		/// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
 		/// <exception cref="TimeoutException">The voltage was not set within the allotted time.</exception>
 		/// <remarks>
 		/// This method does not return until one of the following occurs:

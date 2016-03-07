@@ -67,7 +67,6 @@ namespace Device
         /// </summary>
         static MCA527()
         {
-            MCA527Error error;
 
         }
 
@@ -77,7 +76,6 @@ namespace Device
         /// <returns>The names of the devices registered with the system.</returns>
         public static IEnumerable<string> GetDeviceNames()
         {
-            MCA527Error error;
             return null;
 
         }
@@ -87,16 +85,13 @@ namespace Device
         /// </summary>
         /// <param name="deviceName">The name of the device to open.</param>
         /// <exception cref="ArgumentNullException"><paramref name="deviceName"/> is <c>null</c>.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public MCA527(string deviceName)
         {
             if (deviceName == null)
             {
                 throw new ArgumentNullException();
             }
-
-            MCA527Error error;
-
 
             m_deviceName = deviceName;
             m_firmwareVersion = GetFirmwareVersion();
@@ -115,7 +110,7 @@ namespace Device
         /// Gets the number of bytes available to be read.
         /// </summary>
         /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public int Available
         {
             get
@@ -178,7 +173,7 @@ namespace Device
         /// Gets the actual voltage in volts (V).
         /// </summary>
         /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public int Voltage
         {
             get
@@ -228,8 +223,6 @@ namespace Device
                     }
                 }
 
-                MCA527Error error;
-
                 m_disposed = true;
             }
         }
@@ -254,7 +247,7 @@ namespace Device
         /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is <c>null</c>.</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="count"/> is negative.</exception>
         /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public int Read(byte[] buffer, int offset, int count)
         {
             if (buffer == null)
@@ -289,7 +282,7 @@ namespace Device
         /// Resets the device.
         /// </summary>
         /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public void Reset()
         {
             CheckDisposed();
@@ -337,7 +330,7 @@ namespace Device
         /// Gets a string identifying the firmware version.
         /// </summary>
         /// <returns>A string identifying the firmware version.</returns>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private string GetFirmwareVersion()
         {
 			string s =  Encoding.ASCII.GetString(GetRegisterReader(3).ReadBytes(32));
@@ -348,7 +341,7 @@ namespace Device
         /// Gets the voltage corrections factors.
         /// </summary>
         /// <returns>The voltage correction factors.</returns>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private double[] GetVoltageCorrections()
         {
             double[] voltageCorrections = new double[] { 1, 0 };
@@ -441,7 +434,7 @@ namespace Device
             /// <exception cref="ArgumentException">The sum of <paramref name="offset"/> and <paramref name="count"/> is greater than the buffer length.</exception>
             /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is <c>null</c>.</exception>
             /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="count"/> is negative.</exception>
-            /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
             public override unsafe int Read(byte[] buffer, int offset, int count)
             {
                 if (buffer == null)
@@ -458,8 +451,6 @@ namespace Device
                 {
                     throw new ArgumentException();
                 }
-
-                MCA527Error error;
 
 
                 return count;
@@ -496,7 +487,7 @@ namespace Device
             /// <exception cref="ArgumentException">The sum of <paramref name="offset"/> and <paramref name="count"/> is greater than the buffer length.</exception>
             /// <exception cref="ArgumentNullException"><paramref name="buffer"/> is <c>null</c>.</exception>
             /// <exception cref="ArgumentOutOfRangeException"><paramref name="offset"/> or <paramref name="count"/> is negative.</exception>
-            /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
             public override unsafe void Write(byte[] buffer, int offset, int count)
             {
                 if (buffer == null)
@@ -513,8 +504,6 @@ namespace Device
                 {
                     throw new ArgumentException();
                 }
-
-                MCA527Error error;
 
             }
 

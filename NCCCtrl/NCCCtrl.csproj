@@ -96,10 +96,8 @@
     <Compile Include="DAQ\SREventHandler.cs" />
     <Compile Include="Device\MCA.cs" />
     <Compile Include="Device\MCA527.cs" />
-    <Compile Include="Device\MCA527Error.cs" />
     <Compile Include="Device\MCA527Parser.cs" />
     <Compile Include="Device\MCA527RateCounter.cs" />
-    <Compile Include="Device\MCA52Exception.cs" />
     <Compile Include="Device\Ptr32.cs" />
     <Compile Include="Device\Ptr32Error.cs" />
     <Compile Include="Device\Ptr32Exception.cs" />

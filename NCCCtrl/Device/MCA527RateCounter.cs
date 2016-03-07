@@ -117,7 +117,7 @@ namespace Device
         /// <param name="duration">The duration of the measurement to take.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
-        /// <exception cref="MCA527Exception">An error occurred communicating with the device.</exception>
+		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         public void TakeMeasurement(TimeSpan duration, CancellationToken cancellationToken)
         {
             byte[] buffer = new byte[1024 * 1024];
