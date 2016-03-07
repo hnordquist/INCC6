@@ -296,7 +296,7 @@ namespace AnalysisDefs
                         sec.AddHeader(N.App.Name + " " + N.App.Config.VersionString);  // section header
                         break;
                     case INCCReportSection.Context:
-                        sec = new INCCStyleSection(null, 1);
+                        sec = new INCCStyleSection(null, 0);
                         ConstructContextContent(sec, det);
                         break;
                     case INCCReportSection.Isotopics:

@@ -799,6 +799,11 @@ namespace NCCConfig
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
         }
 
+		public bool HasFileAction
+		{
+            get { return IsFileActionSet(); }
+		}
+
 		public string LogFilePath
         {
             get { return overridepath(NCCFlags.logFileLoc); }
@@ -1052,6 +1057,20 @@ namespace NCCConfig
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
+        }
+
+		bool IsFileActionSet()
+        {
+			return 
+				(bool)getVal(NCCFlags.testDataFileAssay) ||
+                (bool)getVal(NCCFlags.reviewFileAssay) ||
+                (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.mcaFileAssay) ||
+                (bool)getVal(NCCFlags.dbDataAssay) ||
+                (bool)getVal(NCCFlags.INCCXfer) ||
+                (bool)getVal(NCCFlags.pulseFileAssay) ||
+                (bool)getVal(NCCFlags.ncdFileAssay) ||
+                (bool)getVal(NCCFlags.sortPulseFile);
         }
 
         public string[] ToLines()

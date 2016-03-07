@@ -98,8 +98,8 @@ namespace NCCCmd
 	                BuildMeasurement();
 					if (NC.App.AppContext.AssayFromFiles)
 						NC.App.Opstate.Action = NCC.NCCAction.Assay;
-					//else
-					//	NC.App.Opstate.Action = NCC.NCCAction.File;
+					else if (NC.App.AppContext.HasFileAction)
+						NC.App.Opstate.Action = NCC.NCCAction.File;
 
 					// file processing for analysis and more
 					FileControlBind filecontrol = new FileControlBind();
