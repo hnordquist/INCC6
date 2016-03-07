@@ -255,7 +255,8 @@ namespace NewUI
                 updateGUIWithChannelRatesData = true;
                 string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
-					s2 = "(" + s2 + ")";				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
+					s2 = "(" + s2 + ")";
+				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions)));
                 fctrlbind.mProgressTracker.ReportProgress(per, // a % est of files
 					String.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
             });
@@ -340,7 +341,7 @@ namespace NewUI
                 string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
-				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
+				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions)));
 				daqbind.mProgressTracker.ReportProgress(per, // a % est of files
 					string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
             });
