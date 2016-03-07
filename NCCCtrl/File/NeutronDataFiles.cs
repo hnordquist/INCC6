@@ -207,7 +207,8 @@ namespace NCCFile
         }
         public virtual void CloseStream()
         {
-            if (Log != null) Log.TraceEvent(LogLevels.Verbose, 115, "Closing stream for " + Filename);
+            if (Log != null && !string.IsNullOrEmpty(Filename))
+				Log.TraceEvent(LogLevels.Verbose, 115, "Closing stream for " + Filename);
             try
             {
                 if (stream != null)
@@ -1916,7 +1917,13 @@ namespace NCCFile
 
 		public bool OpenForWriting()
 		{
-            if (Log != null) Log.TraceEvent(LogLevels.Info, 111, "opening existing file for writing: " + Filename);
+            if (Log != null)
+			{
+				if (!string.IsNullOrEmpty(Filename))
+					Log.TraceEvent(LogLevels.Info, 111, "opening existing file for writing: " + Filename);
+				else
+					return false;
+			}
 			try
 			{ 
 				stream = File.OpenWrite(Filename);
@@ -1946,7 +1953,7 @@ namespace NCCFile
 		public override void CloseWriter()
 		{
 			base.CloseWriter();
-			if (Log != null)
+			if (Log != null && !string.IsNullOrEmpty(Filename))
 				Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
 			try {
 				if (writer != null) {

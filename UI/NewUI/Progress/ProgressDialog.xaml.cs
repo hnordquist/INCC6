@@ -49,38 +49,38 @@ namespace NewUI.Progress
 
             InitializeComponent();
 			_task = task;
-			Go();
+			_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
         }
 		Task _task;
 
-		public void Go()
-		{
-			while (UIIntegration.Controller.ConnWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
-			{
-					System.Threading.Thread.Yield();
-			}
-			while (UIIntegration.Controller.MeasWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
-			{
-					System.Threading.Thread.Yield();
-            }
-			_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
-		}
+		//public void Go()
+		//{
+		//	while (UIIntegration.Controller.ConnWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+		//	{
+		//			System.Threading.Thread.Yield();
+		//	}
+		//	while (UIIntegration.Controller.MeasWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+		//	{
+		//			System.Threading.Thread.Yield();
+  //          }
+		//	_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
+		//}
 
 		void WaitForCompletion()
 		{
-			if (!UIIntegration.Controller.ConnWaiter.IsSet)
-			do
-			{
-					System.Threading.Thread.Yield();
-			}
-			while (!UIIntegration.Controller.ConnWaiter.Wait(600));
+			//if (!UIIntegration.Controller.ConnWaiter.IsSet)
+			//do
+			//{
+			//		System.Threading.Thread.Yield();
+			//}
+			//while (!UIIntegration.Controller.ConnWaiter.Wait(600));
 
-			if (!UIIntegration.Controller.MeasWaiter.IsSet)
-			do
-			{
-				System.Threading.Thread.Yield();
-			}
-			while (!UIIntegration.Controller.MeasWaiter.Wait(600));
+			//if (!UIIntegration.Controller.MeasWaiter.IsSet)
+			//do
+			//{
+			//	System.Threading.Thread.Yield();
+			//}
+			//while (!UIIntegration.Controller.MeasWaiter.Wait(600));
 
 			Close();
 		}
@@ -139,12 +139,12 @@ namespace NewUI.Progress
             }
             if (progressTracker.m_modal)
 			{
-				dialog.Go();
+				//dialog.Go();
                 dialog.ShowDialog();
 			}
             else
 			{
-				dialog.Go();
+				//dialog.Go();
                 dialog.Show();
 			}
         }

@@ -88,27 +88,6 @@ namespace NewUI
                     return daqbind.SOH;
             }
         }
-
-		public System.Threading.CountdownEvent ConnWaiter
-        {
-            get
-            {
-                if (file)
-                    return fctrlbind.ConnCompleted;
-                else
-                    return daqbind.ConnCompleted;
-            }
-        }
-		public System.Threading.CountdownEvent MeasWaiter
-        {
-            get
-            {
-                if (file)
-                    return fctrlbind.MeasCompleted;
-                else
-                    return daqbind.MeasCompleted;
-            }
-        }
         public string FileInput
         {
             get { return NC.App.AppContext.FileInput; }
@@ -456,10 +435,7 @@ namespace NewUI
         public new void StartAction()
         {
             mProgressTracker = new ProgressTracker();
-
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
-					TaskCreationOptions.PreferFairness, 	
-					TaskScheduler.Default);
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken); 
             string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") + (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
         }
@@ -590,13 +566,8 @@ namespace NewUI
         public new void StartAction()
         {
             mProgressTracker = new ProgressTracker();
-            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
-
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken, 
-					TaskCreationOptions.PreferFairness, 
-					TaskScheduler.Default);
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
             Progress.ProgressDialog.Show(null, "DAQ " + NC.App.Opstate.Action.ToString(), NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
-
         }
 
         public new void CancelCurrentAction()

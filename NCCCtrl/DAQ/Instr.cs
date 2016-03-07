@@ -494,7 +494,7 @@ namespace Instr
         internal INeutronDataFile PrepOutputFile(string prefix, int idx, LMLoggers.LognLM collog)
         {
             if (!NC.App.AppContext.LiveFileWrite)
-                return null;
+                return file;
             file.GenName(prefix, idx); // dev note: good to provide external config approach to specify output file pattern 
             file.CreateForWriting();
             return file;

@@ -2566,7 +2566,7 @@ namespace Device
             file.Log.TraceEvent(NCCReporter.LogLevels.Verbose, 120, "CreateWriteHeaderAndClose entry");
             QuerySystemDataResponse qsdr = (QuerySystemDataResponse)device.Client.Send(MCACommand.QuerySystemData());
             if (qsdr == null) { throw new MCADeviceLostConnectionException(); }
-            if (file.stream == null)
+            if (file.stream == null)// && App.AppContext.LiveFileWrite)
             {
                 file.Log.TraceEvent(NCCReporter.LogLevels.Verbose, 118, "CreateWriteHeaderAndClose reopen");
                 // reopen the closed file for this final operation

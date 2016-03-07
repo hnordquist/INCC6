@@ -358,9 +358,12 @@ namespace Instr
 				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
 				m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
 				m_logger.Flush();
-				m_device.CreateWriteHeaderAndClose(ps.file);
-				m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
-				m_logger.Flush();
+				if (NC.App.AppContext.LiveFileWrite)
+				{
+					m_device.CreateWriteHeaderAndClose(ps.file);
+					m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
+					m_logger.Flush();
+				}
 			}
 			catch (OperationCanceledException)
 			{
