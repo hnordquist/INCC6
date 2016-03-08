@@ -955,7 +955,8 @@ namespace NCCTransfer
                 item.modified = true;
 
                 List<ItemId> list = NC.App.DB.ItemIds.GetList();
-                if (list.Contains(item) && overwrite)
+				bool flump = list.Exists(i => { return string.Compare(item.item, i.item, true) == 0; });
+                if (flump && overwrite)
                 {
                     list.Remove(item);
                     list.Add(item);
@@ -1590,7 +1591,8 @@ namespace NCCTransfer
                         cid.modified = true;
 
                         List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();
-                        if (list.Contains(cid) && overwrite)
+						bool glump = list.Exists(i => { return string.Compare(cid.item_id, i.item_id, true) == 0; });
+                        if (glump && overwrite)
                         {
                             list.Remove(cid);
                             list.Add(cid);

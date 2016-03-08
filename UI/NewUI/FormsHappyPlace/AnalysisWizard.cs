@@ -137,16 +137,17 @@ namespace NewUI
             alt = CountingAnalysisParameters.Copy(NC.App.Opstate.Measurement.AnalysisParams);
 
             InitializeComponent();
+			Text += " for detector " + det.Id.DetectorName;
 
             // Stack all the panels up on top of each other; window is set to autosize to whatever is visible.
-            this.Step2APanel.Left = 4;
-            this.Step2APanel.Top = 6;
-            this.Step2BPanel.Left = 4;
-            this.Step2BPanel.Top = 6;
-            this.Step3Panel.Left = 4;
-            this.Step3Panel.Top = 6;
-            this.Step4Panel.Left = 4;
-            this.Step4Panel.Top = 6;
+            Step2APanel.Left = 4;
+            Step2APanel.Top = 6;
+            Step2BPanel.Left = 4;
+            Step2BPanel.Top = 6;
+            Step3Panel.Left = 4;
+            Step3Panel.Top = 6;
+            Step4Panel.Left = 4;
+            Step4Panel.Top = 6;
 
             state = startHere;
             if (state == AWSteps.Step2A || state == AWSteps.Step2B)
@@ -157,6 +158,7 @@ namespace NewUI
             CycleIntervalPatch(); // guard for bad LM cycle and interval
             // Set the visibilities correctly for the initial state 
             UpdateUI();
+
         }
 
         private void UpdateUI()

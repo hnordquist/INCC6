@@ -76,10 +76,20 @@ namespace NewUI
 				listView1.Columns[listView1.Columns.Count -1].Width = 0;
             if (mlist.Count == 0)
             {
-                string msg = string.Format("There were no measurements for {0} of type {1} found.", det.Id.DetectorId, filter=="Rates"?"Rates Only": filter);
+                string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det.Id.DetectorId);
                 MessageBox.Show(msg, "WARNING");
             }
         }
+
+		string TypeTextFragment(string filter)
+		{
+			if (string.IsNullOrEmpty(filter))
+				return filter;
+			else if (filter.CompareTo("unspecified") == 0)
+				return "List Mode ";
+			else
+				return (filter=="Rates"?"Rates Only": filter) + " ";
+		}
 
         public static bool EmptyINCC5File(Measurement m)
         {
@@ -109,22 +119,22 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
             ShowResults();
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-              System.Windows.Forms.Help.ShowHelp (null,".\\inccuser.chm");
+              Help.ShowHelp (null,".\\inccuser.chm");
         }
 
         private void ShowResults()
         {
-            string notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
+            string notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
             foreach (ListViewItem lvi in listView1.Items)
             {
                 if (lvi.Selected)
                 {
-                    if (System.IO.File.Exists(notepadPath))
+                    if (File.Exists(notepadPath))
                     {
 						string path = GetMainFilePath(mlist[lvi.Index].ResultsFiles, mlist[lvi.Index].MeasOption);
                         if (File.Exists(path))
@@ -152,7 +162,7 @@ namespace NewUI
 
 		private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)

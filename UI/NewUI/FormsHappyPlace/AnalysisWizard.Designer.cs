@@ -1573,7 +1573,7 @@
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "AnalysisWizard";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.Text = "List Mode Data Analysis Wizard";
+			this.Text = "List Mode data collection and analysis";
 			this.TopMost = true;
 			this.Load += new System.EventHandler(this.AnalysisWizard_Load);
 			this.Step1ControlsPanel.ResumeLayout(false);
