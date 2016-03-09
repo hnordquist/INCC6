@@ -45,8 +45,8 @@ namespace NCCCmd
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
 			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
 			c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(NC.App.Logger(LMLoggers.AppSection.Control));
-            if (possiblepaths.Length > 2)
+            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(NC.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
+            if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths
             {
                 NC.App.AppContext.FileInput = possiblepaths[0];
                 if (System.IO.Directory.Exists(possiblepaths[1]))
@@ -63,11 +63,13 @@ namespace NCCCmd
 			{
 				NC.App.Config.Cmd.ShowVersionOnConsole(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
 				return;
-			} else if (NC.App.Config.Cmd.Showhelp)
+			} 
+			else if (NC.App.Config.Cmd.Showhelp)
 			{
 				NC.App.Config.ShowHelp();
 				return;
-			} else if (NC.App.Config.Cmd.Showcfg)
+			}
+			else if (NC.App.Config.Cmd.Showcfg)
 			{
 				NCCConfig.Config.ShowCfg(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
 				return;
@@ -81,17 +83,17 @@ namespace NCCCmd
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
-					goto frob;
+					goto end;
 
                 if (!string.IsNullOrEmpty(c.Cur.Material) && !c.Cur.Material.Equals("Pu")) // command line set the value
                     initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
-                    goto frob;
+                    goto end;
 
                 if (!string.IsNullOrEmpty(c.Cur.ItemId)) // command line set the item value, use it to override the material and other acquire params
                     initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
-                    goto frob;
+                    goto end;
 
 				if (NC.App.Config.App.UsingFileInput || NC.App.Opstate.Action == NCC.NCCAction.File)
 				{
@@ -103,25 +105,20 @@ namespace NCCCmd
 
 					// file processing for analysis and more
 					FileControlBind filecontrol = new FileControlBind();
-
 					filecontrol.SetupEventHandlers();
-
-					filecontrol.StartAction();  // step into the code and Run run run!
-
+					filecontrol.StartAction();  // step into the code and run
 					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				}
 				else
 				{
 					BuildMeasurement();
 					DAQControlBind control = new DAQControlBind();
-					
-                    //control.SetupTimerCallBacks();
-                    DAQControlBind.ActivateDetector(NC.App.Opstate.Measurement.Detector);
+					DAQ.DAQControl.ActivateDetector(NC.App.Opstate.Measurement.Detector);
 					control.SetupEventHandlers();
 					control.StartAction();
 					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
                 }
-                frob:
+                end:
 				;
 			} catch (Exception e)
 			{

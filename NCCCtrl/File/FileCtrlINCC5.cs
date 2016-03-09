@@ -331,7 +331,14 @@ namespace NCCFile
             }
         }
 
-        static public string[] ProcessINCC5IniFile(LMLoggers.LognLM ctrllog)
+        /// <summary>
+		/// Extract root path from INCC5 incc.ini file, and use that path to construct 3 new paths for use by the iRAP software.
+		/// Assumes iRAP runtime directory structure (data and output directories).
+		/// </summary>
+		/// <param name="ctrllog">log handle for error output</param>
+		/// <returns>paths, non-null empty array if no INCC5 in file is used, or
+		///          an array of 3 paths, 0: common input path, 1: data path, 2: log file path</returns>
+		static public string[] ProcessINCC5IniFile(LMLoggers.LognLM ctrllog)
 		{
 			string [] paths = new string[] { string.Empty };
 			if (!NC.App.AppContext.UseINCC5Ini)
@@ -340,15 +347,14 @@ namespace NCCFile
 			if (!System.IO.File.Exists(filename))
 			{
 				if (ctrllog != null)
-					ctrllog.TraceEvent(LogLevels.Warning, 112, "Ooof! File does not exist or cannot be opened: " + filename);
+					ctrllog.TraceEvent(LogLevels.Warning, 112, "INCC5 ini file does not exist or cannot be opened: " + filename);
 				return paths;
 			}
 			string inputpath = string.Empty;
 			using (System.IO.StreamReader sr = new System.IO.StreamReader(filename))
 			{
 				string line;
-				// Read and display lines from the file until the end of 
-				// the file is reached.
+				// Read lines from the file until the end of the file is reached or the relevant tag is found
 				while ((line = sr.ReadLine()) != null)
 				{
 					string tline = line.TrimStart();
