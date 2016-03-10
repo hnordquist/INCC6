@@ -1924,7 +1924,7 @@ namespace Device
             }
         }
 
-        uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
+        public uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
         {
             uint offset = 0;
             uint timestampIndex = 0;

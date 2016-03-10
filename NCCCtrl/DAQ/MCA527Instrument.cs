@@ -281,7 +281,7 @@ namespace Instr
 
 						rawBufferOffset += bytesToCopy;
 						commonMemoryReadIndex += bytesToCopy;
-						uint timestampsCount = 0;//TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
+						uint timestampsCount = m_device.TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
 
 						// make sure rawBufferOffset is never greater than 3 after transforming data
 						// => means something has gone wrong
@@ -291,11 +291,8 @@ namespace Instr
 
 						// copy the data out...
 						if (timestampsCount > 0) {
-							uint[] timestamps = new uint[timestampsCount];
-							Array.Copy(timestampsBuffer, 0, timestamps, 0, timestampsCount);
-							if (m_device.CallbackObject != null) {
-								ps.ReadTimestamps(measurement.CurrentRepetition, timestamps);
-							}
+							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
+							// RDT.PassBufferToTheCounters(timestampsCount);
 						}
 					} else if (bytesAvailable > 0 && state != MCAState.Run) {
 						// special case for when there's not a whole block left to read
@@ -322,34 +319,21 @@ namespace Instr
 						rawBufferOffset += bytesToCopy;
 						commonMemoryReadIndex += bytesToCopy;                            
 
-						uint timestampsCount = 0;//TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
+						uint timestampsCount = m_device.TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
 
 						//if (rawBufferOffset > 0) {
                             // apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
 							//throw new MCADeviceBadDataException();
 						//}
 						if (timestampsCount > 0) {
-							uint[] timestamps = new uint[timestampsCount];
-							Array.Copy(timestampsBuffer, 0, timestamps, 0, timestampsCount);
-							if (m_device.CallbackObject != null) {
-								ps.ReadTimestamps(measurement.CurrentRepetition, timestamps);
-							}
+							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
+							// RDT.PassBufferToTheCounters(timestampsCount);
 						}
 					} else {
 						// give the device a break
 						Thread.Sleep(100); // 100 ms
 					}
-					//    if (m_device.Available > 0) {
-					//        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
-
-					//        if (bytesRead > 0) {
-					//            RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
-					//            total += bytesRead;
-					//        }
-					//    } else {
-					//       Sleep(0);
-					//     }
-				}
+					}
 
 				stopwatch.Stop();
 				ps.FinishedSweep(seq, stopwatch.Elapsed.TotalSeconds);
