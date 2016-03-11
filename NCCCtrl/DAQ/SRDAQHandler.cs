@@ -795,8 +795,8 @@ namespace DAQ
                 (double)tds.acquire_num_runs;
 
             /* setup COM timeout equal to count time (if JSR-11 use 1 second) */
-            if (detector.Id.SRType == InstrType.JSR11)
-                SRLib.Set_timeout(ref tds.timeout, meas.AcquireState.run_count_time);
+            if (detector.Id.SRType != InstrType.JSR11) // URGENT: verify the recent logic switch made to match the commment
+                SRLib.Set_timeout(ref tds.timeout, meas.AcquireState.run_count_time);  
             else
                 SRLib.Set_timeout(ref tds.timeout, 1.0);
 
@@ -1014,7 +1014,7 @@ namespace DAQ
             // dev note: replaced with timer callback and progress update events
             tds = new TDState(acquire_num_runs);
 
-            /* See StartLMCAssay for similar steps (NCD file, cycle instance) "create a results record for this measurement" */
+            /* See StartLMCAssay for similar steps (LM file, cycle instance) "create a results record for this measurement" */
 
             // step 3 should occur at a higher level  (e.g. see StartLMCAssay)
 

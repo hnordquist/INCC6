@@ -1,14 +1,11 @@
 **********************************************************************************
 
-INCC6 Beta Release 1
-January 22, 2016
+INCC6 Beta Release 2
+6.0.1.1 March 10, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
 Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security.
-
-LA-CC-14-009. This software was exported from the United States in accordance with the Export
-Administration Regulations. Diversion contrary to U.S. law prohibited.
 
 Copyright 2016, Los Alamos National Security, LLC. This software application and associated
 material ("The Software") was prepared by the Los Alamos National Security, LLC. (LANS), under
@@ -47,3 +44,15 @@ INSTALLATION INSTRUCTIONS:
 3. A "bare" database has been provided for your use. It is named "incc6.sqlite"
 4. If for any reason INCC6 Beta Release stops working, you may opt to restore this
    default database by running the "reset.bat" batch file
+   
+KNOWN ISSUES:
+
+MCA-527 list mode file processing is implemented, but data collection support is not.
+Many dialogs from INCC 5.* are not fully implemented.
+This is beta release software, many issues missing features are known to exist.
+
+CONTACT:
+
+Please use direct email to j.longo@iaea.org or heather@lanl.gov for support and issue reporting.
+
+   
