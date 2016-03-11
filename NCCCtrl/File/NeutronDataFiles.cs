@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -98,7 +98,7 @@ namespace NCCFile
         /// <summary>
         /// Generate a file name pertinent for the output file
         /// </summary>
-        /// <param name="locPrefix">File-specific prefix to prepend the generated file name with, can be String.Empty</param>
+        /// <param name="locPrefix">File-specific prefix to prepend the generated file name with, can be string.Empty</param>
         /// <param name="lm">Instrument number</param>
         void GenName(string locPrefix, int lm);
 
@@ -181,7 +181,7 @@ namespace NCCFile
                     this.Filename = filename;
                     if (!File.Exists(filename))
                         return false;
-                    if (String.IsNullOrEmpty(SourceName))
+                    if (string.IsNullOrEmpty(SourceName))
                         SourceName = filename.Substring(filename.LastIndexOf("\\") + 1);// Remove path information from string.
                 }
                 if (!File.Exists(this.Filename))
@@ -207,7 +207,8 @@ namespace NCCFile
         }
         public virtual void CloseStream()
         {
-            if (Log != null) Log.TraceEvent(LogLevels.Verbose, 115, "Closing stream for " + Filename);
+            if (Log != null && !string.IsNullOrEmpty(Filename))
+				Log.TraceEvent(LogLevels.Verbose, 115, "Closing stream for " + Filename);
             try
             {
                 if (stream != null)
@@ -314,7 +315,7 @@ namespace NCCFile
             {
                 string[] sub = new string[4];
                 Array.Copy(split, sub, 4);
-                string newname = String.Join(" ", sub);
+                string newname = string.Join(" ", sub);
 
                 try
                 {
@@ -518,7 +519,7 @@ namespace NCCFile
         {
             Int64 ROllOverTics = 0x100000000;
 
-            string issue = String.Empty;
+            string issue = string.Empty;
             ulong dups = 0, events = 0, timei = 0;
 
             Double lasttime = 0, timeR8tics, timeR8ticsRnd;
@@ -566,7 +567,7 @@ namespace NCCFile
 
                     if (lasttime > time) // ooops! 
                     {
-                        throw new Exception(String.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeU4B4, timeU4));
+                        throw new Exception(string.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeU4B4, timeU4));
                     }
                     else if (timeU4B4 == timeU4) // rounding created a duplicate ! 
                     {
@@ -607,7 +608,7 @@ namespace NCCFile
         {
 
             Int64 ROllOverTics = 0x100000000;
-            string issue = String.Empty;
+            string issue = string.Empty;
             ulong dups = 0, events = 0, timei = 0;
 
             Double lasttime = 0, timeR8tics, timeR8ticsRnd;
@@ -649,13 +650,13 @@ namespace NCCFile
                         //{
                         //    string output = events.ToString() + " ";
                         //    for (int ctr = chnbytes.Length - 1; ctr >= 0; ctr--)
-                        //        output += String.Format("{0:X2} ", chnbytes[ctr]);
+                        //        output += string.Format("{0:X2} ", chnbytes[ctr]);
                         //    //output += ",";
                         //    for (int ctr = timeswapped.Length - 1; ctr >= 0; ctr--)
-                        //        output += String.Format("{0:X2} ", timeswapped[ctr]);
+                        //        output += string.Format("{0:X2} ", timeswapped[ctr]);
                         //    output += " |";
                         //    for (int ctr = timebytes.Length - 1; ctr >= 0; ctr--)
-                        //        output += String.Format("{0:X2} ", timebytes[ctr]);
+                        //        output += string.Format("{0:X2} ", timebytes[ctr]);
                         //    pf.Log.TraceEvent(LogLevels.Info, 773773773, output + "| " + timeU4.ToString());
                         //}
                         //pf.Log.TraceEvent(LogLevels.Info, 773773773, "stop here!"); events--;
@@ -671,7 +672,7 @@ namespace NCCFile
 
                     if (lasttime > time) // ooops! 
                     {
-                        throw new Exception(String.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeU4B4, timeU4));
+                        throw new Exception(string.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeU4B4, timeU4));
                     }
                     else if (timeU4B4 == timeU4) // rounding created a duplicate ! 
                     {
@@ -733,14 +734,14 @@ namespace NCCFile
 
             string sourcename = source.Substring(source.LastIndexOf("\\") + 1);
 
-            string s2 = String.Format("Status\r\nSingle\r\nDuration = {0:F6} s\r\ntriggers = {1}\r\ntotals   = {2}\r\noverflow = 0xfeedacat, FALSE\r\npackets  = NA\r\nrate     = {3:F6} ~samples/sec\r\n",
+            string s2 = string.Format("Status\r\nSingle\r\nDuration = {0:F6} s\r\ntriggers = {1}\r\ntotals   = {2}\r\noverflow = 0xfeedacat, FALSE\r\npackets  = NA\r\nrate     = {3:F6} ~samples/sec\r\n",
                 durationTics / 10e7, TotalEvents, TotalEvents, ((double)TotalEvents / durationTics) / 10e-7);
 
-            string s3 = String.Format("rate     = NA Mbits/sec\r\nbin size = 100 ns\r\nbuf sep  = 0 ms\r\nname     = {0} : {1}\r\nLMC      = f00dbeef\r\nsource   = {2}\r\n", HW, devicename, sourcename);
+            string s3 = string.Format("rate     = NA Mbits/sec\r\nbin size = 100 ns\r\nbuf sep  = 0 ms\r\nname     = {0} : {1}\r\nLMC      = f00dbeef\r\nsource   = {2}\r\n", HW, devicename, sourcename);
             string s = s2 + s3;
-            if (!String.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
             {
-                s += String.Format("Extra    = {0}\r\n", message);
+                s += string.Format("Extra    = {0}\r\n", message);
             }
             sb = new Analysis.StreamStatusBlock();
             sb.Encode(s);
@@ -782,9 +783,9 @@ namespace NCCFile
         public int thisread;
         public long read, fulllen;
 
-        public UInt16 CycleNumber;
-        //byte[] BitsSetTable256;
-        public PTRChannelFile()
+        public ushort CycleNumber;
+
+		public PTRChannelFile()
         {
    
         }
@@ -957,7 +958,7 @@ namespace NCCFile
 
         public UInt16 CycleNumber;
         public const int HeaderLength = 0x1000;
-        public int ReportedCountTime = 0;
+        public int ReportedCountTimeSecs = 0;
 
         public PTREventFile()
         {
@@ -979,9 +980,9 @@ namespace NCCFile
             if (reg.IsMatch (headerstr))
             {
                 Match m = reg.Match(headerstr);
-                ReportedCountTime = 0;
+                ReportedCountTimeSecs = 0;
                 
-                Int32.TryParse(m.Groups[2].Value, out ReportedCountTime);
+                Int32.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
             }
             return thisread;
         }
@@ -1027,7 +1028,7 @@ namespace NCCFile
         public void WriteHeader(string start)
         {
             header.Initialize();  // nulls, 
-            String s = ("@0PulseTrainRecorder X7.?"); // todo: version, serial #, author, comment, etc. figure out what the text should say by examining files from various devices
+            string s = ("@0PulseTrainRecorder X7.?"); // todo: version, serial #, author, comment, etc. figure out what the text should say by examining files from various devices
             Byte[] sa = Encoding.ASCII.GetBytes(s);
             Byte[] sb = Encoding.ASCII.GetBytes(start);
             Array.Copy(sa, header, sa.Length);
@@ -1135,8 +1136,8 @@ namespace NCCFile
         public PTRChannelFile Channels;
         public PTREventFile Events;
         public bool SoloBinFile;
-        public UInt16 CycleNumber;
-        public String FirmwareIdent // NEXT: get this from instrument.m_device.FirmwareVersion 
+        public ushort CycleNumber;
+        public string FirmwareIdent // this is from instrument.m_device.FirmwareVersion 
         {
             get;
             set;
@@ -1252,6 +1253,7 @@ namespace NCCFile
         {
             Events.GenName(locPrefix, lm);
             Channels.Filename = Events.Filename.Replace(".bin", ".chn");
+			Filename = Events.Filename;
         }
 
         public void Delete()
@@ -1300,8 +1302,805 @@ namespace NCCFile
 
     }
 
+	public class TimestampOverflowException : Exception { }
+	public class SometingWrongHierException : Exception { public SometingWrongHierException(string message) : base(message) {  } }
 
-    public class UnsortedPulseFile : NeutronDataFile
+	public class MCAFile : NeutronDataFile
+	{
+
+		internal class MCATimestamp
+		{
+			uint fileBlockSize;  // from subject file's UsedMemorySize field
+
+			internal MCATimestamp(uint blockSize)
+			{
+				fileBlockSize = blockSize;
+			}
+			protected IEnumerable<ulong> EnumerateTimestampsUsingMethod0(BinaryReader br)
+			{
+				byte[] bytes = new byte[8];
+				long startPosition = br.BaseStream.Position;
+				bool usePreviousTimestamp = false;
+				ulong previousTimestamp = 0;
+				while (br.BaseStream.Position < startPosition + fileBlockSize)
+				{
+					ulong timestamp = (ulong)ReadVariableLengthUInt(br, bytes);
+					if (timestamp + 1 == 0x40C30C0)
+					{ // maximum value, means no event occurred...
+						previousTimestamp += timestamp;
+						usePreviousTimestamp = true;
+					} 
+					else
+					{
+						if (usePreviousTimestamp)
+						{
+							if (timestamp > ulong.MaxValue - previousTimestamp)
+							{
+								throw new TimestampOverflowException();
+							}
+							timestamp += previousTimestamp;
+							previousTimestamp = 0;
+							usePreviousTimestamp = false;
+						}
+						yield return timestamp;
+					}
+				}
+			}
+			IEnumerable<ulong> EnumerateTimestampsUsingMethod1(BinaryReader br)
+			{
+				long startPosition = br.BaseStream.Position;
+				bool usePreviousTimestamp = false;
+				ulong previousTimestamp = 0;
+				while (br.BaseStream.Position < startPosition + fileBlockSize) {
+					ulong timestamp = (ulong)br.ReadByte();
+					if (timestamp == 0xff) {
+						previousTimestamp += timestamp;
+						usePreviousTimestamp = true;
+					} else {
+						if (usePreviousTimestamp) {
+							if (timestamp > ulong.MaxValue - previousTimestamp) {
+								throw new TimestampOverflowException();
+							}
+							timestamp += previousTimestamp;
+							previousTimestamp = 0;
+							usePreviousTimestamp = false;
+						}
+						yield return timestamp;
+					}
+				}
+			}
+			IEnumerable<ulong> EnumerateTimestampsUsingMethod2(BinaryReader br)
+			{
+				long startPosition = br.BaseStream.Position;
+				bool usePreviousTimestamp = false;
+				ulong previousTimestamp = 0;
+				while (br.BaseStream.Position < startPosition + fileBlockSize) {
+					ulong timestamp = (ulong)br.ReadUInt16();
+					if (timestamp == 0xffff) {
+						previousTimestamp += timestamp;
+						usePreviousTimestamp = true;
+					} else {
+						if (usePreviousTimestamp) {
+							if (timestamp > ulong.MaxValue - previousTimestamp) {
+								throw new TimestampOverflowException();
+							}
+							timestamp += previousTimestamp;
+							previousTimestamp = 0;
+							usePreviousTimestamp = false;
+						}
+						yield return timestamp;
+					}
+				}
+			}
+			internal IEnumerable<ulong> EnumerateTimestamps(BinaryReader br, ushort dataCodingMethod)
+			{
+				switch (dataCodingMethod) {
+				case 0:
+					return EnumerateTimestampsUsingMethod0(br);
+				case 1:
+					return EnumerateTimestampsUsingMethod1(br);
+				default:
+					return EnumerateTimestampsUsingMethod2(br);
+				}
+			}
+
+			//public static List<ulong> Parse(FileStream fs, uint fileBlockSize, ushort dataCodingMethod)
+			//{
+			//	IEnumerable<ulong> timestampsEnumerator = EnumerateTimestamps(fs, fileBlockSize, dataCodingMethod);
+			//	return timestampsEnumerator.ToList();
+			//}
+
+
+			uint ReadVariableLengthUInt(BinaryReader br, byte[] bytes)
+			{
+				int bytesRead = br.Read(bytes, 0, 1);
+				if (bytesRead != 1) { throw new SometingWrongHierException("R1"); }
+				// if the value is less than 192, we are done
+				if (bytes[0] < 0xC0) {
+					return (uint)bytes[0];
+				}
+				if (bytes[0] < 0xF0) {
+					// two bytes
+					bytesRead = br.Read(bytes, 1, 1);
+					if (bytesRead != 1) { throw new SometingWrongHierException("R2"); }
+					// 0b00111111 => 0x3f
+					return ((((((uint)bytes[0]) & 0x3f) << 8) | ((uint)bytes[1]))) + 0xC0;
+				} else if (bytes[0] < 0xFC) {
+					// three bytes
+					bytesRead = br.Read(bytes, 1, 2);
+					if (bytesRead != 2) { throw new SometingWrongHierException("R3");}
+					// 0b00001111 => 0x0f
+					return (((((uint)bytes[0]) & 0x0f) << 16) | (((uint)bytes[1]) << 8) | ((uint)bytes[2])) + 0x30C0;
+				} else {
+					// four bytes
+					bytesRead = br.Read(bytes, 1, 3);
+					if (bytesRead != 3) { throw new SometingWrongHierException("R4"); }
+					// 0b00000011 => 0x03
+					return (((((uint)bytes[0]) & 0x03) << 24) | (((uint)bytes[1]) << 16) | (((uint)bytes[2]) << 8) | ((uint)bytes[3])) + 0x0C30C0;
+				}
+			}
+		}
+
+		public class MCAHeader
+		{
+			public string FileIdentification;
+			public ushort ValidByteCount;
+			public ushort FirmwareVersion;
+			public ushort HardwareVersion;
+			public ushort FirmwareModification;
+			public ushort HardwareModification;
+			public ushort SerialNumber;
+			public ushort GeneralMode;
+
+			public override string ToString()
+			{
+				return "MCAHeader:\n" +
+					" - file id: " + FileIdentification + "\n" +
+					" - valid byte count: " + ValidByteCount + "\n" +
+					" - firmware version: " + FirmwareVersion + "\n" +
+					" - hardware version: " + HardwareVersion + "\n" +
+					" - firmware modification: " + FirmwareModification + "\n" +
+					" - hardware modification: " + HardwareModification + "\n" +
+					" - serial number: " + SerialNumber + "\n" +
+					" - general mode: " + GeneralMode;
+			}
+
+
+			public static MCAHeader Scan(BinaryReader br)
+			{
+				MCAHeader header = new MCAHeader {
+					FileIdentification = ReadUTF8ByteString(br, 14),
+					ValidByteCount = br.ReadUInt16(),
+					FirmwareVersion = br.ReadUInt16(),
+					HardwareVersion = br.ReadUInt16(),
+					FirmwareModification = br.ReadUInt16(),
+					HardwareModification = br.ReadUInt16(),
+					SerialNumber = br.ReadUInt16(),
+					GeneralMode = br.ReadUInt16()
+				};
+				return header;
+			}
+
+			public void Write(MCAFile mca)
+			{
+				// jump to the beginning of the stream...
+				mca.stream.Seek(0, SeekOrigin.Begin);
+				ValidByteCount = MCAFile.BasisBlockSize;
+				mca.Write(FileIdentification, 14);
+				mca.Write(ValidByteCount);
+				mca.Write(FirmwareVersion);
+				mca.Write(HardwareVersion);
+				mca.Write(FirmwareModification);
+				mca.Write(HardwareModification);
+				mca.Write(SerialNumber);
+				mca.Write(GeneralMode);
+			}
+		}
+
+		public class MCATimestampsRecorderModeHeader
+		{
+			public string ApplicationIdentification;
+			public ushort TimeUnitLengthNanoSec;
+			public ushort Preset;
+			public uint PresetValue;
+			public uint PresetMemorySize;
+			public uint UsedMemorySize;
+			public ushort HighVoltage;
+			public ushort HighVoltagePolarity;
+			public short HVInhibitMode;
+			public ushort PreamplifierPowerSwitches;
+			public byte TTLLowLevel;
+			public byte TTLHighLevel;
+			public ushort AmplifierCoarseGain;
+			public ushort ADCInputPolarity;
+			public ushort ShapingTimeChoice;
+			public byte TriggerFilterForLowShapingTime;
+			public byte TriggerFilterForHighShapingTime;
+			public ushort OffsetDAC;
+			public ushort TriggerLevelForAutomaticThresholdCalculation;
+			public int SetTriggerThreshold;
+			public byte ExtensionPortPartAConfiguration;
+			public byte ExtensionPortPartBConfiguration;
+			public byte ExtensionPortPartCConfiguration;
+			public byte ExtensionPortPartFConfiguration;
+			public ushort ExtensionPortRS232BaudRate;
+			public ushort ExtensionPortRS232Flags;
+			public ushort StartFlag;
+			public uint StartTime;
+			public uint RealTime;
+			public uint BatteryCurrentAtStop;
+			public uint ChargerCurrentAtStop;
+			public uint HVPrimaryCurrentAtStop;
+			public uint Plus12VPrimaryCurrentAtStop;
+			public uint Minus12VPrimaryCurrentAtStop;
+			public uint Plus24VPrimaryCurrentAtStop;
+			public uint Minus24VPrimaryCurrentAtStop;
+			public uint BatteryVoltageAtStop;
+			public uint HighVoltageAtStop;
+			public byte Plus12VActualValueAtStop;
+			public byte Minus12VActualValueAtStop;
+			public byte Plus24VActualValueAtStop;
+			public byte Minus24VActualValueAtStop;
+			public ushort VoltageOnSubD9Pin3AtStop;
+			public ushort VoltageOnSubD9Pin5AtStop;
+			public ushort CurrentSourceStateOnSubD9Pin5;
+			public ushort CurrentSourceValueOnSubD9Pin5;
+			public ushort InputResistanceOnSubD9Pin5;
+			public sbyte ADCCorrectionOffsetOnSubD9Pin5;
+			public sbyte GainCorrectionFactorOnSubD9Pin5;
+			public sbyte ADCCorrectionOffsetOnSubD9Pin3;
+			public sbyte GainCorrectionFactorOnSubD9Pin3;
+			public short MCATemperatureAtStop;
+			public short DetectorTemperatureAtStop;
+			public short PowerModuleTemperatureAtStop;
+			// since version 1.00.0007
+			public sbyte RepeatMode;
+			public sbyte RepeatModeOptions;
+			public ushort RepeatValue; // binary data format docs say this is short, firmware commands say it is ushort
+			// since version 1.00.0000
+			public uint AHRCGroup0Width;
+			public uint AHRCGroup1Width;
+			public uint AHRCGroup2Width;
+			public uint AHRCGroup3Width;
+			public uint AHRCGroup4Width;
+			public uint AHRCGroup5Width;
+			public uint AHRCGroup6Width;
+			public uint AHRCGroup7Width;
+			public uint AHRCGroup8Width;
+			public uint AHRCGroup9Width;
+			public ushort AHRCTriggerThreshold;
+			public ushort DataCodingMethod;
+
+
+			public override string ToString()
+			{
+				return "TimestampsRecorderModeHeader:\n" +
+					" - application id: " + ApplicationIdentification + "\n" +
+					" - time unit length (nanoseconds): " + TimeUnitLengthNanoSec + "\n" +
+					" - preset: " + Preset + "\n" +
+					" - preset value: " + PresetValue + "\n" +
+					" - preset memory size: " + PresetMemorySize + "\n" +
+					" - used memory size: " + UsedMemorySize + "\n" +
+					" - start time: " + StartTime + "\n" +
+					" - real time: " + RealTime + "\n" +
+					" - high voltage: " + HighVoltage + "\n" +
+					" - high voltage polarity: " + HighVoltagePolarity + "\n" +
+					" - hv inhibit mode: " + HVInhibitMode + "\n" +
+					" - preamp power switches: " + PreamplifierPowerSwitches + "\n" +
+					" - ttl low level: " + TTLLowLevel + "\n" +
+					" - ttl high level: " + TTLHighLevel + "\n" +
+					" - amp coarse gain: " + AmplifierCoarseGain + "\n" +
+					" - adc input polarity: " + ADCInputPolarity + "\n" +
+					" - shaping time choice: " + ShapingTimeChoice + "\n" +
+					" - trigger filter for low shaping time: " + TriggerFilterForLowShapingTime + "\n" +
+					" - trigger filter for high shaping time: " + TriggerFilterForHighShapingTime + "\n" +
+					" - offset dac: " + OffsetDAC + "\n" +
+					" - trigger level for automatic threshold calculation: " + TriggerLevelForAutomaticThresholdCalculation + "\n" +
+					" - set trigger threshold: " + SetTriggerThreshold + "\n" +
+					" - ext port part A config: " + ExtensionPortPartAConfiguration + "\n" +
+					" - ext port part B config: " + ExtensionPortPartBConfiguration + "\n" +
+					" - ext port part C config: " + ExtensionPortPartCConfiguration + "\n" +
+					" - ext port part F config: " + ExtensionPortPartFConfiguration + "\n" +
+					" - ext port rs232 baud rate: " + ExtensionPortRS232BaudRate + "\n" +
+					" - ext port rs232 flags: " + ExtensionPortRS232Flags + "\n" +
+					" - start flag: " + StartFlag + "\n" +
+					" - bat cur at stop: " + BatteryCurrentAtStop + "\n" +
+					" - chrg cur at stop: " + ChargerCurrentAtStop + "\n" +
+					" - hv prim cur at stop: " + HVPrimaryCurrentAtStop + "\n" +
+					" - +12v prim cur at stop: " + Plus12VPrimaryCurrentAtStop + "\n" +
+					" - -12v prim cur at stop: " + Minus12VPrimaryCurrentAtStop + "\n" +
+					" - +24v prim cur at stop: " + Plus24VPrimaryCurrentAtStop + "\n" +
+					" - -24v prim cur at stop: " + Minus24VPrimaryCurrentAtStop + "\n" +
+					" - bat volt at stop: " + BatteryVoltageAtStop + "\n" +
+					" - high volt at stop: " + HighVoltageAtStop + "\n" +
+					" - +12v actual val at stop: " + Plus12VActualValueAtStop + "\n" +
+					" - -12v actual val at stop: " + Minus12VActualValueAtStop + "\n" +
+					" - +24v actual val at stop: " + Plus24VActualValueAtStop + "\n" +
+					" - -24v actual val at stop: " + Minus24VActualValueAtStop + "\n" +
+					" - volt on SUB-D9 pin 3 at stop: " + VoltageOnSubD9Pin3AtStop + "\n" +
+					" - volt on SUB-D9 pin 5 at stop: " + VoltageOnSubD9Pin5AtStop + "\n" +
+					" - cur source state on SUB-D9 pin 5: " + CurrentSourceStateOnSubD9Pin5 + "\n" +
+					" - cur source val on SUB-D9 pin 5: " + CurrentSourceValueOnSubD9Pin5 + "\n" +
+					" - input resist on SUB-D9 pin 5: " + InputResistanceOnSubD9Pin5 + "\n" +
+					" - adc correct offset on SUB-D9 pin 5: " + ADCCorrectionOffsetOnSubD9Pin5 + "\n" +
+					" - gain correct fact on SUB-D9 pin 5: " + GainCorrectionFactorOnSubD9Pin5 + "\n" +
+					" - adc correct offset on SUB-D9 pin 3: " + ADCCorrectionOffsetOnSubD9Pin3 + "\n" +
+					" - gain correct fact on SUB-D9 pin 3: " + GainCorrectionFactorOnSubD9Pin3 + "\n" +
+					" - mca temp at stop: " + MCATemperatureAtStop + "\n" +
+					" - detect temp at stop: " + DetectorTemperatureAtStop + "\n" +
+					" - power module temp at stop: " + PowerModuleTemperatureAtStop + "\n" +
+					" - repeat mode: " + RepeatMode + "\n" +
+					" - repeat mode options: " + RepeatModeOptions + "\n" +
+					" - repeat value: " + RepeatValue + "\n" +
+					" - ahrc group 0 width: " + AHRCGroup0Width + "\n" +
+					" - ahrc group 1 width: " + AHRCGroup1Width + "\n" +
+					" - ahrc group 2 width: " + AHRCGroup2Width + "\n" +
+					" - ahrc group 3 width: " + AHRCGroup3Width + "\n" +
+					" - ahrc group 4 width: " + AHRCGroup4Width + "\n" +
+					" - ahrc group 5 width: " + AHRCGroup5Width + "\n" +
+					" - ahrc group 6 width: " + AHRCGroup6Width + "\n" +
+					" - ahrc group 7 width: " + AHRCGroup7Width + "\n" +
+					" - ahrc group 8 width: " + AHRCGroup8Width + "\n" +
+					" - ahrc group 9 width: " + AHRCGroup9Width + "\n" +
+					" - ahrc trigger threshold: " + AHRCTriggerThreshold + "\n" +
+					" - data coding method: " + DataCodingMethod;
+			}
+
+			public static MCATimestampsRecorderModeHeader Scan(BinaryReader br)
+			{
+				MCATimestampsRecorderModeHeader header = new MCATimestampsRecorderModeHeader {
+					ApplicationIdentification = ReadUTF8ByteString(br, 32),
+					TimeUnitLengthNanoSec = br.ReadUInt16(),
+					Preset = br.ReadUInt16(),
+					PresetValue = br.ReadUInt32(),
+					PresetMemorySize = br.ReadUInt32(),
+					UsedMemorySize = br.ReadUInt32(),
+					HighVoltage = br.ReadUInt16(),
+					HighVoltagePolarity = br.ReadUInt16(),
+					HVInhibitMode = br.ReadInt16(),
+					PreamplifierPowerSwitches = br.ReadUInt16(),
+					TTLLowLevel = br.ReadByte(),
+					TTLHighLevel = br.ReadByte(),
+					AmplifierCoarseGain = br.ReadUInt16(),
+					ADCInputPolarity = br.ReadUInt16(),
+					ShapingTimeChoice = br.ReadUInt16(),
+					TriggerFilterForLowShapingTime = br.ReadByte(),
+					TriggerFilterForHighShapingTime = br.ReadByte(),
+					OffsetDAC = br.ReadUInt16(),
+					TriggerLevelForAutomaticThresholdCalculation = br.ReadUInt16(),
+					SetTriggerThreshold = br.ReadInt32(),
+					ExtensionPortPartAConfiguration = br.ReadByte(),
+					ExtensionPortPartBConfiguration = br.ReadByte(),
+					ExtensionPortPartCConfiguration = br.ReadByte(),
+					ExtensionPortPartFConfiguration = br.ReadByte(),
+					ExtensionPortRS232BaudRate = br.ReadUInt16(),
+					ExtensionPortRS232Flags = br.ReadUInt16(),
+					StartFlag = br.ReadUInt16(),
+					StartTime = br.ReadUInt32(),
+					RealTime = br.ReadUInt32(),
+					BatteryCurrentAtStop = br.ReadUInt32(),
+					ChargerCurrentAtStop = br.ReadUInt32(),
+					HVPrimaryCurrentAtStop = br.ReadUInt32(),
+					Plus12VPrimaryCurrentAtStop = br.ReadUInt32(),
+					Minus12VPrimaryCurrentAtStop = br.ReadUInt32(),
+					Plus24VPrimaryCurrentAtStop = br.ReadUInt32(),
+					Minus24VPrimaryCurrentAtStop = br.ReadUInt32(),
+					BatteryVoltageAtStop = br.ReadUInt32(),
+					HighVoltageAtStop = br.ReadUInt32(),
+					Plus12VActualValueAtStop = br.ReadByte(),
+					Minus12VActualValueAtStop = br.ReadByte(),
+					Plus24VActualValueAtStop = br.ReadByte(),
+					Minus24VActualValueAtStop = br.ReadByte(),
+					VoltageOnSubD9Pin3AtStop = br.ReadUInt16(),
+					VoltageOnSubD9Pin5AtStop = br.ReadUInt16(),
+					CurrentSourceStateOnSubD9Pin5 = br.ReadUInt16(),
+					CurrentSourceValueOnSubD9Pin5 = br.ReadUInt16(),
+					InputResistanceOnSubD9Pin5 = br.ReadUInt16(),
+					ADCCorrectionOffsetOnSubD9Pin5 = br.ReadSByte(),
+					GainCorrectionFactorOnSubD9Pin5 = br.ReadSByte(),
+					ADCCorrectionOffsetOnSubD9Pin3 = br.ReadSByte(),
+					GainCorrectionFactorOnSubD9Pin3 = br.ReadSByte(),
+					MCATemperatureAtStop = br.ReadInt16(),
+					DetectorTemperatureAtStop = br.ReadInt16(),
+					PowerModuleTemperatureAtStop = br.ReadInt16(),
+					// since version 1.00.0007
+					RepeatMode = br.ReadSByte(),
+					RepeatModeOptions = br.ReadSByte(),
+					RepeatValue = br.ReadUInt16(),
+					// since version 1.00.0000
+					AHRCGroup0Width = br.ReadUInt32(),
+					AHRCGroup1Width = br.ReadUInt32(),
+					AHRCGroup2Width = br.ReadUInt32(),
+					AHRCGroup3Width = br.ReadUInt32(),
+					AHRCGroup4Width = br.ReadUInt32(),
+					AHRCGroup5Width = br.ReadUInt32(),
+					AHRCGroup6Width = br.ReadUInt32(),
+					AHRCGroup7Width = br.ReadUInt32(),
+					AHRCGroup8Width = br.ReadUInt32(),
+					AHRCGroup9Width = br.ReadUInt32(),
+					AHRCTriggerThreshold = br.ReadUInt16(),
+					DataCodingMethod = br.ReadUInt16()
+				};
+				return header;
+			}
+			public void Write(MCAFile mca)
+			{
+				DataCodingMethod = 0;
+				
+				mca.Write(ApplicationIdentification, 32);
+				mca.Write(TimeUnitLengthNanoSec);
+				mca.Write(Preset);
+				mca.Write(PresetValue);
+				mca.Write(PresetMemorySize);
+				mca.Write(UsedMemorySize);
+				mca.Write(HighVoltage);
+				mca.Write(HighVoltagePolarity);
+				mca.Write(HVInhibitMode);
+				mca.Write(PreamplifierPowerSwitches);
+				mca.Write(TTLLowLevel);
+				mca.Write(TTLHighLevel);
+				mca.Write(AmplifierCoarseGain);
+				mca.Write(ADCInputPolarity);
+				mca.Write(ShapingTimeChoice);
+				mca.Write(TriggerFilterForLowShapingTime);
+				mca.Write(TriggerFilterForHighShapingTime);
+				mca.Write(OffsetDAC);
+				mca.Write(TriggerLevelForAutomaticThresholdCalculation);
+				mca.Write(SetTriggerThreshold);
+				mca.Write(ExtensionPortPartAConfiguration);
+				mca.Write(ExtensionPortPartBConfiguration);
+				mca.Write(ExtensionPortPartCConfiguration);
+				mca.Write(ExtensionPortPartFConfiguration);
+				mca.Write(ExtensionPortRS232BaudRate);
+				mca.Write(ExtensionPortRS232Flags);
+				mca.Write(StartFlag);
+				mca.Write(StartTime);
+				mca.Write(RealTime);
+				mca.Write(BatteryCurrentAtStop);
+				mca.Write(ChargerCurrentAtStop);
+				mca.Write(HVPrimaryCurrentAtStop);
+				mca.Write(Plus12VPrimaryCurrentAtStop);
+				mca.Write(Minus12VPrimaryCurrentAtStop);
+				mca.Write(Plus24VPrimaryCurrentAtStop);
+				mca.Write(Minus24VPrimaryCurrentAtStop);
+				mca.Write(BatteryVoltageAtStop);
+				mca.Write(HighVoltageAtStop);
+				mca.Write(Plus12VActualValueAtStop);
+				mca.Write(Minus12VActualValueAtStop);
+				mca.Write(Plus24VActualValueAtStop);
+				mca.Write(Minus24VActualValueAtStop);
+				mca.Write(VoltageOnSubD9Pin3AtStop);
+				mca.Write(VoltageOnSubD9Pin5AtStop);
+				mca.Write(CurrentSourceStateOnSubD9Pin5);
+				mca.Write(CurrentSourceValueOnSubD9Pin5);
+				mca.Write(InputResistanceOnSubD9Pin5);
+				mca.Write(ADCCorrectionOffsetOnSubD9Pin5);
+				mca.Write(GainCorrectionFactorOnSubD9Pin5);
+				mca.Write(MCATemperatureAtStop);
+				mca.Write(DetectorTemperatureAtStop);
+				mca.Write(PowerModuleTemperatureAtStop);
+				mca.Write(RepeatMode);
+				mca.Write(RepeatModeOptions);
+				mca.Write(RepeatValue);
+				mca.Write(AHRCGroup0Width);
+				mca.Write(AHRCGroup1Width);
+				mca.Write(AHRCGroup2Width);
+				mca.Write(AHRCGroup3Width);
+				mca.Write(AHRCGroup4Width);
+				mca.Write(AHRCGroup5Width);
+				mca.Write(AHRCGroup6Width);
+				mca.Write(AHRCGroup7Width);
+				mca.Write(AHRCGroup8Width);
+				mca.Write(AHRCGroup9Width);
+				mca.Write(AHRCTriggerThreshold);
+				mca.Write(DataCodingMethod);
+			}
+		}
+
+		internal MCAHeader header;
+		internal MCATimestampsRecorderModeHeader rheader;
+		internal MCATimestamp mca;
+
+		public BinaryWriter writer;
+		public BinaryReader reader;
+
+
+		public MCAFile()
+		{
+			FirstEventTimeInTics = 0;
+			TotalDups = 0;
+			TotalEvents = 0;
+			LastTimeInTics = 0;
+		}
+
+		public void ReadHeader()
+		{
+			header = MCAHeader.Scan(reader);
+			switch (header.GeneralMode) {
+			case 0:
+				// General Mode = 'MCA'
+				throw new NotImplementedException("General Mode = 'MCA' not implemented");
+			case 3:
+			case 4:
+			case 5:
+				// General Mode = 'Timestamps recorder'
+				rheader = MCATimestampsRecorderModeHeader.Scan(reader);
+				long seekgap = header.ValidByteCount - 228;
+				if (seekgap > 0)	// Seek ahead header.ValidByteCount - 228 (a hard-coded value, the number of bytes in the rheader)
+									// This can be non-zero on files taken directly from the MCA-527 SD card storage
+				{
+					reader.BaseStream.Seek(header.ValidByteCount - 228, SeekOrigin.Current);
+					Log.TraceEvent(LogLevels.Verbose, 117, "Seek " + seekgap.ToString() + "bytes");
+				}
+				if (rheader.UsedMemorySize > 0 &&
+					(rheader.ExtensionPortPartAConfiguration == 0x5 ||
+					 rheader.ExtensionPortPartCConfiguration == 0x5)) {
+					// RS-232 data
+					// Do we need to parse it? Not for now
+				}
+				mca = new MCATimestamp(rheader.UsedMemorySize);
+				break;
+			default:
+				throw new FormatException("Unexpected MCA file format");
+			}
+		}
+
+		public uint TotalBytes { get { return header.ValidByteCount + rheader.UsedMemorySize; } } 
+
+		public long ReaderPosition { get { return reader.BaseStream.Position; } } 
+
+		public uint MeasTime { get { return rheader.RealTime; } } 
+
+		public ulong TimeUnitNanoSec { get { return rheader.TimeUnitLengthNanoSec; } } 
+
+		public ulong HighVoltage { get { return rheader.HighVoltage; } } 
+
+
+		public DateTimeOffset StartTime { 
+			get 
+			{
+				uint startTime = rheader.StartTime;
+				// MCA start time => number of seconds since Dec 31, 1969, 16:00:00 -8:00 PST (midnight 1970 GMT)
+				int hours = 0;
+				while (startTime > int.MaxValue) {
+					hours += 1;
+					startTime -= 60 * 60;
+				}
+				DateTimeOffset mcaEpoch = new DateTimeOffset(1969, 12, 31, 16, 0, 0, new TimeSpan(-8,0,0)); // start at GMT unix time 0 i.e. GMT time from US west coast time is an 8 hour offset
+				mcaEpoch = mcaEpoch.AddSeconds(startTime);
+				return mcaEpoch;		
+			} }
+
+		public TimeSpan RealTime { 
+			get 
+			{
+				//int hrs = (int)(rheader.RealTime / 3600);
+				//int min = (int)((rheader.RealTime - (hrs * 3600)) / 60);
+				//int sec = (int)((rheader.RealTime - ((hrs * 3600) + (min * 60))));
+				return new TimeSpan(0, 0, (int)rheader.RealTime);  // dev note: cannot expect a measurement time of greater than int.MaxValue seconds (24855 days), so this truncation is acceptable
+
+			} }
+
+
+		public IEnumerable<ulong> EnumerateTimestamps()
+		{
+			return mca.EnumerateTimestamps(reader, rheader.DataCodingMethod);
+		}
+		public override bool OpenForReading(string filename = null)
+		{
+			bool ok = base.OpenForReading(filename);
+			if (ok)
+				reader = new BinaryReader(stream);
+			return ok;
+		}
+
+		public void CloseReader()
+		{
+			if (reader == null)
+				return;
+			reader.Close();
+			base.CloseStream();
+		}
+
+
+		//  when encountering the same file name, create a file name with a millisecond addendum
+		public override bool CreateForWriting()
+		{
+			bool ok = base.CreateForWriting();
+			if (ok)
+			{
+				writer = new BinaryWriter(stream);
+				AdvanceToTimestampsBlock();  // move file pointer to first timestamp location
+			}
+			return ok;
+		}
+
+		public bool OpenForWriting()
+		{
+            if (Log != null)
+			{
+				if (!string.IsNullOrEmpty(Filename))
+					Log.TraceEvent(LogLevels.Info, 111, "opening existing file for writing: " + Filename);
+				else
+					return false;
+			}
+			try
+			{ 
+				stream = File.OpenWrite(Filename);
+				writer = new BinaryWriter(stream);					
+			}
+			catch (Exception e) 
+			{
+				if (Log != null)
+					Log.TraceException(e);
+				return false;
+			}
+			return true;
+		}
+
+		public override void ConstructFullPathName(string opt = "")
+		{
+			base.ConstructFullPathName(opt);
+			Filename += ".mca";
+		}
+
+		public void Write(byte[] buffer, int index, int count)
+		{
+			if (writer != null)
+				writer.Write(buffer, index, count);
+		}
+
+		public override void CloseWriter()
+		{
+			base.CloseWriter();
+			if (Log != null && !string.IsNullOrEmpty(Filename))
+				Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
+			try {
+				if (writer != null) {
+					writer.Flush();
+					writer.Close();
+					writer = null;
+				}
+				CloseStream();
+				stream = null;
+			} catch (Exception e) {
+				if (Log != null)
+					Log.TraceException(e);
+			}
+		}
+
+		const ushort BasisBlockSize = 228;
+
+		// create, then call this, write timestamps, at end seek back and write final header
+		public void AdvanceToTimestampsBlock()
+        {
+            writer.Seek(BasisBlockSize, SeekOrigin.Begin);
+        }
+
+		public void WriteTimestampsRawDataChunk(byte[] rawDataChunk, int offset, int count)
+        {
+            Write(rawDataChunk, offset, count);
+        }
+
+		public void Write(string str, int length)
+        {
+			int len = 0;
+			if (str != null) {
+				byte[] bytes = Encoding.UTF8.GetBytes(str);
+				len = Math.Min(length, bytes.Length);
+				writer.Write(bytes, 0, len);
+			}
+			while (len++ < length) { writer.Write((byte)0); }
+		}
+
+        public void Write(sbyte value)
+        {
+            Write((byte)value);
+        }
+
+        public void Write(byte value)
+        {
+            writer.Write(value);
+        }
+
+		public void Write(ushort value)
+		{           
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+		}
+
+        public void Write(short value)
+        {
+            Write((ushort)value);
+        }
+
+		public void Write(uint value)
+		{
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+			writer.Write((byte)((value >> 16) & 0xff));
+			writer.Write((byte)((value >> 24) & 0xff));
+		}
+
+        public void Write(int value)
+        {
+            Write((uint)value);
+        }
+
+        public void Write(long value)
+        {
+            Write((ulong)value);
+        }
+
+		private void Write(ulong value)
+		{
+			writer.Write((byte)(value & 0xff));
+			writer.Write((byte)((value >> 8) & 0xff));
+			writer.Write((byte)((value >> 16) & 0xff));
+			writer.Write((byte)((value >> 24) & 0xff));
+			writer.Write((byte)((value >> 32) & 0xff));
+			writer.Write((byte)((value >> 40) & 0xff));
+			writer.Write((byte)((value >> 48) & 0xff));
+			writer.Write((byte)((value >> 56) & 0xff));
+		}
+
+		private void Write(double value)
+		{
+			Write(BitConverter.DoubleToInt64Bits(value));
+		}
+
+		public void WriteHeader()
+		{
+			header.Write(this);
+			rheader.Write(this);
+		}
+
+
+		public long FirstEventTimeInTics;
+		public ulong TotalDups;
+		public ulong TotalEvents;
+		public long LastTimeInTics;
+
+		Analysis.StreamStatusBlock sb;
+		public void CustomStatusBlock(string HW, string devicename, string source, string message)
+		{
+			double durationTics = (double)(LastTimeInTics - FirstEventTimeInTics);
+			if (durationTics <= 0)
+				durationTics = 1;
+
+			string sourcename = source.Substring(source.LastIndexOf("\\") + 1);
+
+			string s2 = string.Format("Status\r\nSingle\r\nDuration = {0:F6} s\r\ntriggers = {1}\r\ntotals   = {2}\r\noverflow = 0xfeedacat, FALSE\r\npackets  = NA\r\nrate     = {3:F6} ~samples/sec\r\n",
+				durationTics / 10e7, TotalEvents, TotalEvents, ((double)TotalEvents / durationTics) / 10e-7);
+
+			string s3 = string.Format("rate     = NA Mbits/sec\r\nbin size = 100 ns\r\nbuf sep  = 0 ms\r\nname     = {0} : {1}\r\nLMC      = f00dbeef\r\nsource   = {2}\r\n", HW, devicename, sourcename);
+			string s = s2 + s3;
+			if (!string.IsNullOrEmpty(message)) {
+				s += string.Format("Extra    = {0}\r\n", message);
+			}
+			sb = new Analysis.StreamStatusBlock();
+			sb.Encode(s);
+
+			Log.TraceEvent(LogLevels.Verbose, 3333, "Converted {0} events between {1} and {2} tics ({3} duplicates skipped)", TotalEvents, FirstEventTimeInTics, LastTimeInTics, TotalDups);
+
+		}
+
+		static string ReadUTF8ByteString(BinaryReader r, int count)
+		{
+			byte[] bytes = null;
+			try {
+				bytes = r.ReadBytes(count);
+				return System.Text.Encoding.UTF8.GetString(bytes);
+			} catch (Exception) {
+			}
+			return string.Empty;
+		}
+
+
+	}
+
+
+	public class UnsortedPulseFile : NeutronDataFile
     {
 
         static public List<string> ExtensionList = new List<string>() { ".pulse", ".txt" };
@@ -2424,134 +3223,130 @@ namespace NCCFile
         }
 
 
-        /// <summary>
-        ///
-        /// get the list of files from the named folder, check for other conditions if not a folder
-        /// if this a single file then
-        ///  if the file is an T file then
-        ///    run with an T FileList of one file
-        ///  if the file is a compressed archive then
-        ///     unpack the archive all at once into a temp folder and then construct the list OR unpack 1 at a time as the list is processed?
-        ///
-        /// </summary>
-        /// <param name="dir">The root folder to examine for files</param>
-        /// <param name="recurse">use subfolders or not</param>
-        /// <returns>A List of T type files</returns>
-        public List<T> BuildFileList(string dir, bool recurse, bool sort)
-        {
+		/// <summary>
+		///
+		/// get the list of files from the named folder, check for other conditions if not a folder
+		/// if this a single file then
+		///  if the file is an T file then
+		///    run with an T FileList of one file
+		///  NYI: if the file is a compressed archive then
+		///     unpack the archive all at once into a temp folder and then construct the list OR unpack 1 at a time as the list is processed?
+		///
+		/// </summary>
+		/// <param name="dir">The root folder to examine for files, always NC.App.AppContext.FileInput</param>
+		/// <param name="recurse">use subfolders or not</param>
+		/// <returns>A List of T type files</returns>
+		public List<T> BuildFileList(string dir, bool recurse, bool sort)
+		{
 
-            bool folder = false, singlefile = false, oneOfTheChosen = false, compressedfile = false, none = false;
-            folder = Directory.Exists(NC.App.AppContext.FileInput);
-            System.IO.FileInfo fi = null;
-            if (singlefile = File.Exists(NC.App.AppContext.FileInput))
-            {
-                fi = new System.IO.FileInfo(NC.App.AppContext.FileInput);
-                if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
-                {
-                    compressedfile = true;
-                }
-                else
-                {
-                    if (Extensions.Exists(ext => ext.ToLower().EndsWith(fi.Extension.ToLower())))
-                    {
-                        oneOfTheChosen = true;
-                    }
-                }
-            }
+			bool folder = false, singlefile = false, oneOfTheChosen = false, none = false; // compressedPerhaps = false, 
+			folder = Directory.Exists(dir);
+			System.IO.FileInfo fi = null;
+			if (singlefile = File.Exists(dir))
+			{
+				fi = new System.IO.FileInfo(dir);
+				if (Extensions.Exists(ext => ext.ToLower().EndsWith(fi.Extension.ToLower())))
+				{
+					oneOfTheChosen = true;
+				}
+				//if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed)
+				//{
+				//	compressedPerhaps = true;
+				//}
+			}
 
-            SearchOption so = recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+			SearchOption so = recurse ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
 
-            IEnumerable<string> effs = null;
-            if (folder)
-            {
-                foreach (string extension in Extensions)
-                {
-                    var leffs = from f in
-                                    Directory.EnumerateFileSystemEntries(dir, "*" + extension, so)
-                                select f;
-                    if (effs == null)
-                        effs = leffs;
-                    else
-                        effs = effs.Concat(leffs);
-                }
-            }
-            else if (singlefile)
-            {
-                if (oneOfTheChosen)
-                    effs = from f in
-                               Directory.EnumerateFileSystemEntries(fi.DirectoryName, fi.Name)
-                           select f;
-                else if (compressedfile)
-                {
-                    log.TraceInformation(NC.App.AppContext.FileInput + " Compressed archives cannot be processed at this time");
-                }
-            }
+			IEnumerable<string> effs = null;
+			if (folder)
+			{
+				foreach (string extension in Extensions)
+				{
+					var leffs = from f in
+									Directory.EnumerateFileSystemEntries(dir, "*" + extension, so)
+								select f;
+					if (effs == null)
+						effs = leffs;
+					else
+						effs = effs.Concat(leffs);
+				}
+			} else if (singlefile)
+			{
+				if (oneOfTheChosen)
+					effs = from f in
+							   Directory.EnumerateFileSystemEntries(fi.DirectoryName, fi.Name)
+						   select f;
+				//if (compressedPerhaps)
+				//{
+				//	log.TraceInformation(dir + " might be compressed, or not. The API is ambiguous");
+				//}
+			}
 
-            FileList<T> files = null;
-            if (!folder && !singlefile)
-            {
-                log.TraceInformation(NC.App.AppContext.FileInput + " cannot be processed, folder or file not found");
-                none = true;
-            }
-            else if (folder)
-            {
-                if (effs == null || (effs.Count() <= 0))
-                {
-                    string s = String.Empty;
-                    Extensions.ForEach(i => s += i + ", ");
-                    log.TraceInformation("No {0} files found in {1}, see ya . . .", s, NC.App.AppContext.FileInput);
-                    none = true;
-                }
-                if (recurse)
-                    log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), NC.App.AppContext.FileInput);
-                else
-                    log.TraceInformation("Processing {0} files in {1}", effs.Count(), NC.App.AppContext.FileInput);
-            }
-            else if (singlefile)
-            {
-                if (effs == null || (effs.Count() <= 0))
-                {
-                    log.TraceInformation("{0} cannot be processed, see ya . . .", NC.App.AppContext.FileInput);
-                    none = true;
-                }
-                else
-                    log.TraceInformation("Processing {0}", NC.App.AppContext.FileInput);
-            }
+			FileList<T> files = null;
+			if (!folder && !singlefile)
+			{
+				log.TraceInformation(dir + " cannot be processed, folder or file not found");
+				none = true;
+			} else if (folder)
+			{
+				if (effs == null || (effs.Count() <= 0))
+				{
+					string s = string.Empty;
+					Extensions.ForEach(i => s += i + ", ");
+					s = s.TrimEnd(new char[] { ' ', ',' });
+					log.TraceInformation("No {0} files found in {1}, . . .", s, dir);
+					none = true;
+				}
+				if (!none)
+				{
+					if (recurse)
+						log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
+					else
+						log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
+				}
+			} else if (singlefile)
+			{
+				if (effs == null || (effs.Count() <= 0))
+				{
+					log.TraceInformation("{0} cannot be processed, . . .", dir);
+					none = true;
+				} else
+					log.TraceInformation("Processing {0}", dir);
+			}
 
-            if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files
-                none = true;
+			if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files
+				none = true;
 
-            if (none)
-                return null;
+			if (none)
+				return null;
 
-            files = new FileList<T>(Extensions, log);
+			files = new FileList<T>(Extensions, log);
 
-            files.state.cur = 0;
-            // Show files and build list
-            foreach (var f in effs)
-            {
-                string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
-                log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
-                T n = new T();
-                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
-                n.Num = files.state.cur++;
-                n.Filename = f;
-                n.ExtractDateFromFilename();
-                n.ThisSuffix = name.Substring(name.IndexOf('.'));
-                files.Add(n);
-            }
-            files.state.count = files.Count;
+			files.state.cur = 0;
+			// Show files and build list
+			foreach (var f in effs)
+			{
+				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
+				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
+				T n = new T();
+				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				n.Num = files.state.cur++;
+				n.Filename = f;
+				n.ExtractDateFromFilename();
+				n.ThisSuffix = name.Substring(name.IndexOf('.'));
+				files.Add(n);
+			}
+			files.state.count = files.Count;
 
-            if (sort)
-                files.Sort((f1, f2) =>
-                {
-                    return f1.DTO.CompareTo(f2.DTO);
-                });
+			if (sort)
+				files.Sort((f1, f2) => {
+					return f1.DTO.CompareTo(f2.DTO);
+				});
 
-            return files;
-        }
+			return files;
+		}
 
-        public List<T> BuildFileList(List<string> ufiles)
+		public List<T> BuildFileList(List<string> ufiles)
         {
 
             FileList<T> files = new FileList<T>(Extensions, log);

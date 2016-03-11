@@ -59,8 +59,8 @@ namespace NewUI
             InitializeComponent();
             mp = new MethodParamFormFields(AnalysisMethod.KnownM);
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
-            this.Text += " for " + mp.det.Id.DetectorName;
-            this.MaterialTypeComboBox.Items.Clear();
+            Text += " for " + mp.det.Id.DetectorName;
+            MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
             {
                 MaterialTypeComboBox.Items.Add(desc.Name);
@@ -141,14 +141,14 @@ namespace NewUI
             rows = kmr.ToLines(null);
             sec.AddRange(rows);
 
-            string path = System.IO.Path.GetTempFileName();
+            string path = Path.GetTempFileName();
             FileStream f = new FileStream(path, FileMode.OpenOrCreate);
             StreamWriter s = new StreamWriter(f);
             s.AutoFlush = true;
             foreach (NCCReporter.Row r in rows)
                 s.WriteLine(r.ToLine(' '));
             f.Close();
-            PrintForm pf = new PrintForm(path, this.Text);
+            PrintForm pf = new PrintForm(path, Text);
             pf.ShowDialog();
             File.Delete(path);
         }
@@ -156,11 +156,12 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
             mp.Persist();
+			Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

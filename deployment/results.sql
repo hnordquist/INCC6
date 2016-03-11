@@ -819,3 +819,9 @@ CREATE TABLE analysis_messages(
 	[ts] datetime NOT NULL 
 );
 GO
+CREATE TABLE results_filenames(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[FileName] nvarchar(1024) NULL
+);
+GO

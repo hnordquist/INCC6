@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,13 +26,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-
 using NCC;
-using System.Collections;
-
 namespace NewUI.Progress
 {
     /// <summary>
@@ -52,8 +48,42 @@ namespace NewUI.Progress
             }
 
             InitializeComponent();
-            task.ContinueWith(_ => Close(), TaskScheduler.FromCurrentSynchronizationContext());
+			_task = task;
+			_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
         }
+		Task _task;
+
+		//public void Go()
+		//{
+		//	while (UIIntegration.Controller.ConnWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+		//	{
+		//			System.Threading.Thread.Yield();
+		//	}
+		//	while (UIIntegration.Controller.MeasWaiter.CurrentCount < 1 && (UIIntegration.Controller.SOH < OperatingState.Stopped))
+		//	{
+		//			System.Threading.Thread.Yield();
+  //          }
+		//	_task.ContinueWith(_ => WaitForCompletion(), TaskScheduler.FromCurrentSynchronizationContext());
+		//}
+
+		void WaitForCompletion()
+		{
+			//if (!UIIntegration.Controller.ConnWaiter.IsSet)
+			//do
+			//{
+			//		System.Threading.Thread.Yield();
+			//}
+			//while (!UIIntegration.Controller.ConnWaiter.Wait(600));
+
+			//if (!UIIntegration.Controller.MeasWaiter.IsSet)
+			//do
+			//{
+			//	System.Threading.Thread.Yield();
+			//}
+			//while (!UIIntegration.Controller.MeasWaiter.Wait(600));
+
+			Close();
+		}
 
         /// <summary>
         /// Displays a progress dialog for the specified task.
@@ -108,9 +138,15 @@ namespace NewUI.Progress
 
             }
             if (progressTracker.m_modal)
+			{
+				//dialog.Go();
                 dialog.ShowDialog();
+			}
             else
+			{
+				//dialog.Go();
                 dialog.Show();
+			}
         }
 
     }

@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -797,7 +797,7 @@ namespace NCCTransfer
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
             meas.AcquireState.comment = "Original file name " + meas.MeasurementId.FileName;
-            meas.Detectors.Add(det);
+            meas.Detectors.Add(det);  // in practice this is a list with one element, e.g. meas.Detector
 
             TestParameters t = new TestParameters();
             t.accSnglTestRateLimit = results.r_acc_sngl_test_rate_limit;
@@ -871,7 +871,7 @@ namespace NCCTransfer
 
             AcquireParameters acq = meas.AcquireState;
             acq.detector_id = det.Id.DetectorId;
-            acq.meas_detector_id = String.Copy(det.Id.DetectorId);
+            acq.meas_detector_id = string.Copy(det.Id.DetectorId);
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
@@ -885,10 +885,10 @@ namespace NCCTransfer
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
-            meas.AcquireState.facility = new INCCDB.Descriptor(String.Copy(itf.facility_table[0].id), String.Copy(itf.facility_table[0].desc));
-            meas.AcquireState.mba = new INCCDB.Descriptor(String.Copy(itf.mba_table[0].id), String.Copy(itf.mba_table[0].desc));
+            meas.AcquireState.facility = new INCCDB.Descriptor(string.Copy(itf.facility_table[0].id), string.Copy(itf.facility_table[0].desc));
+            meas.AcquireState.mba = new INCCDB.Descriptor(string.Copy(itf.mba_table[0].id), string.Copy(itf.mba_table[0].desc));
             if (itf.stratum_id_names_rec_table.Count > 0)
-                meas.AcquireState.stratum_id = new INCCDB.Descriptor(String.Copy(itf.stratum_id_names_rec_table[0].id), String.Copy(itf.stratum_id_names_rec_table[0].desc));
+                meas.AcquireState.stratum_id = new INCCDB.Descriptor(string.Copy(itf.stratum_id_names_rec_table[0].id), string.Copy(itf.stratum_id_names_rec_table[0].desc));
 
             // stratum values
             meas.Stratum = new Stratum();
@@ -897,7 +897,7 @@ namespace NCCTransfer
             meas.Stratum.relative_std_dev = results.relative_std_dev;
             meas.Stratum.systematic_uncertainty = results.systematic_uncertainty;
 
-            INCCDB.Descriptor mtdesc = new INCCDB.Descriptor(String.Copy(acq.item_type), String.Empty);
+            INCCDB.Descriptor mtdesc = new INCCDB.Descriptor(string.Copy(acq.item_type), string.Empty);
             if (!NC.App.DB.Materials.Has(mtdesc) || overwrite)
             {
                 NC.App.DB.Materials.Update(mtdesc);
@@ -909,7 +909,7 @@ namespace NCCTransfer
 
             foreach (DescriptorPair dp in itf.facility_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (!NC.App.DB.Facilities.Has(idesc) || overwrite)
                 {
                     idesc.modified = true;
@@ -918,7 +918,7 @@ namespace NCCTransfer
             }
             foreach (DescriptorPair dp in itf.mba_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (!NC.App.DB.MBAs.Has(idesc) || overwrite)
                 {
                     idesc.modified = true;
@@ -927,7 +927,7 @@ namespace NCCTransfer
             }
             foreach (DescriptorPair dp in itf.stratum_id_names_rec_table)
             {
-                INCCDB.Descriptor idesc = new INCCDB.Descriptor(String.Copy(dp.id), String.Copy(dp.desc));
+                INCCDB.Descriptor idesc = new INCCDB.Descriptor(string.Copy(dp.id), string.Copy(dp.desc));
                 if (meas.Stratum != null) 
                 {
                    idesc.modified = true;
@@ -955,7 +955,8 @@ namespace NCCTransfer
                 item.modified = true;
 
                 List<ItemId> list = NC.App.DB.ItemIds.GetList();
-                if (list.Contains(item) && overwrite)
+				bool flump = list.Exists(i => { return string.Compare(item.item, i.item, true) == 0; });
+                if (flump && overwrite)
                 {
                     list.Remove(item);
                     list.Add(item);
@@ -1590,7 +1591,8 @@ namespace NCCTransfer
                         cid.modified = true;
 
                         List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();
-                        if (list.Contains(cid) && overwrite)
+						bool glump = list.Exists(i => { return string.Compare(cid.item_id, i.item_id, true) == 0; });
+                        if (glump && overwrite)
                         {
                             list.Remove(cid);
                             list.Add(cid);
@@ -1654,7 +1656,7 @@ namespace NCCTransfer
             long mid = meas.Persist();
 
             // save the warning and error messages from the results here, these rode on the results rec in INCC5
-            NC.App.DB.AddAnalysisMessages(msgs, det, mid);
+            NC.App.DB.AddAnalysisMessages(msgs, mid);
 
             // Store off Params
 
@@ -1663,14 +1665,12 @@ namespace NCCTransfer
             NC.App.DB.BackgroundParameters.Set(det, meas.Background); 
  
             INCCDB.AcquireSelector acqsel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(acqsel) && overwrite)
+            if (overwrite)
             {
-                NC.App.DB.AcquireParametersMap().Remove(acqsel);
-                NC.App.DB.AcquireParametersMap().Add(acqsel, acq);
+                NC.App.DB.ReplaceAcquireParams(acqsel, acq);
             }
             else
-                NC.App.DB.AcquireParametersMap().Add(acqsel, acq); // gotta add it to the global map, then push it to the DB
-            NC.App.DB.UpdateAcquireParams(acq);
+                NC.App.DB.AddAcquireParams(acqsel, acq); // gotta add it to the global map, then push it to the DB
 
             if (meas.Tests != null) // added only if not found on the list
 				NC.App.DB.TestParameters.Set(meas.Tests);
@@ -1708,7 +1708,7 @@ namespace NCCTransfer
                             ElementList els = ir.ToDBElementList();
                             DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
                             long resid = ar.Create(mid, els);
-                            mlogger.TraceEvent(LogLevels.Verbose, 34103, String.Format("Preserving {0} as {1}", ir.Table, resid));
+                            mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
                         }
                         break;
                     case AssaySelector.MeasurementOption.verification:
@@ -1738,7 +1738,7 @@ namespace NCCTransfer
                                         long resid = ar.Create(mid, els);
                                         ElementList mels = _imr.methodParams.ToDBElementList();
                                         long resmid = ar.CreateMethod(resid, mid, mels);
-                                        mlogger.TraceEvent(LogLevels.Verbose, 34101, String.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+                                        mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
                                     }
                                     catch (Exception e)
                                     {

@@ -294,8 +294,8 @@
             this.ChangeDirBtn.Name = "ChangeDirBtn";
             this.ChangeDirBtn.Size = new System.Drawing.Size(218, 23);
             this.ChangeDirBtn.TabIndex = 12;
-            this.ChangeDirBtn.Text = "Change ASCII results data directory...";
-            this.toolTip1.SetToolTip(this.ChangeDirBtn, "Click on this button to change the directory where all ASCII results files are st" +
+            this.ChangeDirBtn.Text = "Change ASCII results data folder...";
+            this.toolTip1.SetToolTip(this.ChangeDirBtn, "Click on this button to change the folder where all ASCII results files are st" +
         "ored. You will be prompted for the disk drive and full path.");
             this.ChangeDirBtn.UseVisualStyleBackColor = true;
             this.ChangeDirBtn.Click += new System.EventHandler(this.ChangeDirBtn_Click);

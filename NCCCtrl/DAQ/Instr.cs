@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS5NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -34,7 +34,7 @@ using AnalysisDefs;
 using DetectorDefs;
 using NCCFile;
 using NCCReporter;
-namespace LMDAQ
+namespace Instr
 {
 
     using NC = NCC.CentralizedState;
@@ -85,6 +85,14 @@ namespace LMDAQ
         {
             return this.Exists(i => { return (i is LMInstrument) && ((LMInstrument)i).SocketBased(); });
         }
+		public bool HasMCA()
+        {
+            return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.MCA527; });
+        }
+		public bool HasLMMM()
+        {
+            return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.LMMM; });
+        }
         public bool HasUSBBasedLM()
         {
             return this.Exists(i => { return i is LMInstrument && i.id.SRType.IsUSBBasedLM(); });
@@ -95,7 +103,7 @@ namespace LMDAQ
         }
         public bool HasConnectedLM()
         {
-            return this.Exists(i => { return (i is LMInstrument &&   ((LMInstrument)i).SocketBased() && (i as LMInstrument).DAQState == DAQInstrState.Online); });
+            return this.Exists(i => { return (i is LMInstrument && ((LMInstrument)i).SocketBased() && (i as LMInstrument).DAQState == DAQInstrState.Online); });
         }
         public Instrument AConnectedLM()
         {
@@ -306,9 +314,8 @@ namespace LMDAQ
         /// </summary>
         /// <param name="measurement">The measurement.</param>
         /// <exception cref="IOException">An error occurred communicating with the device.</exception>
-        public virtual Task StartAssay(Measurement measurement)
+        public virtual void StartAssay(Measurement measurement)
         {
-            return null;
         }
 
         /// <summary>
@@ -325,9 +332,8 @@ namespace LMDAQ
         /// <param name="voltage">The voltage to set in volts.</param>
         /// <param name="duration">The length of the measurement to take.</param>
         /// <exception cref="IOException">An error occurred communicating with the device.</exception>
-        public virtual Task StartHVCalibration(int voltage, TimeSpan duration)
+        public virtual void StartHVCalibration(int voltage, TimeSpan duration)
         {
-            return null;
         }
 
         /// <summary>
@@ -462,7 +468,7 @@ namespace LMDAQ
         }
 
         /// <summary>
-        /// LMMM-specific contructor for live instrument uptake while doing discovery on a local network
+        /// LMMM-specific constructor for live instrument uptake while doing discovery on a local network
         /// </summary>
         /// <param name="e">socket event struct</param>
         /// <param name="EndpointPort">the source port</param>
@@ -485,10 +491,10 @@ namespace LMDAQ
         }
 
 
-        internal INeutronDataFile PrepFile(string prefix, int idx, LMLoggers.LognLM collog)
+        internal INeutronDataFile PrepOutputFile(string prefix, int idx, LMLoggers.LognLM collog)
         {
             if (!NC.App.AppContext.LiveFileWrite)
-                return null;
+                return file;
             file.GenName(prefix, idx); // dev note: good to provide external config approach to specify output file pattern 
             file.CreateForWriting();
             return file;
@@ -514,7 +520,7 @@ namespace LMDAQ
             if (obj == null) return base.Equals(obj);
 
             if (!(obj is LMInstrument))
-                throw new InvalidCastException("The 'obj' argument is not a LMInstrument object.");
+                return false;
             else
                 return Equals(obj as LMInstrument);
         }
@@ -586,7 +592,7 @@ namespace LMDAQ
             }
         }
 
-        public SRControl SRCtrl
+        public DAQ.SRControl SRCtrl
         {
             get { return (RDT as SRCycleDataTransform).SRCtrl; }
             set { (RDT as SRCycleDataTransform).SRCtrl = value; }
@@ -606,7 +612,7 @@ namespace LMDAQ
             if (obj == null) return base.Equals(obj);
 
             if (!(obj is SRInstrument))
-                throw new InvalidCastException("The 'obj' argument is not a SRInstrument object.");
+                return false; //throw new InvalidCastException("The 'obj' argument is not a SRInstrument object.");
             else
                 return Equals(obj as LMInstrument);
         }

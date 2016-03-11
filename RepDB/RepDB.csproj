@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -103,6 +105,7 @@
     <None Include="DB\Ye Olde\NCC_DB.SCH" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DB\initdata.sql" />
     <Content Include="DB\results.sql" />
     <Content Include="DB\tables.sql" />
     <Content Include="DB\Ye Olde\ncc_db.h" />

@@ -103,7 +103,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Name = "Splash";
-            this.Text = "Beta Release 1, LA-CC 11-048";
+            this.Text = "Beta Release 1, LA-CC 14-009";
             this.ResumeLayout(false);
             this.PerformLayout();
 

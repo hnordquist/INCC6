@@ -104,12 +104,15 @@ namespace NewUI
                 rows.Add(a);
             }
 
-
             // Generate a copy of the ItemId string in case the user changes it so we can tell what is a new row and what is a name change
-            foreach (DataGridViewRow row in this.ItemIdDataGrid.Rows)
+            for (int i = 0; i < rows.Count; i++)
             {
-                // Set the row's Tag member to a copy of the ItemId string
-                row.Tag = (string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value;
+				DataGridViewRow row = rows[i];
+				if (string.IsNullOrEmpty((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value))
+					continue;
+				else
+					// Set the row's Tag member to a copy of the ItemId string
+					row.Tag = string.Copy((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value);
             }
 
         }

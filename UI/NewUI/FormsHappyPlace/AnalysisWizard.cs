@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -42,7 +42,7 @@ namespace NewUI
         // State diagram for wizard is as follows:
         //
         //  Step 1:     user selects either to post-process existing data (goto Step 2A) or to process real time data from an attached detector (goto Step 2B)
-        //  Step 2A:    user selects a dataset to post-process.  If dataset is invalid, throw error dialog and return to Step 2A.  Otherwise, goto Step 3.
+        //  Step 2A:    user selects a dataset to post-process. If dataset is invalid, throw error dialog and return to Step 2A.  Otherwise, goto Step 3.
         //  Step 2B:    user selects a detector configuration from a list of pre-defined detectors or can launch the detector configuration.  Goto Step 3.
         //  Step 3:     user selects an analysis method from a list, goto Step 4.
         //  Step 4:     user selects analysis parameters appropriate for the previously selected method.  Goto Step 5
@@ -81,7 +81,6 @@ namespace NewUI
                                                                          //  > 7: undefined
 
         private Boolean fromINCCAcquire = false;  // if called directly from INCC acquire, force user to select a multiplicity analyzer
-        private Boolean converting = false; // Used for UI formatting in Step 4.
 
         private int active = 0;         // Used to track which parameter is selected for use in mouserover™ highlighting in the diagrams.
 
@@ -129,36 +128,37 @@ namespace NewUI
             det = lmdet;
             ap = lmap;
 
-            if (startHere == AWSteps.Step1)  // fresh List Mode only
+            if (startHere == AWSteps.Step3)  // fresh List Mode only
             {
                 ResetMeasurement();
                 Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
             }
 
-            //cntap = CountingAnalysisParameters.Copy(NC.App.Opstate.Measurement.AnalysisParams);
             alt = CountingAnalysisParameters.Copy(NC.App.Opstate.Measurement.AnalysisParams);
 
             InitializeComponent();
+			Text += " for detector " + det.Id.DetectorName;
 
             // Stack all the panels up on top of each other; window is set to autosize to whatever is visible.
-            this.Step2APanel.Left = 4;
-            this.Step2APanel.Top = 6;
-            this.Step2BPanel.Left = 4;
-            this.Step2BPanel.Top = 6;
-            this.Step3Panel.Left = 4;
-            this.Step3Panel.Top = 6;
-            this.Step4Panel.Left = 4;
-            this.Step4Panel.Top = 6;
+            Step2APanel.Left = 4;
+            Step2APanel.Top = 6;
+            Step2BPanel.Left = 4;
+            Step2BPanel.Top = 6;
+            Step3Panel.Left = 4;
+            Step3Panel.Top = 6;
+            Step4Panel.Left = 4;
+            Step4Panel.Top = 6;
 
             state = startHere;
-            if (state != AWSteps.Step1)
+            if (state == AWSteps.Step2A || state == AWSteps.Step2B)
             {
                 fromINCCAcquire = true;
-                ap.data_src = (state == AWSteps.Step2B ? ConstructedSource.Live : ConstructedSource.NCDFile);  // default file type is NCD, updated in UI from acquire param details
+                ap.data_src = (state == AWSteps.Step2B ? ConstructedSource.Live : ConstructedSource.PTRFile);  // default file type is PTR-32, updated in UI from acquire param details
             }
             CycleIntervalPatch(); // guard for bad LM cycle and interval
             // Set the visibilities correctly for the initial state 
             UpdateUI();
+
         }
 
         private void UpdateUI()
@@ -230,6 +230,7 @@ namespace NewUI
             {
                 this.Step4Panel.Visible = true;
                 this.Step4SaveAndExit.Enabled = true;
+				Comment.Text = ap.comment;
                 // Fill in data source and output
                 if (ap.data_src.Live())
                 {
@@ -240,34 +241,27 @@ namespace NewUI
                 }
                 else
                 {
+                    string a = "";
+                    if (NC.App.AppContext.FileInputList == null)
+                        a = " files in " + Step2InputDirectoryTextBox.Text;
+                    else
+                        a = " " + NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
                     // Fill in the input location text box, starting with the file type
                     if (this.Step2NCDRadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "NCD files in ";
+                            a = "LMMM NCD" + a;
                     }
                     else if (this.Step2SortedPulseRadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "Sorted pulse files in ";
-                        if (this.Step2ConvertSPtoNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
+                            a = "Sorted pulse" + a; 
                     }
                     else if (this.Step2PTR32RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "PTR32 dual file streams in ";
-                        if (this.Step2ConvertPTR32toNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
+                            a = "PTR-32 dual" + a;
                     }
-                    else if (this.Step2NILA2RadioBtn.Checked)
+                    else if (this.Step2MCA5272RadioBtn.Checked)
                     {
-                        this.Step4DataSourceTextBox.Text = "NILA dual file streams in ";
-                        if (this.Step2ConvertNILAtoNCDCheckBox.Checked)
-                        {
-                            converting = true;
-                        }
+                            a = "MCA-527" + a;
                     }
                     else
                     {
@@ -275,17 +269,12 @@ namespace NewUI
                     }
 
                     // Add the input file directory string
-                    this.Step4DataSourceTextBox.Text += this.Step2InputDirectoryTextBox.Text;
+                    this.Step4DataSourceTextBox.Text = a;
 
                     // Make note of any input file special handling checkboxes
                     if (this.Step2RecurseCheckBox.Checked)
                     {
                         this.Step4DataSourceTextBox.Text += " (recursive)";
-                    }
-
-                    if (converting)
-                    {
-                        this.Step4DataSourceTextBox.Text += ", converting input files to NCD";
                     }
 
                     // Fill in the output location text box
@@ -450,15 +439,43 @@ namespace NewUI
 
         private void Step2BrowseBtn_Click(object sender, EventArgs e)
         {
-            string s = UIIntegration.GetUsersFolder("Select Input Folder", NC.App.AppContext.FileInput);
-            if (!String.IsNullOrEmpty(s))
+            DialogResult dr = GetUsersInputSelection();
+            if (dr == DialogResult.OK)
             {
-                NC.App.AppContext.FileInput = s;
-                NC.App.AppContext.modified = true;
-                Step2InputDirectoryTextBox.Text = s;
+                if (NC.App.AppContext.FileInputList == null)
+                    Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+                else
+                    Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
             }
-            else
-                Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+            else Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;        
+        }
+
+        DialogResult GetUsersInputSelection()
+        {
+            string a = string.Empty, b = string.Empty, c = string.Empty, d = string.Empty;
+            switch (ap.data_src)
+            {
+                case ConstructedSource.MCA527File:
+                    a = "Select MCA files or folder";
+                    b = "MCA527"; c = "mca";
+                    break;
+                case ConstructedSource.NCDFile:
+                    a = "Select NCD files or folder";
+                    b = "LMMM NCD"; c = "ncd";
+                    break;
+                case ConstructedSource.PTRFile:
+                    a = "Select PTR-32 files or folder";
+                    b = "PTR-32"; c = "bin"; d = "chn";
+                    break;
+                case ConstructedSource.SortedPulseTextFile:
+                    a = "Select pulse files or folder";
+                    b = "pulse"; c = "txt";
+                    break;  
+            }
+
+            DialogResult dr = UIIntegration.GetUsersFilesFolder(a, NC.App.AppContext.FileInput, b, c, d);
+            return dr;
+
         }
 
         private void FilePicker2_Click(object sender, EventArgs e)
@@ -897,7 +914,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            co.SR.predelay = x; co.modified = true;
+								co.SR.predelay = x; co.modified = true;
                         }
                         ((TextBox)sender).Text = co.SR.predelay.ToString();
                     }
@@ -909,7 +926,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -921,7 +938,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -1060,8 +1077,8 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            co.SR.predelay = x; co.modified = true;
-                        }
+								co.SR.predelay = x; co.modified = true;
+						}
                         ((TextBox)sender).Text = co.SR.predelay.ToString();
                     }
                     break;
@@ -1072,8 +1089,8 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
-                        }
+								m.SR.predelay = x; m.modified = true;
+						}
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
                     break;
@@ -1084,7 +1101,7 @@ namespace NewUI
                         bool mod = (Format.ToNN(((TextBox)sender).Text, ref x));
                         if (mod)
                         {
-                            m.SR.predelay = x; m.modified = true;
+								m.SR.predelay = x; m.modified = true;
                         }
                         ((TextBox)sender).Text = m.SR.predelay.ToString();
                     }
@@ -1399,8 +1416,7 @@ namespace NewUI
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
-                NC.App.DB.AcquireParametersMap().Add(sel, ap);  // it's a new one, not the existing one modified
-                NC.App.DB.UpdateAcquireParams(ap, det.ListMode);
+                NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
             }
             this.Close();
         }
@@ -1487,27 +1503,24 @@ namespace NewUI
                     if (NC.App.AppContext.PTRFileAssay)
                     {
                         Step2PTR32RadioBtn.Checked = true;
-                        Step2ConvertPTR32toNCDCheckBox.Checked = NC.App.AppContext.PTRFileNCD;
                         ap.data_src = ConstructedSource.PTRFile;
                     }
                     else if (NC.App.AppContext.PulseFileAssay)
                     {
                         Step2SortedPulseRadioBtn.Checked = true;
-                        Step2ConvertSPtoNCDCheckBox.Checked = NC.App.AppContext.PulseFileNCD;
                         ap.data_src = ConstructedSource.SortedPulseTextFile;
                     }
-                    else if (NC.App.AppContext.NILAFileAssay)
+                    else if (NC.App.AppContext.MCA527FileAssay)
                     {
-                        Step2NILA2RadioBtn.Checked = true;
-                        Step2ConvertNILAtoNCDCheckBox.Checked = NC.App.AppContext.NILAFileNCD;
-                        ap.data_src = ConstructedSource.NILAFile;
+                        Step2MCA5272RadioBtn.Checked = true;
+                        ap.data_src = ConstructedSource.MCA527File;
                     }
                     else // always the default
                     {
                         Step2NCDRadioBtn.Checked = true;
                     }
 
-                    Step2OutputDirectoryTextBox.Text = ap.lm.Results; // jfl todo: expand to full path (if relative?)
+                    Step2OutputDirectoryTextBox.Text = ap.lm.Results;
                     RefreshDetectorCombo(Step2ADetCB);
                     break;
                 case AnalysisWizard.AWSteps.Step2B:
@@ -1518,7 +1531,7 @@ namespace NewUI
                         IntervalTextBox.Text = ap.run_count_time.ToString();
                     else
                         IntervalTextBox.Text = ap.lm.Interval.ToString();
-                    Step2BOutputDirectoryTextBox.Text = ap.lm.Results; // jfl todo: expand to full path (if relative?)
+                    Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     if (fromINCCAcquire)
                         CycleNumTextBox.Text = ap.num_runs.ToString();
                     else
@@ -1529,9 +1542,26 @@ namespace NewUI
                     RefreshDetectorCombo(Step2BDetectorComboBox);
                     break;
                 case AnalysisWizard.AWSteps.Step3:
+					if (ap.data_src.Live())
+					{
+						if (string.IsNullOrEmpty(Step2BDetectorComboBox.Text))
+						{
+							RefreshDetectorCombo(Step2BDetectorComboBox);
+							Step2BDetectorComboBox.SelectedItem = det;
+						}
+					} else
+					if (string.IsNullOrEmpty(Step2InputDirectoryTextBox.Text))
+					{
+
+						if (NC.App.AppContext.FileInputList == null)
+							Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
+						else
+							Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInputList.Count.ToString() + " selected files";
+					}
+					if (string.IsNullOrEmpty(Step2BOutputDirectoryTextBox.Text))
+							Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
                     SetCheckListBoxAnalyzers();
                     ShowCurrentAnalzyerSelection();
-
                     break;
                 case AnalysisWizard.AWSteps.Step4:
                     // step 4 next creates the selected analyzer and adds it to the ap var
@@ -1700,28 +1730,6 @@ namespace NewUI
             }
         }
 
-        private void Step2ConvertSPtoNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.PulseFileNCD != ((CheckBox)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.PulseFileNCD = ((CheckBox)sender).Checked;
-            }
-        }
-
-        private void Step2ConvertPTR32toNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.PTRFileNCD != ((RadioButton)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.PTRFileNCD = ((RadioButton)sender).Checked;
-            }
-        }
-        private void Step2ConvertNILAtoNCDCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (NC.App.AppContext.NILAFileNCD != ((RadioButton)sender).Checked)
-            {
-                NC.App.AppContext.modified = true; NC.App.AppContext.NILAFileNCD = ((RadioButton)sender).Checked;
-            }
-        }
         private void Step2NCDRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
@@ -1747,14 +1755,14 @@ namespace NewUI
             if (NC.App.AppContext.PTRFileAssay)
                 ap.data_src = ConstructedSource.PTRFile;
         }
-        private void Step2NILARadioBtn_CheckedChanged(object sender, EventArgs e)
+        private void Step2MCA527RadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-            if (NC.App.AppContext.NILAFileAssay != ((RadioButton)sender).Checked)
+            if (NC.App.AppContext.MCA527FileAssay != ((RadioButton)sender).Checked)
             {
-                NC.App.AppContext.modified = true; NC.App.AppContext.NILAFileAssay = ((RadioButton)sender).Checked;
+                NC.App.AppContext.modified = true; NC.App.AppContext.MCA527FileAssay = ((RadioButton)sender).Checked;
             }
-            if (NC.App.AppContext.NILAFileAssay)
-                ap.data_src = ConstructedSource.NILAFile;
+            if (NC.App.AppContext.MCA527FileAssay)
+                ap.data_src = ConstructedSource.MCA527File;
         }
 
         private void Step2RecurseCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -1861,12 +1869,21 @@ namespace NewUI
             Multiplicity m0 = alt.GetFirstMult(FA, out addedIfNotPresent);
             if (addedIfNotPresent)
             {
-                m0.SR.CopyValues(det.SRParams);  // merge default values wth this analyzer
+                m0.SR.CopyValues(det.SRParams);  // merge default values with this analyzer
                 m0.SetGateWidthTics(det.SRParams.gateLength);
             }
             return m0;
         }
 
-    }
+		private void Comment_Leave(object sender, EventArgs e)
+		{
+            bool thisonechanged = (string.Compare(ap.comment,((TextBox)sender).Text) != 0);
+			if (thisonechanged)
+			{
+				ap.modified = true;
+				ap.comment = string.Copy(((TextBox)sender).Text);
+			}
+		}
+	}
 
 }

@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -30,10 +30,10 @@ using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
 using LMComm;
-using LMProcessor;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
@@ -48,12 +48,11 @@ namespace LMDAQ
 
         protected LMLoggers.LognLM collog;
         protected LMLoggers.LognLM ctrllog;
-        protected LMLoggers.LognLM netlog;
         protected LMLoggers.LognLM datalog;
         protected LMLoggers.LognLM applog;
         public bool gui;
 
-        public DAQControl(MLMEmulation.IEmulatorDiversion emu, bool usingGui)
+        public DAQControl(bool usingGui)
         {
             gui = usingGui;
 
@@ -62,16 +61,12 @@ namespace LMDAQ
             applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
             collog = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
-            netlog = NC.App.Loggers.Logger(LMLoggers.AppSection.Net);
             datalog = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 
             // JFL was set on cmd line prior to exec here, and it still is, upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
-            LMMMComm = LMMMComm ?? new TalkToLMMMM(NC.App.Loggers.Logger(LMLoggers.AppSection.LMComm));  // a singleton
-
-            emu.SetLogger(NC.App.Loggers.Logger(LMLoggers.AppSection.LMComm));
-            LMMMComm.EmulatorInstance = emu;
+            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton
 
             CurState.SOH = NCC.OperatingState.Starting;
 
@@ -115,7 +110,7 @@ namespace LMDAQ
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
-                case NCCAction.Discover: // for LM only, not needed for SR AFAIKT
+                case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
                     ConnectInstruments();
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
@@ -139,7 +134,7 @@ namespace LMDAQ
 
         protected void ShiftRegisterRuntimeInit()
         {
-            Detector det = NC.App.Opstate.Measurement.Detectors[0];
+            Detector det = NC.App.Opstate.Measurement.Detector;
             if (det.ListMode)
                 return;
             SRInstrument sri = new SRInstrument(det);
@@ -229,41 +224,37 @@ namespace LMDAQ
             return some;
         }
 
-        public void ConnectWithRetries(bool batch, int retry)
+        public void ConnectWithRetries(bool batch, ushort retry)
         {
-            //NC.App.Opstate.ResetTimer(0, instconnect, (AssayState)NC.App.Opstate, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
 
             if (batch)// the method calling this method is a single command 'batch' that exits when complete, so emit config at start of operations
                 LogConfig();
-
-            if (!Instruments.Active.HasLM())
+            _completed[1].Reset(1);
+            ushort attempts = 0;
+            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
-                collog.TraceInformation("No active LM instruments. . .");
-            }
-            int attempts = 0;
-            while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count >0)
-            {
-                if (attempts == 0)
-                    ConnectInstruments();  // do LMMM, PTR-32 and SR the first time
-                else if (attempts > 0)
-                {
-                    Thread.Sleep(500);              
-                    if (Instruments.Active.HasSocketBasedLM()) 
-                        FireEvent(EventType.PreAction, NC.App.Opstate);
-                }
-                ConnectLMMMInstruments();  // now just do the LMMMs again, socket-based needs more retries based on testing
-               
+                ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) 
+				Thread.Sleep(90);      // wait a moment
                 attempts++;
             }
-            NC.App.Opstate.StopTimer(0);
+			_completed[1].Signal();
+            NC.App.Opstate.StopTimer();
         }
 
-        // set only when all assay or HVCalib cycles are completed
-        CountdownEvent completed;
+        // set only when all assay or HVCalib cycles are completed, or cancelled
+        CountdownEvent [] _completed = {  new CountdownEvent(0), new CountdownEvent(0) };
 
+        public CountdownEvent MeasCompleted
+		{
+			get { return _completed[0]; }
+		}
+        public CountdownEvent ConnCompleted
+		{
+			get { return _completed[1]; }
+		}
         public void MajorOperationCompleted()
         {
-            completed.Signal();
+            _completed[0].Signal();
             Flush();
             FireEvent(EventType.ActionStop, this);
         }
@@ -278,7 +269,7 @@ namespace LMDAQ
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.HVCalibration;
             bool ok = HVCalibInception(); // the current thread pends in this method until the active instrument completes HV processing
-            CurState.StopTimer(1); // started in StartHVCalib
+            CurState.StopTimer(); // started in StartHVCalib
             if (ok)
             {
                 OutputResults(NCCAction.HVCalibration);
@@ -296,7 +287,7 @@ namespace LMDAQ
 
         private bool HVCalibInception()
         {
-            completed = new CountdownEvent(Instruments.Active.Count);
+            _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
             bool going = StartHVCalib();
             if (going)
@@ -315,8 +306,7 @@ namespace LMDAQ
         {
             applog.TraceInformation("Starting High Voltage Calibration Plateau");
             FireEvent(EventType.ActionPrep, this);
-
-            ConnectWithRetries(true, 5);
+            ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -364,7 +354,7 @@ namespace LMDAQ
             ctrlHVCalib.HVCalibRun();
         }
 
-        public void AppendHVCalibration(LMDAQ.HVControl.HVStatus hvst)
+        public void AppendHVCalibration(DAQ.HVControl.HVStatus hvst)
         {
             ctrlHVCalib.AddStepData(hvst);
         }
@@ -374,10 +364,13 @@ namespace LMDAQ
 
 
         // The Assay op control
-        public void AssayCoreOp()
+		public void AssayCoreOp()
         {
             if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
+			{
+				NC.App.Opstate.SOH = OperatingState.Stopped;
                 return;  //nothing to do
+			}
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.Assay;
             NC.App.Opstate.SOH = NCC.OperatingState.Living;
@@ -389,50 +382,88 @@ namespace LMDAQ
                 if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
                 {
                     //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
-                    //if (CurState.Measurement.HasReportableData)
-                    //{
+                    if (CurState.Measurement.HasReportableData)
+                    {
                         CalculateMeasurementResults();
                         SaveMeasurementBasics();
                         SaveMeasurementResults();
-                        //CurState.StopTimer(1);
                         FireEvent(EventType.ActionInProgress, this);
                         OutputResults(NCCAction.Assay);
-                    //}
+                    }
+					else
+						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
                 }
                 NC.App.Opstate.ResetTokens();
             }
             NC.App.Opstate.Action = x;
         }
-        public Thread AssayOperation()
+		public bool AssayInception()
         {
-            Thread at = new Thread(AssayCoreOp);
-            at.Start();
-            return at;
-        }
-        public bool AssayInception()
-        {
-            completed = new CountdownEvent(Instruments.Active.Count);
+            _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
-            var task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
+            bool task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
             if (task)
             {
                 ManualResetEventSlim[] me = GetTheAssayWaitTokens(); // each active Instr has it's own analysis handler wait handle
                 foreach (ManualResetEventSlim mres in me)
                    if (mres != null) mres.Wait(); // wait for signal from DAQ + Analyzer on each active instrument.
             }
-            completed.Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
-            CurState.StopTimer(1); // started in StartAssay > ResetForMeasurement
+            _completed[0].Wait(); // wait for all the instr assays to complete (might be more than 1 in NPOD model)
+            CurState.StopTimer(); // started in StartAssay > ResetForMeasurement
             Thread.Sleep(500);  // todo: separately config the various waits, grep for Thread.Sleep to find them
             return task;
         }
 
 
 
+
+		public void ThreadAssayCoreOp()
+        {
+            if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
+			{
+				NC.App.Opstate.SOH = OperatingState.Stopped;
+                return;  //nothing to do
+			}
+            NCCAction x = NC.App.Opstate.Action;
+            NC.App.Opstate.Action = NCCAction.Assay;
+            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            bool ok = false;// AssayInception();
+            if (ok)
+            {
+                FireEvent(EventType.ActionStart, this);
+                FireEvent(EventType.ActionInProgress, this);
+                if (!NC.App.Opstate.IsAbortRequested) // stop/quit means continue with what is available
+                {
+                    //Nothing was saving or displaying..... Don't think HasReportableData is finished HN 9.4.2015
+                    if (CurState.Measurement.HasReportableData)
+                    {
+                        CalculateMeasurementResults();
+                        SaveMeasurementBasics();
+                        SaveMeasurementResults();
+                        FireEvent(EventType.ActionInProgress, this);
+                        OutputResults(NCCAction.Assay);
+                    }
+					else
+						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
+                }
+                NC.App.Opstate.ResetTokens();
+            }
+            NC.App.Opstate.Action = x;
+        }
+
+        public Thread AssayOperation()
+        {
+            Thread at = new Thread(ThreadAssayCoreOp);
+            at.Start();
+            return at;
+        }
+
+
         // self-threaded for console
         private void DoAnAssay()
         {
             applog.TraceInformation("Starting " + CurState.Measurement.MeasOption.PrintName() + " Assay");
-            ConnectWithRetries(true, 5);
+            ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
@@ -500,38 +531,14 @@ namespace LMDAQ
                     collog.TraceInformation("Producing Assay results output file");
                     ReportMangler rm = new ReportMangler(ctrllog);
                     rm.GenerateReports(CurState.Measurement);
-                    NC.App.DB.AddResultsFileName(CurState.Measurement);
+                    NC.App.DB.AddResultsFileNames(CurState.Measurement);
                     break;
             }
         }
         public void ConnectInstruments()
         {
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
-
-            foreach (Instrument instrument in Instruments.Active) // devnote: this SR-specific code belongs down in ConnectSRInstruments
-            {
-                try
-                {
-                    collog.TraceInformation("Connecting to " + instrument.id.DetectorId);
-                    if (instrument.id.SRType != InstrType.LMMM && instrument.id.SRType != InstrType.NILA && instrument.id.SRType != InstrType.PTR32)
-                    {
-                        if (RetryCOM("COM" + instrument.id.SerialPort.ToString()))
-                            instrument.Connect();
-                        else
-                        {
-                            collog.TraceInformation("The com port {0} is no longer available.  Instrument {1} cannot be connected.  Please set a valid COM port.", instrument.id.SerialPort.ToString(), instrument.id.DetectorId);
-                            Instruments.Active.Remove(instrument);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    collog.TraceException(ex);
-                }
-            }
-
-            // Fix case where crashes because COM port doesn't exist any more..... hn 5.15.2015
-
+            ConnectMCAInstruments();
 
             // for the LMMMs
             ConnectLMMMInstruments();
@@ -545,55 +552,83 @@ namespace LMDAQ
                 PrepSRDAQHandler();
                 ConnectSRInstruments();
             }
-            else
-            {
-                collog.TraceEvent(LogLevels.Verbose, 10799, "No active SR instruments. . .");
-            }
         }
 
-        public bool RetryCOM(string comport)
-        {
+		public Device.MCADeviceInfo[] ConnectMCAInstruments()
+		{
+			Device.MCADeviceInfo[] deviceInfos = null;
+			if (!Instruments.Active.HasMCA())
+				return deviceInfos;
+			LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
+			if (lmi.id.SRType != InstrType.MCA527)
+				return deviceInfos;
+			collog.TraceInformation("Broadcasting to MCA instruments. . .");
+			try
+			{
+				deviceInfos = Device.MCADevice.QueryDevices();
+				if (deviceInfos.Length > 0)
+				{
+					Device.MCADeviceInfo thisone = null;
+					// Match based on Electronics Id field
+					foreach (Device.MCADeviceInfo d in deviceInfos)
+					{
+						string id = d.Serial.ToString("D5");
+						string s = string.Format("MCA-527#{0}  FW# {1}  HW# {2} on {3}", id, d.FirmwareVersion, d.HardwareVersion, d.Address);
+						collog.TraceInformation("Checking " + s);
+						if (string.Equals(id, lmi.id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
+						{
+							collog.TraceInformation("Connecting to " + s);
+							thisone = d;
+							break;
+						}
+					}
+					if (thisone == null)
+						return deviceInfos;
+					((MCA527Instrument)lmi).DeviceInfo = thisone;
+					lmi.Connect();
+				}
+			} 
+			catch (AggregateException ex)
+			{
+				collog.TraceException(ex.InnerException);
+			}
+			catch (Exception e)
+			{
+				collog.TraceException(e);
+			}
+			return deviceInfos;
+		}
 
-            string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
-
-            foreach (string p in ports)
-            {
-                if (p.CompareTo(comport) == 0)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }    
-        public void ConnectLMMMInstruments()
+		public void ConnectLMMMInstruments()
         {
-            if (!Instruments.Active.HasSocketBasedLM())
-            {
+            if (!Instruments.Active.HasLMMM())
                 return;
-            }
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
+			if (lmi.id.SRType != InstrType.LMMM)
+				return;
             // for the LMs
             // Start listening for instruments.
             StartLMDAQServer((LMConnectionInfo)lmi.id.FullConnInfo);   // NEXT: socket reset should occur here for robust restart and recovery            
-            collog.TraceInformation("Broadcasting to LM instruments. . .");
+            collog.TraceInformation("Broadcasting to LMMM instruments. . .");
 
             // broadcast message to all subnet (configurable, defaulting to 169.254.x.x) addresses. This is the instrument group.
             // look for the number of requested instruments
             DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.broadcast);
-            collog.TraceInformation("Sent broadcast. Waiting for LM instruments to connect");
+            collog.TraceInformation("Sent broadcast. Waiting for LMMM instruments to connect");
 
             // wait until enough time has elapsed to be sure live instruments can report back
             Thread.Sleep(lmi.id.FullConnInfo.Wait);  // todo: configure this with a unique wait parameter value
             if (!LMMMComm.LMServer.IsRunning)
-                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LM support running");
-
+                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LMMM support running");
         }
+
         public void ConnectPTR32Instruments()
         {
-            if (!Instruments.Active.HasUSBBasedLM())
-            {
+			bool exists = Instruments.Active.Exists( lm => { return lm.id.SRType == InstrType.PTR32; });
+			if (!exists)
+				return;
+            if (!Instruments.Active.HasUSBBasedLM()) // USB support only
                 return;
-            }
 
             foreach (Instrument instrument in Instruments.Active)
             {
@@ -613,67 +648,66 @@ namespace LMDAQ
         }
         protected void DisconnectInstruments()
         {
-            foreach (Instrument instrument in Instruments.Active) {
-                try {
-                    instrument.Disconnect();
-                }
-                catch (Exception ex) {
-                    collog.TraceException(ex);
-                }
+            foreach (Instrument active in Instruments.Active)  // disconnect PTR-32 and MCA-527
+			{
+				active.Disconnect();
             }
 
-            DisconnectFromLMInstruments();
+            DisconnectFromLMMMInstruments();
             DisconnectFromSRInstruments();
             Instruments.All.Clear();
             collog.TraceInformation("Offline");
             collog.TraceEvent(LogLevels.Info, 0, "Disconnected instruments");
         }
 
-        public void ApplyInstrumentSettings()
-        {
-            foreach (Instrument instrument in Instruments.Active) {
-                try {
-                    instrument.ApplySettings();
-                }
-                catch (Exception ex) {
-                    collog.TraceException(ex);
-                }
-            }
+		public void ApplyInstrumentSettings()
+		{
+			foreach (Instrument instrument in Instruments.Active)
+			{
+				try
+				{
+					instrument.ApplySettings();
+				} catch (Exception ex)
+				{
+					collog.TraceException(ex);
+				}
+			}
 
-            // for now, this is for the LMs only
-            if (!Instruments.Active.HasConnectedLM())
-                return;
+			// for now, this is for the LMs only
+			if (!Instruments.Active.HasConnectedLM())
+				return;
 
-            LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
-            LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
+			LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
+			LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
 
-            if (lm.SocketBased()) // it's an LMMM
-            {
-            // look for any flags requiring conditioning of the instrument prior to assay or HV
-            // e.g. input=0, the arg to each is already parsed in the command line processing state
-            //if (NC.App.Config.LMMM.isSet(LMFlags.input))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.input, lmc.DeviceConfig.Input);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.debug))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.leds))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
-            }
-            //if (NC.App.Config.LMMM.isSet(LMFlags.hv))
-            {
-                DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
-            }
-        }
-            else // its a PTR-32
-            {
-            }
-        }
+			if (lm.id.SRType == InstrType.LMMM) // it's an LMMM
+			{
+				// look for any flags requiring conditioning of the instrument prior to assay or HV
+				// e.g. input=0, the arg to each is already parsed in the command line processing state
+				//if (NC.App.Config.LMMM.isSet(LMFlags.input))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.input, lmc.DeviceConfig.Input);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.debug))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.leds))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
+				}
+				//if (NC.App.Config.LMMM.isSet(LMFlags.hv))
+				{
+					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
+				}
+			} else if (lm.id.SRType == InstrType.PTR32) // its a PTR-32
+			{
+			} else if (lm.id.SRType == InstrType.MCA527)
+			{
+			}
+		}
 
-        public void Flush()
+		public void Flush()
         {
             NC.App.Loggers.Flush();
         }
@@ -688,7 +722,7 @@ namespace LMDAQ
         }
 
 
-        #region status display
+#region status display
 
 		public string InstrStatusString(CombinedInstrumentProcessingStateSnapshot cipss, bool channels = false)
 		{
@@ -713,7 +747,7 @@ namespace LMDAQ
 
 		public string InstrStatusString(object o, bool channels = false)
         {
-            LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
+            Instr.Instrument inst = (Instr.Instrument)o;
             CombinedInstrumentProcessingStateSnapshot cps = new CombinedInstrumentProcessingStateSnapshot(inst);
             return InstrStatusString(cps, channels);
         }
@@ -723,9 +757,9 @@ namespace LMDAQ
             if (o == null)
 				return String.Empty;
 
-			LMDAQ.Instrument inst = (LMDAQ.Instrument)o;
-			return inst.id.IdentName();
+			Instr.Instrument inst = (Instr.Instrument)o;
+			return inst.id.Identifier();
         }
-        #endregion status display
+#endregion status display
     }
 }

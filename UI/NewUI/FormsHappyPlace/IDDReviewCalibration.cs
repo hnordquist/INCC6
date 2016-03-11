@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -31,8 +31,6 @@ using AnalysisDefs;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
-
     
     public partial class IDDReviewCalibration : Form
     {
@@ -61,6 +59,7 @@ namespace NewUI
                 SummedRawCoincidenceDataCheckBox.Checked = true;
             if (acq.print)
                 PrintTextCheckBox.Checked = true; 
+			this.Text += " for Detector " + det.Id.DetectorId;
         }
 
         private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -127,10 +126,6 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            /*if (acq.modified)
-                NC.App.DB.UpdateAcquireParams(det); 
-            IDDReviewCalibrationMeas dlg = new IDDReviewCalibrationMeas();
-            DialogResult result = dlg.ShowDialog();*/
             IDDMeasurementList measlist = new IDDMeasurementList("Calibration");
             measlist.ShowDialog();
         }

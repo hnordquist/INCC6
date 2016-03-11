@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -43,20 +43,20 @@ namespace NewUI
         Detector det;
         public void StartWithLMDetail()
         {
-            this.SelectorPanel.Visible = false;
-            this.AddDetectorTypePanel.Visible = false;
+            SelectorPanel.Visible = false;
+            AddDetectorTypePanel.Visible = false;
             if (det.Id.SRType == InstrType.LMMM)
             {
-                this.LMMMPanel.Visible = true;
-                this.LMMMBackBtn.Enabled = false;
+                LMMMPanel.Visible = true;
+                LMMMBackBtn.Enabled = false;
             }
-            else if (det.Id.SRType == InstrType.PTR32)
+            else if (det.Id.SRType == InstrType.PTR32 || det.Id.SRType == InstrType.MCA527)
             {
-                this.PTR32Panel.Visible = true;
-                this.PTR32Back.Enabled = false;
+                PTR32Panel.Visible = true;
+                PTR32Back.Enabled = false;
             }
 
-            this.Text = oTitle + (" for " + det.Id.DetectorName);
+            Text = oTitle + (" for " + det.Id.DetectorName);
         }
         void RefreshDetectorCombo()
         {
@@ -72,7 +72,7 @@ namespace NewUI
         void RefreshDetectorTypeCombo()
         {
             AddDetectorTypeComboBox.Items.Clear();
-            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetList())
+            foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetLMList())
             {
                 InstrType dty;
                 System.Enum.TryParse<InstrType>(dt.Name, out dty);
@@ -82,39 +82,48 @@ namespace NewUI
         }
 
 
-        // Constructor including initialization of comboboxen in the various panels
-        public LMConnectionParams(Detector candidate, AcquireParameters acq, bool isnew)
-        {
-            AddingNew = isnew;
-            InitializeComponent();
-            oTitle = this.Text;
+		// Constructor including initialization of comboboxen in the various panels
+		public LMConnectionParams(Detector candidate, AcquireParameters acq, bool isnew)
+		{
+			AddingNew = isnew;
+			InitializeComponent();
+			oTitle = Text;
 
-            // Reposition the various panels on top of each other
-            this.SelectorPanel.Top = 4;
-            this.SelectorPanel.Left = 6;
-            this.LMMMPanel.Top = 4;
-            this.LMMMPanel.Left = 6;
-            this.PTR32Panel.Top = 4;
-            this.PTR32Panel.Left = 6;
-            this.AddDetectorTypePanel.Top = 4;
-            this.AddDetectorTypePanel.Left = 6;
-            this.AddDetectorTypePanel.Top = 4;
-            this.AddDetectorTypePanel.Left = 6;
+			// Reposition the various panels on top of each other
+			SelectorPanel.Top = 4;
+			SelectorPanel.Left = 6;
+			LMMMPanel.Top = 4;
+			LMMMPanel.Left = 6;
+			PTR32Panel.Top = 4;
+			PTR32Panel.Left = 6;
+			AddDetectorTypePanel.Top = 4;
+			AddDetectorTypePanel.Left = 6;
+			AddDetectorTypePanel.Top = 4;
+			AddDetectorTypePanel.Left = 6;
 
-            RefreshDetectorCombo();
-            DetectorComboBox.SelectedItem = candidate;
+			RefreshDetectorCombo();
+			DetectorComboBox.SelectedItem = candidate;
 
-            RefreshDetectorTypeCombo();
-            AddDetectorTypeComboBox.SelectedItem = candidate.Id.SRType;
+			RefreshDetectorTypeCombo();
+			AddDetectorTypeComboBox.SelectedItem = candidate.Id.SRType;
 
-            det = candidate;
-            this.acq = acq;
-            PopulateParamFields();
+			det = candidate;
+			this.acq = acq;
+			MCAComboBox.Visible = false;
+			if (det != null)
+			{
+				if (det.Id.SRType == InstrType.MCA527)
+				{
+					PopulateMCA527ParamFields();
+				} else
+				{
+					PopulateLMMM_PTR32ParamFields();
+				}
+			}
+		}
 
-        }
-
-        // Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
-        private void PopulateParamFields() 
+		// Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
+		private void PopulateLMMM_PTR32ParamFields() 
         {
             if (det != null)
             {
@@ -146,35 +155,58 @@ namespace NewUI
                     LMMMFeedbackFlagCheckBox.Checked = acq.lm.Feedback;
 
                     // Make edit panel visible
-                    this.LMMMPanel.Visible = true;
+                    LMMMPanel.Visible = true;
                 }
                 else if (det.Id.SRType == InstrType.PTR32)
                 {
-                    this.PTR32Panel.Visible = true;
-                    this.PTR32Id.Text = String.Copy(det.Id.DetectorId);
+                    PTR32Panel.Visible = true;
+					MCANameLabel.Visible = MCAName.Visible = false;
+					ConnIdField.Text = string.Copy(det.Id.DetectorId);
+					connIdLabel.Text = "PTR-32 instrument identifier: ";
+					connLabel.Text = "PTR-32 Connection Parameters";
+
                     //Warning: hack attack.  using extra fields here to store hv enabling and tolerance hn 2.3.2015
                     // OK, was logic error.  Checked box means HV disabled..... fixed.  hn 5.19.2015
                     LMConnectionInfo lmi = (LMConnectionInfo)(det.Id.FullConnInfo);
                     check_HV_set.Checked = lmi.DeviceConfig.LEDs == 2 ? true : false;
                     VoltageTimeout.Visible = true;
                     VoltageTimeout.Text = lmi.DeviceConfig.HVTimeout.ToString();
-                    VoltageTolerance.Text = lmi.DeviceConfig.LLD.ToString();
+                    VoltageTolerance.Text = lmi.DeviceConfig.VoltageTolerance.ToString();
                     VoltageTolerance.Visible = true;
                            
                 }
-                else if (det.Id.SRType == InstrType.NILA)
-                {
-                    this.PTR32Panel.Visible = true;
-                }
+
             }
         }
 
+		private void PopulateMCA527ParamFields()
+		{
+			if (det != null && det.Id.SRType == InstrType.MCA527)
+			{
+				PTR32Panel.Visible = true;
+				MCANameLabel.Visible = MCAName.Visible = true;
+				MCAName.Text = string.Copy(det.Id.DetectorId);
+				ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
+				connIdLabel.Text = "MCA-527 serial number: ";
+				connLabel.Text = "MCA-527 Connection Parameters";
+				LoadtheMCACombobox();
 
-  //// SELECTOR PANEL ////////////////////////////////////////////////////////////////////////////////////
-  
-        private void CancelButt_Click(object sender, EventArgs e)
+
+				LMConnectionInfo lmi = (LMConnectionInfo)(det.Id.FullConnInfo);
+				check_HV_set.Checked = lmi.DeviceConfig.LEDs == 2 ? true : false;
+				VoltageTimeout.Visible = true;
+				VoltageTimeout.Text = lmi.DeviceConfig.HVTimeout.ToString();
+				VoltageTolerance.Text = lmi.DeviceConfig.VoltageTolerance.ToString();
+				VoltageTolerance.Visible = true;
+			}
+		}
+
+
+		//// SELECTOR PANEL ////////////////////////////////////////////////////////////////////////////////////
+
+		private void CancelButt_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpButt_Click(object sender, EventArgs e)
@@ -184,22 +216,31 @@ namespace NewUI
 
         private void DetectorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.EditBtn.Enabled = true;
-            this.DeleteBtn.Enabled = true;
+            EditBtn.Enabled = true;
+            DeleteBtn.Enabled = true;
         }
 
-        private void EditBtn_Click(object sender, EventArgs e)
-        {
-            this.SelectorPanel.Visible = false;
-            if (DetectorComboBox.SelectedItem != null)
-            {
-                det = (Detector)DetectorComboBox.SelectedItem;
-                PopulateParamFields();
-                this.Text = oTitle + (" for " + det.Id.DetectorName);
-            }
-        }
+		private void EditBtn_Click(object sender, EventArgs e)
+		{
+			SelectorPanel.Visible = false;
+			if (DetectorComboBox.SelectedItem != null)
+			{
+				det = (Detector)DetectorComboBox.SelectedItem;
+				if (det != null)
+				{
+					if (det.Id.SRType == InstrType.MCA527)
+					{
+						PopulateMCA527ParamFields();
+					} else
+					{
+						PopulateLMMM_PTR32ParamFields();
+					}
+				}
+				Text = oTitle + (" for " + det.Id.DetectorName);
+			}
+		}
 
-        private void DeleteBtn_Click(object sender, EventArgs e)
+		private void DeleteBtn_Click(object sender, EventArgs e)
         {
             if (NCC.IntegrationHelpers.DeleteDetectorAndAssociations(det)) // removes from DB then from Detectors list, also punts teh related parameters
                 det = null;
@@ -210,8 +251,8 @@ namespace NewUI
         private void AddDetectorBtn_Click(object sender, EventArgs e)
         {
             // Activate the AddDetectorType selector list
-            this.SelectorPanel.Visible = false;
-            this.AddDetectorTypePanel.Visible = true;
+            SelectorPanel.Visible = false;
+            AddDetectorTypePanel.Visible = true;
         }
 
 
@@ -220,9 +261,9 @@ namespace NewUI
         private void AddDetectorTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Enabled the next button if they've chosen a type and added a name
-            if ((this.AddDetectorNameTextBox.Text != "") && (this.AddDetectorTypeComboBox.Text != ""))
+            if ((AddDetectorNameTextBox.Text != "") && (AddDetectorTypeComboBox.Text != ""))
             {
-                this.AddNextBtn.Enabled = true;
+                AddNextBtn.Enabled = true;
             }
         }
 
@@ -231,51 +272,59 @@ namespace NewUI
             // Enabled the next button if they've chosen a type and added a name
             if ((!String.IsNullOrWhiteSpace(AddDetectorNameTextBox.Text)) && (!String.IsNullOrWhiteSpace(AddDetectorTypeComboBox.Text)))
             {
-                this.AddNextBtn.Enabled = true;
+                AddNextBtn.Enabled = true;
             }
         }
 
         bool AddingNew;
-        private void AddNextBtn_Click(object sender, EventArgs e)
-        {
-            this.SelectorPanel.Visible = false;
-            this.AddDetectorTypePanel.Visible = false;
+		private void AddNextBtn_Click(object sender, EventArgs e)
+		{
+			SelectorPanel.Visible = false;
+			AddDetectorTypePanel.Visible = false;
 
-            // Create new detector with default parameters for the selected type
-            DataSourceIdentifier did = new DataSourceIdentifier();
-            did.DetectorName = AddDetectorNameTextBox.Text;
-            InstrType dt;
-            INCCDB.Descriptor desc = (INCCDB.Descriptor)AddDetectorTypeComboBox.SelectedItem;
-            System.Enum.TryParse<InstrType>(desc.Name, out dt);
-            did.SRType = dt;
-            did.FullConnInfo = new LMConnectionInfo();
-            Multiplicity mkey = new Multiplicity(InstrTypeExtensions.DefaultFAFor(did.SRType));
-            det = new Detector(did, mkey, null);
+			// Create new detector with default parameters for the selected type
+			DataSourceIdentifier did = new DataSourceIdentifier();
+			did.DetectorName = AddDetectorNameTextBox.Text;
+			InstrType dt;
+			INCCDB.Descriptor desc = (INCCDB.Descriptor)AddDetectorTypeComboBox.SelectedItem;
+			System.Enum.TryParse<InstrType>(desc.Name, out dt);
+			did.SRType = dt;
+			did.FullConnInfo = new LMConnectionInfo();
+			Multiplicity mkey = new Multiplicity(InstrTypeExtensions.DefaultFAFor(did.SRType));
+			det = new Detector(did, mkey, null);
 
-            // Jump to an edit panel for the parameters of the appropriate type
-           PopulateParamFields();
-           AddingNew = true;
+			// Jump to an edit panel for the parameters of the appropriate type
+			if (det != null)
+			{
+				if (det.Id.SRType == InstrType.MCA527)
+				{
+					PopulateMCA527ParamFields();
+				} else
+				{
+					PopulateLMMM_PTR32ParamFields();
+				}
+			}
+			AddingNew = true;
+		}
 
-        }
-
-        private void AddBackBtn_Click(object sender, EventArgs e)
+		private void AddBackBtn_Click(object sender, EventArgs e)
         {
             AddingNew = false;
-            this.AddDetectorTypePanel.Visible = false;
-            this.SelectorPanel.Visible = true;
+            AddDetectorTypePanel.Visible = false;
+            SelectorPanel.Visible = true;
         }
 
    //// LMMM PARAMETERS ////////////////////////////////////////////////////////////////////////////////////
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            this.LMMMPanel.Visible = false;
-            this.SelectorPanel.Visible = true;
+            LMMMPanel.Visible = false;
+            SelectorPanel.Visible = true;
         }
 
         private void AddDetectorNameTextBox_Leave(object sender, EventArgs e)
@@ -289,21 +338,20 @@ namespace NewUI
             //LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
             if (AddingNew)
             {
-                NC.App.DB.Detectors.Add(det);
+                NC.App.DB.Detectors.AddOnlyIfNotThere(det);
                 RefreshDetectorCombo();
                 AddingNew = false;
             }
             NC.App.DB.UpdateDetector(det);
             if (acq.modified)
             {
-                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
-                NC.App.DB.AcquireParametersMap()[new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime)] = acq;
+                NC.App.DB.ReplaceAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
             }
-            this.LMMMPanel.Visible = false;  // like the back button
-            this.SelectorPanel.Visible = true;
+            LMMMPanel.Visible = false;  // like the back button
+            SelectorPanel.Visible = true;
 
             //if (INCCEntry)
-                this.Close();
+                Close();
 
         }
         bool modified;
@@ -464,34 +512,38 @@ namespace NewUI
             // set the params on the current PTR32 acquire and det def pair
             if (AddingNew)
             {
-                NC.App.DB.Detectors.Add(det);
+                NC.App.DB.Detectors.AddOnlyIfNotThere(det);
                 RefreshDetectorCombo();
                 AddingNew = false;
             }
             if (modified)
                 NC.App.DB.UpdateDetectorParams(det); // the only thing that changes here are the LM Connection HW params
 
+			if (det.Id.modified && det.Id.SRType == InstrType.MCA527)
+			{
+				det.Id.modified = !NC.App.DB.UpdateDetectorFields(det); // the only thing that changes here is the detector electronics id, a proxy for the MCA-527 unique id
+			}
+
             if (acq.modified)
             {
-                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
-                NC.App.DB.AcquireParametersMap()[new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime)] = acq;
+                NC.App.DB.ReplaceAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
             }
-            this.PTR32Panel.Visible = false;  // like the back button
-            this.SelectorPanel.Visible = true;
+            PTR32Panel.Visible = false;  // like the back button
+            SelectorPanel.Visible = true;
 
             //if (INCCEntry)
-            this.Close();
+            Close();
         }
 
         private void PTR32Back_Click(object sender, EventArgs e)
         {
-            this.PTR32Panel.Visible = false;
-            this.SelectorPanel.Visible = true;
+            PTR32Panel.Visible = false;
+            SelectorPanel.Visible = true;
         }
 
         private void PTR32Cancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void PTR32Help_Click(object sender, EventArgs e)
@@ -518,14 +570,10 @@ namespace NewUI
         private void check_HV_set_CheckedChanged(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-           // int tolerance = l.DeviceConfig.LLD;
-           // int to = l.DeviceConfig.HVTimeout;
             int disabled = l.DeviceConfig.LEDs;
             if (((CheckBox)sender).Checked == true)
             {
-                //l.DeviceConfig.HVTimeout = 0;
                 l.DeviceConfig.LEDs = 2;
-                //l.DeviceConfig.LLD = 0;
                 VoltageTolerance.Enabled = false;
                 VoltageTolerance.ReadOnly = true;
                 VoltageTimeout.Enabled = false;
@@ -538,24 +586,77 @@ namespace NewUI
                 VoltageTimeout.Enabled = true;
                 VoltageTimeout.ReadOnly = false;
                 l.DeviceConfig.LEDs = 1;
-                //l.DeviceConfig.HVTimeout = 0;
-                //l.DeviceConfig.LLD = 1;
-                // Int32.TryParse(VoltageTolerance.Text, out tolerance);
-                // This is a hack for the moment, just a place to store our definable tolerance hn 2.3.3015
-               // l.DeviceConfig.LLD = tolerance;
             }
-            modified = /* to != l.DeviceConfig.HVTimeout || tolerance != l.DeviceConfig.LLD || */ 
-                disabled != l.DeviceConfig.LEDs;
+            modified = disabled != l.DeviceConfig.LEDs;
         }
 
         private void VoltageTolerance_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.DeviceConfig.LLD;
+            int i = l.DeviceConfig.VoltageTolerance;
             modified |= Format.ToNZInt(((TextBox)sender).Text, ref i);
             if (modified)
-                l.DeviceConfig.LLD = i;
+                l.DeviceConfig.VoltageTolerance = i;
         }
 
-    }
+		private void MCAComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (0 == MCAComboBox.Text.IndexOf(MCAPrefix))
+			{
+				string id = MCAComboBox.Text.Substring(MCAPrefix.Length, 5);
+				Console.WriteLine(id);
+				if (!string.Equals(id, det.Id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
+				{
+					det.Id.ElectronicsId = id;
+					ConnIdField.Text = string.Copy(det.Id.ElectronicsId);
+					det.Id.modified = true;
+				}
+			}
+		}
+
+		void LoadtheMCACombobox()
+		{
+			Device.MCADeviceInfo[] deviceInfos = null;
+			int indexOfMyDesire = -1;
+			try
+			{
+				deviceInfos = Device.MCADevice.QueryDevices();
+				MCAComboBox.Items.Clear();
+				if (deviceInfos.Length > 0)
+				{   
+					MCAComboBox.Visible = true;
+					// Populate the combobox in the selector panel
+					foreach (Device.MCADeviceInfo d in deviceInfos)
+					{
+						string id =  d.Serial.ToString("D5");
+						string s = string.Format("{0}{1}  FW# {2}  HW# {3} on {4}", MCAPrefix, id, d.FirmwareVersion, d.HardwareVersion, d.Address);
+						int i = MCAComboBox.Items.Add(s);
+						object o = MCAComboBox.Items[i];
+						if (string.Equals(id, det.Id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
+						{
+							indexOfMyDesire = i;
+						}
+					}
+					if (indexOfMyDesire >= 0)
+						MCAComboBox.SelectedIndex = indexOfMyDesire;
+				} else
+					MCAComboBox.Visible = false;
+			} catch (Exception e)
+			{
+				NCCReporter.LMLoggers.LognLM log = NC.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+				log.TraceException(e);
+			}
+		}
+
+		private void ConnIdField_Leave(object sender, EventArgs e)
+        {
+			if (det.Id.SRType != InstrType.MCA527)
+				return;
+			// MCA527 detector Electronics Id file can be changed here
+			if (!string.Equals(ConnIdField.Text, det.Id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
+				det.Id.modified = true;
+
+        }
+		const string MCAPrefix ="MCA-527#";
+	}
 }

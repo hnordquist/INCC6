@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -30,6 +30,8 @@ using System;
 using System.Collections.Generic;
 using AnalysisDefs;
 using BigNum;
+using NCCReporter;
+
 namespace LMRawAnalysis
 {
     static public class RawAnalysisProperties
@@ -89,10 +91,11 @@ namespace LMRawAnalysis
      public class SDTMultiplicityCalculator
     {
         protected double ticSizeInSeconds;
+		public LMLoggers.LognLM Log {get; set; }
 
         public SDTMultiplicityCalculator(double theTicSizeInSeconds)
         {
-            this.ticSizeInSeconds = theTicSizeInSeconds;
+			ticSizeInSeconds = theTicSizeInSeconds;
         }
 
         /// <summary>
@@ -270,7 +273,7 @@ namespace LMRawAnalysis
             alpha = new double[biggestKey + 1];
             beta = new double[biggestKey + 1];
 
-            gateInSeconds = ((double)multiplicityGateWidth) * this.ticSizeInSeconds;
+            gateInSeconds = ((double)multiplicityGateWidth) * ticSizeInSeconds;
             phi = (deadTimeCoeffTinNanoSecs / 1E9) / gateInSeconds;
             bool standard = true;  // dev note: this toggle signals use of BigNum when FP overflow is detected
             int axover = 0, bxover = 0;
@@ -299,6 +302,7 @@ namespace LMRawAnalysis
                                 axover = n;
                                 standard = false; k = n; n = n - 1; // redo the loop
                                 α = new BigFloat[biggestKey + 1];
+								Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                             }
                         }
                     }
@@ -365,6 +369,7 @@ namespace LMRawAnalysis
                                 bxover = n;
                                 standard = false; k = n; n = n - 1; // redo the loop
                                 β = new BigFloat[biggestKey + 1];
+								Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                             }
                         }
                     }
@@ -419,7 +424,8 @@ namespace LMRawAnalysis
                 {
                     result.alpha[i] = lastGoodD;
                     result.warnings.Add(String.Format("α[{0}] conversion failed on {1}", i, α[i].ToString()));
-                }
+ 					Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
+               }
                 else
                 {
                     lastGoodD = d;
@@ -435,6 +441,7 @@ namespace LMRawAnalysis
                 {
                     result.beta[i] = lastGoodD;
                     result.warnings.Add(String.Format("β[{0}] conversion failed on {1}", i, β[i].ToString()));  // URGENT: alpha/beta arrays are to be transformed from doubles to BigFloat types when this conversion happens to overflow                
+					Log.TraceEvent(LogLevels.Warning, 13, result.warnings[result.warnings.Count - 1]);
                  }
                 else
                 {
@@ -545,7 +552,7 @@ namespace LMRawAnalysis
             if (wasFastAccidentals)
             {
                 PTsingles = RAfactorialMoment0;
-                double gateFactor = numAccidentalGates / Math.Floor(totalMeasurementTime / (multiplicityGateWidth * this.ticSizeInSeconds));
+                double gateFactor = numAccidentalGates / Math.Floor(totalMeasurementTime / (multiplicityGateWidth * ticSizeInSeconds));
                 RTsingles = AfactorialMoment1 / gateFactor;
                 normRAfactorialMoment1 = RAfactorialMoment1 / PTsingles;
                 normRAfactorialMoment2 = RAfactorialMoment2 / PTsingles;
@@ -576,8 +583,8 @@ namespace LMRawAnalysis
                 normAfactorialMomentBeta2 = AfactorialMomentBeta2 / RTsingles;
             }
 
-            double RTdoubles = (0.5 / (multiplicityGateWidth * this.ticSizeInSeconds)) * ((2.0 * normAfactorialMoment2) - Math.Pow(normAfactorialMoment1, 2.0));
-            double RTtriples = (0.16667 / (multiplicityGateWidth * this.ticSizeInSeconds))
+            double RTdoubles = (0.5 / (multiplicityGateWidth * ticSizeInSeconds)) * ((2.0 * normAfactorialMoment2) - Math.Pow(normAfactorialMoment1, 2.0));
+            double RTtriples = (0.16667 / (multiplicityGateWidth * ticSizeInSeconds))
                                * ((6.0 * normAfactorialMoment3) - (6.0 * normAfactorialMoment1 * normAfactorialMoment2) + (2.0 * Math.Pow(normAfactorialMoment1, 3)));
 
             double PTdoubles = PTsingles * (normRAfactorialMoment1 - normAfactorialMoment1);

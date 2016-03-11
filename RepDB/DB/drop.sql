@@ -167,6 +167,8 @@ DROP TABLE [HVCalibrationParams];
 GO
 DROP TABLE [analysis_messages];
 GO
+DROP TABLE [results_filenames];
+GO
 DROP TABLE [measurements];
 GO
 DROP TABLE [detectors];

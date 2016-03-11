@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -42,11 +42,11 @@ namespace NCCReporter
     };
 
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
-    // dev note: consider reducing the number of loggers after early release testing for the multiple thread performance impact
+    // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
     public class LMLoggers
     {
 
-        public enum AppSection { App, Data, Analysis, Net, LMComm, Control, Collect, UI, DB, Eight, Rarrr };
+        public enum AppSection { App, Data, Analysis, Control, Collect, DB };
 
         Hashtable reps = null;
         NCCConfig.Config cfg = null;
@@ -68,10 +68,11 @@ namespace NCCReporter
         public LMLoggers(NCCConfig.Config cfg)
         {
             this.cfg = cfg;
-            reps = new Hashtable((int)AppSection.Rarrr);
+            Array a = Enum.GetValues(typeof(AppSection));
+            reps = new Hashtable(a.Length);
             int pid = Process.GetCurrentProcess().Id;
 
-            foreach (AppSection wp in Enum.GetValues(typeof(AppSection)))
+            foreach (AppSection wp in a)
             {
                 LognLM l = new LognLM(wp.ToString(), cfg, pid);
                 reps.Add(wp, l);
@@ -109,6 +110,8 @@ namespace NCCReporter
                 set { ts = value; }
             }
 
+            public static string CurrentLogFilePath { get; set; }
+
             public LognLM(string section, NCCConfig.Config cfg, int pid)
             {
                 FileLogTraceListener listener = null;
@@ -129,12 +132,15 @@ namespace NCCReporter
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
-                                listener.CustomLocation = cfg.App.RootLoc;
+                                listener.CustomLocation = cfg.App.LogFilePath;
                             }
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
                             // logdetails cmd line flag crudely enables this option set, only because the App.Config sharedListeners and switch source sections do not permit setting this attribute.
                             if (cfg.App.isSet(NCCConfig.NCCFlags.logDetails))
                                 item.TraceOutputOptions |= cfg.App.LoggingDetailOptions;
+
+                            if (string.IsNullOrEmpty(CurrentLogFilePath))
+                                CurrentLogFilePath = listener.FullLogFileName; //System.IO.Path.Combine(listener.CustomLocation, listener.BaseFileName + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
                         }
                         else
                         {

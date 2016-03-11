@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -183,7 +183,14 @@ namespace AnalysisDefs
                                             }
                                             rl = imr.ToLines(meas);
                                             sec.AddRange(rl);
-                                            // todo: optional use of END_PRIMARY_RESULT as in some INCC report formats, but not others
+                                            // devnote: optional use of END_PRIMARY_RESULT as in some INCC report formats, but not others
+											if (ai.Current.Key.Equals(imrs.primaryMethod))
+                                            {
+                                                sec.Add(new Row());
+                                                Row rh = new Row();
+                                                rh.Add(0, "          END PRIMARY RESULT");
+                                                sec.Add(rh);
+                                            }
                                         }
                                     }
                                 }
@@ -289,7 +296,7 @@ namespace AnalysisDefs
                         sec.AddHeader(N.App.Name + " " + N.App.Config.VersionString);  // section header
                         break;
                     case INCCReportSection.Context:
-                        sec = new INCCStyleSection(null, 1);
+                        sec = new INCCStyleSection(null, 0);
                         ConstructContextContent(sec, det);
                         break;
                     case INCCReportSection.Isotopics:
@@ -304,8 +311,8 @@ namespace AnalysisDefs
                                 meas.Isotopics.CopyTo(curiso);
                                 ctrllog.TraceEvent(LogLevels.Warning, 82034,  "Using incorrect updated defaults for " + meas.Isotopics.id);
                             }
-                            sec.AddTwo("Isotopics id:", meas.Isotopics.id);
-                            sec.AddTwo("Isotopics source code:", meas.Isotopics.source_code.ToString());
+                            sec.AddTwo("Isotopics id: ", meas.Isotopics.id);
+                            sec.AddTwo("Isotopics source code: ", meas.Isotopics.source_code.ToString());
                             sec.AddDualNumericRow("Pu238:", meas.Isotopics[Isotope.pu238], curiso[Isotope.pu238]);
                             sec.AddDualNumericRow("Pu239:", meas.Isotopics[Isotope.pu239], curiso[Isotope.pu239]);
                             sec.AddDualNumericRow("Pu240:", meas.Isotopics[Isotope.pu240], curiso[Isotope.pu240]);
@@ -376,7 +383,7 @@ namespace AnalysisDefs
                     case INCCReportSection.Reference:
                         sec = new INCCStyleSection(null, 1);
                         sec.AddHeader("Counting results, summaries and cycle counts file name");  // section header
-                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFileName);
+                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFiles.CSVResultsFileName.Path);
                         sec.Add(resline);
                         break;
                     default:
@@ -414,25 +421,26 @@ namespace AnalysisDefs
         protected void ConstructContextContent(INCCStyleSection sec, Detector det)
         {
 
-            sec.AddTwo("Facility:", meas.AcquireState.facility.Name);
-            sec.AddTwo("Material balance area:", meas.AcquireState.mba.Name);
-            sec.AddTwo("Detector type:", det.Id.Type); // todo: revisit this, there can be multiple detectors because there can be multiple physical and virtual SR Params used to create results
-            sec.AddTwo("Detector id:", det.Id.DetectorId);
-            sec.AddTwo("Electronics id:", det.Id.ElectronicsId);
-            sec.AddTwo("Inventory change code:", meas.AcquireState.inventory_change_code);
-            sec.AddTwo("I/O code:", meas.AcquireState.io_code);
-            sec.AddTwo("Measurement date:", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-            sec.AddTwo("Results file name:", meas.INCCResultsFileNames[meas.INCCResultsFileNames.Count - 1]);
-            sec.AddTwo("Inspection number:", meas.AcquireState.campaign_id);
+            sec.AddTwo("Facility: ", meas.AcquireState.facility.Name);
+            sec.AddTwo("Material balance area: ", meas.AcquireState.mba.Name);
+            sec.AddTwo("Detector type: ", det.Id.Type); // todo: revisit this, there can be multiple detectors because there can be multiple physical and virtual SR Params used to create results
+            sec.AddTwo("Detector id: ", det.Id.DetectorId);
+            sec.AddTwo("Electronics id: ", det.Id.ElectronicsId);
+            sec.AddTwo("Inventory change code: ", meas.AcquireState.inventory_change_code);
+            sec.AddTwo("I/O code: ", meas.AcquireState.io_code);
+            sec.AddTwo("Measurement date: ", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
+			string name = System.IO.Path.GetFileName( meas.ResultsFiles.PrimaryINCC5Filename.Path);
+            sec.AddTwo("Results file name: ", name);
+            sec.AddTwo("Inspection number: ", meas.AcquireState.campaign_id);
 
             if (AssaySelector.ForMass(meas.MeasOption) || meas.MeasOption == AssaySelector.MeasurementOption.rates)
                 /* item id only if an assay, calibration, holdup or rates only */
                 //todo: need to check why item_id not stored in Measurement object directly....hn 5.14.2015
                 // it is located on the AcquireParameters 
-                sec.AddTwo("Item id:", meas.AcquireState.item_id); // or       sec.AddTwo("Item id:",m.AcquireState.item);
+                sec.AddTwo("Item id: ", meas.AcquireState.item_id); // or       sec.AddTwo("Item id:",m.AcquireState.item);
             if (AssaySelector.HasStratum(meas.MeasOption))
             {
-                sec.AddTwo("Stratum id:", meas.AcquireState.stratum_id.Name);
+                sec.AddTwo("Stratum id: ", meas.AcquireState.stratum_id.Name);
                 if (meas.Stratum != null)
                 {
                     sec.AddTwo("Bias uncertainty:", meas.Stratum.bias_uncertainty);
@@ -450,29 +458,42 @@ namespace AnalysisDefs
             }
             if (AssaySelector.ForMass(meas.MeasOption))
             {
-                sec.AddTwo("Material type:", meas.AcquireState.item_type);
+                sec.AddTwo("Material type: ", meas.AcquireState.item_type);
                 sec.AddTwo("Original declared mass:", meas.AcquireState.mass);
             }
-            sec.AddTwo("Measurement option:", meas.MeasOption.PrintName());
+            sec.AddTwo("Measurement option: ", meas.MeasOption.PrintName());
             if (AssaySelector.DougsBasics(meas.MeasOption))
             {           /* well configuration */
-                sec.AddTwo("Detector configuration:", meas.AcquireState.well_config.ToString());
+                sec.AddTwo("Detector configuration: ", meas.AcquireState.well_config.ToString());
             }
-            sec.AddTwo("Data source:", det.Id.source.ToString());
-            sec.AddTwo("QC tests:", meas.AcquireState.qc_tests ? "On" : "Off");
+            sec.AddTwo("Data source: ", det.Id.source.ToString());
+            sec.AddTwo("QC tests: ", meas.AcquireState.qc_tests ? "On" : "Off");
             ErrorCalculationTechnique ect = meas.AcquireState.error_calc_method.Override(meas.MeasOption, det.Id.SRType);
             if (ect != ErrorCalculationTechnique.None)
-                sec.AddTwo("Error calculation:", ect.ToString() + " method");
-            sec.AddTwo("Accidentals method:", meas.Tests.accidentalsMethod != AccidentalsMethod.None ? (meas.Tests.accidentalsMethod.ToString() + "d") : "Not set");
-            sec.AddTwo("Inspector name:", meas.AcquireState.user_id);
+                sec.AddTwo("Error calculation: ", ect.ToString() + " method");
+            sec.AddTwo("Accidentals method: ", meas.Tests.accidentalsMethod != AccidentalsMethod.None ? (meas.Tests.accidentalsMethod.ToString() + "d") : "Not set");
+            sec.AddTwo("Inspector name: ", meas.AcquireState.user_id);
             sec.AddTwo("Passive comment:", meas.AcquireState.comment);
         }
 
+        public override string GenBaseFileName(string pretext)
+		{
+			string path;
+			if (N.App.AppContext.Results8Char)
+				path =  MethodResultsReport.EightCharConvert(meas.MeasDate);
+			else
+				path = base.GenBaseFileName(pretext);
+
+
+			return path;
+		}
+
+
         public override void StartReportGeneration(Measurement m, string pretext, char separator, string suffixoverride = null)  // space char as separator forces text report generation
         {
-            base.StartReportGeneration(m, pretext, separator);
+            base.StartReportGeneration(m, pretext, separator, suffixoverride);
 
-            m.INCCResultsFileNames.Add(t.FullFilePath);  // save the full file path on this list for later
+            m.ResultsFiles.Add(new ResultFile(t.FullFilePath));  // save the full file path on this list for later
         }
 
         public void GenerateReport(Measurement m)
@@ -488,10 +509,10 @@ namespace AnalysisDefs
                 // create one results for each SR key
                 StartReportGeneration(m, m.MeasOption.PrintName() + " INCC " +
                     (m.INCCAnalysisResults.Count > 1 ? "[" + moskey.MultiplicityParams.ShortName() + "] " : ""), // add an identifying signature to each file name if more than one active virtual SR
-                    ' ');  // make these text files
+                    ' ',(N.App.AppContext.AssayTypeSuffix ? m.MeasOption.INCC5Suffix() : null));  // make these text files
                 //Detector det = meas.Detectors.GetIt(moskey.SRParams); 
                 // now assuming only one detector on the list, so can use [0], the mos keys have specific values for virtual SR counting, overiding the detector 
-                Detector det = meas.Detectors[0];
+                Detector det = meas.Detector;
                 try
                 {
                     sections.Add(ConstructReportSection(INCCReportSection.Header, det));
@@ -543,6 +564,59 @@ namespace AnalysisDefs
             // capture the Row array before exit
             INCCResultsReports.Add(t.lines);
         }
+
+		
+		/* INCC5 file naming scheme
+			YMDHMMSS
+			Y = last digit of the year
+			M = month (0-9, A-C)
+			D = day (0-9, A-V)
+			H = hour (A-X)
+			MM = minutes (00-59)
+			SS = seconds (00-59)
+		*/
+		static public string EightCharConvert(DateTimeOffset dto)
+		{
+			Char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+			string y = dto.ToString("yy");
+			char Y = y[y.Length-1];
+			string M = string.Format("{0:X1}", dto.Month);
+			char D = table[dto.Day];
+			char H = table[dto.Hour + 10];
+			string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
+
+			return s;
+		}
+
+		static public bool TryEightCharConvert(string s, int decade, out DateTimeOffset result)
+		{
+			bool ret = false;
+			result = new DateTimeOffset();
+			if (s.Length < 8)
+				return ret;
+			try
+			{
+				s = s.Substring(0, 8);
+				int Y = s[0] - 48;
+				int M = s[1] - 65 + 10;  // try for the letter first
+				if (M < 0)   // oh it was a number, adjust accordingly
+					M = s[1] - 48;
+				int D = s[2] - 65 + 10;  // try for the letter first
+				if (D < 0)   // oh it was a number, adjust accordingly
+					D = s[2] - 48;
+				int H = s[3] - 65;
+				int MM = 0;
+				int SS = 0;
+				int.TryParse(s.Substring(4, 2), out MM);
+				int.TryParse(s.Substring(6, 2), out SS);
+				ret = true;
+				result = new DateTimeOffset(decade + Y, M, D, H, MM, SS, new TimeSpan());
+			} catch (Exception)
+			{ }
+			return ret;
+		}
+
+		static public int NowDecade { get {return  DateTimeOffset.Now.Year - (DateTimeOffset.Now.Year % 10); } }
     }
 
     public class INCCStyleSection : Section
@@ -592,7 +666,7 @@ namespace AnalysisDefs
             switch (sectiontype) // INCC5 spacing hard-coded and enforced here
             {
                 case ReportSection.Standard:
-                    s = String.Format("{0,24}", label);
+                    s = String.Format("{0,29}", label);
                     break;
                 case ReportSection.MethodResults:
                     s = String.Format("{0,41}", label);
@@ -899,7 +973,7 @@ namespace AnalysisDefs
 
                 //Detector det = meas.Detectors.GetIt(moskey.SRParams);
                 // now assuming only one detector on the list, so can use [0]
-                Detector det = meas.Detectors[0];
+                Detector det = meas.Detector;
                 try
                 {
                     sections.Add(ConstructReportSection(INCCTestDataSection.CycleSummary, det, moskey));
@@ -939,11 +1013,6 @@ namespace AnalysisDefs
             INCCTestDataFiles.Add(t.lines);
         }
     }
-
-
-
-
-
 }
 
 

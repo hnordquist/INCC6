@@ -30,12 +30,14 @@ using System.Windows.Forms;
 
 namespace NewUI
 {
+    using Integ = NCC.IntegrationHelpers;
     public partial class IDDReviewPrecision : Form
     {
         public IDDReviewPrecision()
         {
             InitializeComponent();
-        }
+ 			this.Text += " for Detector " + Integ.GetCurrentAcquireDetector().Id.DetectorId;
+       }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {

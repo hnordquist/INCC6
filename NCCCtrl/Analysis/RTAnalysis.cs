@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -73,6 +73,11 @@ namespace Analysis
             handler.OnAnalysesCompleted += f;
             handler.OnNeutronOutOfSequenceErrorEvent += f2;
             handler.OnBlockCountMismatchErrorEvent += f3;
+        }
+
+        public void ResetTickSizeInSeconds(double theTicSizeInSeconds)
+        {
+			handler.TickSizeInSeconds = theTicSizeInSeconds;
         }
 
         public bool AddRates(ulong gateWidthTics)

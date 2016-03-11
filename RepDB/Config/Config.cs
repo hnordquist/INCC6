@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -33,13 +33,13 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
-using NDesk.Options;
 using System.Text.RegularExpressions;
+using NDesk.Options;
 
 namespace NCCConfig
 {
 
-    public partial class Config
+	public partial class Config
     {
 
         public AppContextConfig App
@@ -181,7 +181,6 @@ namespace NCCConfig
 
             string[] x = new string[500];
             int ix = 0;
-            x[ix++] = "";
             System.Configuration.Configuration config =
               ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             x[ix++] = "";
@@ -210,45 +209,53 @@ namespace NCCConfig
             Array.Resize(ref x, ix);
             return x;
         }
-        public static string[] ShowCfgLines(Config cfg, bool fullAssembly, bool flush)
-        {
-            string[] x = new string[4096];
-            int ix = 0;
-            x[ix++] = "";
+		public static string[] ShowCfgLines(Config cfg, bool fullAssembly, bool flush)
+		{
+			string[] x = new string[4096];
+			int ix = 0;
+			x[ix++] = "";
 
-            string[] a = cfg.ShowVersionLines(fullAssembly);
-            for (int i = 0; i < a.Length; i++)
-                x[ix++] = a[i];
-            if (flush)
-            {
-                cfg.RetainChanges();
-            }
+			string[] v = cfg.ShowVersionLines(fullAssembly);
+			for (int i = 0; i < v.Length; i++)
+				x[ix++] = v[i];
+			if (flush)
+			{
+				cfg.RetainChanges();
+			}
 
-            a = new string[0];
-            bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
-            System.Configuration.Configuration config =
-              ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            if (config.HasFile)
-            {
-                x[ix++] = ("Config source: " + config.FilePath);
-                if (richcontent)
-                    a = cfg.ShowAppCfgLines();
-            }
-            else
-            {
-                x[ix++] = ("Config source from internal default values");
-                if (richcontent)
-                    a = ShowDefCfgLines(cfg);
-            }
-            if (richcontent)
-                for (int i = 0; i < a.Length; i++)
-                    x[ix++] = a[i];
+			string[] a = new string[0];
+			string[] b = new string[0];
+			bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
+			System.Configuration.Configuration config =
+			  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+			if (config.HasFile)
+			{
+				x[ix++] = ("Config source: " + config.FilePath);
+				if (richcontent)
+				{
+					a = cfg.ShowAppCfgLines();
+					for (int i = 0; i < a.Length; i++)
+						x[ix++] = a[i];
+				}
+			}
+			//else
+			{
+				if (richcontent)
+				{
+					x[ix++] = "";
+					x[ix++] = ("Config values from database, command line overrides and system defaults");
+					b = ShowDefCfgLines(cfg);
+					for (int i = 0; i < b.Length; i++)
+						x[ix++] = b[i];
+				}
+			}
 
-            x[ix++] = "";
-            Array.Resize(ref x, ix);
-            return x;
-        }
-        public static string[] ShowDefCfgLines(Config cfg)
+			x[ix++] = "";
+			Array.Resize(ref x, ix);
+			return x;
+		}
+
+		public static string[] ShowDefCfgLines(Config cfg)
         {
             string[] x = new string[100];
             int ix = 0;
@@ -595,16 +602,19 @@ namespace NCCConfig
             //resetVal(LMFlags.logAutoPath, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (Int32)TraceOptions.None, typeof(Int32));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
-            //resetVal(LMFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
             resetVal(NCCFlags.rolloverSizeMB, 50, typeof(int)); /* (1024 * 1024), */
             resetVal(NCCFlags.logResults, (ushort)3, typeof(ushort)); // 0 none, 1 log file only, 2 console/UI only, 3 everywhere
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
-           
+            resetVal(NCCFlags.results8Char, true, typeof(bool));
+            resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
+            resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
+          
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
-            resetVal(NCCFlags.emulatorapp, "MLMEmulator.exe", typeof(string)); ;
+            resetVal(NCCFlags.emulatorapp, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.serveremulation, false, typeof(bool));
 
             ResetFileInput();
@@ -614,12 +624,9 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCParity, true, typeof(bool), retain: true);
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.pulseFileNCD, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.ptrFileNCD, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.nilaFileNCD, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.nilaFileAssay, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.dbDataAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.testDataFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ncdFileAssay, false, typeof(bool), retain: false);
@@ -664,16 +671,22 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || NILAFileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
         }
-        public string FileInput
+
+		private string overridepath(NCCFlags flag)
+		{
+			if (isSet(flag))
+				return (string)getVal(flag);
+			else
+				return RootLoc;
+		}
+
+		public string FileInput
         {
             get
             {
-                if (isSet(NCCFlags.fileinput))
-                    return (string)getVal(NCCFlags.fileinput);
-                else
-                    return RootLoc;
+				return overridepath(NCCFlags.fileinput);
             }
             set
             {
@@ -775,32 +788,44 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.ptrFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.ptrFileAssay, value); }
         }
-        public bool NILAFileAssay
+        public bool MCA527FileAssay
         {
-            get { return (bool)getVal(NCCFlags.pulseFileAssay); }
-            set { MutuallyExclusiveFileActions(NCCFlags.pulseFileAssay, value); }
+            get { return (bool)getVal(NCCFlags.mcaFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
         }
         public bool SortPulseFile
         {
             get { return (bool)getVal(NCCFlags.sortPulseFile); }
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
         }
-        public bool PulseFileNCD
+
+		public bool HasFileAction
+		{
+            get { return IsFileActionSet(); }
+		}
+
+		public string LogFilePath
         {
-            get { return (bool)getVal(NCCFlags.pulseFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.pulseFileNCD, value); }
+            get { return overridepath(NCCFlags.logFileLoc); }
+            set { setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
-        public bool PTRFileNCD
+		public string ResultsFilePath
         {
-            get { return (bool)getVal(NCCFlags.ptrFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.ptrFileNCD, value); }
+            get { return  overridepath(NCCFlags.resultsFileLoc); }
+            set { setIfNotOverride(NCCFlags.resultsFileLoc, value); }
         }
-        public bool NILAFileNCD
-        {
-            get { return (bool)getVal(NCCFlags.nilaFileNCD); }
-            set { MutuallyExclusiveFileActions(NCCFlags.nilaFileNCD, value); }
-        }
+
+		private void setIfNotOverride(NCCFlags flag, string path)
+		{
+			// do not set if it is the override value
+			Match m = PathMatch(path);
+			if (m.Success) // if it is a daily path match, do not save it
+				return;
+			// if not a daily path match and not the current root path, go ahead and save it
+			if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
+					setVal(flag, path);	
+		}
 
         public string RootPath
         {
@@ -817,7 +842,7 @@ namespace NCCConfig
                     return RootPath;
                 else
                 {
-                    Match m = Regex.Match(RootPath, "\\d{4}-\\d{4}$");
+                    Match m = PathMatch(RootPath);
                     if (m.Success)
                     {
                         // strip and replace
@@ -833,6 +858,12 @@ namespace NCCConfig
                 return RootPath;
         }
 
+		Match PathMatch(string path)
+		{ 
+			Match m = Regex.Match(path, "\\d{4}-\\d{4}$");
+			return m;			
+		}
+
         /// <summary>
         /// resolved with daily path generation every time this is called
         /// </summary>
@@ -840,7 +871,7 @@ namespace NCCConfig
         {
             get
             {
-                    return RootPathOverride();
+                return RootPathOverride();
             }
             set
             {
@@ -860,21 +891,6 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.logging); }
             set { setVal(NCCFlags.logging, value); }
         }
-
-//
-        //public void ConstructDailyLogPath(String parent)
-        //{
-        //    string part = DateTime.Now.ToString("yyyy-MMdd");
-        //    if (parent == null)
-        //    {
-        //        LogFileLoc = Path.Combine(LogFileLoc, part);
-        //    }
-        //    else
-        //    {
-        //        LogFileLoc = Path.Combine(parent, part);
-        //    }
-        //}
-
 
         /// <summary>
         /// integer representation of enum TraceOptions bitmap flag  
@@ -900,6 +916,38 @@ namespace NCCConfig
         {
             get { return (ushort)getVal(NCCFlags.fpPrec); }
             set { setVal(NCCFlags.fpPrec, value); }
+        }
+
+		/// <summary>
+		/// Eight ASCII char file name scheme encodes date and time to 1s precision 
+		///   YMDHMMSS
+		/// Y = last digit of the year
+		/// M = month (0-9, A-C)
+		/// D = day (0-9, A-V)
+		/// H = hour (A-X)
+		/// MM = minutes (00-59)
+		/// SS = seconds (00-59)
+		/// </summary>
+		public bool Results8Char
+        {
+            get { return (bool)getVal(NCCFlags.results8Char); }
+            set { setVal(NCCFlags.results8Char, value); }
+        }
+
+		/// <summary>
+		/// Rates only files have a suffix of .RTS
+		/// Background files have a suffix of .BKG
+		/// Initial source files have a suffix of .INS
+		/// Normalization files have a suffix of .NOR
+		/// Precision files have a suffix of .PRE
+		/// Verification files have a suffix of .VER
+		/// Calibration files have a suffix of .CAL
+		/// Holdup files have a suffix of .HUP
+		/// </summary>
+		public bool AssayTypeSuffix
+        {
+            get { return (bool)getVal(NCCFlags.assayTypeSuffix); }
+            set { setVal(NCCFlags.assayTypeSuffix, value); }
         }
 
         public bool OpenResults
@@ -979,12 +1027,12 @@ namespace NCCConfig
             set { setVal(NCCFlags.opStatusPktInterval, value); }
         }
 
-        public bool Emulate
+        public bool UseINCC5Ini
         {
             get { return (bool)getVal(NCCFlags.serveremulation); }
             set { setVal(NCCFlags.serveremulation, value); }
         }
-        public string EmuLoc
+        public string INCC5IniLoc
         {
             get { return (string)getVal(NCCFlags.emulatorapp); }
             set
@@ -1000,18 +1048,29 @@ namespace NCCConfig
             {
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
-                setVal(NCCFlags.pulseFileNCD, false);
-                setVal(NCCFlags.ptrFileNCD, false);
-                setVal(NCCFlags.nilaFileNCD, false); 
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
-                setVal(NCCFlags.nilaFileAssay, false);
+                setVal(NCCFlags.mcaFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
+        }
+
+		bool IsFileActionSet()
+        {
+			return 
+				(bool)getVal(NCCFlags.testDataFileAssay) ||
+                (bool)getVal(NCCFlags.reviewFileAssay) ||
+                (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.mcaFileAssay) ||
+                (bool)getVal(NCCFlags.dbDataAssay) ||
+                (bool)getVal(NCCFlags.INCCXfer) ||
+                (bool)getVal(NCCFlags.pulseFileAssay) ||
+                (bool)getVal(NCCFlags.ncdFileAssay) ||
+                (bool)getVal(NCCFlags.sortPulseFile);
         }
 
         public string[] ToLines()
@@ -1023,6 +1082,11 @@ namespace NCCConfig
                 x[ix++] = "  root: " + RootLoc;
             if (isSet(NCCFlags.dailyRootPath))
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
+			if (isSet(NCCFlags.logFileLoc))
+				x[ix++] = "  log file path: " + LogFilePath;
+			if (isSet(NCCFlags.resultsFileLoc))
+				x[ix++] = "  results path: " + ResultsFilePath;
+
             x[ix++] = "  logging: " + Logging;
             x[ix++] = "    log level: " + Level();
           //  x[ix++] = "    log folder: " + LogFileLoc;
@@ -1037,22 +1101,37 @@ namespace NCCConfig
 
             if (isSet(NCCFlags.openResults))
                 x[ix++] = "  open results: " + OpenResults.ToString();
+            if (isSet(NCCFlags.assayTypeSuffix))
+                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
+            if (isSet(NCCFlags.results8Char))
+                x[ix++] = "  INCC5 suffix scheme: " + AssayTypeSuffix.ToString();
+
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
-            x[ix++] = (Emulate ? "  use LM emulator server at: " + EmuLoc : "  no LM hardware emulation");
-            if (isSet(NCCFlags.fileinput))
+            x[ix++] = (UseINCC5Ini ? "  use INCC5 ini file at: " + INCC5IniLoc : "  no INCC5 ini file use");
+
+			if (isSet(NCCFlags.fileinput))
+			{
+				string fis = " for input: " + FileInput;
+				if (INCCXfer)
+					x[ix++] = ("  use INCC Transfer files" + fis);
+				else if (PulseFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (PTRFileAssay)
+					x[ix++] = ("  use PTR-32 file pairs" + fis);
+				else if (MCA527FileAssay)
+					x[ix++] = ("  use MCA-527 mca files" + fis);
+				else if (TestDataFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (ReviewFileAssay)
+					x[ix++] = ("  use sorted pulse files" + fis);
+				else if (NCDFileAssay)
+					x[ix++] = ("  use LMMM NCD files" + fis);
+				else
+					x[ix++] = ("  (default) use LMMM NCD files" + fis);
+			}
+			if (!INCCXfer)
             {
-                if (INCCXfer)
-                    x[ix++] = ("  use INCC Transfer files for input: " + FileInput);
-                if (PulseFileAssay)
-                    x[ix++] = ("  use sorted pulse files for input: " + FileInput);
-                if (PTRFileAssay)
-                    x[ix++] = ("  use PTR-32 file pairs for input: " + FileInput);
-                if (!(PTRFileAssay || PulseFileAssay || INCCXfer))
-                    x[ix++] = ("  use NCD files for input: " + FileInput);
-            }
-            if (!INCCXfer)
-            {
-                if (Recurse) x[ix++] = "  search subfolders for NCD files";
+                if (Recurse) x[ix++] = "  search subfolders for files";
                 if (ParseGen2) x[ix++] = "  accept Gen. 2 NCD file format";
             }
             x[ix++] = (INCCParity ? "  INCC Parity, use INCC isotopics whole-day only decay constraint" : "  use isotopics fractional day decay calculations (more precise than INCC)");
@@ -1152,7 +1231,7 @@ namespace NCCConfig
             resetVal(NCCFlags.parseBufferSize, (UInt32)50, typeof(uint)); // 50 MB
             resetVal(NCCFlags.useAsyncFileIO, false, typeof(bool));
             resetVal(NCCFlags.useAsyncAnalysis, false, typeof(bool));
-            resetVal(NCCFlags.streamRawAnalysis, false, typeof(bool));
+            resetVal(NCCFlags.streamRawAnalysis, true, typeof(bool));
             resetVal(NCCFlags.broadcast, true, typeof(bool));
             resetVal(NCCFlags.port, 5011, typeof(int));
             resetVal(NCCFlags.broadcastport, 5000, typeof(int));
@@ -1247,13 +1326,13 @@ namespace NCCConfig
         {
             string[] x = new string[100];
             int ix = 0;
-            x[ix++] = "  subnet: " + Subnet;
-            x[ix++] = "  sending port: " + Port;
-            x[ix++] = "  broadcast response wait delay: " + Wait;
-            x[ix++] = "  broadcast endpoint port: " + LMListeningPort;
-            x[ix++] = (Broadcast ? "  broadcast go" : "  synchronous start");
-            x[ix++] = "  connections: " + NumConnections;
-            x[ix++] = "  TCP/IP receive buffer: " + ReceiveBufferSize + " bytes";
+            x[ix++] = "  LMMM subnet: " + Subnet;
+            x[ix++] = "  LMMM sending port: " + Port;
+            x[ix++] = "  LMMM broadcast response wait delay: " + Wait;
+            x[ix++] = "  LMMM broadcast endpoint port: " + LMListeningPort;
+            x[ix++] = (Broadcast ? "  LMMM broadcast go" : "  LMMM synchronous start");
+            x[ix++] = "  LMMM connections: " + NumConnections;
+            x[ix++] = "  LMMM TCP/IP receive buffer: " + ReceiveBufferSize + " bytes";
             x[ix++] = "  event processing buffer: " + ParseBufferSize + " MB (1024*1024)";
             if (UsingStreamRawAnalysis)
                 x[ix++] = "  neutron counting event block count: " + StreamEventCount + " (" + StreamEventCount / (1024 * 1024) + " MB events)";
@@ -1326,6 +1405,11 @@ namespace NCCConfig
             get { return (Int32)getVal(NCCFlags.LLD); }
             set { setVal(NCCFlags.LLD, value); }
         }
+		public Int32 VoltageTolerance
+        {
+            get { return (Int32)getVal(NCCFlags.LLD); }
+            set { setVal(NCCFlags.LLD, value); }
+        }
         public Int32 HVTimeout
         {
             get { Int32 v = (Int32)getVal(NCCFlags.hvtimeout); if (v < 5) v = 30; return v; }
@@ -1348,6 +1432,7 @@ namespace NCCConfig
             Cycles = src.Cycles; Interval = src.Interval; MinHV = src.MinHV; MaxHV = src.MaxHV;
             Step = src.Step; HVDuration = src.HVDuration; Delay = src.Delay; HVX = src.HVX;
             AssayType = src.AssayType; Detector = String.Copy(src.Detector);
+            ItemId = src.ItemId; Material = String.Copy(src.Material);
         }
         public LMAcquireConfig(Hashtable _parms)
         {
@@ -1375,41 +1460,13 @@ namespace NCCConfig
             resetVal(NCCFlags.lm, (Int32)(-1), typeof(int));
 
             resetVal(NCCFlags.detector, "Default", typeof(string));
+            resetVal(NCCFlags.item, "", typeof(string));
+            resetVal(NCCFlags.material, "Pu", typeof(string));
 
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)
         private Int32 action = 0;
-
-        //public string Results
-        //{
-        //    get { return (string)getVal(LMFlags.results); }
-        //    set
-        //    {
-        //        string warmed = TrimCmdLineFlagpath(value);
-        //        setVal(LMFlags.results, warmed);
-        //    }
-        //}
-
-
-        //public bool DailyResultsPath
-        //{
-        //    get { return (bool)getVal(LMFlags.resultsAutoPath); }
-        //    set { setVal(LMFlags.resultsAutoPath, value); }
-        //}
-        //public void ConstructDailyResultsPath(String parent)
-        //{
-        //    string part = DateTime.Now.ToString("yyyy-MMdd");
-        //    if (parent == null)
-        //    {
-        //        Results = Path.Combine(Results, part);
-        //    }
-        //    else
-        //    {
-        //        Results = Path.Combine(parent, part);
-        //    }
-        //}
-
 
         public bool IncludeConfig
         {
@@ -1421,6 +1478,18 @@ namespace NCCConfig
         {
             get { return (string)getVal(NCCFlags.detector); }
             set { setVal(NCCFlags.detector, value); }
+        }
+
+        public string ItemId
+        {
+            get { return (string)getVal(NCCFlags.item); }
+            set { setVal(NCCFlags.item, value); }
+        }
+
+        public string Material
+        {
+            get { return (string)getVal(NCCFlags.material); }
+            set { setVal(NCCFlags.material, value); }
         }
 
         public string Message
@@ -1649,7 +1718,8 @@ namespace NCCConfig
         {
             string[] x = new string[100];
             int ix = 0;
-            x[ix++] = "  LM #: " + c.LM;
+			if (c.LM >= 0)
+				x[ix++] = "  LMMM LM #: " + c.LM;
             x[ix++] = "  annotation message: " + "'" + c.Message + "'";
             //x[ix++] = "  raw NCD file location: " + (cfg == null ? c.Raw : cfg.Raw); fix lameness
             //x[ix++] = "  results file location: " + (cfg == null ? c.Results : cfg.Results);
@@ -1662,9 +1732,9 @@ namespace NCCConfig
             x[ix++] = "  assay feedback flag: " + c.Feedback;
             x[ix++] = "  assay type: " + c.PoliteName(c.AssayType);
             if (c.SaveOnTerminate)
-                x[ix++] = "   SaveOnTerminate: on cancellation or DAQ error, preserve results";
+                x[ix++] = "  SaveOnTerminate: on cancellation or DAQ error, preserve results";
             else
-                x[ix++] = "   SaveOnTerminate: on cancellation or DAQ error, abandon results";
+                x[ix++] = "  SaveOnTerminate: on cancellation or DAQ error, abandon results";
             x[ix++] = "";
             x[ix++] = "  HV calib minHV, maxHV, step: " + c.MinHV + ", " + c.MaxHV + ", " + c.Step + " volts";
             x[ix++] = "  HV calib step and delay duration: " + c.HVDuration + ", " + c.Delay + " seconds";
@@ -1680,16 +1750,6 @@ namespace NCCConfig
             return LMAcquireConfig.ToLines(null, c);
         }
 
-        //public static string ToString(Config cfg)
-        //{
-        //    string[] x = ToLines(cfg, cfg.cur);
-        //    string s = "";
-        //    for (int i = 0; i < x.Length; i++)
-        //    {
-        //        s += (x[i] + Eol);
-        //    }
-        //    return s;
-        //}
 
         override public string ToString()
         {
@@ -1709,7 +1769,7 @@ namespace NCCConfig
         {
             this._parms = _parms;
             resetVal(NCCFlags.MyProviderName, "System.Data.SQLite", typeof(string));
-            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;", typeof(string));
+            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;foreign_keys=on;", typeof(string));
         }
 
         public string MyProviderName
@@ -1744,6 +1804,19 @@ namespace NCCConfig
         }
     }
 
+	public class WPFEventArgs: EventArgs
+	{
+		public bool value;
+
+		//
+		// Summary:
+		//     Initializes a new instance of the System.EventArgs class.
+		public WPFEventArgs()
+		{
+			value = false;
+		}
+	}
+
     // loaded and configured in the exe.config file
     public class WPFListener : TraceListener
     {
@@ -1758,9 +1831,10 @@ namespace NCCConfig
         }
         ~WPFListener()
         {
+			Dispose(false);
         }
 
-        string current = String.Empty;
+        string current = string.Empty;
         int previous;
         ulong count = 0;
         bool header = true;
@@ -1823,7 +1897,7 @@ namespace NCCConfig
             }
             Write(message);
         }
-        static string[] prefixes = { "===", "DB", "Control", "Data", "Analysis", "App", "Net", "LMComm" };
+        static string[] prefixes = { "===", "DB", "Control", "Data", "Analysis", "App"};
         bool ExternalPrefix(string message)
         {
             bool res = true;

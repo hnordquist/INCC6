@@ -41,11 +41,19 @@ namespace DB
 
         public void Dispose()
         {
+			Dispose(true); 
+            GC.SuppressFinalize(this);
+        }
+
+		protected virtual void Dispose(bool disposing)
+        {
+			if (disposing)
             try
             {
                 if (db != null)
                 {
                     db . Dispose();
+						db = null;
                 }
             }
             catch (Exception caught)

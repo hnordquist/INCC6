@@ -28,6 +28,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.Common;
+
 namespace DB
 {
 
@@ -149,6 +151,17 @@ namespace DB
         {
             db.SetConnection();
             string sSQL = "Select * FROM items";
+
+			//DbCommand dbcmd = DBMain.DBCmd;
+			//dbcmd.Connection = db.sql_con;
+			//DbParameter p = dbcmd.CreateParameter();
+			//p.ParameterName = "items";
+			//p.Value = "items";
+			//dbcmd.CommandType = CommandType.Text;
+			//dbcmd.Parameters.Add(p);
+			//dbcmd.CommandText = "Select * FROM";
+			//DbDataReader dbr = dbcmd.ExecuteReader();
+
             return (db.DT(sSQL));
         }
 
@@ -256,9 +269,9 @@ namespace DB
         public long getItemID(string item_name)
         {
             //Check item name against current entries
+            db.CreateCommand("Select item_id from items where item_name=" + SQLSpecific.QVal(item_name));
             db.SetConnection();
-            string sSQL = "Select item_id from items where item_name='" + item_name + "'";
-            return db.ScalarIntx(sSQL);
+            return db.ScalarIntx();
         }
 
     }
@@ -386,9 +399,9 @@ namespace DB
         public long getItemID(string item_name)
         {
             //Check item name against current entries
+			db.CreateCommand("Select item_id from collar_data_entry where item_name=" + SQLSpecific.QVal(item_name));
             db.SetConnection();
-            string sSQL = "Select item_id from collar_data_entry where item_name='" + item_name + "'";
-            return db.ScalarIntx(sSQL);
+            return db.ScalarIntx();
         }
 
     }

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -28,7 +28,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
 
@@ -123,9 +124,9 @@ namespace LMDAQ
                 {
                     // will blow if not really an Assay subclass, e.g. not running in the context of the full DAQCOntrol class 
                     CurState.State = DAQInstrState.Offline; // remaining buffers should now bypass DAQ section
-                    gControl.StopLMCAssay(removeCurNCDFile: false); // stop the instruments
-                    gControl.netlog.TraceException(oddex, false);
-                    gControl.netlog.TraceEvent(LogLevels.Info, 429, "DAQ processing incomplete: {0}, processing stopped", oddex.Message);
+                    gControl.StopLMCAssay(removeCurLMDataFile: false); // stop the instruments
+                    gControl.collog.TraceException(oddex, false);
+                    gControl.collog.TraceEvent(LogLevels.Info, 429, "DAQ processing incomplete: {0}, processing stopped", oddex.Message);
                     //activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement);
                     gControl.MajorOperationCompleted();  // signal the controlling loop we are done
 
@@ -140,7 +141,7 @@ namespace LMDAQ
             // stop the single SR thread 
             srct.CancelMe();
             srct.sri.DAQState = DAQInstrState.Offline;
-            srct.SRCtrl.Log.TraceEvent(LogLevels.Info, 428, "SR {0} DAQ cancelled", srct.sri.id.IdentName());
+            srct.SRCtrl.Log.TraceEvent(LogLevels.Info, 428, "SR {0} DAQ cancelled", srct.sri.id.Identifier());
 
             // dev note: this still isn't working very well, need to completely fix the early termination logic, it should exit cleanly without extra cycle and results processing
             //srct.sri.RDT.EndOfCycleProcessing(NC.App.Opstate.Measurement);

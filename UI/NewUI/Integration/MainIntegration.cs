@@ -65,13 +65,17 @@ namespace NewUI
             return string.Empty;
         }
 
-        public static DialogResult GetUsersFile(string title, string dir, string name, string ext)
+        public static DialogResult GetUsersFile(string title, string dir, string name, string ext, string ext2 = "")
         {
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog();
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
             RestoreFileDialog.DefaultExt = "ext";
             RestoreFileDialog.Filter = name + " files (." + ext + ")|*." + ext;
+            if (!String.IsNullOrEmpty(ext2))
+            {
+                RestoreFileDialog.Filter += "| (." + ext2 + ")|*." + ext2;
+            }
             RestoreFileDialog.Filter += "|All files (*.*)|*.*";
             RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
             RestoreFileDialog.Title = title;
@@ -147,8 +151,6 @@ namespace NewUI
 
     public partial class MainWindow : Window
     {
-        //System.Timers.Timer oneSecondTimer;  //This GUI-scoped timer helps control updating the display of information in the GUI
-
 
         public void OneSecondGuiUpdate(object source, System.Timers.ElapsedEventArgs e)
         {

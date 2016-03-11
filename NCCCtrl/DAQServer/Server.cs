@@ -32,7 +32,7 @@ using System.Text;
 using System.Threading;
 using NCCReporter;
 
-namespace LMDAQServer
+namespace LMComm
 {
     /// Based on example from 
     /// http://msdn2.microsoft.com/en-us/library/system.net.sockets.socketasynceventargs.aspx

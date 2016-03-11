@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -11,7 +11,7 @@ such modified software should be clearly marked, so as not to confuse it with th
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
 that the following conditions are met:
 •	Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
-disclaimer. 
+disclaimer.  
 •	Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following 
 disclaimer in the documentation and/or other materials provided with the distribution. 
 •	Neither the name of Los Alamos National Security, LLC, Los Alamos National Laboratory, LANL, the U.S. Government, 
@@ -351,7 +351,8 @@ namespace AnalysisDefs
             public double var_c
             {
                 get { return var[(int)Coeff.c]; }
-                set { var[(int)Coeff.c] = value; }            }
+                set { var[(int)Coeff.c] = value; }
+			}
 
             public double var_d
             {

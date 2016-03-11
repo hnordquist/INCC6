@@ -117,4 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="WriteBtn.ToolTip" xml:space="preserve">
+    <value>Clicking here will bring up a dialog box prompting you for the disk drive, path and file name
+for saving the currently selected composite isotopics data set which may be later read into INCC
+using the Read composite isotopics from file button</value>
+  </data>
+  <data name="AddBtn.ToolTip" xml:space="preserve">
+    <value>Clicking here will bring up a dialog box prompting you to enter a composite isotopics id for a new composite isotopics data set. The new composite isotopics data set will consist of the composite isotopics values currently displayed</value>
+  </data>
+  <data name="IsoSrcCodeComboBox.ToolTip" xml:space="preserve">
+    <value>Select the isotopics source code:
+OD  Operator declared
+IA  Inspector analyzed
+IM  Inspector measured
+OA  Operator analyzed
+OC  Operator calculated
+OE  Operator estimated
+OS  Other source
+CO  Composite isotopics</value>
+  </data>
 </root>

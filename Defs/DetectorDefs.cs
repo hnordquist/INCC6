@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -41,7 +41,7 @@ namespace DetectorDefs
         JSR15,// aka HHMR, order taken from sr.h
         UNAP, // aka JSR16, the 40k box
         /* LM */
-        NPOD, LMMM, LMI = LMMM, PTR32, NILA,
+        NPOD, LMMM, LMI = LMMM, PTR32, MCA527,
         /* Simulated */
         MCNPX, N1,
         /* Emulation */
@@ -92,12 +92,12 @@ namespace DetectorDefs
 
         public static bool IsListMode(this InstrType itype)
         {
-            return itype >= InstrType.NPOD && itype <= InstrType.NILA;
+            return itype >= InstrType.NPOD && itype <= InstrType.MCA527;
         }
 
         public static bool IsSocketBasedLM(this InstrType itype)
         {
-            return itype == InstrType.NPOD || itype == InstrType.LMMM || itype == InstrType.NILA;
+            return itype == InstrType.NPOD || itype == InstrType.LMMM || itype == InstrType.MCA527;
         }
         public static bool IsUSBBasedLM(this InstrType itype)
         {
@@ -115,7 +115,7 @@ namespace DetectorDefs
         }
 
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
-        /// This funtion adds the JSR-15 to the list
+        /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
         public static string INCC5ComboBoxString(this InstrType itype)
@@ -171,7 +171,7 @@ namespace DetectorDefs
     public enum ConstructedSource
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
-        NCDFile, SortedPulseTextFile, PTRFile, NILAFile,// List Mode file inputs 
+        NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
         INCCTransferCopy, INCCTransfer, Æther
     };  //INCC transfer and room for more
 
@@ -209,43 +209,45 @@ namespace DetectorDefs
         {
             bool needsAdditionalSpecification =
                ((src == ConstructedSource.Live &&
-                (device >= InstrType.NPOD && device <= InstrType.NILA)) // it is a Live LM DAQ, or
+                (device >= InstrType.NPOD && device <= InstrType.MCA527)) // it is a Live LM DAQ, or
              ||
-               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.NILAFile));  // data from other source and the processing went through the raw counting code 
+               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile));  // data from other source and the processing went through the raw counting code 
             return needsAdditionalSpecification;
         }
 
         public static bool LMFiles(this ConstructedSource src, InstrType device)
         {
-            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.NILAFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
+            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
             return ack;
         }
 
-        public static double TimeBase(this ConstructedSource src, InstrType device)
-        {
-            double te = 1e-7;
-            switch (device)
-            {
-                case InstrType.PTR32:
-                case InstrType.MCNPX:
-                case InstrType.NILA: // TODO: not yet defined Nov 2013 MTS
-                case InstrType.N1:
-                    te = 1e-8;
-                    break;
-            }
+		public static double TimeBase(this ConstructedSource src, InstrType device)
+		{
+			double te = 1e-7;  // JSR files, LMMM and MCA-527 use 100 ns units, but MCA-527 can change 
+			switch (device)
+			{
+			case InstrType.PTR32:
+			case InstrType.MCNPX:
+			case InstrType.N1:
+				te = 1e-8;
+				break;
+			}
 
-            switch (src)
-            {
-                case ConstructedSource.PTRFile:
-                case ConstructedSource.SortedPulseTextFile:
-                case ConstructedSource.NILAFile:
-                    te = 1e-8;
-                    break;
-            }
-            return te;
-        }
+			switch (src) // src takes precedence over the inst type
+			{
+			case ConstructedSource.PTRFile:
+			case ConstructedSource.SortedPulseTextFile:
+				te = 1e-8;
+				break;
+			case ConstructedSource.NCDFile:
+			case ConstructedSource.MCA527File: // LMMM and MCA-527 use 100 ns units, but MCA-527 can change (a header field value) 
+				te = 1e-7;
+				break;
+			}
+			return te;
+		}
 
-        static Dictionary<ConstructedSource, string> PrettyName;
+		static Dictionary<ConstructedSource, string> PrettyName;
 
         static ConstructedSourceExtensions()
         {
@@ -253,9 +255,9 @@ namespace DetectorDefs
             {
                 PrettyName = new Dictionary<ConstructedSource, string>();
                 PrettyName.Add(ConstructedSource.CycleFile, "Disk file");
-                PrettyName.Add(ConstructedSource.PTRFile, "PTR-32 file pair");
+                PrettyName.Add(ConstructedSource.PTRFile, "PTR-32 data file pair");
                 PrettyName.Add(ConstructedSource.SortedPulseTextFile, "Pulse file");
-                PrettyName.Add(ConstructedSource.NILAFile, "NILA file group");
+                PrettyName.Add(ConstructedSource.MCA527File, "MCA-527 data file");
                 PrettyName.Add(ConstructedSource.DB, "Database");
                 PrettyName.Add(ConstructedSource.Manual, "Manual entry");
                 PrettyName.Add(ConstructedSource.ReviewFile, "Review disk file");
@@ -266,13 +268,12 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
                 PrettyName.Add(ConstructedSource.Æther, "Æthereal");
             }
-        }
+		}
 
         public static string HappyFunName(this ConstructedSource src)
         {
             return PrettyName[src];
         }
-
 
         public static ConstructedSource SrcToEnum(this string src)
         {
@@ -498,45 +499,88 @@ namespace DetectorDefs
         public DateTimeOffset dt;
         public ConstructedSource source = ConstructedSource.Live;
 
-        public string IdentName()  // devnote: used to gen output files, so make sure no offending chars are included
-        {
-            string l = "Unknown";
-            switch (source)
-            {
-                case ConstructedSource.Live:
-                    l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
-                    break;
-                case ConstructedSource.NCDFile:
-                case ConstructedSource.SortedPulseTextFile:
-                case ConstructedSource.PTRFile:
-                    l = filename;
-                    break;
-                case ConstructedSource.INCCTransfer:
-                    l = filename + " (INCC transfer file, recalculated)";
-                    break;
-                case ConstructedSource.INCCTransferCopy:
-                    l = filename + " (INCC transfer file)";
-                    break;
-                case ConstructedSource.CycleFile:
-                    l = filename + " (INCC5 test data file)";
-                    break;
-                case ConstructedSource.DB:
-                    l = "DB Acquire";
-                    break;
-                case ConstructedSource.ReviewFile:
-                    l = filename + " (INCC Rad Review measurement data file)";
-                    break;
-                case ConstructedSource.Manual:
-                    l = "Manual";
-                    break;
-                case ConstructedSource.Æther:
-                    l += (" " + source.ToString());
-                    break;
+		/// <summary>
+		/// Returns a combined identification string meant to include data source, detector name and type
+		/// </summary>
+		/// <returns></returns>
+		public string Identifier() 
+		{
+			string l = string.IsNullOrEmpty(filename) ? "*" : filename;
+			switch (source)
+			{
+			case ConstructedSource.Live:
+				l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+				break;
+			case ConstructedSource.NCDFile:
+			case ConstructedSource.SortedPulseTextFile:
+			case ConstructedSource.PTRFile:
+			case ConstructedSource.MCA527File:
+				break;
+			case ConstructedSource.INCCTransfer:
+				l += " (INCC transfer file, recalculated)";
+				break;
+			case ConstructedSource.INCCTransferCopy:
+				l += " (INCC transfer file)";
+				break;
+			case ConstructedSource.CycleFile:
+				l += " (INCC5 test data file)";
+				break;
+			case ConstructedSource.ReviewFile:
+				l += " (INCC Rad Review measurement data file)";
+				break;
+			case ConstructedSource.DB:
+				l = "DB Acquire";
+				break;
+			case ConstructedSource.Manual:
+				l = "Manual";
+				break;
+			case ConstructedSource.Æther:
+				l += (" " + source.ToString());
+				break;
+			}
+			return l;
+		}
 
-            }
-            return l;
-        }
-        public DataSourceIdentifier()
+		public string SourceIdentName()  // devnote: used to gen output files, so make sure no offending chars are included
+		{
+			string l = "Unknown";
+				switch (source)
+				{
+				case ConstructedSource.Live:
+					l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+					break;
+				case ConstructedSource.NCDFile:
+				case ConstructedSource.SortedPulseTextFile:
+				case ConstructedSource.PTRFile:
+				case ConstructedSource.MCA527File:
+					l = filename;
+					break;
+				case ConstructedSource.INCCTransfer:
+					l = filename + " (INCC transfer file, recalculated)";
+					break;
+				case ConstructedSource.INCCTransferCopy:
+					l = filename + " (INCC transfer file)";
+					break;
+				case ConstructedSource.CycleFile:
+					l = filename + " (INCC5 test data file)";
+					break;
+				case ConstructedSource.DB:
+					l = "DB Acquire";
+					break;
+				case ConstructedSource.ReviewFile:
+					l = filename + " (INCC Rad Review measurement data file)";
+					break;
+				case ConstructedSource.Manual:
+					l = "Manual";
+					break;
+				case ConstructedSource.Æther:
+					l += (" " + source.ToString());
+					break;
+
+				}
+			return l;
+		}
+		public DataSourceIdentifier()
         {
             iname = String.Empty;
             elecid = String.Empty;
@@ -581,7 +625,7 @@ namespace DetectorDefs
                 & this.elecid.Equals(other.elecid)
                 & this.filename.Equals(other.filename)
                 & this.type.Equals(other.type)
-                & this.dt.Equals(other.dt) // time may not be the same due to in-memory creation compared with fossilized definitions from DB
+                & this.dt.Equals(other.dt) // dev note: time may not be the same due to in-memory creation compared with fossilized definitions from DB
                 & this.conninfo.Equals(other.conninfo))
             {
                 return true;
@@ -666,7 +710,7 @@ namespace DetectorDefs
             this.ps.Add(new DBParamEntry("electronics_id", ElectronicsId));
             this.ps.Add(new DBParamEntry("detector_type_freeform", Type));
             this.ps.Add(new DBParamEntry("detector_type_id", (Int32)SRType));
-            this.ps.Add(new DBParamEntry("detector_alias", IdentName()));
+            this.ps.Add(new DBParamEntry("detector_alias", Identifier()));
         }
 
         public DBParamEntry NewForINCC6Params

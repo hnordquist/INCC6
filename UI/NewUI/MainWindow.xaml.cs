@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
-NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
+NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED,
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works,
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -26,19 +26,19 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
+using Instr;
 using NCCReporter;
 namespace NewUI
 {
 
     using Integ = NCC.IntegrationHelpers;
     using NC = NCC.CentralizedState;
-    using System.IO;
-    using System.IO.Compression;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -46,16 +46,17 @@ namespace NewUI
     public partial class MainWindow : Window
     {
 
-        public WinPos main = new WinPos();
-
+        private WinPos main;
         public MainWindow()
         {
             InitializeComponent();
+			main = new WinPos();
+
             //Set defaults for window position hn 6.23.15
-            this.MinWidth = main.width;
-            this.MinHeight = main.height;
-            main.SizeToFit();
-            main.MoveIntoView();
+            //this.MinWidth = main.width;
+            //this.MinHeight = main.height;
+            //main.SizeToFit();
+            //main.MoveIntoView();
         }
 
         /////////////////
@@ -426,7 +427,7 @@ namespace NewUI
 
         private void ReportAllMeasClick(object sender, RoutedEventArgs e)
         {
-            IDDReviewAll f = new IDDReviewAll();
+            IDDReviewAll f = new IDDReviewAll(LMOnly:false);
             f.Show();
         }
 
@@ -475,6 +476,12 @@ namespace NewUI
         private void ReportHoldupClick(object sender, RoutedEventArgs e)
         {
             IDDReviewHoldup f = new IDDReviewHoldup();
+            f.Show();
+        }
+
+		private void ReportLMClick(object sender, RoutedEventArgs e)
+        {
+            IDDReviewAll f = new IDDReviewAll(LMOnly:true);
             f.Show();
         }
 
@@ -581,7 +588,7 @@ namespace NewUI
                 MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
                 return;
             }
-            NewUI.AnalysisWizard f = new NewUI.AnalysisWizard(NewUI.AnalysisWizard.AWSteps.Step1, acq, det);
+            AnalysisWizard f = new AnalysisWizard(AnalysisWizard.AWSteps.Step3, acq, det);
             System.Windows.Forms.DialogResult dr = f.ShowDialog();
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
@@ -589,8 +596,7 @@ namespace NewUI
                 {
                     INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, DateTime.Now);
                     acq.MeasDateTime = sel.TimeStamp; acq.lm.TimeStamp = sel.TimeStamp;
-                    NC.App.DB.AcquireParametersMap().Add(sel, acq);  // it's a new one, not the existing one modified
-                    NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+                    NC.App.DB.AddAcquireParams(sel, acq);  // it's a new one, not the existing one modified
                 }
 
                 switch (NC.App.Opstate.Measurement.AcquireState.data_src)  // global access to latest acq here, same as acq set in wizard
@@ -598,35 +604,39 @@ namespace NewUI
                     case ConstructedSource.Live:
                         UIIntegration.Controller.file = false;  // make sure to use the DAQ controller, not the file controller
                         NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
-                        if (NC.App.Opstate.Measurement.Detectors[0].ListMode)
+                        if (NC.App.Opstate.Measurement.Detector.ListMode)
                         {
-                            //  NC.App.DB.UpdateAcquireParams(ap, det.ListMode); //update it again
-                            //   NC.App.DB.UpdateDetector(det);
                             // if ok, the analyzers are set up, so can kick it off now.
-                            if (NC.App.Opstate.Measurement.Detectors[0].Id.SRType == InstrType.PTR32)
+                            if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.PTR32)
                             {
-                                Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detectors[0]);
+                                Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
                                 instrument.DAQState = DAQInstrState.Offline;
                                 instrument.selected = true;
-                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
-
+                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));  // todo: is this reduntant?
                                 if (!Instruments.Active.Contains(instrument))
-                                {
                                     Instruments.Active.Add(instrument);
-                                }
                             }
-                            else
+                            else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
                             {
-                                LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detectors[0]);
+                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                                mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+                                mca.selected = true;
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+                                if (!Instruments.Active.Contains(mca))
+                                    Instruments.Active.Add(mca);                                
+                            } 
+							else // LMMM
+							{
+                                LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
                                 lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                                 lm.selected = false;  //must broadcast first to get it selected
                                 if (!Instruments.All.Contains(lm))
-                                    Instruments.All.Add(lm); // add to global runtime list
-                            }
+                                    Instruments.All.Add(lm); // add to global runtime list		
+							}
                         }
                         else
                         {
-                            SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detectors[0]);
+                            SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
                             sri.selected = true;
                             sri.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
                             if (!Instruments.All.Contains(sri))
@@ -650,7 +660,7 @@ namespace NewUI
                             NC.App.AppContext.FileInput = xs;
                             NC.App.AppContext.FileInputList = null;  // no explicit file list
                         }
-                        SRInstrument sri2 = new SRInstrument(NC.App.Opstate.Measurement.Detectors[0]);
+                        SRInstrument sri2 = new SRInstrument(NC.App.Opstate.Measurement.Detector);
                         sri2.selected = true;
                         sri2.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
                         if (!Instruments.All.Contains(sri2))
@@ -669,10 +679,14 @@ namespace NewUI
                         NC.App.AppContext.PTRFileAssay = true;
                         UIIntegration.Controller.file = true;
                         break;
+                    case ConstructedSource.MCA527File:
+                        NC.App.AppContext.MCA527FileAssay = true;
+                        UIIntegration.Controller.file = true;
+                        break;
                     default:
                         break;
                 }
-                NC.App.Opstate.Measurement.Detectors[0].Id.source = NC.App.Opstate.Measurement.AcquireState.data_src;  // set the detector overall data source value here
+                NC.App.Opstate.Measurement.Detector.Id.source = NC.App.Opstate.Measurement.AcquireState.data_src;  // set the detector overall data source value here
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
             }
@@ -802,17 +816,34 @@ namespace NewUI
 
         private void ItemRelevantDataClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			System.Windows.Forms.OpenFileDialog aDlg =  new System.Windows.Forms.OpenFileDialog();
+			aDlg.CheckFileExists = true;
+			aDlg.FileName = "NCC_Item.dat";
+            aDlg.Filter = "Dat files (*.dat)|*.dat|CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            aDlg.DefaultExt = ".dat";
+            aDlg.InitialDirectory = NC.App.AppContext.FileInput;
+            aDlg.Title = "Select an Item Relevant Data file";
+            aDlg.Multiselect = false;
+            aDlg.RestoreDirectory = true;
+			System.Windows.Forms.DialogResult qw = aDlg.ShowDialog();
+            if (qw == System.Windows.Forms.DialogResult.OK)
+			{
+				NCCFile.ItemFile onefile = new NCCFile.ItemFile();
+				string path = System.IO.Path.GetFullPath(aDlg.FileName);
+				onefile.Process(path);
+				// URGENT: now do something with the results
+			}
+			
         }
 
         private void BackupAllDataClick(object sender, RoutedEventArgs e)
         {
             string dest = UIIntegration.GetUsersFolder("Select Destination", "Select a path to backup data.");
-            if (dest != String.Empty)
+            if (!string.IsNullOrEmpty(dest))
             {
                 string source = System.IO.Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
                 string destFileName;
-                destFileName = String.Format("\\INCC-{0}", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
+                destFileName = string.Format("\\INCC-{0}", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
                 FileStream fs = File.Create (dest + destFileName + ".gz");
                 GZipStream compressionStream = new GZipStream(fs, CompressionMode.Compress);
                 DirectoryInfo selectedDir = new DirectoryInfo(source);

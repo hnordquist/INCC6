@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -25,48 +25,32 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using Microsoft.VisualBasic.FileIO;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace NCCFile
+using AnalysisDefs;
+namespace Analysis
 {
-    public class CSVFile : NeutronDataFile
+    /// <summary>
+    /// Bridging class to connect raw data to the transforming methods elsewhere, kinda lame. Needs a total rewrite
+    /// </summary>
+    public class MCA527RawDataTransform : LMRawDataTransform
     {
-
-        private List<string[]> mLines;
-
-        public CSVFile()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MCA527RawDataTransform"/> class.
+        /// </summary>
+        public MCA527RawDataTransform()
         {
-            Init();
+            state = new MCA527ProcessingState();
         }
 
-        public void Init()
+        /// <summary>
+        /// Performs end of cycle processing.
+        /// </summary>
+        /// <param name="measurement">The measurement.</param>
+        /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
+        public override bool EndOfCycleProcessing(Measurement measurement, bool last = false)
         {
-            stream = null;
-            mLines = new List<string[]>();
+            ((MCA527ProcessingState) state).EndOfCycleProcessing();
+            return base.EndOfCycleProcessing(measurement,last);
         }
-
-        public int LineCount { get { return mLines.Count(); } }
-
-        public List<string[]> Lines { get { return mLines; } }
-
-        public void ProcessFile()
-        {
-            TextFieldParser tfp = new TextFieldParser(this.Filename);
-            tfp.HasFieldsEnclosedInQuotes = true;
-            tfp.Delimiters = new string[] { ",", "\t" };
-            string[] line;
-
-            while (!tfp.EndOfData)
-            {
-                line = tfp.ReadFields();
-                mLines.Add(line);
-            }
-            tfp.Close();
-        }
-
     }
-
 }
-

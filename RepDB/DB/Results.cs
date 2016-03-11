@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -144,22 +144,6 @@ namespace DB
         }
         DB db;
 
-        public bool Has(string detname, DateTime date)
-        {
-            DataTable dt = Get(detname, date);
-            return dt.Rows.Count > 0;
-        }
-
-        public DataTable Get(string detname, DateTime date)
-        {
-            db.SetConnection();
-            Measurements ms = new Measurements(db);
-            long l = ms.PrimaryKey(detname, date);
-            string sSQL = "Select * FROM " + table + " where mid = " + l.ToString();
-            DataTable dt = db.DT(sSQL);
-            return dt;
-        }
-
         string MethodTableName { get {
             if (String.IsNullOrEmpty(table)) 
                 return "__";  // guaranteed to throw exceptions
@@ -169,17 +153,6 @@ namespace DB
             } 
         } 
 
-
-
-        public DataTable GetMethod(string detname, DateTime date)
-        {
-            db.SetConnection();
-            Measurements ms = new Measurements(db);
-            long l = ms.PrimaryKey(detname, date);
-            string sSQL = "Select * FROM " + MethodTableName + "where mid = " + l.ToString();
-            DataTable dt = db.DT(sSQL);
-            return dt;
-        }
         public long CreateMethod(long resid, long mid, ElementList resParams)
         {
             db.SetConnection();
@@ -204,28 +177,7 @@ namespace DB
             sqlList.Add(SQLSpecific.getLastID(table));
             return db.ExecuteTransactionID(sqlList);
         }
-        public long Create(string detname, DateTime date, ElementList resParams)
-        {
-            db.SetConnection();
-            Measurements ms = new Measurements(db);
-            long mid = ms.PrimaryKey(detname, date);
-            return Create(mid, resParams);
-        }
 
-        // TODO: update results and method results in same step
-        public bool unraeadyUpdate(string detname, DateTime date, ElementList resParams, ElementList methodParams)
-        {
-            db.SetConnection();
-            Measurements ms = new Measurements(db);
-            ArrayList sqlList = new ArrayList(); //.......
-
-            long l = ms.PrimaryKey(detname, date);
-            string sSQL1 = "UPDATE " + table + " SET ";
-            string wh = " where mid=" + l.ToString();
-            string sSQL = sSQL1 + resParams.ColumnEqValueList + wh;
-
-            return db.Execute(sSQL);
-        }
 
     }
 

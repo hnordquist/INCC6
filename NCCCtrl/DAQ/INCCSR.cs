@@ -33,7 +33,7 @@ using DetectorDefs;
 using LMSR;
 using NCCReporter;
 using NCCTransfer;
-namespace LMDAQ
+namespace DAQ
 {
 
     using SR = INCCSR;
@@ -283,9 +283,9 @@ namespace LMDAQ
                 status = SRLib.Control(dsid.SerialPort, sr_h.SR_SET_PARMS, ref parms);
                 i++;
             } while ((status != sr_h.SR_SUCCESS) && (i < SR.SR_NUM_TRYS) && !lcts.IsCancellationRequested);
-            if ((status != sr_h.SR_SUCCESS))
+            if ((status != sr_h.SR_SUCCESS)) // devnote: this test can fail for JSR-15 with an open serial port, then must depend upon the timeout failure in the voltage step following
             {
-                log.TraceEvent(LogLevels.Warning, 0x4f331, "{0}; Unable to set shift register parameters; HV {0}, predelay {1}, gate {2}; {3} second cycle", sr_h.SRFunctionReturnStatusCode(status), parms.hv, parms.predelay, parms.gate, parms.time);
+                log.TraceEvent(LogLevels.Warning, 0x4f331, "{0}; Unable to set shift register parameters; HV {1}, predelay {2}, gate {3}; {4} second cycle", sr_h.SRFunctionReturnStatusCode(status), parms.hv, parms.predelay, parms.gate, parms.time);
                 sr_stop();
                 return (status);
             }
@@ -293,7 +293,9 @@ namespace LMDAQ
             {
                 log.TraceEvent(LogLevels.Verbose, 0x4f32A, "Set shift register parameters; HV {0}, predelay {1}, gate {2}; {3} second cycle", parms.hv, parms.predelay, parms.gate, parms.time);
             }
-            /* if a PSR, JSR-12, DGSR or AMSR (or JSR15/UNAP)  then wait for high voltage to stabilize. */
+			bool retry = false;
+			ushort timeouts = 0; // allow for 100 retries with timeouts (hn), a timeout means something is wrong with communication 
+            /* if a PSR, JSR-12, DGSR or AMSR (or JSR15/UNAP) then wait for high voltage to stabilize. */
             if ((dsid.SRType == InstrType.PSR) ||
                 dsid.SRType.isDG_AMSR_Match() ||
                 (dsid.SRType == InstrType.JSR12))
@@ -331,13 +333,23 @@ namespace LMDAQ
                     }
                     if (i != 0)
                         Thread.Sleep(1000); // 1 sec
+					if (status == sr_h.SR_TIMEOUT)
+						timeouts++;
+
+					retry = ((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&  // while have not matched voltage
+						 (status == sr_h.SR_SUCCESS) && (i < 100)) // and the connection is good and we haven't yet tried 100 times 
+							|| timeouts < 100; // OR it simply timed out too many times
+					if (retry && ((i % 2) == 0) && status == sr_h.SR_TIMEOUT)
+						log.TraceEvent(LogLevels.Warning, 0x4f332, "Set voltage attempt {0} of 100, HV {1}, SR status {2}", i+1, Math.Abs(high_voltage - previous_high_voltage), sr_h.SRFunctionReturnStatusCode(status));
+
+					if (lcts.IsCancellationRequested)  // punt here
+						break;
                     i++;
-                } while ((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&
-                  (status == sr_h.SR_SUCCESS) && (i < 100) && !lcts.IsCancellationRequested || status == sr_h.SR_TIMEOUT);
-                // When a timeout occurred, whas just exiting.  Check for TIMEOUT condition and try again up to 100 tries hn
-                if ((status != sr_h.SR_SUCCESS) || (i >= 100))
+				} while (retry);
+                // devnote: When a timeout occurred, the original code exited. Now, check for TIMEOUT condition and try again up to 100 tries hn
+                if ((status != sr_h.SR_SUCCESS) || (i >= 100) || (timeouts >= 100))
                 {
-                    log.TraceEvent(LogLevels.Warning, 0x4f332, "{0}; Unable to set shift register high voltage", sr_h.SRFunctionReturnStatusCode(status));
+                    log.TraceEvent(LogLevels.Warning, 0x4f332, "{0} {1}; Unable to set shift register high voltage", sr_h.SRFunctionReturnStatusCode(status), i);
                 }
             }
 

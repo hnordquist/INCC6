@@ -1,7 +1,7 @@
 /*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -31,10 +31,10 @@ using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
 using LMComm;
-using LMDAQServer;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
 	using NC = NCC.CentralizedState;
@@ -119,11 +119,26 @@ namespace LMDAQ
         {
             if (det.Id.SRType.IsSocketBasedLM())
             {
-                LMInstrument lm = new LMInstrument(det);
-                lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
-                lm.selected = false;  //must broadcast first to get it selected
-                if (!Instruments.All.Contains(lm))
-                    Instruments.All.Add(lm); // add to global runtime list
+				if (det.Id.SRType == InstrType.LMMM)
+				{
+					LMInstrument lm = new LMInstrument(det);
+					lm.DAQState = DAQInstrState.Offline; 
+					lm.selected = false;  //must broadcast first to get it selected
+					if (!Instruments.All.Contains(lm))
+						Instruments.All.Add(lm); // add to global runtime list
+				} 
+				else if (det.Id.SRType == InstrType.MCA527)
+				{
+                    MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+                    mca.DAQState = DAQInstrState.Offline; 
+                    mca.selected = true;
+                    if (!Instruments.Active.Contains(mca))
+                        Instruments.Active.Add(mca);   
+				}
+				else
+				{
+                    // LMMM and MCA-527 are the only socket-based devices supported
+				}
             }
             else if (det.Id.SRType.IsUSBBasedLM())
             {
@@ -136,7 +151,7 @@ namespace LMDAQ
 
 
         /// <summary>
-		/// Threaded handler for Shift Regsiter DAQ support
+		/// Threaded handler for Shift Register DAQ support
 		/// </summary>
         private SRTakeDataHandler _sr;
         public SRTakeDataHandler SRWrangler
@@ -188,7 +203,7 @@ namespace LMDAQ
                 lmn = lmc.NetComm;
 
                 _SL = new Server(lmn.Port, lmn.NumConnections, lmn.ReceiveBufferSize, lmn.subnetip);
-                _SL.Logger = netlog;
+                _SL.Logger = collog;
                 LMMMComm.LMServer = _SL;  // server root visible to COMM class 
                 _SL.clientConnected += SL_ClientConnected;
                 _SL.DataReceived += SL_DataReceived;
@@ -218,44 +233,95 @@ namespace LMDAQ
             GC.Collect();
         }
 
-        // need to call this AFTER the instruments are identified from the sys config
-        internal void ConnectSRInstruments()
+		
+        internal bool CheckCOMPortExistence(int comport)
         {
+			string check = "COM" + comport.ToString();
+            string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
 
-            // start the control thread for each SR and and make sure it is waiting for a command
-            IEnumerator iter = Instruments.Active.GetSREnumerator();
-            while (iter.MoveNext())
+            foreach (string p in ports)
             {
-                SRInstrument sri = (SRInstrument)iter.Current;
-                sri.SRCtrl = SRWrangler.StartSRControl(sri, pceh: (sender, args) =>  // the report progress eh
-                    {
-                        SRControl srctrl = args.UserState as SRControl;
-                        if (srctrl.IsInitialized)
-                            SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 383, "{0}, SRControl {1}: SR status '{2}', SR Control Status '{3}' ({4})",
-                                args.ProgressPercentage, srctrl.Identifier,
-                                INCCSR.SRAPIReturnStatusCode(srctrl.LastSRStatus), INCCSR.SRAPIReturnStatusCode(srctrl.LastMeasStatus), srctrl.fraction);
-                        else
-                        {
-                            SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 384, "{0}, SRControl {1}", args.ProgressPercentage, srctrl.Identifier);
-                        }
-                    },
-                    // the operation complete eh
-                    opeh: SREventHandler
-                    );
+                if (p.CompareTo(check) == 0)
+                {
+                    return true;
+                }
             }
-
-            iter = Instruments.Active.GetSREnumerator();
-            // associate each new SR thread with the current measurement 
-            while (iter.MoveNext())
-            {
-                SRInstrument sri = (SRInstrument)iter.Current;
-                SRWrangler.StartSRActionAndWait(sri.id, SRTakeDataHandler.SROp.InitializeContext);
-            }
-
-            // devnote: the attempt to connect occurs in StartLMCAssay
+            return false;
         }
 
-        void DisconnectFromSRInstruments()
+		// need to call this AFTER the instruments are identified from the sys config
+		internal void ConnectSRInstruments()
+		{
+
+			// start the control thread for each SR and and make sure it is waiting for a command
+			IEnumerator iter = Instruments.Active.GetSREnumerator();
+			while (iter.MoveNext())
+			{
+				SRInstrument sri = (SRInstrument)iter.Current;
+				bool found = false;
+				try // Fix case where crashes because COM port doesn't exist any more..... hn 5.15.2015
+				{
+					if (sri.id.SRType.IsCOMPortBasedSR()) // always true if code gets you here 
+					{
+						if (!CheckCOMPortExistence(sri.id.SerialPort))  // if not found then emit error
+						{
+							collog.TraceInformation("The COM port {0} is no longer available. Instrument {1} cannot be connected. Please set a valid COM port.", sri.id.SerialPort.ToString(), sri.id.DetectorId);
+							string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
+							string ps = string.Empty;
+							if (ports.Length == 0)
+								ps = "No COM ports found";
+							else
+							{
+								ps = "These COM ports are available:";
+								foreach (string p in ports)
+								{
+									ps += (" " + p + ",");
+								}
+							}
+							collog.TraceInformation(ps);
+							sri.selected = false;
+						} else
+							found = true;
+					}
+				} catch (Exception ex)
+				{
+					collog.TraceException(ex);
+				}
+				if (!found)
+				{
+					Instruments.Active.RemoveAll(i => i.selected == false);
+					return;
+				}
+
+				sri.SRCtrl = SRWrangler.StartSRControl(sri, pceh: (sender, args) =>  // the report progress eh
+					{
+						SRControl srctrl = args.UserState as SRControl;
+						if (srctrl.IsInitialized)
+							SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 383, "{0}, SRControl {1}: SR status '{2}', SR Control Status '{3}' ({4})",
+								args.ProgressPercentage, srctrl.Identifier,
+								INCCSR.SRAPIReturnStatusCode(srctrl.LastSRStatus), INCCSR.SRAPIReturnStatusCode(srctrl.LastMeasStatus), srctrl.fraction);
+						else
+						{
+							SRWrangler.Logger.TraceEvent(LogLevels.Verbose, 384, "{0}, SRControl {1}", args.ProgressPercentage, srctrl.Identifier);
+						}
+					},
+					// the operation complete eh
+					opeh: SREventHandler
+					);
+			}
+
+			iter = Instruments.Active.GetSREnumerator();
+			// associate each new SR thread with the current measurement 
+			while (iter.MoveNext())
+			{
+				SRInstrument sri = (SRInstrument)iter.Current;
+				SRWrangler.StartSRActionAndWait(sri.id, SRTakeDataHandler.SROp.InitializeContext);
+			}
+
+			// devnote: the attempt to connect occurs in StartLMCAssay
+		}
+
+		void DisconnectFromSRInstruments()
         {
             IEnumerator iter = Instruments.Active.GetSREnumerator();
             // stop all connected instruments and close the connections
@@ -266,10 +332,9 @@ namespace LMDAQ
             }
         }
 
-        void DisconnectFromLMInstruments()
+        void DisconnectFromLMMMInstruments()
         {
-
-            if (Instruments.Active.HasSocketBasedLM())
+            if (Instruments.Active.HasLMMM())
             {
                 if (_SL == null)
                     return;
@@ -280,7 +345,7 @@ namespace LMDAQ
                 while (iter.MoveNext())
                 {
                     LMInstrument lmi = (LMInstrument)iter.Current;
-                    if (lmi.id.SRType.IsSocketBasedLM())
+                    if (lmi.id.SRType.IsSocketBasedLM())   /// URGENT: implement a new interface implemented for LMMM and MCA-527 separately
                         _SL.StopClient(lmi.instrSocketEvent);
                 }
             }
@@ -292,8 +357,8 @@ namespace LMDAQ
         /// <summary>
         /// send the cancel command to each LMMM, set the instrument state Online to prevent data processing of any additional packets 
         /// </summary>
-        /// <param name="removeCurNCDFile">delete the current NCD files created for the current interval</param>
-        private void StopLMCAssay(bool removeCurNCDFile)
+        /// <param name="removeCurLMDataFile">delete the current LM data files created for the current interval</param>
+        private void StopLMCAssay(bool removeCurLMDataFile)
         {
             collog.TraceEvent(LogLevels.Info, 0, "Stopping assay...");
             CurState.State = DAQInstrState.Online;
@@ -302,17 +367,17 @@ namespace LMDAQ
             foreach (Instrument active in Instruments.Active)
             {
                 //This new from USB version incc6, commenting out has no effect on doubles/triples errors hn 9/22/2014
-                active.StopAssay();
+                active.StopAssay(); // for PTR-32 and MCA527
 
                 // send cancel command to the LMMM instruments
-                if (active is LMInstrument && ((LMInstrument)active).SocketBased())
+                if (active is LMInstrument && (active.id.SRType == InstrType.LMMM))
                 {
                     LMInstrument lmi = active as LMInstrument;
                     LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.cancel, 0, Instruments.Active.RankPositionInList(lmi)); // send to all active, 1 by 1
                     if (collectingFileData && lmi.file != null)
                     {
                         lmi.file.CloseWriter();
-                        if (removeCurNCDFile)
+                        if (removeCurLMDataFile)
                             lmi.file.Delete();
                     }
                     active.DAQState = DAQInstrState.Online;
@@ -320,7 +385,7 @@ namespace LMDAQ
                 else if (active is SRInstrument)
                 {
                     // tell the SR thread handler to cancel it
-                    ctrllog.TraceInformation("Stop SR {0}", active.id.IdentName());
+                    ctrllog.TraceInformation("Stop SR {0}", active.id.Identifier());
                     SRWrangler.StopThread(active as SRInstrument, true);
                     active.DAQState = DAQInstrState.Offline;
                 }
@@ -379,20 +444,22 @@ namespace LMDAQ
             {
                 if (active is SRInstrument)
                 {
-                    ctrllog.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.IdentName());
+                    ctrllog.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.Identifier());
                 }
                 active.DAQState = DAQInstrState.ReceivingData;
 
                 Cycle cycle = new Cycle(ctrllog);
                 cycle.SetUpdatedDataSourceId(active.id); // where the cycle came from, but with updated timestamp
                 CurState.Measurement.Add(cycle);  // todo: this mixes the cycles from the different instruments onto one list, gotta change this now that we are at more than one instrument, well you can simply write iterators that select on specific instrument Ids, over the entire list, or use LINQ select * where dsid == whatever syntax on the list
+                ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0} init", cycle.seq);
 
                 // devnote: file writing is selectable via the UI, and raw analysis should be independently
                 // start the file capture
                 if (active is LMInstrument)
                 {
-                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
-                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32, but not for LMMM
+                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
+                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for LMMM
+                    ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
                 }
                 else
                     active.RDT.StartCycle(cycle);
@@ -415,28 +482,9 @@ namespace LMDAQ
                         // kick off the thread to try and init the SR
                         SRWrangler.StartSRActionAndWait((active as SRInstrument).id, SRTakeDataHandler.SROp.InitializeSR);
                     }
-                    else
-                        if (active is LMInstrument && ((LMInstrument)active).SocketBased())
+                    else if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
                     {
-                        // send go commands to the instruments
-                        //string output = null;
-                        // this is outdated, there can never be more than one virtual LM on current systems (late 2010, mid 2011)
-                        // for each networked instrument.
-                        //     1) Each slave instrument should be set up first and get ready.
-                        //     2) Tell the master (last instrument)    to go.
-                        //if (Instruments.Active.Count > 1 && !CurState.broadcastGo) // the instruments need to be synched 
-                        //{
-                        //    if (active == Instruments.Active.LastActive(typeof(LMInstrument)))  // oooh tricky
-                        //    {
-                        //        output += "master" + LMComm.LMMMLingo.eol;
-                        //    }
-                        //    else // tell other instruments to act as pupils
-                        //    {
-                        //        output += "slave" + LMComm.LMMMLingo.eol;
-                        //    }
-                        //}
-
-                        DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LM
+						DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LMMM
                     }
 
                     // devnote: index might be wrong if some of multiple LMs are disabled via UI. This will require a revisit at integration time 
@@ -445,12 +493,12 @@ namespace LMDAQ
 
             NC.App.Loggers.Flush();
             FireEvent(EventType.ActionInProgress, this);
-            Thread.Sleep(250); // wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
+            Thread.Sleep(250); // LMMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
             // PTR-32
-            // This loop works for PTR-32 instruments, based on an improved instrument and control design
+            // This loop works for PTR-32 (and soon MCA-527) instruments, based on an improved instrument and control design
 
-            // devnote: rewrite SR and LMMM to use the PTR-32 abstractions for measurement control
+            // devnote: rewrite SR and LMMM sections below to use the StartAssay virtual method abstraction for measurement control
             foreach (Instrument instrument in Instruments.Active) {
                 try {
                     instrument.StartAssay(CurState.Measurement);
@@ -462,7 +510,7 @@ namespace LMDAQ
 
             // The following sections are for SR and LMMM 
             // LMMM
-            if (Instruments.Active.HasSocketBasedLM())  // send to a plurality of thresholding units, err, I mean, LM Instruments
+            if (Instruments.Active.HasLMMM())  // send to a plurality of thresholding units, err, I mean, LMMM Instruments
             {
                 if (CurState.broadcastGo) // send go
                 {
@@ -542,7 +590,7 @@ namespace LMDAQ
             if (Instruments.Active.Count > 0)
             { 
                 FireEvent(EventType.ActionInProgress, this);
-                collog.TraceEvent(LogLevels.Info, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
+                collog.TraceEvent(LogLevels.Verbose, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
             }
             return Instruments.Active.Count;
         }
@@ -557,10 +605,10 @@ namespace LMDAQ
 
         static public string MeasStatusString(Measurement m)
         {
-            LMProcessor.MeasurementStatus ms = new LMProcessor.MeasurementStatus();
+            MeasurementStatus ms = new MeasurementStatus();
             return MeasStatusString(ms);
         }
-        static public string MeasStatusString(LMProcessor.MeasurementStatus ms)
+        static public string MeasStatusString(MeasurementStatus ms)
         {
             return ms.ToString();
         }

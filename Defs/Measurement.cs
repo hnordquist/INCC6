@@ -1,5 +1,5 @@
 ﻿/*
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software. 
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -233,6 +233,7 @@ namespace AnalysisDefs
     {
 
         static Dictionary<AssaySelector.MeasurementOption, string> PrintableName;
+        static Dictionary<AssaySelector.MeasurementOption, string> Suffix;
 
         static AssaySelectorExtensions()
         {
@@ -249,12 +250,32 @@ namespace AnalysisDefs
                 PrintableName.Add(AssaySelector.MeasurementOption.holdup, "Holdup");
                 PrintableName.Add(AssaySelector.MeasurementOption.unspecified, "Unspecified");
             }
+
+			if (Suffix == null)
+            {
+                Suffix = new Dictionary<AssaySelector.MeasurementOption, string>();
+                Suffix.Add(AssaySelector.MeasurementOption.rates, "RTS");
+                Suffix.Add(AssaySelector.MeasurementOption.background, "BKG");
+                Suffix.Add(AssaySelector.MeasurementOption.initial, "INS");
+                Suffix.Add(AssaySelector.MeasurementOption.normalization, "NOR");
+                Suffix.Add(AssaySelector.MeasurementOption.precision, "PRE");
+                Suffix.Add(AssaySelector.MeasurementOption.verification, "VER");
+                Suffix.Add(AssaySelector.MeasurementOption.calibration, "CAL");
+                Suffix.Add(AssaySelector.MeasurementOption.holdup, "HUP");
+                Suffix.Add(AssaySelector.MeasurementOption.unspecified, "txt");
+            }
         }
 
         public static string PrintName(this AssaySelector.MeasurementOption src)
         {
             return PrintableName[src];
         }
+
+		public static string INCC5Suffix(this AssaySelector.MeasurementOption src)
+        {
+            return Suffix[src];
+        }
+
 
 
         public static AssaySelector.MeasurementOption SrcToEnum(this string src)
@@ -275,8 +296,8 @@ namespace AnalysisDefs
                 }
             }
 
-            if (!match)  // non-null string that does not match, ry a direct conversion
-                System.Enum.TryParse<AssaySelector.MeasurementOption>(src, out res);
+            if (!match)  // non-null string that does not match, try a direct conversion
+				Enum.TryParse(src, out res);
             return res;
         }
     }
@@ -460,8 +481,7 @@ namespace AnalysisDefs
             get { return mid.MeasOption; }
             // set { mid.MeasOption = value; }
         }
-        public string ResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
-        public List<string> INCCResultsFileNames;  // INCC5-style text files; can have multiple output files if more than one SR params
+        public ResultFiles ResultsFiles; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis,  INCC5-style text files; can have multiple output files if more than one SR params
 
         public double CountTimeInSeconds;
         public ushort CurrentRepetition;
@@ -484,14 +504,23 @@ namespace AnalysisDefs
         /// A Detector has its id, SR params and alpha-beta
         /// 
         /// With LM, an instrument is discovered and created for live DAQ, an associated detector is then created for each virtual SR specified by the user for that instrument.
-        /// For SR, a detector is first created by user, with specif Parms and a type and such, at run-time, whne a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
-        /// In both cases there is an instrument to SR spec relationship that always exists. Each instument can have one SR detector, and one or more virtual detectors in the context of a measurment. Muddy clear!
+        /// For SR, a detector is first created by user, with specific Parms and a type and such, at run-time, when a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
+        /// In both cases there is an instrument to SR spec relationship that always exists. Each instrument can have one SR detector, and one or more virtual detectors in the context of a measurment. Muddy clear!
         ///
         /// </summary>
         public DetectorList Detectors
         {
             get { return mt.Detectors; }
         }
+
+		/// <summary>
+		/// The single detector used for a measurement. Multiple active detectors are not used 
+		/// </summary>
+		public Detector Detector
+        {
+            get { return mt.Detectors[0]; }
+        }
+
         /// <summary>
         ///  The test params are global to all detectors involved in the measurement 
         /// </summary>
@@ -677,42 +706,37 @@ namespace AnalysisDefs
         }
         public bool FirstCycle; // reset at first cycle
 
-        /// <summary>
+		/// <summary>
 		/// True iff there is at least one complete cycle with non-zero total elapsed time.
-        /// And if list mode 
-        ///    and a multiplicity analyzer is defined
-        ///      at least one must have a cycle with a calculated status
-        ///    else
-        ///      one or more cycles exist
-        /// else (using SR data where there is always a multiplicity analzyer defined)
-        ///    at least one must have a cycle with a calculated status
+		/// And if list mode 
+		///    and a multiplicity analyzer is defined
+		///      at least one must have a cycle with a calculated status
+		///    else
+		///      one or more cycles exist
+		/// else (using SR data where there is always a multiplicity analyser defined)
+		///    at least one must have a cycle with a calculated status
 		/// </summary>
 		public bool HasReportableData
-        {
-            get {
-                bool good = CountTimeInSeconds > 0.0;
-                if (good)
-                {
-                    if (Detectors[0].ListMode)
-                    {
-                        if (AnalysisParams.HasMultiplicity())
-                            good = Cycles.HasReportableCycles;
-                        else
-                            good = Cycles.Count > 0;
-                    }
-                    else
-                        good = Cycles.HasReportableCycles;
-                }
-                return good;
-			}	  
+		{
+			get
+			{
+				if (Detector.ListMode)
+				{
+					if (AnalysisParams.HasMultiplicity())
+						return Cycles.HasReportableCycles;
+					else
+						return Cycles.Count > 0;
+				} else
+					return Cycles.HasReportableCycles;
+			}
 		}
 
-        /// <summary>
-        /// Constructs a new Measurement object with default values
-        /// </summary>
-        /// <param name="at">The measurement method or goal</param>
-        /// <param name="logger">the logger handle</param>
-        public Measurement(AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
+		/// <summary>
+		/// Constructs a new Measurement object with default values
+		/// </summary>
+		/// <param name="at">The measurement method or goal</param>
+		/// <param name="logger">the logger handle</param>
+		public Measurement(AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
         {
             mt = new MeasurementTuple();
             this.logger = logger;
@@ -760,7 +784,7 @@ namespace AnalysisDefs
             cycles = new CycleList();
             Messages = new AnalysisMessages();
             cyclestatus = new MeasurementCycleStatusCounts();
-            INCCResultsFileNames = new List<string>();
+			ResultsFiles = new ResultFiles();
         }
 
         /// <summary>
@@ -936,13 +960,16 @@ namespace AnalysisDefs
             IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
             while (iter.MoveNext())
             {
+				bool existed = false;
                 Multiplicity mcr = (Multiplicity)iter.Current;
                 try
                 {
-                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
-                    INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
-                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
-                    INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
+                    existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
+					if (!existed) // it was created just now in PrepareINCCResults
+	                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
+                    existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
+ 					if (!existed) // it was created just now in PrepareINCCMethodResults
+						logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -963,7 +990,7 @@ namespace AnalysisDefs
         {
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserving measurement ...");
             DB.Measurements dbm = new DB.Measurements();
-            long mid = dbm.Add(name: Detectors[0].Id.DetectorName,
+            long mid = dbm.Add(name: Detector.Id.DetectorName,
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
                                 mtype: MeasOption.PrintName(),
                                 filename: MeasurementId.FileName,  // the file names are generated at the end of the process, GenerateReports, update the database at the end
@@ -976,6 +1003,13 @@ namespace AnalysisDefs
             long rid = dbres.Create(mid, this.INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 
+			long c = dbm.CountOf(name: Detector.Id.DetectorName,
+                                dt: MeasDate, 
+                                type: MeasOption.PrintName());
+
+			dbm.UpdateNote(c.ToString(),mid);
+			MeasurementId.UniqueId = mid;
+
             return mid;
         }
 
@@ -985,22 +1019,7 @@ namespace AnalysisDefs
         /// </summary>
         public void PersistFileNames()
         {
-            string filename = ResultsFileName; // start with the LM csv default name, in case this is an LM measurement only
-            // But always use the first INCC5 filename for legacy consistency
-            if (INCCResultsFileNames != null && INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
-                filename = INCCResultsFileNames[0];
-
-            if (!String.IsNullOrEmpty(filename))  // only do the write if it's non-null
-            {
-                DB.Measurements ms = new DB.Measurements();
-                string type = MeasOption.ToString();
-                long id;
-                int dupNum = 0;
-                id = ms.Lookup(AcquireState.detector_id, MeasDate, MeasOption.PrintName());
-
-                logger.TraceEvent(LogLevels.Verbose, 34001, String.Format("Patching in the first file name...{0} " + filename, dupNum == 1 ? "Original measurement" : "Reanalysis #" + dupNum));
-                ms.UpdateFileName(filename, id);
-            }
+			NC.App.DB.AddResultsFileNames(this);
         }
 
         public void AdjustCycleCountsBaseOnStatus(bool curCycleIncomplete)

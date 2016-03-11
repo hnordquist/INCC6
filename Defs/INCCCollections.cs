@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -280,6 +280,15 @@ namespace AnalysisDefs
              return null;
         }
 
+		/// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+			isotopics = null;
+			GetList();
+        }
+
         public void Replace(Isotopics riso)
         {
             Isotopics i = Get(riso.id);
@@ -478,14 +487,15 @@ namespace AnalysisDefs
                 foreach (DataRow dr in dt.Rows)
                 {
                     CompositeIsotopics iso = new CompositeIsotopics();
-                    /*foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+                    foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
                     {
                         if (dt.Columns.IndexOf(v.ToString()) >= 0)
-                            iso.SetValueError((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]), DB.Utils.DBDouble(dr[v.ToString() + "_err"]));
-                    }*/
+                            iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]));
+                    }
                     iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
                     iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
-                    System.Enum.TryParse<CompositeIsotopics.SourceCode>(dr["ci_isotopics_source_code"].ToString(), out  iso.source_code);
+                    iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
+                    System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
                     iso.id = dr["ci_isotopics_id"].ToString();
                     comp_isotopics.Add(iso);
                 }
@@ -753,6 +763,7 @@ namespace AnalysisDefs
 
     public class ItemIdListImpl : IAPI<ItemId>
     {
+
         public ItemIdListImpl()
         {
         }
@@ -814,8 +825,8 @@ namespace AnalysisDefs
         }
         public List<ItemId> GetList()
         {
-            //if (items == null)
-            //{
+            if (items == null)
+            {
                 items = new List<ItemId>();
                 DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.Items);
                 foreach (DataRow dr in dt.Rows)
@@ -823,7 +834,7 @@ namespace AnalysisDefs
                     ItemId ito = GetItemIdByRow(dr,false);
                     items.Add(ito);
                 }
-           // }
+            }
             return items;
         }
         public List<ItemId> GetListByStratumID(string value)
@@ -856,7 +867,14 @@ namespace AnalysisDefs
             }
             return id;
         }
-
+        public void Set()
+        {
+            GetList();
+            foreach (ItemId itid in items)
+            {
+                Set(itid);
+            }
+        }
         public long SetList(List<ItemId> vals = null)
         {
             long res = -1;
@@ -945,6 +963,13 @@ namespace AnalysisDefs
         {
             DB.Items itodb = new DB.Items();
             return itodb.Update(itodb.PrimaryKey(old), NewId);
+        }
+
+		
+        public void Refresh()
+        {
+			items = null;
+			GetList();
         }
     }
 
@@ -1549,7 +1574,7 @@ namespace AnalysisDefs
 
     public class ResultsRecs
     {
-        // map form detector name to general INCC5 results record
+        // map from detector name to general INCC5 results record
         Dictionary<string, List<INCCResults.results_rec>> results;
         public ResultsRecs()
         {
@@ -1559,112 +1584,99 @@ namespace AnalysisDefs
 
         public INCCResults.results_rec GetResultsFor(string detname, MeasId mid)
         {
-            List<INCCResults.results_rec> resultsList = GetList(detname);
-            INCCResults.results_rec rec = resultsList.Find(d => d.MeasurementIdMatch(mid));
+			INCCResults.results_rec rec = Get(mid.UniqueId); 
             return rec;
         }
 
-        public List<INCCResults.results_rec> GetList(string detname)
+        public List<INCCResults.results_rec> GetResultsFor(string detname)
         {
-            Dictionary<string, List<INCCResults.results_rec>> recs = GetMap(detname);
-            if (recs.ContainsKey(detname))
-                return recs[detname];
-            else
-                return new List<INCCResults.results_rec>();
-        }
-
-        public Dictionary<string, List<INCCResults.results_rec>> GetMap(Detector det = null) 
-         // dev note: might soon need a finer filter at the SQL level, to reduce discardable DB overhead here e.g. AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified)
-        {
-            return GetMap(det == null ? string.Empty : det.Id.DetectorName);
-        }
-        public Dictionary<string, List<INCCResults.results_rec>> GetMap(string detname)
-        {
-            results = new Dictionary<string, List<INCCResults.results_rec>>();
-
-            DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.Results, (string.IsNullOrEmpty(detname) ? string.Empty: detname));
+            DB.Results r = new DB.Results();
+            DataTable dt = r.ResultsForDet(detname);
             List<INCCResults.results_rec> res = new List<INCCResults.results_rec>();
             string curr_det = string.Empty;
-            string prev_det = string.Empty;
-
             foreach (DataRow dr in dt.Rows)
             {
-                INCCResults.results_rec resrec = new INCCResults.results_rec();
-                // reconstruct the acquire params used for this measurement result
-                resrec.meas_option = AssaySelectorExtensions.SrcToEnum(dr["meas_option"].ToString());
-                curr_det = dr["detector_name"].ToString();
-                resrec.det = INCCDB.GetDetectorParmsFromDataRow(dr, resultsSubset: true);
-                resrec.acq = INCCDB.GetAcquireParmsFromDataRow(ref curr_det, dr, resultsSubset: true, isLM: resrec.det.ListMode);
-                resrec.tests = TestParamsImpl.GetFromDataRow(dr);
-                resrec.norm = NormParamsImpl.GetFromDataRow(dr, resultsSubset: true);  // dev note: examine the reconstruction code in INCC5 to know if one must blend these values with current normalization settings for this detector?
-                resrec.bkg = BackgroundParamsImpl.GetDataFromRow(dr, resultsSubset: true);
-                resrec.st = INCCDB.GetStratumByRow(dr, resultsSubset: true);
-
-                // item id
-                resrec.item = ItemIdListImpl.GetItemIdByRow(dr, resultsSubset: true);
-                resrec.item.material = string.Copy(resrec.acq.item_type);
-
-                // reconstruct the isotopics used for the measurement results               
-                resrec.iso = IsotopicsListImpl.GetIsotopicsByRow(dr);
-
-                resrec.mcr = new MultiplicityCountingRes();
-                resrec.mcr.Totals = DB.Utils.DBDouble(dr["singles_sum"]);
-                resrec.mcr.S1Sum = DB.Utils.DBDouble(dr["scaler1_sum"]);
-                resrec.mcr.S2Sum = DB.Utils.DBDouble(dr["scaler2_sum"]);
-                resrec.mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc_sum"]);
-                resrec.mcr.ASum = DB.Utils.DBDouble(dr["acc_sum"]);
-                resrec.mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc_sum"].ToString());
-                resrec.mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc_sum"].ToString());
-                resrec.mcr.DeadtimeCorrectedRates.Singles = VTupleHelper.Make(dr, "singles");
-                resrec.mcr.DeadtimeCorrectedRates.Doubles = VTupleHelper.Make(dr, "doubles");
-                resrec.mcr.DeadtimeCorrectedRates.Triples = VTupleHelper.Make(dr, "triples");
-                resrec.mcr.Scaler1 = VTupleHelper.Make(dr, "scaler1");
-                resrec.mcr.Scaler2 = VTupleHelper.Make(dr, "scaler2");
-                resrec.mcr.rates.RawRates.Doubles = VTupleHelper.Make(dr, "uncorrected_doubles");
-                resrec.mcr.singles_multi = DB.Utils.DBDouble(dr["singles_multi"]);
-                resrec.mcr.doubles_multi = DB.Utils.DBDouble(dr["doubles_multi"]);
-                resrec.mcr.triples_multi = DB.Utils.DBDouble(dr["triples_multi"]);
-                resrec.mcr.Mass = DB.Utils.DBDouble(dr["declared_mass"]);
-
-                if (prev_det == string.Empty)
-                    prev_det = curr_det;
-                if (string.Compare(prev_det, curr_det, ignoreCase: true) != 0)
-                {
-                    results.Add(prev_det, res);
-                    res = new List<INCCResults.results_rec>();
-                    prev_det = curr_det;
-                }
-
-                System.Enum.TryParse<AnalysisMethod>(dr["primary_analysis_method"].ToString(), out resrec.primary);
-                resrec.total_number_runs = DB.Utils.DBInt32(dr["total_number_runs"]);
-                resrec.total_good_count_time = DB.Utils.DBDouble(dr["total_good_count_time"]);
-                resrec.net_drum_weight = DB.Utils.DBDouble(dr["net_drum_weight"]);
-                resrec.db_version = DB.Utils.DBDouble(dr["db_version"]);
-                resrec.completed = DB.Utils.DBBool(dr["completed"]);
-
-                long meas_id = DB.Utils.DBInt32(dr["mid"]);
-                DB.Measurements m = new DB.Measurements();
-                DataTable mt = m.Measurement(meas_id);
-                // for now, get the timestamp from the measurements table and place it on the Acquire params instance
-                // NEXT: the result_rec should have one, two or three timestamps, "original_meas_date", and the "passive_DateTime" and the "active_DateTime", but these have not yet been worked out correctly
-                // Should only be one measurement.....
-                foreach (DataRow dm in mt.Rows)
-                {
-                    DateTimeOffset dto = DB.Utils.DBDateTimeOffset(dm["DateTime"]);
-                    resrec.acq.MeasDateTime = dto;
-                    break;
-                }
-
-
-                // add this measurement results to the list of measurements for the current dectector
-                res.Add(resrec);
-            }
-            results.Add(curr_det, res);
-            return results;
-
+                res.Add(RowParser(dr, ref curr_det));
+            }   
+            return res;
         }
 
 
+        public INCCResults.results_rec Get(long mid)
+		{
+			DB.Results r = new DB.Results();
+			DataTable dt = r.Result(mid);
+			INCCResults.results_rec rr = null;
+			string curr_det = string.Empty;
+			foreach (DataRow dr in dt.Rows)
+            {
+				rr = RowParser(dr, ref curr_det);
+				break; // take the first (and only) one
+			}
+			return rr;
+		}
+
+
+		INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
+		{
+            INCCResults.results_rec resrec = new INCCResults.results_rec();
+            // reconstruct the acquire params used for this measurement result
+            resrec.meas_option = AssaySelectorExtensions.SrcToEnum(dr["meas_option"].ToString());
+            resrec.det = INCCDB.GetDetectorParmsFromDataRow(dr, resultsSubset: true);
+            resrec.acq = INCCDB.GetAcquireParmsFromDataRow(ref curr_det, dr, resultsSubset: true, isLM: resrec.det.ListMode);
+            resrec.tests = TestParamsImpl.GetFromDataRow(dr);
+            resrec.norm = NormParamsImpl.GetFromDataRow(dr, resultsSubset: true);  // dev note: examine the reconstruction code in INCC5 to know if one must blend these values with current normalization settings for this detector?
+            resrec.bkg = BackgroundParamsImpl.GetDataFromRow(dr, resultsSubset: true);
+            resrec.st = INCCDB.GetStratumByRow(dr, resultsSubset: true);
+
+            // item id
+            resrec.item = ItemIdListImpl.GetItemIdByRow(dr, resultsSubset: true);
+            resrec.item.material = string.Copy(resrec.acq.item_type);
+
+            // reconstruct the isotopics used for the measurement results               
+            resrec.iso = IsotopicsListImpl.GetIsotopicsByRow(dr);
+
+            resrec.mcr = new MultiplicityCountingRes();
+            resrec.mcr.Totals = DB.Utils.DBDouble(dr["singles_sum"]);
+            resrec.mcr.S1Sum = DB.Utils.DBDouble(dr["scaler1_sum"]);
+            resrec.mcr.S2Sum = DB.Utils.DBDouble(dr["scaler2_sum"]);
+            resrec.mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc_sum"]);
+            resrec.mcr.ASum = DB.Utils.DBDouble(dr["acc_sum"]);
+            resrec.mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc_sum"].ToString());
+            resrec.mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc_sum"].ToString());
+            resrec.mcr.DeadtimeCorrectedRates.Singles = VTupleHelper.Make(dr, "singles");
+            resrec.mcr.DeadtimeCorrectedRates.Doubles = VTupleHelper.Make(dr, "doubles");
+            resrec.mcr.DeadtimeCorrectedRates.Triples = VTupleHelper.Make(dr, "triples");
+            resrec.mcr.Scaler1 = VTupleHelper.Make(dr, "scaler1");
+            resrec.mcr.Scaler2 = VTupleHelper.Make(dr, "scaler2");
+            resrec.mcr.rates.RawRates.Doubles = VTupleHelper.Make(dr, "uncorrected_doubles");
+            resrec.mcr.singles_multi = DB.Utils.DBDouble(dr["singles_multi"]);
+            resrec.mcr.doubles_multi = DB.Utils.DBDouble(dr["doubles_multi"]);
+            resrec.mcr.triples_multi = DB.Utils.DBDouble(dr["triples_multi"]);
+            resrec.mcr.Mass = DB.Utils.DBDouble(dr["declared_mass"]);
+
+            System.Enum.TryParse<AnalysisMethod>(dr["primary_analysis_method"].ToString(), out resrec.primary);
+            resrec.total_number_runs = DB.Utils.DBInt32(dr["total_number_runs"]);
+            resrec.total_good_count_time = DB.Utils.DBDouble(dr["total_good_count_time"]);
+            resrec.net_drum_weight = DB.Utils.DBDouble(dr["net_drum_weight"]);
+            resrec.db_version = DB.Utils.DBDouble(dr["db_version"]);
+            resrec.completed = DB.Utils.DBBool(dr["completed"]);
+
+            resrec.MeasId = DB.Utils.DBInt32(dr["mid"]);
+            DB.Measurements m = new DB.Measurements();
+            DataTable mt = m.Measurement(resrec.MeasId);
+            // for now, get the timestamp from the measurements table and place it on the Acquire params instance
+            // NEXT: the result_rec should have one, two or three timestamps, "original_meas_date", and the "passive_DateTime" and the "active_DateTime", but these have not yet been worked out correctly
+            // Should only be one measurement.....
+            foreach (DataRow dm in mt.Rows)
+            {
+                DateTimeOffset dto = DB.Utils.DBDateTimeOffset(dm["DateTime"]);
+                resrec.acq.MeasDateTime = dto;
+                break;
+            }
+
+			return resrec;
+		}
     }
 
     public static class VTupleHelper
@@ -2633,19 +2645,19 @@ namespace AnalysisDefs
             db = new DB.Descriptors(table);
         }
     }
-    public class DetectorTypes : DescListImpl
+    public class DetectorTypes // : DescListImpl
     {
         public DetectorTypes()
-            : base(DB.Pieces.DetectorTypes, "detector_types")
+           // : base(DB.Pieces.DetectorTypes, "detector_types")
         {
-            db = new DB.Descriptors(table);
+           // db = new DB.Descriptors(table);
         }
 
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
-        /// This funtion adds the JSR-15 to the list
+        /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
-
+        
         public List<INCCDB.Descriptor> GetINCC5SRList()
         {
             if (mlimited == null)
@@ -2662,7 +2674,27 @@ namespace AnalysisDefs
             return mlimited;
         }
 
+        public List<INCCDB.Descriptor> GetLMList()
+        {
+            if (lmlimited == null)
+            {
+                lmlimited = new List<INCCDB.Descriptor>();
+                INCCDB.Descriptor d = new INCCDB.Descriptor("LMMM", "LMMM (LANL)"); lmlimited.Add(d);
+                d = new INCCDB.Descriptor("PTR32", "PTR-32"); lmlimited.Add(d);
+                d = new INCCDB.Descriptor("MCA527", "GBS Elektronik GmbH"); lmlimited.Add(d);
+             }
+            return lmlimited;
+        }
         protected List<INCCDB.Descriptor> mlimited = null;
+        protected List<INCCDB.Descriptor> lmlimited = null;
+
+        public INCCDB.Descriptor Get()
+        {
+            GetINCC5SRList();
+            GetLMList();
+            return null;
+        }
+
     }
     public class IOCodes : DescListImpl
     {
@@ -2809,7 +2841,7 @@ namespace AnalysisDefs
                 {
                     {
                         DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.Detectors);
-                        detectors = new DetectorList();
+                        detectors = new   DetectorList();
                         foreach (DataRow dr in dt.Rows)
                         {
 
@@ -2838,7 +2870,7 @@ namespace AnalysisDefs
                                 DataRow drl = lmdt.Rows[0];
                                 lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
                                 lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
-                                lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]);
+                                lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
                                 lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
                                 lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
                                 try
@@ -2941,6 +2973,8 @@ namespace AnalysisDefs
 
             ap.drum_empty_weight = DB.Utils.DBDouble(dr["drum_empty_weight"].ToString());
             ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);
+            if (dr.Table.Columns.Contains("CheckDate"))
+                ap.CheckDateTime = DB.Utils.DBDateTimeOffset(dr["CheckDate"]);
             ap.meas_detector_id = dr["meas_detector_id"].ToString();
 
             if (isLM)  // named detector is an LM, get the xtra params, unless they failed to get in DB
@@ -2958,8 +2992,6 @@ namespace AnalysisDefs
                     ap.lm.HVX = DB.Utils.DBBool(dr["hvx"]);
                     ap.lm.Feedback = DB.Utils.DBBool(dr["feedback"]);
                     ap.lm.SaveOnTerminate = DB.Utils.DBBool(dr["saveOnTerminate"]);
-                    //ap.lm.DailyResultsPath = DB.Utils.DBBool(dr["resultsAutoPath"]);
-
                     if (!dr["results"].Equals(System.DBNull.Value))
                         ap.lm.Results = (string)(dr["results"]);
                     ap.lm.IncludeConfig = DB.Utils.DBBool(dr["includeConfig"]);
@@ -2976,10 +3008,8 @@ namespace AnalysisDefs
                 catch (ArgumentException)
                 {
                 }
-                //DateTimeOffset.TryParse(dr["MeasDate"].ToString(), out ap.lm.TimeStamp);
                 ap.lm.TimeStamp = ap.MeasDateTime;
-
-            }
+             }
             return ap;
         }
 
@@ -3092,23 +3122,22 @@ namespace AnalysisDefs
     }
     public AcquireParameters LastAcquire()
     {
-        var res =   // this finds all acquire params, then sorts the saved params by date
-                    (from aq in NC.App.DB.AcquireParametersMap()
-                     orderby aq.Value.MeasDateTime descending
+         List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion key
+                    (from aq in NC.App.DB.AcquireParametersMap
+                     orderby aq.Value.CheckDateTime descending
                      select aq).ToList();  // force eval
-        List<KeyValuePair<AcquireSelector, AcquireParameters>> l = res.ToList(); 
         if (l.Count > 0)
             return l.First().Value; // get the newest, it is the first on the sorted list
         else
             return new AcquireParameters();
     }
 
-        public AcquireParameters LastAcquireFor(Detector d)
+        public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
         {
             List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
-                                    (from aq in NC.App.DB.AcquireParametersMap()
-                                     where string.Equals(d.Id.DetectorId, aq.Value.detector_id)
-                                     orderby aq.Value.MeasDateTime descending
+                                    (from aq in NC.App.DB.AcquireParametersMap
+                                     where (string.Equals(d.Id.DetectorId, aq.Value.detector_id) && string.Equals(mtl_type, aq.Value.item_type))
+                                     orderby aq.Value.CheckDateTime descending
                                      select aq).ToList();  // force eval
             if (res.Count > 0)
                 return res.First().Value;  // get the newest, it is the first on the sorted list
@@ -3116,25 +3145,41 @@ namespace AnalysisDefs
                 return null;
         }
 
-        public Dictionary<AcquireSelector, AcquireParameters> AcquireParametersMap()
+		public AcquireParameters LastAcquireFor(Detector d)
         {
-            if (acqParameters == null)
+            List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
+                                    (from aq in NC.App.DB.AcquireParametersMap
+                                     where string.Equals(d.Id.DetectorId, aq.Value.detector_id)
+                                     orderby aq.Value.CheckDateTime descending
+                                     select aq).ToList();  // force eval
+            if (res.Count > 0)
+                return res.First().Value;  // get the newest, it is the first on the sorted list
+            else
+                return null;
+        }
+
+        public Dictionary<AcquireSelector, AcquireParameters> AcquireParametersMap
+        {
+            get
             {
-                acqParameters = new Dictionary<AcquireSelector, AcquireParameters>();
-                foreach (Detector d in Detectors)
+                if (acqParameters == null)
                 {
-                    DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.AcquireParams, d.Id.DetectorName);
-                    foreach (DataRow dr in dt.Rows)
+                    acqParameters = new Dictionary<AcquireSelector, AcquireParameters>();
+                    foreach (Detector d in Detectors)
                     {
-                        string det = d.Id.DetectorName;
-                        AcquireParameters ap = GetAcquireParmsFromDataRow(ref det, dr, resultsSubset:false, isLM:d.ListMode);
-                        acqParameters.Add(new AcquireSelector(d, ap.item_type, ap.MeasDateTime), ap);
+                        DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.AcquireParams, d.Id.DetectorName);
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            string det = d.Id.DetectorName;
+                            AcquireParameters ap = GetAcquireParmsFromDataRow(ref det, dr, resultsSubset: false, isLM: d.ListMode);
+                            AcquireSelector acs = new AcquireSelector(d, ap.item_type, ap.MeasDateTime);
+                            if (!acqParameters.ContainsKey(acs))
+                                acqParameters.Add(acs, ap);
+                        }
                     }
-
-
                 }
+                return acqParameters;
             }
-            return acqParameters;
         }
         private Stratums stratums;
         public Stratums Stratums
@@ -3447,8 +3492,7 @@ namespace AnalysisDefs
                 MeasId MeaId = new MeasId(
                     AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
                     DB.Utils.DBDateTimeOffset(dr["DateTime"]),
-                    dr["FileName"].ToString());
-                MeaId.UniqueId = DB.Utils.DBInt32(dr["id"]); // db table key actually
+                    dr["FileName"].ToString(), DB.Utils.DBInt32(dr["id"])); // db table key actually
                 foo.Add(MeaId);
             }
 
@@ -3456,14 +3500,10 @@ namespace AnalysisDefs
             {
                 ResultsRecs recs = new ResultsRecs();
 
-                Dictionary<string, List<INCCResults.results_rec>> results = recs.GetMap(detectorName);
-                List<INCCResults.results_rec> resultsList;
-                results.TryGetValue(detectorName, out resultsList);
-
                 // get the traditional results rec that matches the measurement id 
                 foreach (MeasId mid in foo)
                 {
-                    INCCResults.results_rec rec = resultsList.Find(d => d.MeasurementIdMatch(mid));
+                    INCCResults.results_rec rec = recs.Get(mid.UniqueId); 
                     if (rec == null)
                         continue;
                     // To support UI operations on measurement lists, copy the item id from the results into the measurement id
@@ -3473,24 +3513,14 @@ namespace AnalysisDefs
             return foo;            
         }
 
-
-        // NEXT: write a get MeasurementResults pairs method set, for Meas reconstruction in Reanalysis feature
-    
-        public List<Measurement> MeasurementsFor(Detector det = null, string MeasType = "")
+ 
+        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified)
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
-            AssaySelector.MeasurementOption option = AssaySelectorExtensions.SrcToEnum(MeasType);
             ResultsRecs recs = new ResultsRecs();
 
-            Dictionary <string, List<INCCResults.results_rec>> results = recs.GetMap(det);
-            List <INCCResults.results_rec> resultsList;
-            results.TryGetValue(det.Id.DetectorName, out resultsList);
-
-            if (det != null)
-                dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, det.Id.DetectorName);
-            else
-                dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements);
+			dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, det.Id.DetectorName);
 
             foreach (DataRow dr in dt_meas.Rows)
             {
@@ -3506,27 +3536,45 @@ namespace AnalysisDefs
                 MeasId MeaId = new MeasId(
                     AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
                     DB.Utils.DBDateTimeOffset(dr["DateTime"]),
-                    dr["FileName"].ToString());
+                    dr["FileName"].ToString(), DB.Utils.DBInt32(dr["id"])); // db table key actually
 
                 // get the traditional results rec that matches the measurement id 
-                if (resultsList == null)
-                    resultsList = new List<INCCResults.results_rec>();
                 //This does not, in fact, get an item id......hn 9.10.2015
-                INCCResults.results_rec rec = resultsList.Find(d => d.MeasurementIdMatch(MeaId));
-                
-                if (rec != null)
-                { 
-                    Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
-                    MeaId.Item.Copy(rec.item);
-                    ms.Add(m);
-                   if (m.INCCResultsFileNames != null && !string.IsNullOrEmpty(dr["FileName"].ToString()))
-                        m.INCCResultsFileNames.Add (dr["FileName"].ToString());
-                }
-                // TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
-            }
+                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId); //resultsList.Find(d => d.MeasurementIdMatch(MeaId));
+
+				if (rec != null)
+				{
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+					MeaId.Item.Copy(rec.item);
+					ms.Add(m);
+					if (m.ResultsFiles != null)
+					{
+						bool LMOnly = (option == AssaySelector.MeasurementOption.unspecified);
+						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+						List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+						foreach (string rfpath in lrfpaths)
+							m.ResultsFiles.Add(LMOnly, rfpath);
+					}
+				}
+				// TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
+			}
 
             return ms;
         }
+
+		List<string> GetResultFiles(MeasId id)
+		{
+			List<string> l = new List<string> ();
+
+            DB.Measurements ms = new DB.Measurements();
+            DataTable dt = ms.GetResultFiles(id.UniqueId);  // this specific measurement id's results files
+            foreach (DataRow dr in dt.Rows)
+            {
+				l.Add(dr["FileName"].ToString());
+			}
+			return l;
+		}
 
         /// <summary>
         /// Construxt the CycleList from a stored measurement identified by the detector and the MeasId
@@ -3538,12 +3586,12 @@ namespace AnalysisDefs
         public CycleList GetCycles(Detector det, MeasId mid)
         {
             CycleList cl = new CycleList();
+			if (mid.UniqueId <= 0)
+				return cl;
+
             DB.Measurements ms = new DB.Measurements();
             DataTable dt = null;
-            if (mid.UniqueId > 0)
-                dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
-            else
-                dt = ms.GetCycles(det.Id.DetectorName, mid.MeasDateTime, mid.MeasOption.PrintName()); // closest match to the details
+            dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
             int seq = 0;
             foreach (DataRow dr in dt.Rows)
             {
@@ -3555,7 +3603,18 @@ namespace AnalysisDefs
                 c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
                 c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
                 c.seq = seq;
-                c.HitsPerChannel[0] = c.Totals;
+                if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(System.DBNull.Value)))
+				{
+					double[] att =  DB.Utils.ReifyDoubles((string)dr["chnhits"]);
+					if (att.Length > 0)  // there was something there, use it
+						c.HitsPerChannel = att;
+					else
+						c.HitsPerChannel[0] = c.Totals;
+				}
+				else
+				{
+	                c.HitsPerChannel[0] = c.Totals;
+				}
 
                 c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(det.MultiplicityParams.FA, 0);
@@ -3590,7 +3649,7 @@ namespace AnalysisDefs
         public bool AddCycles(CycleList cl, Detector det, Measurement m)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(det.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = m.MeasurementId.UniqueId;
             if (mid <= 0)
                 return false;
 
@@ -3629,32 +3688,62 @@ namespace AnalysisDefs
         // URGENT: design db tables for LM-specific results and implement parameter generator here (per cycle results)
         // invoke at the appropriate time from the single cycle with return value entry point
 
-        public void AddResultsFileName(Measurement m)
+        public void AddResultsFileNames(Measurement m)
         {
-            string filename = m.ResultsFileName; // start with the LM csv default name, in case this is an LM measurement only
-            // But always use the first INCC5 filename for legacy consistency
-            if (m.INCCResultsFileNames != null && m.INCCResultsFileNames.Count > 0) // need a defined filename and fully initialized Measurement here
-                filename = m.INCCResultsFileNames[0];
+            string primaryFilename = string.Empty; 
+			bool skipTheFirstINCC5File = false;
+			// Always use the first INCC5 filename for legacy consistency
+            if (m.ResultsFiles != null && m.ResultsFiles.Count > 0) // need a defined filename and fully initialized Measurement here
+			{
+                primaryFilename = m.ResultsFiles.PrimaryINCC5Filename.Path;
+				skipTheFirstINCC5File = true;
+			}
+            if (string.IsNullOrEmpty(primaryFilename))  // try the LM csv default name, this might be an LM measurement only
+                primaryFilename = m.ResultsFiles.CSVResultsFileName.Path;
+            if (string.IsNullOrEmpty(primaryFilename))  // only do the write if it's non-null
+				return;
 
-            if (!string.IsNullOrEmpty(filename))  // only do the write if it's non-null
-            { 
-                DB.Measurements ms = new DB.Measurements();
-                string type = m.MeasOption.ToString();
-                long id = ms.Lookup(m.AcquireState.detector_id, m.MeasDate, m.MeasOption.PrintName());
-                ms.UpdateFileName(filename, id);
-            }         
+			DB.Measurements ms = new DB.Measurements();
+            string type = m.MeasOption.ToString();
+            long mid = m.MeasurementId.UniqueId;
+			if (mid < 0) // no such measurement
+				return;
+            ms.UpdateFileName(primaryFilename, mid);
+
+			// now add the remaining file names to the extended table
+			List<ResultFile> rfl = new List<ResultFile>();
+			if (skipTheFirstINCC5File && m.ResultsFiles.Count() > 1)
+			{
+				if (!string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
+				{
+					rfl.Add(m.ResultsFiles.CSVResultsFileName);
+					rfl.AddRange(m.ResultsFiles.GetRange(1,m.ResultsFiles.Count() - 1));
+				}
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
+				{
+					rfl.Add(m.ResultsFiles.CSVResultsFileName);
+					rfl.AddRange(m.ResultsFiles);
+				}
+			}
+			if (rfl.Count() > 0)
+				AddResultsFiles(rfl, mid, ms);
+      
         }
-        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, Measurement m)
+
+		public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, Measurement m)
         {
             DB.Measurements ms = new DB.Measurements();
-            long mid = ms.Lookup(det.Id.DetectorName, m.MeasDate, m.MeasOption.PrintName());
+            long mid = m.MeasurementId.UniqueId;
             if (mid <= 0)
                 return false;
 
-            return AddAnalysisMessages(msgs, det, mid, ms);
+            return AddAnalysisMessages(msgs, mid, ms);
         }
 
-        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, Detector det, long mid, DB.Measurements db = null)
+        public bool AddAnalysisMessages(List<MeasurementMsg> msgs, long mid, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -3670,12 +3759,28 @@ namespace AnalysisDefs
             return true;
         }
 
+		public bool AddResultsFiles(List<ResultFile> names, long mid, DB.Measurements db = null)
+        {
+            if (db == null)
+                db = new DB.Measurements();
+            int imc = names.Count;
+            List<DB.ElementList> mlist = new List<DB.ElementList>();
+            for (int ic = 0; ic < imc; ic++)
+            {
+                ResultFile c = names[ic];
+                c.GenParamList();
+                mlist.Add(c.ToDBElementList(generate: false));
+            }
+            db.AddResultsFiles(mid, mlist);
+            return true;
+        }
+
         public void UpdateAcquireParams(Detector det)
         {
             DB.AcquireParams aqdb = new DB.AcquireParams();
             AnalysisDefs.AcquireParameters acq = null;            
             var res =   // this finds the acquire params for the given detector and acquire type
-                    from aq in this.AcquireParametersMap()
+                    from aq in AcquireParametersMap
                     where aq.Value.detector_id == det.Id.DetectorId
                     orderby aq.Value.MeasDateTime descending
                     select aq;
@@ -3685,16 +3790,32 @@ namespace AnalysisDefs
                 UpdateAcquireParams(acq, det.ListMode,aqdb);
             }
         }
+        public void AddAcquireParams(AcquireSelector sel, AcquireParameters acq)
+        {
+            AcquireParametersMap.Add(sel, acq);
+            UpdateAcquireParams(acq, sel.Detector.ListMode);
+        }
+        public void ReplaceAcquireParams(AcquireSelector sel, AcquireParameters acq)
+        { 
+            if (AcquireParametersMap.ContainsKey(sel))
+            {
+                AcquireParametersMap.Remove(sel);
+            }
+            AcquireParametersMap.Add(sel, acq);
+            UpdateAcquireParams(acq, sel.Detector.ListMode);
+        }
 
         public void UpdateAcquireParams(AcquireParameters acq, bool isLM = false, DB.AcquireParams aqdb = null)
         {
             if (aqdb == null)
                 aqdb = new DB.AcquireParams();
             DB.ElementList saParams;
+            DateTimeOffset pre = acq.CheckDateTime;     // devnote, internal timestamp always set here and only here
+            acq.CheckDateTime = DateTimeOffset.Now;
             saParams = acq.ToDBElementList();
             bool ok = false;
             bool acqThere = aqdb.Has(acq.MeasDateTime, acq.detector_id, acq.item_type);
-            if (!acqThere) // item not there, so add it
+            if (!acqThere) // acq not there, so add it
             {
                 ok = aqdb.Create(saParams);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34011, MakeFrag(ok) + " new acquisition state {0} {1}", acq.MeasDateTime, acq.detector_id);
@@ -3706,6 +3827,8 @@ namespace AnalysisDefs
             }
             if (ok)
                 acq.modified = false;
+            else // restore the check date, the acq record did not get saved
+                acq.CheckDateTime = pre;
 
             if (isLM)
             {
@@ -3821,7 +3944,7 @@ namespace AnalysisDefs
             
             if (!db.DefinitionExists(els))
             {
-                long id = db.Insert(det.Id.DetectorId, det.Id.IdentName(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
+                long id = db.Insert(det.Id.DetectorId, det.Id.Identifier(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34013, MakeIdFrag(id) + " for detector {0}", det.Id.DetectorName);
             }
             else
@@ -3832,10 +3955,30 @@ namespace AnalysisDefs
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
 
-            UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
-            UpdateDetectorαβ(det, db);
+			UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
+			UpdateDetectorαβ(det, db);
         }
-        // update the accumulated changes on the global list
+
+		
+        public bool UpdateDetectorFields(Detector det, DB.Detectors db = null)
+        {
+            if (db == null) db = new DB.Detectors();
+           
+            DB.ElementList els = null;
+            els = new DB.ElementList();
+            els.Add(new DB.Element("detector_name",det.Id.DetectorName)); 
+            bool b = false;
+            if (db.DefinitionExists(els))
+            {
+                DB.ElementList full = det.Id.ToDBElementList();
+                full.AddRange(els);
+                b = db.Update(det.Id.DetectorName, full);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
+            }
+			return b;
+        }
+
+		        // update the accumulated changes on the global list
         public void UpdateDetectors()
         {
             DB.Detectors db = new DB.Detectors();

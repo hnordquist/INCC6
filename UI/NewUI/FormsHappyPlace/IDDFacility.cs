@@ -145,8 +145,7 @@ namespace NewUI
                 acq.MeasDateTime = sel.TimeStamp;
                 acq.lm.TimeStamp = sel.TimeStamp;
                 // facility and mba already set by selector handlers
-                NC.App.DB.AcquireParametersMap().Add(sel, acq);  // it's a new one, not the existing one modified
-                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+                NC.App.DB.AddAcquireParams(sel, acq);  // it's a new one, not the existing one modified
             }
 
             if (det.Id.modified)

@@ -106,7 +106,7 @@
             // RestoreFileDialog
             // 
             this.RestoreFileDialog.CheckFileExists = false;
-            this.RestoreFileDialog.FileName = "RestoreFileDialog";
+            this.RestoreFileDialog.FileName = "";
             // 
             // IDDRestoreInitialData
             // 

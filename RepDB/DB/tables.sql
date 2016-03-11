@@ -369,6 +369,7 @@ CREATE TABLE analysis_method_rec(
 );
 GO
 CREATE TABLE acquire_parms_rec(
+	[id] INTEGER Primary Key,
 	[facility] nvarchar(256) NULL,
 	[facility_description] nvarchar(1024) NULL,
 	[mba] nvarchar(256) NULL,
@@ -411,12 +412,8 @@ CREATE TABLE acquire_parms_rec(
 	[collar_mode] int NULL,
 	[drum_empty_weight] float NULL,
 	[MeasDate] nvarchar(40) NOT NULL,
-	[meas_detector_id] nvarchar(256) NOT NULL,
-   CONSTRAINT [dtd] PRIMARY KEY 
-(
-	[meas_detector_id],
-	[item_type]
-)
+	[CheckDate] nvarchar(40) NOT NULL,
+	[meas_detector_id] nvarchar(256) NOT NULL
 );
 GO
 CREATE TABLE add_a_source_setup_rec(
@@ -772,7 +769,7 @@ CREATE TABLE LMAcquireParams(
 	[lm] int NULL, 
 	[MeasDate] nvarchar(40) NOT NULL,
 	[item_type] nvarchar(256) NULL,
-	[FADefault] not NULL default 1,
+	[FADefault] int not NULL default 1,
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE,
 	CONSTRAINT [dtd] PRIMARY KEY 
 (
@@ -818,7 +815,11 @@ CREATE TABLE LMINCCAppContext(
 	[autoCreateMissing] int NULL,
 	[overwriteDefs] int NULL,
 	[gen5RevDataFile] int NULL,
-	[liveFileWrite] int NULL
+	[liveFileWrite] int NULL,
+	[resultsFilePath] ntext NULL, 
+	[logFilePath] ntext NULL,
+	[results8Char] int NULL,
+	[assayTypeSuffix] int NULL
 );
 GO
 /* for Feynman, Rossi, Time, etc. */
@@ -900,4 +901,6 @@ GO
 CREATE INDEX  alpha_beta_recixdid on alpha_beta_rec(detector_id);
 GO
 CREATE INDEX LMHWParamsixdid on LMHWParams(detector_id);
+GO
+CREATE INDEX LMAcquireParamsixdid on LMAcquireParams(MeasDate);
 GO

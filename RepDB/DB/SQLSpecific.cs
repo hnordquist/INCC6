@@ -204,7 +204,7 @@ namespace DB
                 case DBMain.DbsWeLove.SQLServerClient:
                     return "SELECT IDENT_CURRENT ('" + table + "') AS Current_Identity";
                 case DBMain.DbsWeLove.SQLCE4:
-                    return "SELECT @@IDENTITY AS [Sheila]";
+                    return "SELECT @@IDENTITY AS " + table; //?? placeholder
                 default:
                     return "";
             }

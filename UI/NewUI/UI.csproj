@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <DefineConstants Condition=" !$(DefineConstants.Contains(';NET')) ">$(DefineConstants);$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+    <DefineConstants Condition=" $(DefineConstants.Contains(';NET')) ">$(DefineConstants.Remove($(DefineConstants.LastIndexOf(";NET"))));$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -42,6 +46,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -51,6 +56,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>rel.ico</ApplicationIcon>
@@ -622,12 +628,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDReviewAssay.Designer.cs">
       <DependentUpon>IDDReviewAssay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDReviewAssayMeas.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDReviewAssayMeas.Designer.cs">
-      <DependentUpon>IDDReviewAssayMeas.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDReviewAssaySummary.cs">
       <SubType>Form</SubType>
@@ -1554,9 +1554,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewAssay.resx">
       <DependentUpon>IDDReviewAssay.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDReviewAssayMeas.resx">
-      <DependentUpon>IDDReviewAssayMeas.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReviewAssaySummary.resx">
       <DependentUpon>IDDReviewAssaySummary.cs</DependentUpon>
     </EmbeddedResource>
@@ -1659,8 +1656,9 @@
     <EmbeddedResource Include="Unready\SortPulseFiles.resx">
       <DependentUpon>SortPulseFiles.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
@@ -1730,6 +1728,16 @@
   <PropertyGroup>
     <PostBuildEvent>copy /B /V /Y "$(TargetPath)" "$(SolutionDir)deployment"
 copy /B /V /Y "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6.1')))) &gt;= 0">$(DefineConstants);NETFX_461</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6'))))   &gt;= 0">$(DefineConstants);NETFX_46</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.2')))) &gt;= 0">$(DefineConstants);NETFX_452</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.1')))) &gt;= 0">$(DefineConstants);NETFX_451</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5'))))   &gt;= 0">$(DefineConstants);NETFX_45</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.0'))))   &gt;= 0">$(DefineConstants);NETFX_40</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.5'))))   &gt;= 0">$(DefineConstants);NETFX_35</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.0'))))   &gt;= 0">$(DefineConstants);NETFX_30</DefineConstants>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

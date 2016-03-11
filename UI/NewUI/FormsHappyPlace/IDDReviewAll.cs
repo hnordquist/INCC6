@@ -1,8 +1,7 @@
-﻿using AnalysisDefs;
-/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+﻿/*
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,24 +26,28 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
+using AnalysisDefs;
 namespace NewUI
 {
 
-    using NC = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
 
     public partial class IDDReviewAll : Form
     {
 
-        public IDDReviewAll()
+		bool bLMOnly = false;
+
+        public IDDReviewAll(bool LMOnly)
         {
             InitializeComponent();
-            
+			bLMOnly = LMOnly;
+  			Detector det = Integ.GetCurrentAcquireDetector();
+			this.Text += " for Detector " + det.Id.DetectorId;          
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList("");
+            IDDMeasurementList measlist = new IDDMeasurementList(bLMOnly ? "unspecified" : "");
             measlist.ShowDialog();
         }
 

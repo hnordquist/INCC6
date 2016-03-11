@@ -516,7 +516,7 @@ namespace LMComm
 
         // 
         // cStatus = 0,0,2,500,506,2500,200,0 as of Dec 2010 rev HW
-        public void SplitCStatusResponse(string received, ref LMDAQ.LMInstrStatus st)
+        public void SplitCStatusResponse(string received, ref Instr.LMInstrStatus st)
         {
             try
             {
@@ -568,7 +568,7 @@ namespace LMComm
             }
         }
 
-        public void SplitHVCalibResponse(string received, ref LMDAQ.HVControl.HVStatus hvst)
+        public void SplitHVCalibResponse(string received, ref DAQ.HVControl.HVStatus hvst)
         {
             try
             {
@@ -579,7 +579,7 @@ namespace LMComm
                 commlog.TraceEvent(LogLevels.Error, 892, "SplitHVCalibResponse barfed on:" + received + "; " + e.Message);
             }
         }
-        public void SplitPowerReadResponse(string received, ref LMDAQ.PowerStatus p)
+        public void SplitPowerReadResponse(string received, ref Instr.PowerStatus p)
         {
             try
             {
@@ -598,7 +598,7 @@ namespace LMComm
                 commlog.TraceEvent(LogLevels.Error, 892, "SplitPowerReadResponse barfed on:" + received + "; " + e.Message);
             }
         }
-        public void SplitRatesReadResponse(string received, ref LMDAQ.RatesStatus p)
+        public void SplitRatesReadResponse(string received, ref Instr.RatesStatus p)
         {
             try
             {

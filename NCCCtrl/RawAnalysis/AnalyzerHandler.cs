@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -26,7 +26,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -66,7 +65,7 @@ namespace LMRawAnalysis
         private UInt64 numNeutronEventsReceived;
         private UInt64 numNeutronEventsReceivedWhetherProcessedOrNot;
         private UInt32 numCircuits;
-        private UInt64 numNeutronEventsCompleted;
+        private UInt64 numNeutronEventsCompleted, accumuNumNeutronEventsCompleted;
 
         private UInt64 timeOfLastNeutronEvent;
 
@@ -83,6 +82,21 @@ namespace LMRawAnalysis
 #if USE_SPINTIME
         public long spinTimeStart;
 #endif
+
+		public double TickSizeInSeconds
+		{
+			set
+			{
+				ticSizeInSeconds = value;
+				if (ticSizeInSeconds == 1e-7)
+				{
+					timeBaseConversion = 1ul;  // no external to internal conversion
+				} else if (ticSizeInSeconds == 1e-8)
+				{
+					timeBaseConversion = 10ul; // shift gate units from tics (1e-7) to shakes (1e-8)
+				}
+			}
+		}
 
         #region Events
 
@@ -101,22 +115,14 @@ namespace LMRawAnalysis
         public AnalyzerHandler(double theTicSizeInSeconds, LMLoggers.LognLM logger)
         {
 
-            ticSizeInSeconds = theTicSizeInSeconds;
+            TickSizeInSeconds = theTicSizeInSeconds;
             log = logger;
             verboseTrace = log.ShouldTrace(LogLevels.Verbose);
             numNeutronEventsReceived = 0;
             numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0;
-            numCircuits = 0;
+            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
+          numCircuits = 0;
             timeOfLastNeutronEvent = 0;
-            if (ticSizeInSeconds == 1e-7)
-            {
-                timeBaseConversion = 1ul;  // no external to internal conversion
-            }
-            else if (ticSizeInSeconds == 1e-8)
-            {
-                timeBaseConversion = 10ul; // shift gate units from tics (1e-7) to shakes (1e-8)
-            }
 
 #if USE_SPINTIME
             ResetSpinTime();
@@ -552,7 +558,7 @@ namespace LMRawAnalysis
 
                         //FINISHED passing this neutron event to all the analyzers.
                         numNeutronEventsCompleted += (UInt64)numEventsThisBlock;
-
+                        accumuNumNeutronEventsCompleted += (UInt64)numEventsThisBlock;
                         //See if there are any more neutron events
                         PermissionToUseEndOfEventsWait();
                         //see if we have processed the last neutron...
@@ -704,7 +710,7 @@ namespace LMRawAnalysis
         void AHWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             AHWorkerHasCompleted = true;
-            FireAnalysesCompletedEvent("AnalyzerHandler thread completed.");
+            FireAnalysesCompletedEvent("list mode analysis completed.");
         }
         #endregion
 
@@ -779,6 +785,7 @@ namespace LMRawAnalysis
                                                         deadTimeCoefficientAinMicroSecs,
                                                         deadTimeCoefficientBinPicoSecs,
                                                         deadTimeCoefficientCinNanoSecs);
+			ma.Log = log;
             multiplicityFastBackgroundAnalyzers.Add(ma);
 
             log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicityFastBGAnalyzer with gate= " + gateWidthInTics
@@ -816,6 +823,7 @@ namespace LMRawAnalysis
                                                         deadTimeCoefficientAinMicroSecs,
                                                         deadTimeCoefficientBinPicoSecs,
                                                         deadTimeCoefficientCinNanoSecs);
+			ma.Log = log;
             multiplicitySlowBackgroundAnalyzers.Add(ma);
 
             log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicitySlowBGAnalyzer with gate= " + gateWidthInTics
@@ -952,9 +960,9 @@ namespace LMRawAnalysis
         #endregion
 
         #region InputNeutronDataForAnalysis
-        public void HandleANeutronEvent(UInt64 timeOfNewEvent, UInt32 neutronsOfNewEvent)
+        public void HandleANeutronEvent(ulong timeOfNewEvent, uint neutronsOfNewEvent)
         {
-            UInt32 numNeutrons;
+            uint numNeutrons;
 
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot++;
@@ -1036,10 +1044,10 @@ namespace LMRawAnalysis
 
         public void HandleAnArrayOfNeutronEvents(List<ulong> timeOfNewEvents, List<uint> neutronsOfNewEvents, int actualEventCount)
         {
-            UInt32 numNeutrons, aNeutronEvent;
+            uint numNeutrons, aNeutronEvent;
             int which, numEvents;
 
-            if (timeOfNewEvents.Count != neutronsOfNewEvents.Count)  // URGENT: new list semantics, was this conditional is unneeded now the actualEventCount param is in use
+            if (timeOfNewEvents.Count != neutronsOfNewEvents.Count)  // note: new list semantics, this conditional may be unneeded now that the actualEventCount param is in use
             {
                 String theProblem = "Array lengths unequal: time[" + timeOfNewEvents.Count + "] neutrons[" + neutronsOfNewEvents.Count + "]";
                 FireBlockCountMismatchErrorEvent(theProblem);
@@ -1092,7 +1100,7 @@ namespace LMRawAnalysis
 
                     //place the new neutron data in the data-holder at the end of the list
                     aNeutronEvent = neutronsOfNewEvents[which];
-                    endOfNeutronEventList.eventTime = timeOfNewEvents[which];
+                    endOfNeutronEventList.eventTime = timeOfLastNeutronEvent;
                     endOfNeutronEventList.eventNeutrons = aNeutronEvent;
                     numNeutrons = 0;
                     while (aNeutronEvent != 0)
@@ -1192,6 +1200,7 @@ namespace LMRawAnalysis
             //get technical-performance info
             status.numNeutronEventsReceived = numNeutronEventsReceived;
             status.numNeutronEventsProcessed = numNeutronEventsCompleted;
+            status.accumuNumNeutronEventsCompleted = accumuNumNeutronEventsCompleted;
             status.capacityOfQueue = (UInt64)numEventsInCircularLinkedList;
             status.numCircuits = numCircuits;
             status.numNeutronEventsReceivedWhetherProcessedOrNot = numNeutronEventsReceivedWhetherProcessedOrNot;

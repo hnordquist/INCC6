@@ -1,8 +1,7 @@
-﻿using NCCConfig;
-/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+﻿/*
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -30,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using NCCConfig;
 namespace NewUI
 {
 
@@ -44,6 +44,9 @@ namespace NewUI
             maybe.Add(NCCFlags.auxRatioReport, NC.App.AppContext.AuxRatioReport);
             maybe.Add(NCCFlags.autoCreateMissing, NC.App.AppContext.AutoCreateMissing);
             maybe.Add(NCCFlags.root, NC.App.AppContext.RootLoc);
+            maybe.Add(NCCFlags.logFileLoc, NC.App.AppContext.LogFilePath);
+            maybe.Add(NCCFlags.resultsFileLoc, NC.App.AppContext.ResultsFilePath);
+            maybe.Add(NCCFlags.fileinput, NC.App.AppContext.FileInput);
             maybe.Add(NCCFlags.dailyRootPath, NC.App.AppContext.DailyRootPath);
             maybe.Add(NCCFlags.fpPrec, NC.App.AppContext.FPPrecision);
             maybe.Add(NCCFlags.INCCParity, NC.App.AppContext.INCCParity);
@@ -53,41 +56,67 @@ namespace NewUI
             maybe.Add(NCCFlags.overwriteImportedDefs, NC.App.AppContext.OverwriteImportedDefs);
             maybe.Add(NCCFlags.openResults, NC.App.AppContext.OpenResults);
             maybe.Add(NCCFlags.gen5TestDataFile, NC.App.AppContext.CreateINCC5TestDataFile);    
+            maybe.Add(NCCFlags.results8Char, NC.App.AppContext.Results8Char);    
+            maybe.Add(NCCFlags.assayTypeSuffix, NC.App.AppContext.AssayTypeSuffix);    
+            maybe.Add(NCCFlags.serveremulation, NC.App.AppContext.UseINCC5Ini);    
+            maybe.Add(NCCFlags.emulatorapp, NC.App.AppContext.INCC5IniLoc);    
 
             InitializeComponent();
 
-            this.WorkingDirTextBox.Tag = root.Tag = NCCFlags.root;
-            this.DailyF0lder.Tag = NCCFlags.dailyRootPath;
-            this.IsoFractionalDay.Tag = NCCFlags.INCCParity;
-            this.PollTimer.Tag = NCCFlags.opStatusTimeInterval;
-            this.PollPacket.Tag = NCCFlags.opStatusPktInterval;
-            this.Replay.Tag = NCCFlags.replay;
-            this.FPPrec.Tag = NCCFlags.fpPrec;
-            this.EnableAuxRatioReportingCheckBox.Tag = NCCFlags.auxRatioReport;
-            this.EnableSilentFolderCreationCheckBox.Tag = NCCFlags.autoCreateMissing;
-            this.OverwriteImportedDefs.Tag = NCCFlags.overwriteImportedDefs;
-            this.AutoOpenCheckBox.Tag = NCCFlags.openResults;
-            this.RevFileGen.Tag = NCCFlags.gen5TestDataFile;
+            WorkingDirTextBox.Tag = root.Tag = NCCFlags.root;
+            LogFileLoc.Tag = logLoc.Tag = NCCFlags.logFileLoc;
+            ResultsFileLoc.Tag = resultsLoc.Tag = NCCFlags.resultsFileLoc;
+            DataFileLoc.Tag = dataLoc.Tag = NCCFlags.fileinput;
+            DailyF0lder.Tag = NCCFlags.dailyRootPath;
+            IsoFractionalDay.Tag = NCCFlags.INCCParity;
+			RevFileGen.Tag = NCCFlags.gen5TestDataFile;
+            PollTimer.Tag = NCCFlags.opStatusTimeInterval;
+            PollPacket.Tag = NCCFlags.opStatusPktInterval;
+            Replay.Tag = NCCFlags.replay;
+            FPPrec.Tag = NCCFlags.fpPrec;
+            EnableAuxRatioReportingCheckBox.Tag = NCCFlags.auxRatioReport;
+            EnableSilentFolderCreationCheckBox.Tag = NCCFlags.autoCreateMissing;
+            OverwriteImportedDefs.Tag = NCCFlags.overwriteImportedDefs;
+            AutoOpenCheckBox.Tag = NCCFlags.openResults;
+			Use8Char.Tag = NCCFlags.results8Char;
+			UseINCC5Suffix.Tag = NCCFlags.assayTypeSuffix;
+			UseINCC5Ini.Tag = NCCFlags.serveremulation;
+			Incc5IniFileLoc.Tag = NCCFlags.emulatorapp;
 
             DailyF0lder.Checked = NC.App.AppContext.DailyRootPath;
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
+            LogFileLoc.Text = NC.App.AppContext.LogFilePath;
+            ResultsFileLoc.Text = NC.App.AppContext.ResultsFilePath;
+            DataFileLoc.Text = NC.App.AppContext.FileInput;
             FPPrec.SelectedItem = NC.App.AppContext.FPPrecision.ToString();
             EnableAuxRatioReportingCheckBox.Checked = NC.App.AppContext.AuxRatioReport;
             EnableSilentFolderCreationCheckBox.Checked = NC.App.AppContext.AutoCreateMissing;
             OverwriteImportedDefs.Checked = NC.App.AppContext.OverwriteImportedDefs;
             AutoOpenCheckBox.Checked = NC.App.AppContext.OpenResults;
             IsoFractionalDay.Checked = NC.App.AppContext.INCCParity;
-            this.RevFileGen.Checked = NC.App.AppContext.CreateINCC5TestDataFile;
+            RevFileGen.Checked = NC.App.AppContext.CreateINCC5TestDataFile;
             Replay.Checked = NC.App.AppContext.Replay;
             PollPacket.Text = NC.App.AppContext.StatusPacketCount.ToString();
             PollTimer.Text = NC.App.AppContext.StatusTimerMilliseconds.ToString();
+			Use8Char.Checked = NC.App.AppContext.Results8Char;
+			UseINCC5Suffix.Checked = NC.App.AppContext.AssayTypeSuffix;
+			Use8Char.Text = "Use INCC5 results file naming (" + AnalysisDefs.MethodResultsReport.EightCharConvert(DateTimeOffset.Now) + ")";
+			UseINCC5Ini.Checked = NC.App.AppContext.UseINCC5Ini;
+			Incc5IniFileLoc.Text = NC.App.AppContext.INCC5IniLoc;
 
+			// hide these if the relevant flag is not set
+			UseINCC5IniLocLabel.Visible =  NC.App.AppContext.UseINCC5Ini;
+			Incc5IniFileLoc.Visible =  NC.App.AppContext.UseINCC5Ini;
+			incc5IniLoc.Visible = NC.App.AppContext.UseINCC5Ini;
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.auxRatioReport] != NC.App.AppContext.AuxRatioReport);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.autoCreateMissing] !=NC.App.AppContext.AutoCreateMissing);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.root] !=NC.App.AppContext.RootLoc);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.logFileLoc] !=NC.App.AppContext.LogFilePath);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.resultsFileLoc] !=NC.App.AppContext.ResultsFilePath);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.fileinput] !=NC.App.AppContext.FileInput);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.dailyRootPath] !=NC.App.AppContext.DailyRootPath);
             NC.App.AppContext.modified |= ((UInt16)maybe[NCCFlags.fpPrec] !=NC.App.AppContext.FPPrecision);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.INCCParity] !=NC.App.AppContext.INCCParity);
@@ -97,14 +126,22 @@ namespace NewUI
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.overwriteImportedDefs] != NC.App.AppContext.OverwriteImportedDefs);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.openResults] != NC.App.AppContext.OpenResults);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.gen5TestDataFile] != NC.App.AppContext.CreateINCC5TestDataFile);
-            if (!NC.App.AppContext.modified)
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.results8Char] != NC.App.AppContext.Results8Char);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.assayTypeSuffix] != NC.App.AppContext.AssayTypeSuffix);
+            NC.App.AppContext.modified |= ((string)maybe[NCCFlags.emulatorapp] != NC.App.AppContext.INCC5IniLoc);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.serveremulation] != NC.App.AppContext.UseINCC5Ini);
+            if (!NC.App.AppContext.modified)  // nothing 
             {
                 Close();
                 return;
             }
+			// copy any changes back to the context
             NC.App.AppContext.AuxRatioReport = (bool)maybe[NCCFlags.auxRatioReport];
             NC.App.AppContext.AutoCreateMissing = (bool)maybe[NCCFlags.autoCreateMissing];
             NC.App.AppContext.RootPath = (string)maybe[NCCFlags.root];
+            NC.App.AppContext.LogFilePath = (string)maybe[NCCFlags.logFileLoc];
+            NC.App.AppContext.ResultsFilePath = (string)maybe[NCCFlags.resultsFileLoc];
+            NC.App.AppContext.FileInput = (string)maybe[NCCFlags.fileinput];
             NC.App.AppContext.DailyRootPath = (bool)maybe[NCCFlags.dailyRootPath];
             NC.App.AppContext.FPPrecision = (UInt16)maybe[NCCFlags.fpPrec];
             NC.App.AppContext.INCCParity = (bool)maybe[NCCFlags.INCCParity];
@@ -114,6 +151,10 @@ namespace NewUI
             NC.App.AppContext.OverwriteImportedDefs = (bool)maybe[NCCFlags.overwriteImportedDefs];
             NC.App.AppContext.OpenResults = (bool)maybe[NCCFlags.openResults];
             NC.App.AppContext.CreateINCC5TestDataFile = (bool)maybe[NCCFlags.gen5TestDataFile];
+			NC.App.AppContext.Results8Char = (bool)maybe[NCCFlags.results8Char];
+			NC.App.AppContext.AssayTypeSuffix = (bool)maybe[NCCFlags.assayTypeSuffix];
+			NC.App.AppContext.INCC5IniLoc = (string)maybe[NCCFlags.emulatorapp];
+            NC.App.AppContext.UseINCC5Ini = (bool)maybe[NCCFlags.serveremulation];
             NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
             Close();
         }
@@ -124,7 +165,7 @@ namespace NewUI
             string str = UIIntegration.GetUsersFolder("Working folder (the current directory) location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
 
             //Adding date to this path is sticking.  Need to just display the root location. hn 10-2
-            //Checking for extra date presence to skipp it, to keep the daily path override of the overall root path in play, to fix  hn 10-2 bug,
+            //Checking for extra date presence to skip it, to keep the daily path override of the overall root path in play, to fix  hn 10-2 bug,
 
             if (!String.IsNullOrEmpty(str))
             {
@@ -229,5 +270,109 @@ namespace NewUI
         {
             maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
         }
-    }
+
+		private void logLoc_Click(object sender, EventArgs e)
+		{
+            string str = UIIntegration.GetUsersFolder("Log file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!String.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				LogFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					LogFileLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+
+		}
+
+		private void resultsLoc_Click(object sender, EventArgs e)
+		{
+            string str = UIIntegration.GetUsersFolder("Results file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!String.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				ResultsFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+		}
+
+		private void dataLoc_Click(object sender, EventArgs e)
+		{
+            string str = UIIntegration.GetUsersFolder("Data file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!String.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					DataFileLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+		}
+
+		private void LogFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.logFileLoc], true))
+			{
+				maybe[NCCFlags.logFileLoc] = str;
+				LogFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					LogFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
+		}
+
+		private void ResultsFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.resultsFileLoc], true))
+			{
+				maybe[NCCFlags.resultsFileLoc] = str;
+				ResultsFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					ResultsFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
+		}
+
+		private void DataFileLoc_Leave(object sender, EventArgs e)
+		{
+			string str = ((TextBox)sender).Text;
+			if (0 != string.Compare(str, (string)maybe[NCCFlags.fileinput], true))
+			{
+				maybe[NCCFlags.fileinput] = str;
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					DataFileLoc.Text = System.IO.Path.GetFullPath(str);
+			}
+		}
+
+		private void Use8Char_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+
+		}
+
+		private void UseINCC5Suffix_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+		}
+
+		private void incc5IniLoc_Click(object sender, EventArgs e)
+		{
+			string str = UIIntegration.GetUsersFolder("Data file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
+            if (!string.IsNullOrEmpty(str))
+            {
+                maybe[(NCCFlags)((Control)sender).Tag] = str;
+				DataFileLoc.Text = str;
+				if (!string.IsNullOrEmpty(str))
+					incc5IniLoc.Text = System.IO.Path.GetFullPath(str);
+            }
+		}
+
+		private void UseINCC5Ini_CheckedChanged(object sender, EventArgs e)
+		{
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+			UseINCC5IniLocLabel.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			Incc5IniFileLoc.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+			incc5IniLoc.Visible = (bool) maybe[(NCCFlags)((Control)sender).Tag];
+		}
+	}
 }

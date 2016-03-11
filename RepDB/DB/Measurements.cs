@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -73,12 +73,12 @@ namespace DB
             return db.DT(sSQL);
         }
         // t is the measurement option
-        public DataTable Measurement(string name, DateTimeOffset dt, string t)
-        {
-            db.SetConnection();
-            long id = Lookup(name, dt, t);
-            return Measurement(id);
-        }
+        //public DataTable Measurement(string name, DateTimeOffset dt, string t)
+        //{
+        //    db.SetConnection();
+        //    long id = Lookup(name, dt, t);
+        //    return Measurement(id);
+        //}
         public DataTable Measurement(long M_id)
         {
             db.SetConnection();
@@ -86,12 +86,12 @@ namespace DB
             return db.DT(sSQL);
         }
 
-        public long PrimaryKey(string name, DateTimeOffset dt, string type = null)
-        {
-            db.SetConnection();
-            long id = Lookup(name, dt, type);
-            return id;
-        }
+        //public long PrimaryKey(string name, DateTimeOffset dt, string type = null)
+        //{
+        //    db.SetConnection();
+        //    long id = Lookup(name, dt, type);
+        //    return id;
+        //}
 
         public long Create(ElementList sParams) 
         {
@@ -125,26 +125,43 @@ namespace DB
             return db.Execute(s);
         }
 
-        public bool Delete(string name, DateTimeOffset dt, string type)
-        {
-            db.SetConnection();
-            long id = Lookup(name, dt, type);
-            string s = "DELETE FROM measurements where id=" + id.ToString();
-            return db.Execute(s);
-        }
+        //public bool Delete(string name, DateTimeOffset dt, string type)
+        //{
+        //    db.SetConnection();
+        //    long id = Lookup(name, dt, type);
+        //    string s = "DELETE FROM measurements where id=" + id.ToString();
+        //    return db.Execute(s);
+        //}
         /// <summary>
         /// Look up the measurement identified by name, measurement type and timestamp
         /// </summary>
         /// <param name="name">detector</param>
         /// <param name="dt">timestamp</param>
         /// <param name="type">measurement type</param>
-        /// <returns>if found, the measurement primary key, o.w. -1</returns>
-        public long Lookup(string name, DateTimeOffset dt, string type)
+        /// <param name="counter">nth instance of this measurement, unique id it when other 3 values are identical</param>
+        /// <returns>if found, the newest matching measurement primary key, o.w. -1</returns>
+        public long Lookup(string name, DateTimeOffset dt, string type, int counter)
         {
             if (String.IsNullOrEmpty(name))
                 return -1;
             db.SetConnection();
             string s = "SELECT * FROM measurements WHERE detector_id=" + SQLSpecific.QVal(name) + " AND DateTime=" + SQLSpecific.getDate(dt);
+            if (!String.IsNullOrEmpty(type))
+                s += " AND Type=" + SQLSpecific.QVal(type);
+
+            string r = db.Scalar(s);
+            long lr = -1;
+            if (!Int64.TryParse(r, out lr))
+                lr = -1;
+            return lr;
+        }
+
+		public long CountOf(string name, DateTimeOffset dt, string type)
+        {
+            if (String.IsNullOrEmpty(name))
+                return 0;
+            db.SetConnection();
+            string s = "SELECT COUNT(*) FROM measurements WHERE detector_id=" + SQLSpecific.QVal(name) + " AND DateTime=" + SQLSpecific.getDate(dt);
             if (!String.IsNullOrEmpty(type))
                 s += " AND Type=" + SQLSpecific.QVal(type);
 
@@ -174,6 +191,14 @@ namespace DB
             string sSQL1 = "UPDATE measurements SET FileName = " +  SQLSpecific.QVal(fileName ) + wh;
             return db.Execute(sSQL1);
         }
+		public bool UpdateNote(string notes, long Meas_ID)
+        {
+            db.SetConnection();
+            string wh = " where id = " + Meas_ID.ToString();
+            string sSQL1 = "UPDATE measurements SET Notes = " +  SQLSpecific.QVal(notes) + wh;
+            return db.Execute(sSQL1);
+        }
+
         /// Messages /////////////////////////////////////////
         public bool AddMessages(long Measurement_ID, List<ElementList> sParams)
         {
@@ -188,6 +213,25 @@ namespace DB
             return db.ExecuteTransaction(sqlList);
         }
 
+		/// Additional results file names /////////////////////////////////////////
+        public bool AddResultsFiles(long Measurement_ID, List<ElementList> sParams)
+        {
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQLa = "Insert into results_filenames ";
+            foreach (ElementList sParam in sParams)
+            {
+                sParam.Add(new Element("mid",Measurement_ID));
+                sqlList.Add(sSQLa + sParam.ColumnsValues);
+            }
+            return db.ExecuteTransaction(sqlList);
+        }
+        public DataTable GetResultFiles(long mid)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * FROM results_filenames Where mid=" + mid;
+            return db.DT(sSQL);
+        }
         /// Cycles /////////////////////////////////////////
         ///
         /// yes
@@ -226,16 +270,6 @@ namespace DB
                 sqlList.Add(sSQL);
             }
             return db.ExecuteTransaction(sqlList);
-        }
-
-
-        public DataTable GetCycles(string name, DateTimeOffset dt, string type)
-        {
-            long mid = Lookup(name, dt, type);
-            if (mid > 0)
-                return GetCycles(mid);
-            else
-                return new DataTable("cycles");
         }
 
         public DataTable GetCycles(long mid)

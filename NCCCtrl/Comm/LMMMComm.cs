@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software. 
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -34,8 +34,8 @@ using System.Text;
 using System.Threading;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQServer;
 using NCCReporter;
+using Instr;
 namespace LMComm
 {
 
@@ -105,7 +105,7 @@ namespace LMComm
         {
             cmdprocessor.SplitBroadcastResponse(received, ref itype, ref iname, ref iversion);
         }
-        public void SplitCStatusResponse(string received, ref LMDAQ.LMInstrStatus st)
+        public void SplitCStatusResponse(string received, ref Instr.LMInstrStatus st)
         {
             cmdprocessor.SplitCStatusResponse(received, ref st);
         }
@@ -113,7 +113,7 @@ namespace LMComm
         {
             cmdprocessor.SplitHVReadResponse(received, ref hv);
         }
-        public void SplitHVCalibResponse(string received, ref LMDAQ.HVControl.HVStatus hvst)
+        public void SplitHVCalibResponse(string received, ref DAQ.HVControl.HVStatus hvst)
         {
             cmdprocessor.SplitHVCalibResponse(received, ref hvst);
         }
@@ -121,11 +121,11 @@ namespace LMComm
         {
             cmdprocessor.SplitLLDReadResponse(received, ref hv);
         }
-        public void SplitRatesReadResponse(string received,  ref LMDAQ.RatesStatus p)
+        public void SplitRatesReadResponse(string received,  ref Instr.RatesStatus p)
         {
             cmdprocessor.SplitRatesReadResponse(received, ref p);
         }
-        public void SplitPowerReadResponse(string received, ref LMDAQ.PowerStatus p)
+        public void SplitPowerReadResponse(string received, ref Instr.PowerStatus p)
         {
             cmdprocessor.SplitPowerReadResponse(received, ref p);
         }
@@ -149,25 +149,25 @@ namespace LMComm
          
 
         //
-        // "Send" wrapper hiding socket and the looping over list of LMs
+        // "Send" wrapper hiding socket and the looping over list of LMMMs
         //
-        private void SendToLM(string cmd, Int32 specificLMIndex = -1)
+        private void SendToLMMM(string cmd, Int32 specificLMIndex = -1)
         {
-            if (!LMDAQ.Instruments.Active.HasSocketBasedLM())
+            if (!Instruments.Active.HasLMMM())
             {
-                commlog.TraceEvent(LogLevels.Warning, 325, "No LM instruments available to receive '" + cmd + "'");
+                commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
                 return;
             }
             try
             {
                 if (CurrentLM == -1 && specificLMIndex == -1)  // all of them
                 {
-                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LM instruments on the subnet");
-                    IEnumerator iter = LMDAQ.Instruments.Active.GetLMEnumerator();
+                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
+                    IEnumerator iter = Instruments.Active.GetLMEnumerator();
                     while (iter.MoveNext())
                     {
-                        LMDAQ.LMInstrument lmi = (LMDAQ.LMInstrument)iter.Current;
-                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + LMDAQ.Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
+                        LMInstrument lmi = (LMInstrument)iter.Current;
+                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent);
                     }
                 }
@@ -175,10 +175,10 @@ namespace LMComm
                 {
                     int index = specificLMIndex > -1 ? specificLMIndex : CurrentLM;  // index override from live call in main code, not from command line
                     // make sure the element is actually there
-                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LM instrument {0} on the subnet", index);
-                    LMDAQ.LMInstrument lmi = LMDAQ.Instruments.Active.FindByIndexer(index);
+                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
+                    LMInstrument lmi = Instruments.Active.FindByIndexer(index);
                     if (lmi == null) // index must always be less than Count, the list is 0 based
-                        commlog.TraceEvent(LogLevels.Warning, 325, "No LM instrument {0} available", index);
+                        commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
                     else
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent); 
                 }
@@ -202,20 +202,19 @@ namespace LMComm
         {
             bool res = true;
 
-            if (NC.App.AppContext.Emulate)
+            if (NC.App.AppContext.UseINCC5Ini)
             { // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
-                DivertToEmulation(op, 0, -1);
             }
             else
             try {
                 string cmds = cmdprocessor.ComposeCommandStrings(cmd, 0);
                 if (cmds.Length > 0)
                 {
-                    LMConnectionInfo net = ((LMConnectionInfo)(NC.App.Opstate.Measurement.Detectors[0].Id.FullConnInfo));
-                    // broadcast go message to all cfg.Net.Subnet addresses.    This is the instrument group.
+                    LMConnectionInfo net = ((LMConnectionInfo)(NC.App.Opstate.Measurement.Detector.Id.FullConnInfo));
+                    // broadcast go message to all cfg.Net.Subnet addresses. This is the instrument group.
                     Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     IPAddress broadcast = IPAddress.Parse(net.NetComm.Subnet);
                     if (terminator) cmds += LMMMLingo.eol;
@@ -247,12 +246,11 @@ namespace LMComm
         {
             bool res = true;
 
-            if (NC.App.AppContext.Emulate)
+            if (NC.App.AppContext.UseINCC5Ini)
             {   // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
                 LMMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
-                DivertToEmulation(op, arg, LMRankPosition);
             }
             else
             {
@@ -261,7 +259,7 @@ namespace LMComm
                     string cmds = cmdprocessor.ComposeCommandStrings(cmd, arg);
                     if (cmds.Length > 0)
                     {
-                        SendToLM(cmds, LMRankPosition);
+                        SendToLMMM(cmds, LMRankPosition);
                     }
                 }
                 catch (Exception e)
@@ -272,7 +270,7 @@ namespace LMComm
             return res;
         }
 
-        internal Thread ProcessUserCommand(LMMMLingo.OpDesc cmdt, string tline, LMDAQ.DAQControl control, ref bool keepgoing)
+        internal Thread ProcessUserCommand(LMMMLingo.OpDesc cmdt, string tline, DAQ.DAQControl control, ref bool keepgoing)
         {
             Thread t = null;
             // each prompt command might have a '=' followed by a single numeric argument e.g. cmd = 1
@@ -360,29 +358,11 @@ namespace LMComm
 
         public void Settle()  // this could go into the dispose or finalize#
         {
-            if (emulator != null)
-                emulator.Stop();
+
         }
         
-        bool DivertToEmulation(LMMMLingo.OpDesc op, Int32 arg, Int32 LMIndex)
-        {
-            if (emulator != null)
-            {
-                return emulator.DivertToEmulation(op, arg, LMIndex);
-            }
-            else
-            {
-                return false;
-            }
-        }
 
-        private MLMEmulation.IEmulatorDiversion emulator = null;
 
-        internal MLMEmulation.IEmulatorDiversion EmulatorInstance
-        {
-            get { return emulator; }
-            set { emulator = value; }
-        }
         int CurrentLM
         { get { return NC.App.Opstate.Measurement.AcquireState.lm.LM; } set { NC.App.Opstate.Measurement.AcquireState.lm.LM = value; } }
          //

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016, Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -609,10 +609,11 @@ namespace AnalysisDefs
             set;
         }
         /// <summary>
-        /// Uniquely identifies measurment with shared datetime and option properties 
+        /// Uniquely identifies measurement with shared datetime and option properties 
         /// In INCC5, the time 1s increment coupled with the file name seemed to cover this case
+		/// In INCC6, use the measurement sinternal unique key value
         /// </summary>
-        public int UniqueId
+        public long UniqueId
         {
             get;
             set;
@@ -642,6 +643,7 @@ namespace AnalysisDefs
             MeasDateTime = new DateTimeOffset(src.MeasDateTime.Ticks, src.MeasDateTime.Offset);
             Item = new ItemId(src.Item);
             FileName = string.Copy(src.FileName);
+			UniqueId = src.UniqueId;
         }
         public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, ItemId it = null)
         {
@@ -651,11 +653,12 @@ namespace AnalysisDefs
             FileName = string.Empty;
         }
 
-        public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, string fn)
+        public MeasId(AssaySelector.MeasurementOption op, DateTimeOffset dt, string fn, long mid)
         {
             MeasOption = op;
             MeasDateTime = new DateTimeOffset(dt.Ticks, dt.Offset);
             FileName = String.Copy(fn);
+			UniqueId = mid;
             Item = new ItemId();
         }
         // expanded info
@@ -682,6 +685,8 @@ namespace AnalysisDefs
             if (res == 0)
                 res = MeasDateTime.CompareTo(other.MeasDateTime);
             if (res == 0)
+                res = UniqueId.CompareTo(other.UniqueId);
+            if (res == 0)
                 res = FileName.CompareTo(other.FileName);
             if (res == 0 && Item != null && other.Item != null)
                 res = Item.CompareTo(other.Item);
@@ -696,6 +701,8 @@ namespace AnalysisDefs
             res = MeasOption.Equals(other.MeasOption);
             if (res)
                 res = MeasDateTime.Equals(other.MeasDateTime);
+            if (res)
+                res = UniqueId.Equals(other.UniqueId);
             if (res)
                 res = FileName.Equals(other.FileName);
             //if (res && Item != null && other.Item != null)
@@ -732,7 +739,7 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="mkey"></param>
         /// <param name="mcr"></param>
-        public void PrepareINCCResults(AssaySelector.MeasurementOption option, Multiplicity mkey, MultiplicityCountingRes mcr)
+        public bool PrepareINCCResults(AssaySelector.MeasurementOption option, Multiplicity mkey, MultiplicityCountingRes mcr)
         {
             INCCResult newmcr;
             MeasOptionSelector ar = new MeasOptionSelector(option, mkey);
@@ -747,6 +754,7 @@ namespace AnalysisDefs
                 //   newmcr.idx = mcr.idx;
                 Results.Add(ar, newmcr);
             }
+			return good;
         }
 
         // this is silly, this is why we do OO design and I havent done it here
@@ -809,15 +817,15 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="mkey"></param>
         /// <param name="sel"></param>
-        public void PrepareINCCMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector sel, Measurement m)
+        public bool PrepareINCCMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector sel, Measurement m)
         {
             INCCMethodResults imr;
             AnalysisMethods am = m.INCCAnalysisState.Methods;
             if (am == null)//this shouldn't EVER happen hn 5.7.2015
                 am = new AnalysisMethods();
-            bool good = Results.MethodsResults.TryGetValue(mkey, out imr);
+            bool existed = Results.MethodsResults.TryGetValue(mkey, out imr);
             // first look for the incc results map
-            if (!good || imr == null) // add new method map to results for this key
+            if (!existed || imr == null) // add new method map to results for this key
             {
                 imr = new INCCMethodResults();
                 Results.MethodsResults.Add(mkey, imr);
@@ -896,7 +904,7 @@ namespace AnalysisDefs
                     }
                 }
             }
-
+			return existed;
             // done!
         }
     }
@@ -966,7 +974,7 @@ namespace AnalysisDefs
         public string io_code;
         public bool collar_mode;
         public double drum_empty_weight;
-        protected DateTimeOffset _MeasDateTime;
+        protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;
 
         public LMAcquireParams lm;
@@ -1001,7 +1009,8 @@ namespace AnalysisDefs
             error_calc_method = ErrorCalculationTechnique.Theoretical;
             inventory_change_code = String.Empty;
             io_code = String.Empty;
-            _MeasDateTime = new DateTimeOffset(2010, 1, 1, 0, 0, 0, DateTimeOffset.Now.Offset);
+            _MeasDateTime = new DateTimeOffset(2016, 2, 6, 0, 0, 0, DateTimeOffset.Now.Offset);
+            _CheckDateTime = DateTimeOffset.Now;
             meas_detector_id = "XXXX/XXX/YY";
             lm = new LMAcquireParams(_MeasDateTime);
             lm.Cycles = num_runs;
@@ -1022,9 +1031,21 @@ namespace AnalysisDefs
             }
         }
 
+        /// Timestamp for last content modification of this acquire record
+        /// not the measuremnt timestamp
+        public DateTimeOffset CheckDateTime
+        {
+            get
+            {
+                return _CheckDateTime;
+            }
+            set
+            {
+                _CheckDateTime = value;
+            }
+        }
         public AcquireParameters(AcquireParameters src)
         {
-
             facility = new INCCDB.Descriptor(src.facility);
             mba = new INCCDB.Descriptor(src.mba);
             detector_id = String.Copy(src.detector_id);
@@ -1064,6 +1085,7 @@ namespace AnalysisDefs
             collar_mode = src.collar_mode;
             drum_empty_weight = src.drum_empty_weight;
             _MeasDateTime = new DateTimeOffset(src._MeasDateTime.Ticks, src._MeasDateTime.Offset);
+            _CheckDateTime = new DateTimeOffset(src._CheckDateTime.Ticks, src._CheckDateTime.Offset);
             meas_detector_id = String.Copy(src.meas_detector_id);
             lm = new LMAcquireParams(src.lm);
         }
@@ -1146,6 +1168,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("collar_mode", collar_mode));
             this.ps.Add(new DBParamEntry("drum_empty_weight", drum_empty_weight));
             this.ps.Add(new DBParamEntry("MeasDate", _MeasDateTime));
+            this.ps.Add(new DBParamEntry("CheckDate", _CheckDateTime));
             this.ps.Add(new DBParamEntry("meas_detector_id", meas_detector_id));
         }
 
@@ -1652,9 +1675,10 @@ namespace AnalysisDefs
         {
             length = 1;
             item = itemName;
-            material = String.Empty; isotopics = String.Empty; stratum = String.Empty; mba = string.Empty;
+            material = String.Empty; stratum = String.Empty; mba = string.Empty;
             inventoryChangeCode = String.Empty; IOCode = String.Empty;
             //We should always put the measurements pu and am dates in the item structure.  hn 11.5.2014
+            isotopics = string.Copy(measIso.id);
             pu_date = measIso.pu_date;
             am_date = measIso.am_date;
         }
@@ -1672,6 +1696,15 @@ namespace AnalysisDefs
             inventoryChangeCode = String.Empty; IOCode = String.Empty;
             pu_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
             am_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
+        }
+
+        public void IsoApply(Isotopics measIso)
+        {
+            if (measIso == null)
+                return;
+            isotopics = string.Copy(measIso.id);   // redundant i am sure
+            pu_date = measIso.pu_date;
+            am_date = measIso.am_date;
         }
 
         public void Copy(ItemId src)
@@ -1925,7 +1958,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("input", Input));
             pb.ps.Add(new DBParamEntry("debug", Debug));
             pb.ps.Add(new DBParamEntry("hv", HV));
-            pb.ps.Add(new DBParamEntry("LLD", LLD));
+            pb.ps.Add(new DBParamEntry("LLD", LLD)); // alias for VoltageTolerance on PTR32 and MCA527
             pb.ps.Add(new DBParamEntry("hvtimeout", HVTimeout));
 
         }
@@ -1970,6 +2003,7 @@ namespace AnalysisDefs
         public LMMMNetComm()
             : base(NCCConfig.Config.ParameterBasis())
         {
+			//resetVal(NCCConfig.NCCFlags.streamRawAnalysis, true, typeof(bool));
         }
 
         public LMMMNetComm(LMMMNetComm src) : base(src)
@@ -2103,7 +2137,10 @@ namespace AnalysisDefs
         {
             get
             {
-                if (String.IsNullOrEmpty(results))
+				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && 
+					!string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))
+					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
+				else if (string.IsNullOrEmpty(results))
                 {
                     return NCC.CentralizedState.App.AppContext.RootPathOverride();
                 }
@@ -2120,7 +2157,7 @@ namespace AnalysisDefs
                         }
                     }
                 }                
-                // else use the path exactly as user has specifeid, it is not overridden by the daily flag
+                // else use the path exactly as user has specified, it is not overridden by the daily flag
                 return results;
             }
             set
@@ -2167,7 +2204,10 @@ namespace AnalysisDefs
                 res = x.Delay.CompareTo(y.Delay);
             if (res == 0)
                 res = x.HVX.CompareTo(y.HVX);
-
+            if (res == 0)
+                res = x.ItemId.CompareTo(y.ItemId);
+            if (res == 0)
+                res = x.Material.CompareTo(y.Material);
             return res;
         }
 
@@ -2264,23 +2304,20 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("openResults", OpenResults));
             i = (int)Verbose();
             pb.ps.Add(new DBParamEntry("verbose", i));
-            pb.ps.Add(new DBParamEntry("emulatorapp", EmuLoc));
-            pb.ps.Add(new DBParamEntry("serveremulation", Emulate));
+            pb.ps.Add(new DBParamEntry("emulatorapp", INCC5IniLoc));
+            pb.ps.Add(new DBParamEntry("serveremulation", UseINCC5Ini));
             pb.ps.Add(new DBParamEntry("fileinput", FileInput));
             pb.ps.Add(new DBParamEntry("recurse", Recurse));
             pb.ps.Add(new DBParamEntry("parseGen2", ParseGen2));
             pb.ps.Add(new DBParamEntry("replay", Replay));
             pb.ps.Add(new DBParamEntry("INCCParity", INCCParity));
             pb.ps.Add(new DBParamEntry("sortPulseFile", SortPulseFile));
-            pb.ps.Add(new DBParamEntry("pulseFileNCD", PulseFileNCD));
-            pb.ps.Add(new DBParamEntry("ptrFileNCD", PTRFileNCD));
-            pb.ps.Add(new DBParamEntry("nilaFileNCD", NILAFileNCD));
             pb.ps.Add(new DBParamEntry("pulseFileAssay", PulseFileAssay));
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
             pb.ps.Add(new DBParamEntry("dbDataAssay", DBDataAssay));
             pb.ps.Add(new DBParamEntry("reviewFileAssay", ReviewFileAssay));
-            pb.ps.Add(new DBParamEntry("nilaFileAssay", NILAFileAssay));
+            pb.ps.Add(new DBParamEntry("nilaFileAssay", MCA527FileAssay));
             pb.ps.Add(new DBParamEntry("opStatusPktInterval", StatusPacketCount));
             pb.ps.Add(new DBParamEntry("opStatusTimeInterval", StatusTimerMilliseconds));
             pb.ps.Add(new DBParamEntry("auxRatioReport", AuxRatioReport));
@@ -2288,6 +2325,10 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("overwriteDefs", OverwriteImportedDefs));
             pb.ps.Add(new DBParamEntry("gen5RevDataFile", CreateINCC5TestDataFile));
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
+            pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
+            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
+            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix)); 
+            pb.ps.Add(new DBParamEntry("results8Char", Results8Char)); 
         }
 
         public DB.ElementList ToDBElementList()
@@ -2577,6 +2618,90 @@ namespace AnalysisDefs
         }
     }
 
+	public class ResultFile : ParameterBase,  IComparable<ResultFile>, IEquatable<ResultFile>
+    {
+		public string Path  // csv file or INCC5-style text files; can have multiple output files if more than one SR params
+		{
+            get;
+            set;
+        }
+        public ResultFile()
+        {
+			Path = string.Empty;
+        }
+        public ResultFile(string name)
+        {
+			Path = name;
+        }
+        public ResultFile(ResultFile src)
+        {
+            if (src == null)
+				Path = string.Empty;
+            else
+				Path = string.Copy(src.Path);
+        }
+
+        public void Copy(ResultFile src)
+        {
+            if (src == null)
+                return;
+		    Path = string.Copy(src.Path);
+        }
+        public static int Compare(ResultFile x, ResultFile y)
+        {
+            int res = x.Path.CompareTo(y.Path);
+            return res;
+        }
+
+        public int CompareTo(ResultFile other)
+        {
+            return Compare(this, other);
+        }
+
+		public bool Equals(ResultFile other)
+        {
+            return CompareTo(other) == 0;
+        }
+
+        public override void GenParamList()
+        {
+            base.GenParamList();
+            this.Table = "results_filenames";
+            this.ps.Add(new DBParamEntry("FileName", Path));
+        }
+
+    }
+	public class ResultFiles :  List<ResultFile>
+	{
+		// INCC5-style text files; can have multiple output files if more than one SR params
+        public ResultFile CSVResultsFileName; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis
+
+		public ResultFile PrimaryINCC5Filename
+		{
+			get {
+				if (Count > 0)
+					return this[0];
+				else
+					return new ResultFile(); // empty
+			}
+		}
+
+		public ResultFiles() : base()
+		{
+			CSVResultsFileName = new ResultFile();
+		}
+
+		public void Add(bool LMOnly, string path)
+		{
+			if (path.EndsWith(".csv",true, System.Globalization.CultureInfo.InstalledUICulture) && string.IsNullOrEmpty(CSVResultsFileName.Path))
+			{
+				CSVResultsFileName.Path = path;
+			}
+			else
+				Add(new ResultFile(path));
+
+		}
+	}
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };
     public class DBParamList
     {

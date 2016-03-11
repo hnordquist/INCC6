@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -29,10 +29,10 @@ using System;
 using System.Collections.Generic;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
 using NCC;
 using NCCReporter;
 using NCCTransfer;
+using Instr;
 namespace NCCFile
 {
     using NC = NCC.CentralizedState;
@@ -41,7 +41,7 @@ namespace NCCFile
         // Acquire from Database and Manual data work the same from this point 
         void DBDataAssay()
         {
-            NC.App.Opstate.ResetTimer(0, filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -61,15 +61,15 @@ namespace NCCFile
                 meas.MeasDate = meas.Cycles[0].DataSourceId.dt;
                 meas.Persist();  // preserve the basic results record
                 FireEvent(EventType.ActionInProgress, this);
-                meas.Cycles.ResetStatus(meas.Detectors[0].MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
+                meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
                 ComputeFromINCC5SRData(meas);
                 FireEvent(EventType.ActionInProgress, this);
             }
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+            FireEvent(EventType.ActionFinished, this);
         }
 
 
@@ -82,7 +82,7 @@ namespace NCCFile
             FileList<TestDataFile> files = null;
 
             // initialize operation timer here
-            NC.App.Opstate.ResetTimer(0, filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
 
@@ -92,15 +92,15 @@ namespace NCCFile
                 files = (FileList<TestDataFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
             if (files == null || files.Count < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable Test data/Disk .dat files found");
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Test data/Disk .dat or .cnn files found");
                 return;
             }
 
             AcquireParameters orig_acq = new AcquireParameters(NC.App.Opstate.Measurement.AcquireState);
-            Detector curdet = NC.App.Opstate.Measurement.Detectors[0];
+            Detector curdet = NC.App.Opstate.Measurement.Detector;
             AssaySelector.MeasurementOption mo = NC.App.Opstate.Measurement.MeasOption;
 
             // Each .dat file is a separate measurement 
@@ -117,8 +117,8 @@ namespace NCCFile
                         break;
                     UInt32 run_seconds;
 
-                    UInt16 number_good_runs = 0;
-                    UInt16 total_number_runs = 0;
+                    ushort number_good_runs = 0;
+                    ushort total_number_runs = 0;
                     double run_count_time = 0;
                     double total_good_count_time = 0;
 
@@ -126,7 +126,7 @@ namespace NCCFile
                     {
                         /* number of good runs */
                         string l = td.reader.ReadLine();
-                        UInt16.TryParse(l, out number_good_runs);
+                        ushort.TryParse(l, out number_good_runs);
                         if (number_good_runs == 0)
                         {
                             ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
@@ -161,7 +161,7 @@ namespace NCCFile
                     for (int i = 0; i < number_good_runs; i++)
                     {
                         /* run date and time (IAEA format) */
-                        run_seconds = (UInt32)(i * (UInt16)run_count_time); // from start time
+                        run_seconds = (UInt32)(i * (ushort)run_count_time); // from start time
                         AddTestDataCycle(i, run_seconds, run_count_time, meas, td);
                         if (i % 8 == 0)
                             FireEvent(EventType.ActionInProgress, this);
@@ -172,7 +172,7 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detectors[0]);
+                        AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         for (int n = 1; n <= aass.number_positions; n++)
                         {
                             /* number of good runs */
@@ -181,7 +181,7 @@ namespace NCCFile
                             {
                                 ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. " + "AAS p" + n.ToString());
                             }
-                            UInt16.TryParse(l, out number_good_runs);
+                            ushort.TryParse(l, out number_good_runs);
                             if (number_good_runs == 0)
                             {
                                 ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. " + "AAS p" + n.ToString());
@@ -199,7 +199,7 @@ namespace NCCFile
                             for (int i = 0; i < number_good_runs; i++)
                             {
                                 /* run date and time (IAEA format) */
-                                run_seconds = (UInt32)((n + 1) * (i + 1) * (UInt16)run_count_time); // from start time
+                                run_seconds = (UInt32)((n + 1) * (i + 1) * (ushort)run_count_time); // from start time
                                 AddTestDataCycle(i, run_seconds, run_count_time, meas, td, " AAS p" + n.ToString(), n);
                                 if (i % 8 == 0)
                                     FireEvent(EventType.ActionInProgress, this);
@@ -210,7 +210,7 @@ namespace NCCFile
                 }
                 catch (Exception e)
                 {
-                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    NC.App.Opstate.SOH = OperatingState.Trouble;
                     ctrllog.TraceException(e, true);
                     ctrllog.TraceEvent(LogLevels.Error, 437, "Test data file processing stopped with error: '" + e.Message + "'");
                 }
@@ -225,18 +225,18 @@ namespace NCCFile
             }
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
         }
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, DateTimeOffset dto, ushort runs, string path)
         {
-            AcquireParameters acq = NC.App.DB.LastAcquireFor(det);
+            AcquireParameters acq = NC.App.DB.LastAcquireFor(det, def.item_type);
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = dto; acq.lm.TimeStamp = dto;
-            acq.detector_id = String.Copy(det.Id.DetectorId);
+            acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
             acq.num_runs = runs;
             int tx = def.comment.IndexOf(" (Original file name");
@@ -246,12 +246,7 @@ namespace NCCFile
                 acq.comment = def.comment;
             acq.comment += " (Original file name " + System.IO.Path.GetFileName(path) + ")";
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, dto);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(sel))  // only one allowed, same for actual measurement
-            {
-                NC.App.DB.AcquireParametersMap().Remove(sel);
-            }
-            NC.App.DB.AcquireParametersMap().Add(sel, acq);
-            NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
         }
 
@@ -260,7 +255,7 @@ namespace NCCFile
             Cycle cycle = new Cycle(datalog);
             try
             {
-                cycle.UpdateDataSourceId(ConstructedSource.CycleFile, meas.Detectors[0].Id.SRType,
+                cycle.UpdateDataSourceId(ConstructedSource.CycleFile, meas.Detector.Id.SRType,
                         td.DTO.AddSeconds(run_seconds), td.Filename);
                 cycle.seq = run;
                 cycle.TS = TimeSpan.FromSeconds(run_count_time);  // dev note: check if this is always only in seconds, or fractions of a second
@@ -268,7 +263,7 @@ namespace NCCFile
                                                                   // Joe still has force to int.  bleck!
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detectors[0].MultiplicityParams, QCTestStatus.None); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.None); // multmult creates entry if not found
                 meas.Add(cycle, cfindex);
                 /* singles, reals + accidentals, accidentals */
                 string l = td.reader.ReadLine();
@@ -282,9 +277,9 @@ namespace NCCFile
                         v[z] = d;
                 }
                 cycle.Totals = (ulong)v[0];
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detectors[0].MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detectors[0].MultiplicityParams, mcr);  // multmult
-                mcr.AB.TransferIntermediates(meas.Detectors[0].AB);  // copy alpha beta onto the cycle's results 
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr);  // multmult
+                mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
                 mcr.ASum = v[4];
@@ -300,8 +295,8 @@ namespace NCCFile
 
                 /* number of multiplicity values */
                 string mv = td.reader.ReadLine();
-                UInt16 k = 0;
-                UInt16.TryParse(mv, out k);
+                ushort k = 0;
+                ushort.TryParse(mv, out k);
                 if (k == 0)  // test data files require an entry with 1 bin set 0s for the absence of multiplicity, go figure
                 {
                     ctrllog.TraceEvent(LogLevels.Error, 440, "This" + pivot + " cycle " + run.ToString() + " has no good multiplicity data.");
@@ -312,7 +307,7 @@ namespace NCCFile
                 mcr.NormedAMult = new ulong[k];
                 mcr.UnAMult = new ulong[k]; // todo: compute this
                 /* multiplicity values */
-                for (UInt16 j = 0; j < k; j++)
+                for (ushort j = 0; j < k; j++)
                 {
                     string ra = td.reader.ReadLine();
                     string[] blorks = ra.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
@@ -336,15 +331,62 @@ namespace NCCFile
             }
         }
 
-
         /// <summary>
-        /// Process one or more .NCC Review measurement data files, with related .NOP/.COP files.
-        /// see Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
-        /// See Operator Declaration File Format p. 87, 
-        /// See Operator Declaration File Format for Curium Ratio Measurements p. 88, 
-        /// See Radiation Review Measurement Data File Format p. 93, INCC Software Users Manual, March 29, 2009
-        /// </summary>
-        void INCCReviewFileProcessing()
+		/// Extract root path from INCC5 incc.ini file, and use that path to construct 3 new paths for use by the iRAP software.
+		/// Assumes iRAP runtime directory structure (data and output directories).
+		/// </summary>
+		/// <param name="ctrllog">log handle for error output</param>
+		/// <returns>paths, non-null empty array if no INCC5 in file is used, or
+		///          an array of 3 paths, 0: common input path, 1: data path, 2: log file path</returns>
+		static public string[] ProcessINCC5IniFile(LMLoggers.LognLM ctrllog)
+		{
+			string [] paths = new string[] { string.Empty };
+			if (!NC.App.AppContext.UseINCC5Ini)
+				return paths;
+			string filename = System.IO.Path.Combine(NC.App.AppContext.INCC5IniLoc, "incc.ini");
+			if (!System.IO.File.Exists(filename))
+			{
+				if (ctrllog != null)
+					ctrllog.TraceEvent(LogLevels.Warning, 112, "INCC5 ini file does not exist or cannot be opened: " + filename);
+				return paths;
+			}
+			string inputpath = string.Empty;
+			using (System.IO.StreamReader sr = new System.IO.StreamReader(filename))
+			{
+				string line;
+				// Read lines from the file until the end of the file is reached or the relevant tag is found
+				while ((line = sr.ReadLine()) != null)
+				{
+					string tline = line.TrimStart();
+					if (tline.StartsWith(@"//") || tline.StartsWith(@"#"))
+						continue;
+					if (tline.TrimStart().StartsWith("RT_COMMON_DATABASE_PATH")) // lolz
+					{
+						string[] otkens = line.Split();
+						inputpath = otkens.Length > 1 ? otkens[1] : string.Empty;
+						break;
+					}
+				}
+			}
+			if (!string.IsNullOrEmpty(inputpath))
+			{
+                System.IO.DirectoryInfo parentpath = System.IO.Directory.GetParent(inputpath.TrimEnd(new char[] {'\\', '/'}));
+				paths = new string[] { inputpath,   // as specified in the ini file entry
+                                        System.IO.Path.Combine(System.IO.Path.GetFullPath("./"), @"Data"),  // todo: hard-coded path from examples in iRAP, but could be wrong
+                                        System.IO.Path.Combine(parentpath.FullName, @"output") }; // log file goes into the final sweep output path
+			}
+			return paths;
+		}
+
+		/// <summary>
+		/// Process one or more .NCC Review measurement data files, with related .NOP/.COP files.
+		/// Presence of NOP/COP files is optional
+		/// See Import Operator Declarations from Operator Review and Measurements from Radiation Review p. 24,
+		/// See Operator Declaration File Format p. 87, 
+		/// See Operator Declaration File Format for Curium Ratio Measurements p. 88, 
+		/// See Radiation Review Measurement Data File Format p. 93, INCC Software Users Manual, March 29, 2009
+		/// </summary>
+		void INCCReviewFileProcessing()
         {
 
             FireEvent(EventType.ActionPrep, this);
@@ -356,18 +398,21 @@ namespace NCCFile
             FileList<CSVFile> hdlr = new FileList<CSVFile>();
             hdlr.Init(exts, ctrllog);
             FileList<CSVFile> files = null;
+			OPFiles opfiles = new OPFiles();
 
             // The INCC5 semantics
             if (NC.App.AppContext.FileInputList == null)
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, true);
             else
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
-
-            // construct lists of isotopics and items from the NOP and COP files
-            OPFiles opfiles = new OPFiles();
-            opfiles.Process(files);
-
-            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.NOPItemIds.Count);
+			if (files != null && files.Count > 0)
+            {
+				// construct lists of isotopics and items from the NOP and COP files
+				opfiles.Process(files);
+	            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.Results.ItemIds.Count);
+            }
+			else
+	            ctrllog.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, continuing with default values");
 
             // process the NCC files only
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog, "*.NCC");
@@ -393,13 +438,12 @@ namespace NCCFile
                 return DateTime.Compare((rf1 as INCCReviewFile).dt, (rf2 as INCCReviewFile).dt);
             });
             /// end here > The sorted, filtered and processed list here would be returned to the UI for display and interactive selection
-
             if (res == null || res.Count < 1)
             {
-                NC.App.Opstate.StopTimer(0);
+                NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No useable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
                 return;
             }
 
@@ -440,7 +484,7 @@ namespace NCCFile
                 try
                 {
 
-                    UInt16 total_number_runs = 0;
+					ushort total_number_runs = 0;
                     double run_count_time = 0;
                     double total_good_count_time = 0;
 
@@ -473,8 +517,8 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because I am lame. " + "AAS ");
-                        //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detectors[0]);
+                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. " + "AAS ");
+                        //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         //for (int n = 1; n <= aass.number_positions; n++)
                         //{
                         //    /* number of good runs */
@@ -489,7 +533,7 @@ namespace NCCFile
                 }
                 catch (Exception e)
                 {
-                    NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                    NC.App.Opstate.SOH = OperatingState.Trouble;
                     ctrllog.TraceException(e, true);
                     ctrllog.TraceEvent(LogLevels.Error, 437, "NCC file processing stopped with error: '" + e.Message + "'");
                 }
@@ -504,14 +548,14 @@ namespace NCCFile
 
 
             NC.App.Opstate.ResetTokens();
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+            NC.App.Opstate.SOH = OperatingState.Stopping;
             NC.App.Opstate.StampOperationStopTime();
-            FireEvent(EventType.ActionStop, this);
+			FireEvent(EventType.ActionFinished, this);
         }
 
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, INCCReviewFile irf)
         {
-            AcquireParameters acq = NC.App.DB.LastAcquireFor(det);
+            AcquireParameters acq = NC.App.DB.LastAcquireFor(det, def.item_type);
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = irf.dt; acq.lm.TimeStamp = irf.dt;
@@ -522,14 +566,14 @@ namespace NCCFile
             else
                 acq.comment = def.comment;
             acq.comment += " (Original file name " + System.IO.Path.GetFileName(irf.Path) + ")";
-            acq.detector_id = String.Copy(det.Id.DetectorId);
+            acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
 
             // iid should have been added from the NOP processing above
             ItemId iid = NC.App.DB.ItemIds.Get(irf.item);
             if (iid == null)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database");
+                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database. Item type will default to " + acq.item_type);
             }
             else
             {
@@ -544,12 +588,7 @@ namespace NCCFile
             // todo: also need to account for iid UMass to mass condition
 
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, irf.dt);
-            if (NC.App.DB.AcquireParametersMap().ContainsKey(sel))  // only one allowed, same for actual measurement
-            {
-                NC.App.DB.AcquireParametersMap().Remove(sel);
-            }
-            NC.App.DB.AcquireParametersMap().Add(sel, acq);
-            NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
         }
 
@@ -568,19 +607,19 @@ namespace NCCFile
             Cycle cycle = new Cycle(datalog);
             try
             {
-                cycle.UpdateDataSourceId(ConstructedSource.ReviewFile, meas.Detectors[0].Id.SRType,
+                cycle.UpdateDataSourceId(ConstructedSource.ReviewFile, meas.Detector.Id.SRType,
                         rrep.dt, fn);
                 cycle.seq = (run.run_number > 0 ? run.run_number : i); // INCC run record sequence numbers start at 1
                 cycle.TS = TimeSpan.FromSeconds(run.run_count_time);
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detectors[0].MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult creates entry if not found
                 meas.Add(cycle);
                 /* singles, reals + accidentals, accidentals */
                 cycle.Totals = (ulong)run.run_singles;
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detectors[0].MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detectors[0].MultiplicityParams, mcr); // multmult
-                mcr.AB.TransferIntermediates(meas.Detectors[0].AB);  // copy alpha beta onto the cycle's results 
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr); // multmult
+                mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
                 mcr.ASum = run.run_acc;
@@ -608,7 +647,7 @@ namespace NCCFile
                 mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
 
                 // copy the bin values, if any
-                for (UInt16 j = 0; j < mcr.MaxBins; j++)
+                for (ushort j = 0; j < mcr.MaxBins; j++)
                 {
                     mcr.RAMult[j] = (ulong)run.run_mult_reals_plus_acc[j];
                     mcr.NormedAMult[j] = (ulong)run.run_mult_acc[j];
@@ -656,7 +695,7 @@ namespace NCCFile
                 return; //bad match between detector and this file type.
             }
 
-            SRInstrument PseudoInstrument = new SRInstrument(m.Detectors[0]);
+            SRInstrument PseudoInstrument = new SRInstrument(m.Detector);
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
@@ -667,11 +706,11 @@ namespace NCCFile
             try
             {
                 // urgent: there is more work to do for the bins and AB here, AB can be copied from the detector values
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detectors[0].MultiplicityParams]; // multmult
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
                 Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
-                mcr.AB.TransferIntermediates(src: m.Detectors[0].AB);
+                mcr.AB.TransferIntermediates(src: m.Detector.AB);
 
                 foreach (AnalysisDefs.Cycle cycle in m.Cycles)
                 {
@@ -681,7 +720,7 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    cycle.SetQCStatus(m.Detectors[0].MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
+                    cycle.SetQCStatus(m.Detector.MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
@@ -690,11 +729,11 @@ namespace NCCFile
                 }
                 FireEvent(EventType.ActionInProgress, this);
                 // trim any None's that were not processed (occurs during a cancel/stop intervention)
-                m.Cycles.Trim(m.Detectors[0].MultiplicityParams); // multmult
+                m.Cycles.Trim(m.Detector.MultiplicityParams); // multmult
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 ctrllog.TraceException(e, true);
                 ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
             }
@@ -705,10 +744,12 @@ namespace NCCFile
 
             if (!NC.App.Opstate.IsAbortRequested)  // stop/quit means continue with what is available
             { 
-                // todo: 			if (meas.HasReportableData)
-                m.CalculateMeasurementResults();
-                new ReportMangler(ctrllog).GenerateReports(m);
-                m.SaveMeasurementResults();
+                if (m.HasReportableData)
+				{
+					m.CalculateMeasurementResults();
+					new ReportMangler(ctrllog).GenerateReports(m);
+					m.SaveMeasurementResults();
+				}
             }
             NC.App.Opstate.ResetTokens();
             Instruments.All.Remove(PseudoInstrument);

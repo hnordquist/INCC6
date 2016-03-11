@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <DefineConstants Condition=" !$(DefineConstants.Contains(';NET')) ">$(DefineConstants);$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+    <DefineConstants Condition=" $(DefineConstants.Contains(';NET')) ">$(DefineConstants.Remove($(DefineConstants.LastIndexOf(";NET"))));$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+  </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -8,7 +12,7 @@
     <ProjectGuid>{C4393A93-ABF7-448C-A3EB-4F0E5A1F7376}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LM</RootNamespace>
+    <RootNamespace>NCC</RootNamespace>
     <AssemblyName>NCCCtrl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -67,15 +71,15 @@
   <ItemGroup>
     <Compile Include="Analysis\INCCMeasurement.cs" />
     <Compile Include="Analysis\LMRDT.cs" />
+    <Compile Include="Analysis\MCA527ProcessingState.cs" />
+    <Compile Include="Analysis\MCA527RawDataTransform.cs" />
     <Compile Include="Analysis\Ptr32ProcessingState.cs" />
     <Compile Include="Analysis\Ptr32RawDataTransform.cs" />
     <Compile Include="Analysis\RDT.cs" />
     <Compile Include="Analysis\RTAnalysis.cs" />
     <Compile Include="Analysis\SRRDT.cs" />
-    <Compile Include="Comm\IEmulatorDiversion.cs" />
     <Compile Include="Comm\Lingo.cs" />
     <Compile Include="Comm\LMMMComm.cs" />
-    <Compile Include="Comm\NullEmulation.cs" />
     <Compile Include="DAQServer\BufferPool.cs" />
     <Compile Include="DAQServer\ExtensionMethods.cs" />
     <Compile Include="DAQServer\Server.cs" />
@@ -86,20 +90,24 @@
     <Compile Include="DAQ\HV.cs" />
     <Compile Include="DAQ\INCCSR.cs" />
     <Compile Include="DAQ\Instr.cs" />
+    <Compile Include="DAQ\MCA527Instrument.cs" />
     <Compile Include="DAQ\Ptr32Instrument.cs" />
     <Compile Include="DAQ\SRDAQHandler.cs" />
     <Compile Include="DAQ\SREventHandler.cs" />
+    <Compile Include="Device\MCA.cs" />
+    <Compile Include="Device\MCA527.cs" />
+    <Compile Include="Device\MCA527Parser.cs" />
+    <Compile Include="Device\MCA527RateCounter.cs" />
     <Compile Include="Device\Ptr32.cs" />
     <Compile Include="Device\Ptr32Error.cs" />
     <Compile Include="Device\Ptr32Exception.cs" />
     <Compile Include="Device\Ptr32Parser.cs" />
     <Compile Include="Device\Ptr32RateCounter.cs" />
     <Compile Include="File\FileCtrlINCC5.cs" />
-    <Compile Include="File\CSVFile.cs" />
     <Compile Include="File\FileCtrl.cs" />
     <Compile Include="File\INCCKnew.cs" />
+    <Compile Include="File\INCC5CSVFiles.cs" />
     <Compile Include="File\NeutronDataFiles.cs" />
-    <Compile Include="File\OPFiles.cs" />
     <Compile Include="LM\IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawAnalysis\AnalyzerEventCode.cs" />
@@ -126,6 +134,16 @@
   <PropertyGroup>
     <PostBuildEvent>copy /B /V /Y "$(TargetPath)" "$(SolutionDir)deployment"
 copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6.1')))) &gt;= 0">$(DefineConstants);NETFX_461</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6'))))   &gt;= 0">$(DefineConstants);NETFX_46</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.2')))) &gt;= 0">$(DefineConstants);NETFX_452</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.1')))) &gt;= 0">$(DefineConstants);NETFX_451</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5'))))   &gt;= 0">$(DefineConstants);NETFX_45</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.0'))))   &gt;= 0">$(DefineConstants);NETFX_40</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.5'))))   &gt;= 0">$(DefineConstants);NETFX_35</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.0'))))   &gt;= 0">$(DefineConstants);NETFX_30</DefineConstants>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

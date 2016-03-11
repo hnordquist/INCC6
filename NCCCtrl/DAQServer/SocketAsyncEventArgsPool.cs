@@ -32,7 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace LMDAQServer
+namespace LMComm
 {
     /// <summary>
     /// src: http://msdn2.microsoft.com/en-us/library/system.net.sockets.socketasynceventargs.socketasynceventargs.aspx

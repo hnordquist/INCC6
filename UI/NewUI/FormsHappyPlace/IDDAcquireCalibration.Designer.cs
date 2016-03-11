@@ -72,6 +72,7 @@
             this.ItemIdComboBox.Size = new System.Drawing.Size(121, 21);
             this.ItemIdComboBox.TabIndex = 0;
             this.ItemIdComboBox.SelectedIndexChanged += new System.EventHandler(this.ItemIdComboBox_SelectedIndexChanged);
+            this.ItemIdComboBox.Leave += new System.EventHandler(this.ItemIdComboBox_Leave);
             // 
             // MaterialTypeComboBox
             // 
@@ -430,6 +431,7 @@
             this.DeclaredMassTextBox.Text = "0.000000E+000";
             this.DeclaredMassTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.DeclaredMassTextBox.Value = 0D;
+            this.DeclaredMassTextBox.Leave += new System.EventHandler(this.DeclaredMassTextBox_Leave);
             // 
             // CountTimeTextBox
             // 

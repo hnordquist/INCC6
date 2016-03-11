@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -87,7 +87,10 @@ namespace AnalysisDefs
         {
             C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27, C28, C29, C30, C31, C32
         };
-
+        enum MCAChannelCounts
+        {
+            C1
+        };
 
         public SimpleRawReport(NCCReporter.LMLoggers.LognLM ctrllog)
             : base(ctrllog)
@@ -155,7 +158,7 @@ namespace AnalysisDefs
                         break;
                     case ReportSections.MeasurementDetails:
                         sec = new Section(typeof(MeasurementDetails), 0, 1, 1);
-                        sec.Add(GenMeasurementDetailsRow());
+                        sec.Add(GenMeasurementDetailsRow(meas.CountingAnalysisResults.HasMultiplicity));
                         break;
                     case ReportSections.DetectorCalibration:
 
@@ -172,13 +175,13 @@ namespace AnalysisDefs
                             while (iter.MoveNext())
                             {
                                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                                sec.Add(GenDetectorCalibrationRow(meas.Detectors[0], mkey));
+                                sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
                             }
                         }
                         else
                         {
                             hcrow.GenFromEnum(typeof(BaseDetectorCalibration), null, 0);
-                            sec.Add(GenDetectorCalibrationRow(meas.Detectors[0]));
+                            sec.Add(GenDetectorCalibrationRow(meas.Detector));
                         }
 
                         break;
@@ -382,35 +385,39 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Facility, meas.AcquireState.facility.ToString());
             row.Add((int)DescriptiveSummary.MBA, meas.AcquireState.mba.ToString());
             row.Add((int)DescriptiveSummary.MeasDate, meas.MeasDate.ToString());
-            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFileName);
+            row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFiles.CSVResultsFileName.Path);
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
             return row;
         }
-        Row GenMeasurementDetailsRow()
+        Row GenMeasurementDetailsRow(bool hasMultiplicity)
         {
-            string s = meas.AcquireState.data_src.HappyFunName() + " " + meas.AcquireState.data_src.ToString();
-            if (meas.AcquireState.data_src.CompareTo(ConstructedSource.Live) != 0)
-                // The other flag you were using here seemed to always be true.  If not live, it is from a file, right? hn 5.13.2015
+            string s = meas.AcquireState.data_src.HappyFunName();			
+            if (meas.AcquireState.data_src == ConstructedSource.Live)
             {
-                if (N.App.AppContext.INCCXfer)
-                    s = "INCC transfer " + s;
-                else if (N.App.AppContext.PulseFileAssay)
-                    s = "Sorted pulse " + s;
-                else if (N.App.AppContext.PTRFileAssay)
-                    s = "PTR-32 dual " + s;
+                if (meas.Detector.ListMode)
+                    s = "Live " + meas.Detector.Id.SRType.ToString() + " List Mode";
                 else
-                    s = "NCD " + s;
+					s = "Live " + meas.Detector.Id.SRType.ToString() + " Shift register";
             }
             Row row = new Row();
             row.Add((int)MeasurementDetails.MeasType, meas.MeasOption.PrintName());
             row.Add((int)MeasurementDetails.DetectorConfig, ""); // what was this supposed to be?
             row.Add((int)MeasurementDetails.DataSource, s);
-            row.Add((int)MeasurementDetails.QCTests, meas.AcquireState.qc_tests ? "On" : "Off");
-            row.Add((int)MeasurementDetails.ErrorCalc, meas.AcquireState.error_calc_method.ToString());
-            // ErrorCalculationTechniqueExtensions.Override(meas.AcquireState.error_calc_method, meas.MeasOption, meas.Detectors.GetIt(mkey.sr)).ToString());
-            row.Add((int)MeasurementDetails.AccidentalsMethod, meas.Tests.accidentalsMethod.ToString() + "d");
+			if (hasMultiplicity)
+			{
+				row.Add((int)MeasurementDetails.QCTests, meas.AcquireState.qc_tests ? "On" : "Off");
+				row.Add((int)MeasurementDetails.ErrorCalc, meas.AcquireState.error_calc_method.ToString());
+				// ErrorCalculationTechniqueExtensions.Override(meas.AcquireState.error_calc_method, meas.MeasOption, meas.Detectors.GetIt(mkey.sr)).ToString());
+				row.Add((int)MeasurementDetails.AccidentalsMethod, meas.Tests.accidentalsMethod.ToString() + "d");
+			}
+			else
+			{
+				row.Add((int)MeasurementDetails.QCTests, "");
+				row.Add((int)MeasurementDetails.ErrorCalc,"");
+				row.Add((int)MeasurementDetails.AccidentalsMethod, "");
+			}
             row.Add((int)MeasurementDetails.CycleCount, meas.Cycles.Count.ToString());
             row.Add((int)MeasurementDetails.TotalCountTime, meas.CountTimeInSeconds.ToString());  // an averaged time 
             return row;
@@ -483,7 +490,7 @@ namespace AnalysisDefs
             return rows;
         }
 
-        Row GenRawSumsRow(CountingResultsMap map)  // done: uses # of analyzers and goes across
+        Row GenRawSumsRow(CountingResultsMap map)  // uses # of analyzers and goes across
         {
             Row row = new Row();
             IEnumerator iter = map.GetMultiplicityEnumerator();
@@ -819,7 +826,7 @@ namespace AnalysisDefs
             Row row = new Row();
             row.Add(0, c.seq.ToString());
             row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.ToString());
-            row.Add((int)CycleSource.Identifier + 1, c.DataSourceId.IdentName());
+            row.Add((int)CycleSource.Identifier + 1, c.DataSourceId.Identifier());
             row.Add((int)CycleSource.DateTime + 1, c.DataSourceId.dt.ToString("MMM dd yyy HH:mm:ss.ff K")); // my favorite format
             return row;
         }
@@ -1500,7 +1507,7 @@ namespace AnalysisDefs
         {
             base.StartReportGeneration(m, pretext, separator);
 
-            m.ResultsFileName = t.FullFilePath;  // save the full file path on this single member var for later
+            m.ResultsFiles.CSVResultsFileName.Path = t.FullFilePath;  // save the full file path on this single member var for later
         }
 
 

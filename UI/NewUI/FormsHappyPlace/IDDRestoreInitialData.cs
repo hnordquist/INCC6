@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -108,17 +108,17 @@ namespace NewUI
                 NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  //enable only xfer file processing
                 UIIntegration.Controller.Perform();  // run the current specified operation
             }
-            this.Close();
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, "c:\\code\\INCC6\\deployment\\inccuser.chm", "Restore - All data");
+            Help.ShowHelp(null, @".\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/getexternaldata.htm");
         }
     }
 }

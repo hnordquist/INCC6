@@ -46,7 +46,7 @@ namespace NewUI
             richTextBox1.Text += @"Office of Nonproliferation and National Security, International Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security." + System.Environment.NewLine + System.Environment.NewLine;
             richTextBox1.Text += @"LA-CC-14-009. This software was exported from the United States in accordance with the Export Administration Regulations. Diversion contrary to U.S. law prohibited." + System.Environment.NewLine + System.Environment.NewLine;
 
-            richTextBox2.Text = "Copyright © 2015, Los Alamos National Security, LLC. This software application and associated material (\"The Software\") was prepared by the Los Alamos National Security, LLC (LANS),";
+            richTextBox2.Text = "Copyright © 2016, Los Alamos National Security, LLC. This software application and associated material (\"The Software\") was prepared by the Los Alamos National Security, LLC (LANS),";
             richTextBox2.Text += @" under Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE) for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, LLC (LANS) for the";
             richTextBox2.Text += @"the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY,";
             richTextBox2.Text += @" EXPRESS OR IMPLIED, OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, such modified software should be clearly marked, so as not to confuse ";

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -50,7 +50,7 @@ namespace NCC
     public enum OperatingState { Void, Starting, Living, Stopping, Cancelling, Stopped, Trouble };
 
     // tasks to perform with the NCC6 code
-    public enum NCCAction { Nothing = 0, Prompt = 1, Discover = 2, Assay = 3, HVCalibration = 4, Analysis = 5, Maintenance = 6, File = 7, Bonk = 99 }
+    public enum NCCAction { Nothing = 0, Prompt = 1, Discover = 2, Assay = 3, HVCalibration = 4, Analysis = 5, File = 6, Bonk = 99 }
 
 
     // carries current status and support state like 
@@ -64,8 +64,8 @@ namespace NCC
 
         public OperatingState SOH
         {
-            get; //{ return soh; }
-            set;// { soh = value; }
+            get;
+            set;
         }
         public Measurement Measurement
         {
@@ -73,33 +73,26 @@ namespace NCC
             set { meas = value; }
         }
 		
-        public void ResetTimer(int i, TimerCallback callback, object state = null, int dueTime = Timeout.Infinite, int period = Timeout.Infinite)
+        public void ResetTimer(TimerCallback callback, object state = null, int dueTime = Timeout.Infinite, int period = Timeout.Infinite)
         {
-            StopTimer(i);
+            StopTimer();
             if (callback != null)
-                statusTimer[i] = new Timer(callback, state, dueTime, period);
+                statusTimer = new Timer(callback, state, dueTime, period);
         }
 
-        public void StopTimer(int i)
+        public void StopTimer()
         {
-            if (statusTimer[i] != null)
-                statusTimer[i].Change(Timeout.Infinite, Timeout.Infinite);
+            if (statusTimer != null)
+                statusTimer.Change(Timeout.Infinite, Timeout.Infinite);
         }
 
         public void ClearTimers()
         {
-            if (statusTimer[0] != null)
+            if (statusTimer != null)
             {
-                statusTimer[0].Change(Timeout.Infinite, Timeout.Infinite);
-                statusTimer[0].Dispose();
-                statusTimer[0] = null;
-            }
-        
-            if (statusTimer[1] != null)
-            { 
-                statusTimer[1].Change(Timeout.Infinite, Timeout.Infinite);
-                statusTimer[1].Dispose();
-                statusTimer[1] = null;
+                statusTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                statusTimer.Dispose();
+                statusTimer = null;
             }
         }
 
@@ -109,6 +102,16 @@ namespace NCC
         public bool IsQuitRequested
         {
             get { return csa.IsQuitRequested; }
+        }
+
+		public bool IsCancelAbortRequested
+        {
+            get { return csa.IsCancelAbortRequested; }
+        }
+
+		public bool Continue
+        {
+            get { return csa.Continue; }
         }
 
         /// <summary>
@@ -132,6 +135,21 @@ namespace NCC
         {
             get { return csa.IsStopRequested; }
         }
+
+		public OperatingState Requested
+		{
+			get
+			{
+				if (csa.IsCancellationRequested)
+					return OperatingState.Cancelling;
+				else if (csa.IsAbortRequested)
+					return OperatingState.Cancelling;
+				else if (csa.IsStopRequested)
+					return OperatingState.Stopping;
+				else
+					return SOH;
+			}
+		}
 
         public string CancelStopAbortStateRep
         {
@@ -175,7 +193,6 @@ namespace NCC
         {
             csa = new CancelStopAbort();
             SOH = OperatingState.Void;
-            statusTimer = new Timer[2];
         }
 
         public OperationalState(OperationalState src)
@@ -190,7 +207,7 @@ namespace NCC
 
         protected Measurement meas;
         protected CancelStopAbort csa;
-        protected Timer[] statusTimer; // ok, I let you have two at the same time
+        protected Timer statusTimer; // ok, I let you have two at the same time
 
     }
     public class CancelStopAbort
@@ -206,24 +223,28 @@ namespace NCC
         /// </summary>
         public bool IsQuitRequested { get { return IsAbortRequested || IsCancellationRequested || IsStopRequested; } }
 
+		public bool IsCancelAbortRequested { get { return IsAbortRequested || IsCancellationRequested ; } }
+
+		public bool Continue { get { return !IsCancelAbortRequested; } }
+
+
         public CancellationToken CancellationToken { get { return CancellationTokenSource.Token; } }
         public CancellationTokenSource CancellationTokenSource { get; set; }
-
-        /// <summary>
+		/// <summary>
         /// User requests the current operation be cancelled without persisting or completing 
         /// </summary>
         public bool IsCancellationRequested { get { return CancellationTokenSource.IsCancellationRequested; } }
+
         public CancellationToken StopToken { get { return StopTokenSource.Token; } }
         public CancellationTokenSource StopTokenSource { get; set; }
-
-        /// <summary>
+		/// <summary>
         /// User requests stopping current measurement processing, saving and completing the measurement with any existing data 
         /// </summary>
         public bool IsStopRequested { get { return StopTokenSource.IsCancellationRequested; } }
-        public CancellationToken AbortToken { get { return AbortTokenSource.Token; } }
-        public CancellationTokenSource AbortTokenSource { get; set; }
 
-        /// <summary>
+		public CancellationToken AbortToken { get { return AbortTokenSource.Token; } }
+        public CancellationTokenSource AbortTokenSource { get; set; }
+		/// <summary>
         /// User requests aborting current measurement without completing existing data calculations or preserving results
         /// </summary>
         public bool IsAbortRequested { get { return AbortTokenSource.IsCancellationRequested; } }
@@ -372,7 +393,7 @@ namespace NCC
     // global state for synchronized operations and access to singleton class instances for logging, configuration, DB access API+parameters
     public class CentralizedState
     {
-        public const Int32 ChannelCount = 32; // forever
+        public const Int32 ChannelCount = 32; // forever, but what about MCA-527 single channel now eh?
 
         static public CentralizedState App
         {
@@ -436,10 +457,6 @@ namespace NCC
 
                 loggers = new LMLoggers(cfg);
                 pest.logger = Logger(LMLoggers.AppSection.DB);
-
-                if (!String.IsNullOrEmpty(cfg.Cur.Detector) && !cfg.Cur.Detector.Equals("Default")) // command line set the value
-                    IntegrationHelpers.SetNewCurrentDetector(cfg.Cur.Detector);
-
             }
             return good;
         }
@@ -701,7 +718,7 @@ namespace NCC
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
                 Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // hack: multmult just using the first one found, lame, shoud be using closest match
-                meas.Detectors[0].MultiplicityParams.CopyValues(mkey);
+                meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }
 
@@ -718,7 +735,7 @@ namespace NCC
             if (det == null || string.IsNullOrWhiteSpace(det.Id.DetectorName))
             {
                 det = new AnalysisDefs.Detector();
-                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32444, "Detector " + curdet + " is not defined in the database");
+                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
             }
 			if (det.ListMode)
 				det.MultiplicityParams.FA = acq.lm.FADefault;
@@ -813,22 +830,71 @@ namespace NCC
             return GetMethodSelections(acq.detector_id, acq.item_type);
         }
 
-        public static void SetNewCurrentDetector(string name)
+        public static bool SetNewCurrentDetector(string name, bool checkForExistence)
         {
             AcquireParameters acq = GetCurrentAcquireParams();
+			bool exists = true;
             Detector det = CentralizedState.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, name, true) == 0);
             if (det == null)
-                det = new AnalysisDefs.Detector();
-            acq.MeasDateTime = DateTime.Now;
+			{
+				exists = false;
+				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
+ 				if (checkForExistence)
+					return false;			
+				else
+					det = new AnalysisDefs.Detector();
+			}
+			acq.MeasDateTime = DateTime.Now;
             if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                acq.detector_id = string.Copy(name);
-                acq.meas_detector_id = string.Copy(name);
-                CentralizedState.App.DB.AcquireParametersMap().Add(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
-            }
-            CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+			{
+				// change detector on current acquire parms state
+				if (!exists)
+					CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
+				acq.detector_id = string.Copy(name);
+				acq.meas_detector_id = string.Copy(name);
+                INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
+                CentralizedState.App.DB.AddAcquireParams(sel, acq);
+				if (!exists)
+					CentralizedState.App.DB.Detectors.Add(det);
+			}
+            else    // update existing entry
+                CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
             CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
 
+			return true;
+		}
+
+        public static bool SetNewCurrentMaterial(string name, bool checkForExistence)
+        {
+            AcquireParameters acq = GetCurrentAcquireParams();
+            Detector det = GetCurrentAcquireDetector();
+            bool exists = true;
+            INCCDB.Descriptor desc = CentralizedState.App.DB.Materials.Get(name);
+            if (desc == null)
+            {
+                exists = false;
+                CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
+                if (checkForExistence)
+                    return false;
+                else
+                    desc = new INCCDB.Descriptor(name,name);
+            }
+            acq.MeasDateTime = DateTime.Now;
+            if (!acq.item_type.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                // change material on current acquire parms state
+                if (!exists)
+                    CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
+                acq.item_type = string.Copy(name);
+                CentralizedState.App.DB.AddAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
+                if (!exists)
+                    CentralizedState.App.DB.Materials.Update(desc);
+            }
+            else
+                CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
+            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
+
+            return true;
         }
     }
 

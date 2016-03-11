@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -32,7 +32,8 @@ using DetectorDefs;
 using LMComm;
 using NCC;
 using NCCReporter;
-namespace LMDAQ
+using Instr;
+namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
@@ -62,7 +63,7 @@ namespace LMDAQ
         {
             HVSteps = new List<HVStatus>();
             xp = null;
-            hvp = IntegrationHelpers.GetCurrentHVCalibrationParams(NC.App.Opstate.Measurement.Detectors[0]);
+            hvp = IntegrationHelpers.GetCurrentHVCalibrationParams(NC.App.Opstate.Measurement.Detector);
             hvCalibPoint = hvMinCalibPoint = hvp.MinHV;  // starting point for stepping
             hvMaxCalibPoint = hvp.MaxHV;
             hvStep = hvp.Step;
@@ -323,7 +324,7 @@ namespace LMDAQ
 
             return row;
         }
-        public void GenerateReport(LMDAQ.HVControl.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
+        public void GenerateReport(DAQ.HVControl.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
         {
 
             TabularReport t = new TabularReport(typeof(HVVals), NC.App.Loggers);  // default file output type is CSV

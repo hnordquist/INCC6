@@ -1,11 +1,7 @@
 ﻿/*
- * 186846
- * N Division
- * Safeguards and Security Systems (N-4)
-/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -32,9 +28,9 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using AnalysisDefs;
 using DetectorDefs;
-using LMDAQ;
-using NCC;
-namespace LMProcessor
+using DAQ;
+using Instr;
+namespace NCC
 {
 
     using NC = NCC.CentralizedState;
@@ -114,16 +110,14 @@ namespace LMProcessor
             {
                 case NCCAction.Nothing:
                 case NCCAction.Prompt:
-                case NCCAction.Maintenance:
-                case NCCAction.Analysis:
                     // nothing more right now
                     break;
                 case NCCAction.Discover:
                 case NCCAction.HVCalibration:
                 case NCCAction.Assay:
-                    if (NC.App.Opstate is LMDAQ.DAQControl.AssayState)
+                    if (NC.App.Opstate is DAQControl.AssayState)
                     {
-                        LMDAQ.DAQControl.AssayState a = LMDAQ.DAQControl.CurState;
+                        DAQControl.AssayState a = DAQControl.CurState;
                         State = a.State;
                     }
                     CurrentRepetition = NC.App.Opstate.Measurement.CurrentRepetition;
@@ -184,17 +178,17 @@ namespace LMProcessor
     {
         public CombinedInstrumentProcessingStateSnapshot(Instrument inst)
         {
-            iss = new LMProcessor.InstrumentStateSnapshot(inst);
+            iss = new InstrumentStateSnapshot(inst);
             if (!iss.ins.IsSuspect)
             {
                 if (inst is LMInstrument)
                 {
                     LMInstrument lm = inst as LMInstrument;
-                    cs = new LMProcessor.CountersStatus(lm.RDT.ReadCountingProcessorStatus());
+                    cs = new CountersStatus(lm.RDT.ReadCountingProcessorStatus());
                 }
                 else if (inst is SRInstrument)
                 {
-                    cs = new LMProcessor.CountersStatus(null);
+                    cs = new CountersStatus(null);
                 }
             }
         }
@@ -305,7 +299,7 @@ namespace LMProcessor
 
             public override string ToString()
             {
-                String s = String.Format("{0} {1}{2}", dsid == null ? "-" : dsid.IdentName(), state.ToString(), active ? "" : " (inactive)");
+                String s = String.Format("{0} {1}{2}", dsid == null ? "-" : dsid.Identifier(), state.ToString(), active ? "" : " (inactive)");
                 if (IsSuspect)
                     s = String.Format("({0}) {1}", Reason, s);
                 return s;

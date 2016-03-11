@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -35,8 +35,8 @@ using Device;
 using NCC;
 using NCCFile;
 using NCCReporter;
-
-namespace LMDAQ
+using DAQ;
+namespace Instr
 {
 
     using NC = NCC.CentralizedState;
@@ -114,7 +114,7 @@ namespace LMDAQ
 			{
 				m_logger.TraceEvent(LogLevels.Error, 0, "PTR-32[{0}]: Digilent DpcUtils {1}", DeviceName, GetDpcUtilsVersion());
 				m_logger.Flush();
-				throw pex;
+				throw new Exception("PTR32 connect problem", pex);
 			} 
 
 			DAQState = DAQInstrState.Online;
@@ -131,7 +131,7 @@ namespace LMDAQ
         /// </summary>
         /// <param name="measurement">The measurement.</param>
         /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartAssay(Measurement measurement)
+        public override void StartAssay(Measurement measurement)
         {
             m_logger.TraceEvent(LogLevels.Info, 0,
                 "PTR-32[{0}]: Starting {1}s assay...",
@@ -147,7 +147,7 @@ namespace LMDAQ
             }
 
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            return Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
+            Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
         }
 
         /// <summary>
@@ -201,10 +201,7 @@ namespace LMDAQ
                 DAQControl.HandleEndOfCycleProcessing(this, new Analysis.StreamStatusBlock(@"PTR32 Done"));
             }
             catch (OperationCanceledException) {
-                //Analysis.StreamStatusBlock ssb = new Analysis.StreamStatusBlock(@"Assay Cancelled.");
-                //DAQControl.HandleEndOfCycleProcessing(this, ssb);
-
-                m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Stopped assay", DeviceName);
+                m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Stopping assay", DeviceName);
                 m_logger.Flush();
                 DAQControl.StopActiveAssayImmediately();
                 throw;
@@ -239,7 +236,7 @@ namespace LMDAQ
         /// <param name="voltage">The voltage to set in volts.</param>
         /// <param name="duration">The length of the measurement to take.</param>
         /// <exception cref="InvalidOperationException">An operation is already in progress.</exception>
-        public override Task StartHVCalibration(int voltage, TimeSpan duration)
+        public override void StartHVCalibration(int voltage, TimeSpan duration)
         {
             m_logger.TraceEvent(LogLevels.Info, 0,
                 "PTR-32[{0}]: Starting HV calibration at {1}V for {2}s...",
@@ -255,7 +252,7 @@ namespace LMDAQ
             }
 
             CancellationToken cancellationToken = m_cancellationTokenSource.Token;
-            return Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
+            Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
         }
 
         /// <summary>

@@ -53,7 +53,9 @@ namespace NCCTransfer
         public static readonly string OLD_REVIEW = "RAW";
 
         static public string DETECTOR_SAVE_RESTORE = "DETECT";	/* id for detector save/restore files */
+        static public string DETECTOR_SAVE_REST6RE = "DETEC6";	/* id for INCC6 detector save/restore files */
         static public string CALIBRATION_SAVE_RESTORE = "CAL  "; /* id for calibration save/restore files */
+        static public string CALIBRATION_SAVE_REST6RE = "CAL6 "; /* id for INCC6 calibration save/restore files */
         public static string[] Extensions = new string[] {".BKG",		/* background measurement file extension */
                                                 ".INS",		/* initial source file extension */
                                                  ".NOR",			/* bias measurement file extension */
@@ -93,7 +95,7 @@ namespace NCCTransfer
 
         public void SetFilePath(string path)
         {
-            mpath = String.Copy(path);
+            mpath = string.Copy(path);
             mft = DetermineFileType(path);
         }
 
@@ -162,16 +164,9 @@ namespace NCCTransfer
                 return result;
             }
 
-            FileStream stream;
-            BinaryReader reader;
-            byte[] buff;
             FileInfo fi;
-
             try
             {
-                stream = File.OpenRead(source_path_filename);
-                reader = new BinaryReader(stream);
-                buff = new byte[stream.Length];
                 fi = new System.IO.FileInfo(source_path_filename);
             }
             catch (Exception e)
@@ -179,17 +174,31 @@ namespace NCCTransfer
                 mlogger.TraceException(e);
                 return result;
             }
-
-            if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed ||
-                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx"))
+            if (//(fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed ||
+                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
             {
                 result = eFileType.eZip;
                 mlogger.TraceEvent(LogLevels.Warning, 33039, "Compressed archive use is unavailable today {0}", source_path_filename);
-                reader.Close(); 
                 return result;
             }
 
-            int thisread = 0;
+
+            FileStream stream;
+            BinaryReader reader;
+            byte[] buff;
+			try
+            {
+                stream = fi.OpenRead();
+                reader = new BinaryReader(stream);
+                buff = new byte[stream.Length];
+            }
+            catch (Exception e)
+            {
+                mlogger.TraceException(e);
+                return result;
+            }
+
+			int thisread = 0;
             string str2, str2a,str2b;
             if (stream.Length < CALIBRATION_SAVE_RESTORE.Length)
             {
@@ -352,7 +361,7 @@ namespace NCCTransfer
 
         public void SetPath(string path)  // zip or folder
         {
-            fpath = String.Copy(path);
+            fpath = string.Copy(path);
             mft = DetermineFolderStateType(path);
             if (!(IsZip() || IsFolder()))
             {
@@ -364,7 +373,7 @@ namespace NCCTransfer
         {
             if (paths.Count() < 1)
                 return;
-            fpath = String.Copy(paths[0]);
+            fpath = string.Copy(paths[0]);
             this.paths = paths;
             mft = eFileType.eFileList;
         }
@@ -387,7 +396,7 @@ namespace NCCTransfer
                 {
                     IEnumerable<string> effs = null;
                     effs = from f in
-                               (String.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
+                               (string.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
                            select f;
 
                     if (effs == null || (effs.Count() <= 0))
@@ -395,7 +404,7 @@ namespace NCCTransfer
                         mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);
                     }
 
-                    mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC file processing", effs.Count(), fpath);
+                    mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
 
                     // Show files and build list
                     foreach (var f in effs)
@@ -423,7 +432,7 @@ namespace NCCTransfer
             }
             else if (mft == eFileType.eFileList)
             {
-                mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC file processing", paths.Count());
+                mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC review and transfer file processing", paths.Count());
 
                 // Show files and build list
                 foreach (var f in paths)
@@ -489,7 +498,8 @@ namespace NCCTransfer
                 System.IO.FileInfo fi = null;
 
                 fi = new System.IO.FileInfo(source_path_filename);
-                if ((fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed || fi.Extension.ToLower().Equals(".zip"))
+                if (//(fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed || fi.Extension.ToLower().Equals(".zip")
+					                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
                 {
                     result = eFileType.eZip;
                     mlogger.TraceEvent(LogLevels.Info, 33030, "Compressed archive found");

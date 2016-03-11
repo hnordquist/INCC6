@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -76,8 +76,8 @@ namespace ListModeDB
                 app.FPPrecision = DB.Utils.DBUInt16(dr["fpPrec"]);
                 app.OpenResults = DB.Utils.DBBool(dr["openResults"]);
                 app.SetVerbose(DB.Utils.DBUInt16(dr["verbose"]));
-                app.EmuLoc = (string)(dr["emulatorapp"]);
-                app.Emulate = DB.Utils.DBBool(dr["serveremulation"]);
+                app.INCC5IniLoc = (string)(dr["emulatorapp"]);
+                app.UseINCC5Ini = DB.Utils.DBBool(dr["serveremulation"]);
                 app.FileInputDBSetter = (string)(dr["fileinput"]);
                 app.Recurse = DB.Utils.DBBool(dr["recurse"]);
                 app.ParseGen2 = DB.Utils.DBBool(dr["parseGen2"]);
@@ -85,12 +85,10 @@ namespace ListModeDB
                 app.INCCParity = DB.Utils.DBBool(dr["INCCParity"]);
 
                 app.SortPulseFile = DB.Utils.DBBool(dr["sortPulseFile"]);
-                app.PulseFileNCD = DB.Utils.DBBool(dr["pulseFileNCD"]);
-                app.PTRFileNCD = DB.Utils.DBBool(dr["ptrFileNCD"]);
-                app.NILAFileNCD = DB.Utils.DBBool(dr["nilaFileNCD"]);
+
                 app.PulseFileAssay = DB.Utils.DBBool(dr["pulseFileAssay"]);
                 app.PTRFileAssay = DB.Utils.DBBool(dr["ptrFileAssay"]);
-                app.NILAFileAssay = DB.Utils.DBBool(dr["nilaFileAssay"]);
+                app.MCA527FileAssay = DB.Utils.DBBool(dr["nilaFileAssay"]);
                 app.TestDataFileAssay = DB.Utils.DBBool(dr["testDataFileAssay"]);
                 app.ReviewFileAssay = DB.Utils.DBBool(dr["reviewFileAssay"]);
 
@@ -102,11 +100,30 @@ namespace ListModeDB
                 app.CreateINCC5TestDataFile = DB.Utils.DBBool(dr["gen5RevDataFile"]);
                 app.LiveFileWrite = DB.Utils.DBBool(dr["liveFileWrite"]);
 
-                if (dr.Table.Columns.Contains("dbDataAssay"))
+                if (existtest(dr, "dbDataAssay"))
                     app.DBDataAssay = DB.Utils.DBBool(dr["dbDataAssay"]);
-                return app;
+				
+                if (strvaluetest(dr, "resultsFilePath"))
+                    app.ResultsFilePath = (string)(dr["resultsFilePath"]);
+                if (strvaluetest(dr, "logFilePath"))
+                    app.LogFilePath = (string)(dr["logFilePath"]);
+                if (existtest(dr, "results8Char"))
+					app.Results8Char = DB.Utils.DBBool(dr["results8Char"]);
+                if (existtest(dr, "assayTypeSuffix"))
+					app.AssayTypeSuffix = DB.Utils.DBBool(dr["assayTypeSuffix"]);
+               return app;
             }
-        }
+		}
+        
+		static private bool strvaluetest(DataRow dr, string key)
+		{
+			return dr.Table.Columns.Contains(key) && (!dr[key].Equals(System.DBNull.Value)) && (!string.IsNullOrEmpty((string)dr[key]));
+		}
+
+		static private bool existtest(DataRow dr, string key)
+		{
+			return dr.Table.Columns.Contains(key);
+		}
 
         private CountingAnalysisParameters CountingParameters(string detname)
         {
@@ -183,7 +200,7 @@ namespace ListModeDB
             drl = dt.Rows[dt.Rows.Count - 1];
             lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
             lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
-            lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]);
+            lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
             lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
             lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
             try {

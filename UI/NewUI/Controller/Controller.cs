@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -29,7 +29,7 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using AnalysisDefs;
-using LMProcessor;
+using DAQ;
 using NCC;
 using NCCFile;
 using NCCReporter;
@@ -44,8 +44,8 @@ namespace NewUI
 
     public partial class Controller
     {
-        LMProcessor.MeasurementStatus measStatus;
-        public Boolean updateGUIWithNewData = true;
+        NCC.MeasurementStatus measStatus;
+        public bool updateGUIWithNewData = true;
         public bool updateGUIWithChannelRatesData = false;
 
         // DAQ operations
@@ -64,7 +64,7 @@ namespace NewUI
 
         public Controller(EnableFunc ef)
         {
-            this.enablecontrols = ef;
+            enablecontrols = ef;
         }
 
         // access global state, but layered apart from form space
@@ -88,7 +88,6 @@ namespace NewUI
                     return daqbind.SOH;
             }
         }
-
         public string FileInput
         {
             get { return NC.App.AppContext.FileInput; }
@@ -105,7 +104,7 @@ namespace NewUI
         public void ActivateDetector(Detector det = null)
         {
             if (!file)
-                DAQBind.ActivateDetector(det);
+                DAQControl.ActivateDetector(det);
         }
 
         /// <summary>
@@ -148,7 +147,6 @@ namespace NewUI
             string[] fullargs = Environment.GetCommandLineArgs();
             string[] args = new string[fullargs.Length - 1];
             Array.Copy(fullargs, 1, args, 0, args.Length);
-
             
             NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
             NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
@@ -188,7 +186,7 @@ namespace NewUI
             {
                 InitializeFileController();
                 InitializeDAQController();
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
             }
         }
 
@@ -251,14 +249,23 @@ namespace NewUI
 
             fctrlbind.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
             {
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
                 string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
-				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
-                fctrlbind.mProgressTracker.ReportProgress(per, // a % est of files
-					String.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
+				if (!string.IsNullOrEmpty(s2))
+					s2 = "(" + s2 + ")";
+				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+				try
+				{
+					fctrlbind.mProgressTracker.ReportProgress(per, // a % est of files
+						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
+				}
+				catch (ArgumentOutOfRangeException e)
+				{
+					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
+				}				
             });
 
             fctrlbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
@@ -275,11 +282,11 @@ namespace NewUI
 
             fctrlbind.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
-                String s = "";
+                string s = "";
                 if (o != null && o is FileCtrl)
                 {
                     FileCtrl f = (FileCtrl)o;
-                        measStatus = new LMProcessor.MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
+                        measStatus = new MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
                         measStatus.UpdateWithMeasurement();
                         s = FileCtrl.MeasStatusString(measStatus);
                         updateGUIWithChannelRatesData = true;
@@ -307,13 +314,13 @@ namespace NewUI
         public bool InitializeDAQController()
         {
             // DAQ
-            daqbind = new DAQBind((MLMEmulation.IEmulatorDiversion)(new LMProcessor.NullEmulation()));
+            daqbind = new DAQBind();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
 
 
             daqbind.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
 				daqbind.mProgressTracker.ReportProgress(0, s);//"...");
             });
 
@@ -321,56 +328,66 @@ namespace NewUI
             {
                 string s = "Action Prep: ";
                 //can also look at active instrument list here LogLevels.Verbose,
-                s = s + LMDAQ.Instruments.Active.Count + " devices found, [" + NC.App.Opstate.SOH + "] " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K");
+                s = s + Instr.Instruments.Active.Count + " devices found, [" + NC.App.Opstate.SOH + "] " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K");
                 applog.TraceEvent(LogLevels.Verbose, 0xABCE, "Action Prep: SOH " + o.ToString() + "'");
 				daqbind.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
                 enablecontrols(false);
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
                 daqbind.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
             {
-                measStatus = new LMProcessor.MeasurementStatus();
+                measStatus = new MeasurementStatus();
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
-                string s2 = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
-				int per = Math.Min(100, (int)Math.Round(100.0 * ((double)measStatus.CurrentRepetition / (double)measStatus.RequestedRepetitions)));
-				daqbind.mProgressTracker.ReportProgress(per, // a % est of files
-					String.Format("{0} of {1} ({2})", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
+                string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+				if (!string.IsNullOrEmpty(s2))
+					s2 = "(" + s2 + ")";
+
+				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+				try
+				{
+					daqbind.mProgressTracker.ReportProgress(per, // a % est of files
+						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
+				}
+				catch (ArgumentOutOfRangeException e)
+				{
+					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
+				}
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
-                string s = LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
                 string s = "";
-                if (o != null && o is LMDAQ.DAQControl)
+                if (o != null && o is DAQControl)
                 {
-                    LMDAQ.DAQControl f = (LMDAQ.DAQControl)o;
-                    measStatus = new LMProcessor.MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
+                    DAQControl f = (DAQControl)o;
+                    measStatus = new MeasurementStatus();  // preps local state for refresh on channel and computed rates for now, follow up with all other state
                     measStatus.UpdateWithMeasurement();
-                    s = LMDAQ.DAQControl.MeasStatusString(measStatus);
+                    s = DAQControl.MeasStatusString(measStatus);
                     updateGUIWithChannelRatesData = true;
                     UpdateGUIWithNewdata();
                 }
                 else
                 {
-                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + LMDAQ.DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
+                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
                 }
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
@@ -387,7 +404,7 @@ namespace NewUI
 
         public void UpdateGUIWithNewData(MainWindow df)
         {
-            this.updateGUIWithNewData = true;
+            updateGUIWithNewData = true;
             NC.App.Logger(LMLoggers.AppSection.App).TraceInformation("!!!!");
         }
 
@@ -403,7 +420,7 @@ namespace NewUI
 
         public void Close()
         {
-            NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+            NC.App.Opstate.SOH = OperatingState.Stopped;
             NC.App.Config.RetainChanges();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
             applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
@@ -418,7 +435,7 @@ namespace NewUI
     /// <summary>
     /// Class for controlling file processing from a UI or other controlling client code
     /// </summary>
-    public class FCtrlBind : NCCFile.FileCtrl
+    public class FCtrlBind : FileCtrl
     {
 
         public Task task;
@@ -434,23 +451,21 @@ namespace NewUI
         public new void StartAction()
         {
             mProgressTracker = new ProgressTracker();
-
-            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
-            string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") +
-                                (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
+            task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken); 
+            string titletext = (NC.App.AppContext.DBDataAssay ? "Database " : "File ") + (NC.App.Opstate.Action == NCCAction.Assay ? "Analysis" : "Processing");
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
         }
 
         public new void CancelCurrentAction()
         {
             base.CancelCurrentAction();
-            base.Cleanup();
+            Cleanup();
         }
 
         public new void StopCurrentAction()
         {
             base.StopCurrentAction();
-            base.Cleanup();
+            Cleanup();
         }
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
@@ -467,12 +482,12 @@ namespace NewUI
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }
-            base.Cleanup();
+            Cleanup();
         }
 
         void Done(object sender, RunWorkerCompletedEventArgs e)
         {
-            base.Cleanup();
+            Cleanup();
         }
 
         public OperatingState SOH
@@ -489,39 +504,39 @@ namespace NewUI
     /// <summary>
     /// Class for controlling live DAQ from a UI or other controlling client code
     /// </summary>
-    public class DAQBind : LMDAQ.DAQControl
+    public class DAQBind : DAQControl
     {
         public Task task;
         public ProgressTracker mProgressTracker;
 
-        public DAQBind(MLMEmulation.IEmulatorDiversion emu)
-            : base(emu, true)
+        public DAQBind()
+            : base(true)
         {            
             mProgressTracker = new ProgressTracker();
         }
 
-        public new void Run()
+		public new void Run()
         {
             try
             {
                 switch (NC.App.Opstate.Action)  // these are the actions available from the GUI only
                 {
                     case NCCAction.Discover:
-                        FireEvent(EventType.PreAction, this);
-                        ConnectWithRetries(false, 5);
+                        FireEvent(EventType.PreAction, this);  
+						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.HVCalibration:
                         FireEvent(EventType.PreAction, this);
-                        ConnectWithRetries(false, 5);
+                        ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         HVCoreOp();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.Assay:
                         FireEvent(EventType.PreAction, this);
-                        ConnectWithRetries(false, 5);
+						ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         AssayCoreOp();
                         DisconnectInstruments();
@@ -561,29 +576,26 @@ namespace NewUI
 
         void Done(object sender, RunWorkerCompletedEventArgs e)
         {
-			base.Cleanup();
+			Cleanup();
         }
 
         public new void StartAction()
         {
             mProgressTracker = new ProgressTracker();
-
             task = Task.Factory.StartNew(() => ThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
-
             Progress.ProgressDialog.Show(null, "DAQ " + NC.App.Opstate.Action.ToString(), NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
-
         }
 
         public new void CancelCurrentAction()
         {
             base.CancelCurrentAction();
-			base.Cleanup();
+			Cleanup();
         }
 
         public new void StopCurrentAction()
         {
             base.StopCurrentAction();
-			base.Cleanup();
+			Cleanup();
         }
 
         public NCCAction CurAction

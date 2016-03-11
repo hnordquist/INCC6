@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -156,6 +156,7 @@ namespace DB
         // if this fails, all DB access fails, but the code will treat the state as if it has no memory, and use whatever exists or can be imported into the app from the outside.
         // in other words, the app can run despite no DB persistence 
         private static DbProviderFactory fact;
+        private static DbCommandBuilder bld;
         public static DbProviderFactory DBProvider
         {
             get
@@ -168,11 +169,35 @@ namespace DB
                     // (e.g. bin/release), and the assembly will not be loaded. 
                     // dev note: another source of error can be the loc of the provider reference assembly, the loc must be available at runtime 
                     fact = DbProviderFactories.GetFactory(ProviderInvariantName);
+					bld = fact.CreateCommandBuilder();
                 }
                 return fact;
             }
         }
 
+		public static DbCommand DBCmd
+        {
+            get
+            {
+                if (fact == null)
+                {
+					DbProviderFactory f = DBProvider;
+				}
+				return fact.CreateCommand();
+            }
+        }
+
+		public static DbCommandBuilder DBCmdBuilder
+        {
+            get
+            {
+                if (bld == null || fact == null)
+                {
+					DbProviderFactory f = DBProvider;
+				}
+                return bld;
+            }
+        }
         /// <summary>
         /// The current DBProvider factory creates the typed DBConnection subclass
         /// </summary>
@@ -414,7 +439,7 @@ namespace DB
          bool Execute(string sSQL);
          DataTable DT(string sSQL);
          string Scalar(string sSQL);
-         int ScalarIntx(string sSQL);
+         int ScalarIntx();
          int Execute(ArrayList sqlList);
          bool ExecuteTransaction(ArrayList sqlList);
          long ExecuteTransactionID(ArrayList sqlList);
@@ -450,6 +475,13 @@ namespace DB
                 }
         }
 
+		public void CreateCommand(string sSQL)
+        {
+			SetConnection();
+            sql_cmd = sql_con.CreateCommand();
+			sql_cmd.CommandText = sSQL;
+        }
+
         // assumes DB is there, but might need to build it before we get here 
         public bool Execute(string sSQL)
         {
@@ -457,9 +489,9 @@ namespace DB
             bool needDb = false;
             try
             {
-                sql_con.Open();
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.CommandText = sSQL;
+		sql_con.Open();
                 try
                 {
                     int i = sql_cmd.ExecuteNonQuery();
@@ -552,33 +584,28 @@ namespace DB
             return sData;
         }
 
-        public int ScalarIntx(string sSQL)
-        {
-            int iData = -1;
-            try
-            {
-                sql_con.Open();
-                sql_cmd = sql_con.CreateCommand();
-                sql_cmd.CommandText = sSQL;
-
-                var wht = sql_cmd.ExecuteScalar();
-                if (wht == null)
-                    iData = 0;
-                else
-                    iData = Convert.ToInt32(wht.ToString());
-            }
-            catch (Exception caught)
-            {
-                try
-                {
-                   DBMain.AltLog(LogLevels.Warning, 70105, "ScalarIntx  '" + caught.Message + "' " + sSQL);
-                    sql_con.Close();
-                    return -1;
-                }
-                catch { }
-            }
-            sql_con.Close();
-            return iData;
+		public int ScalarIntx()
+		{
+			int iData = -1;
+			try
+			{
+				sql_con.Open();
+				var wht = sql_cmd.ExecuteScalar();
+				if (wht == null)
+					iData = 0;
+				else
+					iData = Convert.ToInt32(wht.ToString());
+			} catch (Exception caught)
+			{
+				try
+				{
+					DBMain.AltLog(LogLevels.Warning, 70105, "ScalarIntx  '" + caught.Message + "' " + sql_cmd.CommandText);
+					sql_con.Close();
+					return -1;
+				} catch { }
+			}
+			sql_con.Close();
+			return iData;
         }
 
         public int Execute(ArrayList sqlList)
@@ -794,8 +821,20 @@ namespace DB
             }
         }
 
-
-    }
+		/// <summary>
+		/// 6.0.1.0			db.TableHasColumn("LMINCCAppContext","dataFilePath");
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public bool TableHasColumn(string table, string col)
+		{
+			string sql = "select " + col + " from " + table;
+			DataTable dt = DT(sql);
+			DataRow r =  dt.Rows.Find(col);
+			return dt.Rows.Count > 0;
+		}
+	}
 
     public class DB2 : IDB, IDisposable
     {
@@ -811,30 +850,38 @@ namespace DB
                 SetConnection(); // Now optional because if this throws, hard to recover in chain of const calls
         }
 
-
-        public void Dispose()
+		protected virtual void Dispose(bool disposing)
+		{
+			try
+			{
+				if (disposing)
+				{ 
+					if (sql_con != null)
+					{
+						sql_con.Close();
+						sql_con.Dispose();
+						sql_con = null;
+					}
+					if (sql_cmd != null)
+					{
+						sql_cmd.Dispose();
+						sql_cmd = null;
+					}
+					if (sql_da != null)
+					{
+						sql_da.Dispose();
+						sql_da = null;
+					}
+				}
+			} catch (Exception caught)
+			{
+				Console.WriteLine(caught.Message);
+			}
+		}
+		public void Dispose()
         {
-            try
-            {
-                if (sql_con != null)
-                {
-                    sql_con.Close();
-                    sql_con . Dispose();
-                }
-                if (sql_cmd != null)
-                {
-                    sql_cmd.Dispose();
-                }
-                if (sql_da!= null)
-                {
-                    sql_da.Dispose();
-                }
-
-            }
-            catch (Exception caught)
-            {
-                Console.WriteLine(caught.Message);
-            }
+			Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         public void SetConnection()
@@ -940,31 +987,28 @@ namespace DB
             return sData;
         }
 
-        public int ScalarIntx(string sSQL)
-        {
-            int iData = -1;
-            try
-            {
-                if (sql_cmd == null) sql_cmd = sql_con.CreateCommand();
-                sql_cmd.CommandText = sSQL;
-
-                var wht = sql_cmd.ExecuteScalar();
-                if (wht == null)
-                    iData = 0;
-                else
-                    iData = Convert.ToInt32(wht.ToString());
-            }
-            catch (Exception caught)
-            {
-                try
-                {
-                    DBMain.AltLog(LogLevels.Warning, 70105, "ScalarIntx  '" + caught.Message + "' " + sSQL);
-
-                    return -1;
-                }
-                catch { }
-            }
-            return iData;
+		public int ScalarIntx()
+		{
+			int iData = -1;
+			try
+			{
+				sql_con.Open();
+				var wht = sql_cmd.ExecuteScalar();
+				if (wht == null)
+					iData = 0;
+				else
+					iData = Convert.ToInt32(wht.ToString());
+			} catch (Exception caught)
+			{
+				try
+				{
+					DBMain.AltLog(LogLevels.Warning, 70105, "ScalarIntx  '" + caught.Message + "' " + sql_cmd.CommandText);
+					sql_con.Close();
+					return -1;
+				} catch { }
+			}
+			sql_con.Close();
+			return iData;
         }
 
         public int Execute(ArrayList sqlList)

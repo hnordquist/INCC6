@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,23 +26,21 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Linq;
 using AnalysisDefs;
 namespace NewUI
 {
+	using NC = NCC.CentralizedState;
 
-    using NC = NCC.CentralizedState;
-    public partial class IDDCompositeIsotopics : Form
+	public partial class IDDCompositeIsotopics : Form
     {
-        CompositeIsotopics comp_iso;
-        const double isomin = 99.7;
-        const double isomax = 100.3;
         public IDDCompositeIsotopics()
         {
             InitializeComponent();
             RefreshIsoCodeCombo();
             RefreshIdComboWithDefault();
+            applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
         }
 
         private void CalculateBtn_Click(object sender, EventArgs e)
@@ -57,7 +55,12 @@ namespace NewUI
 
         private void ReferenceDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
-
+            DateTime dt = ((DateTimePicker)sender).Value;
+            if (!m_comp_iso.pu_date.Equals(dt))
+            {
+                modified = m_comp_iso.modified = true;
+                m_comp_iso.pu_date = dt;
+            }
         }
 
         private void IsoSrcCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -72,7 +75,34 @@ namespace NewUI
 
         private void ReadBtn_Click(object sender, EventArgs e)
         {
-
+			OpenFileDialog RestoreFileDialog = new OpenFileDialog();
+            List<string> paths = new List<string>();
+            RestoreFileDialog.CheckFileExists = false;
+			RestoreFileDialog.Filter = "all files (*.*)|*.*";
+            RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
+            RestoreFileDialog.Title = "Select a composite isotopics file";
+            RestoreFileDialog.Multiselect = false;
+            RestoreFileDialog.RestoreDirectory = true;
+            DialogResult r = DialogResult.No;
+            r = RestoreFileDialog.ShowDialog();
+            if (r != DialogResult.OK)
+				return;            
+			NCCFile.IsoFiles possibleCompIsoFilesToAttemptProcessingUpon = new NCCFile.IsoFiles();
+			possibleCompIsoFilesToAttemptProcessingUpon.Process(new List<string>(RestoreFileDialog.FileNames));
+			foreach (CompositeIsotopics iso in possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics) // add all new values into the database
+			{
+				iso.modified = true;
+				if (NC.App.DB.CompositeIsotopics.Set(iso) >= 0)
+				{
+					applog.TraceInformation("'" + iso.id + "' composite isotopics updated/added");
+				}
+			}
+			int count = possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics.Count;
+			if (count > 0)
+			{
+				NC.App.DB.Isotopics.Refresh();  // update isotopics in-memory list from the freshly updated database 
+				RefreshIdComboWithDefault(possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics[count-1].id);  // make the last read iso the current iso
+			}
         }
 
         private void WriteBtn_Click(object sender, EventArgs e)
@@ -120,14 +150,6 @@ namespace NewUI
 
         }
 
-        public void RefreshComboBox(ComboBox box)
-        {
-            box.Items.Clear();
-            foreach (CompositeIsotopics i in NC.App.DB.CompositeIsotopics.GetList())
-            {
-                box.Items.Add(i.id);
-            }
-        }
         public void RefreshIsoIDCombo(ComboBox box)
         {
             box.Items.Clear();
@@ -144,19 +166,39 @@ namespace NewUI
                 IsoSrcCodeComboBox.Items.Add(sc.ToString());
             }
         }
-        private void RefreshIdComboWithDefault()
-        {
-            if (NC.App.DB.CompositeIsotopics.GetList() != null && NC.App.DB.CompositeIsotopics.GetList().Count > 0)
-            {
-                comp_iso = NC.App.DB.CompositeIsotopics.GetList().FirstOrDefault(isot => String.Compare(isot.id, "default", true) == 0); // "Default" is the first selected item
-            }
-            else
-            {
-                comp_iso = new CompositeIsotopics();
-            }
-            RefreshIsoIDCombo(IsotopicsIdComboBox);
-            IsotopicsIdComboBox.SelectedItem = comp_iso.id;  // forces event handler (below) to load  dialog fields
-        }
+		private void RefreshIdComboWithDefault(string id = "default")
+		{
+			IsotopicsIdComboBox.Items.Clear();
 
+			// get the in-memory list
+			List<CompositeIsotopics> isolist = NC.App.DB.CompositeIsotopics.GetList();
+
+			if (isolist.Count > 0)  // look for id on the list
+			{
+				foreach (CompositeIsotopics tope in isolist)
+				{
+					IsotopicsIdComboBox.Items.Add(tope.id);
+				}
+				m_comp_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+			} 
+			else // Should never hit here, happens if DB is blank. Add a single "Default"
+			{
+				m_comp_iso = new CompositeIsotopics();
+				m_comp_iso.modified = true;
+				isolist.Add(m_comp_iso); // add to in-memory list
+				NC.App.DB.CompositeIsotopics.Set(m_comp_iso);  // set in database
+			}
+			IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;  // forces event handler to load dialog fields
+		}
+
+		public CompositeIsotopics GetSelectedIsotopics { get { return m_comp_iso; } }
+
+        CompositeIsotopics m_comp_iso;
+        const double isomin = 99.7;
+        const double isomax = 100.3;
+        const double TOLERANCE = .00001;
+		NCCReporter.LMLoggers.LognLM applog;
+		bool modified = false;
+		
     }
 }

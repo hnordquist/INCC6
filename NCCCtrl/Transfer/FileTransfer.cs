@@ -40,12 +40,12 @@ namespace NCCTransfer
 
         public DescriptorPair()
         {
-            id = String.Empty;
-            desc = String.Empty;
+            id = string.Empty;
+            desc = string.Empty;
         }
         public bool HasContent()
         {
-            bool has = !String.IsNullOrWhiteSpace(id);
+            bool has = !string.IsNullOrWhiteSpace(id);
             return has;
         }
     }
@@ -78,13 +78,13 @@ namespace NCCTransfer
     {
         public DetectorMaterialMethod()
         {
-            item_type = String.Empty;
-            detector_id = String.Empty;
+            item_type = string.Empty;
+            detector_id = string.Empty;
         }
         public DetectorMaterialMethod(DetectorMaterialMethod src)
         {
-            item_type = String.Copy(src.item_type);
-            detector_id = String.Copy(src.detector_id);
+            item_type = string.Copy(src.item_type);
+            detector_id = string.Copy(src.detector_id);
             analysis_method = src.analysis_method;
             extra = src.extra;
         }
@@ -136,7 +136,7 @@ namespace NCCTransfer
         public INCCTransferBase(LMLoggers.LognLM logger, string mpath)
         {
             mlogger = logger;
-            Path = String.Copy(mpath);
+            Path = string.Copy(mpath);
         }
         unsafe public virtual bool Restore(string source_path_filename)
         {
@@ -180,6 +180,9 @@ namespace NCCTransfer
                 Marshal.SizeOf(bkg_parms) + Marshal.SizeOf(norm_parms) +
                 Marshal.SizeOf(add_a_source_setup) + Marshal.SizeOf(tm_bkg_parms);
 
+			
+            // long size_version_6_detector_parms = size_version_5_detector_parms + List mode stuff added;
+
             bool result = false;
             FileStream stream;
             BinaryReader reader;
@@ -189,9 +192,9 @@ namespace NCCTransfer
 
             try
             {
-                stream = File.OpenRead(source_path_filename);
-                reader = new BinaryReader(stream);
                 fi = new System.IO.FileInfo(source_path_filename);
+                stream = fi.OpenRead();
+                reader = new BinaryReader(stream);
             }
             catch (Exception e)
             {
@@ -393,9 +396,9 @@ namespace NCCTransfer
             mlogger.TraceEvent(LogLevels.Info, 33290, "Parsing the calibration initial data file {0}", source_path_filename);
             try
             {
-                stream = File.OpenRead(source_path_filename);
+		fi = new System.IO.FileInfo(source_path_filename);
+                stream = fi.OpenRead();
                 reader = new BinaryReader(stream);
-                fi = new System.IO.FileInfo(source_path_filename);
             }
             catch (Exception e)
             {
@@ -730,9 +733,9 @@ namespace NCCTransfer
             meas_id id = new meas_id();
             try
             {
-                stream = File.OpenRead(source_path_filename);
+				fi = new System.IO.FileInfo(source_path_filename);
+                stream = fi.OpenRead();
                 reader = new BinaryReader(stream);
-                fi = new System.IO.FileInfo(source_path_filename);
             }
             catch (Exception e)
             {
@@ -2407,9 +2410,9 @@ namespace NCCTransfer
 
             try
             {
-                stream = File.OpenRead(source_path_filename);
-                reader = new BinaryReader(stream);
                 fi = new System.IO.FileInfo(source_path_filename);
+                stream = fi.OpenRead();
+                reader = new BinaryReader(stream);
             }
             catch (Exception e)
             {

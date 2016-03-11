@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -197,7 +197,7 @@ namespace AnalysisDefs
                                     rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.collar_combined_rec();
                                     break;
                                 case AnalysisMethod.CuriumRatio:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.cm_pu_ratio_rec();
+                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.curium_ratio_rec();
                                     break;
                                 case AnalysisMethod.KnownA:
                                     rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.known_alpha_rec();
