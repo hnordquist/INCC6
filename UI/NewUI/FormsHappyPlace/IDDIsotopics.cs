@@ -114,6 +114,8 @@ namespace NewUI
             {
                 modified = m_iso.modified = true;
                 m_iso.pu_date = dt;
+                m_iso.am_date = new DateTime(dt.Ticks);
+                AmDateTimePicker.Value = m_iso.am_date;   // what INCC5 does
             }
         }
 

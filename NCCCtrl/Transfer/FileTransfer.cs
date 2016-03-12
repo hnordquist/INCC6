@@ -1120,7 +1120,7 @@ namespace NCCTransfer
                     {
                         sz = Marshal.SizeOf(run);
                         los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                        if (los_bytos != null)
+                        if (los_bytos != null && los_bytos.Length >= sz)  // gonna fail here if size is not exact
                             fixed (byte* pData = los_bytos)
                             {
                                 run = *(run_rec*)pData;
@@ -1242,7 +1242,7 @@ namespace NCCTransfer
             }
             catch (TransferUtils.TransferParsingException tpe)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33086, "Transfer file processing incomplete", tpe.Message);
+                mlogger.TraceEvent(LogLevels.Warning, 33086, "Transfer file processing incomplete {0}", tpe.Message);
                 result = false;
             }
             catch (Exception e)

@@ -27,6 +27,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
@@ -552,30 +553,6 @@ namespace DB
             return db.Execute(s);
         }
 
-        //todo: Does the composite isotopics table need the primary key?
-        /*public long PrimaryKey(string Id)
-        {
-            if (String.IsNullOrEmpty(Id))
-                return -1;
-            db.SetConnection();
-            string s = "SELECT id FROM isotopics where isotopics_id = " + SQLSpecific.QVal(Id);
-            string r = db.Scalar(s);
-            long l = -1;
-            if (!Int64.TryParse(r, out l))
-                l = -1;
-            return l;
-        }*/
-
-        /*public bool Update(string Id, string NewId)
-        {
-            //todo: not needed?  Looks like the other update will work for our composite record
-            db.SetConnection();
-            string wh = " where ci_isotopics_id = " + Id.ToString();
-            string sSQL1 = "UPDATE composite_isotopics_rec SET ci_isotopics_id=" + SQLSpecific.QVal(NewId);
-            string sSQL = sSQL1 + wh;
-            return db.Execute(sSQL);
-        }*/
-
         public long Update(string Id, ElementList sParams)
         {
             db.SetConnection();
@@ -629,7 +606,6 @@ namespace DB
             return (UniqueRow(IsoName) != null);
         }
 
-        //todo: not sure if composite isotopics are tied to detector.
         public bool Has(string IsoName, Int32 DetectorType, string DetectorElectronics)
         {
             return (HasRow(IsoName) != null);
@@ -644,6 +620,67 @@ namespace DB
             DataTable dt = db.DT(sSQL);
             return dt;
         }
+
+        /// composite isotopic element /////////////////////////////////////////
+        ///
+        /// yes
+        public long AddCIRetId(long cid, ElementList sParams)
+        {
+            //Returns ID
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQL = CIInsertStatement(cid, sParams);
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("composite_isotopic_rec"));
+            return db.Execute(sqlList);
+        }
+
+        public bool AddCI(long cid, ElementList sParams)
+        {
+            db.SetConnection();
+            string sSQL = CIInsertStatement(cid, sParams);
+            return db.Execute(sSQL);
+        }
+
+        protected string CIInsertStatement(long cid, ElementList sParams)
+        {
+            sParams.Add(new Element("cid", cid));
+            return "Insert into composite_isotopic_rec " + sParams.ColumnsValues;
+        }
+
+        public bool AddCIs(long cid, List<ElementList> sParams)
+        {
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQL = "";
+            foreach (ElementList els in sParams)
+            {
+                sSQL = CIInsertStatement(cid, els);
+                sqlList.Add(sSQL);
+            }
+            return db.ExecuteTransaction(sqlList);
+        }
+
+        public DataTable GetCIs(long cid)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * FROM composite_isotopic_rec Where cid=" + cid;
+            return db.DT(sSQL);
+        }
+
+        public long Lookup(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return -1;
+            db.SetConnection();
+            string s = "SELECT * FROM composite_isotopic_recs WHERE ci_isotopics_id=" + SQLSpecific.QVal(name);
+            string r = db.Scalar(s);
+            long lr = -1;
+            if (!long.TryParse(r, out lr))
+                lr = -1;
+            return lr;
+        }
+
     }
 
     public class cm_pu_ratio_rec

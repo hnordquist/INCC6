@@ -146,8 +146,9 @@ namespace NCCTransfer
             {
                 r = reader.ReadBytes(count);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                throw new TransferParsingException(" read " + count.ToString() + " bytes failed: " + e.Message);
             }
 
             return r;

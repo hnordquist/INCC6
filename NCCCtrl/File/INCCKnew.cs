@@ -885,8 +885,10 @@ namespace NCCTransfer
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
-            meas.AcquireState.facility = new INCCDB.Descriptor(string.Copy(itf.facility_table[0].id), string.Copy(itf.facility_table[0].desc));
-            meas.AcquireState.mba = new INCCDB.Descriptor(string.Copy(itf.mba_table[0].id), string.Copy(itf.mba_table[0].desc));
+            if (itf.facility_table.Count > 0)
+                meas.AcquireState.facility = new INCCDB.Descriptor(string.Copy(itf.facility_table[0].id), string.Copy(itf.facility_table[0].desc));
+            if (itf.mba_table.Count > 0)
+                meas.AcquireState.mba = new INCCDB.Descriptor(string.Copy(itf.mba_table[0].id), string.Copy(itf.mba_table[0].desc));
             if (itf.stratum_id_names_rec_table.Count > 0)
                 meas.AcquireState.stratum_id = new INCCDB.Descriptor(string.Copy(itf.stratum_id_names_rec_table[0].id), string.Copy(itf.stratum_id_names_rec_table[0].desc));
 
@@ -1676,7 +1678,7 @@ namespace NCCTransfer
 				NC.App.DB.TestParameters.Set(meas.Tests);
  
             NC.App.DB.Isotopics.SetList();  // new style de 'mouser'!
-            //NC.App.DB.CompositeIsotopics.SetList();// todo:
+            //NC.App.DB.CompositeIsotopics.SetList();// next:NYI
             NC.App.DB.ItemIds.SetList(); // This writes any new items ids to the DB
             NC.App.DB.CollarItemIds.SetList(); // so does this
 

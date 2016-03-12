@@ -201,7 +201,7 @@ namespace NewUI
 
             fctrlbind = new FCtrlBind();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
-            fctrlbind.mProgressTracker.ProgressChanged += new ProgressChangedEventHandler(Progress);
+            //fctrlbind.mProgressTracker.ProgressChanged += new ProgressChangedEventHandler(Progress);
 
 
             /* 

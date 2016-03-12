@@ -505,6 +505,11 @@ namespace AnalysisDefs
             return comp_isotopics;
         }
 
+        public List<CompositeIsotopics> GetMatch(Predicate<CompositeIsotopics> match)
+        {
+            return GetList().FindAll(match);
+        }
+
         public CompositeIsotopics Get()
         {
             return null;
@@ -592,6 +597,45 @@ namespace AnalysisDefs
             }
             return res;
         }
+
+        public bool AddComposites(List<CompositeIsotopic> cl, CompositeIsotopics cis)
+        {
+            DB.CompositeIsotopics db = new DB.CompositeIsotopics();
+            long cid = db.Lookup(cis.id);
+            if (cid <= 0)
+                return false;  
+            return AddComposites(cl, cid, db);
+        }
+
+        public bool AddComposites(List<CompositeIsotopic> cl, long cid, DB.CompositeIsotopics db = null)
+        {
+            if (db == null)
+                db = new DB.CompositeIsotopics();
+            int iCntCIs = cl.Count;
+            List<DB.ElementList> clist = new List<DB.ElementList>();
+            for (int ic = 0; ic < iCntCIs; ic++)
+            {
+                CompositeIsotopic c = cl[ic];
+                c.GenParamList(); 
+                clist.Add(c.ToDBElementList(generate: false));
+            }
+            db.AddCIs(cid, clist);
+            return true;
+        }
+
+        /// <summary>
+        ///  short cut when DB id is known at creation time
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <param name="c"></param>
+        public void AddComposite(long cid, CompositeIsotopic ci)
+        {
+            DB.CompositeIsotopics cis = new DB.CompositeIsotopics();
+            ci.GenParamList(); 
+
+            long lid = cis.AddCIRetId(cid, ci.ToDBElementList(generate: false));
+        }
+
 
     }
     public class CollarItemIdListImpl : IAPI<CollarItemId>
