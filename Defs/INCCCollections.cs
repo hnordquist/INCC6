@@ -500,7 +500,10 @@ namespace AnalysisDefs
                     comp_isotopics.Add(iso);
                 }
                 if (comp_isotopics.Count < 1)
-                    comp_isotopics.Add(new CompositeIsotopics());
+                {
+                    CompositeIsotopics f = new CompositeIsotopics();
+                    comp_isotopics.Add(f);
+                }
             }
             return comp_isotopics;
         }
@@ -523,7 +526,7 @@ namespace AnalysisDefs
         private DB.CompositeIsotopics compisodb;
         public long Set(CompositeIsotopics iso)
         {
-            //todo: see if this really works
+            //urgent: finish the sub entries
             long success = -1;
             if (iso.modified)
             {
@@ -553,7 +556,7 @@ namespace AnalysisDefs
             {
                 foreach (CompositeIsotopics iso in comp_isotopics)
                 {
-                    if (iso.modified)
+                    if (iso.modified)              //urgent: finish the sub entries
                     {
                         res = comp_isodb.Update(iso.id, iso.ToDBElementList());
                         NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created composite isotopics {0} ({1})", iso.id, res);
@@ -569,7 +572,16 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Delete(CompositeIsotopics iso)
+        /// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+            comp_isotopics = null;
+            GetList();
+        }
+
+        public bool Delete(CompositeIsotopics iso)  //todo: test for cascade remove of the sub entries
         {
             DB.CompositeIsotopics comp_isodb = new DB.CompositeIsotopics();
             if (comp_isodb.Delete(iso.id))
@@ -598,6 +610,14 @@ namespace AnalysisDefs
             return res;
         }
 
+        public bool GetComposites(ref List<CompositeIsotopic> cl, long cid, DB.CompositeIsotopics db = null)
+        {
+            if (db == null)
+                db = new DB.CompositeIsotopics();
+            DataTable dt = db.GetCIs(cid);
+            // urgent:
+            return true;
+        }
         public bool AddComposites(List<CompositeIsotopic> cl, CompositeIsotopics cis)
         {
             DB.CompositeIsotopics db = new DB.CompositeIsotopics();
@@ -631,8 +651,7 @@ namespace AnalysisDefs
         public void AddComposite(long cid, CompositeIsotopic ci)
         {
             DB.CompositeIsotopics cis = new DB.CompositeIsotopics();
-            ci.GenParamList(); 
-
+            ci.GenParamList();
             long lid = cis.AddCIRetId(cid, ci.ToDBElementList(generate: false));
         }
 

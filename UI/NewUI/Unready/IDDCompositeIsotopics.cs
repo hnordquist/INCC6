@@ -53,7 +53,7 @@ namespace NewUI
             //IsoDataGrid.Columns.AddRange()
             InitializeComponent();
             RefreshIsoCodeCombo();
-            RefreshIdComboWithDefault();
+            RefreshIdComboWithDefault(string.Empty);
 
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
         }
@@ -107,15 +107,17 @@ namespace NewUI
             foreach (CompositeIsotopics iso in possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics) // add all new values into the database
             {
                 iso.modified = true;
-                if (NC.App.DB.CompositeIsotopics.Set(iso) >= 0)
+                long key = -1;
+                if ((key = NC.App.DB.CompositeIsotopics.Set(iso)) >= 0)
                 {
+                    NC.App.DB.CompositeIsotopics.AddComposites(iso.isotopicComponents, key);
                     applog.TraceInformation("'" + iso.id + "' composite isotopics updated/added");
                 }
             }
             int count = possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics.Count;
             if (count > 0)
             {
-                NC.App.DB.Isotopics.Refresh();  // update isotopics in-memory list from the freshly updated database 
+                NC.App.DB.CompositeIsotopics.Refresh();  // update isotopics in-memory list from the freshly updated database 
                 RefreshIdComboWithDefault(possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics[count - 1].id);  // make the last read iso the current iso
             }
         }
@@ -134,7 +136,7 @@ namespace NewUI
         {
             if (modified)
             {
-                // URGNT: copy themodel in the single isotopcs imlementation
+                // URGNT: copy thevmodel in the single isotopcs implementation
                 if (!NC.App.DB.CompositeIsotopics.Has(m_comp_iso))
                     NC.App.DB.CompositeIsotopics.GetList().Add(m_comp_iso);   // add to in-memory list 
                 List<CompositeIsotopics> list = NC.App.DB.CompositeIsotopics.GetMatch(i => i.modified);
@@ -196,7 +198,7 @@ namespace NewUI
                 IsoSrcCodeComboBox.Items.Add(sc.ToString());
             }
         }
-        private void RefreshIdComboWithDefault(string id = "default")
+        private void RefreshIdComboWithDefault(string id)
         {
             IsotopicsIdComboBox.Items.Clear();
 
@@ -209,16 +211,14 @@ namespace NewUI
                 {
                     IsotopicsIdComboBox.Items.Add(tope.id);
                 }
-                m_comp_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+                if (!string.IsNullOrEmpty(id))
+                    m_comp_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+                else
+                    m_comp_iso = isolist[0];
             }
-            else // Should never hit here, happens if DB is blank. Add a single "Default"
-            {
-                m_comp_iso = new CompositeIsotopics();
-                m_comp_iso.modified = true;
-                isolist.Add(m_comp_iso); // add to in-memory list
-                NC.App.DB.CompositeIsotopics.Set(m_comp_iso);  // set in database
-            }
-            IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;  // forces event handler to load dialog fields
+
+            if (m_comp_iso != null)
+                 IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;  // forces event handler to load dialog fields
         }
 
         public CompositeIsotopics GetSelectedIsotopics { get { return m_comp_iso; } }

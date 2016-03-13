@@ -194,7 +194,7 @@
             // IsotopicsIdLabel
             // 
             this.IsotopicsIdLabel.AutoSize = true;
-            this.IsotopicsIdLabel.Location = new System.Drawing.Point(12, 115);
+            this.IsotopicsIdLabel.Location = new System.Drawing.Point(10, 115);
             this.IsotopicsIdLabel.Name = "IsotopicsIdLabel";
             this.IsotopicsIdLabel.Size = new System.Drawing.Size(111, 13);
             this.IsotopicsIdLabel.TabIndex = 15;
@@ -203,7 +203,7 @@
             // ReferenceDateLabel
             // 
             this.ReferenceDateLabel.AutoSize = true;
-            this.ReferenceDateLabel.Location = new System.Drawing.Point(43, 148);
+            this.ReferenceDateLabel.Location = new System.Drawing.Point(41, 148);
             this.ReferenceDateLabel.Name = "ReferenceDateLabel";
             this.ReferenceDateLabel.Size = new System.Drawing.Size(81, 13);
             this.ReferenceDateLabel.TabIndex = 16;

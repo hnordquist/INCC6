@@ -59,7 +59,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(456, 32);
             this.textBox1.TabIndex = 1;
-            this.textBox1.Text = "Beta Release 1, LA-CC 14-009";
+            this.textBox1.Text = "Beta Release 2, LA-CC 14-009";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // richTextBox1
@@ -103,7 +103,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Name = "Splash";
-            this.Text = "Beta Release 1, LA-CC 14-009";
+            this.Text = "Beta Release 2, LA-CC 14-009";
             this.ResumeLayout(false);
             this.PerformLayout();
 

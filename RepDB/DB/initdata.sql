@@ -87,6 +87,15 @@ INSERT INTO "isotopics"
 [pu_date],[am_date],[isotopics_id],[isotopics_source_code])
 VALUES(0.0,0.0,100.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,'2010-01-01','2010-01-01','Default','OD');
 GO
+INSERT INTO "composite_isotopics_rec" 
+([ci_pu238],[ci_pu239],[ci_pu240],[ci_pu241],[ci_pu242],[ci_am241],
+ [ci_pu_date],[ci_am_date],[ci_isotopics_id],[ci_isotopics_source_code],[ci_pu_mass])
+VALUES(0.0,0.0,100.0,0.0,0.0,0.0,'2010-01-01','2010-01-01','Default','OD',1.0);
+GO
+INSERT INTO "composite_isotopic_rec" 
+([id],[cid],[pu238],[pu239],[pu240],[pu241],[pu242],[am241],[pu_date],[am_date],[pu_mass])
+VALUES(1,1,0.0,0.0,100.0,0.0,0.0,0.0,'2010-01-01','2010-01-01',1.0);
+GO
 INSERT INTO "item_isotopics" (isotopics_source_code,isotopics_name) VALUES('OD','Default');
 GO
 INSERT INTO "detector_types" (name, [description]) VALUES('JSR11','JSR11');

@@ -128,7 +128,7 @@ namespace AnalysisDefs
             Halflives = new double[] { 0, PU238HL, PU239HL, PU240HL, PU241HL, PU242HL, AM241HL, CF252HL, CMHL, U235HL, 1.0 };
         }
 
-        Tuple[] isotopes;
+        internal Tuple[] isotopes;
         public DateTime pu_date;
         public DateTime am_date;
         public string id;
@@ -629,7 +629,18 @@ namespace AnalysisDefs
             dest.modified = true;
             dest.pu_mass = pu_mass;
             dest.isotopicComponents = new List<CompositeIsotopic>(isotopicComponents);
+        }     
+
+        public void Copy(Isotopics src, float mass)
+        {
+            pu_date = new DateTime(src.pu_date.Ticks);
+            am_date = new DateTime(src.am_date.Ticks);
+            isotopes = Isotopics.CopyArray(src.isotopes);
+            id = string.Copy(src.id);
+            source_code = src.source_code;
+            pu_mass = mass;
         }
+
         public static int Compare(CompositeIsotopics x, CompositeIsotopics y)
         {
             int res = x.id.CompareTo(y.id);
@@ -670,18 +681,18 @@ namespace AnalysisDefs
             base.GenParamList();
             Table = "composite_isotopics_rec";
 
-            ps.AddRange(DBParamList.TuplePair("pu238", this[Isotope.pu238]));
-            ps.AddRange(DBParamList.TuplePair("pu239", this[Isotope.pu239]));
-            ps.AddRange(DBParamList.TuplePair("pu240", this[Isotope.pu240]));
-            ps.AddRange(DBParamList.TuplePair("pu241", this[Isotope.pu241]));
-            ps.AddRange(DBParamList.TuplePair("pu242", this[Isotope.pu242]));
-            ps.AddRange(DBParamList.TuplePair("am241", this[Isotope.am241]));
-            ps.Add(new DBParamEntry("pu_date", pu_date.ToString("yyyy-MM-dd")));
-            ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
-            ps.Add(new DBParamEntry("ref_date", ref_date));
-            ps.Add(new DBParamEntry("isotopics_id", id));
-            ps.Add(new DBParamEntry("isotopics_source_code", source_code.ToString()));
-            ps.Add(new DBParamEntry("pu_mass", pu_mass));
+            ps.Add(new DBParamEntry("ci_pu238", pu238));
+            ps.Add(new DBParamEntry("ci_pu239", pu239));
+            ps.Add(new DBParamEntry("ci_pu240", pu240));
+            ps.Add(new DBParamEntry("ci_pu241", pu241));
+            ps.Add(new DBParamEntry("ci_pu242", pu242));
+            ps.Add(new DBParamEntry("ci_am241", am241));
+            ps.Add(new DBParamEntry("ci_pu_date", pu_date.ToString("yyyy-MM-dd")));
+            ps.Add(new DBParamEntry("ci_am_date", am_date.ToString("yyyy-MM-dd")));
+            ps.Add(new DBParamEntry("ci_ref_date", ref_date));
+            ps.Add(new DBParamEntry("ci_isotopics_id", id));
+            ps.Add(new DBParamEntry("ci_isotopics_source_code", source_code.ToString()));
+            ps.Add(new DBParamEntry("ci_pu_mass", pu_mass));
 
         }
     }
@@ -700,8 +711,8 @@ namespace AnalysisDefs
         {
             pu_date = new DateTime(2010, 1, 1);
             am_date = new DateTime(2010, 1, 1);
-            isotopes[(int)Isotope.pu240].v = 100.0;
             isotopes = Isotopics.MakeArray();
+            isotopes[(int)Isotope.pu240].v = 100.0;
             pu_mass = 1;
         }
 
@@ -776,6 +787,15 @@ namespace AnalysisDefs
             dest.modified = true;
             dest.pu_mass = pu_mass;
         }
+
+        public void Copy(Isotopics src, float mass)
+        {
+            pu_date = new DateTime(src.pu_date.Ticks);
+            am_date = new DateTime(src.am_date.Ticks);
+            isotopes = Isotopics.CopyArray(src.isotopes);
+            pu_mass = mass;
+        }
+
         public static int Compare(CompositeIsotopic x, CompositeIsotopic y)
         {
             int res = (DateTime.Compare(x.pu_date, y.pu_date));
