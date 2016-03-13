@@ -162,7 +162,7 @@ namespace NewUI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            UIIntegration.Controller = new Controller(SettingsControls);
+            UIIntegration.Controller = new Controller();
             UIIntegration.Controller.Initialize(this);
 
             EnableLog.IsChecked = NC.App.AppContext.Logging;
@@ -193,30 +193,6 @@ namespace NewUI
         }
 
         delegate void SetBooleanCB(bool enable);
-
-		/// <summary>
-		/// Use this entry point to enable/disable context-specific windows controls
-		/// </summary>
-		/// <param name="enable"></param>
-        public void SettingsControls(bool enable)
-        {
-
-            // JFL if (this.radioButton1.InvokeRequired)
-            //{
-            //    SetBooleanCB d = new SetBooleanCB(SettingsControls);
-            //    this.Invoke(d, new object[] { enable });
-            //    return;
-            //}
-
-            //radioButton1.Enabled = enable;
-            //radioButton2.Enabled = enable;
-            //radioButton3.Enabled = enable;
-            //radioButton4.Enabled = enable;
-            //checkBox1.Enabled = enable;
-            //checkBox2.Enabled = enable;
-            //target.Enabled = enable;
-
-        }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {

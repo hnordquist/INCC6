@@ -192,7 +192,7 @@ namespace NCCFile
             m.PersistFileNames();
         }
 
-        void INCCTransferFileProcessing()
+          void INCCTransferFileProcessing()
         {
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
@@ -202,6 +202,8 @@ namespace NCCFile
                 foo.SetPath(NC.App.AppContext.FileInput);
             else
                 foo.SetFileList(NC.App.AppContext.FileInputList);
+            FireEvent(EventType.ActionStart, foo);
+            foo.eh += new TransferEventHandler((s,e) => { FireEvent(EventType.ActionInProgress, e); } );
             List<INCCTransferBase> res = foo.Restore();
             if (res != null)
             {
@@ -239,6 +241,7 @@ namespace NCCFile
                     {
                         if (bar is INCCInitialDataDetectorFile)  // first in the list, define the detectors
                         {
+                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)res.Count)), "Constructing detector from " + System.IO.Path.GetFileName(bar.Path)));
                             INCCKnew k = new INCCKnew(ctrllog);
                             k.BuildDetector((INCCInitialDataDetectorFile)bar, j); j++;
                             modI = true;
@@ -258,6 +261,7 @@ namespace NCCFile
                     {
                         if (bar is INCCInitialDataCalibrationFile)   // second in the list, get the calib info attached to detectors
                         {
+                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / res.Count)), "Constructing calibration from " + System.IO.Path.GetFileName(bar.Path)));
                             INCCKnew k = new INCCKnew(ctrllog);
                             k.BuildCalibration((INCCInitialDataCalibrationFile)bar, j); j++;
                             modC = true;
@@ -272,6 +276,7 @@ namespace NCCFile
                     {
                         if (bar is INCCTransferFile)   // third, after prep with detector data and calib, this is measurement data and results derived using detectors and thier calibration parameters.
                         {
+                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)res.Count)), "Constructing measurement from " + System.IO.Path.GetFileName(bar.Path)));
                             INCCKnew k = new INCCKnew(ctrllog);
                             bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j); j++;
                             if (!supercool)
