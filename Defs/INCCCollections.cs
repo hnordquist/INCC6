@@ -489,8 +489,9 @@ namespace AnalysisDefs
                     CompositeIsotopics iso = new CompositeIsotopics();
                     foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
                     {
-                        if (dt.Columns.IndexOf(v.ToString()) >= 0)
-                            iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]));
+						string key = "ci_" + v.ToString();
+                        if (dt.Columns.IndexOf(key) >= 0)
+                            iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[key]));
                     }
                     iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
                     iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
@@ -498,8 +499,12 @@ namespace AnalysisDefs
                     System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
                     iso.id = dr["ci_isotopics_id"].ToString();
                     comp_isotopics.Add(iso);
+
+					long cikey = DB.Utils.DBInt64(dr["id"]);
+					iso.isotopicComponents = GetComposites(cikey);
+
                 }
-                if (comp_isotopics.Count < 1)
+                if (comp_isotopics.Count < 1)  // the default
                 {
                     CompositeIsotopics f = new CompositeIsotopics();
                     comp_isotopics.Add(f);
@@ -523,21 +528,18 @@ namespace AnalysisDefs
             CompositeIsotopics i = Get(riso.id);
             riso.CopyTo(i);
         }
-        private DB.CompositeIsotopics compisodb;
         public long Set(CompositeIsotopics iso)
         {
-            //urgent: finish the sub entries
+	        DB.CompositeIsotopics compisodb = null;
             long success = -1;
             if (iso.modified)
             {
                 if (compisodb == null)
                     compisodb = new DB.CompositeIsotopics();
-                if (iso.modified)
-                {
-                    success = compisodb.Update(iso.id, iso.ToDBElementList());
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
-                    if (success >= 0) iso.modified = false;
-                }
+                success = compisodb.Update(iso.id, iso.ToDBElementList());
+                if (success >= 0) AddComposites(iso.isotopicComponents, success);
+				if (success >= 0) iso.modified = false;
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
             }
             return success;
         }
@@ -556,11 +558,13 @@ namespace AnalysisDefs
             {
                 foreach (CompositeIsotopics iso in comp_isotopics)
                 {
-                    if (iso.modified)              //urgent: finish the sub entries
+                    if (iso.modified)
                     {
                         res = comp_isodb.Update(iso.id, iso.ToDBElementList());
                         NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created composite isotopics {0} ({1})", iso.id, res);
                         if (res >= 0) iso.modified = false;
+						if (res >= 0) AddComposites(iso.isotopicComponents, res);
+
                     }
                 }
             }
@@ -610,14 +614,29 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool GetComposites(ref List<CompositeIsotopic> cl, long cid, DB.CompositeIsotopics db = null)
+        public List<CompositeIsotopic> GetComposites(long cid, DB.CompositeIsotopics db = null)
         {
             if (db == null)
                 db = new DB.CompositeIsotopics();
+			List<CompositeIsotopic> cl = new List<CompositeIsotopic>();
             DataTable dt = db.GetCIs(cid);
-            // urgent:
-            return true;
+           foreach (DataRow dr in dt.Rows)
+            {
+                CompositeIsotopic c = new CompositeIsotopic();
+                cl.Add(c);
+                c.pu_mass = (float)DB.Utils.DBDouble(dr["pu_mass"]);
+				foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+				{
+					string key = v.ToString();
+					if (dt.Columns.IndexOf(key) >= 0)
+						c.SetVal((Isotope)v, DB.Utils.DBDouble(dr[key]));
+				}
+				c.pu_date = DB.Utils.DBDateTime(dr["pu_date"]);
+				c.am_date = DB.Utils.DBDateTime(dr["am_date"]);
+            }
+            return cl;
         }
+
         public bool AddComposites(List<CompositeIsotopic> cl, CompositeIsotopics cis)
         {
             DB.CompositeIsotopics db = new DB.CompositeIsotopics();

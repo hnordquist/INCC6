@@ -31,7 +31,6 @@ using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-    using System.Drawing;
     using NC = NCC.CentralizedState;
 
     public partial class IDDCompositeIsotopics : Form
@@ -58,6 +57,13 @@ namespace NewUI
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
         }
 
+		void PopulateWithSelectedItem()
+        {
+            // Fill in the GUI elements with the current values stored in the local data structure
+            ReferenceDateTimePicker.Value = m_comp_iso.ref_date;
+            IsoSrcCodeComboBox.SelectedItem = m_comp_iso.source_code.ToString();
+        }
+
         private void CalculateBtn_Click(object sender, EventArgs e)
         {
 
@@ -65,25 +71,24 @@ namespace NewUI
 
         private void IsotopicsIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+			ComboBox cb = (ComboBox)sender;
+            string newid = (string)cb.SelectedItem;
+			if (NC.App.DB.CompositeIsotopics.Has(newid))
+				m_comp_iso = NC.App.DB.CompositeIsotopics.Get(newid);            
+			PopulateWithSelectedItem();
         }
 
         private void ReferenceDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
             DateTime dt = ((DateTimePicker)sender).Value;
-            if (!m_comp_iso.pu_date.Equals(dt))
+            if (!m_comp_iso.ref_date.Equals(dt))
             {
                 modified = m_comp_iso.modified = true;
-                m_comp_iso.pu_date = dt;
+                m_comp_iso.ref_date = dt;
             }
         }
 
         private void IsoSrcCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
@@ -108,9 +113,8 @@ namespace NewUI
             {
                 iso.modified = true;
                 long key = -1;
-                if ((key = NC.App.DB.CompositeIsotopics.Set(iso)) >= 0)
+                if ((key = NC.App.DB.CompositeIsotopics.Set(iso)) > 0)
                 {
-                    NC.App.DB.CompositeIsotopics.AddComposites(iso.isotopicComponents, key);
                     applog.TraceInformation("'" + iso.id + "' composite isotopics updated/added");
                 }
             }
@@ -136,7 +140,7 @@ namespace NewUI
         {
             if (modified)
             {
-                // URGNT: copy thevmodel in the single isotopcs implementation
+                // URGENT: copy the model used in the single isotopics implementation
                 if (!NC.App.DB.CompositeIsotopics.Has(m_comp_iso))
                     NC.App.DB.CompositeIsotopics.GetList().Add(m_comp_iso);   // add to in-memory list 
                 List<CompositeIsotopics> list = NC.App.DB.CompositeIsotopics.GetMatch(i => i.modified);
@@ -173,11 +177,6 @@ namespace NewUI
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

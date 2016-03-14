@@ -824,17 +824,17 @@ namespace AnalysisDefs
         {
             return Compare(this, other);
         }        
-         public override void GenParamList()
+        public override void GenParamList()
         {
             base.GenParamList();
             Table = "composite_isotopic_rec";
 
-            ps.AddRange(DBParamList.TuplePair("pu238", this[Isotope.pu238]));
-            ps.AddRange(DBParamList.TuplePair("pu239", this[Isotope.pu239]));
-            ps.AddRange(DBParamList.TuplePair("pu240", this[Isotope.pu240]));
-            ps.AddRange(DBParamList.TuplePair("pu241", this[Isotope.pu241]));
-            ps.AddRange(DBParamList.TuplePair("pu242", this[Isotope.pu242]));
-            ps.AddRange(DBParamList.TuplePair("am241", this[Isotope.am241]));
+            ps.Add(new DBParamEntry("pu238", pu238));
+            ps.Add(new DBParamEntry("pu239", pu239));
+            ps.Add(new DBParamEntry("pu240", pu240));
+            ps.Add(new DBParamEntry("pu241", pu241));
+            ps.Add(new DBParamEntry("pu242", pu242));
+            ps.Add(new DBParamEntry("am241", am241));
             ps.Add(new DBParamEntry("pu_date", pu_date.ToString("yyyy-MM-dd")));
             ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
             ps.Add(new DBParamEntry("pu_mass", pu_mass));

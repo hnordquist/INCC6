@@ -434,13 +434,13 @@ namespace DB
 
         public long PrimaryKey(string Id)
         {
-            if (String.IsNullOrEmpty(Id))
+            if (string.IsNullOrEmpty(Id))
                 return -1;
             db.SetConnection();
             string s = "SELECT id FROM isotopics where isotopics_id = " + SQLSpecific.QVal(Id);
             string r = db.Scalar(s);
             long l = -1;
-            if (!Int64.TryParse(r, out l))
+            if (!long.TryParse(r, out l))
                 l = -1;
             return l;
         }
@@ -553,6 +553,19 @@ namespace DB
             return db.Execute(s);
         }
 
+		public long PrimaryKey(string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+                return -1;
+            db.SetConnection();
+            string s = "SELECT id FROM composite_isotopics_rec where ci_isotopics_id = " + SQLSpecific.QVal(Id);
+            string r = db.Scalar(s);
+            long l = -1;
+            if (!long.TryParse(r, out l))
+                l = -1;
+            return l;
+        }
+
         public long Update(string Id, ElementList sParams)
         {
             db.SetConnection();
@@ -563,8 +576,11 @@ namespace DB
                 string wh = " where " + "ci_isotopics_id = " + SQLSpecific.QVal(Id);
                 string sSQL = "UPDATE composite_isotopics_rec SET ";
                 sSQL += sParams.ColumnEqValueList + wh;
-                return db.Execute(sSQL) ? 0 : -1;
-            }
+                if (db.Execute(sSQL))
+                    return PrimaryKey(Id);
+                else
+                    return -1;
+			}
             else  // totally new 
             {
                 ArrayList sqlList = new ArrayList();
