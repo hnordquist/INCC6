@@ -597,6 +597,7 @@ namespace DB
             string sSQL = "SELECT * "
                   + " FROM composite_isotopics_rec"
                   + " Where ci_isotopics_id = " + SQLSpecific.QVal(Name);
+			db.SetConnection();
             DataTable dt = db.DT(sSQL);
             if (dt.Rows.Count > 0) return dt;
             else return null;

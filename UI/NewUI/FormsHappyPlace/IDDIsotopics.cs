@@ -371,7 +371,7 @@ namespace NewUI
 
         private void WriteToFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("NYI", "NOT IMPLEMENTED....YET");
+            MessageBox.Show("NYI", "Not yet implemented ....");
         }
 
         private void AddNewSetBtn_Click(object sender, EventArgs e)
@@ -438,7 +438,7 @@ namespace NewUI
             if (ia.ShowDialog() == DialogResult.OK)
             {
                 string oldId = m_iso.id;
-                m_iso.id = String.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
+                m_iso.id = string.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
                 if (NC.App.DB.Isotopics.Rename(oldId, ia.NewID))
                 {
                     IsotopicsIdComboBox.Items.Remove(oldId);
