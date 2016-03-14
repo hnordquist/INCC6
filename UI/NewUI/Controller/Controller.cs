@@ -261,7 +261,7 @@ namespace NewUI
                     measFctrl.mProgressTracker.ReportProgress(per, // a % est of files
 						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
 				}
-				catch (ArgumentOutOfRangeException e)
+				catch (ArgumentOutOfRangeException)
 				{
 					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}				
@@ -397,7 +397,7 @@ namespace NewUI
 					daqbind.mProgressTracker.ReportProgress(per, // a % est of files
 						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
 				}
-				catch (ArgumentOutOfRangeException e)
+				catch (ArgumentOutOfRangeException)
 				{
 					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}

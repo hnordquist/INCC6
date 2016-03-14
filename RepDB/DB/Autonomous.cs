@@ -169,7 +169,7 @@ namespace DB
         public bool Delete(String Id)
         {
             db.SetConnection();
-            string s = "DELETE FROM items where item_name = " + SQLSpecific.QVal(Id); ;
+            string s = "DELETE FROM items where item_name = " + SQLSpecific.QVal(Id);
             return db.Execute(s);
         }
         public bool Delete(Int32 Id)
@@ -549,7 +549,7 @@ namespace DB
         public bool Delete(string Id)
         {
             db.SetConnection();
-            string s = "DELETE FROM composite_isotopics_rec where isotopics_id = " + SQLSpecific.QVal(Id);
+            string s = "DELETE FROM composite_isotopics_rec where ci_isotopics_id = " + SQLSpecific.QVal(Id);
             return db.Execute(s);
         }
 
@@ -680,23 +680,15 @@ namespace DB
         public DataTable GetCIs(long cid)
         {
             db.SetConnection();
-            string sSQL = "SELECT * FROM composite_isotopic_rec Where cid=" + cid;
+            string sSQL = "SELECT * FROM composite_isotopic_rec Where cid=" + cid.ToString();
             return db.DT(sSQL);
         }
 
-        public long Lookup(string name)
+		public bool DeleteCIs(long cid)
         {
-            if (string.IsNullOrEmpty(name))
-                return -1;
             db.SetConnection();
-            string s = "SELECT * FROM composite_isotopic_recs WHERE ci_isotopics_id=" + SQLSpecific.QVal(name);
-            string r = db.Scalar(s);
-            long lr = -1;
-            if (!long.TryParse(r, out lr))
-                lr = -1;
-            return lr;
-        }
-
+            string sSQL = "DELETE FROM composite_isotopic_rec where cid=" + cid.ToString();
+            return db.Execute(sSQL);        }
     }
 
     public class cm_pu_ratio_rec

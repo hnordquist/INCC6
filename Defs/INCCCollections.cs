@@ -498,6 +498,7 @@ namespace AnalysisDefs
                     iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
                     System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
                     iso.id = dr["ci_isotopics_id"].ToString();
+                    iso.pu_mass = (float)DB.Utils.DBDouble(dr["ci_pu_mass"]);
                     comp_isotopics.Add(iso);
 
 					long cikey = DB.Utils.DBInt64(dr["id"]);
@@ -640,7 +641,7 @@ namespace AnalysisDefs
         public bool AddComposites(List<CompositeIsotopic> cl, CompositeIsotopics cis)
         {
             DB.CompositeIsotopics db = new DB.CompositeIsotopics();
-            long cid = db.Lookup(cis.id);
+            long cid = db.PrimaryKey(cis.id);
             if (cid <= 0)
                 return false;  
             return AddComposites(cl, cid, db);
@@ -658,6 +659,7 @@ namespace AnalysisDefs
                 c.GenParamList(); 
                 clist.Add(c.ToDBElementList(generate: false));
             }
+			db.DeleteCIs(cid);
             db.AddCIs(cid, clist);
             return true;
         }

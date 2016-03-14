@@ -94,7 +94,7 @@ VALUES(0.0,0.0,100.0,0.0,0.0,0.0,'2010-01-01','2010-01-01','Default','OD',1.0,'2
 GO
 INSERT INTO "composite_isotopic_rec" 
 ([id],[cid],[pu238],[pu239],[pu240],[pu241],[pu242],[am241],[pu_date],[am_date],[pu_mass])
-VALUES(1,1,0.0,0.0,100.0,0.0,0.0,0.0,'2010-01-01','2010-01-01',1.0);
+VALUES(1,1,0.0,0.0,100.0,0.0,0.0,0.0,'2010-01-01','2010-01-01',0.0);
 GO
 INSERT INTO "item_isotopics" (isotopics_source_code,isotopics_name) VALUES('OD','Default');
 GO

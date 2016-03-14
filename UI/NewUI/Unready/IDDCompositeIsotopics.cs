@@ -37,19 +37,6 @@ namespace NewUI
     {
         public IDDCompositeIsotopics()
         {
-            //CalendarColumn col6 = new CalendarColumn();
-            //CalendarColumn col8 = new CalendarColumn();
-            //col8.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            //col8.HeaderText = "Am Date";
-            //col8.Name = "AmDate";
-            //col8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            //col6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            //col6.HeaderText = "Pu Date";
-            //col6.Name = "PuDate";
-            //col6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            //IsoDataGrid.Columns.RemoveAt(8);
-            //IsoDataGrid.Columns.RemoveAt(6);
-            //IsoDataGrid.Columns.AddRange()
             InitializeComponent();
             RefreshIsoCodeCombo();
             RefreshIdComboWithDefault(string.Empty);
@@ -57,11 +44,49 @@ namespace NewUI
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
         }
 
+
+		void LoadEntry()
+		{
+            DataGridViewRowCollection rows = this.IsoDataGrid.Rows;
+			rows.Clear();
+            string[] summ = new string[9];
+			summ[0] = m_comp_iso.pu_mass.ToString("F3");
+			summ[1] = m_comp_iso.pu238.ToString("F6");
+			summ[2] = m_comp_iso.pu239.ToString("F6");
+			summ[3] = m_comp_iso.pu240.ToString("F6");
+			summ[4] = m_comp_iso.pu241.ToString("F6");
+			summ[5] = m_comp_iso.pu242.ToString("F6");
+			summ[6] = m_comp_iso.pu_date.ToString("yyyy-MM-dd");
+			summ[7] = m_comp_iso.am241.ToString("F6");
+			summ[8] = m_comp_iso.am_date.ToString("yyyy-MM-dd");
+            rows.Add(summ);
+
+			foreach(CompositeIsotopic ci in m_comp_iso.isotopicComponents)
+			{
+				if (ci.pu_mass == 0.0f)
+					continue;
+				string[] sub = new string[9];
+				sub[0] = ci.pu_mass.ToString("F3");
+				sub[1] = ci.pu238.ToString("F6");
+				sub[2] = ci.pu239.ToString("F6");
+				sub[3] = ci.pu240.ToString("F6");
+				sub[4] = ci.pu241.ToString("F6");
+				sub[5] = ci.pu242.ToString("F6");
+				sub[6] = ci.pu_date.ToString("yyyy-MM-dd");
+				sub[7] = ci.am241.ToString("F6");
+				sub[8] = ci.am_date.ToString("yyyy-MM-dd");
+				rows.Add(sub);
+			}
+
+		}
+
+
 		void PopulateWithSelectedItem()
         {
             // Fill in the GUI elements with the current values stored in the local data structure
             ReferenceDateTimePicker.Value = m_comp_iso.ref_date;
             IsoSrcCodeComboBox.SelectedItem = m_comp_iso.source_code.ToString();
+			LoadEntry();
         }
 
         private void CalculateBtn_Click(object sender, EventArgs e)
@@ -279,7 +304,9 @@ namespace NewUI
             }
             else
             {
-                ctl.Value = (DateTime)this.Value;
+				DateTime dt = ctl.Value;
+				DateTime.TryParse((string)Value, out dt);
+				ctl.Value = dt;
             }
         }
 
