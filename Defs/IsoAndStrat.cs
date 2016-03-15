@@ -692,8 +692,68 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("ci_isotopics_id", id));
             ps.Add(new DBParamEntry("ci_isotopics_source_code", source_code.ToString()));
             ps.Add(new DBParamEntry("ci_pu_mass", pu_mass));
-
         }
+
+		public uint CombinedCalculation(out Isotopics newIsotopics, bool INCCParity, NCCReporter.LMLoggers.LognLM logger)
+		{
+			MassSum = 0;
+			uint res = 0;
+			newIsotopics = null;
+			foreach(CompositeIsotopic ci in isotopicComponents)
+			{
+				if (ci.pu_mass == 0.0f)
+					continue;
+				res = ci.CalculateDecayAndMass(ref_date, INCCParity, logger);
+				if (res != 0)
+					break;
+			}
+			if (res != 0) return res;
+			MassSum = CalculateMassSums();
+			if (MassSum <= 0)
+			{ 
+				logger.TraceEvent(NCCReporter.LogLevels.Error, 36784, "Sum of masses = 0.");
+				res = 36784;
+			}
+			else
+				newIsotopics = CreateIsotopicsFromSums(ref_date, INCCParity, MassSum);
+			return res;
+		}
+
+		internal  Tuple[] currentMassSum = Isotopics.MakeArray();
+		public double MassSum;
+		public double CalculateMassSums()
+		{
+			double mass_sum = 0;
+			foreach(CompositeIsotopic ci in isotopicComponents)
+			{
+				if (ci.pu_mass == 0.0f)
+					continue;
+				for (Isotope iso = Isotope.pu238; iso <= Isotope.am241; iso++)
+				{
+					currentMassSum[(int)iso].v += ci.CurrentMass[(int)iso].v;
+				}
+			}
+            for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
+            {
+                mass_sum += currentMassSum[(int)iso].v;
+            }
+            return mass_sum;
+		}
+
+		public Isotopics CreateIsotopicsFromSums(DateTime ref_date, bool INCCParity, double mass_sum)
+		{
+			Isotopics isor = new Isotopics();
+			isor.pu_date = new DateTime(ref_date.Ticks);
+			isor.am_date = new DateTime(ref_date.Ticks);
+			isor.source_code = source_code;
+			isor.id = string.Copy(id);
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.am241; iso++)
+			{
+				isor.SetVal(iso, 100.0 * currentMassSum[(int)iso].v / mass_sum);
+			}
+			return isor;
+		}
+
     }
 
     public class CompositeIsotopic : ParameterBase, IComparable<CompositeIsotopic>
@@ -708,122 +768,74 @@ namespace AnalysisDefs
 
 		public double Summed   { get { return pu238 + pu239 + pu240 + pu241 + pu242; } }
 
-				
-//public void Calculate()
-		//{
-  //          double ref_days;
-  //          double pu_days;
-  //          double am_days;
-  //          Tuple[] iso_mass = Isotopics.MakeArray();
-  //          Tuple[] decay_fract_pu_to_am = Isotopics.MakeArray();
-  //          Tuple[] decay_fract_am_to_now = Isotopics.MakeArray();
+		internal  Tuple[] CurrentMass = Isotopics.MakeArray();
 
-  //          Tuple[] decay_fract_pu_to_now = Isotopics.MakeArray();
-  //          Tuple[] cur_mass = Isotopics.MakeArray();
+		public uint CalculateDecayAndMass(DateTime ref_date, bool INCCParity, NCCReporter.LMLoggers.LognLM logger)
+		{
+			double ref_days;
+			double pu_days;
+			double am_days;
+			Tuple[] iso_mass = Isotopics.MakeArray();
+			Tuple[] decay_fract_pu_to_am = Isotopics.MakeArray();
+			Tuple[] decay_fract_am_to_now = Isotopics.MakeArray();
+			Tuple[] decay_fract_pu_to_now = Isotopics.MakeArray();
 
-  //          double temp = 0.0;
-  //          double temp_sum = 0.0;
-  //          double cur_mass_sum = 0.0;
-  //          double x, y;
-  //          double pu_mass = PuMass;
+			double temp = 0.0;
+			double temp_sum = 0.0;
+			double pumass = pu_mass;
 
-  //          double isosum = 0.0;
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              isosum += curiso[(int)iso].v;
-  //          }
+			double isosum = 0.0;
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
+			{
+				isosum += isotopes[(int)iso].v;
+			}
 
-  //          if (isosum <= 0.0)
-  //          {
-  //              logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
-  //              return false;
-  //          }
-		//	Tuple[] newiso = MakeArray();
-  //          if (INCCParity)
-  //          {
-  //              pu_days = (pu_date.Date.Subtract(ZeroIAEATime)).TotalDays;
-  //              am_days = (am_date.Date.Subtract(ZeroIAEATime)).TotalDays;
-  //              ref_days = (long)(ref_date.Date.Subtract(ZeroIAEATime)).TotalDays;
-  //          }
-  //          else
-  //          {
-  //              pu_days = (pu_date.Subtract(ZeroIAEATime)).TotalDays;
-  //              am_days = (am_date.Subtract(ZeroIAEATime)).TotalDays;
-  //              ref_days = (long)(ref_date.Subtract(ZeroIAEATime)).TotalDays;
-  //          }
+			if (isosum <= 0.0)
+			{
+				logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
+				return 36783;
+			}
+			Tuple[] newiso = Isotopics.MakeArray();
+			if (INCCParity)
+			{
+				pu_days = (pu_date.Date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+				am_days = (am_date.Date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+				ref_days = (long)(ref_date.Date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+			} else
+			{
+				pu_days = (pu_date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+				am_days = (am_date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+				ref_days = (long)(ref_date.Subtract(Isotopics.ZeroIAEATime)).TotalDays;
+			}
 
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              iso_mass[(int)iso].v = (curiso[(int)iso].v * pu_mass / 100.0);
-  //              decay_fract_pu_to_am[(int)iso].v = Math.Exp((-LN2 / Halflives[(int)iso]) * (am_days - pu_days));
-  //              decay_fract_pu_to_now[(int)iso].v = Math.Exp((-LN2 / Halflives[(int)iso]) * (ref_days - pu_days));
-  //          }
-  //          decay_fract_am_to_now[(int)Isotope.pu241].v = Math.Exp((-LN2 / Halflives[(int)Isotope.pu241]) * (ref_days - am_days));
-  //          decay_fract_am_to_now[(int)Isotope.am241].v = Math.Exp((-LN2 / Halflives[(int)Isotope.am241]) * (ref_days - am_days));
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
+			{
+				iso_mass[(int)iso].v = (isotopes[(int)iso].v * pumass / 100.0);
+				decay_fract_pu_to_am[(int)iso].v = Math.Exp((-Isotopics.LN2 / Isotopics.Halflives[(int)iso]) * (am_days - pu_days));
+				decay_fract_pu_to_now[(int)iso].v = Math.Exp((-Isotopics.LN2 / Isotopics.Halflives[(int)iso]) * (ref_days - pu_days));
+			}
+			decay_fract_am_to_now[(int)Isotope.pu241].v = Math.Exp((-Isotopics.LN2 / Isotopics.Halflives[(int)Isotope.pu241]) * (ref_days - am_days));
+			decay_fract_am_to_now[(int)Isotope.am241].v = Math.Exp((-Isotopics.LN2 / Isotopics.Halflives[(int)Isotope.am241]) * (ref_days - am_days));
 
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              cur_mass[(int)iso].v = iso_mass[(int)iso].v * decay_fract_pu_to_now[(int)iso].v;
-  //          }
-  //          cur_mass[(int)Isotope.am241].v = decay_fract_am_to_now[(int)Isotope.am241].v * curiso[(int)Isotope.am241].v / 100.0;
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
+			{
+				CurrentMass[(int)iso].v = iso_mass[(int)iso].v * decay_fract_pu_to_now[(int)iso].v;
+			}
+			CurrentMass[(int)Isotope.am241].v = decay_fract_am_to_now[(int)Isotope.am241].v * isotopes[(int)Isotope.am241].v / 100.0;
 
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              temp_sum += decay_fract_pu_to_am[(int)iso].v * iso_mass[(int)iso].v;
-  //          }
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
+			{
+				temp_sum += decay_fract_pu_to_am[(int)iso].v * iso_mass[(int)iso].v;
+			}
 
-  //          temp = decay_fract_pu_to_am[(int)Isotope.pu241].v * iso_mass[(int)Isotope.pu241].v *
-  //              (decay_fract_am_to_now[(int)Isotope.am241].v - decay_fract_am_to_now[(int)Isotope.pu241].v)
-  //              * (LN2 / Halflives[(int)Isotope.pu241]) / ((LN2 / Halflives[(int)Isotope.pu241]) - (LN2 / Halflives[(int)Isotope.am241]));
-  //          cur_mass[(int)Isotope.am241].v = (cur_mass[(int)Isotope.am241].v * temp_sum) + temp;
+			temp = decay_fract_pu_to_am[(int)Isotope.pu241].v * iso_mass[(int)Isotope.pu241].v *
+								  (decay_fract_am_to_now[(int)Isotope.am241].v - decay_fract_am_to_now[(int)Isotope.pu241].v)
+								  * (Isotopics.LN2 / Isotopics.Halflives[(int)Isotope.pu241]) / ((Isotopics.LN2 / Isotopics.Halflives[(int)Isotope.pu241]) - (Isotopics.LN2 / Isotopics.Halflives[(int)Isotope.am241]));
+			CurrentMass[(int)Isotope.am241].v = (CurrentMass[(int)Isotope.am241].v * temp_sum) + temp;
+			return 0;
+		}
 
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              cur_mass_sum += cur_mass[(int)iso].v;
-  //          }
-
-  //          if (cur_mass_sum <= 0.0)
-  //          {
-  //              logger.TraceEvent(NCCReporter.LogLevels.Warning, 36784, "Unable to update isotopics, mass sum must be greater than zero");
-  //              return false;
-  //          }
-  //          else
-  //              logger.TraceEvent(NCCReporter.LogLevels.Verbose, 36722, "'update_isotopics' mass sum " + cur_mass_sum);
-
-
-  //          pu_date = new DateTime(ref_date.Ticks);
-  //          am_date = new DateTime(ref_date.Ticks);
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.am241; iso++)
-  //          {
-  //              newiso[(int)iso].v = 100.0 * cur_mass[(int)iso].v / cur_mass_sum;
-  //          }
-  //          for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
-  //          {
-  //              if (curiso[(int)iso].v != 0)
-  //                  newiso[(int)iso].sigma = curiso[(int)iso].sigma * newiso[(int)iso].v / curiso[(int)iso].v;
-  //              else
-  //                  newiso[(int)iso].sigma = curiso[(int)iso].sigma;
-
-  //          }
-  //          if (curiso[(int)Isotope.am241].v != 0.0)
-  //          {
-  //              x = (decay_fract_am_to_now[(int)Isotope.am241].v / 100.0) * temp_sum *
-  //                 curiso[(int)Isotope.am241].sigma;
-  //              temp = decay_fract_pu_to_am[(int)Isotope.pu241].v *
-  //                  (decay_fract_am_to_now[(int)Isotope.am241].v - decay_fract_am_to_now[(int)Isotope.pu241].v)
-  //                  * (LN2 / PU241HL) / ((LN2 / PU241HL) - (LN2 / AM241HL));
-  //              y = temp * (pu_mass / 100.0) * curiso[(int)Isotope.pu241].sigma;
-  //              newiso[(int)Isotope.am241].sigma = Math.Sqrt(x * x + y * y) / cur_mass_sum * 100.0;
-  //          }
-  //          else
-  //              newiso[(int)Isotope.am241].sigma = curiso[(int)Isotope.am241].sigma;
-
-  //          return true;      
-
-		//}
-
-		
-        public void InitVals()
+		public void InitVals()
         {
             pu_date = new DateTime(2010, 1, 1);
             am_date = new DateTime(2010, 1, 1);
