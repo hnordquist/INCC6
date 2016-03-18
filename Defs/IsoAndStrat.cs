@@ -719,11 +719,15 @@ namespace AnalysisDefs
 			return res;
 		}
 
-		internal  Tuple[] currentMassSum = Isotopics.MakeArray();
+		internal Tuple[] currentMassSum = Isotopics.MakeArray();
 		public double MassSum;
 		public double CalculateMassSums()
 		{
 			double mass_sum = 0;
+			for (Isotope iso = Isotope.pu238; iso <= Isotope.am241; iso++)
+			{
+				currentMassSum[(int)iso].v = 0;
+			}
 			foreach(CompositeIsotopic ci in isotopicComponents)
 			{
 				if (ci.pu_mass == 0.0f)
@@ -825,7 +829,7 @@ namespace AnalysisDefs
 
 			for (Isotope iso = Isotope.pu238; iso <= Isotope.pu242; iso++)
 			{
-				temp_sum += decay_fract_pu_to_am[(int)iso].v * iso_mass[(int)iso].v;
+				temp_sum += (decay_fract_pu_to_am[(int)iso].v * iso_mass[(int)iso].v);
 			}
 
 			temp = decay_fract_pu_to_am[(int)Isotope.pu241].v * iso_mass[(int)Isotope.pu241].v *

@@ -69,6 +69,28 @@ namespace NewUI
             IsotopicsSourceCodeComboBox.SelectedItem = m_iso.source_code.ToString();
         }
 
+		void EnableBasedOnSourceCode()
+        {
+			bool enable = (m_iso.source_code != Isotopics.SourceCode.CO);
+            PuDateTimePicker.Enabled = enable;
+            AmDateTimePicker.Enabled = enable;
+
+			Am241ErrorTextBox.Enabled = enable;
+            Am241PercentTextBox.Enabled = enable;
+
+            Pu238PercentTextBox.Enabled = enable;
+            Pu239PercentTextBox.Enabled = enable;
+            Pu240PercentTextBox.Enabled = enable;
+            Pu241PercentTextBox.Enabled = enable;
+            Pu242PercentTextBox.Enabled = enable;
+
+            Pu238ErrorTextBox.Enabled = enable;
+            Pu239ErrorTextBox.Enabled = enable;
+            Pu240ErrorTextBox.Enabled = enable;
+            Pu241ErrorTextBox.Enabled = enable;
+            Pu242ErrorTextBox.Enabled = enable;
+        }
+
         public IDDIsotopics(string selected = "default")
         {
             InitializeComponent();
@@ -105,6 +127,7 @@ namespace NewUI
             System.Enum.TryParse((string)cb.SelectedItem, out m_iso.source_code);
             if (string.Compare(m_iso.source_code.ToString(), cb.Text, StringComparison.OrdinalIgnoreCase) != 0)
                 modified = m_iso.modified = true;
+			EnableBasedOnSourceCode();
         }
 
         private void PuDateTimePicker_ValueChanged(object sender, EventArgs e)

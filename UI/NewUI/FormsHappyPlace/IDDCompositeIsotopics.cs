@@ -45,26 +45,24 @@ namespace NewUI
         }
 
 
-		void LoadEntry()
+		void LoadEntry(CompositeIsotopics comp_iso)
 		{
             DataGridViewRowCollection rows = this.IsoDataGrid.Rows;
 			rows.Clear();
             string[] summ = new string[9];
-			summ[0] = m_comp_iso.pu_mass.ToString("F3");
-			summ[1] = m_comp_iso.pu238.ToString("F6");
-			summ[2] = m_comp_iso.pu239.ToString("F6");
-			summ[3] = m_comp_iso.pu240.ToString("F6");
-			summ[4] = m_comp_iso.pu241.ToString("F6");
-			summ[5] = m_comp_iso.pu242.ToString("F6");
-			summ[6] = m_comp_iso.pu_date.ToString("yyyy-MM-dd");
-			summ[7] = m_comp_iso.am241.ToString("F6");
-			summ[8] = m_comp_iso.am_date.ToString("yyyy-MM-dd");
+			summ[0] = comp_iso.pu_mass.ToString("F3");
+			summ[1] = comp_iso.pu238.ToString("F6");
+			summ[2] = comp_iso.pu239.ToString("F6");
+			summ[3] = comp_iso.pu240.ToString("F6");
+			summ[4] = comp_iso.pu241.ToString("F6");
+			summ[5] = comp_iso.pu242.ToString("F6");
+			summ[6] = comp_iso.pu_date.ToString("yyyy-MM-dd");
+			summ[7] = comp_iso.am241.ToString("F6");
+			summ[8] = comp_iso.am_date.ToString("yyyy-MM-dd");
             rows.Add(summ);
 
-			foreach(CompositeIsotopic ci in m_comp_iso.isotopicComponents)
+			foreach(CompositeIsotopic ci in comp_iso.isotopicComponents)
 			{
-				if (ci.pu_mass == 0.0f)
-					continue;
 				string[] sub = new string[9];
 				sub[0] = ci.pu_mass.ToString("F3");
 				sub[1] = ci.pu238.ToString("F6");
@@ -86,7 +84,7 @@ namespace NewUI
             // Fill in the GUI elements with the current values stored in the local data structure
             ReferenceDateTimePicker.Value = m_comp_iso.ref_date;
             IsoSrcCodeComboBox.SelectedItem = m_comp_iso.source_code.ToString();
-			LoadEntry();
+			LoadEntry(m_comp_iso);
         }
 
         private void IsotopicsIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -108,13 +106,14 @@ namespace NewUI
             }
         }
 
-        // urgent: souce code not being set
         private void IsoSrcCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            ComboBox cb = (ComboBox)sender;
+            Enum.TryParse((string)cb.SelectedItem, out m_comp_iso.source_code);
+            if (string.Compare(m_comp_iso.source_code.ToString(), cb.Text, StringComparison.OrdinalIgnoreCase) != 0)
+                modified = m_comp_iso.modified = true;
         }
 
-        // urgent: do the isotopics calc+save for the imported compiste calc (see Calc)
         private void ReadBtn_Click(object sender, EventArgs e)
         {
             OpenFileDialog RestoreFileDialog = new OpenFileDialog();
@@ -132,14 +131,19 @@ namespace NewUI
             NCCFile.IsoFiles possibleCompIsoFilesToAttemptProcessingUpon = new NCCFile.IsoFiles();
             possibleCompIsoFilesToAttemptProcessingUpon.Process(new List<string>(RestoreFileDialog.FileNames));
 
-			// urgent: do CalculateBtn_Click equiv here
             foreach (CompositeIsotopics iso in possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics) // add all new values into the database
             {
+				if (NC.App.DB.CompositeIsotopics.Has(iso.id))
+				{
+					MessageBox.Show("Isotopics id " + iso.id + " already exists.\r\nNew isotopics data set not created.", "Hallo");
+					continue;
+				}
+				CalculateAndPersist(iso);
                 iso.modified = true;
                 long key = -1;
                 if ((key = NC.App.DB.CompositeIsotopics.Set(iso)) > 0)
                 {
-                    applog.TraceInformation("'" + iso.id + "' composite isotopics updated/added");
+                    applog.TraceInformation("'" + iso.id + "' composite isotopics added");
                 }
             }
             int count = possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics.Count;
@@ -175,6 +179,7 @@ namespace NewUI
                     applog.TraceInformation("New composite isotopics " + iso.id + " (not saved to database)");
                     IsotopicsIdComboBox.Items.Add(iso.id);
                     IsotopicsIdComboBox.SelectedItem = iso.id;  // force m_iso assignment in event handler
+					calcQ = true;
 				}
 				else
 					MessageBox.Show("'" + ia.ID + "' is already in use", "I .... uuuh oh");
@@ -184,30 +189,35 @@ namespace NewUI
 
 		private void CalculateBtn_Click(object sender, EventArgs e)
 		{
-			if (!GutCheck(true))
+			CalculateAndPersist(m_comp_iso);
+		}
+
+		void CalculateAndPersist(CompositeIsotopics comp_iso)
+		{
+			if (!GutCheck(calc: true))
 				return;
 			Isotopics newiso = null;
-			uint retcode = m_comp_iso.CombinedCalculation(out newiso, NC.App.AppContext.INCCParity, applog);
+			uint retcode = comp_iso.CombinedCalculation(out newiso, NC.App.AppContext.INCCParity, applog);
 			if (retcode == 36783)
 				MessageBox.Show("Unable to update isotopics, sum of Pu isotopes must be greater than zero");
 			else if (retcode == 36784)
 				MessageBox.Show("Sum of masses = 0.\r\nNew isotopics not calculated and stored.");
 			else
 			{
-				newiso.modified = m_comp_iso.modified = true;
-				if (!NC.App.DB.CompositeIsotopics.Has(m_comp_iso.id))
-					NC.App.DB.CompositeIsotopics.GetList().Add(m_comp_iso);   // add to in-memory list 
+				newiso.modified = comp_iso.modified = true;
+				if (!NC.App.DB.CompositeIsotopics.Has(comp_iso.id))
+					NC.App.DB.CompositeIsotopics.GetList().Add(comp_iso);   // add to in-memory list 
 				List<CompositeIsotopics> list = NC.App.DB.CompositeIsotopics.GetMatch(i => i.modified);
 				foreach (CompositeIsotopics iso in list)
 				{
 					long pk = NC.App.DB.CompositeIsotopics.Set(iso);             // add to database 
 					applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " composite isotopics");
 				}
-				m_comp_iso.modified = false;
-                LoadEntry(); // urgent:sum entry line does not seem to track the components on refresh. 
+				comp_iso.modified = false;
+                LoadEntry(comp_iso);
                 string msg = string.Format(
 						"Composite Isotopics id:\t{0}\n\nIsotopics Source Code:\t{1}\n\nMass\t\t{2,8:F3}\nPu238\t\t{3,8:F6}\nPu239\t\t{4,8:F6}\nPu240\t\t{5,8:F6}\nPu241\t\t{6,8:F6}\nPu242\t\t{7,8:F6}\nPu Date\t\t{8}\nAm241\t\t{9,8:F6}\nAm Date\t\t{10}\n\nIsotopics are updated to the reference date.",
-						newiso.id, newiso.source_code, m_comp_iso.MassSum,
+						newiso.id, newiso.source_code, comp_iso.MassSum,
 						newiso.pu238, newiso.pu239, newiso.pu240,
 						newiso.pu241, newiso.pu242, newiso.pu_date,
 						newiso.am241, newiso.am_date);
@@ -219,18 +229,21 @@ namespace NewUI
 						NC.App.DB.Isotopics.GetList().Add(newiso);
 						long pk = NC.App.DB.Isotopics.Set(newiso);              // add to database 
 						applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + newiso.id + " isotopics");
+						if (pk >= 0)
+							NC.App.DB.Isotopics.Refresh();
 					} else
 					{
 						NC.App.DB.Isotopics.Replace(newiso);
 						applog.TraceInformation("Replaced " + newiso.id + " isotopics");
 					}
-
+					calcQ = false;
 				}
                 else
 				    MessageBox.Show("New isotopics not stored.");
 			}
-		}
 
+
+		}
 
 		private void SaveBtn_Click(object sender, EventArgs e)
         {
@@ -253,6 +266,7 @@ namespace NewUI
 						applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
 					}
 					modified = false;
+					calcQ = true;
 				}
 				RefreshIdComboWithDefault(m_comp_iso.id);
 			}
@@ -272,6 +286,7 @@ namespace NewUI
                     IsotopicsIdComboBox.Items.Add(m_comp_iso.id);
                     applog.TraceInformation("Renamed " + oldId + " to " + m_comp_iso.id);
                     IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;
+					calcQ = true;
                 }
             }
         }
@@ -294,14 +309,27 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-					// urgent: do the cancel check to calc and store
-                // if not stored and save selected, then update with ref data and save to ci table
+			if (ExitCheck())
+				Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+			if (ExitCheck())
+				Close();
         }
+
+		bool ExitCheck()
+		{
+			if (!calcQ)
+				return true;
+			string s = "You have not done a 'Calculate and Store Isotopics' for the last set of composite isotopics entered or modified.\n\nDo you want to return to the composite isotopics dialog box?";
+            DialogResult r = MessageBox.Show(s, NC.App.Name, MessageBoxButtons.YesNo);
+            if (r == DialogResult.Yes)
+				return false;
+			else
+				return true;
+		}
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
@@ -319,7 +347,7 @@ namespace NewUI
         void RefreshIsoCodeCombo()
         {
             IsoSrcCodeComboBox.Items.Clear();
-            foreach (Isotopics.SourceCode sc in System.Enum.GetValues(typeof(Isotopics.SourceCode))) // could use the GetOptionType scheme here
+            foreach (Isotopics.SourceCode sc in Enum.GetValues(typeof(Isotopics.SourceCode)))
             {
                 IsoSrcCodeComboBox.Items.Add(sc.ToString());
             }
@@ -384,7 +412,7 @@ namespace NewUI
         const double isomax = 100.3;
         const double TOLERANCE = .00001;
         NCCReporter.LMLoggers.LognLM applog;
-        bool modified = false;
+        bool modified = false, calcQ = false;
 	}
 
 	public class CalendarColumn : DataGridViewColumn
