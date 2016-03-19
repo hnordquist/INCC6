@@ -32,16 +32,23 @@ using AnalysisDefs;
 namespace NewUI
 {
     using NC = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
 
     public partial class IDDCompositeIsotopics : Form
     {
-        public IDDCompositeIsotopics()
+
+        public IDDCompositeIsotopics(string selected)
         {
             InitializeComponent();
             RefreshIsoCodeCombo();
-            RefreshIdComboWithDefault(string.Empty);
-
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
+            acq = Integ.GetCurrentAcquireParams();
+            if (string.IsNullOrEmpty(selected))
+            {
+                // get current acquire composite isotopics id and use that
+                selected = acq.comp_isotopics_id;                  
+            }    
+            RefreshIdComboWithDefault(selected);     
         }
 
 
@@ -310,7 +317,13 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
 			if (ExitCheck())
-				Close();
+            {
+                // save as current acquire composite isotopics
+                acq.isotopics_id = string.Copy(m_comp_iso.id);
+                acq.comp_isotopics_id = string.Copy(m_comp_iso.id);
+                NC.App.DB.UpdateAcquireParams(acq);
+                Close();
+            }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -408,6 +421,7 @@ namespace NewUI
         public CompositeIsotopics GetSelectedIsotopics { get { return m_comp_iso; } }
 
         CompositeIsotopics m_comp_iso;
+        AcquireParameters acq;
         const double isomin = 99.7;
         const double isomax = 100.3;
         const double TOLERANCE = .00001;

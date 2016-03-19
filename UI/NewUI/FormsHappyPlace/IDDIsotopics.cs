@@ -32,14 +32,15 @@ using AnalysisDefs;
 namespace NewUI
 {
 	using NC = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
 
-	public partial class IDDIsotopics : Form
+    public partial class IDDIsotopics : Form
     {
 
         void RefreshIsoCodeCombo()
         {
             IsotopicsSourceCodeComboBox.Items.Clear();
-            foreach (Isotopics.SourceCode sc in System.Enum.GetValues(typeof(Isotopics.SourceCode))) // could use the GetOptionType scheme here
+            foreach (Isotopics.SourceCode sc in System.Enum.GetValues(typeof(Isotopics.SourceCode)))
             {
                 IsotopicsSourceCodeComboBox.Items.Add(sc.ToString());
             }
@@ -95,7 +96,13 @@ namespace NewUI
         {
             InitializeComponent();
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
-            RefreshIsoCodeCombo();
+            acq = Integ.GetCurrentAcquireParams();
+            if (string.IsNullOrEmpty(selected) || string.Compare(selected, "default",true) == 0)
+            {
+                // get current acquire composite isotopics id and use that
+                selected = acq.isotopics_id;
+            }
+            RefreshIsoCodeCombo();      
             RefreshIdComboWithDefaultOrSet(selected);
         }
 
@@ -179,14 +186,17 @@ namespace NewUI
         {
             if (modified)
             {
-                if (GutCheck())  // next: does this behavior follow that of INCC5? It is supposed to replicate INCC5 behavior
+                if (GutCheck())  
+                {
                     SaveSetBtn_Click(sender, e);
+                }
                 else
                     return;
                 ((Button) sender).DialogResult = DialogResult.OK;
             }
-            this.Close();
-
+            acq.isotopics_id = string.Copy(m_iso.id);      // behavior follows INCC5 by making the last selection the current isotopics
+            NC.App.DB.UpdateAcquireParams(acq);
+            Close();     
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -450,6 +460,7 @@ namespace NewUI
                     }
                     modified = false;
                 }
+                // save as current acquire isotopics
             }
             RefreshIdComboWithDefaultOrSet(m_iso.id);
 
@@ -521,6 +532,7 @@ namespace NewUI
         public Isotopics GetSelectedIsotopics { get { return m_iso; } }
 
 		Isotopics m_iso;
+        AcquireParameters acq;
         NCCReporter.LMLoggers.LognLM applog;
 
         const double isomin = 99.7;

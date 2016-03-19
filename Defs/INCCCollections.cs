@@ -1411,7 +1411,7 @@ namespace AnalysisDefs
             {
                 cm_pu_ratio = new BindingList<INCCAnalysisParams.cm_pu_ratio_rec>();
 
-                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.TestParams);
+                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CmPuRatioParams);
                 foreach (DataRow dr in dt.Rows)
                 {
                     try
@@ -1429,7 +1429,6 @@ namespace AnalysisDefs
                         v.cm_input_batch_id = dr["cm_input_batch_id"].ToString();
                         v.cm_dcl_u_mass = DB.Utils.DBDouble(dr["dcl_u_mass"]);
                         v.cm_dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
-;
                     }
                     catch (Exception e)
                     {

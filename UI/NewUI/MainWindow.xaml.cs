@@ -126,7 +126,7 @@ namespace NewUI
 
         private void SetupCompositeIsotopicsClick(object sender, RoutedEventArgs e)
         {
-            IDDCompositeIsotopics f = new IDDCompositeIsotopics();
+            IDDCompositeIsotopics f = new IDDCompositeIsotopics(string.Empty);
             f.ShowDialog();
         }
 

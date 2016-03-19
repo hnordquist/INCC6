@@ -53,6 +53,11 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
         }
 
+        public void RefreshParams()
+        {
+            ap = Integ.GetCurrentAcquireParamsFor(det);   
+        }
+
         //// TEXTBOXLEAVE HANDLERS ///////////////////////////////////////////
 
         public void NumCyclesTextBox_Leave(object sender, EventArgs e)

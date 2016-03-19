@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 2
-6.0.1.1 March 11, 2016 J. Longo
+INCC6 Beta Release 3
+6.0.1.2 March 18, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -49,9 +49,9 @@ INSTALLATION INSTRUCTIONS:
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Reanalysis, Holdup acquire, Glovebox entry, the Measurement, Verification and Holdup Summary
-   reports, the Plot features, Deming integration, Composite Isotopics definition (import is available),
-   Collar item data entry, acquire and Poison Rod details, integrated help.
+   Reanalysis, Holdup acquire, Glovebox entry, the Measurement, Verification and Holdup
+   Summary reports, the Plot features, Deming integration, Collar item data entry,
+   Collar acquire and Poison Rod details, integrated help.
 
 MCA-527 list mode file processing is implemented, but live data collection support is not.
 

@@ -182,6 +182,9 @@ namespace NewUI
         {
             IDDIsotopics f = new IDDIsotopics(ah.ap.isotopics_id);
             DialogResult dlg = f.ShowDialog();
+            if (dlg != DialogResult.OK)
+                return;
+            ah.RefreshParams();
             Isotopics selected = f.GetSelectedIsotopics;
             if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
             {
@@ -204,7 +207,31 @@ namespace NewUI
 
         private void CompositeIsotopicsBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Not yet implemented");
+            IDDCompositeIsotopics f = new IDDCompositeIsotopics(ah.ap.comp_isotopics_id);
+            DialogResult dlg = f.ShowDialog();
+            if (dlg != DialogResult.OK)
+                return;
+            ah.RefreshParams();
+            CompositeIsotopics selected = f.GetSelectedIsotopics;
+            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
+            {
+                ah.ap.isotopics_id = selected.id;
+                ah.ap.comp_isotopics_id = selected.id;
+                // NEXT: do new item id stuff right after this
+            }
+            else
+            {
+                // isotopic settings will be loaded from DB prior to running measurement
+
+                // change the isotopics setting on the current item id state
+                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                if (Cur == null)                         // blank or unspecified somehow
+                    return;
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+                NC.App.DB.ItemIds.Set(Cur);
+                NC.App.DB.ItemIds.Refresh();    // save and update the list of items
+            }
+
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
