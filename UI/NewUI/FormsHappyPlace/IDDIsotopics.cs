@@ -69,6 +69,28 @@ namespace NewUI
             IsotopicsSourceCodeComboBox.SelectedItem = m_iso.source_code.ToString();
         }
 
+		void EnableBasedOnSourceCode()
+        {
+			bool enable = (m_iso.source_code != Isotopics.SourceCode.CO);
+            PuDateTimePicker.Enabled = enable;
+            AmDateTimePicker.Enabled = enable;
+
+			Am241ErrorTextBox.Enabled = enable;
+            Am241PercentTextBox.Enabled = enable;
+
+            Pu238PercentTextBox.Enabled = enable;
+            Pu239PercentTextBox.Enabled = enable;
+            Pu240PercentTextBox.Enabled = enable;
+            Pu241PercentTextBox.Enabled = enable;
+            Pu242PercentTextBox.Enabled = enable;
+
+            Pu238ErrorTextBox.Enabled = enable;
+            Pu239ErrorTextBox.Enabled = enable;
+            Pu240ErrorTextBox.Enabled = enable;
+            Pu241ErrorTextBox.Enabled = enable;
+            Pu242ErrorTextBox.Enabled = enable;
+        }
+
         public IDDIsotopics(string selected = "default")
         {
             InitializeComponent();
@@ -105,6 +127,7 @@ namespace NewUI
             System.Enum.TryParse((string)cb.SelectedItem, out m_iso.source_code);
             if (string.Compare(m_iso.source_code.ToString(), cb.Text, StringComparison.OrdinalIgnoreCase) != 0)
                 modified = m_iso.modified = true;
+			EnableBasedOnSourceCode();
         }
 
         private void PuDateTimePicker_ValueChanged(object sender, EventArgs e)
@@ -114,6 +137,8 @@ namespace NewUI
             {
                 modified = m_iso.modified = true;
                 m_iso.pu_date = dt;
+                m_iso.am_date = new DateTime(dt.Ticks);
+                AmDateTimePicker.Value = m_iso.am_date;   // what INCC5 does
             }
         }
 
@@ -369,7 +394,7 @@ namespace NewUI
 
         private void WriteToFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("NYI", "NOT IMPLEMENTED....YET");
+            MessageBox.Show("NYI", "Not yet implemented ....");
         }
 
         private void AddNewSetBtn_Click(object sender, EventArgs e)
@@ -436,7 +461,7 @@ namespace NewUI
             if (ia.ShowDialog() == DialogResult.OK)
             {
                 string oldId = m_iso.id;
-                m_iso.id = String.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
+                m_iso.id = string.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
                 if (NC.App.DB.Isotopics.Rename(oldId, ia.NewID))
                 {
                     IsotopicsIdComboBox.Items.Remove(oldId);

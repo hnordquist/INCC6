@@ -11,10 +11,10 @@
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)                                  
+            {
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -30,6 +30,12 @@
         {
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IDDCompositeIsotopics));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.OKBtn = new System.Windows.Forms.Button();
 			this.CancelBtn = new System.Windows.Forms.Button();
 			this.HelpBtn = new System.Windows.Forms.Button();
@@ -47,17 +53,25 @@
 			this.IsoSrcCodeLabel = new System.Windows.Forms.Label();
 			this.CalculateBtn = new System.Windows.Forms.Button();
 			this.ReferenceDateTimePicker = new System.Windows.Forms.DateTimePicker();
-			this.listView1 = new System.Windows.Forms.ListView();
-			this.PuMass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Pu238 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Pu239 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Pu240 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Pu241 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Pu242 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.PuDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.Am241 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.AmDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.IsoDataGrid = new System.Windows.Forms.DataGridView();
+			this.PuMass = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Pu238 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Pu239 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Pu240 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Pu241 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Pu242 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PuDate = new NewUI.CalendarColumn();
+			this.Am241 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.AmDate = new NewUI.CalendarColumn();
+			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			((System.ComponentModel.ISupportInitialize)(this.IsoDataGrid)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// OKBtn
@@ -95,7 +109,7 @@
 			// 
 			// ReadBtn
 			// 
-			this.ReadBtn.Location = new System.Drawing.Point(712, 122);
+			this.ReadBtn.Location = new System.Drawing.Point(604, 15);
 			this.ReadBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.ReadBtn.Name = "ReadBtn";
 			this.ReadBtn.Size = new System.Drawing.Size(297, 28);
@@ -108,7 +122,8 @@
 			// 
 			// WriteBtn
 			// 
-			this.WriteBtn.Location = new System.Drawing.Point(712, 158);
+			this.WriteBtn.Enabled = false;
+			this.WriteBtn.Location = new System.Drawing.Point(604, 51);
 			this.WriteBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.WriteBtn.Name = "WriteBtn";
 			this.WriteBtn.Size = new System.Drawing.Size(297, 28);
@@ -116,11 +131,10 @@
 			this.WriteBtn.Text = "Write composite isotopics to file...";
 			this.toolTip1.SetToolTip(this.WriteBtn, resources.GetString("WriteBtn.ToolTip"));
 			this.WriteBtn.UseVisualStyleBackColor = true;
-			this.WriteBtn.Click += new System.EventHandler(this.WriteBtn_Click);
 			// 
 			// AddBtn
 			// 
-			this.AddBtn.Location = new System.Drawing.Point(712, 193);
+			this.AddBtn.Location = new System.Drawing.Point(604, 87);
 			this.AddBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.AddBtn.Name = "AddBtn";
 			this.AddBtn.Size = new System.Drawing.Size(297, 28);
@@ -132,7 +146,7 @@
 			// 
 			// SaveBtn
 			// 
-			this.SaveBtn.Location = new System.Drawing.Point(712, 229);
+			this.SaveBtn.Location = new System.Drawing.Point(604, 123);
 			this.SaveBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.SaveBtn.Name = "SaveBtn";
 			this.SaveBtn.Size = new System.Drawing.Size(297, 28);
@@ -145,7 +159,7 @@
 			// 
 			// EditBtn
 			// 
-			this.EditBtn.Location = new System.Drawing.Point(712, 265);
+			this.EditBtn.Location = new System.Drawing.Point(604, 159);
 			this.EditBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.EditBtn.Name = "EditBtn";
 			this.EditBtn.Size = new System.Drawing.Size(297, 28);
@@ -158,7 +172,7 @@
 			// 
 			// DeleteBtn
 			// 
-			this.DeleteBtn.Location = new System.Drawing.Point(712, 300);
+			this.DeleteBtn.Location = new System.Drawing.Point(604, 193);
 			this.DeleteBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.DeleteBtn.Name = "DeleteBtn";
 			this.DeleteBtn.Size = new System.Drawing.Size(297, 28);
@@ -183,10 +197,10 @@
 			// IsotopicsIdComboBox
 			// 
 			this.IsotopicsIdComboBox.FormattingEnabled = true;
-			this.IsotopicsIdComboBox.Location = new System.Drawing.Point(169, 138);
+			this.IsotopicsIdComboBox.Location = new System.Drawing.Point(220, 90);
 			this.IsotopicsIdComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.IsotopicsIdComboBox.Name = "IsotopicsIdComboBox";
-			this.IsotopicsIdComboBox.Size = new System.Drawing.Size(265, 24);
+			this.IsotopicsIdComboBox.Size = new System.Drawing.Size(203, 24);
 			this.IsotopicsIdComboBox.TabIndex = 12;
 			this.toolTip1.SetToolTip(this.IsotopicsIdComboBox, "Select the desired composite isotopics data set from the picklist");
 			this.IsotopicsIdComboBox.SelectedIndexChanged += new System.EventHandler(this.IsotopicsIdComboBox_SelectedIndexChanged);
@@ -194,10 +208,10 @@
 			// IsoSrcCodeComboBox
 			// 
 			this.IsoSrcCodeComboBox.FormattingEnabled = true;
-			this.IsoSrcCodeComboBox.Location = new System.Drawing.Point(169, 220);
+			this.IsoSrcCodeComboBox.Location = new System.Drawing.Point(358, 163);
 			this.IsoSrcCodeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.IsoSrcCodeComboBox.Name = "IsoSrcCodeComboBox";
-			this.IsoSrcCodeComboBox.Size = new System.Drawing.Size(265, 24);
+			this.IsoSrcCodeComboBox.Size = new System.Drawing.Size(65, 24);
 			this.IsoSrcCodeComboBox.TabIndex = 13;
 			this.toolTip1.SetToolTip(this.IsoSrcCodeComboBox, resources.GetString("IsoSrcCodeComboBox.ToolTip"));
 			this.IsoSrcCodeComboBox.SelectedIndexChanged += new System.EventHandler(this.IsoSrcCodeComboBox_SelectedIndexChanged);
@@ -205,7 +219,7 @@
 			// IsotopicsIdLabel
 			// 
 			this.IsotopicsIdLabel.AutoSize = true;
-			this.IsotopicsIdLabel.Location = new System.Drawing.Point(16, 142);
+			this.IsotopicsIdLabel.Location = new System.Drawing.Point(43, 97);
 			this.IsotopicsIdLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.IsotopicsIdLabel.Name = "IsotopicsIdLabel";
 			this.IsotopicsIdLabel.Size = new System.Drawing.Size(148, 17);
@@ -215,7 +229,7 @@
 			// ReferenceDateLabel
 			// 
 			this.ReferenceDateLabel.AutoSize = true;
-			this.ReferenceDateLabel.Location = new System.Drawing.Point(57, 182);
+			this.ReferenceDateLabel.Location = new System.Drawing.Point(85, 129);
 			this.ReferenceDateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.ReferenceDateLabel.Name = "ReferenceDateLabel";
 			this.ReferenceDateLabel.Size = new System.Drawing.Size(106, 17);
@@ -225,7 +239,7 @@
 			// IsoSrcCodeLabel
 			// 
 			this.IsoSrcCodeLabel.AutoSize = true;
-			this.IsoSrcCodeLabel.Location = new System.Drawing.Point(13, 224);
+			this.IsoSrcCodeLabel.Location = new System.Drawing.Point(205, 166);
 			this.IsoSrcCodeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.IsoSrcCodeLabel.Name = "IsoSrcCodeLabel";
 			this.IsoSrcCodeLabel.Size = new System.Drawing.Size(145, 17);
@@ -235,10 +249,10 @@
 			// CalculateBtn
 			// 
 			this.CalculateBtn.BackColor = System.Drawing.Color.Lime;
-			this.CalculateBtn.Location = new System.Drawing.Point(169, 64);
+			this.CalculateBtn.Location = new System.Drawing.Point(208, 33);
 			this.CalculateBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.CalculateBtn.Name = "CalculateBtn";
-			this.CalculateBtn.Size = new System.Drawing.Size(267, 28);
+			this.CalculateBtn.Size = new System.Drawing.Size(215, 46);
 			this.CalculateBtn.TabIndex = 18;
 			this.CalculateBtn.Text = "Calculate and Store Isotopics";
 			this.toolTip1.SetToolTip(this.CalculateBtn, "Clicking here will cause a composite set of isotopics to be calculated and displa" +
@@ -249,17 +263,19 @@
 			// 
 			// ReferenceDateTimePicker
 			// 
-			this.ReferenceDateTimePicker.Location = new System.Drawing.Point(169, 180);
+			this.ReferenceDateTimePicker.Location = new System.Drawing.Point(220, 129);
 			this.ReferenceDateTimePicker.Margin = new System.Windows.Forms.Padding(4);
 			this.ReferenceDateTimePicker.Name = "ReferenceDateTimePicker";
-			this.ReferenceDateTimePicker.Size = new System.Drawing.Size(265, 22);
+			this.ReferenceDateTimePicker.Size = new System.Drawing.Size(203, 22);
 			this.ReferenceDateTimePicker.TabIndex = 19;
 			this.toolTip1.SetToolTip(this.ReferenceDateTimePicker, "The date the isotopics were determined");
 			this.ReferenceDateTimePicker.ValueChanged += new System.EventHandler(this.ReferenceDateTimePicker_ValueChanged);
 			// 
-			// listView1
+			// IsoDataGrid
 			// 
-			this.listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.IsoDataGrid.AllowUserToDeleteRows = false;
+			this.IsoDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.IsoDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.PuMass,
             this.Pu238,
             this.Pu239,
@@ -269,67 +285,150 @@
             this.PuDate,
             this.Am241,
             this.AmDate});
-			this.listView1.Location = new System.Drawing.Point(31, 347);
-			this.listView1.Margin = new System.Windows.Forms.Padding(4);
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(977, 274);
-			this.listView1.TabIndex = 20;
-			this.listView1.UseCompatibleStateImageBehavior = false;
-			this.listView1.View = System.Windows.Forms.View.Details;
-			this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
+			this.IsoDataGrid.Location = new System.Drawing.Point(0, 229);
+			this.IsoDataGrid.Margin = new System.Windows.Forms.Padding(4);
+			this.IsoDataGrid.Name = "IsoDataGrid";
+			this.IsoDataGrid.RowHeadersVisible = false;
+			this.IsoDataGrid.Size = new System.Drawing.Size(1025, 295);
+			this.IsoDataGrid.TabIndex = 20;
 			// 
 			// PuMass
 			// 
-			this.PuMass.Text = "Pu Mass (g)";
-			this.PuMass.Width = 70;
+			this.PuMass.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle1.Format = "N3";
+			dataGridViewCellStyle1.NullValue = null;
+			this.PuMass.DefaultCellStyle = dataGridViewCellStyle1;
+			this.PuMass.HeaderText = "Pu Mass (g)";
+			this.PuMass.Name = "PuMass";
+			this.PuMass.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// Pu238
 			// 
-			this.Pu238.Text = "% Pu238";
-			this.Pu238.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Pu238.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle2.Format = "N6";
+			this.Pu238.DefaultCellStyle = dataGridViewCellStyle2;
+			this.Pu238.HeaderText = "% Pu238";
+			this.Pu238.Name = "Pu238";
+			this.Pu238.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// Pu239
 			// 
-			this.Pu239.Text = "% Pu239";
-			this.Pu239.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Pu239.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle3.Format = "N6";
+			this.Pu239.DefaultCellStyle = dataGridViewCellStyle3;
+			this.Pu239.HeaderText = "% Pu239";
+			this.Pu239.Name = "Pu239";
+			this.Pu239.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// Pu240
 			// 
-			this.Pu240.Text = "% Pu240";
-			this.Pu240.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Pu240.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle4.Format = "N6";
+			this.Pu240.DefaultCellStyle = dataGridViewCellStyle4;
+			this.Pu240.HeaderText = "% Pu240";
+			this.Pu240.Name = "Pu240";
+			this.Pu240.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// Pu241
 			// 
-			this.Pu241.Text = "% Pu241";
-			this.Pu241.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Pu241.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle5.Format = "N6";
+			this.Pu241.DefaultCellStyle = dataGridViewCellStyle5;
+			this.Pu241.HeaderText = "% Pu241";
+			this.Pu241.Name = "Pu241";
+			this.Pu241.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// Pu242
 			// 
-			this.Pu242.Text = "% Pu242";
+			this.Pu242.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle6.Format = "N6";
+			this.Pu242.DefaultCellStyle = dataGridViewCellStyle6;
+			this.Pu242.HeaderText = "% Pu242";
+			this.Pu242.Name = "Pu242";
+			this.Pu242.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// PuDate
 			// 
-			this.PuDate.Text = "Pu Date";
-			this.PuDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.PuDate.Width = 150;
+			this.PuDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.PuDate.HeaderText = "Pu Date";
+			this.PuDate.Name = "PuDate";
 			// 
 			// Am241
 			// 
-			this.Am241.Text = "% Am241";
-			this.Am241.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Am241.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.Am241.DefaultCellStyle = dataGridViewCellStyle6;
+			this.Am241.HeaderText = "% Am241";
+			this.Am241.Name = "Am241";
+			this.Am241.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// AmDate
 			// 
-			this.AmDate.Text = "Am Date";
-			this.AmDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.AmDate.Width = 150;
+			this.AmDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.AmDate.HeaderText = "Am Date";
+			this.AmDate.Name = "AmDate";
+			// 
+			// dataGridViewTextBoxColumn1
+			// 
+			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn1.HeaderText = "Pu Mass (g)";
+			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+			this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn2
+			// 
+			this.dataGridViewTextBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn2.HeaderText = "% Pu238";
+			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+			this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn3
+			// 
+			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn3.HeaderText = "% Pu239";
+			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+			this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn4
+			// 
+			this.dataGridViewTextBoxColumn4.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn4.HeaderText = "% Pu240";
+			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+			this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn5
+			// 
+			this.dataGridViewTextBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn5.HeaderText = "% Pu241";
+			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+			this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn6
+			// 
+			this.dataGridViewTextBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn6.HeaderText = "% Pu242";
+			this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+			this.dataGridViewTextBoxColumn6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn7
+			// 
+			this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.dataGridViewTextBoxColumn7.HeaderText = "% Am241";
+			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+			this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// IDDCompositeIsotopics
 			// 
+			this.AccessibleDescription = "c";
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1025, 636);
-			this.Controls.Add(this.listView1);
+			this.ClientSize = new System.Drawing.Size(1025, 525);
+			this.Controls.Add(this.IsoDataGrid);
 			this.Controls.Add(this.ReferenceDateTimePicker);
 			this.Controls.Add(this.CalculateBtn);
 			this.Controls.Add(this.IsoSrcCodeLabel);
@@ -350,6 +449,7 @@
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "IDDCompositeIsotopics";
 			this.Text = "Composite Isotopics";
+			((System.ComponentModel.ISupportInitialize)(this.IsoDataGrid)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -374,16 +474,23 @@
         private System.Windows.Forms.Label IsoSrcCodeLabel;
         private System.Windows.Forms.Button CalculateBtn;
         private System.Windows.Forms.DateTimePicker ReferenceDateTimePicker;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.ColumnHeader PuMass;
-        private System.Windows.Forms.ColumnHeader Pu238;
-        private System.Windows.Forms.ColumnHeader Pu239;
-        private System.Windows.Forms.ColumnHeader Pu240;
-        private System.Windows.Forms.ColumnHeader Pu241;
-        private System.Windows.Forms.ColumnHeader Pu242;
-        private System.Windows.Forms.ColumnHeader PuDate;
-        private System.Windows.Forms.ColumnHeader Am241;
-        private System.Windows.Forms.ColumnHeader AmDate;
 		private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.DataGridView IsoDataGrid;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+		private CalendarColumn AmDate;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Am241;
+		private CalendarColumn PuDate;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Pu242;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Pu241;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Pu240;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Pu239;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Pu238;
+		private System.Windows.Forms.DataGridViewTextBoxColumn PuMass;
 	}
 }

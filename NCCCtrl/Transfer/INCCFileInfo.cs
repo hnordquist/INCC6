@@ -350,8 +350,21 @@ namespace NCCTransfer
 
     }
 
+    public delegate void TransferEventHandler(object sender, TransferEventArgs e);
+    public class TransferEventArgs : EventArgs
+    {
+        public TransferEventArgs(int per, string s)
+        {
+            msg = s; percent = per;
+        }
+        public string msg { get; set; }
+        public int percent { get; set; }
+    }
+    
     public class INCCFileOrFolderInfo : INCCFileInfo
     {
+
+        public event TransferEventHandler eh;
 
         public INCCFileOrFolderInfo(LMLoggers.LognLM logger, string searchPattern = "")
             : base(logger)
@@ -403,14 +416,17 @@ namespace NCCTransfer
                     {
                         mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);
                     }
+                    else
+                        mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
 
-                    mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
-
+                    int fcount = effs.Count(), j = 0;
                     // Show files and build list
                     foreach (var f in effs)
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", f.Substring(f.LastIndexOf("\\") + 1));// Remove path information from string.
-
+                        j++;
+                        string p = f.Substring(f.LastIndexOf("\\") + 1);
+                        mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
+                        eh(this, new TransferEventArgs((int)(100.0 * (j / (float)fcount)),"Doing " + p));
                         base.SetFilePath(f);
                         INCCTransferBase itf = base.Restore();
                         if (itf == null)
@@ -433,12 +449,14 @@ namespace NCCTransfer
             else if (mft == eFileType.eFileList)
             {
                 mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC review and transfer file processing", paths.Count());
-
+                int j = 0;
                 // Show files and build list
                 foreach (var f in paths)
                 {
-                    mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", f.Substring(f.LastIndexOf("\\") + 1));// Remove path information from string.
-
+                    j++;
+                    string p = f.Substring(f.LastIndexOf("\\") + 1);
+                    mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
+                    eh(this, new TransferEventArgs((int)(100.0 * (j / (float)paths.Count)), "Doing " + p));
                     base.SetFilePath(f);
                     INCCTransferBase itf = base.Restore();
                     if (itf == null)

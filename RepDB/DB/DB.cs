@@ -823,6 +823,8 @@ namespace DB
 
 		/// <summary>
 		/// 6.0.1.0			db.TableHasColumn("LMINCCAppContext","dataFilePath");
+		/// 6.0.1.1			db.TableHasColumn("composite_isotopics_rec","id");
+		/// 6.0.1.2			new table composite_isotopic_rec
 		/// </summary>
 		/// <param name="table"></param>
 		/// <param name="col"></param>

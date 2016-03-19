@@ -129,6 +129,8 @@ DROP TABLE [curium_ratio_rec];
 GO
 DROP TABLE [CountingParams];
 GO
+DROP TABLE [composite_isotopic_rec]
+GO
 DROP TABLE [composite_isotopics_rec];
 GO
 DROP TABLE [collar_rec];

@@ -465,7 +465,8 @@ CREATE TABLE bkg_parms_rec(
 );
 GO
 CREATE TABLE composite_isotopics_rec(
-	[ci_isotopics_id] nvarchar(299) NOT NULL,
+	[id] INTEGER Primary Key,
+	[ci_isotopics_id] nvarchar(64) NOT NULL,
 	[ci_ref_date] nvarchar(40) NULL,
 	[ci_pu_mass] float NULL,
 	[ci_pu238] float NULL,
@@ -476,8 +477,21 @@ CREATE TABLE composite_isotopics_rec(
 	[ci_am241] float NULL,
 	[ci_pu_date] nvarchar(20) NULL,
 	[ci_am_date] nvarchar(20) NULL,
-	[ci_isotopics_source_code] nvarchar(256) NULL
+	[ci_isotopics_source_code] nvarchar(10) NULL
 );
+GO
+CREATE TABLE composite_isotopic_rec(
+	[id] INTEGER Primary Key,
+	[cid] INTEGER REFERENCES composite_isotopics_rec(id) on DELETE CASCADE,
+	[pu_mass] float NULL,
+	[pu238] float NULL,
+	[pu239] float NULL,
+	[pu240] float NULL,
+	[pu241] float NULL,
+	[pu242] float NULL,
+	[am241] float NULL,
+	[pu_date] nvarchar(20) NULL,
+	[am_date] nvarchar(20) NULL);
 GO
 CREATE TABLE cycles(
 	[id] INTEGER Primary Key,

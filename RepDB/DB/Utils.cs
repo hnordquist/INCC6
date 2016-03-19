@@ -246,6 +246,18 @@ namespace DB
             UInt64.TryParse(s, out d);
             return d;
         }
+        public static Int64 DBInt64(object o)
+        {
+            Int64 d = 0;
+            Int64.TryParse(o.ToString(), out d);
+            return d;
+        }
+        public static Int64 DBInt64(string s)
+        {
+            Int64 d = 0;
+            Int64.TryParse(s, out d);
+            return d;
+        }
         public static Double DBDouble(object o)
         {
             return DBDouble(o.ToString());

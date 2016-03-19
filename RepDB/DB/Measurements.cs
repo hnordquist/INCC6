@@ -56,7 +56,7 @@ namespace DB
         public DB db;
         public DataTable AllMeasurements(string name = null)
         {
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
                 return MeasurementsForDet(name);
             else
             {
@@ -142,32 +142,32 @@ namespace DB
         /// <returns>if found, the newest matching measurement primary key, o.w. -1</returns>
         public long Lookup(string name, DateTimeOffset dt, string type, int counter)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return -1;
             db.SetConnection();
             string s = "SELECT * FROM measurements WHERE detector_id=" + SQLSpecific.QVal(name) + " AND DateTime=" + SQLSpecific.getDate(dt);
-            if (!String.IsNullOrEmpty(type))
+            if (!string.IsNullOrEmpty(type))
                 s += " AND Type=" + SQLSpecific.QVal(type);
 
             string r = db.Scalar(s);
             long lr = -1;
-            if (!Int64.TryParse(r, out lr))
+            if (!long.TryParse(r, out lr))
                 lr = -1;
             return lr;
         }
 
 		public long CountOf(string name, DateTimeOffset dt, string type)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
                 return 0;
             db.SetConnection();
             string s = "SELECT COUNT(*) FROM measurements WHERE detector_id=" + SQLSpecific.QVal(name) + " AND DateTime=" + SQLSpecific.getDate(dt);
-            if (!String.IsNullOrEmpty(type))
+            if (!string.IsNullOrEmpty(type))
                 s += " AND Type=" + SQLSpecific.QVal(type);
 
             string r = db.Scalar(s);
             long lr = -1;
-            if (!Int64.TryParse(r, out lr))
+            if (!long.TryParse(r, out lr))
                 lr = -1;
             return lr;
         }
