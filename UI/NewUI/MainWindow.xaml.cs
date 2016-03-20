@@ -811,7 +811,22 @@ namespace NewUI
 
         private void StratumAuthorityFileClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            System.Windows.Forms.OpenFileDialog aDlg = new System.Windows.Forms.OpenFileDialog();
+            aDlg.CheckFileExists = true;
+            aDlg.FileName = "NCC_Strat.dat";
+            aDlg.Filter = "Dat files (*.dat)|*.dat|CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+            aDlg.DefaultExt = ".dat";
+            aDlg.InitialDirectory = NC.App.AppContext.FileInput;
+            aDlg.Title = "Select a Stratum Authority file";
+            aDlg.Multiselect = false;
+            aDlg.RestoreDirectory = true;
+            System.Windows.Forms.DialogResult qw = aDlg.ShowDialog();
+            if (qw == System.Windows.Forms.DialogResult.OK)
+            {
+                NCCFile.SAFile onefile = new NCCFile.SAFile();
+                string path = System.IO.Path.GetFullPath(aDlg.FileName);
+                onefile.Process(path);
+            }
         }
 
         private void ItemRelevantDataClick(object sender, RoutedEventArgs e)
@@ -874,10 +889,6 @@ namespace NewUI
         private void SetupPrinterClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
-        }
-
-        private void GetExternalDataClick(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

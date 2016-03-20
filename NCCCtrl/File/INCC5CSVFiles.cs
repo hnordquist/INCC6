@@ -25,6 +25,7 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -32,7 +33,6 @@ using AnalysisDefs;
 using NCCReporter;
 namespace NCCFile
 {
-	using Microsoft.VisualBasic.FileIO;
 	using NC = NCC.CentralizedState;
 
 	public class CSVFile : NeutronDataFile
@@ -909,7 +909,6 @@ SourceCodes
     /// </summary>
     public class OPFiles
     {
-
         public OPFiles()
         {
             Init();
@@ -1237,9 +1236,8 @@ SourceCodes
 		public List<CompositeIsotopics> CompIsoIsotopics;
 		public List<ItemId> ItemIds;
 		public List<string> Facilities, MBAs, ItemNames, Strata, InventoryChangeCodes, IOCodes, MaterialTypes, SourceCodes, ItemTypes;
-        // private vars used for processing
-        public LMLoggers.LognLM mlogger;
-
+        //  vars used for processing
+        public LMLoggers.LognLM mlogger;  
 
 		void Init()
 		{
@@ -1305,6 +1303,7 @@ SourceCodes
                 NC.App.DB.MBAs.Set(d2);
             }
         }
+
 		public void DoFacs()
         {
             List<INCCDB.Descriptor> l = NC.App.DB.Facilities.GetList();
@@ -1461,4 +1460,150 @@ SourceCodes
 
 	}
 
+
+    /// <summary>
+    /// Manager for INCC5 Stratum Authority files
+    /// See Stratum Authority File Format p. 83, INCC Software Users Manual, March 29, 2009
+    /// </summary>
+    public class SAFile
+    {
+
+        public SAFile()
+        {
+            Init();
+        }
+
+        public void Init()
+        {
+            Strata = new List<INCCDB.StratumDescriptor>();
+            Facilities_ = new List<INCCDB.Descriptor>();
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+        }
+
+
+        /// <summary>
+        /// Create a list of stratum and facilities from a single line set 
+        /// </summary>
+        /// <param name="csv">The field-scanned csv file instance with an array of tokenized lines</param>
+        void GenerateStrata(CSVFile csv)
+        {
+            string s = string.Empty;
+            Array ae = System.Enum.GetValues(typeof(SACol));
+            foreach (string[] sa in csv.Lines)
+            {
+                if (sa.Length != ae.Length)
+                    continue;
+                INCCDB.Descriptor desc = null;
+                Stratum strat = new Stratum();
+                string facname = string.Empty;
+                double d = 0;
+                foreach (SACol op in ae)
+                {
+                    try
+                    {
+                        s = sa[(int)op];
+                        switch (op)
+                        {
+                            case SACol.Facility:
+                               Facilities_.Add(new INCCDB.Descriptor(s,s));
+                                break;
+                            case SACol.StratumId:
+                                facname = string.Copy(s);
+                                break;
+                            case SACol.StratumDesc:
+                                desc = new INCCDB.Descriptor(facname, s);
+                                break;
+                            case SACol.Bias:
+                                double.TryParse(s, out d);
+                                strat.bias_uncertainty = d;
+                                break;
+                            case SACol.Random:
+                                double.TryParse(s, out d);
+                                strat.random_uncertainty = d;
+                                break;
+                            case SACol.Systematic:
+                                double.TryParse(s, out d);
+                                strat.systematic_uncertainty = d;
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                Strata.Add(new INCCDB.StratumDescriptor(desc, strat));
+            }
+        }
+
+        /// <summary>
+        /// Enum of positional column ids for the INCC5 Stratum file format
+        /// </summary>
+        enum SACol
+        {
+            Facility, StratumId, StratumDesc, Bias, Random, Systematic
+        }
+
+
+        /// <summary>
+        /// Scan a stratum authority file.
+        /// Creates a list of Strata and a list of Facilities from the file.
+        /// </summary>
+        /// <param name="file">file to process</param>
+        public void Process(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+            CSVFile csv = new CSVFile();
+            string name = path.Substring(path.LastIndexOf("\\") + 1); // Remove path information from string
+            csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+            csv.Filename = path;
+            csv.ExtractDateFromFilename();
+            if (name.IndexOf('.') >= 0)
+                csv.ThisSuffix = name.Substring(name.IndexOf('.'));
+            csv.ProcessFile();  // split lines with scanner
+            mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + System.IO.Path.GetFileName(csv.Filename));
+
+            GenerateStrata(csv);
+            DoFacs();
+            DoStratumIds();
+        }
+
+    	public void DoFacs()
+        {
+            List<INCCDB.Descriptor> l = NC.App.DB.Facilities.GetList();
+            foreach (INCCDB.Descriptor desc in Facilities_)
+            {
+                if (string.IsNullOrEmpty(desc.Name) || NC.App.DB.Facilities.Has(desc))
+                    continue;
+                desc.modified = true;
+                l.Add(desc);
+                NC.App.DB.Facilities.Set(desc);
+            }
+        }
+
+        protected void DoStratumIds()
+        {
+            List<INCCDB.StratumDescriptor> l = NC.App.DB.StrataList();
+            foreach (INCCDB.StratumDescriptor sde in Strata)
+            {
+                if (string.IsNullOrEmpty(sde.Desc.Name))
+                    continue;
+                int ex = l.FindIndex(sd => string.Compare(sd.Desc.Name, sde.Desc.Name, true) == 0);
+                if (ex >= 0)   // replace
+                {
+                    l[ex] = sde;
+                }                    
+                else
+                    l.Add(sde);
+                sde.Desc.modified = true;
+                NC.App.DB.UpdateStratum(sde.Desc, sde.Stratum);  // creates or updates it
+            }
+            NC.App.DB.Stratums.Reset();
+        }
+
+        public List<INCCDB.StratumDescriptor> Strata;
+        public List<INCCDB.Descriptor> Facilities_;
+        public LMLoggers.LognLM mlogger;
+
+    }
 }
