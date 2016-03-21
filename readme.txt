@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 3
-6.0.1.2 March 18, 2016 J. Longo
+INCC6 Beta Release 4
+6.0.1.3 April 1, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -41,10 +41,15 @@ INSTALLATION INSTRUCTIONS:
 
 1. Extract the contents of the incc.zip folder onto your PC.
 2. Run INCC6.exe
-3. A "bare" database has been provided for your use. It is named "incc6.sqlite"
-4. If for any reason INCC6 Beta Release stops working, you may opt to restore this
-   default database by running the "reset.bat" batch file or
-   by copying Default.sqlite over INCC6.sqlite
+3. A "bare" SQLite database has been provided for your use. It is named "incc6.sqlite".
+   A SQL Server instance is available.
+   INCC6.exe.Config contains the connection details, manually configure following the notes
+   and example in the file. Create the SQL Server database using the create_INCC6_sqlserver.sql
+   script.
+4. If for any reason INCC6 Beta Release stops working, you may opt to restore the
+   default SQLite database by running the "reset.bat" batch file or
+   by copying Default.sqlite over INCC6.sqlite. For SQL Server run the drop_INCC6_sqlserver.sql
+   script followed by create_INCC6_sqlserver.sql.
    
 KNOWN ISSUES:
 
@@ -60,5 +65,39 @@ This is beta release software, and issues and missing features are known to exis
 CONTACT:
 
 Please use direct email to j.longo@iaea.org or heather@lanl.gov for support and issue reporting.
+
+Issues for basic feature COMPLETION
+
+#70* 		Add MCA-527 single channel list mode DAQ
+#41*		INCC6 CANNOT be KILLED!!! :)
+#11*		Implement progress and cancel features for lengthy operations
+#76* 		LM wizard gatewidth param change not used in subsequent live DAQ analysis
+#75* 		LM wizard setting for cycle count not used in Live DAQ
+#82*		Implement the report subsection filter
+#80* 		Summary results CSV reports
+#31*		Implement the INCC5 Reanalysis
+#84*		Implement full SQL database implementation
+#85*		Implement Collar
+
+
+#32		Implement INCC5 File > Save As/Export > Transfer and Initial Data
+#79		Plot Norm, Plot Ver diagnostic tools
+#78		Find Deming curve fitting tool replacement
+#40		source ID in 'initial source' does not get passed to results
+#35		Hold-up analysis required
+
+*HIGH PRIORITY and these also
+
+#67		PTR-32 data handling question 
+#59		Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+#45		calc_alpha_beta performance and efficiency
+#43		Performing LM as SR after doing LM Acquire craps
+#37		Urgent labels and others urgently may or may not need attention 
+#25		List mode acquisition predelay not stored
+#16		Accidental Singles test Failure for PTR32
+#13		PTR-32 -- Results different if reading file/doing live acquisition
+
+
+
 
    

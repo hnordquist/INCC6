@@ -82,7 +82,7 @@ namespace NCCFile
                             INCCReviewFileProcessing();
                         else if (NC.App.AppContext.DBDataAssay)
                             DBDataAssay();
-                        //else if (NC.App.AppContext.ManualDataAssay) // todo: implement flag state and inernal processing from acquire dlgs
+                        //else if (NC.App.AppContext.ManualDataAssay) // todo: implement flag state and internal processing from acquire dlgs
                         //    ManualDataAssay();
                         else
                             NCDFileAssay();

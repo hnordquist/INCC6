@@ -626,6 +626,7 @@ namespace AnalysisDefs
 
         public override void GenParamList()  // force implementation in subclasses
         {
+			ps = new List<DBParamEntry>();
         }
    
     }

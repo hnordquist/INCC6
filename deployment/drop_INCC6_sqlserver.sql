@@ -1,4 +1,4 @@
-
+Use [INCC6]
 DROP TABLE [collar_data_entry];
 GO
 DROP TABLE [test_parms_rec];
@@ -121,9 +121,9 @@ DROP TABLE [detector_types];
 GO
 DROP TABLE [de_mult_rec];
 GO
-DROP TABLE [cycles];
-GO
 DROP TABLE [cycleslm];
+GO
+DROP TABLE [cycles];
 GO
 DROP TABLE [curium_ratio_rec];
 GO

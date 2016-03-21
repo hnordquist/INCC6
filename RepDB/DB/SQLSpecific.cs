@@ -230,7 +230,7 @@ namespace DB
             }
         }
 
-        public static string getDate(string sDate)
+        public static string getDate(string sDate) // sDate is in ISO format e.g. "2010-06-23T14:18:04.0000000+02:00"
         {
             string s;
             switch (DBMain.Provider)
@@ -246,8 +246,10 @@ namespace DB
                     s= "TO_DATE('" + Utils.ConverttoDateTimeString(sDate) + "','YYYYMMDD HH:MM:SS')";
                     break;
                 case DBMain.DbsWeLove.SQLServerClient:
+					s= "'" + sDate + "'";
+                    break;
                 case DBMain.DbsWeLove.SQLCE4:
-                    s = "Cast('" + Utils.ConverttoDateTimeString(sDate) + "' as datetime)";
+                    s = "Cast('" + sDate + "' as datetime)";
                     break;
                 default:
                     s= "'" + sDate + "'";

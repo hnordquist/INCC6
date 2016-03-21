@@ -327,7 +327,8 @@ namespace NewUI
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                             NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).TraceEvent(NCCReporter.LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));
-
+							
+							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
                             CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId);
                             foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
@@ -338,6 +339,12 @@ namespace NewUI
                             }
 
                             NC.App.Opstate.Measurement.Add(cl);
+
+							// use the cycle time interval as found in the data, taking the first entry because equal intervals are assumed 
+							if (cl.Count > 0)
+								NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time
+									= cl[0].TS.TotalSeconds;
+                            NC.App.DB.UpdateAcquireParams(ap); //update it again
 
                             // TODO: for Reanalysis, a full reconstruction of the measurement state based on the ResultsRec state and the method parameter map contents (for Calib and Verif)
                         }

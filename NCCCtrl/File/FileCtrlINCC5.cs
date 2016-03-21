@@ -57,8 +57,6 @@ namespace NCCFile
             }
             else
             {
-                //Let's use old measurement date...... We will deal with dups later.
-                meas.MeasDate = meas.Cycles[0].DataSourceId.dt;
                 meas.Persist();  // preserve the basic results record
                 FireEvent(EventType.ActionInProgress, this);
                 meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew

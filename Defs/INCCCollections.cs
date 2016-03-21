@@ -4069,7 +4069,6 @@ namespace AnalysisDefs
             else
             {
                 DB.ElementList full = det.Id.ToDBElementList();
-                full.AddRange(els);
                 bool b = db.Update(det.Id.DetectorName, full);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
@@ -4090,7 +4089,6 @@ namespace AnalysisDefs
             if (db.DefinitionExists(els))
             {
                 DB.ElementList full = det.Id.ToDBElementList();
-                full.AddRange(els);
                 b = db.Update(det.Id.DetectorName, full);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
