@@ -35,7 +35,7 @@ using System.Windows.Forms;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+    using N = NCC.CentralizedState;
 
     public partial class IDDMeasurementList : Form
     {
@@ -46,19 +46,50 @@ namespace NewUI
         public IDDMeasurementList(string filter = "")
         {
             InitializeComponent();
+			bool LMOnly = (filter.CompareTo("unspecified") == 0);
 			allmea =  filter == "";
             this.Text = allmea?"All Measurements":filter + " Measurements";
             Detector det = Integ.GetCurrentAcquireDetector();
 			this.Text += " for Detector " + det.Id.DetectorId;
-            mlist = NC.App.DB.MeasurementsFor(det, AssaySelectorExtensions.SrcToEnum(filter));
-			if (filter.CompareTo("unspecified") == 0)  // LMOnly
+            mlist = N.App.DB.MeasurementsFor(det, AssaySelectorExtensions.SrcToEnum(filter));
+			PrepList(LMOnly, filter, det.Id.DetectorId);
+        }
+
+		public IDDMeasurementList(List<INCCDB.IndexedResults> ilist, string filter = "", string inspnum = "")
+        {
+            InitializeComponent();
+			allmea = filter == "";
+			bool LMOnly = (filter.CompareTo("unspecified") == 0);
+			this.Text = allmea ? "All Measurements" : filter + " Measurements";
+            Detector det = Integ.GetCurrentAcquireDetector();
+			this.Text += " for Detector " + det.Id.DetectorId;
+			if (!string.IsNullOrEmpty(inspnum))
+				this.Text += " for inspection #" + inspnum;
+			mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
+			PrepList(LMOnly, filter, det.Id.DetectorId);
+        }
+
+		void PrepList(bool LMOnly, string filter, string det)
+		{
+			if (LMOnly)  // LMOnly
 				mlist.RemoveAll(EmptyCSVFile);    // cull those without LM CSV results
 			else
 				mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
-			ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
-			listView1.ShowItemToolTips = true;
+			ctrllog = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
+			LoadList();
+			if (!allmea)
+				listView1.Columns[listView1.Columns.Count -1].Width = 0;
+            if (mlist.Count == 0)
+            {
+                string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det);
+                MessageBox.Show(msg, "WARNING");
+            }
+		}
 
-            foreach (Measurement m in mlist)
+		void LoadList()
+		{
+ 			listView1.ShowItemToolTips = true;
+			foreach (Measurement m in mlist)
             {
                 string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "Empty" : m.AcquireState.ItemId.item;
                 if (Path.GetFileName(m.MeasurementId.FileName).Contains("_"))
@@ -72,14 +103,7 @@ namespace NewUI
 				if (string.IsNullOrEmpty(lvi.ToolTipText))
 					lvi.ToolTipText = "No results file available";
             }
-			if (!allmea)
-				listView1.Columns[listView1.Columns.Count -1].Width = 0;
-            if (mlist.Count == 0)
-            {
-                string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det.Id.DetectorId);
-                MessageBox.Show(msg, "WARNING");
-            }
-        }
+		}
 
 		string TypeTextFragment(string filter)
 		{

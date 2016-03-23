@@ -1734,9 +1734,24 @@ namespace AnalysisDefs
 			}
 			return rr;
 		}
+		
+        public static INCCResults.results_rec Get(long mid, DB.DB existing)
+		{
+			DB.Results r = new DB.Results(existing);
+			DataTable dt = r.Result(mid);
+			INCCResults.results_rec rr = null;
+			string curr_det = string.Empty;
+			foreach (DataRow dr in dt.Rows)
+            {
+				rr = RowParser(dr, ref curr_det);
+				break; // take the first (and only) one
+			}
+			return rr;
+		}
 
 
-		INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
+
+		static INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
 		{
             INCCResults.results_rec resrec = new INCCResults.results_rec();
             // reconstruct the acquire params used for this measurement result
@@ -3071,14 +3086,14 @@ namespace AnalysisDefs
             ap.isotopics_id = dr["isotopics_id"].ToString();
             ap.comp_isotopics_id = dr["comp_isotopics_id"].ToString();
 
-            ap.review_detector_parms = DB.Utils.DBBool(dr["review_detector_parms"]);
-            ap.review_calib_parms = DB.Utils.DBBool(dr["review_calib_parms"]);
-            ap.review_isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
-            ap.review_summed_raw_data = DB.Utils.DBBool(dr["review_summed_raw_data"]);
-            ap.review_run_rate_data = DB.Utils.DBBool(dr["review_run_rate_data"].ToString());
-            ap.review_run_raw_data = DB.Utils.DBBool(dr["review_run_raw_data"].ToString());
-            ap.review_summed_mult_dist = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
-            ap.review_run_mult_dist = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
+            ap.review.DetectorParameters = DB.Utils.DBBool(dr["review_detector_parms"]);
+            ap.review.CalibrationParameters = DB.Utils.DBBool(dr["review_calib_parms"]);
+            ap.review.Isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
+            ap.review.SummedRawCoincData = DB.Utils.DBBool(dr["review_summed_raw_data"]);
+            ap.review.RateCycleData= DB.Utils.DBBool(dr["review_run_rate_data"].ToString());
+            ap.review.RawCycleData = DB.Utils.DBBool(dr["review_run_raw_data"].ToString());
+            ap.review.SummedMultiplicityDistributions = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
+            ap.review.MultiplicityDistributions = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
 
             ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
             ap.acquire_type = (AcquireConvergence)(DB.Utils.DBInt32(dr["acquire_type"].ToString()));
@@ -3632,8 +3647,73 @@ namespace AnalysisDefs
             return foo;            
         }
 
+
+		public class IndexedResults
+		{
+			public IndexedResults() { }
+			public	string Campaign;
+			public	string Detector;
+			public	string Option;
+			public	long Mid, Rid;
+		}
+
+		public List<IndexedResults> IndexedResultsFor(string det, string option, string inspnum)
+        {
+			List<MeasId> meas = MeasurementIds(det, option);
+			List<IndexedResults> res = new List<IndexedResults>();
+
+			DB.Results r = new DB.Results();
+			DataTable dt = r.ResultsForDetWithC(det);
+			foreach (DataRow dr in dt.Rows)
+            {
+				string s = dr["campaign_id"].ToString();
+				if ((string.Compare(inspnum,"All") == 0) || (!string.IsNullOrEmpty(inspnum) && (string.Compare(inspnum,s, true) == 0)))
+				{ 
+					IndexedResults ir = new IndexedResults();
+					ir.Campaign = s;
+					ir.Option = dr["meas_option"].ToString();
+					ir.Detector = det;
+					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+					ir.Rid = DB.Utils.DBInt64(dr["id"]);
+					res.Add(ir);
+				}
+			}
+			return res;
+        }
+
+		public List<Measurement> MeasurementsFor(List<IndexedResults> ilist, bool LMOnly)
+		{
+            List<Measurement> ms = new List<Measurement>();
+			DB.Measurements mdb = new DB.Measurements();
+
+			foreach (IndexedResults ir in ilist)
+			{
+				DataTable dt = mdb.Measurement(ir.Mid);		
+				foreach (DataRow dr in dt.Rows)
+				{
+					MeasId MeaId = new MeasId(
+						AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
+						DB.Utils.DBDateTimeOffset(dr["DateTime"]),
+						dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"]));
+					INCCResults.results_rec rec = ResultsRecs.Get(MeaId.UniqueId, mdb.db);
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+					MeaId.Item.Copy(rec.item);
+					ms.Add(m);
+					if (m.ResultsFiles != null)
+					{
+						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+						List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+						foreach (string rfpath in lrfpaths)
+							m.ResultsFiles.Add(LMOnly, rfpath);
+					}
+
+				}
+			}
+			return ms;
+		}
  
-        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified)
+        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
@@ -3655,11 +3735,11 @@ namespace AnalysisDefs
                 MeasId MeaId = new MeasId(
                     AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
                     DB.Utils.DBDateTimeOffset(dr["DateTime"]),
-                    dr["FileName"].ToString(), DB.Utils.DBInt32(dr["id"])); // db table key actually
+                    dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
 
                 // get the traditional results rec that matches the measurement id 
                 //This does not, in fact, get an item id......hn 9.10.2015
-                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId); //resultsList.Find(d => d.MeasurementIdMatch(MeaId));
+                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
 
 				if (rec != null)
 				{

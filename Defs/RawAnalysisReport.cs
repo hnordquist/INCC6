@@ -866,14 +866,13 @@ namespace AnalysisDefs
         }
 
         protected enum RawReportSections { HitsPerChn, RatePerChn, Feynman, Rossi, TimeInterval, CoincidenceMatrix };
-        protected new Array selectedReportSections; // DB$CONFIG
+        protected new Array selectedReportSections;
         public List<string> replines;
         public RawAnalysisReport(NCCReporter.LMLoggers.LognLM ctrllog)
             : base(ctrllog)
         {
-
             selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(RawReportSections)).Length);
-            foreach (ValueType v in System.Enum.GetValues(typeof(RawReportSections)))// dev note: these would be user selections eventually, for now we enable every possible report section
+            foreach (ValueType v in System.Enum.GetValues(typeof(RawReportSections)))
             {
                 selectedReportSections.SetValue(true, (int)v);
             }

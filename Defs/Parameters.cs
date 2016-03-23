@@ -100,7 +100,7 @@ namespace AnalysisDefs
             this.doublesGateFraction = sr.doublesGateFraction;
             this.triplesGateFraction = sr.triplesGateFraction;
             //this.type = sr.type;
-            //this.id = String.Copy(sr.id);
+            //this.id = string.Copy(sr.id);
         }
 
         public void CopyValues(ShiftRegisterParameters sr)
@@ -443,7 +443,7 @@ namespace AnalysisDefs
             cf252RefDoublesRate = new Tuple();
             measRate = new Tuple();
             refDate = new DateTime(2010, 01, 01);
-            sourceId = String.Empty;
+            sourceId = string.Empty;
             biasMode = NormTest.Cf252Doubles;
             initSrcPrecisionLimit = 0.3;
             biasPrecisionLimit = 0.3;
@@ -461,7 +461,7 @@ namespace AnalysisDefs
                 cf252RefDoublesRate = new Tuple();
                 measRate = new Tuple();
                 refDate = new DateTime(2010, 01, 01);
-                sourceId = String.Empty;
+                sourceId = string.Empty;
                 biasMode = NormTest.Cf252Doubles;
                 initSrcPrecisionLimit = 0.3;
                 biasPrecisionLimit = 0.3;
@@ -476,7 +476,7 @@ namespace AnalysisDefs
                 cf252RefDoublesRate = new Tuple(src.cf252RefDoublesRate);
                 measRate = new Tuple(src.measRate);
                 refDate = new DateTime(src.refDate.Ticks);
-                sourceId = String.Copy(src.sourceId);
+                sourceId = string.Copy(src.sourceId);
                 biasMode = src.biasMode;
                 initSrcPrecisionLimit = src.initSrcPrecisionLimit;
                 biasPrecisionLimit = src.biasPrecisionLimit;
@@ -513,7 +513,7 @@ namespace AnalysisDefs
             cf252RefDoublesRate = new Tuple(src.cf252RefDoublesRate);
             measRate = new Tuple(src.measRate);
             refDate = new DateTime(src.refDate.Ticks);
-            sourceId = String.Copy(src.sourceId);
+            sourceId = string.Copy(src.sourceId);
             biasMode = src.biasMode;
             initSrcPrecisionLimit = src.initSrcPrecisionLimit;
             biasPrecisionLimit = src.biasPrecisionLimit;
@@ -534,7 +534,7 @@ namespace AnalysisDefs
             dest.cf252RefDoublesRate = new Tuple(cf252RefDoublesRate);
             dest.measRate = new Tuple(measRate);
             dest.refDate = new DateTime(refDate.Ticks);
-            dest.sourceId = String.Copy(sourceId);
+            dest.sourceId = string.Copy(sourceId);
             dest.biasMode = biasMode;
             dest.initSrcPrecisionLimit = initSrcPrecisionLimit;
             dest.biasPrecisionLimit = biasPrecisionLimit;
@@ -657,7 +657,7 @@ namespace AnalysisDefs
         {
             MeasOption = op;
             MeasDateTime = new DateTimeOffset(dt.Ticks, dt.Offset);
-            FileName = String.Copy(fn);
+            FileName = string.Copy(fn);
 			UniqueId = mid;
             Item = new ItemId();
         }
@@ -852,7 +852,7 @@ namespace AnalysisDefs
                                 imr.AddMethodResults(sel, method, multrec);
                                 break;
                             case AnalysisMethod.CalibrationCurve:
-                                INCCMethodResults.results_cal_curve_rec calrec = new INCCMethodResults.results_cal_curve_rec ();
+                                INCCMethodResults.results_cal_curve_rec calrec = new INCCMethodResults.results_cal_curve_rec ();  // URGENT: blew right here
                                 am.GetMethodParameters(AnalysisMethod.CalibrationCurve).CopyTo(calrec.methodParams);
                                 imr.AddMethodResults(sel, method, calrec);
                                 break;
@@ -952,14 +952,7 @@ namespace AnalysisDefs
         public DetectorDefs.ConstructedSource data_src;
         public bool qc_tests;
         public bool print;
-        public bool review_detector_parms;
-        public bool review_calib_parms;
-        public bool review_isotopics;
-        public bool review_summed_raw_data;
-        public bool review_run_raw_data;
-        public bool review_run_rate_data;
-        public bool review_summed_mult_dist;
-        public bool review_run_mult_dist;
+        public ReportSectional review;
         public double run_count_time;
         public AcquireConvergence acquire_type;
         public UInt16 num_runs;
@@ -985,19 +978,16 @@ namespace AnalysisDefs
             mba = new INCCDB.Descriptor("XXXX", "The default MBA name");
             detector_id = "XXXX/XXX/YY";
             item_type = "Pu";
-            glovebox_id = String.Empty;
+            glovebox_id = string.Empty;
             isotopics_id = Isotopics.DefaultId;
             comp_isotopics_id = Isotopics.DefaultId;
-            campaign_id = String.Empty;
-            item_id = String.Empty;
+            campaign_id = string.Empty;
+            item_id = string.Empty;
             stratum_id = new INCCDB.Descriptor();
-            user_id = String.Empty;
-            comment = String.Empty;
+            user_id = string.Empty;
+            comment = string.Empty;
             qc_tests = true;
-            review_detector_parms = true;
-            review_calib_parms = true;
-            review_isotopics = true;
-            review_run_rate_data = true;
+			review = new ReportSectional();
             run_count_time = 100;
             acquire_type = AcquireConvergence.CycleCount;
             num_runs = 3;
@@ -1007,8 +997,8 @@ namespace AnalysisDefs
             meas_precision = 1.0;
             well_config = WellConfiguration.Passive;
             error_calc_method = ErrorCalculationTechnique.Theoretical;
-            inventory_change_code = String.Empty;
-            io_code = String.Empty;
+            inventory_change_code = string.Empty;
+            io_code = string.Empty;
             _MeasDateTime = new DateTimeOffset(2016, 2, 6, 0, 0, 0, DateTimeOffset.Now.Offset);
             _CheckDateTime = DateTimeOffset.Now;
             meas_detector_id = "XXXX/XXX/YY";
@@ -1048,28 +1038,21 @@ namespace AnalysisDefs
         {
             facility = new INCCDB.Descriptor(src.facility);
             mba = new INCCDB.Descriptor(src.mba);
-            detector_id = String.Copy(src.detector_id);
-            item_type = String.Copy(src.item_type);
-            glovebox_id = String.Copy(src.glovebox_id);
-            isotopics_id = String.Copy(src.isotopics_id);
-            comp_isotopics_id = String.Copy(src.comp_isotopics_id);
-            campaign_id = String.Copy(src.campaign_id);
-            item_id = String.Copy(src.item_id);
+            detector_id = string.Copy(src.detector_id);
+            item_type = string.Copy(src.item_type);
+            glovebox_id = string.Copy(src.glovebox_id);
+            isotopics_id = string.Copy(src.isotopics_id);
+            comp_isotopics_id = string.Copy(src.comp_isotopics_id);
+            campaign_id = string.Copy(src.campaign_id);
+            item_id = string.Copy(src.item_id);
             stratum_id = new INCCDB.Descriptor(src.stratum_id);
-            user_id = String.Copy(src.user_id);
-            comment = String.Copy(src.comment);
+            user_id = string.Copy(src.user_id);
+            comment = string.Copy(src.comment);
             ending_comment = src.ending_comment;
             data_src = src.data_src;
             qc_tests = src.qc_tests;
             print = src.print;
-            review_detector_parms = src.review_detector_parms;
-            review_calib_parms = src.review_calib_parms;
-            review_isotopics = src.review_isotopics;
-            review_summed_raw_data = src.review_summed_raw_data;
-            review_run_raw_data = src.review_run_raw_data;
-            review_run_rate_data = src.review_run_rate_data;
-            review_summed_mult_dist = src.review_summed_mult_dist;
-            review_run_mult_dist = src.review_run_mult_dist;
+			review = new ReportSectional(src.review);
             run_count_time = src.run_count_time;
             acquire_type = src.acquire_type;
             num_runs = src.num_runs;
@@ -1080,13 +1063,13 @@ namespace AnalysisDefs
             well_config = src.well_config;
             mass = src.mass;
             error_calc_method = src.error_calc_method;
-            inventory_change_code = String.Copy(src.inventory_change_code);
-            io_code = String.Copy(src.io_code);
+            inventory_change_code = string.Copy(src.inventory_change_code);
+            io_code = string.Copy(src.io_code);
             collar_mode = src.collar_mode;
             drum_empty_weight = src.drum_empty_weight;
             _MeasDateTime = new DateTimeOffset(src._MeasDateTime.Ticks, src._MeasDateTime.Offset);
             _CheckDateTime = new DateTimeOffset(src._CheckDateTime.Ticks, src._CheckDateTime.Offset);
-            meas_detector_id = String.Copy(src.meas_detector_id);
+            meas_detector_id = string.Copy(src.meas_detector_id);
             lm = new LMAcquireParams(src.lm);
         }
 
@@ -1094,12 +1077,12 @@ namespace AnalysisDefs
         {
             if (id == null)
                 return;
-            item_id = String.Copy(id.item);
-            item_type = String.Copy(id.material);
-            isotopics_id = String.Copy(id.isotopics);
-            stratum_id = new INCCDB.Descriptor(id.stratum, String.Copy(id.stratum));
-            inventory_change_code = String.Copy(id.inventoryChangeCode);
-            io_code = String.Copy(id.IOCode);
+            item_id = string.Copy(id.item);
+            item_type = string.Copy(id.material);
+            isotopics_id = string.Copy(id.isotopics);
+            stratum_id = new INCCDB.Descriptor(id.stratum, string.Copy(id.stratum));
+            inventory_change_code = string.Copy(id.inventoryChangeCode);
+            io_code = string.Copy(id.IOCode);
             mass = id.declaredMass;
         }
 
@@ -1108,11 +1091,11 @@ namespace AnalysisDefs
             get
             {
                 ItemId id = new ItemId(item_id);
-                id.material = String.Copy(item_type);
-                id.isotopics = String.Copy(isotopics_id);
-                id.stratum = String.Copy(stratum_id.Name);
-                id.inventoryChangeCode = String.Copy(inventory_change_code);
-                id.IOCode = String.Copy(io_code);
+                id.material = string.Copy(item_type);
+                id.isotopics = string.Copy(isotopics_id);
+                id.stratum = string.Copy(stratum_id.Name);
+                id.inventoryChangeCode = string.Copy(inventory_change_code);
+                id.IOCode = string.Copy(io_code);
                 id.declaredMass = mass;
                 id.declaredUMass = mass; // devnote: these two mass values cannot exist at the same time, so the input is always one value
                 //id.length = 
@@ -1144,14 +1127,8 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("data_src", (int)data_src));
             this.ps.Add(new DBParamEntry("qc_tests", qc_tests));
             this.ps.Add(new DBParamEntry("acq_print", print));
-            this.ps.Add(new DBParamEntry("review_detector_parms", review_detector_parms));
-            this.ps.Add(new DBParamEntry("review_calib_parms", review_calib_parms));
-            this.ps.Add(new DBParamEntry("review_isotopics", review_isotopics));
-            this.ps.Add(new DBParamEntry("review_summed_raw_data", review_summed_raw_data));
-            this.ps.Add(new DBParamEntry("review_run_raw_data", review_run_raw_data));
-            this.ps.Add(new DBParamEntry("review_run_rate_data", review_run_rate_data));
-            this.ps.Add(new DBParamEntry("review_summed_mult_dist", review_summed_mult_dist));
-            this.ps.Add(new DBParamEntry("review_run_mult_dist", review_run_mult_dist));
+			review.GenParamList();
+			ps.AddRange(review.ps);
 
             this.ps.Add(new DBParamEntry("run_count_time", run_count_time));
             this.ps.Add(new DBParamEntry("acquire_type", (int)acquire_type));
@@ -1663,9 +1640,9 @@ namespace AnalysisDefs
         public ItemId()
         {
             length = 1;
-            item = String.Empty;
-            material = String.Empty; isotopics = String.Empty; stratum = String.Empty; mba = string.Empty;
-            inventoryChangeCode = String.Empty; IOCode = String.Empty;
+            item = string.Empty;
+            material = string.Empty; isotopics = string.Empty; stratum = string.Empty; mba = string.Empty;
+            inventoryChangeCode = string.Empty; IOCode = string.Empty;
             pu_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
             am_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
         }
@@ -1675,8 +1652,8 @@ namespace AnalysisDefs
         {
             length = 1;
             item = itemName;
-            material = String.Empty; stratum = String.Empty; mba = string.Empty;
-            inventoryChangeCode = String.Empty; IOCode = String.Empty;
+            material = string.Empty; stratum = string.Empty; mba = string.Empty;
+            inventoryChangeCode = string.Empty; IOCode = string.Empty;
             //We should always put the measurements pu and am dates in the item structure.  hn 11.5.2014
             isotopics = string.Copy(measIso.id);
             pu_date = measIso.pu_date;
@@ -1684,7 +1661,7 @@ namespace AnalysisDefs
         }
         public ItemId(ItemId src)
         {
-            item = String.Copy(src.item); material = String.Copy(src.material); isotopics = String.Copy(src.isotopics); stratum = String.Copy(src.stratum); inventoryChangeCode = String.Copy(src.inventoryChangeCode); IOCode = String.Copy(src.IOCode); mba = String.Copy(src.mba);
+            item = string.Copy(src.item); material = string.Copy(src.material); isotopics = string.Copy(src.isotopics); stratum = string.Copy(src.stratum); inventoryChangeCode = string.Copy(src.inventoryChangeCode); IOCode = string.Copy(src.IOCode); mba = string.Copy(src.mba);
             declaredMass = src.declaredMass; declaredUMass = src.declaredUMass; length = src.length;
             pu_date = new DateTime(src.pu_date.Ticks); am_date = new DateTime(src.am_date.Ticks);
         }
@@ -1692,8 +1669,8 @@ namespace AnalysisDefs
         {
             length = 1;
             this.item = item;
-            material = String.Empty; isotopics = String.Empty; stratum = String.Empty; mba = string.Empty;
-            inventoryChangeCode = String.Empty; IOCode = String.Empty;
+            material = string.Empty; isotopics = string.Empty; stratum = string.Empty; mba = string.Empty;
+            inventoryChangeCode = string.Empty; IOCode = string.Empty;
             pu_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
             am_date = new DateTime(Isotopics.ZeroIAEATime.Ticks);
         }
@@ -1709,7 +1686,7 @@ namespace AnalysisDefs
 
         public void Copy(ItemId src)
         {
-            item = String.Copy(src.item); material = String.Copy(src.material); isotopics = String.Copy(src.isotopics); stratum = String.Copy(src.stratum); inventoryChangeCode = String.Copy(src.inventoryChangeCode); IOCode = String.Copy(src.IOCode); mba = String.Copy(src.mba);
+            item = string.Copy(src.item); material = string.Copy(src.material); isotopics = string.Copy(src.isotopics); stratum = string.Copy(src.stratum); inventoryChangeCode = string.Copy(src.inventoryChangeCode); IOCode = string.Copy(src.IOCode); mba = string.Copy(src.mba);
             declaredMass = src.declaredMass; declaredUMass = src.declaredUMass; length = src.length;
             pu_date = new DateTime(src.pu_date.Ticks); am_date = new DateTime(src.am_date.Ticks);
         }
@@ -1753,19 +1730,19 @@ namespace AnalysisDefs
         {
             base.GenParamList();
             this.Table = "ItemId";
-            if (String.IsNullOrEmpty(item)) item = "";
+            if (string.IsNullOrEmpty(item)) item = "";
             this.ps.Add(new DBParamEntry("item_name", item));
-            if (String.IsNullOrEmpty(mba)) mba = "";
+            if (string.IsNullOrEmpty(mba)) mba = "";
             this.ps.Add(new DBParamEntry("mba", mba));
-            if (String.IsNullOrEmpty(material)) material = "Pu";
+            if (string.IsNullOrEmpty(material)) material = "Pu";
             this.ps.Add(new DBParamEntry("material_type_id", material));
-            if (String.IsNullOrEmpty(isotopics)) isotopics = "Default";
+            if (string.IsNullOrEmpty(isotopics)) isotopics = "Default";
             this.ps.Add(new DBParamEntry("isotopics_id", isotopics));
-            if (String.IsNullOrEmpty(stratum)) stratum = "";
+            if (string.IsNullOrEmpty(stratum)) stratum = "";
             this.ps.Add(new DBParamEntry("stratum_id", stratum));
-            if (String.IsNullOrEmpty(inventoryChangeCode)) inventoryChangeCode = "";
+            if (string.IsNullOrEmpty(inventoryChangeCode)) inventoryChangeCode = "";
             this.ps.Add(new DBParamEntry("inventory_change_code", inventoryChangeCode));
-            if (String.IsNullOrEmpty(IOCode)) IOCode = "";
+            if (string.IsNullOrEmpty(IOCode)) IOCode = "";
             this.ps.Add(new DBParamEntry("io_code", IOCode));
             this.ps.Add(new DBParamEntry("declared_mass_entry", declaredMass));
             this.ps.Add(new DBParamEntry("declared_u_mass_entry", declaredUMass));
@@ -1783,15 +1760,15 @@ namespace AnalysisDefs
         public CollarItemId()
         {
             length = new Tuple(1,0);
-            item_id = String.Empty;
-            rod_type = String.Empty;
+            item_id = string.Empty;
+            rod_type = string.Empty;
             total_pu = new Tuple(); 
             depleted_u = new Tuple(); natural_u = new Tuple(); enriched_u = new Tuple(); total_u235 = new Tuple(); total_u238 = new Tuple(); poison_percent = new Tuple();
         }
 
         public CollarItemId(CollarItemId src)
         {
-            item_id = String.Copy(src.item_id); rod_type = String.Copy(src.rod_type);
+            item_id = string.Copy(src.item_id); rod_type = string.Copy(src.rod_type);
             total_rods = src.total_rods; total_poison_rods = src.total_poison_rods;
             length = new Tuple(src.length); total_pu = new Tuple(src.total_pu);
             depleted_u.CopyFrom(src.depleted_u);
@@ -1801,8 +1778,8 @@ namespace AnalysisDefs
         public CollarItemId(string item)
         {
             length = new Tuple(1, 0);
-            this.item_id = String.Copy(item);
-            rod_type = String.Empty;
+            this.item_id = string.Copy(item);
+            rod_type = string.Empty;
             total_pu = new Tuple(); depleted_u = new Tuple(); natural_u = new Tuple(); enriched_u = new Tuple(); total_u235 = new Tuple(); total_u238 = new Tuple(); poison_percent = new Tuple();
         }
 
@@ -1845,9 +1822,9 @@ namespace AnalysisDefs
         {
             base.GenParamList();
             Table = "collar_data_entry";
-            if (String.IsNullOrEmpty(item_id)) item_id = "";
+            if (string.IsNullOrEmpty(item_id)) item_id = "";
                 ps.Add(new DBParamEntry("item_name", item_id));
-            if (String.IsNullOrEmpty(rod_type)) rod_type = "";
+            if (string.IsNullOrEmpty(rod_type)) rod_type = "";
                 ps.Add(new DBParamEntry("rod_type", rod_type));
             ps.AddRange(DBParamList.TuplePair("length_entry", length));
             ps.Add(new DBParamEntry("total_rods", total_rods));
@@ -1866,7 +1843,7 @@ namespace AnalysisDefs
     {
         public holdup_config_rec(holdup_config_rec src)
         {
-            num_rows = src.num_rows; num_columns = src.num_columns; distance = src.distance; glovebox_id = String.Copy(src.glovebox_id);
+            num_rows = src.num_rows; num_columns = src.num_columns; distance = src.distance; glovebox_id = string.Copy(src.glovebox_id);
         }
         public holdup_config_rec()
         {
@@ -2119,7 +2096,7 @@ namespace AnalysisDefs
         public LMAcquireParams(LMAcquireParams src)
             : base(src)
         {
-            Results = String.Copy(src.Results);
+            Results = string.Copy(src.Results);
             TimeStamp = new DateTimeOffset(src.TimeStamp.Ticks, src.TimeStamp.Offset);
         }
 
@@ -2365,19 +2342,19 @@ namespace AnalysisDefs
 
         public INCCSelector()
         {
-            otheruniquelyidentifyinginformation = String.Empty;
+            otheruniquelyidentifyinginformation = string.Empty;
         }
         public INCCSelector(INCCSelector src)
         {
-            detectorid = String.Copy(src.detectorid);
-            material = String.Copy(src.material);
-            otheruniquelyidentifyinginformation = String.Copy(src.otheruniquelyidentifyinginformation);
+            detectorid = string.Copy(src.detectorid);
+            material = string.Copy(src.material);
+            otheruniquelyidentifyinginformation = string.Copy(src.otheruniquelyidentifyinginformation);
         }
         public INCCSelector(string id, string material)
         {
-            this.detectorid = String.Copy(id);
-            this.material = String.Copy(material);
-            otheruniquelyidentifyinginformation = String.Empty;
+            this.detectorid = string.Copy(id);
+            this.material = string.Copy(material);
+            otheruniquelyidentifyinginformation = string.Empty;
         }
         public bool Equals(INCCSelector other)
         {
@@ -2394,7 +2371,7 @@ namespace AnalysisDefs
 
         public override string ToString()
         {
-            return String.Format("<{0},{1}>{2}", detectorid, material, otheruniquelyidentifyinginformation);
+            return string.Format("<{0},{1}>{2}", detectorid, material, otheruniquelyidentifyinginformation);
         }
 
         public class SelectorEquality : EqualityComparer<INCCSelector>
@@ -2427,7 +2404,7 @@ namespace AnalysisDefs
 
         public MeasurementMsg(NCCReporter.LogLevels level, Int32 mid, string mtext)
         {
-            this.text = String.Copy(mtext);
+            this.text = string.Copy(mtext);
             lvl = level;
             id = mid;
             dt = DateTime.Now;
@@ -2435,7 +2412,7 @@ namespace AnalysisDefs
 
         public MeasurementMsg(NCCReporter.LogLevels level, Int32 mid, string mtext, DateTimeOffset _dt)
         {
-            this.text = String.Copy(mtext);
+            this.text = string.Copy(mtext);
             lvl = level;
             id = mid;
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
@@ -2445,7 +2422,7 @@ namespace AnalysisDefs
         public override string ToString()
         {
             // Analysis	Information	34014	The savory natto is served
-            return String.Format("Analysis {0} {1} {2}", lvl.ToString(), id.ToString(), text);
+            return string.Format("Analysis {0} {1} {2}", lvl.ToString(), id.ToString(), text);
         }
 
         public override void GenParamList()
@@ -2798,37 +2775,37 @@ namespace AnalysisDefs
         public DBParamType ByteType { get; set; }
 
         public DBParamEntry()
-            : base(String.Empty, String.Empty, DBParamType.String, false)
+            : base(string.Empty, string.Empty, DBParamType.String, false)
         {
         }
 
         public DBParamEntry(DBParamEntry src)
-            : base(String.Copy(src.Item1), String.Copy(src.Item2), src.Item3, src.Item4)
+            : base(string.Copy(src.Item1), string.Copy(src.Item2), src.Item3, src.Item4)
         {
         }
 
         public DBParamEntry(string NewName, DBParamEntry src)
-            : base(String.Copy(NewName), String.Copy(src.Item2), src.Item3, src.Item4)
+            : base(string.Copy(NewName), string.Copy(src.Item2), src.Item3, src.Item4)
         {
         }
         public DBParamEntry(string name, DateTime value) :
-            base(String.Copy(name), value.ToString("s"), DBParamType.DT, true)
+            base(string.Copy(name), value.ToString("s"), DBParamType.DT, true)
         {
         }
         public DBParamEntry(string name, DateTimeOffset value) :
-            base(String.Copy(name), value.ToString("o"), DBParamType.DTOffset, true)
+            base(string.Copy(name), value.ToString("o"), DBParamType.DTOffset, true)
         {
         }
         public DBParamEntry(string name, TimeSpan value) :
-            base(String.Copy(name), value.Ticks.ToString(), DBParamType.TS, true)
+            base(string.Copy(name), value.Ticks.ToString(), DBParamType.TS, true)
         {
         }
         public DBParamEntry(string name, string value) :
-            base(String.Copy(name), String.Copy(NullStringFilter(value)), DBParamType.String, true)
+            base(string.Copy(name), string.Copy(NullStringFilter(value)), DBParamType.String, true)
         {
         }
         public DBParamEntry(string name, bool value) :
-            base(String.Copy(name), (value ? "1" : "0"), DBParamType.Boolean, false)
+            base(string.Copy(name), (value ? "1" : "0"), DBParamType.Boolean, false)
         {
         }
 
@@ -2849,7 +2826,7 @@ namespace AnalysisDefs
         {
             if (s == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
             else
             {
@@ -2858,47 +2835,47 @@ namespace AnalysisDefs
         }
 
         public DBParamEntry(string name, double value) :
-            base(String.Copy(name), NaNFilter(value), DBParamType.Double, false)
+            base(string.Copy(name), NaNFilter(value), DBParamType.Double, false)
         {
         }
         public DBParamEntry(string name, Int32 value) :
-            base(String.Copy(name), value.ToString(), DBParamType.Int32, false)
+            base(string.Copy(name), value.ToString(), DBParamType.Int32, false)
         {
         }
 
         public DBParamEntry(string name, UInt64 value) :
-            base(String.Copy(name), value.ToString(), DBParamType.UInt64, false)
+            base(string.Copy(name), value.ToString(), DBParamType.UInt64, false)
         {
         }
 
         public DBParamEntry(string name, string[] value) :
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.String, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.String, true)
         {
         }
 
         // string to byte conversions happen in the DB.Element class later on this side, start by encoding as string
         public DBParamEntry(string name, double[] value):
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.Double, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.Double, true)
         {
             ByteType = DBParamType.String;
         }
         public DBParamEntry(string name, long[] value) :
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.Int64, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.Int64, true)
         {
             ByteType = DBParamType.String;
         }
         public DBParamEntry(string name, ulong[] value) :
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.UInt64, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.UInt64, true)
         {
             ByteType = DBParamType.String;
         }
         public DBParamEntry(string name, int[] value) :
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.Int32, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.Int32, true)
         {
             ByteType = DBParamType.String;
         }
         public DBParamEntry(string name, bool[] value) :
-            base(String.Copy(name), DB.Utils.Stringify(value), DBParamType.Boolean, true)
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.Boolean, true)
         {
             ByteType = DBParamType.String;
         }
@@ -2971,52 +2948,52 @@ namespace AnalysisDefs
     public class CRISPParam : Tuple<string, object>
     {
         public CRISPParam()
-            : base(String.Empty, null)
+            : base(string.Empty, null)
         {
         }
 
         public CRISPParam(string name, string value) :
-            base(String.Copy(name), String.Copy(value))
+            base(string.Copy(name), string.Copy(value))
         {
         }
         public CRISPParam(string name, bool value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, double value)
-            : base(String.Copy(name), value)
+            : base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, float value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, Byte value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, Int16 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, UInt16 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, Int32 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, UInt32 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, UInt64 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public CRISPParam(string name, Int64 value) :
-            base(String.Copy(name), value)
+            base(string.Copy(name), value)
         {
         }
         public string Name
@@ -3030,7 +3007,7 @@ namespace AnalysisDefs
         public override string ToString()
         {
             Type t = Item2.GetType();
-            if (t.Equals(typeof(String)))
+            if (t.Equals(typeof(string)))
                 return Item1.ToString() + ":"+ "'" +  Item2.ToString() + "'";  // todo: need a full character escape processor here
             else
                 return Item1.ToString() + ":"+ Item2.ToString();

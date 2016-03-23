@@ -72,13 +72,12 @@ namespace DB
             string sSQL = "SELECT * FROM measurements where detector_id=" + SQLSpecific.QVal(name) + " ORDER BY DateTime DESC";
             return db.DT(sSQL);
         }
-        // t is the measurement option
-        //public DataTable Measurement(string name, DateTimeOffset dt, string t)
-        //{
-        //    db.SetConnection();
-        //    long id = Lookup(name, dt, t);
-        //    return Measurement(id);
-        //}
+        public DataTable MeasurementsForInspection(string number)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * FROM measurements where detector_id=" + SQLSpecific.QVal(number) + " ORDER BY DateTime DESC";
+            return db.DT(sSQL);
+        }
         public DataTable Measurement(long M_id)
         {
             db.SetConnection();

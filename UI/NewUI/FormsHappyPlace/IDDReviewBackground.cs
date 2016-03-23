@@ -27,23 +27,50 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
-    using Integ = NCC.IntegrationHelpers;
-    public partial class IDDReviewBackground : Form
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
+
+	public partial class IDDReviewBackground : Form
     {
         public IDDReviewBackground()
         {
             InitializeComponent();
-			this.Text += " for Detector " + Integ.GetCurrentAcquireDetector().Id.DetectorId;
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			FieldFiller();
+			this.Text += " for Detector " + det.Id.DetectorId;
 		}
-
+		AcquireParameters acq;
+		Detector det;
+		public void FieldFiller()
+        {
+			PrintTextCheckBox.Checked = acq.print;
+ 			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateDataCheckBox.Checked = acq.review.RateCycleData;
+            SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
+            SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
+            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
+       }
+		void SaveAcquireState()
+		{
+			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+			acq.review.RateCycleData = IndividualCycleRateDataCheckBox.Checked;
+			acq.review.SummedRawCoincData = SummedRawCoincidenceDataCheckBox.Checked;
+			acq.review.SummedMultiplicityDistributions = SummedMultiplicityDistributionsCheckBox.Checked;
+			acq.review.MultiplicityDistributions = IndividualCycleMultiplicityDistributionsCheckBox.Checked;
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det,acq.item_type, acq.MeasDateTime);
+			N.App.DB.ReplaceAcquireParams(sel, acq);
+		}
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
             IDDMeasurementList measlist = new IDDMeasurementList("Background");
             measlist.ShowDialog();
+			SaveAcquireState();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -56,39 +83,39 @@ namespace NewUI
             System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
         }
 
-        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
         }
-
+		
         private void IndividualCycleRawDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RawCycleData = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleRateDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RateCycleData = ((CheckBox)sender).Checked;
         }
 
         private void SummedRawCoincidenceDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedRawCoincData = ((CheckBox)sender).Checked;
         }
 
         private void SummedMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedMultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.print = ((CheckBox)sender).Checked;
         }
 
         private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)

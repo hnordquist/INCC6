@@ -73,11 +73,9 @@ Issues for basic feature COMPLETION
 #11*		Implement progress and cancel features for lengthy operations
 #76* 		LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75* 		LM wizard setting for cycle count not used in Live DAQ
-#82*		Implement the report subsection filter
 #80* 		Summary results CSV reports
 #31*		Implement the INCC5 Reanalysis
-#84*		Implement full SQL database implementation
-#85*		Implement Collar
+#84*		Implement Collar
 
 
 #32		Implement INCC5 File > Save As/Export > Transfer and Initial Data

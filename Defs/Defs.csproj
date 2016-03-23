@@ -69,6 +69,7 @@
     <Compile Include="LMSupport.cs" />
     <Compile Include="RawAnalysisReport.cs" />
     <Compile Include="ReportBase.cs" />
+    <Compile Include="ReportSectional.cs" />
     <Compile Include="Results.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

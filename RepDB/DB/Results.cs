@@ -28,8 +28,6 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections;
 using System.Data;
-
-
 namespace DB
 {
 
@@ -121,10 +119,17 @@ namespace DB
         {
             db.SetConnection();
             ArrayList sqlList = new ArrayList();
-            string sSQL1 = "UPDATE  results_rec SET ";
+            string sSQL1 = "UPDATE results_rec SET ";
             string wh = " where id=" + rid.ToString();
             string sSQL = sSQL1 + sParams.ColumnEqValueList + wh;
             return db.Execute(sSQL);
+        }
+
+		public DataTable ResultsForDetWithC(string name)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
+            return db.DT(sSQL);
         }
 
     }

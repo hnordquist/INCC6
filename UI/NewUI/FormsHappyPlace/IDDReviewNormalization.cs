@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,21 +27,49 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
 	public partial class IDDReviewNormalization : Form
     {
         public IDDReviewNormalization()
         {
             InitializeComponent();
-			this.Text += " for Detector " + Integ.GetCurrentAcquireDetector().Id.DetectorId;
-        }
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			FieldFiller();
+			this.Text += " for Detector " + det.Id.DetectorId;
+		}
+        AcquireParameters acq;
+		Detector det;
+
+		public void FieldFiller()
+        {
+			PrintTextCheckBox.Checked = acq.print;
+ 			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateDataCheckBox.Checked = acq.review.RateCycleData;
+            SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
+            SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
+            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
+       }
+		void SaveAcquireState()
+		{
+			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+			acq.review.RateCycleData = IndividualCycleRateDataCheckBox.Checked;
+			acq.review.SummedRawCoincData = SummedRawCoincidenceDataCheckBox.Checked;
+			acq.review.SummedMultiplicityDistributions = SummedMultiplicityDistributionsCheckBox.Checked;
+			acq.review.MultiplicityDistributions = IndividualCycleMultiplicityDistributionsCheckBox.Checked;
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det,acq.item_type, acq.MeasDateTime);
+			N.App.DB.ReplaceAcquireParams(sel, acq);
+		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
             IDDMeasurementList measlist = new IDDMeasurementList("Normalization");
             measlist.ShowDialog();
+			SaveAcquireState();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -64,39 +92,48 @@ namespace NewUI
             disclaimer.SetToolTip(this.OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of normalization measurements and \r\nthe report will be displayed as it was originally written.");
             disclaimer.SetToolTip(this.HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of normalization measurements and \r\nthe report will be displayed as it was originally written.");
         }
-        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
+        }
+		
+		private void CalibrationParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.CalibrationParameters = ((CheckBox)sender).Checked;
         }
 
+		private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.Isotopics = ((CheckBox)sender).Checked;
+        }
         private void IndividualCycleRawDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RawCycleData = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleRateDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RateCycleData = ((CheckBox)sender).Checked;
         }
 
         private void SummedRawCoincidenceDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedRawCoincData = ((CheckBox)sender).Checked;
         }
 
         private void SummedMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedMultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.print = ((CheckBox)sender).Checked;
         }
 
         private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)

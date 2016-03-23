@@ -1255,7 +1255,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_known_m";
+                this.Table = "results_known_m_rec";
 
                 ps.Add(new DBParamEntry("mult", mult));
                 ps.Add(new DBParamEntry("alpha", alpha));

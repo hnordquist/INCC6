@@ -27,11 +27,13 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using AnalysisDefs;
 namespace NewUI
 {
 
     using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
 
     public partial class IDDReviewAll : Form
     {
@@ -42,14 +44,72 @@ namespace NewUI
         {
             InitializeComponent();
 			bLMOnly = LMOnly;
-  			Detector det = Integ.GetCurrentAcquireDetector();
-			this.Text += " for Detector " + det.Id.DetectorId;          
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			FieldFiller();
+			this.Text += " for Detector " + det.Id.DetectorId;
+			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
+			LoadInspNumCombo();
+		}
+        private List<INCCDB.IndexedResults> mlist;
+        AcquireParameters acq;
+		Detector det;
+		void LoadInspNumCombo()
+		{
+			SortedSet<string> set = new SortedSet<string>();
+			InspectionNumberComboBox.Items.Add("All");
+			InspectionNumberComboBox.SelectedItem = "All";
+			foreach(INCCDB.IndexedResults ir in mlist)
+			{
+				if (!string.IsNullOrEmpty(ir.Campaign))
+					set.Add(ir.Campaign);
+			}
+			foreach(string si in set)
+			{
+				InspectionNumberComboBox.Items.Add(si);
+			}
+		}
+		public void FieldFiller()
+        {
+			PrintTextCheckBox.Checked = acq.print;
+ 			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            CalibrationParametersCheckBox.Checked = acq.review.CalibrationParameters;
+            IsotopicsCheckBox.Checked = acq.review.Isotopics;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateDateCheckBox.Checked = acq.review.RateCycleData;
+            SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
+            SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
+            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
         }
+
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList(bLMOnly ? "unspecified" : "");
+			List<INCCDB.IndexedResults> list = null;
+			string inspnum = string.Copy(InspectionNumberComboBox.SelectedItem.ToString());
+			if (string.Compare(inspnum,"All", true) == 0)
+			{
+				inspnum = "";
+				list = mlist;
+			}
+			else
+				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
+            IDDMeasurementList measlist = new IDDMeasurementList(list, bLMOnly ? "unspecified" : "", inspnum);
             measlist.ShowDialog();
+			SaveAcquireState();
         }
+
+		void SaveAcquireState()
+		{
+			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+			acq.review.CalibrationParameters = CalibrationParametersCheckBox.Checked;
+			acq.review.Isotopics = IsotopicsCheckBox.Checked;
+			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+			acq.review.RateCycleData = IndividualCycleRateDateCheckBox.Checked;
+			acq.review.SummedRawCoincData = SummedRawCoincidenceDataCheckBox.Checked;
+			acq.review.SummedMultiplicityDistributions = SummedMultiplicityDistributionsCheckBox.Checked;
+			acq.review.MultiplicityDistributions = IndividualCycleMultiplicityDistributionsCheckBox.Checked;
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det,acq.item_type, acq.MeasDateTime);
+			N.App.DB.ReplaceAcquireParams(sel, acq);
+		}
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
@@ -68,60 +128,55 @@ namespace NewUI
             disclaimer.InitialDelay = 1000;
             disclaimer.ReshowDelay = 2000;
             disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(this.OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of all measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(this.HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of all measurements and \r\nthe report will be displayed as it was originally written.");
         }
 
         private void InspectionNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
-
-        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
+        }
+		
+		private void CalibrationParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.CalibrationParameters = ((CheckBox)sender).Checked;
         }
 
-        private void CalibrationParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.Isotopics = ((CheckBox)sender).Checked;
         }
-
-        private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void IndividualCycleRawDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RawCycleData = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleRateDateCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RateCycleData = ((CheckBox)sender).Checked;
         }
 
         private void SummedRawCoincidenceDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedRawCoincData = ((CheckBox)sender).Checked;
         }
 
         private void SummedMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.SummedMultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.print = ((CheckBox)sender).Checked;
         }
-
         private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
         {
 

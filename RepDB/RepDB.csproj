@@ -105,9 +105,10 @@
     <None Include="DB\Ye Olde\NCC_DB.SCH" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DB\initdata.sql" />
-    <Content Include="DB\results.sql" />
-    <Content Include="DB\tables.sql" />
+    <Content Include="DB\create_INCC6_sqlite.sql" />
+    <Content Include="DB\create_INCC6_sqlserver.sql" />
+    <Content Include="DB\drop_INCC6_sqlite.sql" />
+    <Content Include="DB\drop_INCC6_sqlserver.sql" />
     <Content Include="DB\Ye Olde\ncc_db.h" />
   </ItemGroup>
   <ItemGroup>

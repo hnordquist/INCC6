@@ -883,6 +883,10 @@ namespace NCCTransfer
             acq.MeasDateTime = meas.MeasurementId.MeasDateTime;
             acq.meas_detector_id = det.Id.DetectorId;
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
+            acq.campaign_id = TransferUtils.str(results.results_campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
+            if (string.IsNullOrEmpty(acq.campaign_id))
+                acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
+
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
             if (itf.facility_table.Count > 0)

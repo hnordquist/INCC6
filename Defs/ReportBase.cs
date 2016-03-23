@@ -61,6 +61,7 @@ namespace AnalysisDefs
 				ResultsReport = rep.replines;
 			}
             MethodResultsReport mrep = new AnalysisDefs.MethodResultsReport(ctrllog);
+			mrep.ApplyReportSectionSelections(m.AcquireState.review.Selections);
             mrep.GenerateReport(m);
             foreach (List<string> r in mrep.INCCResultsReports)
             {
