@@ -130,13 +130,6 @@ namespace NewUI
 
         private void IDDReviewRatesOnly_Load(object sender, EventArgs e)
         {
-            ToolTip disclaimer = new ToolTip();
-            disclaimer.AutoPopDelay = 5000;
-            disclaimer.InitialDelay = 1000;
-            disclaimer.ReshowDelay = 2000;
-            disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(this.OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of Rates Only measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(this.HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of Rates Only measurements and \r\nthe report will be displayed as it was originally written.");
         }
 
     }

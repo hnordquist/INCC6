@@ -129,13 +129,6 @@ namespace NewUI
 
         private void IDDReviewHoldup_Load(object sender, EventArgs e)
         {
-            ToolTip disclaimer = new ToolTip();
-            disclaimer.AutoPopDelay = 5000;
-            disclaimer.InitialDelay = 1000;
-            disclaimer.ReshowDelay = 2000;
-            disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
         }
 
 
