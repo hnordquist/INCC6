@@ -263,10 +263,10 @@
     <Compile Include="FormsHappyPlace\IDDCollarNormalization.Designer.cs">
       <DependentUpon>IDDCollarNormalization.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDCompositeIsotopics.cs">
+    <Compile Include="FormsHappyPlace\IDDCompositeIsotopics.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDCompositeIsotopics.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDCompositeIsotopics.Designer.cs">
       <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDCorrectionFactors.cs">
@@ -1371,7 +1371,7 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCollarNormalization.resx">
       <DependentUpon>IDDCollarNormalization.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCompositeIsotopics.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDCompositeIsotopics.resx">
       <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDCorrectionFactors.resx">

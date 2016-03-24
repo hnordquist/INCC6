@@ -104,6 +104,11 @@ namespace NCC
                 ac(o);
         }
 
+        public Action<object> GetEventHandler(EventType et)
+        {
+            return handlers[et];
+        }
+
         /// <summary>
         /// Map from event types to a fixed log id
         /// </summary>

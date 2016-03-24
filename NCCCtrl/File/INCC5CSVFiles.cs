@@ -25,6 +25,7 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -32,7 +33,6 @@ using AnalysisDefs;
 using NCCReporter;
 namespace NCCFile
 {
-	using Microsoft.VisualBasic.FileIO;
 	using NC = NCC.CentralizedState;
 
 	public class CSVFile : NeutronDataFile
@@ -103,16 +103,11 @@ namespace NCCFile
 
         /// <summary>
         /// Enum of positional column ids for the INCC5 composite isotopics file format
-		/// CompIsoCol is the smae save for the first enum
+		/// CompIsoCol summary line is the entire enum, and without the first two entries is the subentry spec
         /// </summary>
         enum CompIsCol
         {
 			IsoId, IsoSourceCode, PuMass, Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err
-        }
-
-		enum KindKind
-        {
-			Iso, CompIso, CompIsoSummary
         }
 
         /// <summary>
@@ -136,34 +131,51 @@ namespace NCCFile
 					if (name.IndexOf('.') >= 0)
 						csv.ThisSuffix = name.Substring(name.IndexOf('.'));
 					csv.ProcessFile();  // split lines with scanner
-					foreach (string[] entry in csv.Lines)
+                    bool isofile = false;
+                    CompositeIsotopics ciso = null;
+                    Isotopics iso = null;
+                    iso = GenIso(csv.Lines[0]);
+                    if (isofile = (iso != null))
+                    {
+                        Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
+                        Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
+                        Results.IsoIsotopics.Add(iso);
+                    }
+                    else
+                    {
+                        ciso = (CompositeIsotopics)CompositeIsotopics(csv.Lines[0], headtest: true);
+                        if (ciso != null)  // got a header of a comp iso file, process the rest of the lines
+                        {
+                            Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got a header of a comp iso file, process the rest of the lines " + System.IO.Path.GetFileName(l));
+                            Results.CompIsoIsotopics.Add(ciso);
+                        }
+                    }
+                    for (int i = 1; i < csv.Lines.Count; i++)
 					{
-						Isotopics iso = GenIso(entry);
-						CompositeIsotopics ciso = null;
-						if (iso != null)
-						{
-							Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
-							Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
-							Results.IsoIsotopics.Add(iso);
-						}
-						else
-						{ 
-							ciso = CompositeIsotopics(entry, headtest:true);
-							if (ciso != null)  // got a header of a comp iso file, process the rest of the lines
-							{
-								Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got a header of a comp iso file, process the rest of the lines " + System.IO.Path.GetFileName(l));
-							}
-							else  // a CSV file but not an iso or comp iso file
-							{
-								ciso = CompositeIsotopics(entry, headtest:false);  /// urgent: this Composite part is not yet done
-								Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
-								break;
-							}
-							Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped non-iso token entry");
-						}
+                        string[] entry = csv.Lines[i];
+                        if (isofile)
+                        {
+                            iso = GenIso(entry);
+                            if (iso != null)
+                            {
+                                Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
+                                Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
+                                Results.IsoIsotopics.Add(iso);
+                            }
+                            else Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped non-iso token entry");
+                        }
+                        else
+                        {
+                            CompositeIsotopic ci = (CompositeIsotopic)CompositeIsotopics(entry, headtest: false);
+                            if (ci != null)  // got a header of a comp iso file, process the rest of the lines
+                            {
+                                ciso.isotopicComponents.Add(ci);
+                            }
+
+                        }
 					}
 				} 
-				catch (Microsoft.VisualBasic.FileIO.MalformedLineException )  // not a CSV file
+				catch (MalformedLineException )  // not a CSV file
 				{
 					Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
 				}           
@@ -173,7 +185,7 @@ namespace NCCFile
 		Isotopics GenIso(string[] sa)
 		{
 			Array ev = Enum.GetValues(typeof(IsoCol));
-			if (sa.Length < ev.Length)
+			if (sa.Length != ev.Length)
 				return null;
 			Isotopics i = new Isotopics();
 			string s = string.Empty;
@@ -256,96 +268,113 @@ namespace NCCFile
 			return i;
 		}
 
-		CompositeIsotopics CompositeIsotopics(string[] sa, bool headtest)
+		object CompositeIsotopics(string[] sa, bool headtest)
 		{
-			Array ev = Enum.GetValues(typeof(CompIsCol));
+            var res = new object();
+            CompositeIsotopics cis = null;
+            CompositeIsotopic ci = null;
+            Array ev = Enum.GetValues(typeof(CompIsCol));
 			if (headtest)  // full iso line
 			{
-				if (sa.Length < ev.Length - 1)
+				if (sa.Length != ev.Length)
 					return null;
-			}
-			else  // comp line
+                cis = new CompositeIsotopics();
+                res = cis;
+            }
+			else  // comp iso subentry line
 			{
-				if (sa.Length < ev.Length - 2)
+				if (sa.Length != ev.Length - 2)
 					return null;
-			}
-			CompositeIsotopics i = new CompositeIsotopics();
+                ci = new CompositeIsotopic();
+                res = ci;
+            }
+            float pumass = 0;
+            Isotopics iso = new Isotopics();
 			string s = string.Empty;
 			double v = 0, err = 0;
 			foreach (CompIsCol op in ev)
 			{
 				try
 				{
-					s = sa[(int)op]; 
-					switch (op)
+                    if (headtest)
+                        s = sa[(int)op];
+                    else
+                    {
+                        if (op > CompIsCol.IsoSourceCode)
+                            s = sa[(int)op - 2];
+                        else
+                            s = string.Empty;
+                    }      
+
+                    switch (op)
 					{
 					case CompIsCol.IsoSourceCode:
-						if (headtest) Enum.TryParse(s, out i.source_code);
-						break;
+						if (headtest) {  Enum.TryParse(s, out cis.source_code); iso.source_code = cis.source_code; }
+                        break;
 					case CompIsCol.IsoId:
-						if (headtest) i.id = string.Copy(s);
-						break;
+                        if (headtest) { cis.id = string.Copy(s); iso.id = cis.id; } 
+                        break;
 					case CompIsCol.PuMass:
-						if (!headtest)  // comp iso lines start with mass
-						{ 
+						//if (!headtest)  // comp iso lines start with mass
+						//{ 
 							float sv = 0f;
 							float.TryParse(s, out sv);
-							i.pu_mass = sv;
-						}
+							pumass = sv;
+						//}
 						break;
 					case CompIsCol.AmDate:
-						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.am_date);
+						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref iso.am_date);
 						break;
 					case CompIsCol.PuDate:
-						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.pu_date);
+						INCC5FileImportUtils.GenFromYYYYMMDD(s, ref iso.pu_date);
 						break;
 					case CompIsCol.Pu238:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu238, v);
+						iso.SetVal(Isotope.pu238, v);
 						break;
 					case CompIsCol.Pu239:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu239, v);
+                        iso.SetVal(Isotope.pu239, v);
 						break;
 					case CompIsCol.Pu240:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu240, v);
+                        iso.SetVal(Isotope.pu240, v);
 						break;
 					case CompIsCol.Pu241:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu241, v);
+                        iso.SetVal(Isotope.pu241, v);
 						break;
 					case CompIsCol.Pu242:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.pu242, v);
+                        iso.SetVal(Isotope.pu242, v);
 						break;
 					case CompIsCol.Am241:
 						double.TryParse(s, out v);
-						i.SetVal(Isotope.am241, v);
+                        iso.SetVal(Isotope.am241, v);
 						break;
 					case CompIsCol.Pu238err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.pu238, err);
+                        iso.SetError(Isotope.pu238, err);
 						break;
 					case CompIsCol.Pu239err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.pu239, err);
+                        iso.SetError(Isotope.pu239, err);
 						break;
 					case CompIsCol.Pu240err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.pu240, err);
+                        iso.SetError(Isotope.pu240, err);
 						break;
 					case CompIsCol.Pu241err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.pu241, err);
+                        iso.SetError(Isotope.pu241, err);
 						break;
 					case CompIsCol.Pu242err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.pu242, err);
+                        iso.SetError(Isotope.pu242, err);
 						break;
 					case CompIsCol.Am241err:
 						double.TryParse(s, out err);
-						i.SetError(Isotope.am241, err);
+                        iso.SetError(Isotope.am241, err);
 						break;
 					}
 				} 
@@ -355,7 +384,12 @@ namespace NCCFile
 					return null;
 				}
 			}
-			return i;
+            // copy values onto the relevant object
+            if (cis != null)
+                cis.Copy(iso, pumass);
+            if (ci != null)
+                ci.Copy(iso, pumass);
+            return res;
 		}
 		// The results of processing a folder with iso files
 		public INCC5FileImportUtils Results;
@@ -875,7 +909,6 @@ SourceCodes
     /// </summary>
     public class OPFiles
     {
-
         public OPFiles()
         {
             Init();
@@ -1203,9 +1236,8 @@ SourceCodes
 		public List<CompositeIsotopics> CompIsoIsotopics;
 		public List<ItemId> ItemIds;
 		public List<string> Facilities, MBAs, ItemNames, Strata, InventoryChangeCodes, IOCodes, MaterialTypes, SourceCodes, ItemTypes;
-        // private vars used for processing
-        public LMLoggers.LognLM mlogger;
-
+        //  vars used for processing
+        public LMLoggers.LognLM mlogger;  
 
 		void Init()
 		{
@@ -1271,6 +1303,7 @@ SourceCodes
                 NC.App.DB.MBAs.Set(d2);
             }
         }
+
 		public void DoFacs()
         {
             List<INCCDB.Descriptor> l = NC.App.DB.Facilities.GetList();
@@ -1427,4 +1460,150 @@ SourceCodes
 
 	}
 
+
+    /// <summary>
+    /// Manager for INCC5 Stratum Authority files
+    /// See Stratum Authority File Format p. 83, INCC Software Users Manual, March 29, 2009
+    /// </summary>
+    public class SAFile
+    {
+
+        public SAFile()
+        {
+            Init();
+        }
+
+        public void Init()
+        {
+            Strata = new List<INCCDB.StratumDescriptor>();
+            Facilities_ = new List<INCCDB.Descriptor>();
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+        }
+
+
+        /// <summary>
+        /// Create a list of stratum and facilities from a single line set 
+        /// </summary>
+        /// <param name="csv">The field-scanned csv file instance with an array of tokenized lines</param>
+        void GenerateStrata(CSVFile csv)
+        {
+            string s = string.Empty;
+            Array ae = System.Enum.GetValues(typeof(SACol));
+            foreach (string[] sa in csv.Lines)
+            {
+                if (sa.Length != ae.Length)
+                    continue;
+                INCCDB.Descriptor desc = null;
+                Stratum strat = new Stratum();
+                string facname = string.Empty;
+                double d = 0;
+                foreach (SACol op in ae)
+                {
+                    try
+                    {
+                        s = sa[(int)op];
+                        switch (op)
+                        {
+                            case SACol.Facility:
+                               Facilities_.Add(new INCCDB.Descriptor(s,s));
+                                break;
+                            case SACol.StratumId:
+                                facname = string.Copy(s);
+                                break;
+                            case SACol.StratumDesc:
+                                desc = new INCCDB.Descriptor(facname, s);
+                                break;
+                            case SACol.Bias:
+                                double.TryParse(s, out d);
+                                strat.bias_uncertainty = d;
+                                break;
+                            case SACol.Random:
+                                double.TryParse(s, out d);
+                                strat.random_uncertainty = d;
+                                break;
+                            case SACol.Systematic:
+                                double.TryParse(s, out d);
+                                strat.systematic_uncertainty = d;
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                Strata.Add(new INCCDB.StratumDescriptor(desc, strat));
+            }
+        }
+
+        /// <summary>
+        /// Enum of positional column ids for the INCC5 Stratum file format
+        /// </summary>
+        enum SACol
+        {
+            Facility, StratumId, StratumDesc, Bias, Random, Systematic
+        }
+
+
+        /// <summary>
+        /// Scan a stratum authority file.
+        /// Creates a list of Strata and a list of Facilities from the file.
+        /// </summary>
+        /// <param name="file">file to process</param>
+        public void Process(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+            CSVFile csv = new CSVFile();
+            string name = path.Substring(path.LastIndexOf("\\") + 1); // Remove path information from string
+            csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+            csv.Filename = path;
+            csv.ExtractDateFromFilename();
+            if (name.IndexOf('.') >= 0)
+                csv.ThisSuffix = name.Substring(name.IndexOf('.'));
+            csv.ProcessFile();  // split lines with scanner
+            mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + System.IO.Path.GetFileName(csv.Filename));
+
+            GenerateStrata(csv);
+            DoFacs();
+            DoStratumIds();
+        }
+
+    	public void DoFacs()
+        {
+            List<INCCDB.Descriptor> l = NC.App.DB.Facilities.GetList();
+            foreach (INCCDB.Descriptor desc in Facilities_)
+            {
+                if (string.IsNullOrEmpty(desc.Name) || NC.App.DB.Facilities.Has(desc))
+                    continue;
+                desc.modified = true;
+                l.Add(desc);
+                NC.App.DB.Facilities.Set(desc);
+            }
+        }
+
+        protected void DoStratumIds()
+        {
+            List<INCCDB.StratumDescriptor> l = NC.App.DB.StrataList();
+            foreach (INCCDB.StratumDescriptor sde in Strata)
+            {
+                if (string.IsNullOrEmpty(sde.Desc.Name))
+                    continue;
+                int ex = l.FindIndex(sd => string.Compare(sd.Desc.Name, sde.Desc.Name, true) == 0);
+                if (ex >= 0)   // replace
+                {
+                    l[ex] = sde;
+                }                    
+                else
+                    l.Add(sde);
+                sde.Desc.modified = true;
+                NC.App.DB.UpdateStratum(sde.Desc, sde.Stratum);  // creates or updates it
+            }
+            NC.App.DB.Stratums.Reset();
+        }
+
+        public List<INCCDB.StratumDescriptor> Strata;
+        public List<INCCDB.Descriptor> Facilities_;
+        public LMLoggers.LognLM mlogger;
+
+    }
 }

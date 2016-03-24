@@ -27,21 +27,46 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
-    public partial class IDDReviewHoldup : Form
+ 	using N = NCC.CentralizedState;
+   public partial class IDDReviewHoldup : Form
     {
         public IDDReviewHoldup()
         {
             InitializeComponent();
-			this.Text += " for Detector " + Integ.GetCurrentAcquireDetector().Id.DetectorId;
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			FieldFiller();
+			this.Text += " for Detector " + det.Id.DetectorId;
+		}
+
+		AcquireParameters acq;
+		Detector det;
+		public void FieldFiller()
+        {
+			PrintCheckBox.Checked = acq.print;
+ 			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            IsotopicsCheckBox.Checked = acq.review.Isotopics;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateDataCheckBox.Checked = acq.review.RateCycleData;
+        }
+		void SaveAcquireState()
+		{
+			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+			acq.review.CalibrationParameters = CalibrationParametersCheckBox.Checked;
+			acq.review.Isotopics = IsotopicsCheckBox.Checked;
+			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+			acq.review.RateCycleData = IndividualCycleRateDataCheckBox.Checked;
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det,acq.item_type, acq.MeasDateTime);
+			N.App.DB.ReplaceAcquireParams(sel, acq);
 		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
             IDDMeasurementList measlist = new IDDMeasurementList("Holdup");
             measlist.ShowDialog();
+			SaveAcquireState();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -53,50 +78,57 @@ namespace NewUI
         {
 			Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
         }
-        private void InspectionNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
+
+		private void InspectionNumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
-
-        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
+        }
+		
+		private void CalibrationParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.CalibrationParameters = ((CheckBox)sender).Checked;
         }
 
-        private void CalibrationParamatersCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.Isotopics = ((CheckBox)sender).Checked;
         }
-
-        private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void IndividualCycleRawDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.review.RawCycleData = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleRateDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
+			acq.review.RateCycleData = ((CheckBox)sender).Checked;
+        }
 
+        private void SummedRawCoincidenceDataCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.SummedRawCoincData = ((CheckBox)sender).Checked;
+        }
+
+        private void SummedMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.SummedMultiplicityDistributions = ((CheckBox)sender).Checked;
+        }
+
+        private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void PrintCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+			acq.print = ((CheckBox)sender).Checked;
         }
 
         private void IDDReviewHoldup_Load(object sender, EventArgs e)
         {
-            ToolTip disclaimer = new ToolTip();
-            disclaimer.AutoPopDelay = 5000;
-            disclaimer.InitialDelay = 1000;
-            disclaimer.ReshowDelay = 2000;
-            disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of hold up measurements and \r\nthe report will be displayed as it was originally written.");
         }
 
 

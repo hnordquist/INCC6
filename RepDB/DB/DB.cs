@@ -306,13 +306,6 @@ namespace DB
         public static bool DBExceptionHandler(DbException dbx, string sql)
         {
             bool neednew = false;
-            //if (dbx is System.Data.SqlServerCe.SqlCeException)  // SQL Server CE -- specific test against various SQL errors v. the no database found error
-            //{
-            //    System.Data.SqlServerCe.SqlCeException x = (System.Data.SqlServerCe.SqlCeException)dbx;
-            //    //x.NativeError == 
-            //    DBMain.AltLog(LogLevels.Warning, 70147, DBExceptionString(dbx, sql));
-            //}
-            //else
             if (dbx is System.Data.SQLite.SQLiteException)  // SQLite3 -- specific test against various SQL errors v. the no database found error
             {
                 System.Data.SQLite.SQLiteException x = (System.Data.SQLite.SQLiteException)dbx;
@@ -352,85 +345,6 @@ namespace DB
         {
             return LMLoggers.LognLM.FlattenChars(dbx.GetType().Name + "'" + dbx.Message + "' " + dbx.ErrorCode.ToString("x8") + "; " + sql);
         }
-  
-
-
-        //private const ushort creationTriesMax = 5;
-        //private static bool onetimeretry = true;
-        //private static ulong creationTries = 0;
-        //private static object arbitrary = new object();
-        //private static ManualResetEventSlim mres = new ManualResetEventSlim(true);
-        /// <summary>
-        /// Create a new empty database (SQLite3 only for now). Attempt to create five times before giving up.
-        /// </summary>
-        /// <param name="sqlretry">The failed query string , retry it once here after initial DB creation</param>
-        public static void Creation(DbCommand sqlretry, bool scalar = false)
-        {
-            DBMain.AltLog(LogLevels.Warning, 70120, "New DB attempt placeholder, likely called incorrectly");
-            return;
-            /// JFL Oct. 28, 2013. The following code was meant to auto-create a database if one was not found, but I am abandoning this idea for now.
-
-            //mres.Wait(10000);
-            //lock (arbitrary)
-            //{
-            //    mres.Reset();
-            //    creationTries++;
-            //    if (creationTries > creationTriesMax)
-            //        return;
-
-            //    if (DBMain.ProviderInvariantName.Equals("")) return;
-
-            //    // try to populate an empty database here
-            //   DBMain.AltLog(LogLevels.Warning, 70119, "Creating new DB via " + ConnStr);
-
-            //    Assembly exa = System.Reflection.Assembly.GetExecutingAssembly();
-            //    ResourceManager rm = new ResourceManager("LMDB.Schema", exa);
-            //    DbTransaction Trans = null;
-            //    DbConnection sql_con = CreateConnection();
-            //    sql_con.ConnectionString = ConnStr;
-            //    try
-            //    {
-            //        string f2 = rm.GetString("DBCreationScript");   // what if it isnt there?
-
-            //        sql_con.Open();
-            //        Trans = sql_con.BeginTransaction();
-            //        DbCommand sql_cmd = sql_con.CreateCommand();
-            //        sql_cmd.CommandText = f2;
-            //        if (sql_cmd.ExecuteNonQuery() < 0)
-            //        {
-            //            Trans.Rollback();
-            //            sql_con.Close();
-            //        }
-            //        else
-            //        {
-            //            Trans.Commit();
-
-            //            creationTries = creationTriesMax + 1;
-
-            //            sql_con.Close();
-            //           DBMain.AltLog(LogLevels.Warning, 70120, "New DB constructed");
-
-            //            if (onetimeretry)
-            //            {
-            //               DBMain.AltLog(LogLevels.Warning, 70121, "Retrying " + sqlretry.CommandText);
-
-            //                onetimeretry = false;
-            //                if (scalar)
-            //                    sqlretry.ExecuteScalar();
-            //                else
-            //                    sqlretry.ExecuteNonQuery();
-            //            }
-            //        }
-            //    }
-            //    catch (Exception caught)
-            //    {
-            //       DBMain.AltLog(LogLevels.Warning, 70108, LMLoggers.LognLM.FlattenChars("Creation  '" + caught.Message + "' "));
-            //        if (Trans != null) Trans.Rollback();
-            //        sql_con.Close();
-            //    }
-            //}
-        }
-
 
     }
 
@@ -491,7 +405,7 @@ namespace DB
             {
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.CommandText = sSQL;
-		sql_con.Open();
+                sql_con.Open();
                 try
                 {
                     int i = sql_cmd.ExecuteNonQuery();
@@ -512,8 +426,6 @@ namespace DB
                 catch { }
             }
             if (sql_con != null) sql_con.Close();
-            if (needDb)
-                DBMain.Creation(sql_cmd);  // create an new empty DB, pass the failed query string, retry it once after initial DB creation
 
             return true;
         }
@@ -619,7 +531,7 @@ namespace DB
             {
                 sql_con.Open();
                 sql_cmd = sql_con.CreateCommand();
-                bool needDb = false; bool scalar = false;
+                bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
                     if (!sqlList[i].ToString().Equals(""))
@@ -630,7 +542,6 @@ namespace DB
                             if (sqlList[i].ToString().ToUpper().StartsWith("SELECT"))
                             {
                                 //Expect back a string
-                                scalar = true;
                                 sRtn = sql_cmd.ExecuteScalar().ToString();
                                 if (sRtn.Equals(""))
                                 {
@@ -640,7 +551,6 @@ namespace DB
                             }
                             else
                             {
-                                scalar = false;
                                 if (sql_cmd.CommandText.Contains("<Rtn>"))
                                 {
                                     //substitute in sRtn Value
@@ -658,9 +568,7 @@ namespace DB
                         {
                             needDb = DBMain.DBExceptionHandler(dbx, sql_cmd.CommandText);
                         }
-                        if (needDb)
-                            DBMain.Creation(sql_cmd, scalar);  // create a new empty DB, pass the failed query string, retry it once after initial DB creation                       
-                    }
+                      }
                 }
                 sql_con.Close();
 
@@ -687,7 +595,7 @@ namespace DB
                 Trans = sql_con.BeginTransaction();
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.Transaction = Trans;
-                bool needDb = false; bool scalar = false;
+                bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
                     sql_cmd.CommandText = sqlList[i].ToString();
@@ -725,8 +633,6 @@ namespace DB
                     {
                         needDb = DBMain.DBExceptionHandler(dbx, sql_cmd.CommandText);
                     }
-                    if (needDb)
-                        DBMain.Creation(sql_cmd, scalar);  // create a new empty DB, pass the failed query string, retry it once after initial DB creation  
                 }
                 Trans.Commit();
                 sql_con.Close();
@@ -755,7 +661,7 @@ namespace DB
 
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.Transaction = Trans;
-                bool needDb = false; bool scalar = false;
+                bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
                     if (!sqlList[i].ToString().Equals(""))
@@ -767,7 +673,6 @@ namespace DB
                             if (sqlList[i].ToString().ToUpper().StartsWith("SELECT"))
                             {
                                 //Expect back a string
-                                scalar = true;
                                 sRtn = sql_cmd.ExecuteScalar().ToString();
                                 if (sRtn.Equals(""))
                                 {
@@ -779,7 +684,6 @@ namespace DB
                             }
                             else
                             {
-                                scalar = false;
                                 if (sql_cmd.CommandText.Contains("<Rtn>"))
                                 {
                                     //substitute in sRtn Value
@@ -802,8 +706,6 @@ namespace DB
                             return -1;
 
                         }
-                        if (needDb)
-                            DBMain.Creation(sql_cmd, scalar);  // create a new empty DB, pass the failed query string, retry it once after initial DB creation                       
                     }
                 }
                 Trans.Commit();
@@ -823,6 +725,9 @@ namespace DB
 
 		/// <summary>
 		/// 6.0.1.0			db.TableHasColumn("LMINCCAppContext","dataFilePath");
+		/// 6.0.1.1			db.TableHasColumn("composite_isotopics_rec","id");
+		/// 6.0.1.2			new table composite_isotopic_rec, mod cm_pu_ratio_rec
+		/// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas
 		/// </summary>
 		/// <param name="table"></param>
 		/// <param name="col"></param>

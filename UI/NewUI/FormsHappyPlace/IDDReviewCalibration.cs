@@ -31,87 +31,79 @@ using AnalysisDefs;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
-    
+ 	using N = NCC.CentralizedState;
+   
     public partial class IDDReviewCalibration : Form
     {
-        Detector det;
-        AcquireParameters acq;
         bool PrintText, Plot;
 
         public IDDReviewCalibration()
         {
             InitializeComponent();
-            det = Integ.GetCurrentAcquireDetector();
-            acq = Integ.GetCurrentAcquireParams();
-            if (acq.review_detector_parms)
-                DetectorParametersCheckBox.Checked = true;
-            if (acq.review_isotopics)
-                IsotopicsCheckBox.Checked = true;
-            if (acq.review_run_raw_data)
-                IndividualCycleRawDataCheckBox.Checked = true;
-            if (acq.review_run_rate_data)
-                IndividualCycleRateDataCheckBox.Checked = true;
-            if (acq.review_summed_raw_data)
-                SummedRawCoincidenceDataCheckBox.Checked = true;
-            if (acq.review_summed_mult_dist)
-                SummedMultiplicityDistributionsCheckBox.Checked = true;
-            if (acq.review_run_mult_dist)
-                SummedRawCoincidenceDataCheckBox.Checked = true;
-            if (acq.print)
-                PrintTextCheckBox.Checked = true; 
-			this.Text += " for Detector " + det.Id.DetectorId;
-        }
-
-        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			FieldFiller();
+		}
+        AcquireParameters acq;
+		Detector det;
+		public void FieldFiller()
         {
-            acq.review_detector_parms = ((CheckBox)sender).Checked;
-            acq.modified = true;
-        }
-
-        private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
+			PrintTextCheckBox.Checked = acq.print;
+ 			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            IsotopicsCheckBox.Checked = acq.review.Isotopics;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateDataCheckBox.Checked = acq.review.RateCycleData;
+            SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
+            SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
+            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
+       }
+		void SaveAcquireState()
+		{
+			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+			acq.review.Isotopics = IsotopicsCheckBox.Checked;
+			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+			acq.review.RateCycleData = IndividualCycleRateDataCheckBox.Checked;
+			acq.review.SummedRawCoincData = SummedRawCoincidenceDataCheckBox.Checked;
+			acq.review.SummedMultiplicityDistributions = SummedMultiplicityDistributionsCheckBox.Checked;
+			acq.review.MultiplicityDistributions = IndividualCycleMultiplicityDistributionsCheckBox.Checked;
+			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det,acq.item_type, acq.MeasDateTime);
+			N.App.DB.ReplaceAcquireParams(sel, acq);
+		}
+		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            acq.review_isotopics = ((CheckBox)sender).Checked;
-            acq.modified = true;
+			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
         }
-
+		private void IsotopicsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+			acq.review.Isotopics = ((CheckBox)sender).Checked;
+        }
         private void IndividualCycleRawDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            if (((CheckBox)sender).Checked != acq.review_run_raw_data)
-            {
-                acq.review_run_raw_data = ((CheckBox)sender).Checked;
-                acq.modified = true;
-            }
+			acq.review.RawCycleData = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleRateDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            acq.review_run_rate_data = ((CheckBox)sender).Checked;
-            acq.modified = true;
+			acq.review.RateCycleData = ((CheckBox)sender).Checked;
         }
 
         private void SummedRawCoincidenceDataCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            acq.review_summed_raw_data = ((CheckBox)sender).Checked;
-            acq.modified = true;
+			acq.review.SummedRawCoincData = ((CheckBox)sender).Checked;
         }
 
         private void SummedMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            acq.review_summed_mult_dist = ((CheckBox)sender).Checked;
-            acq.modified = true;
-
+			acq.review.SummedMultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-             acq.review_run_mult_dist = ((CheckBox)sender).Checked;
-             acq.modified = true;
+			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
         private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            acq.print = ((CheckBox)sender).Checked;
-            acq.modified = true;
+			acq.print = ((CheckBox)sender).Checked;
         }
 
         private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -128,6 +120,7 @@ namespace NewUI
         {
             IDDMeasurementList measlist = new IDDMeasurementList("Calibration");
             measlist.ShowDialog();
+			SaveAcquireState();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -142,13 +135,6 @@ namespace NewUI
 
         private void IDDReviewCalibration_Load(object sender, EventArgs e)
         {
-            ToolTip disclaimer = new ToolTip();
-            disclaimer.AutoPopDelay = 5000;
-            disclaimer.InitialDelay = 1000;
-            disclaimer.ReshowDelay = 2000;
-            disclaimer.ShowAlways = true;
-            disclaimer.SetToolTip(this.OKBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of calibration measurements and \r\nthe report will be displayed as it was originally written.");
-            disclaimer.SetToolTip(this.HelpBtn, "Current INCC cannot customize reports. \r\nYou will be shown a list of calibration measurements and \r\nthe report will be displayed as it was originally written.");
         }
     }
 }

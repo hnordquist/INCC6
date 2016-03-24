@@ -32,14 +32,15 @@ using AnalysisDefs;
 namespace NewUI
 {
 	using NC = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
 
-	public partial class IDDIsotopics : Form
+    public partial class IDDIsotopics : Form
     {
 
         void RefreshIsoCodeCombo()
         {
             IsotopicsSourceCodeComboBox.Items.Clear();
-            foreach (Isotopics.SourceCode sc in System.Enum.GetValues(typeof(Isotopics.SourceCode))) // could use the GetOptionType scheme here
+            foreach (Isotopics.SourceCode sc in System.Enum.GetValues(typeof(Isotopics.SourceCode)))
             {
                 IsotopicsSourceCodeComboBox.Items.Add(sc.ToString());
             }
@@ -69,11 +70,39 @@ namespace NewUI
             IsotopicsSourceCodeComboBox.SelectedItem = m_iso.source_code.ToString();
         }
 
+		void EnableBasedOnSourceCode()
+        {
+			bool enable = (m_iso.source_code != Isotopics.SourceCode.CO);
+            PuDateTimePicker.Enabled = enable;
+            AmDateTimePicker.Enabled = enable;
+
+			Am241ErrorTextBox.Enabled = enable;
+            Am241PercentTextBox.Enabled = enable;
+
+            Pu238PercentTextBox.Enabled = enable;
+            Pu239PercentTextBox.Enabled = enable;
+            Pu240PercentTextBox.Enabled = enable;
+            Pu241PercentTextBox.Enabled = enable;
+            Pu242PercentTextBox.Enabled = enable;
+
+            Pu238ErrorTextBox.Enabled = enable;
+            Pu239ErrorTextBox.Enabled = enable;
+            Pu240ErrorTextBox.Enabled = enable;
+            Pu241ErrorTextBox.Enabled = enable;
+            Pu242ErrorTextBox.Enabled = enable;
+        }
+
         public IDDIsotopics(string selected = "default")
         {
             InitializeComponent();
             applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
-            RefreshIsoCodeCombo();
+            acq = Integ.GetCurrentAcquireParams();
+            if (string.IsNullOrEmpty(selected) || string.Compare(selected, "default",true) == 0)
+            {
+                // get current acquire composite isotopics id and use that
+                selected = acq.isotopics_id;
+            }
+            RefreshIsoCodeCombo();      
             RefreshIdComboWithDefaultOrSet(selected);
         }
 
@@ -105,6 +134,7 @@ namespace NewUI
             System.Enum.TryParse((string)cb.SelectedItem, out m_iso.source_code);
             if (string.Compare(m_iso.source_code.ToString(), cb.Text, StringComparison.OrdinalIgnoreCase) != 0)
                 modified = m_iso.modified = true;
+			EnableBasedOnSourceCode();
         }
 
         private void PuDateTimePicker_ValueChanged(object sender, EventArgs e)
@@ -114,6 +144,8 @@ namespace NewUI
             {
                 modified = m_iso.modified = true;
                 m_iso.pu_date = dt;
+                m_iso.am_date = new DateTime(dt.Ticks);
+                AmDateTimePicker.Value = m_iso.am_date;   // what INCC5 does
             }
         }
 
@@ -154,14 +186,17 @@ namespace NewUI
         {
             if (modified)
             {
-                if (GutCheck())  // next: does this behavior follow that of INCC5? It is supposed to replicate INCC5 behavior
+                if (GutCheck())  
+                {
                     SaveSetBtn_Click(sender, e);
+                }
                 else
                     return;
                 ((Button) sender).DialogResult = DialogResult.OK;
             }
-            this.Close();
-
+            acq.isotopics_id = string.Copy(m_iso.id);      // behavior follows INCC5 by making the last selection the current isotopics
+            NC.App.DB.UpdateAcquireParams(acq);
+            Close();     
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -369,7 +404,7 @@ namespace NewUI
 
         private void WriteToFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("NYI", "NOT IMPLEMENTED....YET");
+            MessageBox.Show("NYI", "Not yet implemented ....");
         }
 
         private void AddNewSetBtn_Click(object sender, EventArgs e)
@@ -425,6 +460,7 @@ namespace NewUI
                     }
                     modified = false;
                 }
+                // save as current acquire isotopics
             }
             RefreshIdComboWithDefaultOrSet(m_iso.id);
 
@@ -436,7 +472,7 @@ namespace NewUI
             if (ia.ShowDialog() == DialogResult.OK)
             {
                 string oldId = m_iso.id;
-                m_iso.id = String.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
+                m_iso.id = string.Copy(ia.NewID);  // changes the id on the object on the list - m_iso is a reference to an element in the in-memory list
                 if (NC.App.DB.Isotopics.Rename(oldId, ia.NewID))
                 {
                     IsotopicsIdComboBox.Items.Remove(oldId);
@@ -496,6 +532,7 @@ namespace NewUI
         public Isotopics GetSelectedIsotopics { get { return m_iso; } }
 
 		Isotopics m_iso;
+        AcquireParameters acq;
         NCCReporter.LMLoggers.LognLM applog;
 
         const double isomin = 99.7;

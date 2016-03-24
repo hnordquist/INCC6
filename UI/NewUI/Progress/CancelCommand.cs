@@ -72,7 +72,7 @@ namespace NewUI.Progress
             if (m_cancellationTokenSource != null) {
                 if (m_id == 2)  // this needs an enum
                 {
-                    DialogResult r = MessageBox.Show("Do you want to abort this measurement?", "Please", MessageBoxButtons.YesNo);
+                    DialogResult r = MessageBox.Show("Do you want to abort this process?", "Please", MessageBoxButtons.YesNo);
                     if (r == DialogResult.No)
                         return;
                 }

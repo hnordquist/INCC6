@@ -39,7 +39,7 @@ namespace DB
         Detectors, TestParams, NormParams, BackgroundParams, AASSetupParams, Facilities, MBAs, Materials, Items, Isotopics, DetectorTypes, CollarItems,
         Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams,
         AnalysisMethodSpecifiers,
-        CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams,Results, CompositeIsotopics}
+        CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams, Results, CompositeIsotopics}
 
     public class Persistence
     {
@@ -231,7 +231,10 @@ namespace DB
                         Results rr = new Results();
                         dt = rr.AllResults(did);
                         break;
-
+                    case Pieces.CompositeIsotopics:
+                        CompositeIsotopics clscIs = new CompositeIsotopics();
+                        dt = clscIs.getCompositeIsotopics();
+                        break;
                 }
             }
             catch (Exception caught)

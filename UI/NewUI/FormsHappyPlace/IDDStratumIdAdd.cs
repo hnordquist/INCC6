@@ -120,9 +120,6 @@ namespace NewUI
                 if (list.Exists(i => { return st.Desc.Name.CompareTo(i.Desc.Name) == 0; }))
                     return;
 
-                // todo: do the prefix match check here (1st 3 chars match on one or more existing entries)
-                // todo: what the hell is jl talking about?
-                // todo: I dunno, where was his mind?
                 st.Desc.modified = true;
                 NC.App.DB.UpdateStratum(st.Desc, st.Stratum);  // creates it
                 NC.App.DB.AssociateStratum(det, st.Desc, st.Stratum); // associates it with the detector

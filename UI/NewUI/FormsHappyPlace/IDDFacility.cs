@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -33,8 +33,6 @@ namespace NewUI
 
     using Integ = NCC.IntegrationHelpers;
     using NC = NCC.CentralizedState;
-
-
 
     public partial class IDDFacility : Form
     {
@@ -81,14 +79,14 @@ namespace NewUI
             //Bolth.Checked = (det != null && det.ListMode);  // EH reloads combo box with LMs if true 
             if (det != null)
                 DetectorIdComboBox.SelectedItem = det;
-            DetectorParametersCheckBox.Checked = acq.review_detector_parms;
-            CalibrationParametersCheckBox.Checked = acq.review_calib_parms;
-            IsotopicsCheckBox.Checked = acq.review_isotopics;
-            IndividualCycleRawDataCheckBox.Checked = acq.review_run_raw_data;
-            IndividualCycleRateData.Checked = acq.review_run_rate_data;
-            SummedRawCoincidenceDataCheckBox.Checked = acq.review_summed_raw_data;
-            SummedMultiplicityDistributionsCheckBox.Checked = acq.review_summed_mult_dist;
-            IndividualMultiplicityDistributionsCheckBox.Checked = acq.review_run_mult_dist;
+            DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
+            CalibrationParametersCheckBox.Checked = acq.review.CalibrationParameters;
+            IsotopicsCheckBox.Checked = acq.review.Isotopics;
+            IndividualCycleRawDataCheckBox.Checked = acq.review.RawCycleData;
+            IndividualCycleRateData.Checked = acq.review.RateCycleData;
+            SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
+            SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
+            IndividualMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
             InspectorNameTextBox.Text = acq.user_id;
             InspectionNumberTextBox.Text = acq.campaign_id;
         }
@@ -132,14 +130,14 @@ namespace NewUI
             if (acq.modified)
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, DateTime.Now);
-                acq.review_detector_parms = DetectorParametersCheckBox.Checked;
-                acq.review_calib_parms = CalibrationParametersCheckBox.Checked;
-                acq.review_isotopics = IsotopicsCheckBox.Checked;
-                acq.review_run_raw_data = IndividualCycleRawDataCheckBox.Checked;
-                acq.review_run_rate_data = IndividualCycleRateData.Checked;
-                acq.review_summed_raw_data = SummedRawCoincidenceDataCheckBox.Checked;
-                acq.review_summed_mult_dist = SummedMultiplicityDistributionsCheckBox.Checked;
-                acq.review_run_mult_dist = IndividualMultiplicityDistributionsCheckBox.Checked;
+                acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
+                acq.review.CalibrationParameters = CalibrationParametersCheckBox.Checked;
+                acq.review.Isotopics = IsotopicsCheckBox.Checked;
+                acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
+                acq.review.RateCycleData = IndividualCycleRateData.Checked;
+                acq.review.SummedRawCoincData = SummedRawCoincidenceDataCheckBox.Checked;
+                acq.review.SummedMultiplicityDistributions = SummedMultiplicityDistributionsCheckBox.Checked;
+                acq.review.MultiplicityDistributions = IndividualMultiplicityDistributionsCheckBox.Checked;
                 acq.user_id = InspectorNameTextBox.Text;
                 acq.campaign_id = InspectionNumberTextBox.Text;
                 acq.MeasDateTime = sel.TimeStamp;

@@ -38,7 +38,6 @@ namespace NewUI
 
     using NC = NCC.CentralizedState;
 
-    public delegate void EnableFunc(bool enable);
     public delegate void UILoggingFunc(String s, bool newline = false);
 
 
@@ -52,7 +51,7 @@ namespace NewUI
         public DAQBind daqbind;
 
         // FileIO operations
-        public FCtrlBind fctrlbind;
+        public FCtrlBind fctrlbind, measFctrl, procFctrl;
 
         // state
         /// <summary>
@@ -60,11 +59,8 @@ namespace NewUI
         /// </summary>
         public bool file;
 
-        public EnableFunc enablecontrols;
-
-        public Controller(EnableFunc ef)
+        public Controller()
         {
-            enablecontrols = ef;
         }
 
         // access global state, but layered apart from form space
@@ -96,7 +92,13 @@ namespace NewUI
         public void Perform()
         {
             if (file)
+            {
+                if (NC.App.AppContext.INCCXfer)
+                    fctrlbind = procFctrl;
+                else
+                    fctrlbind = measFctrl;
                 fctrlbind.StartAction();
+            }
             else
                 daqbind.StartAction();
         }
@@ -173,7 +175,6 @@ namespace NewUI
             if (!doingSomething && // enable an action if no action is in progress and the overall state is inactive
                 (SOH == OperatingState.Void || SOH == OperatingState.Stopped || SOH == OperatingState.Trouble))
             {
-                 enablecontrols(true);
             }
         }
 
@@ -184,7 +185,7 @@ namespace NewUI
         {
             if (LoadConfiguration())
             {
-                InitializeFileController();
+                InitializeFileControllers();
                 InitializeDAQController();
                 measStatus = new MeasurementStatus();
             }
@@ -196,13 +197,12 @@ namespace NewUI
         /// Set up action event handlers for a FileCtrl instance, uses FCtrlBind subclass
         /// </summary>
         /// <returns></returns>
-        public bool InitializeFileController()
+        public bool InitializeFileControllers()
         {
 
-            fctrlbind = new FCtrlBind();
+            procFctrl = new FCtrlBind();
+            measFctrl = new FCtrlBind();
             LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
-            fctrlbind.mProgressTracker.ProgressChanged += new ProgressChangedEventHandler(Progress);
-
 
             /* 
              * The action event handlers.
@@ -228,26 +228,25 @@ namespace NewUI
             /// set up the 7 magic event handlers
             /// here I have a base handler that does the same thing for every event (writes a string to the log),
             /// and I reuse that string by posting it to the progress handler
-            fctrlbind.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
                 string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
-                fctrlbind.mProgressTracker.ReportProgress(0, s);//  "...");
+                measFctrl.mProgressTracker.ReportProgress(0, s);//  "...");
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
             {
                 string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
-                fctrlbind.mProgressTracker.ReportProgress(0, s);//"Prep");
+                measFctrl.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
-                enablecontrols(false);
                 string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
-                fctrlbind.mProgressTracker.ReportProgress(1, s);//"Starting...");
+                measFctrl.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
             {
                 measStatus = new MeasurementStatus();
                 measStatus.UpdateWithMeasurement();
@@ -259,28 +258,28 @@ namespace NewUI
 				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
 				try
 				{
-					fctrlbind.mProgressTracker.ReportProgress(per, // a % est of files
+                    measFctrl.mProgressTracker.ReportProgress(per, // a % est of files
 						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // n of m, and file name
 				}
-				catch (ArgumentOutOfRangeException e)
+				catch (ArgumentOutOfRangeException)
 				{
 					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}				
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
                 string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
-                fctrlbind.mProgressTracker.ReportProgress(100, s);//"Stopping...");
+                measFctrl.mProgressTracker.ReportProgress(100, s);//"Stopping...");
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
                 string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
-                fctrlbind.mProgressTracker.ReportProgress(100, s);//"Cancelling...");
+                measFctrl.mProgressTracker.ReportProgress(100, s);//"Cancelling...");
             });
 
-            fctrlbind.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
+            measFctrl.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
                 string s = "";
                 if (o != null && o is FileCtrl)
@@ -298,9 +297,53 @@ namespace NewUI
                 applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
 
                 // specialized updater for UI or file
-                fctrlbind.mProgressTracker.ReportProgress(100, "Completed");
+                measFctrl.mProgressTracker.ReportProgress(100, "Completed");
+            });
 
-                enablecontrols(true);
+            procFctrl.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
+            {
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                procFctrl.mProgressTracker.ReportProgress(0, s);//  "...");
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
+            {
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
+                procFctrl.mProgressTracker.ReportProgress(0, s);//"Prep");
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
+            {
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                procFctrl.mProgressTracker.ReportProgress(1, s);//"Starting...");
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
+            {
+                NCCTransfer.TransferEventArgs e = (NCCTransfer.TransferEventArgs)o;
+                procFctrl.mProgressTracker.ReportProgress(e.percent, e.msg);
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
+            {
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                procFctrl.mProgressTracker.ReportProgress(100, s);//"Stopping...");
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
+            {
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                procFctrl.mProgressTracker.ReportProgress(100, s);//"Cancelling...");
+            });
+
+            procFctrl.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
+            {
+                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
+                // general logger: to the console, and/or listbox and/or log file or DB
+                applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished]);
+
+                // specialized updater for UI or file
+                procFctrl.mProgressTracker.ReportProgress(100, "Completed");
             });
 
             NC.App.Opstate.SOH = NCC.OperatingState.Void;
@@ -334,7 +377,6 @@ namespace NewUI
             });
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
-                enablecontrols(false);
                 string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
                 daqbind.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
@@ -355,7 +397,7 @@ namespace NewUI
 					daqbind.mProgressTracker.ReportProgress(per, // a % est of files
 						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
 				}
-				catch (ArgumentOutOfRangeException e)
+				catch (ArgumentOutOfRangeException)
 				{
 					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}
@@ -394,7 +436,6 @@ namespace NewUI
                 applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
                 // specialized updater for UI or file
                 daqbind.mProgressTracker.ReportProgress(100, s);
-                enablecontrols(true);
 
             });
 

@@ -6,17 +6,17 @@
     <DockPanel>
         <Menu Background="{x:Null}" DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Save As/Export..." Click="SaveAsExportClick" IsEnabled="False">
+                <MenuItem Header="_Save As/Export..." Click="SaveAsExportClick" IsEnabled="True">
                     <MenuItem Header="_PSA/Logsheet File..." Click="PSALogsheetOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Performance Monitoring File..." Click="PerformanceMonitoringFileOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Transfer..." Click="TransferFileOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Initial Data..." Click="InitialDataOutClick" IsEnabled="False"/>
                 </MenuItem>
-                <MenuItem Header="_Get External Data..." Click="GetExternalDataClick">
-                    <MenuItem Header="_Stratum Authority File..." Click="StratumAuthorityFileClick" IsEnabled="False"/>
-                    <MenuItem Header="_Item Relevant Data File..." Click="ItemRelevantDataClick" IsEnabled="True"/>
-                    <MenuItem Header="_Transfer..." Click="TransferFileInClick" ToolTip="Import saved transfer files into current INCC database."/>
-                    <MenuItem Header="_Initial Data..." Click="InitialDataSelectorClick" ToolTip="Import inital data files (detector and calibration) into the current INCC database." />
+                <MenuItem Header="_Get External Data...">
+                    <MenuItem Header="_Stratum Authority File..." Click="StratumAuthorityFileClick" IsEnabled="True"  ToolTip="Read a Stratum authority data file in CSV format."/>
+                    <MenuItem Header="_Item Relevant Data File..." Click="ItemRelevantDataClick" IsEnabled="True"  ToolTip="Read an Item relevant data file in CSV format."/>
+                    <MenuItem Header="_Transfer..." Click="TransferFileInClick" ToolTip="Read measurement data files in binary format into INCC."/>
+                    <MenuItem Header="_Initial Data..." Click="InitialDataSelectorClick" ToolTip="Read detector or calibration parameter files in binary format into INCC." />
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="_Back Up All Data..." Click="BackupAllDataClick" IsEnabled="False" />

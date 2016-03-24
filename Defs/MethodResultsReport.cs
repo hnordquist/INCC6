@@ -40,7 +40,7 @@ namespace AnalysisDefs
     public class MethodResultsReport : SimpleReport
     {
 
-        protected enum INCCReportSection
+        public enum INCCReportSection
         {
             Header,
             Context,
@@ -64,13 +64,30 @@ namespace AnalysisDefs
         enum ComputedValueColumns { Primary, Err };
         enum ComputedIsoColumns { Declared, DecErr, Updated, UpErr };
 
+        protected Array selectedReportSections;
+
         public List<List<string>> INCCResultsReports;
 
         public MethodResultsReport(NCCReporter.LMLoggers.LognLM ctrllog)
             : base(ctrllog)
         {
             INCCResultsReports = new List<List<string>>();
+			selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(INCCReportSection)).Length);
+            foreach (ValueType v in System.Enum.GetValues(typeof(INCCReportSection)))
+            {
+                selectedReportSections.SetValue(false, (int)v);
+            }
         }
+
+		public void ApplyReportSectionSelections(bool[] sections)
+		{
+            if (sections == null)
+                return;
+            for (int i = 0; i < sections.Length; i++)
+			{
+                selectedReportSections.SetValue(sections[i], i);
+            }
+		}
 
 
         protected Section ConstructReportSection(INCCReportSection section, MeasOptionSelector moskey, INCCResult ir, Detector det)
@@ -483,8 +500,6 @@ namespace AnalysisDefs
 				path =  MethodResultsReport.EightCharConvert(meas.MeasDate);
 			else
 				path = base.GenBaseFileName(pretext);
-
-
 			return path;
 		}
 

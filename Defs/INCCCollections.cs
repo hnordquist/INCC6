@@ -438,7 +438,7 @@ namespace AnalysisDefs
         {
             DB.Isotopics isodb = new DB.Isotopics();
             DataTable dt = isodb.GetRows(iso.id);
-            if (dt.Rows.Count > 0)
+            if (dt != null && dt.Rows.Count > 0)
             {
                 DataRow drl = dt.Rows[0];
                 Isotopics liso = GetIsotopicsByRow(drl);
@@ -486,23 +486,41 @@ namespace AnalysisDefs
                 DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CompositeIsotopics);
                 foreach (DataRow dr in dt.Rows)
                 {
-                    CompositeIsotopics iso = new CompositeIsotopics();
-                    foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
-                    {
-                        if (dt.Columns.IndexOf(v.ToString()) >= 0)
-                            iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]));
-                    }
-                    iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
-                    iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
-                    iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
-                    System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
-                    iso.id = dr["ci_isotopics_id"].ToString();
+					CompositeIsotopics iso = GetCompositeIsotopicsByRow(dt.Columns, dr);
                     comp_isotopics.Add(iso);
                 }
-                if (comp_isotopics.Count < 1)
-                    comp_isotopics.Add(new CompositeIsotopics());
+                if (comp_isotopics.Count < 1)  // the default
+                {
+                    CompositeIsotopics f = new CompositeIsotopics();
+                    comp_isotopics.Add(f);
+                }
             }
             return comp_isotopics;
+        }
+
+		public static CompositeIsotopics GetCompositeIsotopicsByRow(DataColumnCollection columns, DataRow dr)
+        {
+            CompositeIsotopics iso = new CompositeIsotopics();
+            foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+            {
+				string key = "ci_" + v.ToString();
+                if (columns.IndexOf(key) >= 0)
+                    iso.SetVal((Isotope)v, DB.Utils.DBDouble(dr[key]));
+            }
+            iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
+            iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
+            iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
+            System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
+            iso.id = dr["ci_isotopics_id"].ToString();
+            iso.pu_mass = (float)DB.Utils.DBDouble(dr["ci_pu_mass"]);
+			long cikey = DB.Utils.DBInt64(dr["id"]);
+			iso.isotopicComponents = GetComposites(cikey);
+            return iso;
+        }
+
+        public List<CompositeIsotopics> GetMatch(Predicate<CompositeIsotopics> match)
+        {
+            return GetList().FindAll(match);
         }
 
         public CompositeIsotopics Get()
@@ -515,21 +533,18 @@ namespace AnalysisDefs
             CompositeIsotopics i = Get(riso.id);
             riso.CopyTo(i);
         }
-        private DB.CompositeIsotopics compisodb;
         public long Set(CompositeIsotopics iso)
         {
-            //todo: see if this really works
+	        DB.CompositeIsotopics compisodb = null;
             long success = -1;
             if (iso.modified)
             {
                 if (compisodb == null)
                     compisodb = new DB.CompositeIsotopics();
-                if (iso.modified)
-                {
-                    success = compisodb.Update(iso.id, iso.ToDBElementList());
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
-                    if (success >= 0) iso.modified = false;
-                }
+                success = compisodb.Update(iso.id, iso.ToDBElementList());
+                if (success >= 0) AddComposites(iso.isotopicComponents, success);
+				if (success >= 0) iso.modified = false;
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
             }
             return success;
         }
@@ -553,6 +568,8 @@ namespace AnalysisDefs
                         res = comp_isodb.Update(iso.id, iso.ToDBElementList());
                         NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created composite isotopics {0} ({1})", iso.id, res);
                         if (res >= 0) iso.modified = false;
+						if (res >= 0) AddComposites(iso.isotopicComponents, res);
+
                     }
                 }
             }
@@ -564,7 +581,16 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Delete(CompositeIsotopics iso)
+        /// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+            comp_isotopics = null;
+            GetList();
+        }
+
+        public bool Delete(CompositeIsotopics iso)  //todo: test for cascade remove of the sub entries
         {
             DB.CompositeIsotopics comp_isodb = new DB.CompositeIsotopics();
             if (comp_isodb.Delete(iso.id))
@@ -591,6 +617,100 @@ namespace AnalysisDefs
                     res = false;
             }
             return res;
+        }
+
+        public static List<CompositeIsotopic> GetComposites(long cid, DB.CompositeIsotopics db = null)
+        {
+            if (db == null)
+                db = new DB.CompositeIsotopics();
+			List<CompositeIsotopic> cl = new List<CompositeIsotopic>();
+            DataTable dt = db.GetCIs(cid);
+           foreach (DataRow dr in dt.Rows)
+            {
+                CompositeIsotopic c = new CompositeIsotopic();
+                cl.Add(c);
+                c.pu_mass = (float)DB.Utils.DBDouble(dr["pu_mass"]);
+				foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+				{
+					string key = v.ToString();
+					if (dt.Columns.IndexOf(key) >= 0)
+						c.SetVal((Isotope)v, DB.Utils.DBDouble(dr[key]));
+				}
+				c.pu_date = DB.Utils.DBDateTime(dr["pu_date"]);
+				c.am_date = DB.Utils.DBDateTime(dr["am_date"]);
+            }
+            return cl;
+        }
+
+        public bool AddComposites(List<CompositeIsotopic> cl, CompositeIsotopics cis)
+        {
+            DB.CompositeIsotopics db = new DB.CompositeIsotopics();
+            long cid = db.PrimaryKey(cis.id);
+            if (cid <= 0)
+                return false;  
+            return AddComposites(cl, cid, db);
+        }
+
+        public bool AddComposites(List<CompositeIsotopic> cl, long cid, DB.CompositeIsotopics db = null)
+        {
+            if (db == null)
+                db = new DB.CompositeIsotopics();
+            int iCntCIs = cl.Count;
+            List<DB.ElementList> clist = new List<DB.ElementList>();
+            for (int ic = 0; ic < iCntCIs; ic++)
+            {
+                CompositeIsotopic c = cl[ic];
+                c.GenParamList(); 
+                clist.Add(c.ToDBElementList(generate: false));
+            }
+			db.DeleteCIs(cid);
+            db.AddCIs(cid, clist);
+            return true;
+        }
+
+        /// <summary>
+        ///  short cut when DB id is known at creation time
+        /// </summary>
+        /// <param name="cid"></param>
+        /// <param name="c"></param>
+        public void AddComposite(long cid, CompositeIsotopic ci)
+        {
+            DB.CompositeIsotopics cis = new DB.CompositeIsotopics();
+            ci.GenParamList();
+            long lid = cis.AddCIRetId(cid, ci.ToDBElementList(generate: false));
+        }
+
+		/// <summary>
+		///  Change the "id" (name) of a composite isotopics in the database 
+		/// </summary>
+		/// <param name="old">existing "id"</param>
+		/// <param name="NewId">new "id"</param>
+		/// <returns></returns>
+        public bool Rename(string OldId, string NewId)
+        {
+            DB.Isotopics isodb = new DB.Isotopics();
+            return isodb.Update(isodb.PrimaryKey(OldId), NewId);
+        }
+
+
+		/// <summary>
+        /// Revert this composite isotopics on in-memory list back to DB values
+        /// </summary>
+        /// <param name="iso">The composite isotopics instance subject to reversion</param>
+        /// <returns>true iff reverted</returns>
+        public bool Revert(CompositeIsotopics iso)
+        {
+            DB.CompositeIsotopics isodb = new DB.CompositeIsotopics();
+            DataTable dt = isodb.GetRows(iso.id);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow drl = dt.Rows[0];
+                CompositeIsotopics liso = GetCompositeIsotopicsByRow(dt.Columns, drl);
+                iso.Copy(liso);
+                iso.modified = false;
+                return true;
+            }
+            return false;
         }
 
     }
@@ -1291,7 +1411,7 @@ namespace AnalysisDefs
             {
                 cm_pu_ratio = new BindingList<INCCAnalysisParams.cm_pu_ratio_rec>();
 
-                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.TestParams);
+                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CmPuRatioParams);
                 foreach (DataRow dr in dt.Rows)
                 {
                     try
@@ -1309,7 +1429,6 @@ namespace AnalysisDefs
                         v.cm_input_batch_id = dr["cm_input_batch_id"].ToString();
                         v.cm_dcl_u_mass = DB.Utils.DBDouble(dr["dcl_u_mass"]);
                         v.cm_dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
-;
                     }
                     catch (Exception e)
                     {
@@ -1615,9 +1734,24 @@ namespace AnalysisDefs
 			}
 			return rr;
 		}
+		
+        public static INCCResults.results_rec Get(long mid, DB.DB existing)
+		{
+			DB.Results r = new DB.Results(existing);
+			DataTable dt = r.Result(mid);
+			INCCResults.results_rec rr = null;
+			string curr_det = string.Empty;
+			foreach (DataRow dr in dt.Rows)
+            {
+				rr = RowParser(dr, ref curr_det);
+				break; // take the first (and only) one
+			}
+			return rr;
+		}
 
 
-		INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
+
+		static INCCResults.results_rec RowParser(DataRow dr, ref string curr_det)
 		{
             INCCResults.results_rec resrec = new INCCResults.results_rec();
             // reconstruct the acquire params used for this measurement result
@@ -2952,14 +3086,14 @@ namespace AnalysisDefs
             ap.isotopics_id = dr["isotopics_id"].ToString();
             ap.comp_isotopics_id = dr["comp_isotopics_id"].ToString();
 
-            ap.review_detector_parms = DB.Utils.DBBool(dr["review_detector_parms"]);
-            ap.review_calib_parms = DB.Utils.DBBool(dr["review_calib_parms"]);
-            ap.review_isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
-            ap.review_summed_raw_data = DB.Utils.DBBool(dr["review_summed_raw_data"]);
-            ap.review_run_rate_data = DB.Utils.DBBool(dr["review_run_rate_data"].ToString());
-            ap.review_run_raw_data = DB.Utils.DBBool(dr["review_run_raw_data"].ToString());
-            ap.review_summed_mult_dist = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
-            ap.review_run_mult_dist = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
+            ap.review.DetectorParameters = DB.Utils.DBBool(dr["review_detector_parms"]);
+            ap.review.CalibrationParameters = DB.Utils.DBBool(dr["review_calib_parms"]);
+            ap.review.Isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
+            ap.review.SummedRawCoincData = DB.Utils.DBBool(dr["review_summed_raw_data"]);
+            ap.review.RateCycleData= DB.Utils.DBBool(dr["review_run_rate_data"].ToString());
+            ap.review.RawCycleData = DB.Utils.DBBool(dr["review_run_raw_data"].ToString());
+            ap.review.SummedMultiplicityDistributions = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
+            ap.review.MultiplicityDistributions = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
 
             ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
             ap.acquire_type = (AcquireConvergence)(DB.Utils.DBInt32(dr["acquire_type"].ToString()));
@@ -3513,8 +3647,73 @@ namespace AnalysisDefs
             return foo;            
         }
 
+
+		public class IndexedResults
+		{
+			public IndexedResults() { }
+			public	string Campaign;
+			public	string Detector;
+			public	string Option;
+			public	long Mid, Rid;
+		}
+
+		public List<IndexedResults> IndexedResultsFor(string det, string option, string inspnum)
+        {
+			List<MeasId> meas = MeasurementIds(det, option);
+			List<IndexedResults> res = new List<IndexedResults>();
+
+			DB.Results r = new DB.Results();
+			DataTable dt = r.ResultsForDetWithC(det);
+			foreach (DataRow dr in dt.Rows)
+            {
+				string s = dr["campaign_id"].ToString();
+				if ((string.Compare(inspnum,"All") == 0) || (!string.IsNullOrEmpty(inspnum) && (string.Compare(inspnum,s, true) == 0)))
+				{ 
+					IndexedResults ir = new IndexedResults();
+					ir.Campaign = s;
+					ir.Option = dr["meas_option"].ToString();
+					ir.Detector = det;
+					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+					ir.Rid = DB.Utils.DBInt64(dr["id"]);
+					res.Add(ir);
+				}
+			}
+			return res;
+        }
+
+		public List<Measurement> MeasurementsFor(List<IndexedResults> ilist, bool LMOnly)
+		{
+            List<Measurement> ms = new List<Measurement>();
+			DB.Measurements mdb = new DB.Measurements();
+
+			foreach (IndexedResults ir in ilist)
+			{
+				DataTable dt = mdb.Measurement(ir.Mid);		
+				foreach (DataRow dr in dt.Rows)
+				{
+					MeasId MeaId = new MeasId(
+						AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
+						DB.Utils.DBDateTimeOffset(dr["DateTime"]),
+						dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"]));
+					INCCResults.results_rec rec = ResultsRecs.Get(MeaId.UniqueId, mdb.db);
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+					MeaId.Item.Copy(rec.item);
+					ms.Add(m);
+					if (m.ResultsFiles != null)
+					{
+						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+						List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+						foreach (string rfpath in lrfpaths)
+							m.ResultsFiles.Add(LMOnly, rfpath);
+					}
+
+				}
+			}
+			return ms;
+		}
  
-        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified)
+        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
@@ -3536,11 +3735,11 @@ namespace AnalysisDefs
                 MeasId MeaId = new MeasId(
                     AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
                     DB.Utils.DBDateTimeOffset(dr["DateTime"]),
-                    dr["FileName"].ToString(), DB.Utils.DBInt32(dr["id"])); // db table key actually
+                    dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
 
                 // get the traditional results rec that matches the measurement id 
                 //This does not, in fact, get an item id......hn 9.10.2015
-                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId); //resultsList.Find(d => d.MeasurementIdMatch(MeaId));
+                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
 
 				if (rec != null)
 				{
@@ -3950,7 +4149,6 @@ namespace AnalysisDefs
             else
             {
                 DB.ElementList full = det.Id.ToDBElementList();
-                full.AddRange(els);
                 bool b = db.Update(det.Id.DetectorName, full);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
@@ -3971,7 +4169,6 @@ namespace AnalysisDefs
             if (db.DefinitionExists(els))
             {
                 DB.ElementList full = det.Id.ToDBElementList();
-                full.AddRange(els);
                 b = db.Update(det.Id.DetectorName, full);
                 NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
