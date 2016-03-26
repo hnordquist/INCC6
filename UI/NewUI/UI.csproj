@@ -824,9 +824,6 @@
     <Compile Include="Unready\PlateauCurve.Designer.cs">
       <DependentUpon>PlateauCurve.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\Window2.xaml.cs">
-      <DependentUpon>Window2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="WinPos.cs" />
     <Page Include="FormsHappyPlace\MeasSetup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1130,10 +1127,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Unready\Window2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
