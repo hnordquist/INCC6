@@ -30,12 +30,13 @@ using System.Windows.Forms;
 
 namespace NewUI
 {
+
+	//copy from IDDMeasurementList
     public partial class IDDReviewMeasSummary : Form
     {
         public IDDReviewMeasSummary()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void PrintBtn_Click(object sender, EventArgs e)

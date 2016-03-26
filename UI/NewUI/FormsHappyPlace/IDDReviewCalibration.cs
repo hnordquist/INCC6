@@ -118,8 +118,11 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList("Calibration");
-            measlist.ShowDialog();
+            IDDMeasurementList measlist = new IDDMeasurementList(
+                AssaySelector.MeasurementOption.calibration,
+                alltypes: false, report: true, detector: det);
+            if (measlist.bGood)
+                measlist.ShowDialog();
 			SaveAcquireState();
         }
 

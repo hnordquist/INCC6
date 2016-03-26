@@ -66,8 +66,11 @@ namespace NewUI
 		}
 		private void OKBtn_Click(object sender, EventArgs e)
         {
-            IDDMeasurementList measlist = new IDDMeasurementList("Precision");
-            measlist.ShowDialog();
+            IDDMeasurementList measlist = new IDDMeasurementList(
+                AssaySelector.MeasurementOption.precision,
+                alltypes: false, report: true, detector: det);
+            if (measlist.bGood)
+                measlist.ShowDialog();
 			SaveAcquireState();
         }
 
