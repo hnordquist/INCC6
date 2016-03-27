@@ -137,8 +137,11 @@ namespace NewUI
 				list = mlist;
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
-            IDDMeasurementList measlist = new IDDMeasurementList(list, "Verification", inspnum);
-            measlist.ShowDialog();
+            IDDMeasurementList measlist = new IDDMeasurementList(list, 
+                        AssaySelector.MeasurementOption.verification,
+                        report:true, lmonly:false, inspnum:inspnum, detector:det);
+            if (measlist.bGood)
+                measlist.ShowDialog();
 			SaveAcquireState();
         }
 		void SaveAcquireState()

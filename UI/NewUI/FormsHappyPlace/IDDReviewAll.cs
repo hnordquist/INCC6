@@ -39,14 +39,23 @@ namespace NewUI
     {
 
 		bool bLMOnly = false;
-
+        public bool bGood = false;
         public IDDReviewAll(bool LMOnly)
         {
             InitializeComponent();
 			bLMOnly = LMOnly;
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
-			FieldFiller();
-			this.Text += " for Detector " + det.Id.DetectorId;
+            if (!det.ListMode && LMOnly)
+            {
+                MessageBox.Show(det.Id.DetectorId + " is not a List Mode detector", "Well, hello there");
+                return;
+            }
+            bGood = true;
+            FieldFiller();
+            if (LMOnly)
+                this.Text = "List Mode Measurements for Detector " + det.Id.DetectorId;
+            else
+                this.Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
 			LoadInspNumCombo();
 		}
@@ -92,8 +101,11 @@ namespace NewUI
 			}
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
-            IDDMeasurementList measlist = new IDDMeasurementList(list, bLMOnly ? "unspecified" : "", inspnum);
-            measlist.ShowDialog();
+            IDDMeasurementList measlist = new IDDMeasurementList(list, 
+                AssaySelector.MeasurementOption.unspecified,
+                lmonly: bLMOnly, report:true, inspnum:inspnum, detector:det);
+            if (measlist.bGood)
+                measlist.ShowDialog();
 			SaveAcquireState();
         }
 

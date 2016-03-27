@@ -428,7 +428,8 @@ namespace NewUI
         private void ReportAllMeasClick(object sender, RoutedEventArgs e)
         {
             IDDReviewAll f = new IDDReviewAll(LMOnly:false);
-            f.Show();
+            if (f.bGood)
+                f.Show();
         }
 
         private void ReportRatesClick(object sender, RoutedEventArgs e)
@@ -482,7 +483,8 @@ namespace NewUI
 		private void ReportLMClick(object sender, RoutedEventArgs e)
         {
             IDDReviewAll f = new IDDReviewAll(LMOnly:true);
-            f.Show();
+            if (f.bGood)
+                f.Show();
         }
 
         private void ReportMeasSummaryClick(object sender, RoutedEventArgs e)

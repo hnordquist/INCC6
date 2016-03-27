@@ -192,7 +192,7 @@ namespace NCCFile
             m.PersistFileNames();
         }
 
-          void INCCTransferFileProcessing()
+        void INCCTransferFileProcessing()
         {
             FireEvent(EventType.ActionPrep, this);
             NC.App.Opstate.StampOperationStartTime();
@@ -246,6 +246,8 @@ namespace NCCFile
                             k.BuildDetector((INCCInitialDataDetectorFile)bar, j); j++;
                             modI = true;
                         }
+                        if (NC.App.Opstate.IsQuitRequested)
+                            goto enditall;
                     }
                     if (modI) // detector files have these various related parameters, update the in-memory collection state and the database to reflect this
                     {
@@ -266,6 +268,8 @@ namespace NCCFile
                             k.BuildCalibration((INCCInitialDataCalibrationFile)bar, j); j++;
                             modC = true;
                         }
+                        if (NC.App.Opstate.IsQuitRequested)
+                            goto enditall;
                     }
                     if (modC) // update the datbase with new material defs and method analysis parameters 
                     {
@@ -286,9 +290,12 @@ namespace NCCFile
                             else
                                 PassThru(k.Meas);
                         }
+                        if (NC.App.Opstate.IsQuitRequested)
+                            goto enditall;
                     }
                 }
 
+                enditall:
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionFinished, this);

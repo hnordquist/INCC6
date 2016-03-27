@@ -3681,6 +3681,31 @@ namespace AnalysisDefs
 			return res;
         }
 
+		
+		public List<IndexedResults> IndexedResultsFor(string option)
+        {
+			List<MeasId> meas = MeasurementIds(string.Empty, option);
+			List<IndexedResults> res = new List<IndexedResults>();
+
+			DB.Results r = new DB.Results();
+			DataTable dt = r.ResultsSubset();
+			foreach (DataRow dr in dt.Rows)
+            {
+				string o =  dr["meas_option"].ToString();
+				if (string.Compare(option,o) == 0)
+				{ 
+					IndexedResults ir = new IndexedResults();
+					ir.Campaign = dr["campaign_id"].ToString();
+					ir.Option = o;
+					ir.Detector = dr["detector_name"].ToString();
+					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+					ir.Rid = DB.Utils.DBInt64(dr["id"]);
+					res.Add(ir);
+				}
+			}
+			return res;
+        }
+
 		public List<Measurement> MeasurementsFor(List<IndexedResults> ilist, bool LMOnly)
 		{
             List<Measurement> ms = new List<Measurement>();
@@ -3713,13 +3738,13 @@ namespace AnalysisDefs
 			return ms;
 		}
  
-        public List<Measurement> MeasurementsFor(Detector det, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
+        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
             ResultsRecs recs = new ResultsRecs();
 
-			dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, det.Id.DetectorName);
+			dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, DetName);
 
             foreach (DataRow dr in dt_meas.Rows)
             {

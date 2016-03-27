@@ -131,7 +131,12 @@ namespace DB
             string sSQL = "SELECT results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
             return db.DT(sSQL);
         }
-
+		public DataTable ResultsSubset()
+        {
+            db.SetConnection();
+            string sSQL = "SELECT results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
+            return db.DT(sSQL);
+        }
     }
 
     // for combined results and copy of method params (_m)

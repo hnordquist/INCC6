@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,17 +26,37 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
+	using N = NCC.CentralizedState;
     public partial class IDDAssaySummary : Form
     {
         public IDDAssaySummary()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			mlist = N.App.DB.IndexedResultsFor("verification");
+			LoadInspNumCombo();
         }
+        private List<INCCDB.IndexedResults> mlist;
+
+		void LoadInspNumCombo()
+		{
+			SortedSet<string> set = new SortedSet<string>();
+			InspectionNumComboBox.Items.Add("All");
+			InspectionNumComboBox.SelectedItem = "All";
+			foreach(INCCDB.IndexedResults ir in mlist)
+			{
+				if (!string.IsNullOrEmpty(ir.Campaign))
+					set.Add(ir.Campaign);
+			}
+			foreach(string si in set)
+			{
+				InspectionNumComboBox.Items.Add(si);
+			}
+		}
 
         private void InspectionNumComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -80,7 +100,16 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+			List<INCCDB.IndexedResults> list = null;
+			string inspnum = InspectionNumComboBox.SelectedItem.ToString();
+			if (string.Compare(inspnum,"All", true) == 0)
+				list = mlist;
+			else
+				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
+            IDDMeasurementList measlist = new IDDMeasurementList(list, 
+                AssaySelector.MeasurementOption.verification, false, false, inspnum);
+            if (measlist.bGood)
+                measlist.ShowDialog();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -98,5 +127,14 @@ namespace NewUI
 
         }
 
-    }
+		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+
+		}
+
+		private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
+		{
+
+		}
+	}
 }
