@@ -48,9 +48,13 @@ namespace NewUI
             DefaultCurrentRadioBtn.Checked = sel.WithCurrentEndDate;
             StartDateTimePicker.Value = sel.Start.DateTime;
             LoadSelections(treeView1.Nodes);
+            string l = option.PrintName();
             if (!Enum.TryParse(whuchuwan, out option))
+            {
                 option = AssaySelector.MeasurementOption.unspecified;
-            this.Text = option.PrintName() + " " + this.Text; 
+                l = "Measurement";
+            }
+            this.Text = l + " " + this.Text; 
         }           
 
         private List<INCCDB.IndexedResults> mlist;

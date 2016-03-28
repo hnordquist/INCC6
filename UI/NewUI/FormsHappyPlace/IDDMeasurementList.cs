@@ -202,8 +202,48 @@ namespace NewUI
             if (Reports)
                 ShowResults();
             else
-                MessageBox.Show("NEXT: save selections to CSV file", "Indeed"); 
+                WriteSummary();          
             Close();
+        }
+
+        void WriteSummary()
+        {
+            SummarySelections.ResetSummaryRows();
+            foreach (ListViewItem lvi in listView1.Items)
+            {
+                if (!lvi.Selected)
+                    continue;
+                SummarySelections.Apply(mlist[lvi.Index]);
+            }
+            if (SummarySelections.HasAny)
+            {
+                SaveFileDialog dlg = new SaveFileDialog();
+                dlg.Filter = "CSV files (*.csv) | All files (*.*)";
+                dlg.DefaultExt = ".csv";
+                dlg.FileName = "summary.csv";
+                dlg.InitialDirectory = N.App.AppContext.ResultsFilePath;
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    string lw = SummarySelections.HeaderRow;
+                    try
+                    {
+                        StreamWriter tx = File.CreateText(dlg.FileName);
+                           tx.WriteLine(lw);
+                        System.Collections.IEnumerator iter = SummarySelections.GetEntryEnumerator();
+                        while (iter.MoveNext())
+                        {
+                           string entry = (string)iter.Current;
+                           tx.WriteLine(entry);
+                        }
+                        tx.Close();
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
+                    }
+                }
+            }
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

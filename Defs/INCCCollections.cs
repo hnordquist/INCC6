@@ -1766,7 +1766,7 @@ namespace AnalysisDefs
             // item id
             resrec.item = ItemIdListImpl.GetItemIdByRow(dr, resultsSubset: true);
             resrec.item.material = string.Copy(resrec.acq.item_type);
-
+            resrec.acq.ApplyItemId(resrec.item);
             // reconstruct the isotopics used for the measurement results               
             resrec.iso = IsotopicsListImpl.GetIsotopicsByRow(dr);
 
@@ -3078,14 +3078,11 @@ namespace AnalysisDefs
 
             if (resultsSubset) return ap;
 
-            ap.active_num_runs = DB.Utils.DBUInt16(dr["active_num_runs"].ToString());
-            ap.facility = new Descriptor(dr["facility"].ToString(), dr["facility_description"].ToString());
-            ap.mba = new Descriptor(dr["mba"].ToString(), dr["mba_description"].ToString());
-            ap.detector_id = dr["meas_detector_id"].ToString();
-            ap.glovebox_id = dr["glovebox_id"].ToString();
             ap.isotopics_id = dr["isotopics_id"].ToString();
+            ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
+            ap.mass = DB.Utils.DBDouble(dr["mass"].ToString());
             ap.comp_isotopics_id = dr["comp_isotopics_id"].ToString();
-
+            ap.glovebox_id = dr["glovebox_id"].ToString();
             ap.review.DetectorParameters = DB.Utils.DBBool(dr["review_detector_parms"]);
             ap.review.CalibrationParameters = DB.Utils.DBBool(dr["review_calib_parms"]);
             ap.review.Isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
@@ -3095,15 +3092,12 @@ namespace AnalysisDefs
             ap.review.SummedMultiplicityDistributions = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
             ap.review.MultiplicityDistributions = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
 
-            ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
             ap.acquire_type = (AcquireConvergence)(DB.Utils.DBInt32(dr["acquire_type"].ToString()));
 
             ap.active_num_runs = DB.Utils.DBUInt16(dr["active_num_runs"].ToString());
             ap.max_num_runs = DB.Utils.DBUInt16(dr["max_num_runs"].ToString());
             ap.min_num_runs = DB.Utils.DBUInt16(dr["min_num_runs"].ToString());
             ap.meas_precision = DB.Utils.DBDouble(dr["meas_precision"].ToString());
-
-            ap.mass = DB.Utils.DBDouble(dr["mass"].ToString());
 
             ap.drum_empty_weight = DB.Utils.DBDouble(dr["drum_empty_weight"].ToString());
             ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);
