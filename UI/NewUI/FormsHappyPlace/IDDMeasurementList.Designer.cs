@@ -28,6 +28,7 @@
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.PrintBtn = new System.Windows.Forms.Button();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
@@ -39,6 +40,9 @@
             this.StratumId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.FileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.MCount = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.MCountSel = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // PrintBtn
@@ -91,13 +95,15 @@
             this.DT,
             this.FileName});
             this.listView1.FullRowSelect = true;
-            this.listView1.Location = new System.Drawing.Point(25, 12);
+            this.listView1.Location = new System.Drawing.Point(2, 12);
             this.listView1.Name = "listView1";
             this.listView1.ShowItemToolTips = true;
-            this.listView1.Size = new System.Drawing.Size(544, 365);
+            this.listView1.Size = new System.Drawing.Size(567, 365);
             this.listView1.TabIndex = 9;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
+            this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
+            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             this.listView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDoubleClick);
             // 
             // Option
@@ -133,11 +139,35 @@
             this.FileName.Text = "File Name";
             this.FileName.Width = 120;
             // 
+            // MCount
+            // 
+            this.MCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.MCount.CausesValidation = false;
+            this.MCount.Location = new System.Drawing.Point(575, 267);
+            this.MCount.Name = "MCount";
+            this.MCount.ReadOnly = true;
+            this.MCount.Size = new System.Drawing.Size(87, 13);
+            this.MCount.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.MCount, "Measurements available for use");
+            // 
+            // MCountSel
+            // 
+            this.MCountSel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.MCountSel.CausesValidation = false;
+            this.MCountSel.Location = new System.Drawing.Point(575, 293);
+            this.MCountSel.Name = "MCountSel";
+            this.MCountSel.ReadOnly = true;
+            this.MCountSel.Size = new System.Drawing.Size(87, 13);
+            this.MCountSel.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.MCountSel, "Measurements available for use");
+            // 
             // IDDMeasurementList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(662, 389);
+            this.ClientSize = new System.Drawing.Size(665, 380);
+            this.Controls.Add(this.MCountSel);
+            this.Controls.Add(this.MCount);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.HelpBtn);
             this.Controls.Add(this.CancelBtn);
@@ -146,6 +176,7 @@
             this.Name = "IDDMeasurementList";
             this.Text = "Verification Measurement Selection";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -163,5 +194,8 @@
 		private System.Windows.Forms.ColumnHeader Option;
         private System.Windows.Forms.ColumnHeader Det;
         private System.Windows.Forms.ColumnHeader FileName;
+        private System.Windows.Forms.TextBox MCount;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TextBox MCountSel;
     }
 }

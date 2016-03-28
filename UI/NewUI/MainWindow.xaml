@@ -119,7 +119,7 @@
                 <Separator />
                 <MenuItem Header="_LM..." Click="ReportLMClick" ToolTip="Look at previous List mode measurements." IsEnabled="True"/>
                 <Separator />
-                <MenuItem Header="_Measurement Summary..." Click="ReportMeasSummaryClick" IsEnabled="False"/>
+                <MenuItem Header="_Measurement Summary..." Click="ReportMeasSummaryClick" IsEnabled="True"/>
                 <MenuItem Header="_Verification Summary..." Click="ReportVerificationSummaryClick" IsEnabled="true"/>
                 <MenuItem Header="_Holdup Summary..." Click="ReportHoldupSummaryClick" IsEnabled="False"/>
                 <Separator />

@@ -921,7 +921,7 @@ GO
 CREATE TABLE results_rec(
 	[id] INTEGER Primary Key,
 	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[original_meas_date] nvarchar(20) NULL,
+	[original_meas_date] nvarchar(40) NULL,
 
 	[facility] nvarchar(256) NULL,  /* from the acquire params def */
 	[facility_description] nvarchar(1024) NULL,

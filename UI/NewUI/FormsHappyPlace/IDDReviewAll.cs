@@ -101,9 +101,10 @@ namespace NewUI
 			}
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
-            IDDMeasurementList measlist = new IDDMeasurementList(list, 
-                AssaySelector.MeasurementOption.unspecified,
-                lmonly: bLMOnly, report:true, inspnum:inspnum, detector:det);
+            IDDMeasurementList measlist = new IDDMeasurementList(); 
+            measlist.Init(list,
+                    AssaySelector.MeasurementOption.unspecified,
+                    lmonly: bLMOnly, report: true, inspnum: inspnum, detector: det);
             if (measlist.bGood)
                 measlist.ShowDialog();
 			SaveAcquireState();

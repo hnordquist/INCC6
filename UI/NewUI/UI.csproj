@@ -182,10 +182,10 @@
     <Compile Include="Unready\IDDArchiveConfig.Designer.cs">
       <DependentUpon>IDDArchiveConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDAssaySummary.cs">
+    <Compile Include="FormsHappyPlace\IDDAssaySummary.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDAssaySummary.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDAssaySummary.Designer.cs">
       <DependentUpon>IDDAssaySummary.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDBatchDataWaitMsg.cs">
@@ -397,12 +397,6 @@
     </Compile>
     <Compile Include="Unready\IDDHoldupSelect.Designer.cs">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDHoldupSummary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDHoldupSummary.Designer.cs">
-      <DependentUpon>IDDHoldupSummary.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDImportMeas.cs">
       <SubType>Form</SubType>
@@ -673,12 +667,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDReviewInitSrc.Designer.cs">
       <DependentUpon>IDDReviewInitSrc.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDReviewMeasSummary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDReviewMeasSummary.Designer.cs">
-      <DependentUpon>IDDReviewMeasSummary.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDReviewPrecision.cs">
       <SubType>Form</SubType>
@@ -1320,7 +1308,7 @@
     <EmbeddedResource Include="Unready\IDDArchiveConfig.resx">
       <DependentUpon>IDDArchiveConfig.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDAssaySummary.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDAssaySummary.resx">
       <DependentUpon>IDDAssaySummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDBatchDataWaitMsg.resx">
@@ -1427,9 +1415,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDHoldupSelect.resx">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDHoldupSummary.resx">
-      <DependentUpon>IDDHoldupSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDImportMeas.resx">
       <DependentUpon>IDDImportMeas.cs</DependentUpon>
@@ -1565,9 +1550,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewInitSrc.resx">
       <DependentUpon>IDDReviewInitSrc.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDReviewMeasSummary.resx">
-      <DependentUpon>IDDReviewMeasSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewPrecision.resx">
       <DependentUpon>IDDReviewPrecision.cs</DependentUpon>

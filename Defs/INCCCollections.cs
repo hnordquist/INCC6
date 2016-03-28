@@ -3655,11 +3655,11 @@ namespace AnalysisDefs
 			public	string Detector;
 			public	string Option;
 			public	long Mid, Rid;
+            public DateTimeOffset DateTime;
 		}
 
 		public List<IndexedResults> IndexedResultsFor(string det, string option, string inspnum)
         {
-			List<MeasId> meas = MeasurementIds(det, option);
 			List<IndexedResults> res = new List<IndexedResults>();
 
 			DB.Results r = new DB.Results();
@@ -3674,8 +3674,9 @@ namespace AnalysisDefs
 					ir.Option = dr["meas_option"].ToString();
 					ir.Detector = det;
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
-					ir.Rid = DB.Utils.DBInt64(dr["id"]);
-					res.Add(ir);
+                    ir.Rid = DB.Utils.DBInt64(dr["id"]);
+                    ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    res.Add(ir);
 				}
 			}
 			return res;
@@ -3684,7 +3685,6 @@ namespace AnalysisDefs
 		
 		public List<IndexedResults> IndexedResultsFor(string option)
         {
-			List<MeasId> meas = MeasurementIds(string.Empty, option);
 			List<IndexedResults> res = new List<IndexedResults>();
 
 			DB.Results r = new DB.Results();
@@ -3692,7 +3692,8 @@ namespace AnalysisDefs
 			foreach (DataRow dr in dt.Rows)
             {
 				string o =  dr["meas_option"].ToString();
-				if (string.Compare(option,o) == 0)
+				if (string.IsNullOrEmpty(option) ||
+                    string.Compare(option,o) == 0)
 				{ 
 					IndexedResults ir = new IndexedResults();
 					ir.Campaign = dr["campaign_id"].ToString();
@@ -3700,7 +3701,8 @@ namespace AnalysisDefs
 					ir.Detector = dr["detector_name"].ToString();
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 					ir.Rid = DB.Utils.DBInt64(dr["id"]);
-					res.Add(ir);
+                    ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    res.Add(ir);
 				}
 			}
 			return res;

@@ -974,7 +974,7 @@ namespace AnalysisDefs
 
         public AcquireParameters()
         {
-            facility = new INCCDB.Descriptor("Empty", "The default facility name");
+            facility = new INCCDB.Descriptor("XXXX", "The default facility name");
             mba = new INCCDB.Descriptor("XXXX", "The default MBA name");
             detector_id = "XXXX/XXX/YY";
             item_type = "Pu";

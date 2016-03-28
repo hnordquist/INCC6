@@ -34,19 +34,41 @@ namespace NewUI
 	using N = NCC.CentralizedState;
     public partial class IDDAssaySummary : Form
     {
-        public IDDAssaySummary()
+        static ResultsSummary sel;
+        AssaySelector.MeasurementOption option; 
+        public IDDAssaySummary(string whuchuwan)                          
         {
             InitializeComponent();
-			mlist = N.App.DB.IndexedResultsFor("verification");
-			LoadInspNumCombo();
-        }
+			mlist = N.App.DB.IndexedResultsFor(whuchuwan);
+            if (sel == null)
+                sel = new ResultsSummary();
+            sel.Option = whuchuwan;
+            LoadInspNumCombo();
+            SortByStratRadioBtn.Checked = sel.SortStratum;
+            DefaultCurrentRadioBtn.Checked = sel.WithCurrentEndDate;
+            StartDateTimePicker.Value = sel.Start.DateTime;
+            LoadSelections(treeView1.Nodes);
+            if (!Enum.TryParse(whuchuwan, out option))
+                option = AssaySelector.MeasurementOption.unspecified;
+            this.Text = option.PrintName() + " " + this.Text; 
+        }           
+
         private List<INCCDB.IndexedResults> mlist;
 
-		void LoadInspNumCombo()
+        void LoadSelections(TreeNodeCollection col)
+        {
+            if (col == null) return;
+            foreach (TreeNode cn in col)
+            {
+                cn.Checked = sel.Root[cn.Name].Enabled;
+                LoadSelections(cn.Nodes);
+            }
+        }
+
+        void LoadInspNumCombo()
 		{
 			SortedSet<string> set = new SortedSet<string>();
 			InspectionNumComboBox.Items.Add("All");
-			InspectionNumComboBox.SelectedItem = "All";
 			foreach(INCCDB.IndexedResults ir in mlist)
 			{
 				if (!string.IsNullOrEmpty(ir.Campaign))
@@ -56,41 +78,23 @@ namespace NewUI
 			{
 				InspectionNumComboBox.Items.Add(si);
 			}
-		}
-
-        private void InspectionNumComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
+            InspectionNumComboBox.SelectedItem = sel.InspectionNumber;
         }
 
         private void SortByStratRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void SortByDetectorRadioBtn_CheckedChanged(object sender, EventArgs e)
-        {
-
+            RadioButton r = ((RadioButton)sender);
+            sel.SortStratum = r.Checked;
         }
 
         private void DefaultCurrentRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void DefaultLastEnteredRadioBtn_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void StartDateTimePicker_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void EndDateTimePicker_ValueChanged(object sender, EventArgs e)
-        {
-
+            RadioButton r = ((RadioButton)sender);
+            sel.WithCurrentEndDate = r.Checked;
+            if (sel.WithCurrentEndDate)
+                EndDateTimePicker.Value = sel.End.DateTime;
+            else
+                EndDateTimePicker.Value = DateTime.Now; // value will get swept back to the "sel" state upon Ok      
         }
 
         private void PrintCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -98,23 +102,34 @@ namespace NewUI
 
         }
 
+        static bool CheckForMeasIDMatch(INCCDB.IndexedResults ir)
+            {
+            if (sel.Start <= ir.DateTime && sel.End >= ir.DateTime)
+            {
+                return (string.Compare(sel.InspectionNumber, "All", true) == 0) ||
+                       (string.Compare(sel.InspectionNumber, ir.Campaign, true) == 0);
+            }
+            return false;
+        }
         private void OKBtn_Click(object sender, EventArgs e)
         {
-			List<INCCDB.IndexedResults> list = null;
-			string inspnum = InspectionNumComboBox.SelectedItem.ToString();
-			if (string.Compare(inspnum,"All", true) == 0)
-				list = mlist;
-			else
-				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
-            IDDMeasurementList measlist = new IDDMeasurementList(list, 
-                AssaySelector.MeasurementOption.verification, false, false, inspnum);
+            //AssaySelector.MeasurementOption option =
+            //    AssaySelector.MeasurementOption
+            sel.InspectionNumber = InspectionNumComboBox.SelectedItem.ToString();
+            sel.Start = StartDateTimePicker.Value;
+            sel.End = EndDateTimePicker.Value;
+            List<INCCDB.IndexedResults> list = null;
+            list = mlist.FindAll(ir => CheckForMeasIDMatch(ir));
+            IDDMeasurementList measlist = new IDDMeasurementList();
+            measlist.Init(list, option, false, false, sel.InspectionNumber);
+            measlist.SetSummarySelections(sel); // does a pre-sort before display
             if (measlist.bGood)
                 measlist.ShowDialog();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -122,10 +137,6 @@ namespace NewUI
 
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
 
 		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
 		{
@@ -136,5 +147,5 @@ namespace NewUI
 		{
 
 		}
-	}
+    }
 }
