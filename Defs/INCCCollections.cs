@@ -3759,7 +3759,6 @@ namespace AnalysisDefs
                     dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
 
                 // get the traditional results rec that matches the measurement id 
-                //This does not, in fact, get an item id......hn 9.10.2015
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
 
 				if (rec != null)
@@ -3777,7 +3776,8 @@ namespace AnalysisDefs
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
 				}
-				// TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
+				// URGENT: needed for Reanalysis, and Assay summary: cycles, results, method results, method params, etc 
+				// INCCAnalysisState and INCCAnalysisResults 
 			}
 
             return ms;
@@ -3797,7 +3797,7 @@ namespace AnalysisDefs
 		}
 
         /// <summary>
-        /// Construxt the CycleList from a stored measurement identified by the detector and the MeasId
+        /// Construct the CycleList from a stored measurement identified by the detector and the MeasId
         /// No LM data yet
         /// </summary>
         /// <param name="det">Detector</param>

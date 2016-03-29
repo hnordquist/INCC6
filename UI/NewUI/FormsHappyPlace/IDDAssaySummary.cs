@@ -141,15 +141,13 @@ namespace NewUI
 
         }
 
-
-		private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-		{
-
-		}
-
 		private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
 		{
-
+			if (e.Action == TreeViewAction.ByMouse) // user selected
+			{
+				ResultsSummary.State sta = sel.Root[e.Node.Name];
+				sta.Enabled = e.Node.Checked;
+			}
 		}
     }
 }

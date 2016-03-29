@@ -94,6 +94,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FormsHappyPlace\Ack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Ack.Designer.cs">
+      <DependentUpon>Ack.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\ChooseBackgroundType.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1130,6 +1136,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="FormsHappyPlace\Ack.resx">
+      <DependentUpon>Ack.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\AnalysisWizard.resx">
       <DependentUpon>AnalysisWizard.cs</DependentUpon>
     </EmbeddedResource>
@@ -1690,6 +1699,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DaveEclipseClip.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
