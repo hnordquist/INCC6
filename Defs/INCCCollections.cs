@@ -3728,6 +3728,7 @@ namespace AnalysisDefs
 						foreach (string rfpath in lrfpaths)
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
+					IngestAnalysisMethodResultsFromDB(m, mdb.db);
 
 				}
 			}

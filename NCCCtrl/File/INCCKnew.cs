@@ -796,7 +796,7 @@ namespace NCCTransfer
            // TODO: update detector details from this meas result, since there could be a difference 
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
-            meas.AcquireState.comment = "Original file name " + meas.MeasurementId.FileName;
+  
             meas.Detectors.Add(det);  // in practice this is a list with one element, e.g. meas.Detector
 
             TestParameters t = new TestParameters();
@@ -886,6 +886,12 @@ namespace NCCTransfer
             acq.campaign_id = TransferUtils.str(results.results_campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
             if (string.IsNullOrEmpty(acq.campaign_id))
                 acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
+			acq.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);//"Original file name " + meas.MeasurementId.FileName;
+            if (string.IsNullOrEmpty(acq.comment))
+			{
+				acq.comment = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
+				acq.ending_comment = !string.IsNullOrEmpty(acq.comment); // NEXT: nowhere to save the ending comment AND the standard comment
+			}
 
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
@@ -1719,45 +1725,44 @@ namespace NCCTransfer
                         break;
                     case AssaySelector.MeasurementOption.verification:
                     case AssaySelector.MeasurementOption.calibration:
-                        {
-                            INCCMethodResults imrs;
-                            bool beendonegot = meas.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
-                            if (beendonegot) // should be true for verification and calibration
-                            {
-                                if (imrs.ContainsKey(meas.INCCAnalysisState.Methods.selector))
-                                {
-                                // we've got a distinct detector id and material type on the methods, so that is the indexer here
-                                Dictionary<AnalysisMethod, INCCMethodResult> amimr = imrs[meas.INCCAnalysisState.Methods.selector];
+					{
+						INCCMethodResults imrs;
+						bool beendonegot = meas.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
+						if (beendonegot) // should be true for verification and calibration
+						{
+							if (imrs.ContainsKey(meas.INCCAnalysisState.Methods.selector))
+							{
+								// we've got a distinct detector id and material type on the methods, so that is the indexer here
+								Dictionary<AnalysisMethod, INCCMethodResult> amimr = imrs[meas.INCCAnalysisState.Methods.selector];
 
-                                // now get an enumerator over the map of method results
-                                Dictionary<AnalysisMethod, INCCMethodResult>.Enumerator ai = amimr.GetEnumerator();
-                                while (ai.MoveNext())
-                                {
-                                    if (ai.Current.Key.IsNone())
-                                        continue;
-                                    INCCMethodResult _imr = ai.Current.Value;
-                                    // insert this into the DB under the current meas key
-                                        try
-                                        {
-                                        ElementList els = _imr.ToDBElementList(); // also sets table property, gotta do it first
-                                        DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(_imr.Table);
-                                        long resid = ar.Create(mid, els);
-                                        ElementList mels = _imr.methodParams.ToDBElementList();
-                                        long resmid = ar.CreateMethod(resid, mid, mels);
-                                        mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        mlogger.TraceEvent(LogLevels.Warning, 34102, "Results processing error {0} {1}", _imr.ToString(), e.Message);
-                                    }
-                                }
-                            }
-                                else
-                                    mlogger.TraceEvent(LogLevels.Error, 34102, "Results missing for {0}", meas.INCCAnalysisState.Methods.selector.ToString());
+								// now get an enumerator over the map of method results
+								Dictionary<AnalysisMethod, INCCMethodResult>.Enumerator ai = amimr.GetEnumerator();
+								while (ai.MoveNext())
+								{
+									if (ai.Current.Key.IsNone())
+										continue;
+									INCCMethodResult _imr = ai.Current.Value;
+									// insert this into the DB under the current meas key
+									try
+									{
+										ElementList els = _imr.ToDBElementList(); // also sets table property, gotta do it first
+										ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(_imr.Table);
+										long resid = ar.Create(mid, els);
+										ElementList mels = _imr.methodParams.ToDBElementList();
+										long resmid = ar.CreateMethod(resid, mid, mels);
+										mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+									} 
+									catch (Exception e)
+									{
+										mlogger.TraceEvent(LogLevels.Warning, 34102, "Results processing error {0} {1}", _imr.ToString(), e.Message);
+									}
+								}
+							} else
+								mlogger.TraceEvent(LogLevels.Error, 34102, "Results missing for {0}", meas.INCCAnalysisState.Methods.selector.ToString());
 
-                            }
-                        }
-                        break;
+						}
+					}
+					break;
                     case AssaySelector.MeasurementOption.rates:
                     case AssaySelector.MeasurementOption.holdup:
                     case AssaySelector.MeasurementOption.unspecified:

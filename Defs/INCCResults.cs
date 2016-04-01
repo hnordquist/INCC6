@@ -449,8 +449,6 @@ namespace AnalysisDefs
             public AssaySelector.MeasurementOption meas_option;
             public bool completed;
 			public long MeasId {get; set; }
-            //private Dictionary<Multiplicity, MultiplicityCountingRes> mcrmap;
-
 
             public results_rec()
             {
@@ -475,8 +473,6 @@ namespace AnalysisDefs
                 meas_option = src.meas_option;
 
                 mcr = new MultiplicityCountingRes(src.mcr);
-
-                // not needed since it is already on the meas mcrmap = new Dictionary<Multiplicity, MultiplicityCountingRes>(src.mcrmap);
 
                 //TODO INCCMethodResults imr;
                 //if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr))
@@ -513,20 +509,6 @@ namespace AnalysisDefs
                 if (mcr == null)
                     mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
 
-                ////// new map to account for a multiplicity of multiplicity analyzers, from LM operations
-                ////mcrmap = new Dictionary<Multiplicity, MultiplicityCountingRes>();
-                ////System.Collections.IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
-                ////while (iter.MoveNext())
-                ////{
-                ////    Multiplicity mup = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                ////    MultiplicityCountingRes lmcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
-                ////    mcrmap.Add(mup, lmcr);
-                ////}
-                ////if (mcrmap.Count < 1)
-                ////{
-                ////    mcrmap.Add(det.MultiplicityParams, new MultiplicityCountingRes());
-                ////}
-
                 hc = new holdup_config_rec();  // left unfinished in real code, only available on transfer op
                 item = new ItemId(m.MeasurementId.Item);
                 // pu_date wiped out in item when was in measurement.
@@ -542,7 +524,6 @@ namespace AnalysisDefs
 
             /// <summary>
             /// Match the results rec with the measurement id's type and timestamp.
-            /// Might need to bring the Item Id into the test soon.
             /// </summary>
             /// <param name="m"></param>
             /// <returns></returns>

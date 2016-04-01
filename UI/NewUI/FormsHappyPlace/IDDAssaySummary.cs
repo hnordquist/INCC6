@@ -147,7 +147,42 @@ namespace NewUI
 			{
 				ResultsSummary.State sta = sel.Root[e.Node.Name];
 				sta.Enabled = e.Node.Checked;
+				if (e.Node.Name.CompareTo("MassAnalysisMethods") == 0)
+				{			
+					e.Node.Nodes["CalibrationCurve"].Checked = sta.Enabled;
+					e.Node.Nodes["KnownAlpha"].Checked = sta.Enabled;
+					e.Node.Nodes["KnownM"].Checked = sta.Enabled;
+					e.Node.Nodes["Multiplicity"].Checked = sta.Enabled;
+					e.Node.Nodes["AddASource"].Checked = sta.Enabled;
+					e.Node.Nodes["CuriumRatio"].Checked = sta.Enabled;
+					e.Node.Nodes["TruncatedMultiplicity"].Checked = sta.Enabled;
+					e.Node.Nodes["ActiveCalibCurve"].Checked = sta.Enabled;
+					e.Node.Nodes["Collar"].Checked = sta.Enabled;
+					e.Node.Nodes["ActiveMultiplicity"].Checked = sta.Enabled;
+					e.Node.Nodes["ActivePassive"].Checked = sta.Enabled;
+				}
+				else if ((bool)e.Node.Tag)
+				{
+					TreeView tv = (TreeView)sender;
+					tv.Nodes["MassAnalysisMethods"].Checked =  AnyMethodSelected(tv.Nodes["MassAnalysisMethods"].Nodes);
+				}
 			}
 		}
-    }
+
+		bool AnyMethodSelected(TreeNodeCollection Nodes)
+		{
+
+			return 	Nodes["CalibrationCurve"].Checked ||
+					Nodes["KnownAlpha"].Checked ||
+					Nodes["KnownM"].Checked ||
+					Nodes["Multiplicity"].Checked ||
+					Nodes["AddASource"].Checked ||
+					Nodes["CuriumRatio"].Checked ||
+					Nodes["TruncatedMultiplicity"].Checked ||
+					Nodes["ActiveCalibCurve"].Checked ||
+					Nodes["Collar"].Checked ||
+					Nodes["ActiveMultiplicity"].Checked ||
+					Nodes["ActivePassive"].Checked;
+		}
+	}
 }

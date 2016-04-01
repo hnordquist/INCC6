@@ -1212,6 +1212,35 @@ namespace AnalysisDefs
         public MultiplicityCountingRes(MultiplicityCountingRes src)
         {
             Init();
+			CopyFrom(src);
+        }
+        public MultiplicityCountingRes()
+        {
+            Init();
+            FA = FAType.FAOn;
+            idx = 0;
+        }
+        protected void Init()
+        {
+            RAMult = new ulong[0];
+            UnAMult = new ulong[0];
+            NormedAMult = new ulong[0];
+
+            αβ = new AlphaBeta();
+
+            rates = new Rates();
+            singles = new VTuple();
+            RAFactorialMoments = new double[4];
+            AFactorialMoments = new double[4];
+            multiplication = 1.0;
+            uncorrectedfrominccres = new Rates();
+            covariance_matrix = new double[3 * 3];
+            scaler1 = new VTuple();
+            scaler2 = new VTuple();
+            TS = new TimeSpan();
+        }
+		public void CopyFrom(MultiplicityCountingRes src)
+        {
             FA = src.FA;
             idx = src.idx;
             Array.Resize(ref RAMult, src.RAMult.Length);
@@ -1249,31 +1278,7 @@ namespace AnalysisDefs
             doubles_multi = src.doubles_multi;
             triples_multi = src.triples_multi;
         }
-        public MultiplicityCountingRes()
-        {
-            Init();
-            FA = FAType.FAOn;
-            idx = 0;
-        }
-        protected void Init()
-        {
-            RAMult = new ulong[0];
-            UnAMult = new ulong[0];
-            NormedAMult = new ulong[0];
 
-            αβ = new AlphaBeta();
-
-            rates = new Rates();
-            singles = new VTuple();
-            RAFactorialMoments = new double[4];
-            AFactorialMoments = new double[4];
-            multiplication = 1.0;
-            uncorrectedfrominccres = new Rates();
-            covariance_matrix = new double[3 * 3];
-            scaler1 = new VTuple();
-            scaler2 = new VTuple();
-            TS = new TimeSpan();
-        }
 
         public void TransferRawResult(MultiplicityResult mr)
         {

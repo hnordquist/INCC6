@@ -33,34 +33,31 @@
 			System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Normalization Params");
 			System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Background Params");
 			System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Summaries");
-			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Test Params");
-			System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Isotopics");
-			System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Stratum");
-			System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Results Files");
-			System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Calibration Curve");
-			System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Known Alpha");
-			System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Known M");
-			System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Multiplicity");
-			System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Add-a-Source");
-			System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Curium Ratio");
-			System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Truncated Multiplicity");
-			System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Active Calib Curve");
-			System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Collar");
-			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Active Multiplicity");
-			System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Active/Passive");
-			System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Mass Analysis Methods", new System.Windows.Forms.TreeNode[] {
+			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Calibration Curve");
+			System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Known Alpha");
+			System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Known M");
+			System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Multiplicity");
+			System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Add-a-Source");
+			System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Curium Ratio");
+			System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Truncated Multiplicity");
+			System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Active Calib Curve");
+			System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Collar");
+			System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Active Multiplicity");
+			System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Active/Passive");
+			System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Mass Analysis Methods", new System.Windows.Forms.TreeNode[] {
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9,
             treeNode10,
             treeNode11,
             treeNode12,
             treeNode13,
             treeNode14,
             treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20});
-			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("LM Results");
+            treeNode16});
+			System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Comments");
+			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("LM Results");
 			this.InspectionNumComboBox = new System.Windows.Forms.ComboBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.SortByDetectorRadioBtn = new System.Windows.Forms.RadioButton();
@@ -251,62 +248,72 @@
 			this.treeView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.treeView1.Name = "treeView1";
 			treeNode1.Name = "AcquireParams";
+			treeNode1.Tag = false;
 			treeNode1.Text = "Acquire Params";
 			treeNode1.ToolTipText = "Facility, Item Id, Comments, &c;";
 			treeNode2.Name = "DetectorParams";
+			treeNode2.Tag = false;
 			treeNode2.Text = "Detector Parameters";
 			treeNode3.Name = "NormalizationParams";
+			treeNode3.Tag = false;
 			treeNode3.Text = "Normalization Params";
 			treeNode4.Name = "BackgroundParams";
+			treeNode4.Tag = false;
 			treeNode4.Text = "Background Params";
 			treeNode5.Name = "Summaries";
+			treeNode5.Tag = false;
 			treeNode5.Text = "Summaries";
-			treeNode6.Name = "TestParams";
-			treeNode6.Text = "Test Params";
-			treeNode7.Name = "Isotopics";
-			treeNode7.Text = "Isotopics";
-			treeNode8.Name = "Stratum";
-			treeNode8.Text = "Stratum";
-			treeNode9.Name = "ResultsFiles";
-			treeNode9.Text = "Results Files";
-			treeNode10.Name = "CalibrationCurve";
-			treeNode10.Text = "Calibration Curve";
-			treeNode11.Name = "KnownAlpha";
-			treeNode11.Text = "Known Alpha";
-			treeNode12.Name = "KnownM";
-			treeNode12.Text = "Known M";
-			treeNode13.Name = "Multiplicity";
-			treeNode13.Text = "Multiplicity";
-			treeNode14.Name = "AddASource";
-			treeNode14.Text = "Add-a-Source";
-			treeNode15.Name = "CuriumRatio";
-			treeNode15.Text = "Curium Ratio";
-			treeNode16.Name = "TruncatedMultiplicity";
-			treeNode16.Text = "Truncated Multiplicity";
-			treeNode17.Name = "ActiveCalibCurve";
-			treeNode17.Text = "Active Calib Curve";
-			treeNode18.Name = "Collar";
-			treeNode18.Text = "Collar";
-			treeNode19.Name = "ActiveMultiplicity";
-			treeNode19.Text = "Active Multiplicity";
-			treeNode20.Name = "ActivePassive";
-			treeNode20.Text = "Active/Passive";
-			treeNode21.Name = "MassAnalysisMethods";
-			treeNode21.Text = "Mass Analysis Methods";
-			treeNode22.Name = "LMResults";
-			treeNode22.Text = "LM Results";
+			treeNode6.Name = "CalibrationCurve";
+			treeNode6.Tag = true;
+			treeNode6.Text = "Calibration Curve";
+			treeNode7.Name = "KnownAlpha";
+			treeNode7.Tag = true;
+			treeNode7.Text = "Known Alpha";
+			treeNode8.Name = "KnownM";
+			treeNode8.Tag = true;
+			treeNode8.Text = "Known M";
+			treeNode9.Name = "Multiplicity";
+			treeNode9.Tag =  true;
+			treeNode9.Text = "Multiplicity";
+			treeNode10.Name = "AddASource";
+			treeNode10.Tag = true;
+			treeNode10.Text = "Add-a-Source";
+			treeNode11.Name = "CuriumRatio";
+			treeNode11.Tag =  true;
+			treeNode11.Text = "Curium Ratio";
+			treeNode12.Name = "TruncatedMultiplicity";
+			treeNode12.Tag =  true;
+			treeNode12.Text = "Truncated Multiplicity";
+			treeNode13.Name = "ActiveCalibCurve";
+			treeNode13.Tag =  true;
+			treeNode13.Text = "Active Calib Curve";
+			treeNode14.Name = "Collar";
+			treeNode14.Tag =  true;
+			treeNode14.Text = "Collar";
+			treeNode15.Name = "ActiveMultiplicity";
+			treeNode15.Tag =  true;
+			treeNode15.Text = "Active Multiplicity";
+			treeNode16.Name = "ActivePassive";
+			treeNode16.Tag =  true;
+			treeNode16.Text = "Active/Passive";
+			treeNode17.Name = "MassAnalysisMethods";
+			treeNode17.Tag = false;
+			treeNode17.Text = "Mass Analysis Methods";
+			treeNode18.Name = "Comments";
+			treeNode18.Tag = false;
+			treeNode18.Text = "Comments";
+			treeNode19.Name = "LMResults";
+			treeNode19.Tag = false;
+			treeNode19.Text = "LM Results";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
             treeNode4,
             treeNode5,
-            treeNode6,
-            treeNode7,
-            treeNode8,
-            treeNode9,
-            treeNode21,
-            treeNode22});
+            treeNode17,
+            treeNode18,
+            treeNode19});
 			this.treeView1.Size = new System.Drawing.Size(556, 399);
 			this.treeView1.TabIndex = 18;
 			this.treeView1.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterCheck);

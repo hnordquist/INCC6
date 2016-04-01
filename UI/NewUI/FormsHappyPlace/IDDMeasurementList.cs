@@ -139,6 +139,7 @@ namespace NewUI
 		void LoadList(AssaySelector.MeasurementOption filter)
 		{
  			listView1.ShowItemToolTips = true;
+			int mlistIndex = 0;
 			foreach (Measurement m in mlist)
             {
                 string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
@@ -149,13 +150,14 @@ namespace NewUI
                 ListViewItem lvi = new ListViewItem(new string[] {
                     m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
-                    m.MeasDate.DateTime.ToString("MM.dd.yy  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true)
+                    m.MeasDate.DateTime.ToString("MM.dd.yy  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
                         });
                 listView1.Items.Add(lvi);
                 lvi.Tag = m.MeasDate;  // for proper column sorting
                 lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
 				if (string.IsNullOrEmpty(lvi.ToolTipText))
 					lvi.ToolTipText = "No results file available";
+				mlistIndex++;
             }
             MCount.Text = listView1.Items.Count.ToString() + " measurements";
             if (listView1.SelectedItems.Count > 0)
@@ -213,7 +215,9 @@ namespace NewUI
             {
                 if (!lvi.Selected)
                     continue;
-                SummarySelections.Apply(mlist[lvi.Index]);
+				int lvIndex = 0;
+				int.TryParse(lvi.SubItems[6].Text, out lvIndex); // 6 has the original mlist index of this sorted row element
+                SummarySelections.Apply(mlist[lvIndex]);
             }
             if (SummarySelections.HasAny)
             {

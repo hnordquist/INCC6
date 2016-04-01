@@ -66,6 +66,7 @@ namespace NewUI
                 Collar,
                 ActiveMultiplicity,
                 ActivePassive,
+			Comments,
             LMResults
         }
 
@@ -100,12 +101,15 @@ namespace NewUI
             Root.Add(Selections.Summaries.ToString(), new State(Selections.Summaries, true));
             Root.Add(Selections.NormalizationParams.ToString(), new State(Selections.NormalizationParams, false));
             Root.Add(Selections.BackgroundParams.ToString(), new State(Selections.BackgroundParams, false));
+
             Root.Add(Selections.TestParams.ToString(), new State(Selections.TestParams, false));
             Root.Add(Selections.Isotopics.ToString(), new State(Selections.Isotopics, false));
             Root.Add(Selections.Stratum.ToString(), new State(Selections.Stratum, false));
-            Root.Add(Selections.ResultsFiles.ToString(), new State(Selections.ResultsFiles, true));
-            Root.Add(Selections.MassAnalysisMethods.ToString(), new State(Selections.MassAnalysisMethods, false));
-            Root.Add(Selections.CalibrationCurve.ToString(), new State(Selections.CalibrationCurve, false));
+            Root.Add(Selections.ResultsFiles.ToString(), new State(Selections.ResultsFiles, false));
+
+			Root.Add(Selections.MassAnalysisMethods.ToString(), new State(Selections.MassAnalysisMethods, false));
+
+			Root.Add(Selections.CalibrationCurve.ToString(), new State(Selections.CalibrationCurve, false));
             Root.Add(Selections.KnownAlpha.ToString(), new State(Selections.KnownAlpha, false));
             Root.Add(Selections.KnownM.ToString(), new State(Selections.KnownM, false));
             Root.Add(Selections.Multiplicity.ToString(), new State(Selections.Multiplicity, false));
@@ -116,7 +120,10 @@ namespace NewUI
             Root.Add(Selections.Collar.ToString(), new State(Selections.Collar, false));
             Root.Add(Selections.ActiveMultiplicity.ToString(), new State(Selections.ActiveMultiplicity, false));
             Root.Add(Selections.ActivePassive.ToString(), new State(Selections.ActivePassive, false));
-            Root.Add(Selections.LMResults.ToString(), new State(Selections.LMResults, false));
+
+			Root.Add(Selections.Comments.ToString(), new State(Selections.Comments, false));
+
+			Root.Add(Selections.LMResults.ToString(), new State(Selections.LMResults, false));
          }
 
         public void Apply(Measurement m)
@@ -150,7 +157,7 @@ namespace NewUI
 				entries["Facility"] = Q(m.AcquireState.facility.Name);
 				entries["MBA"] = Q(m.AcquireState.mba.Name);
 				entries["Detector"] = Q(m.AcquireState.detector_id);
-				entries["IC"] = Q(m.AcquireState.inventory_change_code);  // URGENT: not loading
+				entries["IC"] = Q(m.AcquireState.inventory_change_code);  // next: check if not loading
 				entries["IO"] = Q(m.AcquireState.io_code);                              // ditto
 				entries["Measurement Type"] = Q(m.MeasOption.PrintName());
 				entries["Meas Date"] = m.MeasurementId.MeasDateTime.ToString("MM.dd.yy");
@@ -178,7 +185,7 @@ namespace NewUI
 				entries["Act Sngls Bkg Error"] = m.Background.INCCActive.Singles.err.ToString("F3"); //	"Active singles background error"
 				break;
 			case Selections.Summaries:
-				if (m.INCCAnalysisState != null && m.INCCAnalysisResults != null)  // URGENT: this is not constructed upon a measurement read from the DB yet
+				if (m.INCCAnalysisState != null && m.INCCAnalysisResults != null)
 				{
 					System.Collections.IEnumerator iter = m.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
 					while (iter.MoveNext())
@@ -195,7 +202,7 @@ namespace NewUI
 						{
 							entries["Scaler 1"] = ir.Scaler1.v.ToString("F1");
 							entries["Scaler 1 Error"] = ir.Scaler1.err.ToString("F3");
-							entries["Scaler 2"] = ir.Scaler1.v.ToString("F1");
+							entries["Scaler 2"] = ir.Scaler2.v.ToString("F1");
 							entries["Scaler 2 Error"] = ir.Scaler2.err.ToString("F3");
 						}
 						entries["Count Time"] = (m.Cycles.Count > 0 ? m.Cycles[0].TS.TotalSeconds.ToString("F0") : "0"); // "Total count time for a measurement"					
@@ -204,6 +211,128 @@ namespace NewUI
 						entries["A Sum"] = ir.ASum.ToString("F0");  // "Accidentals sum for a measurement"
 					}
 				}
+				break;
+			case Selections.Comments:
+				entries["Comment"] = m.AcquireState.comment;
+				if (m.AcquireState.ending_comment)
+					entries["End Comment"] = "NYI";
+				break;
+			case Selections.MassAnalysisMethods:
+				break;
+			case Selections.CalibrationCurve:
+               INCCMethodResults.results_cal_curve_rec ccres = (INCCMethodResults.results_cal_curve_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CalibrationCurve, false);
+				if (ccres != null)
+				{
+					entries["Cal Cur Dcl Mass"] = ccres.dcl_pu_mass.ToString("F2"); //	Calibration curve - declared mass"
+					entries["Cal Cur Mass"] = ccres.pu_mass.v.ToString("F2");	//	"Calibration curve - mass"
+					entries["Cal Cur Mass Err"] = ccres.pu_mass.err.ToString("F3"); //	"Calibration curve - mass error"
+					entries["Cal Cur Dcl-Asy"] = ccres.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Calibration curve - declared minus assay"
+					entries["Cal Cur Dcl-Asy %"] = ccres.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Calibration curve - declared minus assay %"
+					entries["Cal Cur Status"] = ccres.pass ? "Pass": ""; //	"Calibration curve - measurement status"
+				}
+				break;
+			case Selections.KnownAlpha:
+               INCCMethodResults.results_known_alpha_rec kares = (INCCMethodResults.results_known_alpha_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.KnownA, false);
+				if (kares != null)
+				{
+					entries["Known A Dcl Mass"] = kares.dcl_pu_mass.ToString("F2"); //	Known alpha - declared mass"
+					entries["Known A Mass"] = kares.pu_mass.v.ToString("F2");	//	"Known alpha - mass"
+					entries["Known A Mass Err"] = kares.pu_mass.err.ToString("F3"); //	"Known alpha - mass error"
+					entries["Known A Dcl-Asy"] = kares.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Known alpha - declared minus assay"
+					entries["Known A Dcl-Asy %"] = kares.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Known alpha - declared minus assay %"
+					entries["Known A Mult"] = kares.mult.ToString("F3"); //	"Known alpha - multiplication"
+					entries["Known A Alpha"] = kares.alphaK.ToString("F3"); //	"Known alpha - alpha"
+					entries["Known A Status"] = kares.pass ? "Pass": ""; //	"Known alpha - measurement status"
+				}
+				break;
+			case Selections.KnownM:
+               INCCMethodResults.results_known_m_rec kmres = (INCCMethodResults.results_known_m_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.KnownM, false);
+				if (kmres != null)
+				{
+					entries["Known M Dcl Mass"] = kmres.dcl_pu_mass.ToString("F2"); //	Known M - declared mass"
+					entries["Known M Mass"] = kmres.pu_mass.v.ToString("F2");	//	"Known M - mass"
+					entries["Known M Mass Err"] = kmres.pu_mass.err.ToString("F3"); //	"Known M - mass error"
+					entries["Known M Dcl-Asy"] = kmres.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Known M - declared minus assay"
+					entries["Known M Dcl-Asy %"] = kmres.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Known M - declared minus assay %"
+					entries["Known M Mult"] = kmres.mult.ToString("F3"); //	"Known M - multiplication"
+					entries["Known M Alpha"] = kmres.alpha.ToString("F3"); //	"Known M - alpha"
+					entries["Known M Status"] = kmres.pass ? "Pass": ""; //	"Known M - measurement status"
+				}
+				break;
+			case Selections.Multiplicity:
+               INCCMethodResults.results_multiplicity_rec mres = (INCCMethodResults.results_multiplicity_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.Multiplicity, false);
+				if (mres != null)
+				{
+					entries["Mult Dcl Mass"] = mres.dcl_pu_mass.ToString("F2"); //	Multiplicity - declared mass"
+					entries["Mult Mass"] = mres.pu_mass.v.ToString("F2");	//	"Multiplicity- mass"
+					entries["Mult Mass Err"] = mres.pu_mass.err.ToString("F3"); //	"Multiplicity - mass error"
+					entries["Mult Dcl-Asy"] = mres.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Multiplicity - declared minus assay"
+					entries["Mult Dcl-Asy %"] = mres.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Multiplicity - declared minus assay %"
+					entries["Mult Mult"] = mres.mult.v.ToString("F3"); //	"Multiplicity - multiplication"
+					entries["Mult Mult Err"] = mres.mult.err.ToString("F3"); //	"Multiplicity - multiplication error"
+					entries["Mult Alpha"] = mres.alphaK.v.ToString("F3"); //	"Multiplicity - alpha"
+					entries["Mult Alpha Err"] = mres.alphaK.err.ToString("F3"); //	"Multiplicity - alpha error"
+					entries["Mult Efficiency"] = mres.efficiencyComputed.v.ToString("F3"); //	"Multiplicity - efficiency"
+					entries["Mult Eff Err"] = mres.efficiencyComputed.err.ToString("F3"); //	"Multiplicity - efficiency error"
+					entries["Mult Status"] = mres.pass ? "Pass": ""; //	"Multiplicity - measurement status"
+					entries["Mult Predelay ms"] = m.Detector.SRParams.predelayMS.ToString(); // 	"Multiplicity - predelay "		
+					entries["Mult Gate ms"] = m.Detector.SRParams.gateLengthMS.ToString(); // 	"Multiplicity - gate width"
+				}
+				break;
+
+			case Selections.AddASource: 
+               INCCMethodResults.results_add_a_source_rec aares = (INCCMethodResults.results_add_a_source_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.AddASource, false);
+				if (aares != null)
+				{
+					entries["Add-a-src Dcl Mass"] = aares.dcl_pu_mass.ToString("F2"); //	Add-a-source - declared mass"
+					entries["Add-a-src Mass"] = aares.pu_mass.v.ToString("F2");	//	"Add-a-source - mass"
+					entries["Add-a-src Mass Err"] = aares.pu_mass.err.ToString("F3"); //	"Add-a-source - mass error"
+					entries["Add-a-src Dcl-Asy"] = aares.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Add-a-source - declared minus assay"
+					entries["Add-a-src Dcl-Asy %"] = aares.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Add-a-source - declared minus assay %"
+					entries["Add-a-src Status"] = aares.pass ? "Pass": ""; //	"Add-a-source - measurement status"
+					entries["Add-a-src Corr"] = aares.corr_factor.v.ToString("F3"); //	"Add-a-source - measurement status"
+				}
+				break;
+			case Selections.CuriumRatio: 
+               INCCMethodResults.results_curium_ratio_rec cures = (INCCMethodResults.results_curium_ratio_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CuriumRatio, false);
+				if (cures != null)
+				{
+					entries["Cm Ratio ID"] = cures.cm_id; // Curium ratio - ID"
+					entries["Cm Ratio Input ID"] = cures.cm_input_batch_id; // Curium ratio - input batch ID"
+					entries["Cm Ratio Cm/Pu"] = cures.cm_pu_ratio.v.ToString("F4"); // Curium ratio - Cm/Pu ratio"
+					entries["Cm Ratio Cm/U"] = cures.cm_u_ratio.v.ToString("F4"); // Curium ratio - Cm/U ratio"
+					entries["Cm Mass"] = cures.cm_mass.v.ToString("F3"); // Curium ratio - Cm mass"
+					entries["Cm Err"] = cures.cm_mass.err.ToString("F3"); // Curium ratio - Cm mass error"
+
+					entries["Cm Ratio Pu Dcl Mass"] = cures.pu.dcl_pu_mass.ToString("F2"); // Curium ratio - declared mass"
+					entries["Cm Ratio Pu Mass"] = cures.pu.pu_mass.v.ToString("F2");	//	"Curium ratio - mass"
+					entries["Cm Ratio Pu Mass Err"] = cures.pu.pu_mass.err.ToString("F3"); //	"Curium ratio - mass error"
+					entries["Cm Ratio Pu Dcl-Asy"] = cures.pu.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
+					entries["Cm Ratio Pu Dcl-Asy %"] = cures.pu.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
+					entries["Cm Ratio U Dcl Mass"] = cures.u.dcl_mass.ToString("F2"); // Curium ratio - declared mass"
+					entries["Cm Ratio U Mass"] = cures.u.mass.v.ToString("F2");	//	"Curium ratio - mass"
+					entries["Cm Ratio U Mass Err"] = cures.u.mass.err.ToString("F3"); //	"Curium ratio - mass error"
+					entries["Cm Ratio U Dcl-Asy"] = cures.u.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
+					entries["Cm Ratio U Dcl-Asy %"] = cures.u.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
+					entries["Cm Ratio U235 Dcl Mass"] = cures.u235.dcl_mass.ToString("F2"); // Curium ratio - declared mass"
+					entries["Cm Ratio U235 Mass"] = cures.u235.mass.v.ToString("F2");	//	"Curium ratio - mass"
+					entries["Cm Ratio U235 Mass Err"] = cures.u235.mass.err.ToString("F3"); //	"Curium ratio - mass error"
+					entries["Cm Ratio U235 Dcl-Asy"] = cures.u235.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
+					entries["Cm Ratio U235 Dcl-Asy %"] = cures.u235.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
+					entries["Cm Ratio Pu Status"] = cures.pu.pass ? "Pass": ""; //	"Curium ratio - measurement status"
+					entries["Cm Ratio U Status"] = cures.u.pass ? "Pass": ""; //	"Curium ratio - measurement status"
+					entries["Cm Ratio U235 Status"] = cures.u235.pass ? "Pass": ""; //	"Curium ratio - measurement status"
+				}
+				break;
+			case Selections.TruncatedMultiplicity: // NEXT: three more
+			case Selections.ActiveCalibCurve:
+			case Selections.Collar:
 				break;
 			default:
 				break;
