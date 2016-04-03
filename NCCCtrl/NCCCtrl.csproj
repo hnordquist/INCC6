@@ -42,9 +42,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BigNum">
-      <HintPath>..\deployment\BigNum.dll</HintPath>
-    </Reference>
     <Reference Include="Defs">
       <HintPath>..\deployment\Defs.dll</HintPath>
     </Reference>
@@ -54,9 +51,6 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NCCCore">
       <HintPath>..\deployment\NCCCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Options">
-      <HintPath>..\deployment\Options.dll</HintPath>
     </Reference>
     <Reference Include="RepDB">
       <HintPath>..\deployment\RepDB.dll</HintPath>
