@@ -767,7 +767,7 @@ namespace AnalysisDefs
         /// <param name="meaId">Unique id for the measurement, from the results_rec fields</param>
         /// <param name="logger">logger handle</param>
         /// <returns>A new measurement</returns>
-        public Measurement (INCCResults.results_rec rec, MeasId meaId, NCCReporter.LMLoggers.LognLM logger)
+        public Measurement (INCCResults.results_rec rec, MeasId meaId, LMLoggers.LognLM logger)
         {
             HVCalibrationParameters hv = NCC.IntegrationHelpers.GetCurrentHVCalibrationParams(rec.det);
             MeasurementTuple mt = new MeasurementTuple(new DetectorList(rec.det), rec.tests, rec.norm, rec.bkg, rec.iso, rec.acq, hv);
@@ -823,11 +823,6 @@ namespace AnalysisDefs
 			result.CopyFrom(rec.mcr);
 
 			Stratum = new Stratum(rec.st); // the stratum from the results rec
-
-            // URGENT: tedious work: add the method params pulled from the DB to the default method params
-// see IngestAnalysisMethodResultsFromDB
-
-
         }
 
         private void InitMisc()
@@ -1066,8 +1061,7 @@ namespace AnalysisDefs
         }
 
         /// <summary>
-        /// Preserve first generated INCC or LM file name on the measurement id 
-        /// todo: save the other file names
+        /// Preserve first generated INCC or LM file name on the measurement id, then the remaining filenames 
         /// </summary>
         public void PersistFileNames()
         {

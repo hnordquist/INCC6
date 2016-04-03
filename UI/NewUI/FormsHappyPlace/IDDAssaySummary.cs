@@ -68,7 +68,6 @@ namespace NewUI
                 LoadSelections(cn.Nodes);
             }
         }
-
         void LoadInspNumCombo()
 		{
 			SortedSet<string> set = new SortedSet<string>();

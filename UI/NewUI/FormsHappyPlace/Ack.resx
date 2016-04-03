@@ -118,12 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="richTextBox1.Text" xml:space="preserve">
-    <value>INCC was developed at the Los Alamos National Laboratory
+    <value>INCC was originally developed at the Los Alamos National Laboratory
 by Merlyn Krick, Phd and Bill Harker.
 Contributors include
 D. Mayo PhD, W. Geist PhD, J. Longo, and H. Nordquist of Los Alamos.
-A special thanks to the late David Beddingfield, PhD, of the IAEA
-and Los Alamos, champion of INCC6's List Mode support, and a friend.
-NFM Dave.</value>
+A special thanks to the late David Beddingfield, PhD, of the IAEA and Los Alamos.</value>
   </data>
 </root>

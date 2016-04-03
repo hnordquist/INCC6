@@ -303,10 +303,10 @@ namespace NewUI
                         m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CuriumRatio, false);
 				if (cures != null)
 				{
-					entries["Cm Ratio ID"] = cures.cm_id; // Curium ratio - ID"
-					entries["Cm Ratio Input ID"] = cures.cm_input_batch_id; // Curium ratio - input batch ID"
-					entries["Cm Ratio Cm/Pu"] = cures.cm_pu_ratio.v.ToString("F4"); // Curium ratio - Cm/Pu ratio"
-					entries["Cm Ratio Cm/U"] = cures.cm_u_ratio.v.ToString("F4"); // Curium ratio - Cm/U ratio"
+					entries["Cm Ratio ID"] = cures.methodParams2.cm_id; // Curium ratio - ID"
+					entries["Cm Ratio Input ID"] = cures.methodParams2.cm_input_batch_id; // Curium ratio - input batch ID"
+					entries["Cm Ratio Cm/Pu"] = cures.methodParams2.cm_pu_ratio.v.ToString("F4"); // Curium ratio - Cm/Pu ratio"
+					entries["Cm Ratio Cm/U"] = cures.methodParams2.cm_u_ratio.v.ToString("F4"); // Curium ratio - Cm/U ratio"
 					entries["Cm Mass"] = cures.cm_mass.v.ToString("F3"); // Curium ratio - Cm mass"
 					entries["Cm Err"] = cures.cm_mass.err.ToString("F3"); // Curium ratio - Cm mass error"
 
@@ -315,19 +315,18 @@ namespace NewUI
 					entries["Cm Ratio Pu Mass Err"] = cures.pu.pu_mass.err.ToString("F3"); //	"Curium ratio - mass error"
 					entries["Cm Ratio Pu Dcl-Asy"] = cures.pu.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
 					entries["Cm Ratio Pu Dcl-Asy %"] = cures.pu.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
-					entries["Cm Ratio U Dcl Mass"] = cures.u.dcl_mass.ToString("F2"); // Curium ratio - declared mass"
-					entries["Cm Ratio U Mass"] = cures.u.mass.v.ToString("F2");	//	"Curium ratio - mass"
-					entries["Cm Ratio U Mass Err"] = cures.u.mass.err.ToString("F3"); //	"Curium ratio - mass error"
-					entries["Cm Ratio U Dcl-Asy"] = cures.u.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
-					entries["Cm Ratio U Dcl-Asy %"] = cures.u.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
-					entries["Cm Ratio U235 Dcl Mass"] = cures.u235.dcl_mass.ToString("F2"); // Curium ratio - declared mass"
-					entries["Cm Ratio U235 Mass"] = cures.u235.mass.v.ToString("F2");	//	"Curium ratio - mass"
-					entries["Cm Ratio U235 Mass Err"] = cures.u235.mass.err.ToString("F3"); //	"Curium ratio - mass error"
-					entries["Cm Ratio U235 Dcl-Asy"] = cures.u235.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
-					entries["Cm Ratio U235 Dcl-Asy %"] = cures.u235.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
-					entries["Cm Ratio Pu Status"] = cures.pu.pass ? "Pass": ""; //	"Curium ratio - measurement status"
-					entries["Cm Ratio U Status"] = cures.u.pass ? "Pass": ""; //	"Curium ratio - measurement status"
-					entries["Cm Ratio U235 Status"] = cures.u235.pass ? "Pass": ""; //	"Curium ratio - measurement status"
+					entries["Cm Ratio U Dcl Mass"] = cures.u.dcl_mass.ToString("F2"); // Curium ratio - U declared mass"
+					entries["Cm Ratio U Mass"] = cures.u.mass.v.ToString("F2");	//	"Curium ratio - U mass"
+					entries["Cm Ratio U Mass Err"] = cures.u.mass.err.ToString("F3"); //	"Curium ratio - U mass error"
+					entries["Cm Ratio U Dcl-Asy"] = cures.u.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - U declared minus assay"
+					entries["Cm Ratio U Dcl-Asy %"] = cures.u.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - U declared minus assay %"
+					entries["Cm Ratio U235 Dcl Mass"] = cures.u235.dcl_mass.ToString("F2"); // Curium ratio - U235 declared mass"
+                    entries["Cm Ratio U235 Mass"] = cures.u235.mass.v.ToString("F2");   //	"Curium ratio - U235 mass"
+                    entries["Cm Ratio U235 Mass Err"] = cures.u235.mass.err.ToString("F3"); //	"Curium ratio - U235 mass error"
+                    entries["Cm Ratio U235 Dcl-Asy"] = cures.u235.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - U235 declared minus assay"
+					entries["Cm Ratio U235 Dcl-Asy %"] = cures.u235.dcl_minus_asy_mass_pct.ToString("F2"); //	"Curium ratio - U235 declared minus assay %"
+                    entries["Cm Ratio Pu Status"] = cures.pu.pass ? "Pass": ""; //	"Curium ratio - Pu measurement status"
+					entries["Cm Ratio U Status"] = cures.u.pass ? "Pass": ""; //	"Curium ratio - U measurement status"
 				}
 				break;
 			case Selections.TruncatedMultiplicity: // NEXT: three more

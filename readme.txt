@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 4
-6.0.1.3 April 1, 2016 J. Longo
+6.0.1.3 April 4, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -54,13 +54,13 @@ INSTALLATION INSTRUCTIONS:
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Reanalysis, Holdup acquire, Glovebox entry, the Measurement, Verification and Holdup
-   Summary reports, the Plot features, Deming integration, Collar item data entry,
+   Reanalysis, Holdup and glovebox features, the Plot features,
+   Deming integration, Collar item data entry,
    Collar acquire and Poison Rod details, integrated help.
 
 MCA-527 list mode file processing is implemented, but live data collection support is not.
 
-This is beta release software, and issues and missing features are known to exist.
+This is beta release software; issues and missing features are known to exist.
 
 CONTACT:
 
@@ -70,10 +70,8 @@ Issues for basic feature COMPLETION
 
 #70* 		Add MCA-527 single channel list mode DAQ
 #41*		INCC6 CANNOT be KILLED!!! :)
-#11*		Implement progress and cancel features for lengthy operations
 #76* 		LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75* 		LM wizard setting for cycle count not used in Live DAQ
-#80* 		Summary results CSV reports
 #31*		Implement the INCC5 Reanalysis
 #84*		Implement Collar
 

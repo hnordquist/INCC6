@@ -51,6 +51,8 @@ DROP TABLE [known_alpha_rec_m];
 GO
 DROP TABLE [known_m_rec_m];
 GO
+DROP TABLE [cm_pu_ratio_rec_m];
+GO
 DROP TABLE [curium_ratio_rec_m];
 GO
 DROP TABLE [cal_curve_rec_m];

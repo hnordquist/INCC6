@@ -138,7 +138,7 @@ namespace Analysis
 
             if (m_writingFile)
             {
-				// URGENT file write processing gets inserted here file
+				// URGENT: MCA527 file write processing gets inserted here file
                 //file.Channels.Write(channelMasks, 0, count);
                 //file.Events.Write(times, 0, count);
             }

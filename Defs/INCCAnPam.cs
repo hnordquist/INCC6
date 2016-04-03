@@ -989,7 +989,7 @@ namespace AnalysisDefs
         public class cm_pu_ratio_rec : INCCMethodDescriptor
         {
             public Tuple cm_pu_ratio;
-            public double cm_pu_half_life;
+            public double pu_half_life;
             public DateTime cm_pu_ratio_date;
             public Tuple cm_u_ratio;
             public DateTime cm_u_ratio_date;
@@ -1002,17 +1002,17 @@ namespace AnalysisDefs
             public cm_pu_ratio_rec()
             {
                 cm_pu_ratio = new Tuple(1,0);
-                cm_pu_ratio_date = new DateTime(2012,01,01);
+                cm_pu_ratio_date = new DateTime(2014, 01, 01);
                 cm_u_ratio = new Tuple(1,0);
-                cm_u_ratio_date = new DateTime(2012, 01, 01);
+                cm_u_ratio_date = new DateTime(2014, 01, 01);
                 cm_id_label = String.Empty; cm_id = String.Empty; cm_input_batch_id = String.Empty;
-                cm_pu_half_life = (Isotopics.PU240HL / Isotopics.DAYS_PER_YEAR);
+                pu_half_life = (Isotopics.PU240HL / Isotopics.DAYS_PER_YEAR);
             }
 
             public cm_pu_ratio_rec(cm_pu_ratio_rec src)
             {
                 cm_pu_ratio = new Tuple(src.cm_pu_ratio);
-                cm_pu_half_life = src.cm_pu_half_life;
+                pu_half_life = src.pu_half_life;
                 cm_pu_ratio_date = new DateTime(src.cm_pu_ratio_date.Ticks);
                 cm_u_ratio = new Tuple(src.cm_u_ratio);
                 cm_u_ratio_date = new DateTime(src.cm_u_ratio_date.Ticks);
@@ -1027,7 +1027,7 @@ namespace AnalysisDefs
             {
                 cm_pu_ratio_rec tgt = (cm_pu_ratio_rec)imd;
                 tgt.cm_pu_ratio = new Tuple(cm_pu_ratio);
-                tgt.cm_pu_half_life = cm_pu_half_life;
+                tgt.pu_half_life = pu_half_life;
                 tgt.cm_pu_ratio_date = new DateTime(cm_pu_ratio_date.Ticks);
                 tgt.cm_u_ratio = new Tuple(cm_u_ratio);
                 tgt.cm_u_ratio_date = new DateTime(cm_u_ratio_date.Ticks);
@@ -1055,7 +1055,7 @@ namespace AnalysisDefs
                     res = (x.cm_u_ratio_date.CompareTo(y.cm_u_ratio_date));
 
                 if (res == 0)
-                    res = (x.cm_pu_half_life.CompareTo(y.cm_pu_half_life));
+                    res = (x.pu_half_life.CompareTo(y.pu_half_life));
                 if (res == 0)
                     res = (x.cm_dcl_u235_mass.CompareTo(y.cm_dcl_u235_mass));
                 if (res == 0)
@@ -1077,7 +1077,7 @@ namespace AnalysisDefs
                 base.GenParamList();
                 this.Table = "cm_pu_ratio_rec";
                 ps.AddRange(DBParamList.TuplePair(cm_pu_ratio, "cm_pu_ratio"));
-                ps.Add(new DBParamEntry("pu_half_life", cm_pu_half_life));
+                ps.Add(new DBParamEntry("pu_half_life", pu_half_life));
                 ps.Add(new DBParamEntry("cm_pu_ratio_date", cm_pu_ratio_date));
                 ps.AddRange(DBParamList.TuplePair(cm_u_ratio, "cm_u_ratio"));
                 ps.Add(new DBParamEntry("cm_u_ratio_date", cm_u_ratio_date));
@@ -1087,7 +1087,20 @@ namespace AnalysisDefs
                 ps.Add(new DBParamEntry("dcl_u_mass", cm_dcl_u_mass));
                 ps.Add(new DBParamEntry("dcl_u235_mass", cm_dcl_u235_mass));
             }
-    }
+
+            public override List<NCCReporter.Row> ToLines(Measurement m)
+            {
+                INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Standard);
+                sec.AddTwo(cm_id_label, cm_id);
+                sec.AddTwo("Input batch id:", cm_input_batch_id);
+                sec.AddDateTimeRow("Cm/Pu ratio date:", cm_pu_ratio_date);
+                sec.AddNumericRow("Cm/Pu ratio:", cm_pu_ratio);
+                sec.AddDateTimeRow("Cm/U ratio date:", cm_u_ratio_date);
+                sec.AddNumericRow("Cm/U ratio:", cm_u_ratio);
+                return sec;
+            }
+
+        }
         public enum CuriumRatioVariant { UseSingles, UseDoubles, UseAddASourceDoubles }
         public class curium_ratio_rec : INCCMethodDescriptor
         {

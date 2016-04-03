@@ -1407,7 +1407,6 @@ namespace NCCTransfer
                         newres.pu.dcl_minus_asy_mass = new Tuple(oldres.cr_dcl_minus_asy_pu_mass, oldres.cr_dcl_minus_asy_pu_mass_err);
                         newres.pu.dcl_minus_asy_mass_pct = oldres.cr_dcl_minus_asy_pu_mass_pct;
                         newres.pu.pass = TransferUtils.PassCheck(oldres.cr_pu_pass_fail);
-                        newres.pu_half_life = oldres.cr_pu_half_life;
                       
                         newres.u.mass = new Tuple(oldres.cr_u_mass, oldres.cr_u_mass_err);
                         newres.u.dcl_mass = oldres.cr_dcl_u_mass_res;
@@ -1421,15 +1420,16 @@ namespace NCCTransfer
                         newres.u235.dcl_minus_asy_mass_pct = oldres.cr_dcl_minus_asy_u235_mass_pct;                        
                         
                         newres.cm_mass = new Tuple(oldres.cr_cm_mass, oldres.cr_cm_mass_err);
-                        newres.cm_pu_ratio = new Tuple(oldres.cr_cm_pu_ratio, oldres.cr_cm_pu_ratio_err);
+                        newres.methodParams2.cm_pu_ratio = new Tuple(oldres.cr_cm_pu_ratio, oldres.cr_cm_pu_ratio_err);
                         newres.cm_pu_ratio_decay_corr = new Tuple(oldres.cr_cm_pu_ratio_decay_corr, oldres.cr_cm_pu_ratio_decay_corr_err);
-                        newres.cm_pu_ratio_date = INCC.DateFrom(TransferUtils.str(oldres.cr_cm_pu_ratio_date, INCC.DATE_TIME_LENGTH));
+                        newres.methodParams2.cm_pu_ratio_date = INCC.DateFrom(TransferUtils.str(oldres.cr_cm_pu_ratio_date, INCC.DATE_TIME_LENGTH));
                         newres.cm_u_ratio_decay_corr = new Tuple(oldres.cr_cm_u_ratio_decay_corr, oldres.cr_cm_u_ratio_decay_corr_err);
-                        newres.cm_u_ratio_date = INCC.DateFrom(TransferUtils.str(oldres.cr_cm_pu_ratio_date, INCC.DATE_TIME_LENGTH));
+                        newres.methodParams2.cm_u_ratio_date = INCC.DateFrom(TransferUtils.str(oldres.cr_cm_pu_ratio_date, INCC.DATE_TIME_LENGTH));
+                        newres.methodParams2.pu_half_life = oldres.cr_pu_half_life;
 
-                        newres.cm_id_label = TransferUtils.str(oldres.cr_cm_id_label, INCC.MAX_ITEM_ID_LENGTH);
-                        newres.cm_id = TransferUtils.str(oldres.cr_cm_id, INCC.MAX_ITEM_ID_LENGTH);
-                        newres.cm_input_batch_id = TransferUtils.str(oldres.cr_cm_input_batch_id, INCC.MAX_ITEM_ID_LENGTH);
+                        newres.methodParams2.cm_id_label = TransferUtils.str(oldres.cr_cm_id_label, INCC.MAX_ITEM_ID_LENGTH);
+                        newres.methodParams2.cm_id = TransferUtils.str(oldres.cr_cm_id, INCC.MAX_ITEM_ID_LENGTH);
+                        newres.methodParams2.cm_input_batch_id = TransferUtils.str(oldres.cr_cm_input_batch_id, INCC.MAX_ITEM_ID_LENGTH);
 
                         newres.methodParams.cev.a = oldres.cr_a_res; newres.methodParams.cev.b = oldres.cr_b_res;
                         newres.methodParams.cev.c = oldres.cr_c_res; newres.methodParams.cev.d = oldres.cr_d_res;

@@ -1422,7 +1422,7 @@ namespace AnalysisDefs
                         v.cm_pu_ratio.err = DB.Utils.DBDouble(dr["cm_pu_ratio_err"]);
                         v.cm_u_ratio.v = DB.Utils.DBDouble(dr["cm_u_ratio"]);
                         v.cm_u_ratio.err = DB.Utils.DBDouble(dr["cm_u_ratio_err"]);
-                        v.cm_pu_half_life = DB.Utils.DBDouble(dr["pu_half_life"]);
+                        v.pu_half_life = DB.Utils.DBDouble(dr["pu_half_life"]);
                         v.cm_pu_ratio_date = DB.Utils.DBDateTime(dr["cm_pu_ratio_date"]);
                         v.cm_id_label = dr["cm_id_label"].ToString();
                         v.cm_id = dr["cm_id"].ToString();
@@ -3729,7 +3729,6 @@ namespace AnalysisDefs
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
 					IngestAnalysisMethodResultsFromDB(m, mdb.db);
-
 				}
 			}
 			return ms;
@@ -3761,7 +3760,6 @@ namespace AnalysisDefs
 
                 // get the traditional results rec that matches the measurement id 
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
-
 				if (rec != null)
 				{
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
@@ -3776,11 +3774,10 @@ namespace AnalysisDefs
 						foreach (string rfpath in lrfpaths)
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
-				}
-				// URGENT: needed for Reanalysis, and Assay summary: cycles, results, method results, method params, etc 
-				// INCCAnalysisState and INCCAnalysisResults 
-			}
-
+                    IngestAnalysisMethodResultsFromDB(m);
+                }
+                // URGENT: needed for Reanalysis, and Assay summary: cycles, results, etc 
+            }
             return ms;
         }
 

@@ -418,6 +418,7 @@ namespace NCCFile
                 foo.SetPath(NC.App.AppContext.FileInput);
             else
                 foo.SetFileList(NC.App.AppContext.FileInputList);
+            foo.eh += new TransferEventHandler((s, e) => { FireEvent(EventType.ActionInProgress, e); });
             List<INCCTransferBase> res = foo.Restore();
             // use RemoveAll to cull those NCC files that reference a non-existent detector
             DetectorList dl = NC.App.DB.Detectors;

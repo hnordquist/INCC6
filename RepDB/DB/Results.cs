@@ -214,7 +214,7 @@ namespace DB
         public DataTable GetMethodResultsMethod(long mid, long rid)
         {
 			db.SetConnection();
-            string sSQL = "SELECT * from " + MethodTableName + " where mid=" + mid.ToString() + " AND rid=" + rid.ToString();
+            string sSQL = "SELECT * from " + table + "_m where mid=" + mid.ToString() + " AND rid=" + rid.ToString();
             return db.DT(sSQL);
         }
 

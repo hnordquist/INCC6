@@ -723,16 +723,16 @@ namespace DB
             }
         }
 
-		/// <summary>
-		/// 6.0.1.0			db.TableHasColumn("LMINCCAppContext","dataFilePath");
-		/// 6.0.1.1			db.TableHasColumn("composite_isotopics_rec","id");
-		/// 6.0.1.2			new table composite_isotopic_rec, mod cm_pu_ratio_rec
-		/// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas
-		/// </summary>
-		/// <param name="table"></param>
-		/// <param name="col"></param>
-		/// <returns></returns>
-		public bool TableHasColumn(string table, string col)
+        /// <summary>
+        /// 6.0.1.0			db.TableHasColumn("LMINCCAppContext","dataFilePath");
+        /// 6.0.1.1			db.TableHasColumn("composite_isotopics_rec","id");
+        /// 6.0.1.2			new table composite_isotopic_rec, mod cm_pu_ratio_rec
+        /// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas, mod results_curium_ratio_rec and cm_pu_ratio_rec
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="col"></param>
+        /// <returns></returns>
+        public bool TableHasColumn(string table, string col)
 		{
 			string sql = "select " + col + " from " + table;
 			DataTable dt = DT(sql);

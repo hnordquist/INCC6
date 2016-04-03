@@ -848,7 +848,7 @@ namespace NewUI
 				NCCFile.ItemFile onefile = new NCCFile.ItemFile();
 				string path = System.IO.Path.GetFullPath(aDlg.FileName);
 				onefile.Process(path);
-				// URGENT: now do something with the results
+				// todo: now do something with the results
 			}
 			
         }

@@ -550,6 +550,7 @@ namespace AnalysisDefs
 								ccres.heavy_metal_content = DB.Utils.DBDouble(dr["heavy_metal_content"]);
 								ccres.heavy_metal_correction = DB.Utils.DBDouble(dr["heavy_metal_correction"]);
 								ccres.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                                ccres.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
 								ccres.heavy_metal_corr_singles = VTupleHelper.Make(dr, "heavy_metal_corr_singles");
 								ccres.heavy_metal_corr_doubles = VTupleHelper.Make(dr, "heavy_metal_corr_doubles");
 								INCCAnalysisParams.cal_curve_rec cc = ccres.methodParams;
@@ -616,11 +617,196 @@ namespace AnalysisDefs
 						}
 						break;
 
-					case AnalysisMethod.KnownM:  // URGENT: complete as per above
-					case AnalysisMethod.Multiplicity: // URGENT: 
-					case AnalysisMethod.AddASource: // URGENT: 
-					case AnalysisMethod.Active: // URGENT: 
-					case AnalysisMethod.CuriumRatio: // URGENT: 
+					case AnalysisMethod.KnownM:
+                        {
+                            INCCMethodResults.results_known_m_rec res = (INCCMethodResults.results_known_m_rec)
+                                m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                            ar.table = "results_known_m_rec";
+                            dt = ar.GetCombinedResults(mid);
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                res.pu240e_mass = VTupleHelper.Make(dr, "pu240e_mass");
+                                res.pu_mass = VTupleHelper.Make(dr, "pu_mass");
+                                res.dcl_pu240e_mass = DB.Utils.DBDouble(dr["dcl_pu240e_mass"]);
+                                res.dcl_pu_mass = DB.Utils.DBDouble(dr["dcl_pu_mass"]);
+                                res.pass = DB.Utils.DBBool(dr["pass"]);
+                                res.mult = DB.Utils.DBDouble(dr["mult"]);
+                                res.alpha = DB.Utils.DBDouble(dr["alpha"]);
+                                res.pu239e_mass = DB.Utils.DBDouble(dr["pu239e_mass"]);
+                                res.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                                res.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
+                                INCCAnalysisParams.known_m_rec km = res.methodParams;
+                                km.b = DB.Utils.DBDouble(dr["b"]);
+                                km.c = DB.Utils.DBDouble(dr["c"]);
+                                km.vs1 = DB.Utils.DBDouble(dr["vs1"]);
+                                km.vs2 = DB.Utils.DBDouble(dr["vs2"]);
+                                km.vi1 = DB.Utils.DBDouble(dr["vi1"]);
+                                km.vi2 = DB.Utils.DBDouble(dr["vi2"]);
+                                km.sigma_x = DB.Utils.DBDouble(dr["sigma_x"]);
+                                km.sf_rate = DB.Utils.DBDouble(dr["sf_rate"]);
+                                km.lower_mass_limit = DB.Utils.DBDouble(dr["lower_mass_limit"]);
+                                km.upper_mass_limit = DB.Utils.DBDouble(dr["upper_mass_limit"]);
+                            }
+                        }
+                        break;
+                    case AnalysisMethod.Multiplicity:
+                        {
+                            INCCMethodResults.results_multiplicity_rec res = (INCCMethodResults.results_multiplicity_rec)
+                                m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                            ar.table = "results_multiplicity_rec";
+                            dt = ar.GetCombinedResults(mid);
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                res.pu240e_mass = VTupleHelper.Make(dr, "pu240e_mass");
+                                res.pu_mass = VTupleHelper.Make(dr, "pu_mass");
+                                res.dcl_pu240e_mass = DB.Utils.DBDouble(dr["dcl_pu240e_mass"]);
+                                res.dcl_pu_mass = DB.Utils.DBDouble(dr["dcl_pu_mass"]);
+                                res.pass = DB.Utils.DBBool(dr["pass"]);
+                                res.mult = VTupleHelper.Make(dr, "mult");
+                                res.alphaK = VTupleHelper.Make(dr, "alpha");
+                                res.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                                res.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
+                                res.corr_factor = VTupleHelper.Make(dr, "corr_factor");
+                                res.efficiencyComputed = VTupleHelper.Make(dr, "efficiencyComputed");
+                                INCCAnalysisParams.multiplicity_rec mu = res.methodParams;
+                                mu.solve_efficiency = (INCCAnalysisParams.MultChoice)DB.Utils.DBInt32(dr["solve_efficiency"]);
+                                mu.sf_rate = DB.Utils.DBDouble(dr["sf_rate"]);
+                                mu.vs1 = DB.Utils.DBDouble(dr["vs1"]);
+                                mu.vs2 = DB.Utils.DBDouble(dr["vs2"]);
+                                mu.vs3 = DB.Utils.DBDouble(dr["vs3"]);
+                                mu.vi1 = DB.Utils.DBDouble(dr["vi1"]);
+                                mu.vi2 = DB.Utils.DBDouble(dr["vi2"]);
+                                mu.vi3 = DB.Utils.DBDouble(dr["vi3"]);
+                                mu.a = DB.Utils.DBDouble(dr["a"]);
+                                mu.b = DB.Utils.DBDouble(dr["b"]);
+                                mu.c = DB.Utils.DBDouble(dr["c"]);
+                                mu.sigma_x = DB.Utils.DBDouble(dr["sigma_x"]);
+                                mu.alpha_weight = DB.Utils.DBDouble(dr["alpha_weight"]);
+                                mu.multEffCorFactor = DB.Utils.DBDouble(dr["eff_cor"]);
+                            }
+                        }
+                        break;
+                    case AnalysisMethod.AddASource:
+                        {
+                            INCCMethodResults.results_add_a_source_rec res = (INCCMethodResults.results_add_a_source_rec)
+                                m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                            ar.table = "results_add_a_source_rec";
+                            dt = ar.GetCombinedResults(mid);
+                            foreach (DataRow dr in dt.Rows)
+                            {
+                                res.pu240e_mass = VTupleHelper.Make(dr, "pu240e_mass");
+                                res.pu_mass = VTupleHelper.Make(dr, "pu_mass");
+                                res.dcl_pu240e_mass = DB.Utils.DBDouble(dr["dcl_pu240e_mass"]);
+                                res.dcl_pu_mass = DB.Utils.DBDouble(dr["dcl_pu_mass"]);
+                                res.pass = DB.Utils.DBBool(dr["pass"]);
+                                res.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                                res.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
+                                res.corr_doubles = VTupleHelper.Make(dr, "corr_doubles");
+                                res.corr_factor = VTupleHelper.Make(dr, "corr_factor");
+                                res.delta = VTupleHelper.Make(dr, "delta");
+                                res.tm_doubles_bkg = VTupleHelper.Make(dr, "tm_doubles_bkg");
+                                res.tm_uncorr_doubles = VTupleHelper.Make(dr, "tm_uncorr_doubles");
+                                res.tm_corr_doubles = VTupleHelper.Make(dr, "tm_corr_doubles");
+                                res.sample_avg_cf252_doubles = VTupleHelper.Make(dr, "sample_avg_cf252_doubles");
+                                res.dzero_cf252_doubles = DB.Utils.DBDouble(dr["dzero_cf252_doubles"]);
+                                res.sample_cf252_doubles = TupleArraySlurp(ref res.sample_cf252_doubles, "sample_cf252_doubles", dr);
+                                res.sample_cf252_ratio = DB.Utils.ReifyDoubles((string)dr["sample_cf252_ratio"]);
+
+                                INCCAnalysisParams.add_a_source_rec aas = res.methodParams;
+                                CalCurveDBSnock(aas.cev, dr);
+                                aas.dcl_mass = DB.Utils.ReifyDoubles((string)dr["dcl_mass"]);
+                                aas.doubles = DB.Utils.ReifyDoubles((string)dr["doubles"]);
+                                aas.cf.a = DB.Utils.DBDouble(dr["cf_a"]);
+                                aas.cf.b = DB.Utils.DBDouble(dr["cf_b"]);
+                                aas.cf.c = DB.Utils.DBDouble(dr["cf_c"]);
+                                aas.cf.d = DB.Utils.DBDouble(dr["cf_d"]);
+                                aas.dzero_avg = DB.Utils.DBDouble(dr["dzero_avg"]);
+                                aas.num_runs = DB.Utils.DBUInt16(dr["num_runs"]);
+                                aas.position_dzero = DB.Utils.ReifyDoubles((string)dr["position_dzero"]);
+                                aas.dzero_ref_date = DB.Utils.DBDateTime(dr["dzero_ref_date"]);
+                                aas.use_truncated_mult = DB.Utils.DBBool(dr["use_truncated_mult"]);
+                                aas.tm_dbls_rate_upper_limit = DB.Utils.DBDouble(dr["tm_dbls_rate_upper_limit"]);
+                                aas.tm_weighting_factor = DB.Utils.DBDouble(dr["tm_weighting_factor"]);
+                            }
+                        }
+                        break;  
+                    case AnalysisMethod.Active:
+                    {
+                        INCCMethodResults.results_active_rec res = (INCCMethodResults.results_active_rec)
+                            m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                        ar.table = "results_active_rec";
+                        dt = ar.GetCombinedResults(mid);
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            res.k0.v = DB.Utils.DBDouble(dr["k0"]);
+                            res.k1 = VTupleHelper.Make(dr, "k1");
+                            res.k = VTupleHelper.Make(dr, "k");
+                            res.u235_mass = VTupleHelper.Make(dr, "u235_mass");
+                            res.dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
+                            res.u235_mass = VTupleHelper.Make(dr, "u235_mass");
+                            res.dcl_minus_asy_u235_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.dcl_minus_asy_u235_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+                            res.pass = DB.Utils.DBBool(dr["pass"]);
+
+                            INCCAnalysisParams.active_rec a = res.methodParams;
+                            CalCurveDBSnock(a.cev, dr);
+                            a.dcl_mass = DB.Utils.ReifyDoubles((string)dr["dcl_mass"]);
+                            a.doubles = DB.Utils.ReifyDoubles((string)dr["doubles"]);
+                        }
+                    }
+                    break;  
+                    case AnalysisMethod.CuriumRatio:
+                    {
+                        INCCMethodResults.results_curium_ratio_rec res = (INCCMethodResults.results_curium_ratio_rec)
+                            m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                        ar.table = "results_curium_ratio_rec";
+                        dt = ar.GetCombinedResults(mid);
+                        ar.table = "cm_pu_ratio_rec";
+                        //long rid =                   // URGENT
+                        //DataTable dt2 = ar.GetMethodResultsMethodd(mid, rid);
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                                   // DB.Utils.DBInt64(dr["pu_half_life"]);
+                            res.cm_pu_ratio_decay_corr = VTupleHelper.Make(dr, "cm_pu_ratio_decay_corr");
+                            res.cm_u_ratio_decay_corr = VTupleHelper.Make(dr, "cm_u_ratio_decay_corr");
+                            res.cm_mass = VTupleHelper.Make(dr,"cm_mass");
+
+                            INCCAnalysisParams.cm_pu_ratio_rec v = res.methodParams2;
+                            v.cm_pu_ratio = VTupleHelper.Make(dr, "cm_pu_ratio");
+                            v.cm_u_ratio = VTupleHelper.Make(dr, "cm_u_ratio");
+                            v.pu_half_life = DB.Utils.DBDouble(dr["pu_half_life"]);
+                            v.cm_pu_ratio_date = DB.Utils.DBDateTime(dr["cm_pu_ratio_date"]);
+                            v.cm_id_label = dr["cm_id_label"].ToString();
+                            v.cm_id = dr["cm_id"].ToString();
+                            v.cm_input_batch_id = dr["cm_input_batch_id"].ToString();
+                            v.cm_dcl_u_mass = DB.Utils.DBDouble(dr["dcl_u_mass"]);
+                            v.cm_dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
+
+                            INCCAnalysisParams.curium_ratio_rec cr = res.methodParams;
+                            cr.curium_ratio_type = (INCCAnalysisParams.CuriumRatioVariant)DB.Utils.DBInt32(dr["curium_ratio_type"]);
+                            CalCurveDBSnock(cr.cev, dr);
+
+                            res.pu.pu240e_mass = VTupleHelper.Make(dr, "pu240e_mass");
+                            res.pu.mass = VTupleHelper.Make(dr, "pu_mass");
+                            res.pu.dcl_pu240e_mass = DB.Utils.DBDouble(dr["dcl_pu240e_mass"]);
+                            res.pu.dcl_pu_mass = DB.Utils.DBDouble(dr["dcl_pu_mass"]);
+                            res.pu.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                            res.pu.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
+                            res.pu.pass = DB.Utils.DBBool(dr["pu_pass"]);
+
+                            res.u.mass = VTupleHelper.Make(dr, "u_mass");
+                            res.u.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u_mass");
+                            res.u.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u_mass_pct"]);
+                            res.u.dcl_mass = v.cm_dcl_u_mass;
+                            res.u.pass = DB.Utils.DBBool(dr["u_pass"]);
+
+                            res.u235.mass = VTupleHelper.Make(dr, "u235_mass");
+                            res.u235.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.u235.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+                            res.u235.dcl_mass = v.cm_dcl_u235_mass;
+                        }
+                    }
+                    break;
 					case AnalysisMethod.ActiveMultiplicity:
 					case AnalysisMethod.ActivePassive:
 					case AnalysisMethod.Collar:
