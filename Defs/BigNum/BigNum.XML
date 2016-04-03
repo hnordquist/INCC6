@@ -1,0 +1,1785 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BigNum</name>
+    </assembly>
+    <members>
+        <member name="T:BigNum.BigFloat">
+            <summary>
+            An arbitrary-precision floating-point class
+            
+            Format:
+            Each number is stored as an exponent (32-bit signed integer), and a mantissa
+            (n-bit) BigInteger. The sign of the number is stored in the BigInteger
+            
+            Applicability and Performance:
+            This class is designed to be used for small extended precisions. It may not be
+            safe (and certainly won't be fast) to use it with mixed-precision arguments.
+            It does support, but will not be efficient for, numbers over around 2048 bits.
+            
+            Notes:
+            All conversions to and from strings are slow.
+            
+            Conversions from simple integer types Int32, Int64, UInt32, UInt64 are performed
+            using the appropriate constructor, and are relatively fast.
+            
+            The class is written entirely in managed C# code, with not native or managed
+            assembler. The use of native assembler would speed up the multiplication operations
+            many times over, and therefore all higher-order operations too.
+            </summary>
+        </member>
+        <member name="T:BigNum.BigFloat.SpecialValueType">
+            <summary>
+            Floats can have 4 special value types:
+            
+            NaN: Not a number (cannot be changed using any operations)
+            Infinity: Positive infinity. Some operations e.g. Arctan() allow this input.
+            -Infinity: Negative infinity. Some operations allow this input.
+            Zero
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.SpecialValueType.NONE">
+            <summary>
+            Not a special value
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.SpecialValueType.ZERO">
+            <summary>
+            Zero
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.SpecialValueType.INF_PLUS">
+            <summary>
+            Positive infinity
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.SpecialValueType.INF_MINUS">
+            <summary>
+            Negative infinity
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.SpecialValueType.NAN">
+            <summary>
+            Not a number
+            </summary>
+        </member>
+        <member name="T:BigNum.BigFloat.RoundingModeType">
+            <summary>
+            This affects the ToString() method. 
+            
+            With Trim rounding, all insignificant zero digits are drip
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.RoundingModeType.TRIM">
+            <summary>
+            Trim non-significant zeros from ToString output after rounding
+            </summary>
+        </member>
+        <member name="F:BigNum.BigFloat.RoundingModeType.EXACT">
+            <summary>
+            Keep all non-significant zeroes in ToString output after rounding
+            </summary>
+        </member>
+        <member name="T:BigNum.BigFloat.ExponentAdaptor">
+            <summary>
+            A wrapper for the signed exponent, avoiding overflow.
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.ExponentAdaptor.exponent">
+            <summary>
+            The 32-bit exponent
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Implicit(BigNum.BigFloat.ExponentAdaptor)~System.Int32">
+            <summary>
+            Implicit cast to Int32
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Implicit(System.Int32)~BigNum.BigFloat.ExponentAdaptor">
+            <summary>
+            Implicit cast from Int32 to ExponentAdaptor
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Increment(BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded increment operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Decrement(BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded decrement operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Addition(BigNum.BigFloat.ExponentAdaptor,BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded addition operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Subtraction(BigNum.BigFloat.ExponentAdaptor,BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded subtraction operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Multiply(BigNum.BigFloat.ExponentAdaptor,BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded multiplication operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_Division(BigNum.BigFloat.ExponentAdaptor,BigNum.BigFloat.ExponentAdaptor)">
+            <summary>
+            Overloaded division operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_RightShift(BigNum.BigFloat.ExponentAdaptor,System.Int32)">
+            <summary>
+            Overloaded right-shift operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ExponentAdaptor.op_LeftShift(BigNum.BigFloat.ExponentAdaptor,System.Int32)">
+            <summary>
+            Overloaded left-shift operator
+            </summary>
+            <param name="a1"></param>
+            <param name="shift"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigFloat.#cctor">
+            <summary>
+            Constructs a 128-bit BigFloat
+            
+            Sets the value to zero
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat of the required precision
+            
+            Sets the value to zero
+            </summary>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.UInt32,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a big float from a UInt32 to the required precision
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.Int32,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat from an Int32 to the required precision
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.Int64,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat from a 64-bit integer
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.UInt64,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat from a 64-bit unsigned integer
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(BigNum.BigInt,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat from a BigInt, using the specified precision
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.Double,BigNum.PrecisionSpec)">
+            <summary>
+            Construct a BigFloat from a double-precision floating point number
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(BigNum.BigFloat)">
+            <summary>
+            Copy constructor
+            </summary>
+            <param name="value"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(BigNum.BigFloat,BigNum.PrecisionSpec)">
+            <summary>
+            Copy Constructor - constructs a new BigFloat with the specified precision, copying the old one.
+            
+            The value is rounded towards zero in the case where precision is decreased. The Round() function
+            should be used beforehand if a correctly rounded result is required.
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.#ctor(System.String,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigFloat from a string
+            </summary>
+            <param name="value"></param>
+            <param name="mantissaPrec"></param>
+        </member>
+        <member name="P:BigNum.BigFloat.Precision">
+            <summary>
+            Read-only property. Returns the precision specification of the mantissa.
+            
+            Floating point numbers are represented as 2^exponent * mantissa, where the
+            mantissa and exponent are integers. Note that the exponent in this class is
+            always a 32-bit integer. The precision therefore specifies how many bits
+            the mantissa will have.
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.Sign">
+            <summary>
+            Writable property:
+                true iff the number is negative or in some cases zero (&lt;0)
+                false iff the number if positive or in some cases zero (&gt;0)
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.IsSpecialValue">
+            <summary>
+            Read-only property. 
+            True if the number is NAN, INF_PLUS, INF_MINUS or ZERO
+            False if the number has any other value.
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.SpecialValue">
+            <summary>
+            Read-only property, returns the type of number this is. Special values include:
+            
+            NONE - a regular number
+            ZERO - zero
+            NAN - Not a Number (some operations will return this if their inputs are out of range)
+            INF_PLUS - Positive infinity, not really a number, but a valid input to and output of some functions.
+            INF_MINUS - Negative infinity, not really a number, but a valid input to and output of some functions.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.GetPi(BigNum.PrecisionSpec)">
+            <summary>
+            Gets pi to the indicated precision
+            </summary>
+            <param name="precision">The precision to perform the calculation to</param>
+            <returns>pi (the ratio of the area of a circle to its diameter)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.GetE(BigNum.PrecisionSpec)">
+            <summary>
+            Get e to the indicated precision
+            </summary>
+            <param name="precision">The preicision to perform the calculation to</param>
+            <returns>e (the number for which the d/dx(e^x) = e^x)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Add(BigNum.BigFloat)">
+            <summary>
+            Addition (this = this + n2)
+            </summary>
+            <param name="n2">The number to add</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Sub(BigNum.BigFloat)">
+            <summary>
+            Subtraction (this = this - n2)
+            </summary>
+            <param name="n2">The number to subtract from this</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Mul(BigNum.BigFloat)">
+            <summary>
+            Multiplication (this = this * n2)
+            </summary>
+            <param name="n2">The number to multiply this by</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Div(BigNum.BigFloat)">
+            <summary>
+            Division (this = this / n2)
+            </summary>
+            <param name="n2">The number to divide this by</param>
+        </member>
+        <member name="M:BigNum.BigFloat.MulPow2(System.Int32)">
+            <summary>
+            Multiply by a power of 2 (-ve implies division)
+            </summary>
+            <param name="pow2"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.Reciprocal">
+            <summary>
+            Division-based reciprocal, fastest for small precisions up to 15,000 bits.
+            </summary>
+            <returns>The reciprocal 1/this</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.ReciprocalNewton">
+            <summary>
+            Newton's method reciprocal, fastest for larger precisions over 15,000 bits.
+            </summary>
+            <returns>The reciprocal 1/this</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.ReciprocalNewton2">
+            <summary>
+            Newton's method reciprocal, fastest for larger precisions over 15,000 bits.
+            </summary>
+            <returns>The reciprocal 1/this</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Assign(BigNum.BigFloat)">
+            <summary>
+            Sets this equal to the input
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.GreaterThan(BigNum.BigFloat)">
+            <summary>
+            Greater than comparison
+            </summary>
+            <param name="n2">the number to compare this to</param>
+            <returns>true iff this is greater than n2 (this &gt; n2)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.LessThan(BigNum.BigFloat)">
+            <summary>
+            Less than comparison
+            </summary>
+            <param name="n2">the number to compare this to</param>
+            <returns>true iff this is less than n2 (this &lt; n2)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.GreaterThan(System.Int32)">
+            <summary>
+            Greater than comparison
+            </summary>
+            <param name="i">the number to compare this to</param>
+            <returns>true iff this is greater than n2 (this &gt; n2)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.LessThan(System.Int32)">
+            <summary>
+            Less than comparison
+            </summary>
+            <param name="i">the number to compare this to</param>
+            <returns>true iff this is less than n2 (this &lt; n2)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.IsZero">
+            <summary>
+            Compare to zero
+            </summary>
+            <returns>true if this is zero (this == 0)</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Floor">
+            <summary>
+            Sets the number to the biggest integer numerically closer to zero, if possible.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.FPart">
+            <summary>
+            Sets the number to its fractional component (equivalent to 'this' - (int)'this')
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Tan">
+            <summary>
+            Calculates tan(x)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Cos">
+            <summary>
+            Calculates Cos(x)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Sin">
+            <summary>
+            Calculates Sin(x):
+            This takes a little longer and is less accurate if the input is out of the range (-pi, pi].
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Sinh">
+            <summary>
+            Hyperbolic Sin (sinh) function
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Cosh">
+            <summary>
+            Hyperbolic cosine (cosh) function
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Tanh">
+            <summary>
+            Hyperbolic tangent function (tanh)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arcsin">
+            <summary>
+            arcsin(): the inverse function of sin(), range of (-pi/2..pi/2)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arccos">
+            <summary>
+            arccos(): the inverse function of cos(), range (0..pi)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arctan">
+            <summary>
+            arctan(): the inverse function of sin(), range of (-pi/2..pi/2)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arcsinh">
+            <summary>
+            Arcsinh(): the inverse sinh function
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arccosh">
+            <summary>
+            Arccosh(): the inverse cosh() function
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Arctanh">
+            <summary>
+            Arctanh(): the inverse tanh function
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Sqrt">
+            <summary>
+            Two-variable iterative square root, taken from
+            http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#A_two-variable_iterative_method
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Log">
+            <summary>
+            The natural logarithm, ln(x)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Log10">
+            <summary>
+            Log to the base 10
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Exp">
+            <summary>
+            The exponential function. Less accurate for high exponents, scales poorly with the number
+            of bits.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Pow(System.Int32)">
+            <summary>
+            Raises a number to an integer power (positive or negative). This is a very accurate and fast function,
+            comparable to or faster than division (although it is slightly slower for
+            negative powers, obviously)
+            
+            </summary>
+            <param name="power"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.Pow(BigNum.BigFloat)">
+            <summary>
+            Raises to an aribitrary power. This is both slow (uses Log) and inaccurate. If you need to
+            raise e^x use exp(). If you need an integer power, use the integer power function Pow(int)
+            Accuracy Note:
+               The function is only ever accurate to a maximum of 4 decimal digits
+               For every 10x larger (or smaller) the power gets, you lose an additional decimal digit
+               If you really need a precise result, do the calculation with an extra 32-bits and round
+            Domain Note:
+               This only works for powers of positive real numbers. Negative numbers will fail.
+            </summary>
+            <param name="power"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.Floor(BigNum.BigFloat)">
+            <summary>
+            Returns the integer component of the input
+            </summary>
+            <param name="n1">The input number</param>
+            <remarks>The integer component returned will always be numerically closer to zero
+            than the input: an input of -3.49 for instance would produce a value of 3.</remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.FPart(BigNum.BigFloat)">
+            <summary>
+            Returns the fractional (non-integer component of the input)
+            </summary>
+            <param name="n1">The input number</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Tan(BigNum.BigFloat)">
+            <summary>
+            Calculates tan(x)
+            </summary>
+            <param name="n1">The angle (in radians) to find the tangent of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Cos(BigNum.BigFloat)">
+            <summary>
+            Calculates Cos(x)
+            </summary>
+            <param name="n1">The angle (in radians) to find the cosine of</param>
+            <remarks>This is a reasonably fast function for smaller precisions, but
+            doesn't scale well for higher precision arguments</remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Sin(BigNum.BigFloat)">
+            <summary>
+            Calculates Sin(x):
+            This takes a little longer and is less accurate if the input is out of the range (-pi, pi].
+            </summary>
+            <param name="n1">The angle to find the sine of (in radians)</param>
+            <remarks>This is a resonably fast function, for smaller precision arguments, but doesn't
+            scale very well with the number of bits in the input.</remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Sinh(BigNum.BigFloat)">
+            <summary>
+            Hyperbolic Sin (sinh) function
+            </summary>
+            <param name="n1">The number to find the hyperbolic sine of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Cosh(BigNum.BigFloat)">
+            <summary>
+            Hyperbolic cosine (cosh) function
+            </summary>
+            <param name="n1">The number to find the hyperbolic cosine of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Tanh(BigNum.BigFloat)">
+            <summary>
+            Hyperbolic tangent function (tanh)
+            </summary>
+            <param name="n1">The number to find the hyperbolic tangent of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Arcsin(BigNum.BigFloat)">
+            <summary>
+            arcsin(): the inverse function of sin(), range of (-pi/2..pi/2)
+            </summary>
+            <param name="n1">The number to find the arcsine of (-pi/2..pi/2)</param>
+            <remarks>Note that inverse trig functions are only defined within a specific range.
+            Values outside this range will return NaN, although some margin for error is assumed.
+            </remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Arccos(BigNum.BigFloat)">
+            <summary>
+            arccos(): the inverse function of cos(), input range (0..pi)
+            </summary>
+            <param name="n1">The number to find the arccosine of (0..pi)</param>
+            <remarks>Note that inverse trig functions are only defined within a specific range.
+            Values outside this range will return NaN, although some margin for error is assumed.
+            </remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Arctan(BigNum.BigFloat)">
+            <summary>
+            arctan(): the inverse function of sin(), input range of (-pi/2..pi/2)
+            </summary>
+            <param name="n1">The number to find the arctangent of (-pi/2..pi/2)</param>
+            <remarks>Note that inverse trig functions are only defined within a specific range.
+            Values outside this range will return NaN, although some margin for error is assumed.
+            </remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Arcsinh(BigNum.BigFloat)">
+            <summary>
+            Arcsinh(): the inverse sinh function
+            </summary>
+            <param name="n1">The number to find the inverse hyperbolic sine of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Arccosh(BigNum.BigFloat)">
+            <summary>
+            Arccosh(): the inverse cosh() function
+            </summary>
+            <param name="n1">The number to find the inverse hyperbolic cosine of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Arctanh(BigNum.BigFloat)">
+            <summary>
+            Arctanh(): the inverse tanh function
+            </summary>
+            <param name="n1">The number to fine the inverse hyperbolic tan of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Sqrt(BigNum.BigFloat)">
+            <summary>
+            Two-variable iterative square root, taken from
+            http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#A_two-variable_iterative_method
+            </summary>
+            <remarks>This is quite a fast function, as elementary functions go. You can expect it to take
+            about twice as long as a floating-point division.
+            </remarks>
+        </member>
+        <member name="M:BigNum.BigFloat.Log(BigNum.BigFloat)">
+            <summary>
+            The natural logarithm, ln(x) (log base e)
+            </summary>
+            <remarks>This is a very slow function, despite repeated attempts at optimisation.
+            To make it any faster, different strategies would be needed for integer operations.
+            It does, however, scale well with the number of bits.
+            </remarks>
+            <param name="n1">The number to find the natural logarithm of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Log10(BigNum.BigFloat)">
+            <summary>
+            Base 10 logarithm of a number
+            </summary>
+            <remarks>This is a very slow function, despite repeated attempts at optimisation.
+            To make it any faster, different strategies would be needed for integer operations.
+            It does, however, scale well with the number of bits.
+            </remarks>
+            <param name="n1">The number to find the base 10 logarithm of</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Exp(BigNum.BigFloat)">
+            <summary>
+            The exponential function. Less accurate for high exponents, scales poorly with the number
+            of bits. This is quite fast for low-precision arguments.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Pow(BigNum.BigFloat,System.Int32)">
+            <summary>
+            Raises a number to an integer power (positive or negative). This is a very accurate and fast function,
+            comparable to or faster than division (although it is slightly slower for
+            negative powers, obviously).
+            </summary>
+            <param name="n1">The number to raise to the power</param>
+            <param name="power">The power to raise it to</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Pow(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Raises to an aribitrary power. This is both slow (uses Log) and inaccurate. If you need to
+            raise e^x use exp(). If you need an integer power, use the integer power function Pow(int)
+            </summary>
+            <remarks>
+            Accuracy Note:
+               The function is only ever accurate to a maximum of 4 decimal digits
+               For every 10x larger (or smaller) the power gets, you lose an additional decimal digit
+               If you really need a precise result, do the calculation with an extra 32-bits and round
+               
+            Domain Note:
+               This only works for powers of positive real numbers. Negative numbers will fail.
+            </remarks>
+            <param name="n1">The number to raise to a power</param>
+            <param name="power">The power to raise it to</param>
+        </member>
+        <member name="M:BigNum.BigFloat.Add(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Adds two numbers and returns the result
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Sub(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Subtracts two numbers and returns the result
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Mul(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Multiplies two numbers and returns the result
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Div(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Divides two numbers and returns the result
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.GreaterThan(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Tests whether n1 is greater than n2
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.LessThan(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Tests whether n1 is less than n2
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Add(BigNum.BigFloat,BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Adds two numbers and assigns the result to res.
+            </summary>
+            <param name="res">a pre-existing BigFloat to take the result</param>
+            <param name="n1">the first number</param>
+            <param name="n2">the second number</param>
+            <returns>a handle to res</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Sub(BigNum.BigFloat,BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Subtracts two numbers and assigns the result to res.
+            </summary>
+            <param name="res">a pre-existing BigFloat to take the result</param>
+            <param name="n1">the first number</param>
+            <param name="n2">the second number</param>
+            <returns>a handle to res</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Mul(BigNum.BigFloat,BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Multiplies two numbers and assigns the result to res.
+            </summary>
+            <param name="res">a pre-existing BigFloat to take the result</param>
+            <param name="n1">the first number</param>
+            <param name="n2">the second number</param>
+            <returns>a handle to res</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.Div(BigNum.BigFloat,BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            Divides two numbers and assigns the result to res.
+            </summary>
+            <param name="res">a pre-existing BigFloat to take the result</param>
+            <param name="n1">the first number</param>
+            <param name="n2">the second number</param>
+            <returns>a handle to res</returns>
+        </member>
+        <member name="M:BigNum.BigFloat.op_Addition(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            The addition operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.op_Subtraction(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            The subtraction operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.op_Multiply(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            The multiplication operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.op_Division(BigNum.BigFloat,BigNum.BigFloat)">
+            <summary>
+            The division operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.ConvertToInt(BigNum.BigFloat,BigNum.PrecisionSpec,System.Boolean)">
+            <summary>
+            Converts a BigFloat to an BigInt with the specified precision
+            </summary>
+            <param name="n1">The number to convert</param>
+            <param name="precision">The precision to convert it with</param>
+            <param name="round">Do we round the number if we are truncating the mantissa?</param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigFloat.ToString">
+            <summary>
+            Returns a base-10 string representing the number.
+            
+            Note: This is inefficient and possibly inaccurate. Please use with enough
+            rounding digits (set using the RoundingDigits property) to ensure accuracy
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.Denormalise(System.Int32)">
+            <summary>
+            Used for fixed point speed-ups (where the extra precision is not required). Note that Denormalised
+            floats break the assumptions that underly Add() and Sub(), so they can only be used for multiplication
+            </summary>
+            <param name="targetExponent"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.Log2">
+            <summary>
+            The binary logarithm, log2(x) - for precisions above 1000 bits, use Log() and convert the base.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.LogNewton">
+            <summary>
+            Tried the newton method for logs, but the exponential function is too slow to do it.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.LogAGM1">
+            <summary>
+            Log(x) implemented as an Arithmetic-Geometric Mean. Fast for high precisions.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigFloat.CalculateLog2(System.Int32)">
+            <summary>
+            Calculates ln(2) and returns -10^(n/2 + a bit) for reuse, using the AGM method as described in
+            http://lacim.uqam.ca/~plouffe/articles/log2.pdf
+            </summary>
+            <param name="numBits"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigFloat.CalculatePi(System.Int32)">
+            <summary>
+            Uses the Gauss-Legendre formula for pi
+            Taken from http://en.wikipedia.org/wiki/Gauss%E2%80%93Legendre_algorithm
+            </summary>
+            <param name="numBits"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.CalculateReciprocals(System.Int32,System.Int32)">
+            <summary>
+            Calculates the odd reciprocals of the natural numbers (for atan series)
+            </summary>
+            <param name="numBits"></param>
+            <param name="terms"></param>
+        </member>
+        <member name="M:BigNum.BigFloat.RoundString(System.String,System.Int32)">
+            <summary>
+            Does decimal rounding, for numbers without E notation.
+            </summary>
+            <param name="input"></param>
+            <param name="places"></param>
+            <returns></returns>
+        </member>
+        <member name="F:BigNum.BigFloat.scratch">
+            <summary>
+            Storage area for calculations.
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.RoundingDigits">
+            <summary>
+            The number of decimal digits to round the output of ToString() by
+            </summary>
+        </member>
+        <member name="P:BigNum.BigFloat.RoundingMode">
+            <summary>
+            The way in which ToString() should deal with insignificant trailing zeroes
+            </summary>
+        </member>
+        <member name="T:BigNum.PrecisionSpec">
+            <summary>
+            Specifies the desired precision for a BigInt or a BigFloat. 
+            </summary>
+        </member>
+        <member name="T:BigNum.PrecisionSpec.BaseType">
+            <summary>
+            Precision can be specified in a choice of 8 bases.
+            Note that precision for decimals is approximate.
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.BIN">
+            <summary>
+            Binary base
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.OCT">
+            <summary>
+            Octal base
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.DEC">
+            <summary>
+            Decimal base
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.HEX">
+            <summary>
+            Hexadecimal base
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.BYTES">
+            <summary>
+            8-bits per digit
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.WORDS">
+            <summary>
+            16-bits per digit
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.DWORDS">
+            <summary>
+            32-bits per digit
+            </summary>
+        </member>
+        <member name="F:BigNum.PrecisionSpec.BaseType.QWORDS">
+            <summary>
+            64-bits per digit
+            </summary>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.#ctor(System.Int32,BigNum.PrecisionSpec.BaseType)">
+            <summary>
+            Constructor: Constructs a precision specification
+            </summary>
+            <param name="precision">The number of digits</param>
+            <param name="numberBase">The base of the digits</param>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.op_Explicit(System.Int32)~BigNum.PrecisionSpec">
+            <summary>
+            Explicit cast from integer value.
+            </summary>
+            <param name="value">The value in bits for the new precision specification</param>
+            <returns>A new precision specification with the number of bits specified</returns>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.op_Equality(BigNum.PrecisionSpec,BigNum.PrecisionSpec)">
+            <summary>
+            Equality test
+            </summary>
+            <param name="spec1">the first parameter</param>
+            <param name="spec2">the second parameter</param>
+            <returns>true iff both precisions have the same number of bits</returns>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.op_Inequality(BigNum.PrecisionSpec,BigNum.PrecisionSpec)">
+            <summary>
+            Inequality operator
+            </summary>
+            <param name="spec1">the first parameter</param>
+            <param name="spec2">the second parameter</param>
+            <returns>true iff the parameters do not have the same number of bits</returns>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.Equals(System.Object)">
+            <summary>
+            Object equality override
+            </summary>
+            <param name="obj">the PrecisionSpec struct to compare</param>
+            <returns>true iff obj has the same number of bits as this</returns>
+        </member>
+        <member name="M:BigNum.PrecisionSpec.GetHashCode">
+            <summary>
+            Override of the hash code
+            </summary>
+            <returns>A basic hash</returns>
+        </member>
+        <member name="P:BigNum.PrecisionSpec.Precision">
+            <summary>
+            The precision in units specified by the base type (e.g. number of decimal digits)
+            </summary>
+        </member>
+        <member name="P:BigNum.PrecisionSpec.NumberBaseType">
+            <summary>
+            The base type in which precision is specified
+            </summary>
+        </member>
+        <member name="P:BigNum.PrecisionSpec.NumberBase">
+            <summary>
+            Converts the number-base to an integer
+            </summary>
+        </member>
+        <member name="P:BigNum.PrecisionSpec.NumBits">
+            <summary>
+            The number of bits that this PrecisionSpec structure specifies.
+            </summary>
+        </member>
+        <member name="T:BigNum.BigInt">
+            <summary>
+            An arbitrary-precision integer class
+            
+            Format:
+            Each number consists of an array of 32-bit unsigned integers, and a bool sign
+            value.
+            
+            Applicability and Performance:
+            This class is designed to be used for small extended precisions. It may not be
+            safe (and certainly won't be fast) to use it with mixed-precision arguments.
+            It does support, but will not be efficient for, numbers over around 2048 bits.
+            
+            Notes:
+            All conversions to and from strings are slow.
+            
+            Conversions from simple integer types Int32, Int64, UInt32, UInt64 are performed
+            using the appropriate constructor, and are relatively fast.
+            
+            The class is written entirely in managed C# code, with not native or managed
+            assembler. The use of native assembler would speed up the multiplication operations
+            many times over, and therefore all higher-order operations too.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(BigNum.PrecisionSpec)">
+            <summary>
+            Constructs an empty BigInt to the desired precision.
+            </summary>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.String)">
+            <summary>
+            Constructs a BigInt from a string, using the string length to determine the precision
+            Note, operations on BigInts of non-matching precision are slow, so avoid using this constructor
+            </summary>
+            <param name="init"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(BigNum.BigInt,BigNum.PrecisionSpec,System.Boolean)">
+            <summary>
+            Constructor for copying length and precision
+            </summary>
+            <param name="inputToCopy">The BigInt to copy</param>
+            <param name="precision">The precision of the new BigInt</param>
+            <param name="bCopyLengthOnly">decides whether to copy the actual input, or just its digit length</param>
+            <example><code>//Create an integer
+            BigInt four = new BigInt(4, new PrecisionSpec(128, PrecisionSpec.BaseType.BIN));
+            
+            //Pad four to double its usual number of digits (this does not affect the precision)
+            four.Pad();
+            
+            //Create a new, empty integer with matching precision, also padded to twice the usual length
+            BigInt newCopy = new BigInt(four, four.Precision, true);</code></example>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.String,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a bigint from the string, with the desired precision, using base 10
+            </summary>
+            <param name="init"></param>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.String,BigNum.PrecisionSpec,System.Int32)">
+            <summary>
+            Constructs a BigInt from a string, using the specified precision and base
+            </summary>
+            <param name="init"></param>
+            <param name="precision"></param>
+            <param name="numberBase"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(BigNum.BigInt)">
+            <summary>
+            Constructs a bigint from the input.
+            </summary>
+            <param name="input"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(BigNum.BigInt,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a bigint from the input, matching the new precision provided
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.UInt32,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigInt from a UInt32
+            </summary>
+            <param name="input"></param>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.UInt64,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigInt from a UInt64
+            </summary>
+            <param name="input"></param>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.Int32,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigInt from an Int32
+            </summary>
+            <param name="input"></param>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.#ctor(System.Int64,BigNum.PrecisionSpec)">
+            <summary>
+            Constructs a BigInt from a UInt32
+            </summary>
+            <param name="input"></param>
+            <param name="precision"></param>
+        </member>
+        <member name="P:BigNum.BigInt.Sign">
+            <summary>
+            true iff the number is negative
+            </summary>
+        </member>
+        <member name="P:BigNum.BigInt.Precision">
+            <summary>
+            The precision of the number.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.CastToPrecision(BigNum.BigInt,BigNum.PrecisionSpec)">
+            <summary>
+            Casts a BigInt to the new precision provided.
+            Note: This will return the input if the precision already matches.
+            </summary>
+            <param name="input"></param>
+            <param name="precision"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Add(BigNum.BigInt)">
+            <summary>
+            Addition and assignment - without intermediate memory allocation.
+            </summary>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Sub(BigNum.BigInt)">
+            <summary>
+            Subtraction and assignment - without intermediate memory allocation.
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Mul(BigNum.BigInt)">
+            <summary>
+            Multiplication and assignmnet - with minimal intermediate memory allocation.
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Square">
+            <summary>
+            Squares the number.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.MulHi(BigNum.BigInt)">
+            <summary>
+            Used for floating-point multiplication
+            Stores the high bits of the multiplication only (the carry bit from the
+            lower bits is missing, so the true answer might be 1 greater).
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SquareHiFast(BigNum.BigInt)">
+            <summary>
+            Floating-point helper function.
+            Squares the number and keeps the high bits of the calculation.
+            Takes a temporary BigInt as a working set.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Div(BigNum.BigInt)">
+            <summary>
+            This uses the schoolbook division algorithm, as decribed by http://www.treskal.com/kalle/exjobb/original-report.pdf
+            Algorithms 3.1 (implemented by Div_31) and 3.2 (implemented by Div_32)
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.DivAndShift(BigNum.BigInt)">
+            <summary>
+            This function is used for floating-point division.
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Mod(BigNum.BigInt)">
+            <summary>
+            Calculates 'this' mod n2 (using the schoolbook division algorithm as above)
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.LSH(System.Int32)">
+            <summary>
+            Logical left shift
+            </summary>
+            <param name="shift"></param>
+        </member>
+        <member name="M:BigNum.BigInt.RSH(System.Int32)">
+            <summary>
+            Logical right-shift
+            </summary>
+            <param name="shift"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Negate">
+            <summary>
+            Changes the sign of the number
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Increment">
+            <summary>
+            Increments the number.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Decrement">
+            <summary>
+            Decrements the number.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Factorial">
+            <summary>
+            Calculates the factorial 'this'!
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Power(BigNum.BigInt)">
+            <summary>
+            Calculates 'this'^power
+            </summary>
+            <param name="power"></param>
+        </member>
+        <member name="M:BigNum.BigInt.IsZero">
+            <summary>
+            returns true if this bigint == 0
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.LessThan(BigNum.BigInt)">
+            <summary>
+            true iff n2 (precision adjusted to this) is less than 'this'
+            </summary>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GreaterThan(BigNum.BigInt)">
+            <summary>
+            true iff n2 (precision adjusted to this) is greater than 'this'
+            </summary>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Equals(System.Object)">
+            <summary>
+            Override of base-class equals
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Equals(BigNum.BigInt)">
+            <summary>
+            True iff n2 (precision-adjusted to this) == n1
+            </summary>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Complement">
+            <summary>
+            Takes the bitwise complement of the number
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.And(BigNum.BigInt)">
+            <summary>
+            Bitwise And
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Or(BigNum.BigInt)">
+            <summary>
+            Bitwise Or
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Xor(BigNum.BigInt)">
+            <summary>
+            Bitwise Xor
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.AddFast(BigNum.BigInt,BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Adds n1 and n2 and puts result in dest, without intermediate memory allocation
+            (unsafe if n1 and n2 disagree in precision, safe even if dest is n1 or n2)
+            </summary>
+            <param name="dest"></param>
+            <param name="n1"></param>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SubFast(BigNum.BigInt,BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Adds n1 and n2 and puts result in dest, without intermediate memory allocation
+            (unsafe if n1 and n2 disagree in precision, safe even if dest is n1 or n2)
+            </summary>
+            <param name="dest"></param>
+            <param name="n1"></param>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Add(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            signed addition of 2 numbers.
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Sub(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            signed subtraction of 2 numbers.
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Mul(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Multiplication of two BigInts
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Div(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            True arbitrary precision divide.
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Mod(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            True arbitrary-precision mod operation
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Mul(BigNum.BigInt,System.UInt32)">
+            <summary>
+            Unsigned multiplication of a BigInt by a small number
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Div(BigNum.BigInt,System.UInt32)">
+            <summary>
+            Division of a BigInt by a small (unsigned) number
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.DivMod(BigNum.BigInt,System.UInt32,BigNum.BigInt@,BigNum.BigInt@)">
+            <summary>
+            Division and remainder of a BigInt by a small (unsigned) number
+            n1 / n2 = div remainder mod
+            </summary>
+            <param name="n1">The number to divide (dividend)</param>
+            <param name="n2">The number to divide by (divisor)</param>
+            <param name="div">The quotient (output parameter)</param>
+            <param name="mod">The remainder (output parameter)</param>
+        </member>
+        <member name="M:BigNum.BigInt.LessThan(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            true iff n1 is less than n2
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GreaterThan(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            true iff n1 is greater than n2
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Equals(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            true iff n1 == n2
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.And(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Bitwise And
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Or(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Bitwise Or
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Xor(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Bitwise Xor
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Addition(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Addition operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Subtraction(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The subtraction operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Multiply(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The multiplication operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Division(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The division operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Modulus(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The remainder (mod) operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_LeftShift(BigNum.BigInt,System.Int32)">
+            <summary>
+            The left-shift operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_RightShift(BigNum.BigInt,System.Int32)">
+            <summary>
+            The right-shift operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_LessThan(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The less than operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_GreaterThan(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The greater than operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_LessThanOrEqual(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The less than or equal to operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_GreaterThanOrEqual(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The greater than or equal to operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Equality(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The equality operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Inequality(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The inequality operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_BitwiseAnd(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The bitwise AND operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_BitwiseOr(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The bitwise OR operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_ExclusiveOr(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            The bitwise eXclusive OR operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Increment(BigNum.BigInt)">
+            <summary>
+            The increment operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.op_Decrement(BigNum.BigInt)">
+            <summary>
+            The decrement operator
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.MulInternal(System.UInt32)">
+            <summary>
+            Unsigned multiplication and assignment by a small number
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.DivInternal(System.UInt32)">
+            <summary>
+            Unsigned division and assignment by a small number
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.AddInternal(System.Int32)">
+            <summary>
+            Adds a signed integer to the number.
+            </summary>
+            <param name="n1"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SubInternal(System.Int32)">
+            <summary>
+            Subtract a signed integer from the number.
+            This is internal because it will fail spectacularly if this number is negative or if n1 is bigger than this number.
+            </summary>
+            <param name="n1"></param>
+        </member>
+        <member name="M:BigNum.BigInt.AddInternal(System.UInt32)">
+            <summary>
+            Adds a signed integer to the number.
+            </summary>
+            <param name="n1"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SubInternal(System.UInt32)">
+            <summary>
+            Internally subtracts a uint from the number (sign insensitive)
+            </summary>
+            <param name="n1"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.IncrementInt">
+            <summary>
+            Internal increment function (sign insensitive)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.DecrementInt">
+            <summary>
+            Internal increment function (sign insensitive)
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.AddInternalBits(System.UInt32[])">
+            <summary>
+            Used to add a digit array to a big int.
+            </summary>
+            <param name="digitsToAdd"></param>
+        </member>
+        <member name="M:BigNum.BigInt.AddInternal(BigNum.BigInt)">
+            <summary>
+            Used to add with matching signs (true addition of the digit arrays)
+            This is internal because it will fail spectacularly if n1 is negative.
+            </summary>
+            <param name="n1"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SubInternal(BigNum.BigInt)">
+            <summary>
+            Used to subtract n1 (true subtraction of digit arrays) - n1 must be less than or equal to this number
+            </summary>
+            <param name="n1"></param>
+        </member>
+        <member name="M:BigNum.BigInt.GetRequiredDigitsForPrecision(BigNum.PrecisionSpec)">
+            <summary>
+            Returns the length of the BigInt in 32-bit words for a given decimal precision
+            </summary>
+            <param name="precision"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Init(BigNum.PrecisionSpec)">
+            <summary>
+            Initialises the BigInt to a desired decimal precision
+            </summary>
+            <param name="precision"></param>
+        </member>
+        <member name="M:BigNum.BigInt.InitFromString(System.String,BigNum.PrecisionSpec,System.Int32)">
+            <summary>
+            Initialises the BigInt from a string, given a base and precision
+            </summary>
+            <param name="init"></param>
+            <param name="precision"></param>
+            <param name="numberBase"></param>
+        </member>
+        <member name="M:BigNum.BigInt.IsTopBitOnlyBit">
+            <summary>
+            Returns true if only the top bit is set: i.e. if the floating-point number is a power of 2
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.ZeroBitsHigh(System.Int32)">
+            <summary>
+            Zeroes the n most significant bits of the number
+            </summary>
+            <param name="bits"></param>
+        </member>
+        <member name="M:BigNum.BigInt.ZeroBits(System.Int32)">
+            <summary>
+            Zeroes the least-significant n bits.
+            </summary>
+            <param name="bits"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Zero">
+            <summary>
+            Sets the number to 0
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Round(System.Int32)">
+            <summary>
+            Rounds off the least significant bits of the number.
+            Can only round off up to 31 bits.
+            </summary>
+            <param name="bits">number of bits to round</param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.AssignHigh(BigNum.BigInt)">
+            <summary>
+            Used for casting between BigFloats of different precisions - this assumes
+            that the number is a normalised mantissa.
+            </summary>
+            <param name="n2"></param>
+            <returns>true if a round-up caused the high bits to become zero</returns>
+        </member>
+        <member name="M:BigNum.BigInt.SetHighDigits(System.Int64)">
+            <summary>
+            Used for casting between long ints or doubles and floating-point numbers
+            </summary>
+            <param name="digits"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SetHighDigit(System.UInt32)">
+            <summary>
+            Used for casting between ints and doubles or floats.
+            </summary>
+            <param name="digit"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Pad">
+            <summary>
+            Helper function for floating-point - extends the number to twice the precision
+            and shifts the digits into the upper bits.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.Extend">
+            <summary>
+            Helper function for floating-point - extends the number to twice the precision...
+            This is a necessary step in floating-point division.
+            </summary>
+        </member>
+        <member name="M:BigNum.BigInt.GetTopBit">
+            <summary>
+            Gets the highest big of the integer (used for floating point stuff)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.Normalise">
+            <summary>
+            Used for floating point multiplication, this shifts the number so that
+            the highest bit is set, and returns the number of places shifted.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetMSB(System.UInt32)">
+            <summary>
+            Gets the most significant bit
+            </summary>
+            <param name="value">the input to search for the MSB in</param>
+            <returns>-1 if the input was zero, the position of the MSB otherwise</returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetMSB(System.UInt64)">
+            <summary>
+            Gets the most significant bit
+            </summary>
+            <param name="value">the input to search for the MSB in</param>
+            <returns>-1 if the input was zero, the position of the MSB otherwise</returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetMSB(BigNum.BigInt)">
+            <summary>
+            Gets the most significant bit
+            </summary>
+            <param name="value">the input to search for the MSB in</param>
+            <returns>-1 if the input was zero, the position of the MSB otherwise</returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetMSD">
+            <summary>
+            Gets the index of the most significant digit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GetDivBitshift">
+            <summary>
+            Gets the required bitshift for the Div_32 algorithm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.MakeSafeDiv(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Shifts and optionally precision-extends the arguments to prepare for Div_32
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.Div_31(BigNum.BigInt,BigNum.BigInt,BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Schoolbook division helper function.
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <param name="Q">Quotient output value</param>
+            <param name="R">Remainder output value</param>
+        </member>
+        <member name="M:BigNum.BigInt.Div_32(BigNum.BigInt,BigNum.BigInt,BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Schoolbook division algorithm
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <param name="Q"></param>
+            <param name="R"></param>
+        </member>
+        <member name="M:BigNum.BigInt.SetBit(System.Int32)">
+            <summary>
+            Sets the n-th bit of the number to 1
+            </summary>
+            <param name="bit">the index of the bit to set</param>
+        </member>
+        <member name="M:BigNum.BigInt.ClearBit(System.Int32)">
+            <summary>
+            Sets the n-th bit of the number to 0
+            </summary>
+            <param name="bit">the index of the bit to set</param>
+        </member>
+        <member name="M:BigNum.BigInt.GetBitFromTop(System.Int32)">
+            <summary>
+            Returns the n-th bit, counting from the MSB to the LSB
+            </summary>
+            <param name="bit">the index of the bit to return</param>
+            <returns>1 if the bit is 1, 0 otherwise</returns>
+        </member>
+        <member name="M:BigNum.BigInt.Assign(BigNum.BigInt)">
+            <summary>
+            Assigns n2 to 'this'
+            </summary>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.AssignInt(BigNum.BigInt)">
+            <summary>
+            Assign n2 to 'this', safe only if precision-matched
+            </summary>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.SetNumDigits(System.Int32)">
+            <summary>
+            Sets the number of digits without changing the precision
+            This method is made public only to facilitate fixed-point operations
+            It should under no circumstances be used for anything else, because
+            it breaks the BigNum(PrecisionSpec precision) constructor in dangerous
+            and unpredictable ways.
+            </summary>
+            <param name="digits"></param>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(BigNum.BigInt)~System.Int32">
+            <summary>
+            Cast to int
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(BigNum.BigInt)~System.UInt32">
+            <summary>
+            explicit cast to unsigned int.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(BigNum.BigInt)~System.Int64">
+            <summary>
+            explicit cast to 64-bit signed integer.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(BigNum.BigInt)~System.UInt64">
+            <summary>
+            Explicit cast to UInt64
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(BigNum.BigInt)~System.String">
+            <summary>
+            Cast to string
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.op_Explicit(System.String)~BigNum.BigInt">
+            <summary>
+            Cast from string - this is not wholly safe, because precision is not
+            specified. You should try to construct a BigInt with the appropriate
+            constructor instead.
+            </summary>
+            <param name="value">The decimal string to convert to a BigInt</param>
+            <returns>A BigInt of the precision required to encompass the string</returns>
+        </member>
+        <member name="M:BigNum.BigInt.ToString(System.Int32)">
+            <summary>
+            Converts this to a string, in the specified base
+            </summary>
+            <param name="numberBase">the base to use (min 2, max 16)</param>
+            <returns>a string representation of the number</returns>
+        </member>
+        <member name="M:BigNum.BigInt.ToString">
+            <summary>
+            Converts the number to a string, in base 10
+            </summary>
+            <returns>a string representation of the number in base 10</returns>
+        </member>
+        <member name="M:BigNum.BigInt.LtInt(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Sign-insensitive less than comparison. 
+            unsafe if n1 and n2 disagree in precision
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.GtInt(BigNum.BigInt,BigNum.BigInt)">
+            <summary>
+            Sign-insensitive greater than comparison. 
+            unsafe if n1 and n2 disagree in precision
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BigNum.BigInt.MakeSafe(BigNum.BigInt@,BigNum.BigInt@)">
+            <summary>
+            Makes sure the numbers have matching precisions
+            </summary>
+            <param name="n1"></param>
+            <param name="n2"></param>
+        </member>
+        <member name="M:BigNum.BigInt.MakeSafe(BigNum.BigInt@)">
+            <summary>
+            Makes sure the numbers have matching precisions
+            </summary>
+            <param name="n2">the number to match to this</param>
+        </member>
+    </members>
+</doc>

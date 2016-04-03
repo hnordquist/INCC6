@@ -37,7 +37,7 @@
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(174, 168);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(64, 24);
             this.button1.TabIndex = 0;
@@ -48,7 +48,7 @@
             // richTextBox1
             // 
             this.richTextBox1.Location = new System.Drawing.Point(9, 10);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(405, 89);
             this.richTextBox1.TabIndex = 2;
@@ -61,7 +61,7 @@
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(405, 61);
             this.richTextBox2.TabIndex = 3;
-            this.richTextBox2.Text = "Relevant open source software license details go here ....";
+            this.richTextBox2.Text = resources.GetString("richTextBox2.Text");
             this.richTextBox2.TextChanged += new System.EventHandler(this.richTextBox2_TextChanged);
             // 
             // Ack
@@ -72,7 +72,7 @@
             this.Controls.Add(this.richTextBox2);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.button1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Ack";
             this.Text = "Acknowledgements and third-party licenses";
             this.ResumeLayout(false);

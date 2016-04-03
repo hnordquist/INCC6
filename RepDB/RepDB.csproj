@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\Constants.cs" />
+    <Compile Include="Config\NDesk\Options.cs" />
     <Compile Include="Config\Options.cs" />
     <Compile Include="DB\acq.cs" />
     <Compile Include="DB\AnalysisMethods.cs" />
@@ -84,10 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="Options, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deployment\Options.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -114,6 +111,7 @@
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)deployment"
