@@ -122,10 +122,9 @@
 by Merlyn Krick, Phd and Bill Harker.
 Contributors include
 D. Mayo PhD, W. Geist PhD, J. Longo, and H. Nordquist of Los Alamos.
-A special thanks to the late David Beddingfield, PhD, of the IAEA and Los Alamos.</value>
-  </data>
-  <data name="richTextBox2.Text" xml:space="preserve">
-    <value>Includes code from the NDesk.Options 1.2.0.0 library.
+A special thanks to the late David Beddingfield, PhD, of the IAEA and Los Alamos.
+
+Includes code from the NDesk.Options 1.2.0.0 library.
 
 Author:
  Jonathan Pryor &lt;jpryor@novell.com&gt;

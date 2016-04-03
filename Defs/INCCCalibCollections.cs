@@ -667,7 +667,7 @@ namespace AnalysisDefs
                                 res.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
                                 res.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
                                 res.corr_factor = VTupleHelper.Make(dr, "corr_factor");
-                                res.efficiencyComputed = VTupleHelper.Make(dr, "efficiencyComputed");
+                                res.efficiencyComputed = VTupleHelper.Make(dr, "efficiency");
                                 INCCAnalysisParams.multiplicity_rec mu = res.methodParams;
                                 mu.solve_efficiency = (INCCAnalysisParams.MultChoice)DB.Utils.DBInt32(dr["solve_efficiency"]);
                                 mu.sf_rate = DB.Utils.DBDouble(dr["sf_rate"]);
