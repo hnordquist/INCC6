@@ -56,27 +56,17 @@ namespace DB
             return dt.Rows.Count > 0;
         }
 
-        public DataTable Get(string measDetId) // todo: this join results in duplicate entries, so gotta do something about that. joins the matching LM if found
+        public DataTable Get(string measDetId) // joins the matching LM if found
         {
             db.SetConnection();
-            string sSQL = "select * from acquire_parms_rec left join LMAcquireParams on (acquire_parms_rec.MeasDate=LMAcquireParams.MeasDate) " +
-                "where (acquire_parms_rec.meas_detector_id=" + SQLSpecific.Value(measDetId, true) +
-                 /*" and detector_id=" + l.ToString() +*/ ")" +
+			Detectors dets = new Detectors(db);
+            long l = dets.PrimaryKey(measDetId);
+            string sSQL = "select * from acquire_parms_rec left join LMAcquireParams on (LMAcquireParams.detector_id=" + l.ToString() + ") " +
+                "where (acquire_parms_rec.meas_detector_id=" + SQLSpecific.Value(measDetId, true) + ")" +
                  " order by acquire_parms_rec.MeasDate DESC";
             DataTable dt = db.DT(sSQL);                
             return dt;
 
-        }
-
-        public DataTable Get(string measDetId, string itemId)
-        {
-            db.SetConnection();
-            string sSQL = "select * from acquire_parms_rec left join LMAcquireParams on (acquire_parms_rec.MeasDate=LMAcquireParams.MeasDate) " +
-                "where (meas_detector_id=" + SQLSpecific.Value(measDetId, true) +
-                 " and acquire_parms_rec.item_type=" + SQLSpecific.Value(itemId, true) + ")" +
-                 " order by acquire_parms_rec.MeasDate DESC";
-            DataTable dt = db.DT(sSQL);
-            return dt;
         }
         public bool Create(ElementList sParams)
         {
