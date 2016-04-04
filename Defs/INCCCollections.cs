@@ -2121,7 +2121,10 @@ namespace AnalysisDefs
                     foreach (DataRow dr in dt.Rows)
                     {
                         BackgroundParameters bp = GetDataFromRow(dr, false);
-                        bkgParameters.Add(d, bp);
+                        if (bkgParameters.ContainsKey(d))
+							bkgParameters[d] = bp;
+						else
+							bkgParameters.Add(d, bp);
                     }
                 }
             }

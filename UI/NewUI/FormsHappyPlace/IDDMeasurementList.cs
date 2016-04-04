@@ -168,10 +168,15 @@ namespace NewUI
 
         string TypeTextFragment(AssaySelector.MeasurementOption filter)
 		{
-            if (filter == AssaySelector.MeasurementOption.unspecified)
+            if (filter == AssaySelector.MeasurementOption.unspecified && LMOnly)
 				return "List Mode ";
 			else
-				return (AssaySelector.MeasurementOption.rates == filter ? "Rates Only" : filter.PrintName()) + " ";
+			{
+				if (AllMeas)
+					return string.Empty;
+				else
+					return (AssaySelector.MeasurementOption.rates == filter ? "Rates Only" : filter.PrintName()) + " ";
+			}
 		}
 
         public static bool EmptyINCC5File(Measurement m)
