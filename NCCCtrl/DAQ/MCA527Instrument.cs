@@ -293,6 +293,7 @@ namespace Instr
 						if (timestampsCount > 0) {
 							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
 							// RDT.PassBufferToTheCounters(timestampsCount);
+							m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
 						}
 					} else if (bytesAvailable > 0 && state != MCAState.Run) {
 						// special case for when there's not a whole block left to read
@@ -328,6 +329,7 @@ namespace Instr
 						if (timestampsCount > 0) {
 							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
 							// RDT.PassBufferToTheCounters(timestampsCount);
+							m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount", timestampsCount);
 						}
 					} else {
 						// give the device a break

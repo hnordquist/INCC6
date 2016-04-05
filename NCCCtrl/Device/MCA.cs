@@ -1926,21 +1926,27 @@ namespace Device
 
         public uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
         {
-            uint offset = 0;
-            uint timestampIndex = 0;
-            while (offset < rawBufferIndex)
-            {
-                uint byteCount = ReadEncodedValue(rawBuffer, offset, out timestampsBuffer[timestampIndex]);
-                if (byteCount == 0) { break; }
-                timestampIndex += 1;
-                offset += byteCount;
+			uint offset = 0;
+			uint timestampIndex = 0;
+            uint byteCount = 0;
+			while (offset < rawBufferIndex) 
+			{
+				byteCount = ReadEncodedValue(rawBuffer, offset, out timestampsBuffer[timestampIndex]);
+				if (byteCount == 0) { break; }
+				timestampIndex += 1;
+				offset += byteCount;
+			}
+            if (offset > rawBufferIndex) // need to undo one read...
+			{
+                offset -= byteCount;
+                timestampIndex -= 1;
             }
-            if (offset > 0 && rawBufferIndex > offset)
-            {
-                Array.Copy(rawBuffer, offset, rawBuffer, 0, rawBufferIndex - offset);
-            }
-            rawBufferIndex -= offset;
-            return timestampIndex;
+			if (offset > 0 && rawBufferIndex > offset)
+			{
+				Array.Copy(rawBuffer, offset, rawBuffer, 0, rawBufferIndex - offset);
+			}
+       		rawBufferIndex -= offset;
+			return timestampIndex;
         }
 
 

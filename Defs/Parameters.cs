@@ -785,7 +785,7 @@ namespace AnalysisDefs
                     res = typeof(INCCResult);                    // place holder: the code creates a separate map (methodresults) using classes from INCCMethodResults
                     break;
                 case AssaySelector.MeasurementOption.holdup:
-                    res = typeof(INCCResult);  // NEXT: Hold-up held up, implement it #102 
+                    res = typeof(INCCResult);  // NEXT: Hold-up held up, implement it #35 
                     break;
                 case AssaySelector.MeasurementOption.unspecified:
                     res = typeof(INCCResult);  // hope to never get here

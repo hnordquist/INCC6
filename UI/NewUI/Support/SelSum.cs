@@ -157,8 +157,8 @@ namespace NewUI
 				entries["Facility"] = Q(m.AcquireState.facility.Name);
 				entries["MBA"] = Q(m.AcquireState.mba.Name);
 				entries["Detector"] = Q(m.AcquireState.detector_id);
-				entries["IC"] = Q(m.AcquireState.inventory_change_code);  // next: check if not loading
-				entries["IO"] = Q(m.AcquireState.io_code);                              // ditto
+				entries["IC"] = Q(m.AcquireState.inventory_change_code);
+				entries["IO"] = Q(m.AcquireState.io_code);
 				entries["Measurement Type"] = Q(m.MeasOption.PrintName());
 				entries["Meas Date"] = m.MeasurementId.MeasDateTime.ToString("MM.dd.yy");
 				entries["Meas Time"] = m.MeasurementId.MeasDateTime.ToString("HH:mm:ss");

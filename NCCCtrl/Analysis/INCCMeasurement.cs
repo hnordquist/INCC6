@@ -538,7 +538,7 @@ namespace AnalysisDefs
                                 meas.AddErrorMessage("No analysis methods selected", 10156, mkey);
                             }
                             break;
-                        case AssaySelector.MeasurementOption.holdup:   // NEXT: Hold-up held up, implement it #102 
+                        case AssaySelector.MeasurementOption.holdup:   // NEXT: Hold-up held up, implement it #35 
                             meas.Logger.TraceEvent(NCCReporter.LogLevels.Error, 10187, "Holdup analysis unsupported");
                             break;
                     }
@@ -1320,7 +1320,7 @@ namespace AnalysisDefs
                         case AssaySelector.MeasurementOption.verification:
                             SaveMethodResultsForThisMeasurement(meas, moskey);
                             break;
-                        case AssaySelector.MeasurementOption.holdup: // NEXT: Hold-up held up, implement it #102  
+                        case AssaySelector.MeasurementOption.holdup: // NEXT: Hold-up held up, implement it #35  
 							break;
 					}
 				}

@@ -814,13 +814,16 @@ namespace AnalysisDefs
             InitializeContext();
             PrepareINCCResults();
 
-			MultiplicityCountingRes mcr = (MultiplicityCountingRes)CountingAnalysisResults[rec.det.MultiplicityParams];
-			mcr.CopyFrom(rec.mcr); // copy the mcr results onto the first moskey entry
-
-			// the same results are copied to the full results structure			
-            MeasOptionSelector mos = new MeasOptionSelector(MeasOption, rec.det.MultiplicityParams);
-            INCCResult result = INCCAnalysisState.Lookup(mos);
-			result.CopyFrom(rec.mcr);
+			// a list mode measurement may not have a multiplicity analyzer at all
+			if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
+			{ 
+				MultiplicityCountingRes mcr = (MultiplicityCountingRes)CountingAnalysisResults[rec.det.MultiplicityParams];
+				mcr.CopyFrom(rec.mcr); // copy the mcr results onto the first moskey entry
+				// the same results are copied to the full results structure			
+				MeasOptionSelector mos = new MeasOptionSelector(MeasOption, rec.det.MultiplicityParams);
+				INCCResult result = INCCAnalysisState.Lookup(mos);
+				result.CopyFrom(rec.mcr);
+			}
 
 			Stratum = new Stratum(rec.st); // the stratum from the results rec
         }
@@ -1040,7 +1043,7 @@ namespace AnalysisDefs
             long mid = dbm.Add(name: Detector.Id.DetectorName,
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
                                 mtype: MeasOption.PrintName(),
-                                filename: MeasurementId.FileName,  // the file names are generated at the end of the process, GenerateReports, update the database at the end
+                                filename: MeasurementId.FileName,  // the file names are generated at the end of the process, in GenerateReports, subsequently the database entry is updated with the new file names
                                 notes: "2015");
 
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
