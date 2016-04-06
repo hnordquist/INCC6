@@ -1781,7 +1781,7 @@ namespace Device
                 const uint CommonMemoryBlockSize = 1440;
                 // what's the most that could be left over from a previous attempt to decode? => 3 bytes
                 byte[] rawBuffer = new byte[CommonMemoryBlockSize + 3];
-                uint[] timestampsBuffer = new uint[CommonMemoryBlockSize + 1];
+                ulong[] timestampsBuffer = new ulong[CommonMemoryBlockSize + 1];
 
                 uint commonMemoryReadIndex = 0;
                 uint rawBufferOffset = 0;
@@ -1924,14 +1924,16 @@ namespace Device
             }
         }
 
-        public uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, uint[] timestampsBuffer)
+        public uint TransformRawData(byte[] rawBuffer, ref uint rawBufferIndex, ulong[] timestampsBuffer)
         {
 			uint offset = 0;
 			uint timestampIndex = 0;
             uint byteCount = 0;
+			uint temp = 0;
 			while (offset < rawBufferIndex) 
 			{
-				byteCount = ReadEncodedValue(rawBuffer, offset, out timestampsBuffer[timestampIndex]);
+				byteCount = ReadEncodedValue(rawBuffer, offset, out temp);
+				timestampsBuffer[timestampIndex] = temp;
 				if (byteCount == 0) { break; }
 				timestampIndex += 1;
 				offset += byteCount;

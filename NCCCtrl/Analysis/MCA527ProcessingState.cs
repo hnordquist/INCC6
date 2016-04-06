@@ -96,8 +96,8 @@ namespace Analysis
         /// <returns><c>null</c></returns>
         public override StreamStatusBlock ConvertDataBuffer(int count)
         {
-            m_parser.Parse(rawDataBuff, 0, count);
-            return null;
+			// copy the timestampsBuffer value into the RDT.State.timeArray,
+			return null;
         }
 
         /// <summary>

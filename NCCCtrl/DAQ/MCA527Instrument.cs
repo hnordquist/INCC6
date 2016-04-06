@@ -242,13 +242,16 @@ namespace Instr
 				const uint CommonMemoryBlockSize = 1440;
 				// what's the most that could be left over from a previous attempt to decode? => 3 bytes
 				byte[] rawBuffer = new byte[CommonMemoryBlockSize + 3];
-				uint[] timestampsBuffer = new uint[CommonMemoryBlockSize + 1];
+				ulong[] timestampsBuffer = new ulong[CommonMemoryBlockSize + 1];
 
 				uint commonMemoryReadIndex = 0;
 				uint rawBufferOffset = 0;
 
 				stopwatch.Start();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
+
+				ulong timeaccum = 0;
+
 				while (stopwatch.Elapsed < duration)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
@@ -276,7 +279,7 @@ namespace Instr
 
                         if (ps.file.writer != null) {
                             ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
-							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
                         }
 
 						rawBufferOffset += bytesToCopy;
@@ -291,9 +294,23 @@ namespace Instr
 
 						// copy the data out...
 						if (timestampsCount > 0) {
-							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							// RDT.PassBufferToTheCounters(timestampsCount);
-							m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
+							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
+							RDT.State.timeArray.Clear();
+							for (int i = 0; i < timestampsCount; i++)
+							{  
+								timeaccum += timestampsBuffer[i];
+								RDT.State.timeArray.Add(timeaccum);  // probably the slow way 
+							}
+							RDT.State.NumValuesParsed = timestampsCount;
+							RDT.State.hitsPerChn[0] += timestampsCount;
+
+							if (timestampsCount < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
+								RDT.State.neutronEventArray.RemoveRange((int)timestampsCount - 1, RDT.State.neutronEventArray.Count - (int)timestampsCount);
+							else if (timestampsCount > RDT.State.neutronEventArray.Count)
+								RDT.State.neutronEventArray.AddRange(new uint[timestampsCount - RDT.State.neutronEventArray.Count]);
+
+							RDT.PassBufferToTheCounters((int)timestampsCount);
+							//m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
 						}
 					} else if (bytesAvailable > 0 && state != MCAState.Run) {
 						// special case for when there's not a whole block left to read
@@ -314,7 +331,7 @@ namespace Instr
 
                         if (ps.file.writer != null) {
                             ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
-							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
                         }
 
 						rawBufferOffset += bytesToCopy;
@@ -328,8 +345,8 @@ namespace Instr
 						//}
 						if (timestampsCount > 0) {
 							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							// RDT.PassBufferToTheCounters(timestampsCount);
-							m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount", timestampsCount);
+							RDT.PassBufferToTheCounters((int)timestampsCount);
+							//m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount", timestampsCount);
 						}
 					} else {
 						// give the device a break

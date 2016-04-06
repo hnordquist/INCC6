@@ -668,17 +668,11 @@ namespace Analysis
         public StreamStatusBlock PassBufferToTheCounters(int count)
         {
             StreamStatusBlock endofdata = null;
-            logger.TraceEvent(LogLevels.Verbose, 220, "{0}: Starting data conversion on file stream. . .", NumProcessedRawDataBuffers);
 
             endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
-
-            if (State.usingStreamRawAnalysis)   // process by data blocks, e.g. buffered transfer underlying a stream.
-            {
-                State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
-            }
-
-            //  logger.TraceEvent(LogLevels.Verbose, 224, "{0}: Worked {1} bytes", NumProcessedRawDataBuffers, bytecount);//, state.stopWatch.ElapsedTicks);
+			State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
+         
             return endofdata;
         }
 
