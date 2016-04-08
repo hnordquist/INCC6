@@ -35,10 +35,10 @@ using NCCReporter;
 namespace AnalysisDefs
 {
 
-    using NC = NCC.CentralizedState;
+	using NC = NCC.CentralizedState;
 
 
-    public interface IDetAPI<T>
+	public interface IDetAPI<T>
     {
         /// <summary>
         /// Examine DB for existence of data object of type T

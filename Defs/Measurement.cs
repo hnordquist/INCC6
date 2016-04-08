@@ -876,7 +876,7 @@ namespace AnalysisDefs
                 CurrentRepetition = 0;
                 RequestedRepetitions = (ushort)cycles.Count;
                 FirstCycle = true;  // used by outlier test
-                if (cycles.Count > 0)
+                if (cycles.Count > 0 &&  AcquireState.run_count_time == 0)
                     AcquireState.run_count_time = cycles[0].TS.TotalSeconds;
             }
             else if (cycles.Count > 0) // adjust sequence numbers
@@ -977,7 +977,7 @@ namespace AnalysisDefs
             return validCyclesCount;
         }
 
-        // summarizes using all cycles that have passed evalaution (e.g. marked as Pass)
+        // summarizes using all cycles that have passed evaluation (e.g. marked as Pass)
         public uint CycleSummary(bool ignoreSuspectResults = true)
         {
             long t = 0;                 // the cycle average time

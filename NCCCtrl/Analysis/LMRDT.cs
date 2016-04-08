@@ -190,7 +190,7 @@ namespace Analysis
 						tiks = (long)timeArray[(int)numValuesParsed - 1];
 					else if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
 						tiks = (long)(timeArray[(int)numValuesParsed - 1] / 10);
-					cycle.TS = TimeSpan.FromTicks(tiks);
+					cycle.TS = TimeSpan.FromTicks(tiks); // This is the actual last time, used only if no requested time is specified on the cycle 
 				}
 
 				for (int i = 0; i < NC.ChannelCount; i++)

@@ -45,7 +45,6 @@ namespace Analysis
         public MCA527ProcessingState()
         {
             InitParseBuffers(1,4, false);
-            m_parser = new MCA527Parser(Analyze);
             m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
         /// <summary>
@@ -58,7 +57,7 @@ namespace Analysis
            base.StartCycle(cycle, param);
 
             if (cycle != null) {
-                m_parser.Reset((ulong) (MCA527.Frequency * CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval));
+				cycle.ExpectedTS = new TimeSpan((long)(CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval * TimeSpan.TicksPerSecond));
                 m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
             }
             if (param != null)
@@ -105,10 +104,25 @@ namespace Analysis
         /// </summary>
         public void EndOfCycleProcessing()
         {
-            m_parser.Flush();
             if (file != null)
                 file.CloseWriter();
 		}
+
+
+		        /// <summary>
+        /// The number of channels.
+        /// </summary>
+        public const int ChannelCount = 1;
+
+        /// <summary>
+        /// The clock frequency in hertz (Hz).
+        /// </summary>
+        public const long Frequency = 100000000;
+
+        /// <summary>
+        /// The maximum voltage in volts (V).
+        /// </summary>
+        public const int MaxVoltage = 2000;
 
         /// <summary>
         /// Analyzes a sequence of events. Optionally writes data file 
@@ -119,7 +133,7 @@ namespace Analysis
         private void Analyze(List<ulong> times, List<uint> channelMasks, int count)
         {
             for (int i = 0; i < count; i++) {
-                for (int channel = 0; channel < MCA527.ChannelCount; channel++) {
+                for (int channel = 0; channel < ChannelCount; channel++) {
                     if ((channelMasks[i] & (1u << channel)) != 0) {
                         cycle.HitsPerChannel[channel]++;
                         cycle.Totals++;
@@ -128,7 +142,8 @@ namespace Analysis
             }
 
             cycle.TotalEvents += (ulong) count;
-            cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (MCA527.Frequency / TimeSpan.TicksPerSecond));
+			if (cycle.TS.Ticks == 0L)
+				cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (Frequency / TimeSpan.TicksPerSecond)); // This is the actual last time, used only if no requested time is specified on the cycle
 
             if (cycle.Totals > 0 && cycle.TS.TotalSeconds > 0.0) {
                 cycle.SinglesRate = cycle.Totals / cycle.TS.TotalSeconds;
@@ -144,7 +159,6 @@ namespace Analysis
             }
         }
 
-        private MCA527Parser m_parser;
         public NCCFile.MCAFile file;
         public MCADevice device;
         private bool m_writingFile;

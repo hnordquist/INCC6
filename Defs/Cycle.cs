@@ -48,7 +48,7 @@ namespace AnalysisDefs
         //** INCC
 
         public int seq;   // run number
-        private TimeSpan ts;
+        private TimeSpan ts; // timestamp of last neutron v. requested time
         private VTuple singles; // aka totals in INCC
         private double rawsinglesrate;
         private ulong totalevents;  // events at time t
@@ -146,9 +146,12 @@ namespace AnalysisDefs
             get { return ts; }
             set { ts = value; }
         }
-
-        // number of events, and hits per channel event
-        public ulong Totals
+		public TimeSpan ExpectedTS
+		{
+			set { ts = value; }
+		}
+		// number of events, and hits per channel event
+		public ulong Totals
         {
             get { return (ulong)singles.v; }
             set { singles.v = value; }
@@ -238,7 +241,7 @@ namespace AnalysisDefs
                 countresults.Add(mup, lmcs);
                 lmcs.Totals = Totals;
                 lmcs.TransferRawResult(mr);
-                lmcs.TS = this.TS;
+                lmcs.TS = new TimeSpan(TS.Ticks);
             }
             catch (System.OutOfMemoryException e)
             {

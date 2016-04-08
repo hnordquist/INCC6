@@ -251,8 +251,8 @@ namespace Instr
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
 
 				ulong timeaccum = 0;
-
-				while (stopwatch.Elapsed < duration)
+				TimeSpan interregnum = stopwatch.Elapsed;
+				while (interregnum <= duration)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
@@ -291,7 +291,7 @@ namespace Instr
 						if (rawBufferOffset > 3) {
 							throw new MCADeviceBadDataException();
 						}
-
+						interregnum = stopwatch.Elapsed;
 						// copy the data out...
 						if (timestampsCount > 0) {
 							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
@@ -343,10 +343,26 @@ namespace Instr
                             // apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
 							//throw new MCADeviceBadDataException();
 						//}
+						interregnum = stopwatch.Elapsed;
+
 						if (timestampsCount > 0) {
-							// URGENT: copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
+							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
+							RDT.State.timeArray.Clear();
+							for (int i = 0; i < timestampsCount; i++)
+							{  
+								timeaccum += timestampsBuffer[i];
+								RDT.State.timeArray.Add(timeaccum);  // probably the slow way 
+							}
+							RDT.State.NumValuesParsed = timestampsCount;
+							RDT.State.hitsPerChn[0] += timestampsCount;
+
+							if (timestampsCount < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
+								RDT.State.neutronEventArray.RemoveRange((int)timestampsCount - 1, RDT.State.neutronEventArray.Count - (int)timestampsCount);
+							else if (timestampsCount > RDT.State.neutronEventArray.Count)
+								RDT.State.neutronEventArray.AddRange(new uint[timestampsCount - RDT.State.neutronEventArray.Count]);
+
 							RDT.PassBufferToTheCounters((int)timestampsCount);
-							//m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount", timestampsCount);
+							//m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
 						}
 					} else {
 						// give the device a break
@@ -355,9 +371,9 @@ namespace Instr
 					}
 
 				stopwatch.Stop();
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);
 				ps.FinishedSweep(seq, stopwatch.Elapsed.TotalSeconds);
 				
-				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Finished assay; read {1} bytes in {2}s for {3}", DeviceName, total, stopwatch.Elapsed.TotalSeconds, seq);
 				m_logger.Flush();
 				lock (m_monitor)
@@ -448,50 +464,50 @@ namespace Instr
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
-            try {
-                m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
-                m_logger.Flush();
-                uint x = SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
+            //try {
+            //    m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
+            //    m_logger.Flush();
+            //    uint x = SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
 
-                MCA527RateCounter counter = new MCA527RateCounter(m_device);
-                counter.TakeMeasurement(duration, cancellationToken);
+            //    MCA527RateCounter counter = new MCA527RateCounter(m_device);
+            //    counter.TakeMeasurement(duration, cancellationToken);
 
-                HVControl.HVStatus status = new HVControl.HVStatus();
-                status.HVread = (int) m_device.GetHighVoltage();
-                status.HVsetpt = voltage;
+            //    HVControl.HVStatus status = new HVControl.HVStatus();
+            //    status.HVread = (int) m_device.GetHighVoltage();
+            //    status.HVsetpt = voltage;
 
-                for (int i = 0; i < MCA527.ChannelCount; i++) {
-                    status.counts[i] = (ulong) counter.ChannelCounts[i];
-                }
+            //    for (int i = 0; i < MCA527.ChannelCount; i++) {
+            //        status.counts[i] = (ulong) counter.ChannelCounts[i];
+            //    }
 
-                lock (m_monitor) {
-                    m_cancellationTokenSource.Dispose();
-                    m_cancellationTokenSource = null;
-                }
+            //    lock (m_monitor) {
+            //        m_cancellationTokenSource.Dispose();
+            //        m_cancellationTokenSource = null;
+            //    }
 
-                m_logger.TraceEvent(LogLevels.Info, 0,
-                    "MCA527[{0}]: Finished HV calibration; read {1} bytes in {2}s",
-                    DeviceName, counter.ByteCount, counter.Time.TotalSeconds);
-                m_logger.Flush();
+            //    m_logger.TraceEvent(LogLevels.Info, 0,
+            //        "MCA527[{0}]: Finished HV calibration; read {1} bytes in {2}s",
+            //        DeviceName, counter.ByteCount, counter.Time.TotalSeconds);
+            //    m_logger.Flush();
 
-                DAQControl.gControl.AppendHVCalibration(status);
-                DAQControl.gControl.StepHVCalibration();
-            }
-            catch (OperationCanceledException) {
-                m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Stopped HV calibration", DeviceName);
-                m_logger.Flush();
-                DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
-                PendingComplete();
-                //throw;
-            }
-            catch (Exception ex) {
-                m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
-                m_logger.TraceException(ex, true);
-                m_logger.Flush();
-                DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
-                PendingComplete();
-                //throw;
-            }
+            //    DAQControl.gControl.AppendHVCalibration(status);
+            //    DAQControl.gControl.StepHVCalibration();
+            //}
+            //catch (OperationCanceledException) {
+            //    m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Stopped HV calibration", DeviceName);
+            //    m_logger.Flush();
+            //    DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
+            //    PendingComplete();
+            //    //throw;
+            //}
+            //catch (Exception ex) {
+            //    m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
+            //    m_logger.TraceException(ex, true);
+            //    m_logger.Flush();
+            //    DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
+            //    PendingComplete();
+            //    //throw;
+            //}
         }
 
         /// <summary>

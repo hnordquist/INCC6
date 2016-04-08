@@ -473,10 +473,7 @@ namespace DAQ
                         (active as LMInstrument).RDT.PrepareAndStartCountingAnalyzers(CurState.Measurement.AnalysisParams);
                     }
 
-                    // stamp instrument time on measurement id
                     // todo: Measurement Detector List exists but is not integrated with associated Instrument objects here
-                    // CurState.Measurement.MeasDate = active.id.dt;
-
                     if (active is SRInstrument)
                     {
                         // kick off the thread to try and init the SR
@@ -495,8 +492,8 @@ namespace DAQ
             FireEvent(EventType.ActionInProgress, this);
             Thread.Sleep(250); // LMMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
-            // PTR-32
-            // This loop works for PTR-32 (and soon MCA-527) instruments, based on an improved instrument and control design
+            // PTR-32/MCA-527
+            // This loop works for PTR-32 and MCA-527) instruments, based on an improved instrument and control design
 
             // devnote: rewrite SR and LMMM sections below to use the StartAssay virtual method abstraction for measurement control
             foreach (Instrument instrument in Instruments.Active) {
@@ -519,7 +516,7 @@ namespace DAQ
 
                     Thread.Sleep(250);  // allow linux code to setup waiting socket.
 
-                    // broadcast go message to all NCC.App.Config.Net.Subnet addresses.    This is the instrument group.
+                    // broadcast go message to all NCC.App.Config.Net.Subnet addresses. This is the instrument group.
                     DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.go, true);
                 }
                 else
