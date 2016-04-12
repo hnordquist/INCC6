@@ -72,8 +72,8 @@
     <Compile Include="Analysis\RDT.cs" />
     <Compile Include="Analysis\RTAnalysis.cs" />
     <Compile Include="Analysis\SRRDT.cs" />
-    <Compile Include="Comm\Lingo.cs" />
-    <Compile Include="Comm\LMMMComm.cs" />
+    <Compile Include="Device\Lingo.cs" />
+    <Compile Include="Device\LMMMComm.cs" />
     <Compile Include="DAQServer\BufferPool.cs" />
     <Compile Include="DAQServer\ExtensionMethods.cs" />
     <Compile Include="DAQServer\Server.cs" />
@@ -99,7 +99,7 @@
     <Compile Include="File\INCCKnew.cs" />
     <Compile Include="File\INCC5CSVFiles.cs" />
     <Compile Include="File\NeutronDataFiles.cs" />
-    <Compile Include="LM\IAction.cs" />
+    <Compile Include="DAQ\IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawAnalysis\AnalyzerEventCode.cs" />
     <Compile Include="RawAnalysis\AnalyzerHandler.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="RawAnalysis\NeutronEvent.cs" />
     <Compile Include="RawAnalysis\RateGateAnalysis.cs" />
     <Compile Include="RawAnalysis\RossiAlphaCircularStackAnalysis.cs" />
-    <Compile Include="Status\Status.cs" />
+    <Compile Include="Utils\Status.cs" />
     <Compile Include="Transfer\FileTransfer.cs" />
     <Compile Include="Transfer\INCCDBStructs.cs" />
     <Compile Include="Transfer\INCCFileInfo.cs" />

@@ -1,6 +1,4 @@
 ﻿/*
- * 186846
-/*
 Copyright (c) 2014, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
@@ -31,19 +29,6 @@ using System;
 using System.Collections.Generic;
 namespace NCC
 {
-         // olde-fashioned callbacks, called by timers
-    public interface IActionStatus
-    {
-        // an action is an HV Calib operation or a Measurement "assay", or others yet unspecified
-
-        // gather files into a list, e.g. the "1177", waiting for a detector to respond, querying for data across nodes or from a raw file tree)
-        void PreActionStatusTimerCB(object o);
-        // set up and do intensive pre-processing on data, parsing and counting NCD files and DAQ assay intervals, pre-processing cycles from a DB query into the "neutron mine")
-        void ActionPreparationTimerCB(object o);
-        // the obvious, update an action while it is occuring
-        void ActionInProgressStatusTimerCB(object o);
-
-    }
 
     /// <summary>
     ///  controller has active control of processing through these three entry points
@@ -67,22 +52,6 @@ namespace NCC
 
         // new-fangled events
         Dictionary<EventType, Action<object>> handlers;
-
-        /* e.g.
-        OnPreActionEvent; getting config details
-
-        OnActionPreparationEvent; is doing the file gather
-
-        OnActionStartEvent; start the file cycle parsing loop, start up the analyzer threads, start the cycle conditioning, start the post-analysis
-
-        OnActionInProgressEvent; doing the file by file cycle parsing/analyzing loop
-
-        OnActionStopEvent; user or internal state stops "Preaction, Preparation, Start, in progress", finish the current action and move on to Finished step
-
-        OnActionCancelEvent; user or internal state cancels, this is a stop, with no closure
-
-        OnActionFinishedEvent;
-*/
 
         public ActionEvents()
         {
@@ -118,9 +87,6 @@ namespace NCC
                             {EventType.ActionStop, 66714},{EventType.ActionCancel, 66715},
                             {EventType.ActionFinished, 66716}};
 
-
-
     }
         
-
 }

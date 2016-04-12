@@ -250,7 +250,8 @@ namespace Instr
 				stopwatch.Start();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
 
-				ulong timeaccum = 0;
+				ulong accumulatedTime = 0;
+				int maxindex = 0;
 				TimeSpan interregnum = stopwatch.Elapsed;
 				while (interregnum <= duration)
 				{
@@ -266,21 +267,25 @@ namespace Instr
 					uint commonMemoryFillLevel = qs527er.CommonMemoryFillLevel;
 					uint bytesAvailable = commonMemoryFillLevel - commonMemoryReadIndex;
 
-					if (state != MCAState.Run && bytesAvailable == 0) {
+					if (state != MCAState.Run && bytesAvailable == 0)
+					{
 						break;
 					}
 
-					if (bytesAvailable >= CommonMemoryBlockSize) {
+					if (bytesAvailable >= CommonMemoryBlockSize)
+					{
 						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse)m_device.Client.Send(MCACommand.QueryCommonMemory(commonMemoryReadIndex / 2));
-						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
+						if (qcmr == null)
+							{ throw new MCADeviceLostConnectionException(); }
 						// bytesToCopy needs to always be even, so that commonMemoryReadIndex always stays even...
 						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
 						qcmr.CopyData(0, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-                        if (ps.file.writer != null) {
-                            ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
+						if (ps.file.writer != null)
+						{
+							ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
 							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
-                        }
+						}
 
 						rawBufferOffset += bytesToCopy;
 						commonMemoryReadIndex += bytesToCopy;
@@ -288,87 +293,122 @@ namespace Instr
 
 						// make sure rawBufferOffset is never greater than 3 after transforming data
 						// => means something has gone wrong
-						if (rawBufferOffset > 3) {
+						if (rawBufferOffset > 3)
+						{
 							throw new MCADeviceBadDataException();
 						}
+						// accumulate a big buffer full before handing the buffer over for processing
+
 						interregnum = stopwatch.Elapsed;
 						// copy the data out...
-						if (timestampsCount > 0) {
-							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							RDT.State.timeArray.Clear();
-							for (int i = 0; i < timestampsCount; i++)
-							{  
-								timeaccum += timestampsBuffer[i];
-								RDT.State.timeArray.Add(timeaccum);  // probably the slow way 
+						if (timestampsCount > 0)
+						{
+							if (maxindex < RDT.State.maxValuesInBuffer && interregnum <= duration)
+							{
+								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
+									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
+								for (int i = 0; i < timestampsCount; i++)
+								{
+									accumulatedTime += timestampsBuffer[i];
+									RDT.State.timeArray[maxindex] = accumulatedTime;
+									maxindex++;  // always 1 more than the last index
+								}
+								RDT.State.NumValuesParsed += timestampsCount;
+								RDT.State.hitsPerChn[0] += timestampsCount;
+								RDT.State.NumTotalsEncountered = RDT.State.NumValuesParsed; // only one channel
+							} 
+							else
+							{
+								long _max = RDT.State.NumValuesParsed;
+								if (_max < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
+									RDT.State.neutronEventArray.RemoveRange((int)_max, RDT.State.neutronEventArray.Count - (int)_max);
+								else if (_max > RDT.State.neutronEventArray.Count)
+									RDT.State.neutronEventArray.AddRange(new uint[_max - RDT.State.neutronEventArray.Count]);
+								if (_max < RDT.State.timeArray.Count)
+									RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
+								else if (_max > RDT.State.timeArray.Count)
+									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
+								RDT.PassBufferToTheCounters((int)_max);
+								m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount {1}", timestampsCount, RDT.State.NumValuesParsed);
 							}
-							RDT.State.NumValuesParsed = timestampsCount;
-							RDT.State.hitsPerChn[0] += timestampsCount;
-
-							if (timestampsCount < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
-								RDT.State.neutronEventArray.RemoveRange((int)timestampsCount - 1, RDT.State.neutronEventArray.Count - (int)timestampsCount);
-							else if (timestampsCount > RDT.State.neutronEventArray.Count)
-								RDT.State.neutronEventArray.AddRange(new uint[timestampsCount - RDT.State.neutronEventArray.Count]);
-
-							RDT.PassBufferToTheCounters((int)timestampsCount);
-							//m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
 						}
-					} else if (bytesAvailable > 0 && state != MCAState.Run) {
+					} 
+					else if (bytesAvailable > 0 && state != MCAState.Run)
+					{
 						// special case for when there's not a whole block left to read
 						// we can only read up to the address: CommonMemorySize - 1440
 						uint commonMemorySize = qs527er.CommonMemorySize;
 
 						uint readAddress = commonMemoryReadIndex;
 						uint readOffset = 0;
-						if (readAddress > commonMemorySize - 1440) {
+						if (readAddress > commonMemorySize - 1440)
+						{
 							readOffset = readAddress - (commonMemorySize - 1440);
 							readAddress -= readOffset;
 						}
 
-						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse) m_device.Client.Send(MCACommand.QueryCommonMemory(readAddress / 2));
-						if (qcmr == null) { throw new MCADeviceLostConnectionException(); }
+						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse)m_device.Client.Send(MCACommand.QueryCommonMemory(readAddress / 2));
+						if (qcmr == null)
+						{ throw new MCADeviceLostConnectionException(); }
 						uint bytesToCopy = bytesAvailable;
 						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-                        if (ps.file.writer != null) {
-                            ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
+						if (ps.file.writer != null)
+						{
+							ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
 							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
-                        }
+						}
 
 						rawBufferOffset += bytesToCopy;
-						commonMemoryReadIndex += bytesToCopy;                            
+						commonMemoryReadIndex += bytesToCopy;
 
 						uint timestampsCount = m_device.TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
 
 						//if (rawBufferOffset > 0) {
-                            // apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
-							//throw new MCADeviceBadDataException();
+						// apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
+						//throw new MCADeviceBadDataException();
 						//}
 						interregnum = stopwatch.Elapsed;
 
-						if (timestampsCount > 0) {
+						if (timestampsCount > 0)
+						{
 							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							RDT.State.timeArray.Clear();
-							for (int i = 0; i < timestampsCount; i++)
-							{  
-								timeaccum += timestampsBuffer[i];
-								RDT.State.timeArray.Add(timeaccum);  // probably the slow way 
+							if (maxindex < RDT.State.maxValuesInBuffer && interregnum <= duration)
+							{
+								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
+									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
+								for (int i = 0; i < timestampsCount; i++)
+								{
+									accumulatedTime += timestampsBuffer[i];
+									RDT.State.timeArray[maxindex] = accumulatedTime;
+									maxindex++;  // always 1 more than the last index
+								}
+								RDT.State.NumValuesParsed += timestampsCount;
+								RDT.State.hitsPerChn[0] += timestampsCount;
+								RDT.State.NumTotalsEncountered = RDT.State.NumValuesParsed; // only one channel
+							} 
+							else
+							{
+								long _max = RDT.State.NumValuesParsed;
+								if (_max < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
+									RDT.State.neutronEventArray.RemoveRange((int)_max, RDT.State.neutronEventArray.Count - (int)_max);
+								else if (_max > RDT.State.neutronEventArray.Count)
+									RDT.State.neutronEventArray.AddRange(new uint[_max - RDT.State.neutronEventArray.Count]);
+								if (_max < RDT.State.timeArray.Count)
+									RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
+								else if (_max > RDT.State.timeArray.Count)
+									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
+
+								RDT.PassBufferToTheCounters((int)_max);
 							}
-							RDT.State.NumValuesParsed = timestampsCount;
-							RDT.State.hitsPerChn[0] += timestampsCount;
-
-							if (timestampsCount < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
-								RDT.State.neutronEventArray.RemoveRange((int)timestampsCount - 1, RDT.State.neutronEventArray.Count - (int)timestampsCount);
-							else if (timestampsCount > RDT.State.neutronEventArray.Count)
-								RDT.State.neutronEventArray.AddRange(new uint[timestampsCount - RDT.State.neutronEventArray.Count]);
-
-							RDT.PassBufferToTheCounters((int)timestampsCount);
-							//m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} timestampsCount", timestampsCount);
 						}
-					} else {
+					} 
+					else
+					{
 						// give the device a break
-						Thread.Sleep(100); // 100 ms
+						Thread.Sleep(20); // 100 ms
 					}
-					}
+				}
 
 				stopwatch.Stop();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);

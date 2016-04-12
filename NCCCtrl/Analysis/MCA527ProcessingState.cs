@@ -29,14 +29,13 @@ using System;
 using AnalysisDefs;
 using Device;
 using NCC;
-using System.Collections.Generic;
 
 namespace Analysis
 {
-    /// <summary>
-    /// Converts raw data from a PTR-32.
-    /// </summary>
-    public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
+	/// <summary>
+	/// Converts raw data from an MCA-527.
+	/// </summary>
+	public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
     {
 
         /// <summary>
@@ -123,41 +122,6 @@ namespace Analysis
         /// The maximum voltage in volts (V).
         /// </summary>
         public const int MaxVoltage = 2000;
-
-        /// <summary>
-        /// Analyzes a sequence of events. Optionally writes data file 
-        /// </summary>
-        /// <param name="times">The event times in clock ticks.</param>
-        /// <param name="channelMasks">The event channel masks.</param>
-        /// <param name="count">The number of events.</param>
-        private void Analyze(List<ulong> times, List<uint> channelMasks, int count)
-        {
-            for (int i = 0; i < count; i++) {
-                for (int channel = 0; channel < ChannelCount; channel++) {
-                    if ((channelMasks[i] & (1u << channel)) != 0) {
-                        cycle.HitsPerChannel[channel]++;
-                        cycle.Totals++;
-                    }
-                }
-            }
-
-            cycle.TotalEvents += (ulong) count;
-			if (cycle.TS.Ticks == 0L)
-				cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (Frequency / TimeSpan.TicksPerSecond)); // This is the actual last time, used only if no requested time is specified on the cycle
-
-            if (cycle.Totals > 0 && cycle.TS.TotalSeconds > 0.0) {
-                cycle.SinglesRate = cycle.Totals / cycle.TS.TotalSeconds;
-            }
-
-            Sup.HandleAnArrayOfNeutronEvents(times, channelMasks, count);
-
-            if (m_writingFile)
-            {
-				// URGENT: MCA527 file write processing gets inserted here file
-                //file.Channels.Write(channelMasks, 0, count);
-                //file.Events.Write(times, 0, count);
-            }
-        }
 
         public NCCFile.MCAFile file;
         public MCADevice device;
