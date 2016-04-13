@@ -32,10 +32,10 @@ using NCC;
 
 namespace Analysis
 {
-	/// <summary>
-	/// Converts raw data from an MCA-527.
-	/// </summary>
-	public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
+    /// <summary>
+    /// Converts raw data from a PTR-32.
+    /// </summary>
+    public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
     {
 
         /// <summary>
@@ -67,24 +67,14 @@ namespace Analysis
 
 		public void BeginSweep(uint sweepNumber)
 		{
-			//Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
 		}
 
 		public void FinishedSweep(uint sweepNumber, double sweepDurationSeconds)
 		{
-			//Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDurationSeconds);
 		}
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
 		{
-			Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
-			//bool first = true;
-			//foreach (uint timestamp in timestamps) {
-			//	if (first == false) { Console.Write(", "); }
-			//	Console.Write(timestamp);
-			//	first = false;
-			//}
-			//Console.WriteLine();
 		}
 
         /// <summary>
@@ -94,7 +84,11 @@ namespace Analysis
         /// <returns><c>null</c></returns>
         public override StreamStatusBlock ConvertDataBuffer(int count)
         {
-			// copy the timestampsBuffer value into the RDT.State.timeArray,
+			// assign all neutrons to channel 0
+			for (int i = 0; i < neutronEventArray.Count; i++)
+			{
+				neutronEventArray[i] = 1;
+			}
 			return null;
         }
 
