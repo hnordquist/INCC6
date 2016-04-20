@@ -1499,7 +1499,19 @@ namespace NCCFile
 
 		public class MCATimestampsRecorderModeHeader
 		{
-			public string ApplicationIdentification;
+			string _ApplicationIdentification;
+			public string ApplicationIdentification
+			{
+				get {
+					if (_ApplicationIdentification == null) {
+						return "WinTimestamps Version 01.01.0009";
+					}
+					return _ApplicationIdentification;
+				}
+				set {
+					_ApplicationIdentification = value;
+				}
+			}
 			public ushort TimeUnitLengthNanoSec;
 			public ushort Preset;
 			public uint PresetValue;

@@ -190,8 +190,8 @@ namespace Instr
 			}
 			CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
 			Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
-					TaskCreationOptions.PreferFairness, 
-					TaskScheduler.Default);
+												TaskCreationOptions.PreferFairness, 
+												TaskScheduler.Default);
 
 		}
 
@@ -204,19 +204,21 @@ namespace Instr
 		/// <exception cref="MCADeviceBadDataException">An error occurred with the raw data strem state.</exception>
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
-			//m_device.mHeartbeatSemaphore.Wait();
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
 
 			try
 			{
 				if (ps == null)
 					throw new Exception("Big L bogus state");
+				if (ps.writingFile && ps.file.writer == null)
+					m_logger.TraceEvent(LogLevels.Verbose, 9, "null");
+
 				ushort seq = measurement.CurrentRepetition;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay {1}", DeviceName, seq);
 				m_logger.Flush();
 
 				if (m_setvoltage)
-						SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+					SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
 
 				if (seq == 1)  // init var on first cycle
 					ps.device = m_device;
@@ -227,8 +229,6 @@ namespace Instr
 				TimeSpan duration = TimeSpan.FromSeconds((uint)measurement.AcquireState.lm.Interval);
 				byte[] buffer = new byte[1024 * 1024];
 				long total = 0;
-
-				ps.BeginSweep(measurement.CurrentRepetition);
 
 				// a5 5a 42 00 01 00 ae d5 44 56 b9 9b
 				// flags: 0x0001 => spectrum is cleared and a new start time is set
@@ -247,16 +247,17 @@ namespace Instr
 				uint commonMemoryReadIndex = 0;
 				uint rawBufferOffset = 0;
 
-				stopwatch.Start();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
 
 				ulong accumulatedTime = 0;
 				int maxindex = 0;
-				TimeSpan interregnum = stopwatch.Elapsed;
-				while (interregnum <= duration)
+				TimeSpan elapsed = new TimeSpan(0);
+				stopwatch.Start();
+				while (true)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-
+					if (elapsed > duration)
+						break;
 					QueryState527ExResponse qs527er = (QueryState527ExResponse)m_device.Client.Send(MCACommand.QueryState527Ex());
 					if (qs527er == null) { throw new MCADeviceLostConnectionException(); }
 
@@ -268,9 +269,7 @@ namespace Instr
 					uint bytesAvailable = commonMemoryFillLevel - commonMemoryReadIndex;
 
 					if (state != MCAState.Run && bytesAvailable == 0)
-					{
-						break;
-					}
+						break;					
 
 					if (bytesAvailable >= CommonMemoryBlockSize)
 					{
@@ -281,10 +280,10 @@ namespace Instr
 						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
 						qcmr.CopyData(0, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-						if (ps.file.writer != null)
+						if (ps.file.writer != null && ps.writingFile)
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
-							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+							m_logger.TraceEvent(LogLevels.Verbose, 9, "{0} bytes to write", bytesToCopy);
 						}
 
 						rawBufferOffset += bytesToCopy;
@@ -299,11 +298,11 @@ namespace Instr
 						}
 						// accumulate a big buffer full before handing the buffer over for processing
 
-						interregnum = stopwatch.Elapsed;
+						elapsed = stopwatch.Elapsed;  // snapshot time before the processing, which may delay a bit
 						// copy the data out...
 						if (timestampsCount > 0)
 						{
-							if (maxindex < RDT.State.maxValuesInBuffer && interregnum <= duration)
+							if (maxindex < RDT.State.maxValuesInBuffer && elapsed <= duration)
 							{
 								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
 									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
@@ -353,10 +352,10 @@ namespace Instr
 						uint bytesToCopy = bytesAvailable;
 						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-						if (ps.file.writer != null)
+						if (ps.file.writer != null && ps.writingFile)
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
-							//m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to copy", bytesToCopy);
+							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to write", bytesToCopy);
 						}
 
 						rawBufferOffset += bytesToCopy;
@@ -368,12 +367,11 @@ namespace Instr
 						// apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
 						//throw new MCADeviceBadDataException();
 						//}
-						interregnum = stopwatch.Elapsed;
-
+						elapsed = stopwatch.Elapsed;  // snapshot time before the processing, which may delay a bit
 						if (timestampsCount > 0)
 						{
 							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							if (maxindex < RDT.State.maxValuesInBuffer && interregnum <= duration)
+							if (maxindex < RDT.State.maxValuesInBuffer && elapsed <= duration)
 							{
 								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
 									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
@@ -398,24 +396,29 @@ namespace Instr
 									RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
 								else if (_max > RDT.State.timeArray.Count)
 									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
-
 								RDT.PassBufferToTheCounters((int)_max);
+								m_logger.TraceEvent(LogLevels.Verbose, 86, "{0} timestampsCount {1}", timestampsCount, RDT.State.NumValuesParsed);
 							}
 						}
 					} 
-					else
-					{
-						// give the device a break
-						Thread.Sleep(20); // 100 ms
-					}
-				}
+					//else
+					//{
+					//	// give the device a break
+					//	Thread.Sleep(40); // 100? ms
+					//}
+				}  // while time elpased is less than requested time
 
 				stopwatch.Stop();
-				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);
-				ps.FinishedSweep(seq, stopwatch.Elapsed.TotalSeconds);
-				
+				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);		
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Finished assay; read {1} bytes in {2}s for {3}", DeviceName, total, stopwatch.Elapsed.TotalSeconds, seq);
 				m_logger.Flush();
+
+				if (ps.writingFile)
+				{
+					m_device.CreateWriteHeaderAndClose(ps.file);
+					m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
+					m_logger.Flush();
+				}
 				lock (m_monitor)
 				{
 					m_cancellationTokenSource.Dispose();
@@ -424,19 +427,13 @@ namespace Instr
 				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
 				m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
 				m_logger.Flush();
-				if (NC.App.AppContext.LiveFileWrite)
-				{
-					m_device.CreateWriteHeaderAndClose(ps.file);
-					m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
-					m_logger.Flush();
-				}
 			}
 			catch (OperationCanceledException)
 			{
 				m_logger.TraceEvent(LogLevels.Warning, 767, "MCA527[{0}]: Stopping assay", DeviceName);
 				m_logger.Flush();
 				DAQControl.StopActiveAssayImmediately();
-				//throw; cannot catch easily due to 4.5 task model or my c^&p coding, so just log and stop the task
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -444,13 +441,12 @@ namespace Instr
 				m_logger.TraceException(ex, true);
 				m_logger.Flush();
 				DAQControl.HandleFatalGeneralError(this, ex);
-				//throw; cannot catch upthread due to 4.5 task model
+				throw;
 			}
 			finally
 			{
-				//m_device.mHeartbeatSemaphore.Release();
-			}
 
+			}
 		}
 
 

@@ -374,10 +374,10 @@ namespace DAQ
 
             LMInstrument lmi = new LMInstrument(e, ep.Port);
             Instruments.All.Add(lmi);
-            // dev note: need a parallel entry in the counting parameters map on the enclosing Measurement for each instrument and it;s SR params class instance
+            // dev note: need a parallel entry in the counting parameters map on the enclosing Measurement for each instrument and it's SR params class instance
 
             // get the status of the instrument
-            DAQControl.ReadInstrStatus(lmi);
+			LMMMComm.FormatAndSendLMMMCommand(LMComm.LMMMLingo.Tokens.cstatus, 0, Instruments.Active.RankPositionInList(lmi));
         }
 
         // used for verbose data logging only

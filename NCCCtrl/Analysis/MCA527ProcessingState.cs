@@ -32,10 +32,10 @@ using NCC;
 
 namespace Analysis
 {
-    /// <summary>
-    /// Converts raw data from a PTR-32.
-    /// </summary>
-    public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
+	/// <summary>
+	/// Converts raw data from an MCA-527.
+	/// </summary>
+	public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
     {
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Analysis
         public MCA527ProcessingState()
         {
             InitParseBuffers(1,4, false);
-            m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+            writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
         /// <summary>
         /// Perform initialization at the start of a new cycle.
@@ -57,7 +57,7 @@ namespace Analysis
 
             if (cycle != null) {
 				cycle.ExpectedTS = new TimeSpan((long)(CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval * TimeSpan.TicksPerSecond));
-                m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+                writingFile = CentralizedState.App.AppContext.LiveFileWrite;
             }
             if (param != null)
             {
@@ -67,14 +67,24 @@ namespace Analysis
 
 		public void BeginSweep(uint sweepNumber)
 		{
+			//Console.WriteLine("BEGIN SWEEP: " + sweepNumber);
 		}
 
 		public void FinishedSweep(uint sweepNumber, double sweepDurationSeconds)
 		{
+			//Console.WriteLine("FINISHED SWEEP: " + sweepNumber + ", duration: " + sweepDurationSeconds);
 		}
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
 		{
+			Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
+			//bool first = true;
+			//foreach (uint timestamp in timestamps) {
+			//	if (first == false) { Console.Write(", "); }
+			//	Console.Write(timestamp);
+			//	first = false;
+			//}
+			//Console.WriteLine();
 		}
 
         /// <summary>
@@ -102,7 +112,7 @@ namespace Analysis
 		}
 
 
-		        /// <summary>
+		/// <summary>
         /// The number of channels.
         /// </summary>
         public const int ChannelCount = 1;
@@ -119,7 +129,7 @@ namespace Analysis
 
         public NCCFile.MCAFile file;
         public MCADevice device;
-        private bool m_writingFile;
+        public bool writingFile;
 
     }
 }
