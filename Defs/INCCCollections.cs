@@ -35,10 +35,10 @@ using NCCReporter;
 namespace AnalysisDefs
 {
 
-    using NC = NCC.CentralizedState;
+	using NC = NCC.CentralizedState;
 
 
-    public interface IDetAPI<T>
+	public interface IDetAPI<T>
     {
         /// <summary>
         /// Examine DB for existence of data object of type T
@@ -1422,7 +1422,7 @@ namespace AnalysisDefs
                         v.cm_pu_ratio.err = DB.Utils.DBDouble(dr["cm_pu_ratio_err"]);
                         v.cm_u_ratio.v = DB.Utils.DBDouble(dr["cm_u_ratio"]);
                         v.cm_u_ratio.err = DB.Utils.DBDouble(dr["cm_u_ratio_err"]);
-                        v.cm_pu_half_life = DB.Utils.DBDouble(dr["pu_half_life"]);
+                        v.pu_half_life = DB.Utils.DBDouble(dr["pu_half_life"]);
                         v.cm_pu_ratio_date = DB.Utils.DBDateTime(dr["cm_pu_ratio_date"]);
                         v.cm_id_label = dr["cm_id_label"].ToString();
                         v.cm_id = dr["cm_id"].ToString();
@@ -1766,7 +1766,7 @@ namespace AnalysisDefs
             // item id
             resrec.item = ItemIdListImpl.GetItemIdByRow(dr, resultsSubset: true);
             resrec.item.material = string.Copy(resrec.acq.item_type);
-
+            resrec.acq.ApplyItemId(resrec.item);
             // reconstruct the isotopics used for the measurement results               
             resrec.iso = IsotopicsListImpl.GetIsotopicsByRow(dr);
 
@@ -2121,7 +2121,10 @@ namespace AnalysisDefs
                     foreach (DataRow dr in dt.Rows)
                     {
                         BackgroundParameters bp = GetDataFromRow(dr, false);
-                        bkgParameters.Add(d, bp);
+                        if (bkgParameters.ContainsKey(d))
+							bkgParameters[d] = bp;
+						else
+							bkgParameters.Add(d, bp);
                     }
                 }
             }
@@ -3078,14 +3081,11 @@ namespace AnalysisDefs
 
             if (resultsSubset) return ap;
 
-            ap.active_num_runs = DB.Utils.DBUInt16(dr["active_num_runs"].ToString());
-            ap.facility = new Descriptor(dr["facility"].ToString(), dr["facility_description"].ToString());
-            ap.mba = new Descriptor(dr["mba"].ToString(), dr["mba_description"].ToString());
-            ap.detector_id = dr["meas_detector_id"].ToString();
-            ap.glovebox_id = dr["glovebox_id"].ToString();
             ap.isotopics_id = dr["isotopics_id"].ToString();
+            ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
+            ap.mass = DB.Utils.DBDouble(dr["mass"].ToString());
             ap.comp_isotopics_id = dr["comp_isotopics_id"].ToString();
-
+            ap.glovebox_id = dr["glovebox_id"].ToString();
             ap.review.DetectorParameters = DB.Utils.DBBool(dr["review_detector_parms"]);
             ap.review.CalibrationParameters = DB.Utils.DBBool(dr["review_calib_parms"]);
             ap.review.Isotopics = DB.Utils.DBBool(dr["review_isotopics"]);
@@ -3095,15 +3095,12 @@ namespace AnalysisDefs
             ap.review.SummedMultiplicityDistributions = DB.Utils.DBBool(dr["review_summed_mult_dist"].ToString());
             ap.review.MultiplicityDistributions = DB.Utils.DBBool(dr["review_run_mult_dist"].ToString());
 
-            ap.run_count_time = DB.Utils.DBDouble(dr["run_count_time"].ToString());
             ap.acquire_type = (AcquireConvergence)(DB.Utils.DBInt32(dr["acquire_type"].ToString()));
 
             ap.active_num_runs = DB.Utils.DBUInt16(dr["active_num_runs"].ToString());
             ap.max_num_runs = DB.Utils.DBUInt16(dr["max_num_runs"].ToString());
             ap.min_num_runs = DB.Utils.DBUInt16(dr["min_num_runs"].ToString());
             ap.meas_precision = DB.Utils.DBDouble(dr["meas_precision"].ToString());
-
-            ap.mass = DB.Utils.DBDouble(dr["mass"].ToString());
 
             ap.drum_empty_weight = DB.Utils.DBDouble(dr["drum_empty_weight"].ToString());
             ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);
@@ -3655,11 +3652,11 @@ namespace AnalysisDefs
 			public	string Detector;
 			public	string Option;
 			public	long Mid, Rid;
+            public DateTimeOffset DateTime;
 		}
 
 		public List<IndexedResults> IndexedResultsFor(string det, string option, string inspnum)
         {
-			List<MeasId> meas = MeasurementIds(det, option);
 			List<IndexedResults> res = new List<IndexedResults>();
 
 			DB.Results r = new DB.Results();
@@ -3674,8 +3671,9 @@ namespace AnalysisDefs
 					ir.Option = dr["meas_option"].ToString();
 					ir.Detector = det;
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
-					ir.Rid = DB.Utils.DBInt64(dr["id"]);
-					res.Add(ir);
+                    ir.Rid = DB.Utils.DBInt64(dr["id"]);
+                    ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    res.Add(ir);
 				}
 			}
 			return res;
@@ -3684,7 +3682,6 @@ namespace AnalysisDefs
 		
 		public List<IndexedResults> IndexedResultsFor(string option)
         {
-			List<MeasId> meas = MeasurementIds(string.Empty, option);
 			List<IndexedResults> res = new List<IndexedResults>();
 
 			DB.Results r = new DB.Results();
@@ -3692,7 +3689,8 @@ namespace AnalysisDefs
 			foreach (DataRow dr in dt.Rows)
             {
 				string o =  dr["meas_option"].ToString();
-				if (string.Compare(option,o) == 0)
+				if (string.IsNullOrEmpty(option) ||
+                    string.Compare(option,o) == 0)
 				{ 
 					IndexedResults ir = new IndexedResults();
 					ir.Campaign = dr["campaign_id"].ToString();
@@ -3700,7 +3698,8 @@ namespace AnalysisDefs
 					ir.Detector = dr["detector_name"].ToString();
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 					ir.Rid = DB.Utils.DBInt64(dr["id"]);
-					res.Add(ir);
+                    ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    res.Add(ir);
 				}
 			}
 			return res;
@@ -3732,7 +3731,7 @@ namespace AnalysisDefs
 						foreach (string rfpath in lrfpaths)
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
-
+					IngestAnalysisMethodResultsFromDB(m, mdb.db);
 				}
 			}
 			return ms;
@@ -3763,9 +3762,7 @@ namespace AnalysisDefs
                     dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
 
                 // get the traditional results rec that matches the measurement id 
-                //This does not, in fact, get an item id......hn 9.10.2015
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
-
 				if (rec != null)
 				{
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
@@ -3780,10 +3777,10 @@ namespace AnalysisDefs
 						foreach (string rfpath in lrfpaths)
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
-				}
-				// TODO: not needed by current UI caller, but needed for Reanalysis: cycles, results, method results, method params, etc 
-			}
-
+                    IngestAnalysisMethodResultsFromDB(m);
+                }
+                // URGENT: needed for Reanalysis, and Assay summary: cycles, results, etc 
+            }
             return ms;
         }
 
@@ -3801,7 +3798,7 @@ namespace AnalysisDefs
 		}
 
         /// <summary>
-        /// Construxt the CycleList from a stored measurement identified by the detector and the MeasId
+        /// Construct the CycleList from a stored measurement identified by the detector and the MeasId
         /// No LM data yet
         /// </summary>
         /// <param name="det">Detector</param>

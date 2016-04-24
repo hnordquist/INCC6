@@ -190,7 +190,7 @@ namespace Analysis
 						tiks = (long)timeArray[(int)numValuesParsed - 1];
 					else if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
 						tiks = (long)(timeArray[(int)numValuesParsed - 1] / 10);
-					cycle.TS = TimeSpan.FromTicks(tiks);
+					cycle.TS = TimeSpan.FromTicks(tiks); // This is the actual last time, used only if no requested time is specified on the cycle 
 				}
 
 				for (int i = 0; i < NC.ChannelCount; i++)
@@ -668,17 +668,11 @@ namespace Analysis
         public StreamStatusBlock PassBufferToTheCounters(int count)
         {
             StreamStatusBlock endofdata = null;
-            logger.TraceEvent(LogLevels.Verbose, 220, "{0}: Starting data conversion on file stream. . .", NumProcessedRawDataBuffers);
 
             endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
-
-            if (State.usingStreamRawAnalysis)   // process by data blocks, e.g. buffered transfer underlying a stream.
-            {
-                State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
-            }
-
-            //  logger.TraceEvent(LogLevels.Verbose, 224, "{0}: Worked {1} bytes", NumProcessedRawDataBuffers, bytecount);//, state.stopWatch.ElapsedTicks);
+			State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
+         
             return endofdata;
         }
 

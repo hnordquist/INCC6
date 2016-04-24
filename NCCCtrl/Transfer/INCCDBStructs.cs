@@ -948,8 +948,7 @@ namespace NCCTransfer
         public const int MAX_PATH_LENGTH = LONG_FILE_NAME_LENGTH; /*length of file name path including drive and suffix */
         public const int MAX_COMMENT_LENGTH = 51; /*length of measurement comments */
         public const int ERR_MSG_LENGTH = 81; /*length of database error msg */
-        //This may blow up, but we claim to handle 512 now......hn 5.5.5015
-        public const int MULTI_ARRAY_SIZE = 128; /*size of multiplicity arrays */
+        public const int MULTI_ARRAY_SIZE = 128; /*size of multiplicity arrays */ // INCC5 handles 128 only, this INCC5 legacy code must remain at 128
         public const int MAX_NUM_CALIB_PTS = 20; /*max # calibration pts pairs in db */
         public const int MAX_ASSAY_SUMMARY_VARS = 130; /*max # assay summary variables */
         public const int MAX_HOLDUP_SUMMARY_VARS = 50; /*max # holdup summary variables */

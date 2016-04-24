@@ -26,42 +26,67 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Windows.Forms;
-
-namespace NewUI
+using System.Collections.Generic;
+namespace NCC
 {
 
-	//copy from IDDMeasurementList
-    public partial class IDDReviewMeasSummary : Form
+    /// <summary>
+    ///  controller has active control of processing through these three entry points
+    /// </summary>
+    public interface IActionControl
     {
-        public IDDReviewMeasSummary()
-        {
-            InitializeComponent();
-        }
 
-        private void PrintBtn_Click(object sender, EventArgs e)
-        {
+        void CancelCurrentAction();
 
-        }
+        void StopCurrentAction();
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
+        void StartAction();
 
-        }
-
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
     }
+
+
+    public abstract class ActionEvents 
+    {
+        // an action is an HV Calib operation or a Measurement "assay", or others yet unspecified
+        public enum EventType { PreAction, ActionPrep, ActionStart, ActionInProgress, ActionStop, ActionCancel, ActionFinished }
+
+        // new-fangled events
+        Dictionary<EventType, Action<object>> handlers;
+
+        public ActionEvents()
+        {
+            handlers = new Dictionary<EventType, Action<object>>();
+        }
+
+
+        public void SetEventHandler(EventType et, Action<object> ac)
+        {
+            handlers.Remove(et);
+            handlers.Add(et, ac);
+        }
+
+        public void FireEvent(EventType et, object o)
+        {
+            Action<object> ac = null;
+            handlers.TryGetValue(et, out ac);
+            if (ac != null)
+                ac(o);
+        }
+
+        public Action<object> GetEventHandler(EventType et)
+        {
+            return handlers[et];
+        }
+
+        /// <summary>
+        /// Map from event types to a fixed log id
+        /// </summary>
+        static readonly public Dictionary<EventType, int> logid = new Dictionary<EventType, int>(){
+                            {EventType.PreAction, 66710},{EventType.ActionPrep, 66711},
+                            {EventType.ActionStart, 66712},{EventType.ActionInProgress, 66713},
+                            {EventType.ActionStop, 66714},{EventType.ActionCancel, 66715},
+                            {EventType.ActionFinished, 66716}};
+
+    }
+        
 }

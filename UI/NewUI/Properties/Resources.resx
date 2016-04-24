@@ -121,34 +121,37 @@
   <data name="coincidence_matrix" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\coincidence_matrix.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="coincidence_matrix_gatewidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\coincidence_matrix_gatewidth.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="coincidence_matrix_initdelay" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\coincidence_matrix_initdelay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="coincidence_matrix_longdelay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\coincidence_matrix_longdelay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="feynman" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\feynman.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="feynman_gatewidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\feynman_gatewidth.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="multiplicity_FA" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\multiplicity_FA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="multiplicity_FA_clockwidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\multiplicity_FA_clockwidth.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="multiplicity_FA_gatewidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\multiplicity_FA_gatewidth.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="coincidence_matrix_initdelay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\coincidence_matrix_initdelay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="feynman" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\feynman.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="multiplicity_FA_initdelay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\multiplicity_FA_initdelay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="multiplicity_FA_clockwidth" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\multiplicity_FA_clockwidth.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="multiplicity_FA" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\multiplicity_FA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DaveEclipseClip" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DaveEclipseClip.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

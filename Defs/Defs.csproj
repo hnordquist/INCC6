@@ -36,9 +36,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BigNum">
-      <HintPath>..\deployment\BigNum.dll</HintPath>
-    </Reference>
     <Reference Include="RepDB">
       <HintPath>..\deployment\RepDB.dll</HintPath>
     </Reference>
@@ -52,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis.cs" />
+    <Compile Include="BigNum\BigFloat.cs" />
+    <Compile Include="BigNum\BigInt.cs" />
     <Compile Include="Central.cs" />
     <Compile Include="LMResults.cs" />
     <Compile Include="CounterPersistence.cs" />
@@ -71,6 +70,10 @@
     <Compile Include="ReportBase.cs" />
     <Compile Include="ReportSectional.cs" />
     <Compile Include="Results.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="BigNum\BigNum.XML" />
+    <Content Include="BigNum\Doc.xsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

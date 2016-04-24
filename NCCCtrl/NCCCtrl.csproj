@@ -42,9 +42,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BigNum">
-      <HintPath>..\deployment\BigNum.dll</HintPath>
-    </Reference>
     <Reference Include="Defs">
       <HintPath>..\deployment\Defs.dll</HintPath>
     </Reference>
@@ -54,9 +51,6 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="NCCCore">
       <HintPath>..\deployment\NCCCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Options">
-      <HintPath>..\deployment\Options.dll</HintPath>
     </Reference>
     <Reference Include="RepDB">
       <HintPath>..\deployment\RepDB.dll</HintPath>
@@ -78,8 +72,8 @@
     <Compile Include="Analysis\RDT.cs" />
     <Compile Include="Analysis\RTAnalysis.cs" />
     <Compile Include="Analysis\SRRDT.cs" />
-    <Compile Include="Comm\Lingo.cs" />
-    <Compile Include="Comm\LMMMComm.cs" />
+    <Compile Include="Device\Lingo.cs" />
+    <Compile Include="Device\LMMMComm.cs" />
     <Compile Include="DAQServer\BufferPool.cs" />
     <Compile Include="DAQServer\ExtensionMethods.cs" />
     <Compile Include="DAQServer\Server.cs" />
@@ -95,9 +89,6 @@
     <Compile Include="DAQ\SRDAQHandler.cs" />
     <Compile Include="DAQ\SREventHandler.cs" />
     <Compile Include="Device\MCA.cs" />
-    <Compile Include="Device\MCA527.cs" />
-    <Compile Include="Device\MCA527Parser.cs" />
-    <Compile Include="Device\MCA527RateCounter.cs" />
     <Compile Include="Device\Ptr32.cs" />
     <Compile Include="Device\Ptr32Error.cs" />
     <Compile Include="Device\Ptr32Exception.cs" />
@@ -108,7 +99,7 @@
     <Compile Include="File\INCCKnew.cs" />
     <Compile Include="File\INCC5CSVFiles.cs" />
     <Compile Include="File\NeutronDataFiles.cs" />
-    <Compile Include="LM\IAction.cs" />
+    <Compile Include="DAQ\IAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawAnalysis\AnalyzerEventCode.cs" />
     <Compile Include="RawAnalysis\AnalyzerHandler.cs" />
@@ -124,7 +115,7 @@
     <Compile Include="RawAnalysis\NeutronEvent.cs" />
     <Compile Include="RawAnalysis\RateGateAnalysis.cs" />
     <Compile Include="RawAnalysis\RossiAlphaCircularStackAnalysis.cs" />
-    <Compile Include="Status\Status.cs" />
+    <Compile Include="Utils\Status.cs" />
     <Compile Include="Transfer\FileTransfer.cs" />
     <Compile Include="Transfer\INCCDBStructs.cs" />
     <Compile Include="Transfer\INCCFileInfo.cs" />

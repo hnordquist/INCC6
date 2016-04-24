@@ -418,6 +418,7 @@ namespace NCCFile
                 foo.SetPath(NC.App.AppContext.FileInput);
             else
                 foo.SetFileList(NC.App.AppContext.FileInputList);
+            foo.eh += new TransferEventHandler((s, e) => { FireEvent(EventType.ActionInProgress, e); });
             List<INCCTransferBase> res = foo.Restore();
             // use RemoveAll to cull those NCC files that reference a non-existent detector
             DetectorList dl = NC.App.DB.Detectors;
@@ -664,15 +665,15 @@ namespace NCCFile
             if (NC.App.Opstate.Measurement != null)
             {
                 NC.App.Opstate.Measurement = null;
-                NCCReporter.LMLoggers.LognLM log = NC.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+                LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
                 long mem = GC.GetTotalMemory(false);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4248, "GC now");
+                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+                log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4284, "GC complete");
+                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
                 mem = GC.GetTotalMemory(true);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
             }
         }
 
@@ -699,11 +700,11 @@ namespace NCCFile
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             m.CurrentRepetition = 0;
-            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            NC.App.Opstate.SOH = OperatingState.Living;
 
             try
             {
-                // urgent: there is more work to do for the bins and AB here, AB can be copied from the detector values
+                // URGENT: there is more work to do for the bins and AB here, AB can be copied from the detector values
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);

@@ -489,19 +489,19 @@ namespace NewUI
 
         private void ReportMeasSummaryClick(object sender, RoutedEventArgs e)
         {
-            //TODO
-
+            IDDAssaySummary f = new IDDAssaySummary(string.Empty);   // all types
+            f.Show();
         }
 
         private void ReportVerificationSummaryClick(object sender, RoutedEventArgs e)
         {
-            IDDAssaySummary f = new IDDAssaySummary();
+            IDDAssaySummary f = new IDDAssaySummary("verification");
             f.Show();
         }
 
         private void ReportHoldupSummaryClick(object sender, RoutedEventArgs e)
         {
-            IDDHoldupSummary f = new IDDHoldupSummary();
+            IDDAssaySummary f = new IDDAssaySummary("holdup");   // NYI
             f.Show();
         }
 
@@ -848,7 +848,7 @@ namespace NewUI
 				NCCFile.ItemFile onefile = new NCCFile.ItemFile();
 				string path = System.IO.Path.GetFullPath(aDlg.FileName);
 				onefile.Process(path);
-				// URGENT: now do something with the results
+				// todo: now do something with the results
 			}
 			
         }

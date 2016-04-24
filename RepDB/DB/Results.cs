@@ -128,13 +128,13 @@ namespace DB
 		public DataTable ResultsForDetWithC(string name)
         {
             db.SetConnection();
-            string sSQL = "SELECT results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
             return db.DT(sSQL);
         }
 		public DataTable ResultsSubset()
         {
             db.SetConnection();
-            string sSQL = "SELECT results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
             return db.DT(sSQL);
         }
     }
@@ -144,9 +144,17 @@ namespace DB
     {
         public string table;
 
-        public ParamsRelatedBackToMeasurement(string table, DB db = null)
+        public ParamsRelatedBackToMeasurement(string table = "", DB db = null)
         {
             this.table = table;
+            if (db != null)
+                this.db = db;
+            else
+                this.db = new DB(false);
+        }
+
+		public ParamsRelatedBackToMeasurement(DB db)
+        {
             if (db != null)
                 this.db = db;
             else
@@ -155,7 +163,7 @@ namespace DB
         DB db;
 
         string MethodTableName { get {
-            if (String.IsNullOrEmpty(table)) 
+            if (string.IsNullOrEmpty(table)) 
                 return "__";  // guaranteed to throw exceptions
             else
                 return
@@ -188,6 +196,27 @@ namespace DB
             return db.ExecuteTransactionID(sqlList);
         }
 
+
+		public DataTable GetCombinedResults(long mid)
+        {
+			db.SetConnection();
+			string sSQL = "SELECT * FROM " + table + "," + MethodTableName + " where "+ table + ".mid=" + mid.ToString() + " AND " + MethodTableName + ".rid=" + table + ".id";
+            return db.DT(sSQL);
+        }
+		
+        public DataTable GetMethodResults(long mid)
+        {
+			db.SetConnection();
+            string sSQL = "SELECT * from " + table + " where mid=" + mid.ToString();
+            return db.DT(sSQL);
+        }
+
+        public DataTable GetMethodResultsMethod(long mid, long rid)
+        {
+			db.SetConnection();
+            string sSQL = "SELECT * from " + table + "_m where mid=" + mid.ToString() + " AND rid=" + rid.ToString();
+            return db.DT(sSQL);
+        }
 
     }
 

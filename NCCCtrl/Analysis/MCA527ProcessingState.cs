@@ -29,14 +29,13 @@ using System;
 using AnalysisDefs;
 using Device;
 using NCC;
-using System.Collections.Generic;
 
 namespace Analysis
 {
-    /// <summary>
-    /// Converts raw data from a PTR-32.
-    /// </summary>
-    public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
+	/// <summary>
+	/// Converts raw data from an MCA-527.
+	/// </summary>
+	public class MCA527ProcessingState : LMProcessingState, IMCADeviceCallbackObject
     {
 
         /// <summary>
@@ -45,8 +44,7 @@ namespace Analysis
         public MCA527ProcessingState()
         {
             InitParseBuffers(1,4, false);
-            m_parser = new MCA527Parser(Analyze);
-            m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+            writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
         /// <summary>
         /// Perform initialization at the start of a new cycle.
@@ -58,8 +56,8 @@ namespace Analysis
            base.StartCycle(cycle, param);
 
             if (cycle != null) {
-                m_parser.Reset((ulong) (MCA527.Frequency * CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval));
-                m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+				cycle.ExpectedTS = new TimeSpan((long)(CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval * TimeSpan.TicksPerSecond));
+                writingFile = CentralizedState.App.AppContext.LiveFileWrite;
             }
             if (param != null)
             {
@@ -96,8 +94,12 @@ namespace Analysis
         /// <returns><c>null</c></returns>
         public override StreamStatusBlock ConvertDataBuffer(int count)
         {
-            m_parser.Parse(rawDataBuff, 0, count);
-            return null;
+			// assign all neutrons to channel 0
+			for (int i = 0; i < neutronEventArray.Count; i++)
+			{
+				neutronEventArray[i] = 1;
+			}
+			return null;
         }
 
         /// <summary>
@@ -105,49 +107,29 @@ namespace Analysis
         /// </summary>
         public void EndOfCycleProcessing()
         {
-            m_parser.Flush();
             if (file != null)
                 file.CloseWriter();
 		}
 
-        /// <summary>
-        /// Analyzes a sequence of events. Optionally writes data file 
+
+		/// <summary>
+        /// The number of channels.
         /// </summary>
-        /// <param name="times">The event times in clock ticks.</param>
-        /// <param name="channelMasks">The event channel masks.</param>
-        /// <param name="count">The number of events.</param>
-        private void Analyze(List<ulong> times, List<uint> channelMasks, int count)
-        {
-            for (int i = 0; i < count; i++) {
-                for (int channel = 0; channel < MCA527.ChannelCount; channel++) {
-                    if ((channelMasks[i] & (1u << channel)) != 0) {
-                        cycle.HitsPerChannel[channel]++;
-                        cycle.Totals++;
-                    }
-                }
-            }
+        public const int ChannelCount = 1;
 
-            cycle.TotalEvents += (ulong) count;
-            cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (MCA527.Frequency / TimeSpan.TicksPerSecond));
+        /// <summary>
+        /// The clock frequency in hertz (Hz).
+        /// </summary>
+        public const long Frequency = 100000000;
 
-            if (cycle.Totals > 0 && cycle.TS.TotalSeconds > 0.0) {
-                cycle.SinglesRate = cycle.Totals / cycle.TS.TotalSeconds;
-            }
+        /// <summary>
+        /// The maximum voltage in volts (V).
+        /// </summary>
+        public const int MaxVoltage = 2000;
 
-            Sup.HandleAnArrayOfNeutronEvents(times, channelMasks, count);
-
-            if (m_writingFile)
-            {
-				// URGENT file write processing gets inserted here file
-                //file.Channels.Write(channelMasks, 0, count);
-                //file.Events.Write(times, 0, count);
-            }
-        }
-
-        private MCA527Parser m_parser;
         public NCCFile.MCAFile file;
         public MCADevice device;
-        private bool m_writingFile;
+        public bool writingFile;
 
     }
 }

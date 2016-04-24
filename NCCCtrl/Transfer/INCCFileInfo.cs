@@ -408,16 +408,25 @@ namespace NCCTransfer
                 if (IsFolder())
                 {
                     IEnumerable<string> effs = null;
-                    effs = from f in
-                               (string.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
-                           select f;
-
-                    if (effs == null || (effs.Count() <= 0))
-                    {
-                        mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);
-                    }
-                    else
-                        mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
+					try
+					{
+						effs = from f in
+								   (string.IsNullOrEmpty(searchPattern) ? Directory.EnumerateFiles(fpath) : Directory.EnumerateFiles(fpath, searchPattern))
+							   select f;
+					}
+					catch (Exception e)
+					{
+						mlogger.TraceEvent(LogLevels.Warning, 33021, e.Message);
+					} 
+					finally
+					{
+						if (effs == null || (effs.Count() <= 0))					
+							mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);					
+						else
+							mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
+					}
+					if (effs == null)
+						return results;
 
                     int fcount = effs.Count(), j = 0;
                     // Show files and build list

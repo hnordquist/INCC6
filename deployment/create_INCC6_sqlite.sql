@@ -921,7 +921,7 @@ GO
 CREATE TABLE results_rec(
 	[id] INTEGER Primary Key,
 	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[original_meas_date] nvarchar(20) NULL,
+	[original_meas_date] nvarchar(40) NULL,
 
 	[facility] nvarchar(256) NULL,  /* from the acquire params def */
 	[facility_description] nvarchar(1024) NULL,
@@ -1265,25 +1265,13 @@ CREATE TABLE results_curium_ratio_rec(
 	[dcl_minus_asy_u235_mass_pct] float,
 	[pu_pass] int,
 	[u_pass] int,
-	[cm_pu_ratio] float,
-	[cm_pu_ratio_err] float,
-	[pu_half_life] float,
-	[cm_pu_ratio_date] nvarchar(40),
-	[cm_u_ratio] float,
-	[cm_u_ratio_err] float,
-	[cm_u_ratio_date] nvarchar(40),
-	[cm_id_label] nvarchar(512),
-	[cm_id] nvarchar(512),
-	[cm_input_batch_id] nvarchar(512),
-	[dcl_u_mass] float,
-	[dcl_u235_mass] float,
 	[cm_pu_ratio_decay_corr] float,
 	[cm_pu_ratio_decay_corr_err] float,
 	[cm_u_ratio_decay_corr] float,
 	[cm_u_ratio_decay_corr_err] float
 );
 GO
-CREATE TABLE curium_ratio_rec_m(
+CREATE TABLE cm_pu_ratio_rec_m(
 	[id] INTEGER Primary Key,
 	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
 	[rid] INTEGER REFERENCES results_curium_ratio_rec(id),
@@ -1299,6 +1287,31 @@ CREATE TABLE curium_ratio_rec_m(
 	[cm_input_batch_id] nvarchar(512),
 	[dcl_u_mass] float,
 	[dcl_u235_mass] float
+);
+GO    
+CREATE TABLE curium_ratio_rec_m(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[rid] INTEGER REFERENCES results_curium_ratio_rec(id),
+	[a] float,
+	[b] float,
+	[c] float,
+	[d] float,
+	[var_a] float,
+	[var_b] float,
+	[var_c] float,
+	[var_d] float,
+	[covar_ab] float,
+	[covar_ac] float,
+	[covar_ad] float,
+	[covar_bc] float,
+	[covar_bd] float,
+	[covar_cd] float,
+	[sigma_x] float,
+	[cal_curve_equation] int,
+	[curium_ratio_type] int,
+	[lower_mass_limit] float,
+	[upper_mass_limit] float	
 );
 GO    
 CREATE TABLE results_known_alpha_rec(

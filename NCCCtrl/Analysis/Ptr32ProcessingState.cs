@@ -58,6 +58,7 @@ namespace Analysis
 
             if (cycle != null) {
                 m_parser.Reset((ulong) (Ptr32.Frequency * CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval));
+				cycle.ExpectedTS = new TimeSpan((long)(CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval * TimeSpan.TicksPerSecond));
                 m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
             }
             if (param != null)
@@ -105,7 +106,8 @@ namespace Analysis
             }
 
             cycle.TotalEvents += (ulong) count;
-            cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (Ptr32.Frequency / TimeSpan.TicksPerSecond));
+			if (cycle.TS.Ticks == 0L)
+	            cycle.TS = TimeSpan.FromTicks((long) times[count - 1] / (Ptr32.Frequency / TimeSpan.TicksPerSecond)); // This is the actual last time, used only if no requested time is specified on the cycle
 
             if (cycle.Totals > 0 && cycle.TS.TotalSeconds > 0.0) {
                 cycle.SinglesRate = cycle.Totals / cycle.TS.TotalSeconds;

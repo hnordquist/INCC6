@@ -483,7 +483,7 @@ namespace AnalysisDefs
             {           /* well configuration */
                 sec.AddTwo("Detector configuration: ", meas.AcquireState.well_config.ToString());
             }
-            sec.AddTwo("Data source: ", det.Id.source.ToString());
+            sec.AddTwo("Data source: ", det.Id.source.HappyFunName());
             sec.AddTwo("QC tests: ", meas.AcquireState.qc_tests ? "On" : "Off");
             ErrorCalculationTechnique ect = meas.AcquireState.error_calc_method.Override(meas.MeasOption, det.Id.SRType);
             if (ect != ErrorCalculationTechnique.None)

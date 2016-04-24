@@ -449,8 +449,6 @@ namespace AnalysisDefs
             public AssaySelector.MeasurementOption meas_option;
             public bool completed;
 			public long MeasId {get; set; }
-            //private Dictionary<Multiplicity, MultiplicityCountingRes> mcrmap;
-
 
             public results_rec()
             {
@@ -475,8 +473,6 @@ namespace AnalysisDefs
                 meas_option = src.meas_option;
 
                 mcr = new MultiplicityCountingRes(src.mcr);
-
-                // not needed since it is already on the meas mcrmap = new Dictionary<Multiplicity, MultiplicityCountingRes>(src.mcrmap);
 
                 //TODO INCCMethodResults imr;
                 //if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr))
@@ -513,20 +509,6 @@ namespace AnalysisDefs
                 if (mcr == null)
                     mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
 
-                ////// new map to account for a multiplicity of multiplicity analyzers, from LM operations
-                ////mcrmap = new Dictionary<Multiplicity, MultiplicityCountingRes>();
-                ////System.Collections.IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
-                ////while (iter.MoveNext())
-                ////{
-                ////    Multiplicity mup = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                ////    MultiplicityCountingRes lmcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
-                ////    mcrmap.Add(mup, lmcr);
-                ////}
-                ////if (mcrmap.Count < 1)
-                ////{
-                ////    mcrmap.Add(det.MultiplicityParams, new MultiplicityCountingRes());
-                ////}
-
                 hc = new holdup_config_rec();  // left unfinished in real code, only available on transfer op
                 item = new ItemId(m.MeasurementId.Item);
                 // pu_date wiped out in item when was in measurement.
@@ -542,7 +524,6 @@ namespace AnalysisDefs
 
             /// <summary>
             /// Match the results rec with the measurement id's type and timestamp.
-            /// Might need to bring the Item Id into the test soon.
             /// </summary>
             /// <param name="m"></param>
             /// <returns></returns>
@@ -643,7 +624,7 @@ namespace AnalysisDefs
         public virtual void CopyTo(INCCMethodResult imd) { }
 
         // the method params used to calculate these results: retain results and input values used to calculate 
-        public INCCAnalysisParams.INCCMethodDescriptor methodParams;
+        public INCCAnalysisParams.INCCMethodDescriptor methodParams, methodParams2;
       
     }
 
@@ -1811,10 +1792,7 @@ namespace AnalysisDefs
 
         public class results_curium_ratio_rec : INCCMethodResult
         {
-            public Tuple cm_mass, cm_pu_ratio, cm_u_ratio, cm_pu_ratio_decay_corr, cm_u_ratio_decay_corr;
-            public double pu_half_life;
-            public DateTime cm_pu_ratio_date, cm_u_ratio_date;
-            public string cm_id_label, cm_id, cm_input_batch_id;
+            public Tuple cm_mass, cm_pu_ratio_decay_corr, cm_u_ratio_decay_corr;
 
             public TMAttributes u235, u, pu;
 
@@ -1823,50 +1801,45 @@ namespace AnalysisDefs
                 get { return (INCCAnalysisParams.curium_ratio_rec)base.methodParams; }
                 set { base.methodParams = value; }
             }
-
+            public new INCCAnalysisParams.cm_pu_ratio_rec methodParams2
+            {
+                get { return (INCCAnalysisParams.cm_pu_ratio_rec)base.methodParams2; }
+                set { base.methodParams2 = value; }
+            }
             public results_curium_ratio_rec()
             {
                 methodParams = new INCCAnalysisParams.curium_ratio_rec();
+                methodParams2 = new INCCAnalysisParams.cm_pu_ratio_rec();
                 u235 = new TMAttributes();
                 u = new TMAttributes();
                 pu = new TMAttributes();
-                cm_mass = new Tuple(); cm_pu_ratio = new Tuple(); cm_u_ratio= new Tuple();
+                cm_mass = new Tuple();
                 cm_pu_ratio_decay_corr = new Tuple(); cm_u_ratio_decay_corr = new Tuple();
-                cm_id_label = String.Empty; cm_id = String.Empty; cm_input_batch_id = String.Empty;
             }
 
             public results_curium_ratio_rec(results_curium_ratio_rec src)
             {
                 methodParams = new INCCAnalysisParams.curium_ratio_rec(src.methodParams);
+                methodParams2 = new INCCAnalysisParams.cm_pu_ratio_rec(src.methodParams2);
                 u235 = new TMAttributes(src.u235);
                 u = new TMAttributes(src.u);
                 pu = new TMAttributes(src.pu);
-                pu_half_life = src.pu_half_life;
-                cm_pu_ratio_date = new DateTime(src.cm_pu_ratio_date.Ticks); 
-                cm_u_ratio_date = new DateTime(src.cm_u_ratio_date.Ticks);
-                cm_id_label = String.Copy(src.cm_id_label);
-                cm_id = String.Copy(src.cm_id);
-                cm_input_batch_id = String.Copy(src.cm_input_batch_id);
-                cm_mass = new Tuple(src.cm_mass); cm_pu_ratio = new Tuple(src.cm_pu_ratio); cm_u_ratio = new Tuple(src.cm_u_ratio);
-                cm_pu_ratio_decay_corr = new Tuple(src.cm_pu_ratio_decay_corr); cm_u_ratio_decay_corr = new Tuple(src.cm_u_ratio_decay_corr);
+                cm_mass = new Tuple(src.cm_mass); 
+                cm_pu_ratio_decay_corr = new Tuple(src.cm_pu_ratio_decay_corr);
+                cm_u_ratio_decay_corr = new Tuple(src.cm_u_ratio_decay_corr);
             }
 
             public override void CopyTo(INCCMethodResult imr)
             {
                 results_curium_ratio_rec tgt = (results_curium_ratio_rec)imr;
                 methodParams.CopyTo(tgt.methodParams);
+                methodParams2.CopyTo(tgt.methodParams2);
                 u235.CopyTo(tgt.u235);
                 u.CopyTo(tgt.u);
                 pu.CopyTo(tgt.pu);
-                tgt.pu_half_life = pu_half_life;
-                tgt.cm_pu_ratio_date = new DateTime(cm_pu_ratio_date.Ticks);
-                tgt.cm_u_ratio_date = new DateTime(cm_pu_ratio_date.Ticks);
-
-                tgt.cm_id_label = String.Copy(cm_id_label);
-                tgt.cm_id = String.Copy(cm_id);
-                tgt.cm_input_batch_id = String.Copy(cm_input_batch_id);
-                tgt.cm_mass = new Tuple(cm_mass); tgt.cm_pu_ratio = new Tuple(cm_pu_ratio); tgt.cm_u_ratio = new Tuple(cm_u_ratio);
-                tgt.cm_pu_ratio_decay_corr = new Tuple(cm_pu_ratio_decay_corr); tgt.cm_u_ratio_decay_corr = new Tuple(cm_u_ratio_decay_corr);
+                tgt.cm_mass = new Tuple(cm_mass);
+                tgt.cm_pu_ratio_decay_corr = new Tuple(cm_pu_ratio_decay_corr);
+                tgt.cm_u_ratio_decay_corr = new Tuple(cm_u_ratio_decay_corr);
 
                 imr.modified = true;
             }
@@ -1877,13 +1850,8 @@ namespace AnalysisDefs
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.AddHeader("Curium ratio results");  // section header
-                sec.AddTwo(cm_id_label, cm_id);
-                sec.AddTwo("Input batch id:", cm_input_batch_id);
-                sec.AddDateTimeRow("Cm/Pu ratio date:", cm_pu_ratio_date);
-                sec.AddNumericRow("Cm/Pu ratio:", cm_pu_ratio);
+                if (methodParams2 != null) sec.AddRange(methodParams2.ToLines(m));
                 sec.AddNumericRow("Decay corrected Cm/Pu ratio:", cm_pu_ratio_decay_corr);
-                sec.AddDateTimeRow("Cm/U ratio date:", cm_u_ratio_date);
-                sec.AddNumericRow("Cm/U ratio:", cm_u_ratio);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
                 if (this.methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
                     sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
@@ -1951,15 +1919,6 @@ namespace AnalysisDefs
 
                 ps.Add(new DBParamEntry("pu_pass", pu.pass));
                 ps.Add(new DBParamEntry("u_pass", u.pass));
-
-                ps.AddRange(DBParamList.TuplePair(cm_pu_ratio, "cm_pu_ratio"));
-                ps.Add(new DBParamEntry("pu_half_life", pu_half_life));
-                ps.Add(new DBParamEntry("cm_pu_ratio_date", cm_pu_ratio_date));
-                ps.AddRange(DBParamList.TuplePair(cm_u_ratio, "cm_u_ratio"));
-                ps.Add(new DBParamEntry("cm_u_ratio_date", cm_u_ratio_date));
-                ps.Add(new DBParamEntry("cm_id_label", cm_id_label));
-                ps.Add(new DBParamEntry("cm_id", cm_id));
-                ps.Add(new DBParamEntry("cm_input_batch_id", cm_input_batch_id));
 
                 ps.AddRange(DBParamList.TuplePair(cm_pu_ratio_decay_corr, "cm_pu_ratio_decay_corr"));
                 ps.AddRange(DBParamList.TuplePair(cm_u_ratio_decay_corr, "cm_u_ratio_decay_corr"));

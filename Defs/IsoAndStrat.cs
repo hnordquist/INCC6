@@ -1007,13 +1007,19 @@ namespace AnalysisDefs
         }
         public Stratum(Stratum src)
         {
+			CopyFrom(src);
+        }
+
+		public void CopyFrom(Stratum src)
+		{
             if (src == null)
                 return;
             bias_uncertainty = src.bias_uncertainty;
             random_uncertainty = src.random_uncertainty;
             systematic_uncertainty = src.systematic_uncertainty;
             relative_std_dev = src.relative_std_dev; // computed during mass analysis
-        }
+		}
+
         public static int Compare(Stratum x, Stratum y)
         {
             int res = x.bias_uncertainty.CompareTo(y.bias_uncertainty);

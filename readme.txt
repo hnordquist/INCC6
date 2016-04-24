@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 4
-6.0.1.3 April 1, 2016 J. Longo
+INCC6 Beta Release 5
+6.0.1.4 April 15, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -34,7 +34,6 @@ CAUSED OR ON ANY THEORY OF LIABILITY, WHETHER IN CONTRAT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 **********************************************************************************
 
 INSTALLATION INSTRUCTIONS:
@@ -54,48 +53,80 @@ INSTALLATION INSTRUCTIONS:
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Reanalysis, Holdup acquire, Glovebox entry, the Measurement, Verification and Holdup
-   Summary reports, the Plot features, Deming integration, Collar item data entry,
+   Reanalysis, Holdup and glovebox features, the Plot features,
+   Deming integration, Collar item data entry,
    Collar acquire and Poison Rod details, integrated help.
 
-MCA-527 list mode file processing is implemented, but live data collection support is not.
-
-This is beta release software, and issues and missing features are known to exist.
+This is beta release software; issues and missing features are known to exist.
 
 CONTACT:
 
 Please use direct email to j.longo@iaea.org or heather@lanl.gov for support and issue reporting.
 
-Issues for basic feature COMPLETION
+Issues for basic INCC5/6 feature COMPLETION
 
-#70* 		Add MCA-527 single channel list mode DAQ
-#41*		INCC6 CANNOT be KILLED!!! :)
-#11*		Implement progress and cancel features for lengthy operations
-#76* 		LM wizard gatewidth param change not used in subsequent live DAQ analysis
-#75* 		LM wizard setting for cycle count not used in Live DAQ
-#80* 		Summary results CSV reports
-#31*		Implement the INCC5 Reanalysis
-#84*		Implement Collar
+#84*	Implement Collar
+#76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
+#75*	LM wizard setting for cycle count not used in Live DAQ
+#41*	INCC6 CANNOT be KILLED!!! :)
+#31*	Implement the INCC5 Reanalysis
+#86+	List mode results database persistence 
+#79+	Plot Norm, Plot Ver diagnostic tools
+#78+	Find Deming curve fitting tool replacement
+#69+	Present the proposed List Mode Config UI from DB enhancement
+#66+ 	Delete measurements crashes the code 
+#40+	source ID in 'initial source' does not get passed to results
+#35+	Hold-up analysis required
+#32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
+#23+	how to delete list mode detector?
 
+*HIGH Priority, +MEDIUM Priority
 
-#32		Implement INCC5 File > Save As/Export > Transfer and Initial Data
-#79		Plot Norm, Plot Ver diagnostic tools
-#78		Find Deming curve fitting tool replacement
-#40		source ID in 'initial source' does not get passed to results
-#35		Hold-up analysis required
+#67	PTR-32 data handling question 
+#59	Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+#45	calc_alpha_beta performance and efficiency
+#43	Performing LM as SR after doing LM Acquire craps
+#25	List mode acquisition predelay not stored
+#16	Accidental Singles test Failure for PTR32
+#13	PTR-32 -- Results different if reading file/doing live acquisition
 
-*HIGH PRIORITY and these also
+**********************************************************************************
 
-#67		PTR-32 data handling question 
-#59		Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45		calc_alpha_beta performance and efficiency
-#43		Performing LM as SR after doing LM Acquire craps
-#37		Urgent labels and others urgently may or may not need attention 
-#25		List mode acquisition predelay not stored
-#16		Accidental Singles test Failure for PTR32
-#13		PTR-32 -- Results different if reading file/doing live acquisition
+Includes code from the NDesk.Options library.
 
+Author:
+ Jonathan Pryor <jpryor@novell.com>
 
+Copyright (C) 2008 Novell (http://www.novell.com)
 
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-   
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+**********************************************************************************
+
+Includes code from the BigNum library.
+
+Copyright Adam A. Brown, 2010
+The BigNum library is the exclusive intellectual property of Adam Brown.
+You may copy, modify and use this code for any purpose without prior authorization,
+provided that you keep this attribution in the file, no matter what changes are made. 
+check www.fractal-landscapes.co.uk for any updates. 
+
+**********************************************************************************
+

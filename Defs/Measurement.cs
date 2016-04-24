@@ -762,13 +762,12 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Imprint a new measurement with as much information as possible from a results_rec.
-        /// Might need to bring the Item Id into the test soon.
         /// </summary>
         /// <param name="rec">The results_rec with the measurement details</param>
         /// <param name="meaId">Unique id for the measurement, from the results_rec fields</param>
         /// <param name="logger">logger handle</param>
         /// <returns>A new measurement</returns>
-        public Measurement (INCCResults.results_rec rec, MeasId meaId, NCCReporter.LMLoggers.LognLM logger)
+        public Measurement (INCCResults.results_rec rec, MeasId meaId, LMLoggers.LognLM logger)
         {
             HVCalibrationParameters hv = NCC.IntegrationHelpers.GetCurrentHVCalibrationParams(rec.det);
             MeasurementTuple mt = new MeasurementTuple(new DetectorList(rec.det), rec.tests, rec.norm, rec.bkg, rec.iso, rec.acq, hv);
@@ -776,6 +775,57 @@ namespace AnalysisDefs
             this.logger = logger;
             mid = meaId;
             InitMisc();
+			
+            if (rec.det.ListMode)
+            {
+                AnalysisParams =  NC.App.LMBD.CountingParameters(rec.det, applySRFromDetector:true);
+                if (meaId.MeasOption == AssaySelector.MeasurementOption.unspecified) // pure List Mode, not INCC5
+                {
+                    // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
+                    NCC.IntegrationHelpers.ApplyVSRChangesToDefaultDetector(this);
+                }
+                else // it is an INCC5 analysis driven with LM data
+                {
+                    // check to see if detector settings are copied into an active CA entry
+                    if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(rec.det.MultiplicityParams) && w.Active; }))
+                        AnalysisParams.Add(rec.det.MultiplicityParams);
+                }
+            }
+            else
+            {
+                // prepare analyzer params from detector SR params
+                AnalysisParams = NC.App.LMBD.CountingParameters(rec.det, applySRFromDetector:false);
+                if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(rec.det.MultiplicityParams); }))
+                    AnalysisParams.Add(rec.det.MultiplicityParams);
+            }
+
+            // get the INCC5 analysis methods
+            INCCAnalysisState = new INCCAnalysisState();
+            INCCSelector sel = new INCCSelector(rec.acq.detector_id, rec.acq.item_type);
+            AnalysisMethods am;
+            bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
+            if (found)
+            {
+                am.selector = sel; // gotta do this so that the equality operator is correct
+                INCCAnalysisState.Methods = am;
+            }
+            else
+                INCCAnalysisState.Methods = new AnalysisMethods(sel);
+            InitializeContext();
+            PrepareINCCResults();
+
+			// a list mode measurement may not have a multiplicity analyzer at all
+			if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
+			{ 
+				MultiplicityCountingRes mcr = (MultiplicityCountingRes)CountingAnalysisResults[rec.det.MultiplicityParams];
+				mcr.CopyFrom(rec.mcr); // copy the mcr results onto the first moskey entry
+				// the same results are copied to the full results structure			
+				MeasOptionSelector mos = new MeasOptionSelector(MeasOption, rec.det.MultiplicityParams);
+				INCCResult result = INCCAnalysisState.Lookup(mos);
+				result.CopyFrom(rec.mcr);
+			}
+
+			Stratum = new Stratum(rec.st); // the stratum from the results rec
         }
 
         private void InitMisc()
@@ -826,7 +876,7 @@ namespace AnalysisDefs
                 CurrentRepetition = 0;
                 RequestedRepetitions = (ushort)cycles.Count;
                 FirstCycle = true;  // used by outlier test
-                if (cycles.Count > 0)
+                if (cycles.Count > 0 &&  AcquireState.run_count_time == 0)
                     AcquireState.run_count_time = cycles[0].TS.TotalSeconds;
             }
             else if (cycles.Count > 0) // adjust sequence numbers
@@ -927,7 +977,7 @@ namespace AnalysisDefs
             return validCyclesCount;
         }
 
-        // summarizes using all cycles that have passed evalaution (e.g. marked as Pass)
+        // summarizes using all cycles that have passed evaluation (e.g. marked as Pass)
         public uint CycleSummary(bool ignoreSuspectResults = true)
         {
             long t = 0;                 // the cycle average time
@@ -980,7 +1030,7 @@ namespace AnalysisDefs
 
 
         /// <summary>
-        /// Store the metadata identfier and the generalized results of a measurement into the database.
+        /// Store the metadata identifier and the generalized results of a measurement into the database.
         /// Creates a unique entry for a new measurement.
         /// Creates an entry for the traditional INCC5 results table for the summary results.
         /// Detailed measurement results (e.g. cycles, param methods and results), are saved by other methods.
@@ -993,7 +1043,7 @@ namespace AnalysisDefs
             long mid = dbm.Add(name: Detector.Id.DetectorName,
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
                                 mtype: MeasOption.PrintName(),
-                                filename: MeasurementId.FileName,  // the file names are generated at the end of the process, GenerateReports, update the database at the end
+                                filename: MeasurementId.FileName,  // the file names are generated at the end of the process, in GenerateReports, subsequently the database entry is updated with the new file names
                                 notes: "2015");
 
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
@@ -1014,8 +1064,7 @@ namespace AnalysisDefs
         }
 
         /// <summary>
-        /// Preserve first generated INCC or LM file name on the measurement id 
-        /// todo: save the other file names
+        /// Preserve first generated INCC or LM file name on the measurement id, then the remaining filenames 
         /// </summary>
         public void PersistFileNames()
         {

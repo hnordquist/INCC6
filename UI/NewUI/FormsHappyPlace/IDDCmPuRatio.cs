@@ -54,7 +54,7 @@ namespace NewUI
             CmPuRatioErrorTextBox.Text = cmpuratio.cm_pu_ratio.err.ToString("F7");
             CmURatioTextBox.Text = cmpuratio.cm_u_ratio.v.ToString("F7");
             CmURatioErrorTextBox.Text = cmpuratio.cm_u_ratio.err.ToString("F7");
-            HalfLifeTextBox.Text = cmpuratio.cm_pu_half_life.ToString("F4");
+            HalfLifeTextBox.Text = cmpuratio.pu_half_life.ToString("F4");
             DeclaredU235TextBox.Text = cmpuratio.cm_dcl_u235_mass.ToString("F6");
             DeclaredUTextBox.Text = cmpuratio.cm_dcl_u_mass.ToString("F6");
             DeclaredPuTextBox.Text = acq.mass.ToString("F6");
@@ -121,10 +121,10 @@ namespace NewUI
 
         private void HalfLifeTextBox_Leave(object sender, EventArgs e)
         {
-            Double d = cmpuratio.cm_pu_half_life;
+            Double d = cmpuratio.pu_half_life;
             bool modified = (Format.ToDbl(((TextBox)sender).Text, ref d, 1, 1e20));
-            if (modified) { cmpuratio.cm_pu_half_life = d; cmpuratio.modified = true; }
-            ((TextBox)sender).Text = cmpuratio.cm_pu_half_life.ToString("F4");
+            if (modified) { cmpuratio.pu_half_life = d; cmpuratio.modified = true; }
+            ((TextBox)sender).Text = cmpuratio.pu_half_life.ToString("F4");
         }
 
         private void DeclaredPuTextBox_Leave(object sender, EventArgs e)

@@ -538,7 +538,7 @@ namespace AnalysisDefs
                                 meas.AddErrorMessage("No analysis methods selected", 10156, mkey);
                             }
                             break;
-                        case AssaySelector.MeasurementOption.holdup:   // NEXT: Hold-up held up, implement it #102 
+                        case AssaySelector.MeasurementOption.holdup:   // NEXT: Hold-up held up, implement it #35 
                             meas.Logger.TraceEvent(NCCReporter.LogLevels.Error, 10187, "Holdup analysis unsupported");
                             break;
                     }
@@ -1320,7 +1320,7 @@ namespace AnalysisDefs
                         case AssaySelector.MeasurementOption.verification:
                             SaveMethodResultsForThisMeasurement(meas, moskey);
                             break;
-                        case AssaySelector.MeasurementOption.holdup: // NEXT: Hold-up held up, implement it #102  
+                        case AssaySelector.MeasurementOption.holdup: // NEXT: Hold-up held up, implement it #35  
 							break;
 					}
 				}
@@ -1362,7 +1362,7 @@ namespace AnalysisDefs
         /// <param name="moskey">The option selector+multiplicity key for the method results map</param> 
         static void SaveMethodResultsForThisMeasurement(this Measurement m, MeasOptionSelector moskey)
         {
-            DB.Measurements ms = new DB.Measurements();
+           // DB.Measurements ms = new DB.Measurements();
             long mid = m.MeasurementId.UniqueId;
 
             INCCMethodResults imrs;
@@ -1377,7 +1377,7 @@ namespace AnalysisDefs
                 {
                     INCCMethodResult imr = ai.Current.Value;
                     DB.ElementList els = imr.ToDBElementList(); // generates the Table property content too
-                    DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(imr.Table, ms.db);
+                    DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(imr.Table);
                     long resid = ar.Create(mid, els);  // save the method results in the relevant results table
                     long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
                     m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, String.Format("Method results {0} preserved ({1}{2})", imr.Table, resid, mresid));

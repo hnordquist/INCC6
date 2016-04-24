@@ -47,7 +47,7 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
             return;
-            //  NEXT: delete from collections, then delte fomr DB.
+            //  NEXT: delete from collections, AND delete from DB.
             //DB.Measurements meas = new DB.Measurements ();
             //bool success = true;
             //foreach (ListViewItem lvi in MeasurementView.Items)

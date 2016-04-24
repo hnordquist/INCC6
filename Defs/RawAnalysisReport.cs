@@ -825,7 +825,7 @@ namespace AnalysisDefs
         {
             Row row = new Row();
             row.Add(0, c.seq.ToString());
-            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.ToString());
+            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.HappyFunName());
             row.Add((int)CycleSource.Identifier + 1, c.DataSourceId.Identifier());
             row.Add((int)CycleSource.DateTime + 1, c.DataSourceId.dt.ToString("MMM dd yyy HH:mm:ss.ff K")); // my favorite format
             return row;

@@ -117,16 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox1.Text" xml:space="preserve">
-    <value>This work was supported by the United States Member State Support Program to IAEA Safeguards; the U.S. Department of Energy, Office of Nonproliferation and National Security, International Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security. LA-CC-14-009. This software was exported from the United States in accordance with the Export Administration Regulations. Diversion contrary to U.S. law prohibited.</value>
-  </data>
-  <data name="richTextBox2.Text" xml:space="preserve">
-    <value>Copyright © 2016, Los Alamos National Security, LLC. This software application and associated material ("The Software") was prepared by the Los Alamos National Security, LLC (LANS), under Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE). All rights in the software application and associated material are reserved by DOE on behalf of the Government and LANS pursuant to the contract. You are authorized to use the material for Government purposes but it is not to be released or distributed to the public. </value>
-  </data>
-  <data name="richTextBox3.Text" xml:space="preserve">
-    <value>Further distribution or release of The Software for purposes other than for the Government are prohibited without a specific license from LANS or DOE permitting such a release. If such a release beyond the U.S. Government is contemplated, the recipient of The Software shall obtain a license for that release. Appropriate license terms and conditions will apply for such a license. The Software is subject to applicable United States and foreign laws, regulations, rules and decrees with respect to any transfer of the intellectual property and related technical data to foreign countries, including the U.S. Foreign Corrupt Practices Act, the Arms Control Act, the Export Administration Act, the U.S. Anti-Boycott Laws, and any regulations promulgated thereunder, including the International Traffic in Arms Regulations (ITAR), and the U.S. Export Administration Regulations (EAR). FAILURE TO CONFORM TO SUCH LAWS, REGULATIONS, RULES, AND DECREES MAY RESULT IN CRIMINAL LIABILITY UNDER U.S. LAW.</value>
-  </data>
-  <data name="richTextBox4.Text" xml:space="preserve">
-    <value>NEITHER THE UNITED STATES NOR THE UNITED STATES DEPARTMENT OF ENERGY, NOR LOS ALAMOS NATIONAL SECURITY, LLC, NOR ANY OF THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS.</value>
-  </data>
 </root>

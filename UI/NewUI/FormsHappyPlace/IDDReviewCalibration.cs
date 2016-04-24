@@ -42,7 +42,8 @@ namespace NewUI
             InitializeComponent();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
 			FieldFiller();
-		}
+            this.Text += " for Detector " + det.Id.DetectorId;
+        }
         AcquireParameters acq;
 		Detector det;
 		public void FieldFiller()
