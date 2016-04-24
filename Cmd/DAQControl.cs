@@ -98,7 +98,7 @@ namespace NCCCmd
             });
             SetEventHandler(EventType.ActionStop, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStop, applog, LogLevels.Info, o);
             });
             SetEventHandler(EventType.ActionCancel, (object o) =>
             {

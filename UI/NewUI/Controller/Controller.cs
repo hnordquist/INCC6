@@ -405,7 +405,7 @@ namespace NewUI
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Info, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 

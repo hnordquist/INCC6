@@ -218,7 +218,9 @@ namespace Instr
 				m_logger.Flush();
 
 				if (m_setvoltage)
-					SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+					SetVoltage(m_voltage, MaxSetVoltageTime, cancellationToken);
+
+				cancellationToken.ThrowIfCancellationRequested();
 
 				if (seq == 1)  // init var on first cycle
 					ps.device = m_device;
@@ -238,7 +240,6 @@ namespace Instr
 																false, false, false, secondsSinceEpoch));
 				if (response == null) { throw new MCADeviceLostConnectionException(); }
 
-				bool done = false;
 				const uint CommonMemoryBlockSize = 1440;
 				// what's the most that could be left over from a previous attempt to decode? => 3 bytes
 				byte[] rawBuffer = new byte[CommonMemoryBlockSize + 3];
@@ -256,13 +257,11 @@ namespace Instr
 				while (true)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					if (elapsed > duration)
-						break;
+
 					QueryState527ExResponse qs527er = (QueryState527ExResponse)m_device.Client.Send(MCACommand.QueryState527Ex());
 					if (qs527er == null) { throw new MCADeviceLostConnectionException(); }
 
 					MCAState state = qs527er.MCAState;
-					done = state != MCAState.Run;
 
 					// pull off some data while we are waiting...
 					uint commonMemoryFillLevel = qs527er.CommonMemoryFillLevel;
@@ -283,7 +282,7 @@ namespace Instr
 						if (ps.file.writer != null && ps.writingFile)
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
-							m_logger.TraceEvent(LogLevels.Verbose, 9, "{0} bytes to write", bytesToCopy);
+							//m_logger.TraceEvent(LogLevels.Verbose, 9, "{0} bytes to write", bytesToCopy);
 						}
 
 						rawBufferOffset += bytesToCopy;
@@ -327,8 +326,10 @@ namespace Instr
 									RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
 								else if (_max > RDT.State.timeArray.Count)
 									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
+								m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} {1} handling {2} timestampsCount {3} num", elapsed, duration, timestampsCount, RDT.State.NumValuesParsed);
 								RDT.PassBufferToTheCounters((int)_max);
-								m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} timestampsCount {1}", timestampsCount, RDT.State.NumValuesParsed);
+								maxindex = 0;
+								RDT.StartNewBuffer(); 
 							}
 						}
 					} 
@@ -348,7 +349,7 @@ namespace Instr
 
 						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse)m_device.Client.Send(MCACommand.QueryCommonMemory(readAddress / 2));
 						if (qcmr == null)
-						{ throw new MCADeviceLostConnectionException(); }
+							{ throw new MCADeviceLostConnectionException(); }
 						uint bytesToCopy = bytesAvailable;
 						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
@@ -364,8 +365,10 @@ namespace Instr
 						uint timestampsCount = m_device.TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
 
 						//if (rawBufferOffset > 0) {
-						// apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
-						//throw new MCADeviceBadDataException();
+                            // apparently this can happen. Perhaps when the device gets cut off (because of a timer event), right in the middle of writing?
+							//throw new MCADeviceBadDataException();
+                            // an Engineer from GBS said we are running on a very old firmware version,
+                            // perhaps that has something to do with it...
 						//}
 						elapsed = stopwatch.Elapsed;  // snapshot time before the processing, which may delay a bit
 						if (timestampsCount > 0)
@@ -396,17 +399,19 @@ namespace Instr
 									RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
 								else if (_max > RDT.State.timeArray.Count)
 									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
+								m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} {1} handling {2} timestampsCount {3} num", elapsed, duration, timestampsCount, RDT.State.NumValuesParsed);
 								RDT.PassBufferToTheCounters((int)_max);
-								m_logger.TraceEvent(LogLevels.Verbose, 86, "{0} timestampsCount {1}", timestampsCount, RDT.State.NumValuesParsed);
+								maxindex = 0;
+								RDT.StartNewBuffer(); 
 							}
 						}
 					} 
-					//else
-					//{
-					//	// give the device a break
-					//	Thread.Sleep(40); // 100? ms
-					//}
-				}  // while time elpased is less than requested time
+					else
+					{
+						// give the device a break, not needed now because PassBufferToTheCounters processing takes time
+						//Thread.Sleep(40); // 100? ms
+					}
+				}  // while time elapsed is less than requested time
 
 				stopwatch.Stop();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);		

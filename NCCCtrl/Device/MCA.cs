@@ -1433,37 +1433,6 @@ namespace Device
         }
     }
 
-    class MCABasisFileBlockHeader
-    {
-        public string FileIdentification;
-        public ushort UsedBytesOfTheBasisBlock;
-        public ushort FirmwareVersion;
-        public ushort HardwareVersion;
-        public ushort FirmwareModification;
-        public ushort HardwareModification;
-        public ushort SerialNumber;
-        public Mode GeneralMode;
-
-        public static MCABasisFileBlockHeader Create(
-            QueryState527Response state527Response,
-            QueryStateResponse stateResponse
-        )
-        {
-			if (stateResponse == null) { stateResponse = new QueryStateResponse(); stateResponse.Init(CommandName.CMD_QUERY_STATE); } // dummy values 
-			if (state527Response == null) { state527Response = new QueryState527Response(); state527Response.Init(CommandName.CMD_QUERY_STATE_527); } // dummy values
-            return new MCABasisFileBlockHeader
-            {
-                FileIdentification = "MCA527BIN_APP", UsedBytesOfTheBasisBlock = 0,
-                FirmwareVersion = state527Response.MCAFirmwareVersion,
-                HardwareVersion = state527Response.MCAHardwareVersion,
-                FirmwareModification = state527Response.MCAFirmwareModification,
-                HardwareModification = state527Response.MCAHardwareModification,
-                SerialNumber = stateResponse.MCASerialNumber,
-                GeneralMode = state527Response.GeneralMCAMode
-            };
-        }
-    }
-
     internal static class MCAFileExtensions
     {
 
@@ -1516,10 +1485,7 @@ namespace Device
 					file.CreatePrimaryHeader(state527Response, stateResponse);
 					file.CreateModeHeader(stateResponse, state527ExResponse, state527Response, powerResponse, state527Ex2Response);
 				}
-
                 file.rheader.DataCodingMethod = 0;
-                file.rheader.RepeatMode = (sbyte)(StartFlag.SpectrumClearedNewStartTime);
-                file.rheader.RepeatModeOptions = 0;
                 file.WriteHeader();
                 file.CloseWriter();
             }
@@ -1598,8 +1564,8 @@ namespace Device
                 MCATemperatureAtStop = state527Response.MCATemperatureAtStop,
                 DetectorTemperatureAtStop = state527Response.DetectorTemperatureAtStop,
                 PowerModuleTemperatureAtStop = state527Response.PowerModuleTemperatureAtStop,
-                // RepeatMode = ??
-                // RepeatModeOptions = ??
+                RepeatMode = (sbyte)(StartFlag.SpectrumClearedNewStartTime),
+                RepeatModeOptions = 0,
                 RepeatValue = stateResponse.RepeatValue,
                 AHRCGroup0Width = state527Ex2Response.AHRCGroup0Width,
                 AHRCGroup1Width = state527Ex2Response.AHRCGroup1Width,
@@ -1626,7 +1592,7 @@ namespace Device
 			if (state527Response == null) { state527Response = new QueryState527Response(); state527Response.Init(CommandName.CMD_QUERY_STATE_527); } // dummy values
             file.header = new NCCFile.MCAFile.MCAHeader
             {
-                FileIdentification = "MCA527BIN_APP",
+                FileIdentification = "MCA527BIN_APP ",
                 FirmwareVersion = state527Response.MCAFirmwareVersion,
                 HardwareVersion = state527Response.MCAHardwareVersion,
                 FirmwareModification = state527Response.MCAFirmwareModification,

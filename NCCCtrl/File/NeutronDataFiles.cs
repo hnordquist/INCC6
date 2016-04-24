@@ -1322,9 +1322,17 @@ namespace NCCFile
 				long startPosition = br.BaseStream.Position;
 				bool usePreviousTimestamp = false;
 				ulong previousTimestamp = 0;
+				ulong timestamp = 0;
 				while (br.BaseStream.Position < startPosition + fileBlockSize)
 				{
-					ulong timestamp = (ulong)ReadVariableLengthUInt(br, bytes);
+					try
+					{
+						timestamp = (ulong)ReadVariableLengthUInt(br, bytes);
+					}
+					catch (SometingWrongHierException /*ex*/)
+					{
+						break;
+					}
 					if (timestamp + 1 == 0x40C30C0)
 					{ // maximum value, means no event occurred...
 						previousTimestamp += timestamp;
@@ -1504,7 +1512,7 @@ namespace NCCFile
 			{
 				get {
 					if (_ApplicationIdentification == null) {
-						return "WinTimestamps Version 01.01.0009";
+						return "WinTimestamps Version 01.01.0007 ";
 					}
 					return _ApplicationIdentification;
 				}
@@ -1530,7 +1538,7 @@ namespace NCCFile
 			public byte TriggerFilterForHighShapingTime;
 			public ushort OffsetDAC;
 			public ushort TriggerLevelForAutomaticThresholdCalculation;
-			public int SetTriggerThreshold;
+			public int SetTriggerThreshold = 0x258000;  // experimental
 			public byte ExtensionPortPartAConfiguration;
 			public byte ExtensionPortPartBConfiguration;
 			public byte ExtensionPortPartCConfiguration;
@@ -1828,6 +1836,8 @@ namespace NCCFile
 		public void ReadHeader()
 		{
 			header = MCAHeader.Scan(reader);
+			//				Console.Write(header.ToString());
+
 			switch (header.GeneralMode) {
 			case 0:
 				// General Mode = 'MCA'
@@ -1837,6 +1847,7 @@ namespace NCCFile
 			case 5:
 				// General Mode = 'Timestamps recorder'
 				rheader = MCATimestampsRecorderModeHeader.Scan(reader);
+				//Console.Write(rheader.ToString());
 				long seekgap = header.ValidByteCount - 228;
 				if (seekgap > 0)	// Seek ahead header.ValidByteCount - 228 (a hard-coded value, the number of bytes in the rheader)
 									// This can be non-zero on files taken directly from the MCA-527 SD card storage

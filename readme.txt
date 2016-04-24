@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 5
-6.0.1.4 April 15, 2016 J. Longo
+INCC6 Beta Release 6
+6.0.1.5 April 21, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -41,11 +41,11 @@ INSTALLATION INSTRUCTIONS:
 1. Extract the contents of the incc.zip folder onto your PC.
 2. Run INCC6.exe
 3. A "bare" SQLite database has been provided for your use. It is named "incc6.sqlite".
-   A SQL Server instance is available.
+   SQL Server support is available.
    INCC6.exe.Config contains the connection details, manually configure following the notes
    and example in the file. Create the SQL Server database using the create_INCC6_sqlserver.sql
    script.
-4. If for any reason INCC6 Beta Release stops working, you may opt to restore the
+4. If for any reason the INCC6 Beta release stops working, you may opt to restore the
    default SQLite database by running the "reset.bat" batch file or
    by copying Default.sqlite over INCC6.sqlite. For SQL Server run the drop_INCC6_sqlserver.sql
    script followed by create_INCC6_sqlserver.sql.
@@ -82,13 +82,13 @@ Issues for basic INCC5/6 feature COMPLETION
 
 *HIGH Priority, +MEDIUM Priority
 
-#67	PTR-32 data handling question 
-#59	Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45	calc_alpha_beta performance and efficiency
-#43	Performing LM as SR after doing LM Acquire craps
-#25	List mode acquisition predelay not stored
-#16	Accidental Singles test Failure for PTR32
-#13	PTR-32 -- Results different if reading file/doing live acquisition
+#67		PTR-32 data handling question 
+#59		Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+#45		calc_alpha_beta performance and efficiency
+#43		Performing LM as SR after doing LM Acquire craps
+#25		List mode acquisition predelay not stored
+#16		Accidental Singles test Failure for PTR32
+#13		PTR-32 -- Results different if reading file/doing live acquisition
 
 **********************************************************************************
 
