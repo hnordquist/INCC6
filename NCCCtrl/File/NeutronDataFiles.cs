@@ -1512,7 +1512,7 @@ namespace NCCFile
 			{
 				get {
 					if (_ApplicationIdentification == null) {
-						return "WinTimestamps Version 01.01.0007 ";
+						return "WinTimestamps Version 01.01.0000 ";
 					}
 					return _ApplicationIdentification;
 				}
@@ -1796,6 +1796,8 @@ namespace NCCFile
 				mca.Write(InputResistanceOnSubD9Pin5);
 				mca.Write(ADCCorrectionOffsetOnSubD9Pin5);
 				mca.Write(GainCorrectionFactorOnSubD9Pin5);
+				mca.Write(ADCCorrectionOffsetOnSubD9Pin3);
+				mca.Write(GainCorrectionFactorOnSubD9Pin3);
 				mca.Write(MCATemperatureAtStop);
 				mca.Write(DetectorTemperatureAtStop);
 				mca.Write(PowerModuleTemperatureAtStop);

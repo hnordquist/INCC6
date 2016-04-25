@@ -77,7 +77,7 @@ namespace Analysis
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
 		{
-			Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
+			//Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
 			//bool first = true;
 			//foreach (uint timestamp in timestamps) {
 			//	if (first == false) { Console.Write(", "); }

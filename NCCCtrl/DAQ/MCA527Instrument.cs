@@ -254,7 +254,7 @@ namespace Instr
 				int maxindex = 0;
 				TimeSpan elapsed = new TimeSpan(0);
 				stopwatch.Start();
-				while (true)
+				while (elapsed <= duration)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
