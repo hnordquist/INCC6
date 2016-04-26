@@ -201,7 +201,8 @@ namespace Instr
 		/// <param name="measurement">The measurement.</param>
 		/// <param name="cancellationToken">The cancellation token to observe.</param>
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
-		/// <exception cref="MCADeviceBadDataException">An error occurred with the raw data strem state.</exception>
+		/// <exception cref="MCADeviceBadDataException">An error occurred with the raw data stream state.</exception>
+		/// <exception cref="Exception">Empty or corrupt runtime data structure.</exception>
 		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
 		{
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
@@ -209,13 +210,14 @@ namespace Instr
 			try
 			{
 				if (ps == null)
-					throw new Exception("Big L bogus state");
+					throw new Exception("Big L bogus state");  // caught cleanly below
 				if (ps.writingFile && ps.file.writer == null)
-					m_logger.TraceEvent(LogLevels.Verbose, 9, "null");
-
+					m_logger.TraceEvent(LogLevels.Verbose, 9, "null");				
 				ushort seq = measurement.CurrentRepetition;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay {1}", DeviceName, seq);
 				m_logger.Flush();
+
+				cancellationToken.ThrowIfCancellationRequested();
 
 				if (m_setvoltage)
 					SetVoltage(m_voltage, MaxSetVoltageTime, cancellationToken);
@@ -230,7 +232,6 @@ namespace Instr
 				Stopwatch stopwatch = new Stopwatch();
 				TimeSpan duration = TimeSpan.FromSeconds((uint)measurement.AcquireState.lm.Interval);
 				byte[] buffer = new byte[1024 * 1024];
-				long total = 0;
 
 				// a5 5a 42 00 01 00 ae d5 44 56 b9 9b
 				// flags: 0x0001 => spectrum is cleared and a new start time is set
@@ -250,11 +251,11 @@ namespace Instr
 
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start time for {1}", DateTime.Now.ToString(), seq);
 
-				ulong accumulatedTime = 0;
+				ulong accumulatedTime = 0, totalEvents = 0;
 				int maxindex = 0;
 				TimeSpan elapsed = new TimeSpan(0);
 				stopwatch.Start();
-				while (elapsed <= duration)
+				while (true)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 
@@ -267,10 +268,13 @@ namespace Instr
 					uint commonMemoryFillLevel = qs527er.CommonMemoryFillLevel;
 					uint bytesAvailable = commonMemoryFillLevel - commonMemoryReadIndex;
 
-					if (state != MCAState.Run && bytesAvailable == 0)
-						break;					
+					elapsed = stopwatch.Elapsed;  // snapshot 
 
-					if (bytesAvailable >= CommonMemoryBlockSize)
+					if (state != MCAState.Run && bytesAvailable == 0)  // requested time is complete
+						break;
+					if ((elapsed = stopwatch.Elapsed) > duration)   // elapsed time is complete
+						break;
+					if (bytesAvailable >= CommonMemoryBlockSize)   // a full data block
 					{
 						QueryCommonMemoryResponse qcmr = (QueryCommonMemoryResponse)m_device.Client.Send(MCACommand.QueryCommonMemory(commonMemoryReadIndex / 2));
 						if (qcmr == null)
@@ -279,10 +283,9 @@ namespace Instr
 						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
 						qcmr.CopyData(0, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-						if (ps.file.writer != null && ps.writingFile)
+						if (ps.file.writer != null && ps.writingFile) // write the block
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
-							//m_logger.TraceEvent(LogLevels.Verbose, 9, "{0} bytes to write", bytesToCopy);
 						}
 
 						rawBufferOffset += bytesToCopy;
@@ -295,13 +298,11 @@ namespace Instr
 						{
 							throw new MCADeviceBadDataException();
 						}
-						// accumulate a big buffer full before handing the buffer over for processing
 
-						elapsed = stopwatch.Elapsed;  // snapshot time before the processing, which may delay a bit
 						// copy the data out...
 						if (timestampsCount > 0)
 						{
-							if (maxindex < RDT.State.maxValuesInBuffer && elapsed <= duration)
+							if (maxindex < RDT.State.maxValuesInBuffer) // accumulate
 							{
 								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
 									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
@@ -315,7 +316,7 @@ namespace Instr
 								RDT.State.hitsPerChn[0] += timestampsCount;
 								RDT.State.NumTotalsEncountered = RDT.State.NumValuesParsed; // only one channel
 							} 
-							else
+							else // process
 							{
 								long _max = RDT.State.NumValuesParsed;
 								if (_max < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
@@ -328,7 +329,7 @@ namespace Instr
 									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
 								m_logger.TraceEvent(LogLevels.Verbose, 88, "{0} {1} handling {2} timestampsCount {3} num", elapsed, duration, timestampsCount, RDT.State.NumValuesParsed);
 								RDT.PassBufferToTheCounters((int)_max);
-								maxindex = 0;
+								maxindex = 0; totalEvents += RDT.State.NumTotalsEncountered;
 								RDT.StartNewBuffer(); 
 							}
 						}
@@ -356,12 +357,10 @@ namespace Instr
 						if (ps.file.writer != null && ps.writingFile)
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
-							m_logger.TraceEvent(LogLevels.Verbose, 0, "{0} bytes to write", bytesToCopy);
 						}
 
 						rawBufferOffset += bytesToCopy;
 						commonMemoryReadIndex += bytesToCopy;
-
 						uint timestampsCount = m_device.TransformRawData(rawBuffer, ref rawBufferOffset, timestampsBuffer);
 
 						//if (rawBufferOffset > 0) {
@@ -370,11 +369,10 @@ namespace Instr
                             // an Engineer from GBS said we are running on a very old firmware version,
                             // perhaps that has something to do with it...
 						//}
-						elapsed = stopwatch.Elapsed;  // snapshot time before the processing, which may delay a bit
 						if (timestampsCount > 0)
 						{
 							// copy the timestampsBuffer value into the RDT.State.timeArray, Q: wait to fill a much large internal buffer before calling the transform?
-							if (maxindex < RDT.State.maxValuesInBuffer && elapsed <= duration)
+							if (maxindex < RDT.State.maxValuesInBuffer) // accumulate
 							{
 								if (RDT.State.timeArray.Count < maxindex+timestampsCount)
 									RDT.State.timeArray.AddRange(new ulong[timestampsCount]);
@@ -388,7 +386,7 @@ namespace Instr
 								RDT.State.hitsPerChn[0] += timestampsCount;
 								RDT.State.NumTotalsEncountered = RDT.State.NumValuesParsed; // only one channel
 							} 
-							else
+							else // process
 							{
 								long _max = RDT.State.NumValuesParsed;
 								if (_max < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
@@ -401,7 +399,7 @@ namespace Instr
 									RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
 								m_logger.TraceEvent(LogLevels.Verbose, 89, "{0} {1} handling {2} timestampsCount {3} num", elapsed, duration, timestampsCount, RDT.State.NumValuesParsed);
 								RDT.PassBufferToTheCounters((int)_max);
-								maxindex = 0;
+								maxindex = 0; totalEvents += RDT.State.NumTotalsEncountered;
 								RDT.StartNewBuffer(); 
 							}
 						}
@@ -411,12 +409,32 @@ namespace Instr
 						// give the device a break, not needed now because PassBufferToTheCounters processing takes time
 						//Thread.Sleep(40); // 100? ms
 					}
+					elapsed = stopwatch.Elapsed;  // snapshot the time after the processing and before the next query
+
+					if (maxindex > 0) // accumulated data was not completely processed above, so it happens here
+					{
+						long _max = RDT.State.NumValuesParsed;
+						if (_max < RDT.State.neutronEventArray.Count)  // equalize the length of the empty neutron channel event list 
+							RDT.State.neutronEventArray.RemoveRange((int)_max, RDT.State.neutronEventArray.Count - (int)_max);
+						else if (_max > RDT.State.neutronEventArray.Count)
+							RDT.State.neutronEventArray.AddRange(new uint[_max - RDT.State.neutronEventArray.Count]);
+						if (_max < RDT.State.timeArray.Count)
+							RDT.State.timeArray.RemoveRange((int)_max, RDT.State.timeArray.Count - (int)_max);
+						else if (_max > RDT.State.timeArray.Count)
+							RDT.State.timeArray.AddRange(new ulong[_max - RDT.State.timeArray.Count]);
+						m_logger.TraceEvent(LogLevels.Verbose, 90, "{0} {1} handling {2} num", elapsed, duration, RDT.State.NumValuesParsed);
+						RDT.PassBufferToTheCounters((int)_max);
+						maxindex = 0; totalEvents += RDT.State.NumTotalsEncountered;
+						RDT.StartNewBuffer(); 
+					}
+
 				}  // while time elapsed is less than requested time
 
 				stopwatch.Stop();
 				m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop time for {1}", DateTime.Now.ToString(), seq);		
-				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Finished assay; read {1} bytes in {2}s for {3}", DeviceName, total, stopwatch.Elapsed.TotalSeconds, seq);
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Finished assay; read {1} events in {2}s for {3}", DeviceName, totalEvents, stopwatch.Elapsed.TotalSeconds, seq);
 				m_logger.Flush();
+				RDT.Cycle.HighVoltage = m_device.GetHighVoltage();
 
 				if (ps.writingFile)
 				{
@@ -450,7 +468,6 @@ namespace Instr
 			}
 			finally
 			{
-
 			}
 		}
 
