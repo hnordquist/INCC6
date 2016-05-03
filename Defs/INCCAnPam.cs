@@ -1502,8 +1502,12 @@ namespace AnalysisDefs
             public bool collar_mode;
             public DateTime reference_date;
             public double relative_doubles_rate;
+
             public collar_detector_rec()
             {
+                collar_mode = false;
+                relative_doubles_rate = 1;
+                reference_date = new DateTime (1989,10,17);
             }
 
             public collar_detector_rec(collar_detector_rec src)
@@ -1522,10 +1526,13 @@ namespace AnalysisDefs
                 imd.modified = true;
             }
 
-            // todo: implement INCC5 output
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
+                sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Fixed); // uses E
+                sec.AddTwo("Collar Mode", collar_mode?"Fast(Cd)":"Thermal (no Cd)");
+                sec.AddTwo("Reference Doubles Rate", relative_doubles_rate);
+                sec.AddTwo("Reference Date", reference_date.ToShortDateString());
                 return sec;
             }
 
@@ -1561,10 +1568,19 @@ namespace AnalysisDefs
             {
                 cev = new CurveEquationVals();
                 poison_absorption_fact = new double[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                poison_absorption_fact[0] = 0.647;
                 poison_rod_a = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
                 poison_rod_b = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
                 poison_rod_c = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                for (int i = 0; i < INCCAnalysisParams.MAX_POISON_ROD_TYPES; i ++ )
+                {
+                    poison_rod_a[i]= new Tuple (0.0,0.0);
+                    poison_rod_b[i] = new Tuple(0.0, 0.0);
+                    poison_rod_c[i] = new Tuple(0.0, 0.0);
+                }
                 poison_rod_type = new string[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                poison_rod_type[0] = "G";
+                number_calib_rods = 2;
                 u_mass_corr_fact_a = new Tuple();
                 u_mass_corr_fact_b = new Tuple();
                 sample_corr_fact = new Tuple();
@@ -1632,7 +1648,6 @@ namespace AnalysisDefs
                 ps.AddRange(DBParamList.TuplePair("u_mass_corr_fact_a", u_mass_corr_fact_a));
                 ps.AddRange(DBParamList.TuplePair("u_mass_corr_fact_b", u_mass_corr_fact_b));
                 ps.AddRange(DBParamList.TuplePair("sample_corr_fact", sample_corr_fact));
-
             }
         }
 
@@ -1652,6 +1667,12 @@ namespace AnalysisDefs
                 k5_checkbox = new bool[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
                 k5 = new Tuple[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
                 k5_label = new string[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
+                for (int j = 0; j < MAX_COLLAR_K5_PARAMETERS; j++)
+                {
+                    k5_checkbox[j]= false;
+                    k5[j] = new Tuple(0, 0);
+                    k5_label[j] = String.Empty;
+                }
             }
 
             public collar_k5_rec(collar_k5_rec src)
@@ -1670,8 +1691,8 @@ namespace AnalysisDefs
             {
                 collar_k5_rec tgt = (collar_k5_rec)imd;
                 tgt.k5_mode = k5_mode;
-                tgt.k5_item_type = String.Copy(k5_item_type);
-                tgt.k5 = Tuple.Copy(k5);
+                tgt.k5_item_type = k5_item_type;
+                Array.Copy (k5,tgt.k5, k5.Length);
                 Array.Copy(k5_checkbox, tgt.k5_checkbox, k5_checkbox.Length);
                 Array.Copy(k5_label, tgt.k5_label, k5_label.Length); // todo: not a deep copy but does it matter?
                 imd.modified = true;
@@ -1705,7 +1726,28 @@ namespace AnalysisDefs
             public collar_k5_rec k5;
             public collar_rec collar;
             public collar_detector_rec collar_det;
+            
+            public collar_combined_rec()
+            {
+                collar_det = new collar_detector_rec();
+                collar = new collar_rec();
+                k5 = new collar_k5_rec();
+            }
+            public collar_combined_rec (collar_combined_rec src)
+            {
+                src.collar.CopyTo(collar);
+                src.collar_det.CopyTo(collar_det);
+                src.k5.CopyTo(k5);
+            }
 
+            public override void CopyTo(INCCMethodDescriptor imd)
+            {
+                collar_combined_rec tgt = (collar_combined_rec)imd;
+                tgt.collar.CopyTo (collar);
+                tgt.collar_det.CopyTo(collar_det);
+                tgt.k5.CopyTo(k5);
+                imd.modified = true;
+            }
             public override void GenParamList()
             {
                 base.GenParamList();
