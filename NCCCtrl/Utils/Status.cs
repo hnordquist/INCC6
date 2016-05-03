@@ -309,8 +309,14 @@ namespace NCC
         // NEXT:  1b: For HV Calib operation: The HV Calib Point status as it exists now, 
         public class HVStatusSnapshot : HVControl.HVStatus
         {
+			public int min;
             public HVStatusSnapshot(Instrument inst)
             {
+				if (DAQControl.gControl.ctrlHVCalib == null)
+					return;
+				HVread = DAQControl.gControl.ctrlHVCalib.hvCalibPoint;
+				HVsetpt = DAQControl.gControl.ctrlHVCalib.hvMaxCalibPoint;
+				min = DAQControl.gControl.ctrlHVCalib.hvMinCalibPoint;
             }
             // last status plus stepping placement 
         }

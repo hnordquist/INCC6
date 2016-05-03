@@ -311,6 +311,7 @@ namespace DAQ
             if (Instruments.Active.Count > 0)
             {
                 FireEvent(EventType.ActionStart, this);
+                FireEvent(EventType.ActionInProgress, this);
                 try
                 {
                     Thread hvt = HVCalibOperation();  // Start the underlying HV thread, but use the console prompt to pend

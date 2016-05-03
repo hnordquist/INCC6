@@ -129,9 +129,11 @@ namespace NewUI
             else
                 DialogResult = DialogResult.Ignore;
 
+			acq.data_src = ConstructedSource.Live;
+
             // The acquire is set to occur, build up the measurement state 
             Integ.BuildMeasurement(acq, det, AssaySelector.MeasurementOption.unspecified);
-            
+			NC.App.Opstate.Measurement.Detector.Id.source =   ConstructedSource.Live;           
             if (acq.modified)
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, DateTime.Now);

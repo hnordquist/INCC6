@@ -43,12 +43,13 @@ namespace DAQ
         string instId;
         DateTime time;
 
-        NCCReporter.LMLoggers.LognLM ctrllog = null;
+        LMLoggers.LognLM ctrllog = null;
 
         // expose these as a struct for sampling by polling for status
-        public int hvCalibPoint;
-        int hvMaxCalibPoint, hvMinCalibPoint;
-        int hvStep;
+        public int hvCalibPoint;  // last read or target value
+        public int hvMaxCalibPoint;  // max final value
+		public int hvMinCalibPoint;
+        public int hvStep;
         int hvDelayms;
         bool hvx;
         internal HVExcel xp;
@@ -138,6 +139,7 @@ namespace DAQ
                 }
             }
             instId = inst.id.DetectorId + "-" + inst.id.SRType.ToString();
+
             if (hvCalibPoint <= hvMaxCalibPoint)
             {
                 if (DAQControl.CurState.IsQuitRequested) // leave and do not finish calibration
@@ -183,6 +185,7 @@ namespace DAQ
                             control.SRWrangler.SetAction(inst.id, SRTakeDataHandler.SROp.WaitForResults); // event handler will pick up results when the internal timer polling in the thread detects results and fires the event
                         }
                     }
+                    control.FireEvent(ActionEvents.EventType.ActionInProgress, control);
 
                     hvCalibPoint += hvStep;
                 }
@@ -210,6 +213,14 @@ namespace DAQ
             public HVStatus()
             {
                 time = DateTime.Now;
+            }
+
+			public void Copy(HVStatus src)
+            {
+                time = src.time;
+				setpt = src.setpt;
+				read = src.read;
+				Array.Copy(src.counts, counts, counts.Length);
             }
 
             // as of late 2010, this going to be 34 values, the setpt, the actual read, and the counts per channel

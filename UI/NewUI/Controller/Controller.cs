@@ -390,12 +390,27 @@ namespace NewUI
                 string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
-
-				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+				int per = 0;
 				try
 				{
-					daqbind.mProgressTracker.ReportProgress(per, // a % est of files
-						string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
+					switch (daqbind.CurAction)
+					{
+					case NCCAction.HVCalibration:
+						if (measStatus.snaps.iss != null && measStatus.snaps.iss.hv != null)
+						{
+							per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.snaps.iss.hv.HVread - 1) / (double)measStatus.snaps.iss.hv.HVsetpt))));
+							daqbind.mProgressTracker.ReportProgress(per, // a % est of steps
+								string.Format("{0} volts, with max voltage {1} {2}", measStatus.snaps.iss.hv.HVread, measStatus.snaps.iss.hv.HVsetpt, s2));
+						}
+						break;
+					default:
+						per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+						daqbind.mProgressTracker.ReportProgress(per, // a % est of files
+							string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
+						break;
+
+
+					}
 				}
 				catch (ArgumentOutOfRangeException)
 				{
