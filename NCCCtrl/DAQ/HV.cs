@@ -93,11 +93,11 @@ namespace DAQ
             }
         }
 
-        public bool HVStartCalibration(int feedback)
+        public bool HVStartCalibration()
         {
 
             // only for first active instrument.
-            Instrument inst = Instruments.Active.FirstActive(); //control.FirstActiveInstrument(typeof(LMInstrument));
+            Instrument inst = Instruments.Active.FirstActive();
             if (inst == null)
             {
                 ctrllog.TraceInformation("No active instruments for HV calibration. . .");
@@ -122,7 +122,7 @@ namespace DAQ
         public bool HVCalibRun()
         {
             // only for first active instrument.
-            Instrument inst = Instruments.Active.FirstActive(); //  control.FirstActiveInstrument(typeof(LMInstrument));
+            Instrument inst = Instruments.Active.FirstActive();
             if (inst == null)
             {
                 ctrllog.TraceInformation("No active instruments for HV calibration. . .");
@@ -146,20 +146,23 @@ namespace DAQ
                     inst.DAQState = DAQInstrState.Online;
                     DAQControl.CurState.State = DAQInstrState.Online;
                     ctrllog.Flush();
+					DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
+					inst.PendingComplete(); // each instr must complete for the waitall to move forward 
                 }
                 else
                 {
                     if (inst.id.SRType.IsListMode())
                     {
-                        if (inst.id.SRType == InstrType.PTR32) {
+                        if (inst.id.SRType == InstrType.PTR32 || inst.id.SRType == InstrType.MCA527)
+						{
+							Thread.Sleep(hvDelayms); // wait for HV to settle, nominally 2 seconds
                             inst.StartHVCalibration(hvCalibPoint, TimeSpan.FromSeconds(hvp.HVDuration));
                         }
-                        else {
+                        else if (inst.id.SRType == InstrType.LMMM)
+						{
                             int LM = control.FirstActiveIndexOf(inst);
                             DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvprep, hvCalibPoint, LM);
-
                             Thread.Sleep(hvDelayms); // wait for HV to settle, nominally 2 seconds
-
                             DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvcalib, 0, LM);
                         }
                     }
@@ -190,6 +193,7 @@ namespace DAQ
                 inst.DAQState = DAQInstrState.Online;
                 DAQControl.CurState.State = DAQInstrState.Online;
                 ctrllog.Flush();
+                DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 inst.PendingComplete(); // each instr must complete for the waitall to move forward 
             }
             return true;

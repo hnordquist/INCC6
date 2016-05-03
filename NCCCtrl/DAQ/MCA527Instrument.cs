@@ -522,51 +522,51 @@ namespace Instr
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
-            //try {
-            //    m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
-            //    m_logger.Flush();
-            //    uint x = SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
+            try {
+                m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
+                m_logger.Flush();
+				cancellationToken.ThrowIfCancellationRequested();
 
-            //    MCA527RateCounter counter = new MCA527RateCounter(m_device);
-            //    counter.TakeMeasurement(duration, cancellationToken);
+				uint x = SetVoltage((ushort)voltage, MaxSetVoltageTime, cancellationToken);
 
-            //    HVControl.HVStatus status = new HVControl.HVStatus();
-            //    status.HVread = (int) m_device.GetHighVoltage();
-            //    status.HVsetpt = voltage;
+				cancellationToken.ThrowIfCancellationRequested();
 
-            //    for (int i = 0; i < MCA527.ChannelCount; i++) {
-            //        status.counts[i] = (ulong) counter.ChannelCounts[i];
-            //    }
+				HVControl.HVStatus status = new HVControl.HVStatus();
+				status.HVread = (int) m_device.GetHighVoltage();
+				status.HVsetpt = voltage;
 
-            //    lock (m_monitor) {
-            //        m_cancellationTokenSource.Dispose();
-            //        m_cancellationTokenSource = null;
-            //    }
+				//for (int i = 0; i < 1; i++)  // not getting any counts with MCA-527
+				//{
+				//	status.counts[i] = (ulong)counter.ChannelCounts[i];
+				//}
 
-            //    m_logger.TraceEvent(LogLevels.Info, 0,
-            //        "MCA527[{0}]: Finished HV calibration; read {1} bytes in {2}s",
-            //        DeviceName, counter.ByteCount, counter.Time.TotalSeconds);
-            //    m_logger.Flush();
+				lock (m_monitor)
+				{
+					m_cancellationTokenSource.Dispose();
+					m_cancellationTokenSource = null;
+				}
 
-            //    DAQControl.gControl.AppendHVCalibration(status);
-            //    DAQControl.gControl.StepHVCalibration();
-            //}
-            //catch (OperationCanceledException) {
-            //    m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Stopped HV calibration", DeviceName);
-            //    m_logger.Flush();
-            //    DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
-            //    PendingComplete();
-            //    //throw;
-            //}
-            //catch (Exception ex) {
-            //    m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
-            //    m_logger.TraceException(ex, true);
-            //    m_logger.Flush();
-            //    DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
-            //    PendingComplete();
-            //    //throw;
-            //}
-        }
+				DAQControl.gControl.AppendHVCalibration(status);
+				DAQControl.gControl.StepHVCalibration();
+			} 
+			catch (OperationCanceledException)
+			{
+				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Stopped HV calibration", DeviceName);
+				m_logger.Flush();
+				DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
+				PendingComplete();
+				//throw;
+			}
+			catch (Exception ex)
+			{
+				m_logger.TraceEvent(LogLevels.Error, 0, "MCA527[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
+				m_logger.TraceException(ex, true);
+				m_logger.Flush();
+				DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
+				PendingComplete();
+				//throw;
+			}
+		}
 
         /// <summary>
         /// Stops the currently executing high voltage calibration operation.

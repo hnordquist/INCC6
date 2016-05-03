@@ -29,20 +29,19 @@ using System;
 using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
-using NCCReporter;
 using Instr;
-using DAQ;
+using NCCReporter;
 namespace NewUI
 {
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;        
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    // NEXT: connect this to SR and LM HV params respectively
-    public partial class IDDHighVoltagePlateau : Form
+	// NEXT: connect this to SR and LM HV params respectively
+	public partial class IDDHighVoltagePlateau : Form
     {
-        AnalysisDefs.HVCalibrationParameters hvp;
-        AnalysisDefs.Detector det;
-        AnalysisDefs.AcquireParameters acq;
+        HVCalibrationParameters hvp;
+        Detector det;
+        AcquireParameters acq;
 
         public IDDHighVoltagePlateau()
         {
@@ -51,7 +50,7 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             hvp = Integ.GetCurrentHVCalibrationParams(det);
 
-            this.Text += " for detector " + det.Id.DetectorName;
+            Text += " for detector " + det.Id.DetectorName;
             MinimumVoltageTextBox.Text = hvp.MinHV.ToString();
             MaximumVoltageTextBox.Text = hvp.MaxHV.ToString();
             VoltageStepSizeTextBox.Text = hvp.Step.ToString();
@@ -128,7 +127,7 @@ namespace NewUI
 
             }
             else
-                DialogResult = System.Windows.Forms.DialogResult.Ignore;
+                DialogResult = DialogResult.Ignore;
 
             // The acquire is set to occur, build up the measurement state 
             Integ.BuildMeasurement(acq, det, AssaySelector.MeasurementOption.unspecified);
@@ -142,65 +141,47 @@ namespace NewUI
 
             UIIntegration.Controller.file = false;  // make sure to use the DAQ controller, not the file controller
             NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
-            if (NC.App.Opstate.Measurement.Detector.ListMode)
-            {
-                if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.PTR32) {
-                    Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
-                    instrument.DAQState = DAQInstrState.Offline;
-                    instrument.selected = true;
-                    instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+			Instrument instrument = null;
+			if (NC.App.Opstate.Measurement.Detector.ListMode)
+			{
+				if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.PTR32)
+				{
+					instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
+				} 
+				else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
+				{
+					instrument = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+				} 
+				else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.LMMM)
+				{
+					instrument = new LMInstrument(NC.App.Opstate.Measurement.Detector);
+				}
+				instrument.DAQState = DAQInstrState.Offline;
+				instrument.selected = true;
+				instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+				if (!Instruments.Active.Exists(i => instrument.id.Equals(i.id)))
+					Instruments.Active.Add(instrument);
+			} 
+			else
+			{
+				SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
+				sri.selected = true;
+				sri.Init(null, null);
+				if (!Instruments.Active.Exists(i => instrument.id.Equals(i)))
+					Instruments.All.Add(sri); // add to global runtime list 
+			}
 
-                    if (!Instruments.Active.Contains(instrument)) {
-                        Instruments.Active.Add(instrument);
-                    }
-                }
-                         else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
-                            {
-                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
-                                mca.DAQState = DAQInstrState.Offline; 
-                                mca.selected = true;
-								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
-                                if (!Instruments.Active.Contains(mca))
-                                    Instruments.Active.Add(mca);                                
-                            } 
-                            else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
-                            {
-                                MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
-                                mca.DAQState = DAQInstrState.Offline; 
-                                mca.selected = true;
-								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
-                                if (!Instruments.Active.Contains(mca))
-                                    Instruments.Active.Add(mca);                                
-                            } 
-							else // LMMM
-							{
-                                LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
-                                lm.DAQState = DAQInstrState.Offline; 
-                                lm.selected = false;  //must broadcast first to get it selected
-                                if (!Instruments.All.Contains(lm))
-                                    Instruments.All.Add(lm); // add to global runtime list		
-							}
-                              
-            }
-            else
-            {
-                SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
-                sri.selected = true;
-                sri.Init(null, null);
-                if (!Instruments.All.Contains(sri))
-                    Instruments.All.Add(sri); // add to global runtime list 
-            }
 
-            UIIntegration.Controller.SetHVCalib();  // tell the controller to do an HV operation using the current measurement state
+			UIIntegration.Controller.SetHVCalib();  // tell the controller to do an HV operation using the current measurement state
             UIIntegration.Controller.Perform();  // start the HV DAQ thread
             
             
-            this.Close();        
+            Close();        
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

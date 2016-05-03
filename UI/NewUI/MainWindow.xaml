@@ -86,7 +86,7 @@
                 <Separator />
                 <MenuItem Header="_Delete Measurements..." Click="MaintainDeleteMeasurementClick" IsEnabled="False" />
                 <Separator />
-                <MenuItem Header="Measure _High Voltage Plateau" Click="HVPClick" IsEnabled="False"/>
+                <MenuItem Header="Measure _High Voltage Plateau" Click="HVPClick" IsEnabled="True"/>
                 <Separator />
                 <MenuItem Header="_Other Preferences..." Click="MaintainSomeSettingsClick" />
             </MenuItem>

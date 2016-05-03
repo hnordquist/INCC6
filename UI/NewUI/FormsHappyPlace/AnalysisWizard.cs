@@ -1500,7 +1500,7 @@ namespace NewUI
                     Step2SaveEarlyTermCheckBox.CheckState = (ap.lm.SaveOnTerminate ? CheckState.Checked : CheckState.Unchecked);
 
                     // el radio buton setter
-                    if (NC.App.AppContext.PTRFileAssay)
+                    if (NC.App.AppContext.PTRFileAssay || det.Id.SRType == InstrType.PTR32)
                     {
                         Step2PTR32RadioBtn.Checked = true;
                         ap.data_src = ConstructedSource.PTRFile;
@@ -1510,7 +1510,7 @@ namespace NewUI
                         Step2SortedPulseRadioBtn.Checked = true;
                         ap.data_src = ConstructedSource.SortedPulseTextFile;
                     }
-                    else if (NC.App.AppContext.MCA527FileAssay)
+                    else if (NC.App.AppContext.MCA527FileAssay || det.Id.SRType == InstrType.MCA527)
                     {
                         Step2MCA5272RadioBtn.Checked = true;
                         ap.data_src = ConstructedSource.MCA527File;

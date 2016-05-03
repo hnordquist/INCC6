@@ -345,7 +345,7 @@ namespace DAQ
             }
             else
             {
-                res = ctrlHVCalib.HVStartCalibration((NC.App.Opstate.Measurement.AcquireState.lm.Feedback ? 1 : 0));
+                res = ctrlHVCalib.HVStartCalibration();
             }
             return res;
         }
