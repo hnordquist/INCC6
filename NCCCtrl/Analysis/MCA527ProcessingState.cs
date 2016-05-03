@@ -44,7 +44,7 @@ namespace Analysis
         public MCA527ProcessingState()
         {
             InitParseBuffers(1,4, false);
-            m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+            writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
         /// <summary>
         /// Perform initialization at the start of a new cycle.
@@ -57,7 +57,7 @@ namespace Analysis
 
             if (cycle != null) {
 				cycle.ExpectedTS = new TimeSpan((long)(CentralizedState.App.Opstate.Measurement.AcquireState.lm.Interval * TimeSpan.TicksPerSecond));
-                m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
+                writingFile = CentralizedState.App.AppContext.LiveFileWrite;
             }
             if (param != null)
             {
@@ -77,7 +77,7 @@ namespace Analysis
 
 		public void ReadTimestamps(uint sweepNumber, uint[] timestamps)
 		{
-			Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
+			//Console.WriteLine("TIMESTAMPS FOR SWEEP: " + sweepNumber + ", count: " + timestamps.Length);
 			//bool first = true;
 			//foreach (uint timestamp in timestamps) {
 			//	if (first == false) { Console.Write(", "); }
@@ -94,7 +94,11 @@ namespace Analysis
         /// <returns><c>null</c></returns>
         public override StreamStatusBlock ConvertDataBuffer(int count)
         {
-			// copy the timestampsBuffer value into the RDT.State.timeArray,
+			// assign all neutrons to channel 0
+			for (int i = 0; i < neutronEventArray.Count; i++)
+			{
+				neutronEventArray[i] = 1;
+			}
 			return null;
         }
 
@@ -108,7 +112,7 @@ namespace Analysis
 		}
 
 
-		        /// <summary>
+		/// <summary>
         /// The number of channels.
         /// </summary>
         public const int ChannelCount = 1;
@@ -125,7 +129,7 @@ namespace Analysis
 
         public NCCFile.MCAFile file;
         public MCADevice device;
-        private bool m_writingFile;
+        public bool writingFile;
 
     }
 }

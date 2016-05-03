@@ -460,7 +460,7 @@ namespace DAQ
                     NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
                     active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for LMMM
                     ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
-                }
+                 }
                 else
                     active.RDT.StartCycle(cycle);
 
@@ -481,7 +481,7 @@ namespace DAQ
                     }
                     else if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
                     {
-						DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LMMM
+						LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LMMM
                     }
 
                     // devnote: index might be wrong if some of multiple LMs are disabled via UI. This will require a revisit at integration time 
@@ -511,17 +511,17 @@ namespace DAQ
             {
                 if (CurState.broadcastGo) // send go
                 {
-                    // this has to be sent separately, because linux control is looking for the Arm alone.
-                    DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.arm); // send to all active
+					// this has to be sent separately, because linux control is looking for the Arm alone.
+					LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.arm); // send to all active
 
                     Thread.Sleep(250);  // allow linux code to setup waiting socket.
 
-                    // broadcast go message to all NCC.App.Config.Net.Subnet addresses. This is the instrument group.
-                    DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.go, true);
+					// broadcast go message to all NCC.App.Config.Net.Subnet addresses. This is the instrument group.
+					LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.go, true);
                 }
                 else
                 {
-                    DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.go); // send to all active
+					LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.go); // send to all active
                 }
             }
 
@@ -591,12 +591,6 @@ namespace DAQ
             }
             return Instruments.Active.Count;
         }
-
-        static public void ReadInstrStatus(LMInstrument lmi)
-        {
-            DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.cstatus, 0, Instruments.Active.RankPositionInList(lmi));
-        }
-
 
         #region Status event and timer callbacks
 

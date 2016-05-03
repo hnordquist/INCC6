@@ -201,6 +201,10 @@ namespace NewUI
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
+			if (modified)  // the reference variable m_iso is pointing to an existing isotopics value that has been modified but now needs to be reverted
+			{
+				NC.App.DB.Isotopics.Revert(m_iso);  // revert originating selection on in-memory list back to DB values
+			}
             this.Close();
         }
 

@@ -254,7 +254,8 @@ namespace DAQ
 		}
         public void MajorOperationCompleted()
         {
-            _completed[0].Signal();
+			if (_completed[0].CurrentCount > 0)
+				_completed[0].Signal();
             Flush();
             FireEvent(EventType.ActionStop, this);
         }

@@ -329,7 +329,13 @@ namespace NewUI
         private void CancelBtn_Click(object sender, EventArgs e)
         {
 			if (ExitCheck())
+			{
+				if (modified)  // the reference variable m_comp_iso is pointing to an existing composite isotopics value that has been modified but now needs to be reverted
+				{
+                    NC.App.DB.CompositeIsotopics.Revert(m_comp_iso);  // revert originating selection on in-memory list back to DB values
+				}
 				Close();
+        }
         }
 
 		bool ExitCheck()
