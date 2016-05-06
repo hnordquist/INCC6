@@ -2352,8 +2352,11 @@ namespace AnalysisDefs
         }
         public INCCSelector(string id, string material)
         {
-            this.detectorid = string.Copy(id);
-            this.material = string.Copy(material);
+            detectorid = string.Copy(id);
+            if (string.IsNullOrEmpty(material))
+				this.material = string.Empty;
+			else
+				this.material = string.Copy(material);
             otheruniquelyidentifyinginformation = string.Empty;
         }
         public bool Equals(INCCSelector other)

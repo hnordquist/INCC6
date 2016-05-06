@@ -115,6 +115,30 @@
     <Compile Include="FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs">
       <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCal.Designer.cs">
+      <DependentUpon>IDDCollarCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCrossRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCrossRef.Designer.cs">
+      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCorrectionFactors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCorrectionFactors.Designer.cs">
+      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDK5CollarItemData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDK5CollarItemData.Designer.cs">
+      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\MeasSetup.xaml.cs">
       <DependentUpon>MeasSetup.xaml</DependentUpon>
     </Compile>
@@ -230,18 +254,6 @@
     <Compile Include="Unready\IDDCollarAcquire.Designer.cs">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDCollarCal.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDCollarCal.Designer.cs">
-      <DependentUpon>IDDCollarCal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDCollarCrossRef.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDCollarCrossRef.Designer.cs">
-      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
-    </Compile>
     <Compile Include="Unready\IDDCollarData.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -277,12 +289,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCompositeIsotopics.Designer.cs">
       <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDCorrectionFactors.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDCorrectionFactors.Designer.cs">
-      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCuriumRatioCalibration.cs">
       <SubType>Form</SubType>
@@ -427,12 +433,6 @@
     </Compile>
     <Compile Include="Unready\IDDIsoCompEdit.Designer.cs">
       <DependentUpon>IDDIsoCompEdit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDK5CollarItemData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDK5CollarItemData.Designer.cs">
-      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDKnownAlphaCal.cs">
       <SubType>Form</SubType>
@@ -1190,6 +1190,15 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCf252SinglesNorm.resx">
       <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarCal.resx">
+      <DependentUpon>IDDCollarCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarCrossRef.resx">
+      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCorrectionFactors.resx">
+      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDeleteItems.resx">
       <DependentUpon>IDDDeleteItems.cs</DependentUpon>
     </EmbeddedResource>
@@ -1243,6 +1252,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDItemTypeDelete.resx">
       <DependentUpon>IDDItemTypeDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDK5CollarItemData.resx">
+      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDMBAAdd.resx">
       <DependentUpon>IDDMBAAdd.cs</DependentUpon>
@@ -1338,12 +1350,6 @@
     <EmbeddedResource Include="Unready\IDDCollarAcquire.resx">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCollarCal.resx">
-      <DependentUpon>IDDCollarCal.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCollarCrossRef.resx">
-      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDCollarData.resx">
       <DependentUpon>IDDCollarData.cs</DependentUpon>
     </EmbeddedResource>
@@ -1361,9 +1367,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCompositeIsotopics.resx">
       <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCorrectionFactors.resx">
-      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCuriumRatioCalibration.resx">
       <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
@@ -1436,9 +1439,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDIsoCompEdit.resx">
       <DependentUpon>IDDIsoCompEdit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDK5CollarItemData.resx">
-      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDKnownAlphaCal.resx">
       <DependentUpon>IDDKnownAlphaCal.cs</DependentUpon>

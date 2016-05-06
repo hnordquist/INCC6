@@ -306,7 +306,6 @@ namespace NCC
             }
         }
 
-        // NEXT:  1b: For HV Calib operation: The HV Calib Point status as it exists now, 
         public class HVStatusSnapshot : HVControl.HVStatus
         {
 			public int min;
