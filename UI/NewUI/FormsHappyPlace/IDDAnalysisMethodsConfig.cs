@@ -96,22 +96,35 @@ namespace NewUI
 
         private void collaractive()
         {
-            if (!(ActivePassiveCheckBox.Checked ||
-                ActiveCalCurveCheckBox.Checked ||
-                ActiveMultCheckBox.Checked ||
-                PassiveCalCurveCheckBox.Checked ||
-                KnownAlphaCheckBox.Checked ||
-                KnownMCheckBox.Checked ||
-                PassiveMultiplicityCheckBox.Checked ||
-                AddASourceCheckBox.Checked ||
-                CuRatioCheckBox.Checked ||
-                TruncatedMultCheckBox.Checked))
+            if (CollarCheckBox.Checked == true)
             {
-                this.CollarCheckBox.Enabled = true;
+                string CollarName = CollarCheckBox.Name;
+                foreach (Control cb in this.Controls)
+                {
+                    if (cb is CheckBox)
+                    {
+                        if (cb.Name != CollarCheckBox.Name)
+                        {
+                            cb.Enabled = false;
+                        }
+                    }
+                }
             }
             else
             {
-               this.CollarCheckBox.Enabled = false;
+                bool allUnchecked = true;
+                string CollarName = CollarCheckBox.Name;
+                foreach (Control cb in this.Controls)
+                {
+                    if (cb is CheckBox)
+                    {
+                        if (cb.Name != CollarCheckBox.Name)
+                        {
+                            allUnchecked = ((CheckBox)cb).Checked == false;
+                        }
+                    }
+                }
+                this.CollarCheckBox.Enabled = allUnchecked;
             }
         }
         // collar disabled if any other enabled

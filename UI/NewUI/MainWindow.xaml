@@ -58,7 +58,7 @@
                     <MenuItem Header="_Curium Ratio..." Click="MaintainCuriumRatioClick" IsEnabled="True" />
                     <MenuItem Header="_Truncated Multiplicity..." Click="MaintainTruncatedMultClick" IsEnabled="True"/>
                     <MenuItem Header="_Active Calibration Curve..." Click="MaintainActiveCalCurveClick" IsEnabled="True"/>
-                    <MenuItem Header="_Collar..." Click="MaintainCollarClick" IsEnabled="False"/>
+                    <MenuItem Header="_Collar..." Click="MaintainCollarClick" IsEnabled="True"/>
                     <MenuItem Header="_Active Multiplicity..." Click="MaintainActiveMultClick" IsEnabled="True"/>
                     <MenuItem Header="_Active/Passive..." Click="MaintainActivePassiveClick" IsEnabled="True"/>
                 </MenuItem>
