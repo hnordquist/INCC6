@@ -85,10 +85,13 @@ namespace AnalysisDefs
                     foreach (ResultFile fname in m.ResultsFiles)
                         System.Diagnostics.Process.Start(notepadPath, fname.Path);
                 }
-                // todo:optional enablement
-                // Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
-                //Microsoft.Office.Interop.Excel.Workbook wb = excel.Workbooks.Open(m.ResultsFileName);
-                //excel.Visible = true;
+                // optional enablement
+				if (ExcelPush.ExcelPresent() && !string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
+				{ 
+					Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+					Microsoft.Office.Interop.Excel.Workbook wb = excel.Workbooks.Open(m.ResultsFiles.CSVResultsFileName.Path);
+					excel.Visible = true;
+				}
             }
         }
     }

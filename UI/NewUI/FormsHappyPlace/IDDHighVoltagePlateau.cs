@@ -36,7 +36,6 @@ namespace NewUI
 	using Integ = NCC.IntegrationHelpers;
 	using NC = NCC.CentralizedState;
 
-	// NEXT: connect this to SR and LM HV params respectively
 	public partial class IDDHighVoltagePlateau : Form
     {
         HVCalibrationParameters hvp;
@@ -56,7 +55,8 @@ namespace NewUI
             VoltageStepSizeTextBox.Text = hvp.Step.ToString();
             CountTimeTextBox.Text = hvp.HVDuration.ToString();
             HVStepDelay.Text = hvp.DelayMS.ToString();
-
+			OpenInExcel.Checked = acq.lm.HVX;
+			OpenInExcel.Enabled = DAQ.HVExcel.ExcelPresent();
         }
 
         private void MinimumVoltageTextBox_Leave(object sender, EventArgs e)
@@ -113,7 +113,7 @@ namespace NewUI
         {
             if (hvp.modified)
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
                 HVCalibrationParameters c = NC.App.DB.HVParameters.Get(det.Id.DetectorName);
                 if (c != null)
                     c.Copy(hvp);  // copy changes back to original on user affirmation
@@ -130,6 +130,11 @@ namespace NewUI
                 DialogResult = DialogResult.Ignore;
 
 			acq.data_src = ConstructedSource.Live;
+			if (OpenInExcel.Checked != acq.lm.HVX)
+			{
+				acq.lm.HVX = OpenInExcel.Checked;
+                NC.App.DB.UpdateAcquireParams(acq, det.ListMode);
+			}
 
             // The acquire is set to occur, build up the measurement state 
             Integ.BuildMeasurement(acq, det, AssaySelector.MeasurementOption.unspecified);
@@ -173,7 +178,6 @@ namespace NewUI
 				if (!Instruments.Active.Exists(i => instrument.id.Equals(i)))
 					Instruments.All.Add(sri); // add to global runtime list 
 			}
-
 
 			UIIntegration.Controller.SetHVCalib();  // tell the controller to do an HV operation using the current measurement state
             UIIntegration.Controller.Perform();  // start the HV DAQ thread

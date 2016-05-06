@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -29,33 +29,32 @@ using System;
 
 namespace NCCReporter
 {
-    //using Excel = Microsoft.Office.Interop.Excel;
 
+	using Excel = Microsoft.Office.Interop.Excel;
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
     {
-        protected NCCReporter.LMLoggers.LognLM ctrllog;
-       //protected Excel.Application target;
+        protected LMLoggers.LognLM ctrllog;
+        protected Excel.Application target;
 
         // dev note: pre-define template somewhere, and use it, having the very nice graph already prepared for line by line updating here
-        public ExcelPush(string existingWB, NCCReporter.LMLoggers.LognLM ctrllog)
+        public ExcelPush(string existingWB, LMLoggers.LognLM ctrllog)
         {
             this.ctrllog = ctrllog;
         }
 
-        public ExcelPush(NCCReporter.LMLoggers.LognLM ctrllog)
+        public ExcelPush(LMLoggers.LognLM ctrllog)
         {
             this.ctrllog = ctrllog;
         }
 
 
-        public static bool ExcelPresent(NCCReporter.LMLoggers.LognLM optlog = null)
+        public static bool ExcelPresent(LMLoggers.LognLM optlog = null)
         {
             try
             {
-                //Excel.Application nitz;
-                //nitz = new Excel.Application();
-                return true;
+				if (Type.GetTypeFromProgID("Excel.Application") != null)
+					return true;
             }
             catch (Exception e)
             {
@@ -69,13 +68,13 @@ namespace NCCReporter
         {
             try
             {
-                //if (target == null)
-                //{
-                //    target = new Excel.Application();
-                //    target.Workbooks.Add(); // add a new empty WB
-                //    target.Visible = true;  // pop it up to the front, really annoying, in the traditional Windows way!
-                //}
-            }
+				if (target == null)
+				{
+					target = new Excel.Application();
+					target.Workbooks.Add(); // add a new empty WB
+					target.Visible = true;  // pop it up to the front, really annoying, in the traditional Windows way!
+				}
+			}
             catch (Exception e)
             {
                 ctrllog.TraceException(e);

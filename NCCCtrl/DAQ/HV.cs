@@ -75,7 +75,7 @@ namespace DAQ
                 hvDelayms = hvp.DelayMS;
                 ctrllog.TraceEvent(LogLevels.Warning, 604, "HV delay modified to {0} milliseconds because the HV cycle duration ({1} sec) must be less than HV delay", hvp.DelayMS, hvp.HVDuration); 
             }
-            hvx = false; // excel monitor flag
+            hvx = NC.App.Opstate.Measurement.AcquireState.lm.HVX; // excel monitor flag
         }
         public HVControl(DAQControl control)
         {
@@ -132,9 +132,12 @@ namespace DAQ
             {
                 if (xp == null)
                 {
-                    xp = new HVExcel(ctrllog);
-                    xp.ShowWB();
-                    xp.AddHeaderRow(typeof(SimpleHVReport.HVVals));
+					if (ExcelPush.ExcelPresent(ctrllog))
+					{
+						xp = new HVExcel(ctrllog);
+						xp.ShowWB();
+						xp.AddHeaderRow(typeof(SimpleHVReport.HVVals));
+					}
                 }
             }
             instId = inst.id.DetectorId + "-" + inst.id.SRType.ToString();
@@ -375,7 +378,7 @@ namespace DAQ
             {
                 for (int j = 1; j <= lc; j++)
                 {
-                    //target.Cells[r + 1, j] = row[j - 1];
+                    target.Cells[r + 1, j] = row[j - 1];
                 }
             }
             catch (Exception e)
