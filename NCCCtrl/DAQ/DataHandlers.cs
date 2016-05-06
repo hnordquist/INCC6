@@ -317,7 +317,8 @@ namespace DAQ
                     gControl.collog.TraceInformation("All assay cycles completed");
                     activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement);  // do final processing on the last cycle, then do the last cycle closure processing
                     activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement,  last:true);
-                    gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
+                    if (CurState.Action != NCC.NCCAction.HVCalibration)
+						gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
                 }
             }
         }

@@ -638,7 +638,6 @@ namespace Device
     {
 
         public IMCADeviceCallbackObject CallbackObject;
-		//public System.Threading.ManualResetEventSlim Writing;
 
         public MCAHardwareVersion HardwareModification { get; private set; }
         public bool HasPowerModule { get; private set; }

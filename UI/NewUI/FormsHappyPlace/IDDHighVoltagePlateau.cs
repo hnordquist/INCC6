@@ -153,6 +153,7 @@ namespace NewUI
 				else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.MCA527)
 				{
 					instrument = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
+					((Analysis.MCA527ProcessingState)instrument.RDT.State).writingFile = false;  // force this
 				} 
 				else if (NC.App.Opstate.Measurement.Detector.Id.SRType == InstrType.LMMM)
 				{

@@ -122,7 +122,7 @@ namespace AnalysisDefs
     {
         public BaseRate() : base()
         {
-            gateWidthTics = (ulong)1e6;// .1 second
+            gateWidthTics = (ulong)1e7;// 1 second
         }
         public override void GenParamList()
         {

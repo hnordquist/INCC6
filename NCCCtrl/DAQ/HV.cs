@@ -69,11 +69,11 @@ namespace DAQ
             hvMaxCalibPoint = hvp.MaxHV;
             hvStep = hvp.Step;
             hvDelayms = hvp.DelayMS;
-            if (hvp.HVDuration <= hvp.DelayMS / 1000) // seconds to milliseconds
+            if (hvp.HVDuration < hvp.DelayMS / 1000) // seconds to milliseconds
             {
                 hvp.DelayMS = (hvp.HVDuration/1000) + 1000;
                 hvDelayms = hvp.DelayMS;
-                ctrllog.TraceEvent(LogLevels.Warning, 604, "HV delay modified to {0} seconds because the HV cycle duration ({1} sec) must be less than HV command delay", hvp.DelayMS * 1000, hvp.HVDuration); 
+                ctrllog.TraceEvent(LogLevels.Warning, 604, "HV delay modified to {0} milliseconds because the HV cycle duration ({1} sec) must be less than HV delay", hvp.DelayMS, hvp.HVDuration); 
             }
             hvx = false; // excel monitor flag
         }
@@ -204,7 +204,7 @@ namespace DAQ
 
         public void GenerateReport()
         {
-            new SimpleHVReport(ctrllog).GenerateReport(new HVCalibrationParameters(NC.App.Opstate.Measurement.AcquireState.lm), HVSteps, time, instId);
+            new SimpleHVReport(ctrllog).GenerateReport(hvp, HVSteps, time, instId);
         }
 
 
@@ -257,42 +257,6 @@ namespace DAQ
 
         }
 
-        public class HVCalibrationParameters
-        {
-            public HVCalibrationParameters(AnalysisDefs.LMAcquireParams acq)
-            {
-                MinHV = acq.MinHV;
-                MaxHV = acq.MaxHV;
-                Step = acq.Step;
-                HVDuration = acq.HVDuration;
-                Delay = acq.Delay;
-            }
-            public Int32 MinHV
-            {
-                get;
-                set;
-            }
-            public Int32 MaxHV
-            {
-                get;
-                set;
-            }
-            public Int32 Step
-            {
-                get;
-                set;
-            }
-            public Int32 HVDuration
-            {
-                get;
-                set;
-            }
-            public Int32 Delay
-            {
-                get;
-                set;
-            } 
-        }
     }
 
 
@@ -314,14 +278,14 @@ namespace DAQ
         {
             this.ctrllog = ctrllog;
         }
-        public static Row CreateRow(HVControl.HVCalibrationParameters h, int i)
+        public static Row CreateRow(AnalysisDefs.HVCalibrationParameters h, int i)
         {
             Row row = new Row();
             row.Add((int)HVCalibVals.MinHV, h.MinHV.ToString());
             row.Add((int)HVCalibVals.MaxHV, h.MaxHV.ToString());
             row.Add((int)HVCalibVals.DurationSeconds, h.HVDuration.ToString());
             row.Add((int)HVCalibVals.StepVolts, h.Step.ToString());
-            row.Add((int)HVCalibVals.DelaySeconds, h.Delay.ToString());
+            row.Add((int)HVCalibVals.DelaySeconds, (h.DelayMS / 1000).ToString());
             return row;
         }
         public static Row CreateRow(HVControl.HVStatus h, int i)
@@ -339,7 +303,7 @@ namespace DAQ
 
             return row;
         }
-        public void GenerateReport(DAQ.HVControl.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
+        public void GenerateReport(AnalysisDefs.HVCalibrationParameters hvc, List<HVControl.HVStatus> HVSteps, DateTime time, String instId)
         {
 
             TabularReport t = new TabularReport(typeof(HVVals), NC.App.Loggers);  // default file output type is CSV

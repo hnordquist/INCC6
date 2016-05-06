@@ -189,21 +189,27 @@ namespace Instr
 				m_cancellationTokenSource = new CancellationTokenSource();
 			}
 			CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-			Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta,
-												TaskCreationOptions.PreferFairness, 
-												TaskScheduler.Default);
+			Task.Factory.StartNew(() => PerformAssay(measurement, new MeasTrackParams() {seq = measurement.CurrentRepetition, interval = measurement.AcquireState.lm.Interval }, cta), 
+								cta,
+								TaskCreationOptions.PreferFairness, 
+								TaskScheduler.Default);
+		}
 
+		protected struct MeasTrackParams
+		{
+			public ushort seq;  // measurement.CurrentRepetition;
+			public double interval;  // measurement.AcquireState.lm.Interval or HVDuration
 		}
 
 		/// <summary>
 		/// Performs a single cycle assay operation.
 		/// </summary>
-		/// <param name="measurement">The measurement.</param>
+		/// <param name="measurement">The measurement parameters needed for the op.</param>
 		/// <param name="cancellationToken">The cancellation token to observe.</param>
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
 		/// <exception cref="MCADeviceBadDataException">An error occurred with the raw data stream state.</exception>
 		/// <exception cref="Exception">Empty or corrupt runtime data structure.</exception>
-		protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+		protected void PerformAssay(Measurement measurement, MeasTrackParams mparams, CancellationToken cancellationToken)
 		{
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
 
@@ -211,9 +217,9 @@ namespace Instr
 			{
 				if (ps == null)
 					throw new Exception("Big L bogus state");  // caught cleanly below
-				if (ps.writingFile && ps.file.writer == null)
+				if (ps.writingFile && (ps.file == null || ps.file.writer == null))
 					m_logger.TraceEvent(LogLevels.Verbose, 9, "null");				
-				ushort seq = measurement.CurrentRepetition;
+				ushort seq = mparams.seq;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started assay {1}", DeviceName, seq);
 				m_logger.Flush();
 
@@ -227,10 +233,10 @@ namespace Instr
 				if (seq == 1)  // init var on first cycle
 					ps.device = m_device;
 
-				bool x = InitSettings(seq, (uint)measurement.AcquireState.lm.Interval);  // truncate for discrete integer result
+				bool x = InitSettings(seq, (uint)mparams.interval);  // truncate for discrete integer result
 
 				Stopwatch stopwatch = new Stopwatch();
-				TimeSpan duration = TimeSpan.FromSeconds((uint)measurement.AcquireState.lm.Interval);
+				TimeSpan duration = TimeSpan.FromSeconds((uint)mparams.interval);
 				byte[] buffer = new byte[1024 * 1024];
 
 				// a5 5a 42 00 01 00 ae d5 44 56 b9 9b
@@ -283,7 +289,7 @@ namespace Instr
 						uint bytesToCopy = Math.Min(bytesAvailable / 2, CommonMemoryBlockSize / 2) * 2;
 						qcmr.CopyData(0, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-						if (ps.file.writer != null && ps.writingFile) // write the block
+						if (ps.writingFile && ps.file != null && ps.file.writer != null) // write the block
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, 0, (int)bytesToCopy);
 						}
@@ -354,7 +360,7 @@ namespace Instr
 						uint bytesToCopy = bytesAvailable;
 						qcmr.CopyData((int)readOffset, rawBuffer, (int)rawBufferOffset, (int)bytesToCopy);
 
-						if (ps.file.writer != null && ps.writingFile)
+						if (ps.writingFile && ps.file != null && ps.file.writer != null) // write the block
 						{
 							ps.file.WriteTimestampsRawDataChunk(rawBuffer, (int)readOffset, (int)bytesToCopy);
 						}
@@ -509,7 +515,7 @@ namespace Instr
             }
 
             CancellationToken cancellationToken = m_cancellationTokenSource.Token;
-            Task.Factory.StartNew(() => PerformHVCalibration(voltage, duration, cancellationToken), cancellationToken);
+            Task.Factory.StartNew(() => PerformHVCalibration(NC.App.Opstate.Measurement, voltage, duration, cancellationToken), cancellationToken);
         }
 
         /// <summary>
@@ -520,7 +526,7 @@ namespace Instr
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> to monitor for cancellation requests.</param>
         /// <exception cref="OperationCanceledException">Cancellation was requested.</exception>
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
-        private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
+        private void PerformHVCalibration(Measurement measurement, int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
@@ -535,16 +541,34 @@ namespace Instr
 				status.HVread = (int) m_device.GetHighVoltage();
 				status.HVsetpt = voltage;
 
-				//for (int i = 0; i < 1; i++)  // not getting any counts with MCA-527
-				//{
-				//	status.counts[i] = (ulong)counter.ChannelCounts[i];
-				//}
+				/// begin TakeMeasurement
+				measurement.Cycles.Clear();
+				Cycle cycle = new Cycle(m_logger);
+                cycle.UpdateDataSourceId(DetectorDefs.ConstructedSource.Live, DetectorDefs.InstrType.MCA527, DateTimeOffset.Now, string.Empty);
+				measurement.Add(cycle);
+                RDT.StartCycle(cycle);
+				cycle.ExpectedTS = new TimeSpan(duration.Ticks);   // expected is that requested for HV, not acquire
+				((MCA527ProcessingState)(RDT.State)).writingFile = false;  // never for HV
+				measurement.AnalysisParams = new CountingAnalysisParameters();
+				measurement.AnalysisParams.Add(new BaseRate()); // prep for a single cycle
+				measurement.CountTimeInSeconds = duration.TotalSeconds;   // the requested count time
+				measurement.RequestedRepetitions = measurement.CurrentRepetition = 1;  // 1 rep, always set to complete
+				measurement.InitializeResultsSummarizers();   // reset data structures
+				RDT.SetupCountingAnalyzerHandler(NC.App.Config, DetectorDefs.ConstructedSourceExtensions.TimeBase(DetectorDefs.ConstructedSource.Live, DetectorDefs.InstrType.MCA527));
+                RDT.PrepareAndStartCountingAnalyzers(measurement.AnalysisParams);  // 1 rate counter
+				m_setvoltage = false; // override DB settings here
+				PerformAssay(measurement, new MeasTrackParams() {seq = 1, interval = duration.TotalSeconds}, cancellationToken);
+				/// end TakeMeasurement
 
-				lock (m_monitor)
-				{
-					m_cancellationTokenSource.Dispose();
-					m_cancellationTokenSource = null;
-				}
+				for (int i = 0; i < 1; i++)
+					status.counts[i] = (ulong)cycle.HitsPerChannel[i];
+
+				if (m_cancellationTokenSource != null)
+					lock (m_monitor)
+					{
+						m_cancellationTokenSource.Dispose();
+						m_cancellationTokenSource = null;
+					}
 
 				DAQControl.gControl.AppendHVCalibration(status);
 				DAQControl.gControl.StepHVCalibration();

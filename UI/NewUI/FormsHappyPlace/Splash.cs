@@ -50,7 +50,7 @@ namespace NewUI
             richTextBox2.Text += @" under Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE) for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, LLC (LANS) for the";
             richTextBox2.Text += @"the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY,";
             richTextBox2.Text += @" EXPRESS OR IMPLIED, OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, such modified software should be clearly marked, so as not to confuse ";
-            richTextBox2.Text += @"it with the version available from LANL.All rights in the software application and associated material are reserved by DOE on behalf of the Government and LANS pursuant to the contract.";
+            richTextBox2.Text += @"it with the version available from LANL. All rights in the software application and associated material are reserved by DOE on behalf of the Government and LANS pursuant to the contract.";
             
             richTextBox3.Text = @"Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:" + System.Environment.NewLine + System.Environment.NewLine;
             richTextBox3.Text += @"1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer."  + System.Environment.NewLine;

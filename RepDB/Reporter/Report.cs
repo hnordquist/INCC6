@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -88,7 +88,7 @@ namespace NCCReporter
             Separator = ',';
             GenColumns(et);
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.App));
+            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NCCReporter
             this.loggers = loggers;
             Separator = ',';
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.App));
+            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
         }
 
         public void GenColumns(System.Type et)
@@ -129,6 +129,25 @@ namespace NCCReporter
         // assumes file is created and open, header and footer text is set and rows constructed.
         public virtual void CreateReport(UInt16 logResults)
         {
+			bool sendToLogFile = false, logToConsole = false;
+            switch (logResults)
+            {
+                case 1:
+                    sendToLogFile = true;
+                    break;
+                case 2:
+                    logToConsole = true;
+                    break;
+                case 3:
+                    sendToLogFile = logToConsole = true;
+                    break;
+            }
+			if (sendToLogFile || logToConsole)
+            {
+                LMLoggers.LognLM log = loggers.Logger(LMLoggers.AppSection.App);
+				if (log != null) log.TraceEvent(LogLevels.Info, 111, "Using output file: " + f.filename);
+			}
+
             lines = new List<string>(2 + rows.Length + 1);
 
             if (hf != null)
@@ -154,19 +173,6 @@ namespace NCCReporter
             foreach (string ls in lines)
             {
                 f.WriteLine(ls);
-            }
-            bool sendToLogFile = false, logToConsole = false;
-            switch (logResults)
-            {
-                case 1:
-                    sendToLogFile = true;
-                    break;
-                case 2:
-                    logToConsole = true;
-                    break;
-                case 3:
-                    sendToLogFile = logToConsole = true;
-                    break;
             }
 
             if (sendToLogFile || logToConsole)

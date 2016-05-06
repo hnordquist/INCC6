@@ -268,8 +268,11 @@ namespace Instr
             try {
                 m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Started HV calibration", DeviceName);
                 m_logger.Flush();
+				cancellationToken.ThrowIfCancellationRequested();
 
                 SetVoltage(voltage, MaxSetVoltageTime, cancellationToken);
+
+				cancellationToken.ThrowIfCancellationRequested();
 
                 Ptr32RateCounter counter = new Ptr32RateCounter(m_device);
                 counter.TakeMeasurement(duration, cancellationToken);
@@ -308,7 +311,7 @@ namespace Instr
                 m_logger.Flush();
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 PendingComplete();
-                throw;
+                //throw;
             }
         }
 

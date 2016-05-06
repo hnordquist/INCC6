@@ -262,7 +262,6 @@ namespace DAQ
 
 
         // The HV op control
-
         public void HVCoreOp()
         {
             if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
@@ -270,11 +269,9 @@ namespace DAQ
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.HVCalibration;
             bool ok = HVCalibInception(); // the current thread pends in this method until the active instrument completes HV processing
+			if (ok)
+				OutputResults(NCCAction.HVCalibration);
             CurState.StopTimer(); // started in StartHVCalib
-            if (ok)
-            {
-                OutputResults(NCCAction.HVCalibration);
-            }
             FireEvent(EventType.ActionStop, this);
             NC.App.Opstate.Action = x;
         }
@@ -290,6 +287,7 @@ namespace DAQ
         {
             _completed[0].Reset(Instruments.Active.Count);
             ApplyInstrumentSettings();
+			NC.App.Opstate.SOH = OperatingState.Living;
             bool going = StartHVCalib();
             if (going)
             {
@@ -297,6 +295,7 @@ namespace DAQ
                 foreach (ManualResetEventSlim mres in me)
                     mres.Wait(); // wait for signal from DAQ on each active instrument.
             }
+			 _completed[0].Wait();
             Thread.Sleep(500); 
             return going;
         }
@@ -356,7 +355,7 @@ namespace DAQ
             ctrlHVCalib.HVCalibRun();
         }
 
-        public void AppendHVCalibration(DAQ.HVControl.HVStatus hvst)
+        public void AppendHVCalibration(HVControl.HVStatus hvst)
         {
             ctrlHVCalib.AddStepData(hvst);
         }
@@ -375,7 +374,7 @@ namespace DAQ
 			}
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.Assay;
-            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            NC.App.Opstate.SOH = OperatingState.Living;
             bool ok = AssayInception();
             if (ok)
             {
@@ -399,6 +398,7 @@ namespace DAQ
             }
             NC.App.Opstate.Action = x;
         }
+
 		public bool AssayInception()
         {
             _completed[0].Reset(Instruments.Active.Count);
@@ -518,15 +518,18 @@ namespace DAQ
             CurState.Measurement.SaveMeasurementResults();
         }
 
-        internal void OutputResults(NCC.NCCAction action = NCC.NCCAction.Nothing)
+        public void OutputResults(NCC.NCCAction action = NCC.NCCAction.Nothing)
         {
             if (action == NCCAction.Nothing)
                 action = NC.App.Opstate.Action;
             switch (action)  // these are the actions available from the command line only
             {
                 case NCCAction.HVCalibration:
-                    collog.TraceInformation("Producing HV Calib results output file");
-                    ctrlHVCalib.GenerateReport();
+                    if (ctrlHVCalib != null)
+					{
+	                    collog.TraceInformation("Producing HV Calib results output file");
+						ctrlHVCalib.GenerateReport();
+					}
                     break;
 
                 case NCCAction.Assay:
@@ -669,7 +672,8 @@ namespace DAQ
 				try
 				{
 					instrument.ApplySettings();
-				} catch (Exception ex)
+				} 
+				catch (Exception ex)
 				{
 					collog.TraceException(ex);
 				}
