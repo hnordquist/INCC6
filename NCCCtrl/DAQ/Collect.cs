@@ -339,7 +339,7 @@ namespace DAQ
             if (ctrlHVCalib == null)
                 ctrlHVCalib = new HVControl(this);
 
-            if (CurState.State == DAQInstrState.HVCalib)
+            if (CurState.State == DAQInstrState.HVCalib)  // one already in progress
             {
                 CurState.Cancel();
             }

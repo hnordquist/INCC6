@@ -115,8 +115,7 @@ namespace DAQ
             HVSteps = new List<HVStatus>(200);// a bit arbitrary, but performance here is not an issue
             time = DateTime.Now;
 
-            bool res = HVCalibRun();
-            return res;
+            return HVCalibRun();
         }
 
         // meant to support SR and LM 
@@ -140,8 +139,10 @@ namespace DAQ
             }
             instId = inst.id.DetectorId + "-" + inst.id.SRType.ToString();
 
-            if (hvCalibPoint <= hvMaxCalibPoint)
+			if (hvCalibPoint <= hvMaxCalibPoint)
             {
+
+				// todo: catch spurious exceptions and return false
                 if (DAQControl.CurState.IsQuitRequested) // leave and do not finish calibration
                 {
                     ctrllog.TraceInformation("HV calibration cancelled");

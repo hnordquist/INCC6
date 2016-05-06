@@ -588,6 +588,7 @@ namespace NewUI
                         ConnectWithRetries(false, 3);
                         ApplyInstrumentSettings();
                         HVCoreOp();
+						DisconnectInstruments();
                         FireEvent(EventType.ActionFinished, this);
                         break;
                     case NCCAction.Assay:

@@ -301,17 +301,21 @@ namespace Instr
             catch (OperationCanceledException) {
                 m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Stopped HV calibration", DeviceName);
                 m_logger.Flush();
+				DAQState = DAQInstrState.Online;
+                DAQControl.CurState.State = DAQInstrState.Online;
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 PendingComplete();
-                throw;
+                //throw; running in a task, don't throw
             }
             catch (Exception ex) {
                 m_logger.TraceEvent(LogLevels.Error, 0, "PTR-32[{0}]: Error during HV calibration: {1}", DeviceName, ex.Message);
                 m_logger.TraceException(ex, true);
                 m_logger.Flush();
+				DAQState = DAQInstrState.Online;
+                DAQControl.CurState.State = DAQInstrState.Online;
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 PendingComplete();
-                //throw;
+                //throw; running in a task, don't throw
             }
         }
 

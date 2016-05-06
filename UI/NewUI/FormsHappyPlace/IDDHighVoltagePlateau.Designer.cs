@@ -89,7 +89,7 @@
 			// MinimumVoltageTextBox
 			// 
 			this.MinimumVoltageTextBox.Location = new System.Drawing.Point(216, 21);
-			this.MinimumVoltageTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MinimumVoltageTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MinimumVoltageTextBox.Name = "MinimumVoltageTextBox";
 			this.MinimumVoltageTextBox.Size = new System.Drawing.Size(97, 22);
 			this.MinimumVoltageTextBox.TabIndex = 4;
@@ -99,7 +99,7 @@
 			// MaximumVoltageTextBox
 			// 
 			this.MaximumVoltageTextBox.Location = new System.Drawing.Point(216, 52);
-			this.MaximumVoltageTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MaximumVoltageTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximumVoltageTextBox.Name = "MaximumVoltageTextBox";
 			this.MaximumVoltageTextBox.Size = new System.Drawing.Size(97, 22);
 			this.MaximumVoltageTextBox.TabIndex = 5;
@@ -109,7 +109,7 @@
 			// VoltageStepSizeTextBox
 			// 
 			this.VoltageStepSizeTextBox.Location = new System.Drawing.Point(216, 84);
-			this.VoltageStepSizeTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.VoltageStepSizeTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.VoltageStepSizeTextBox.Name = "VoltageStepSizeTextBox";
 			this.VoltageStepSizeTextBox.Size = new System.Drawing.Size(97, 22);
 			this.VoltageStepSizeTextBox.TabIndex = 6;
@@ -119,7 +119,7 @@
 			// CountTimeTextBox
 			// 
 			this.CountTimeTextBox.Location = new System.Drawing.Point(216, 116);
-			this.CountTimeTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CountTimeTextBox.Margin = new System.Windows.Forms.Padding(4);
 			this.CountTimeTextBox.Name = "CountTimeTextBox";
 			this.CountTimeTextBox.Size = new System.Drawing.Size(97, 22);
 			this.CountTimeTextBox.TabIndex = 7;
@@ -129,7 +129,7 @@
 			// OKBtn
 			// 
 			this.OKBtn.Location = new System.Drawing.Point(344, 16);
-			this.OKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OKBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.OKBtn.Name = "OKBtn";
 			this.OKBtn.Size = new System.Drawing.Size(100, 28);
 			this.OKBtn.TabIndex = 8;
@@ -140,7 +140,7 @@
 			// CancelBtn
 			// 
 			this.CancelBtn.Location = new System.Drawing.Point(344, 52);
-			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.CancelBtn.Name = "CancelBtn";
 			this.CancelBtn.Size = new System.Drawing.Size(100, 28);
 			this.CancelBtn.TabIndex = 9;
@@ -151,7 +151,7 @@
 			// HelpBtn
 			// 
 			this.HelpBtn.Location = new System.Drawing.Point(344, 87);
-			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.HelpBtn.Name = "HelpBtn";
 			this.HelpBtn.Size = new System.Drawing.Size(100, 28);
 			this.HelpBtn.TabIndex = 10;
@@ -165,7 +165,7 @@
 			this.OpenInExcel.AutoSize = true;
 			this.OpenInExcel.Enabled = false;
 			this.OpenInExcel.Location = new System.Drawing.Point(241, 185);
-			this.OpenInExcel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OpenInExcel.Margin = new System.Windows.Forms.Padding(4);
 			this.OpenInExcel.Name = "OpenInExcel";
 			this.OpenInExcel.Size = new System.Drawing.Size(190, 27);
 			this.OpenInExcel.TabIndex = 11;
@@ -177,11 +177,11 @@
 			// HVStepDelay
 			// 
 			this.HVStepDelay.Location = new System.Drawing.Point(216, 148);
-			this.HVStepDelay.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HVStepDelay.Margin = new System.Windows.Forms.Padding(4);
 			this.HVStepDelay.Name = "HVStepDelay";
 			this.HVStepDelay.Size = new System.Drawing.Size(97, 22);
 			this.HVStepDelay.TabIndex = 13;
-			this.toolTip1.SetToolTip(this.HVStepDelay, "Delay after HV step is complete, in seconds");
+			this.toolTip1.SetToolTip(this.HVStepDelay, "Delay after HV step is complete, in milliseconds");
 			this.HVStepDelay.Leave += new System.EventHandler(this.HVStepDelay_Leave);
 			// 
 			// label1
@@ -213,7 +213,7 @@
 			this.Controls.Add(this.VoltageStepSizeLabel);
 			this.Controls.Add(this.MaximumVoltageLabel);
 			this.Controls.Add(this.MinimumVoltageLabel);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "IDDHighVoltagePlateau";
 			this.Text = "Measure High Voltage Plateau";
 			this.ResumeLayout(false);
