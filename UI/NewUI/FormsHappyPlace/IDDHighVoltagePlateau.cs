@@ -172,11 +172,11 @@ namespace NewUI
 			} 
 			else
 			{
-				SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
-				sri.selected = true;
-				sri.Init(null, null);
+				instrument = new SRInstrument(NC.App.Opstate.Measurement.Detector);
+				instrument.selected = true;
+				instrument.Init(null, null);
 				if (!Instruments.Active.Exists(i => instrument.id.Equals(i)))
-					Instruments.All.Add(sri); // add to global runtime list 
+					Instruments.All.Add(instrument); // add to global runtime list 
 			}
 
 			UIIntegration.Controller.SetHVCalib();  // tell the controller to do an HV operation using the current measurement state

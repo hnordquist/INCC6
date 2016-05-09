@@ -118,6 +118,7 @@ namespace DAQ
                 case NCCAction.HVCalibration:       // if SR, must have SR RT inst preset
                     FireEvent(EventType.PreAction, this);
                     DoHVCalib();
+					DisconnectInstruments();
                     FireEvent(EventType.ActionFinished, this);
                     break;
                 case NCCAction.Assay:       // if SR, must have SR RT inst preset
@@ -242,16 +243,10 @@ namespace DAQ
         }
 
         // set only when all assay or HVCalib cycles are completed, or cancelled
-        CountdownEvent [] _completed = {  new CountdownEvent(0), new CountdownEvent(0) };
+        CountdownEvent [] _completed = {  new CountdownEvent(0),// meas 
+										  new CountdownEvent(0) // conn
+										};
 
-        public CountdownEvent MeasCompleted
-		{
-			get { return _completed[0]; }
-		}
-        public CountdownEvent ConnCompleted
-		{
-			get { return _completed[1]; }
-		}
         public void MajorOperationCompleted()
         {
 			if (_completed[0].CurrentCount > 0)
@@ -328,7 +323,7 @@ namespace DAQ
             {
                 FireEvent(EventType.ActionStop, this);
                 if (_SL != null)
-                _SL.Stop();  // shutdown server process
+					_SL.Stop();  // shutdown server process
             }
         }
 

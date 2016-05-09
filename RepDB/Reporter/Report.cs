@@ -402,9 +402,34 @@ namespace NCCReporter
 
         private void ConstructFullPathName(string opt = "")
         {
-            filename = prefixPath + name + opt + "." + suffix;
-            // todo: replace offending chars in the name/filename before use
+            // replace offending chars in the name/filename before use
+            filename = prefixPath + CleansePotentialFilename(name + opt + "." + suffix);
         }
+
+		private static string CleansePotentialFilename(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return "";
+            char[] ca = s.ToCharArray();
+            int i;
+            char dchar;
+
+            System.Text.StringBuilder text = new System.Text.StringBuilder();
+            char[] inv = Path.GetInvalidFileNameChars();
+            for (i = 0; i < ca.Length; i++)
+            {
+                dchar = ca[i];
+                foreach (char c in inv)
+                    if (dchar == c)
+                    {
+                        dchar = '_';
+                        break;
+                    }
+                text.Append(dchar);
+            }
+            return text.ToString();
+        }
+
         public void GenName(string locPrefix, string suffix)
         {
             this.suffix = suffix;

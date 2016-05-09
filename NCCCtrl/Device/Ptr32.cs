@@ -97,19 +97,26 @@ namespace Device
             {
                 throw new ArgumentNullException();
             }
+            m_deviceName = deviceName;
+			mError = Ptr32Error.NoError;
 
-            Ptr32Error error;
             // undocumented feature picks up first Digilent USB-connected device.
             // According to DB 2014, no more than one will ever be connected to a specific machine, so the name doesn't matter here.
-            if (!DpcOpenData(out m_handle, @"Auto Detect", out error, IntPtr.Zero))
+            if (DpcOpenData(out m_handle, @"Auto Detect", out mError, IntPtr.Zero))
             {
-                throw new Ptr32Exception(error);
-            }
-
-            m_deviceName = deviceName;
-            m_firmwareVersion = GetFirmwareVersion();
-            m_voltageCorrections = GetVoltageCorrections();
+				m_firmwareVersion = GetFirmwareVersion();
+				m_voltageCorrections = GetVoltageCorrections();
+			}
+			else
+			{
+				m_firmwareVersion = string.Empty;
+				m_voltageCorrections = new double[] { 1, 0 };
+                throw new Ptr32Exception(mError);
+			}
         }
+
+		public Ptr32Error mError;
+
 
         /// <summary>
         /// Finalizes an instance of the <see cref="Ptr32"/> class.

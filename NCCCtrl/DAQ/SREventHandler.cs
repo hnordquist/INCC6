@@ -146,6 +146,7 @@ namespace DAQ
             // dev note: this still isn't working very well, need to completely fix the early termination logic, it should exit cleanly without extra cycle and results processing
             //srct.sri.RDT.EndOfCycleProcessing(NC.App.Opstate.Measurement);
             //srct.sri.selected = false;
+            DAQControl.CurState.State = DAQInstrState.Online;
             gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
         }
 

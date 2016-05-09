@@ -49,7 +49,7 @@ namespace NCC
         /// Reports a progress update.
         /// </summary>
         /// <param name="progress">The progress, as a percentage from 0 to 100.</param>
-        /// <param name="text">A text indication of the current state, e.g a file name, or a current reate.</param>
+        /// <param name="text">A text indication of the current state, e.g a file name, or a current rate.</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="progress"/> is not between 0 and 100.</exception>
         public void ReportProgress(int progress, string text)
         {
