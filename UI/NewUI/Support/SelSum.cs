@@ -160,7 +160,7 @@ namespace NewUI
 				entries["IC"] = Q(m.AcquireState.inventory_change_code);
 				entries["IO"] = Q(m.AcquireState.io_code);
 				entries["Measurement Type"] = Q(m.MeasOption.PrintName());
-				entries["Meas Date"] = m.MeasurementId.MeasDateTime.ToString("MM.dd.yy");
+				entries["Meas Date"] = m.MeasurementId.MeasDateTime.ToString("yy.MM.dd");
 				entries["Meas Time"] = m.MeasurementId.MeasDateTime.ToString("HH:mm:ss");
 				entries["File Name"] = Q(GetMainFilePath(m.ResultsFiles, m.MeasOption, true));
 				entries["Inspector"] = Q(m.AcquireState.user_id);

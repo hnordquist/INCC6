@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 6
-6.0.1.6 May 6, 2016 J. Longo
+6.0.1.6 May 10, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -82,13 +82,13 @@ Issues for basic INCC5/6 feature COMPLETION
 
 *HIGH Priority, +MEDIUM Priority
 
-#67		PTR-32 data handling question 
-#59		Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45		calc_alpha_beta performance and efficiency
-#43		Performing LM as SR after doing LM Acquire craps
-#25		List mode acquisition predelay not stored
-#16		Accidental Singles test Failure for PTR32
-#13		PTR-32 -- Results different if reading file/doing live acquisition
+#67	PTR-32 data handling question 
+#59	Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+#45	calc_alpha_beta performance and efficiency
+#43	Performing LM as SR after doing LM Acquire craps
+#25	List mode acquisition predelay not stored
+#16	Accidental Singles test Failure for PTR32
+#13	PTR-32 -- Results different if reading file/doing live acquisition
 
 **********************************************************************************
 

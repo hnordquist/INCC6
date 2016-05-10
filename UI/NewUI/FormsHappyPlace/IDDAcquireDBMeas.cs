@@ -100,7 +100,7 @@ namespace NewUI
                 ListViewItem lvi = new ListViewItem(new string[] {
                     ItemWithNumber,
                     string.IsNullOrEmpty(m.Item.stratum) ? "Empty" : m.Item.stratum,
-                    m.MeasDateTime.ToString("MM.dd.yy"), m.MeasDateTime.ToString("HH:mm:ss") });
+                    m.MeasDateTime.ToString("yy.MM.dd"), m.MeasDateTime.ToString("HH:mm:ss") });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
             }
@@ -119,7 +119,7 @@ namespace NewUI
                 ListViewItem lvi = new ListViewItem(new string[] {
                     ItemWithNumber,
                     string.IsNullOrEmpty(m.Item.stratum) ? "Empty" : m.Item.stratum,
-                    m.MeasDateTime.ToString("MM.dd.yy"), m.MeasDateTime.ToString("HH:mm:ss") });
+                    m.MeasDateTime.ToString("yy.MM.dd"), m.MeasDateTime.ToString("HH:mm:ss") });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
             }

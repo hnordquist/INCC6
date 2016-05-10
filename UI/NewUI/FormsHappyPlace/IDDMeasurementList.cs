@@ -37,10 +37,11 @@ namespace NewUI
     using N = NCC.CentralizedState;   
     public partial class IDDMeasurementList : Form
     {
- 
+
         public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, bool report, Detector detector = null)
         {
             InitializeComponent();
+			PrepNotepad();
             SetTitlesAndChoices(filter, alltypes, report,
                 detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
             mlist = N.App.DB.MeasurementsFor(detector == null? string.Empty : detector.Id.DetectorId, filter);
@@ -54,6 +55,7 @@ namespace NewUI
         {
             LMOnly = lmonly;
             bool alltypes = (AssaySelector.MeasurementOption.unspecified == filter) && !lmonly;
+			PrepNotepad();
             SetTitlesAndChoices(filter, alltypes, report,
                 detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
             mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
@@ -150,7 +152,7 @@ namespace NewUI
                 ListViewItem lvi = new ListViewItem(new string[] {
                     m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
-                    m.MeasDate.DateTime.ToString("MM.dd.yy  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
+                    m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
                         });
                 listView1.Items.Add(lvi);
                 lvi.Tag = m.MeasDate;  // for proper column sorting
@@ -262,14 +264,15 @@ namespace NewUI
 
         private void ShowResults()
         {
-            string notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
             foreach (ListViewItem lvi in listView1.Items)
             {
                 if (lvi.Selected)
                 {
-                    if (File.Exists(notepadPath))
+					int lvIndex = 0;
+					int.TryParse(lvi.SubItems[6].Text, out lvIndex); // 6 has the original mlist index of this sorted row element
+					if (bNotepadHappensToBeThere)
                     {
-						string path = GetMainFilePath(mlist[lvi.Index].ResultsFiles, mlist[lvi.Index].MeasOption, false);
+						string path = GetMainFilePath(mlist[lvIndex].ResultsFiles, mlist[lvIndex].MeasOption, false);
                         if (File.Exists(path))
                             System.Diagnostics.Process.Start(notepadPath, path);
                         else if (!string.IsNullOrEmpty(path))
@@ -370,5 +373,16 @@ namespace NewUI
             else
                 MCountSel.Text = string.Empty;
         }
+
+		static string notepadPath = string.Empty;
+		static bool bNotepadHappensToBeThere = false;
+		static void PrepNotepad()
+		{
+			if (string.IsNullOrEmpty(notepadPath))
+			{
+				notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
+				bNotepadHappensToBeThere =  File.Exists(notepadPath);
+			}
+		}
     }
 }

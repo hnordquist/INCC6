@@ -79,8 +79,8 @@ namespace AnalysisDefs
 
             if (NC.App.AppContext.OpenResults)
             {
-                string notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
-                if (System.IO.File.Exists(notepadPath))
+				PrepNotepad();
+                if (bNotepadHappensToBeThere)
                 {
                     foreach (ResultFile fname in m.ResultsFiles)
                         System.Diagnostics.Process.Start(notepadPath, fname.Path);
@@ -94,6 +94,17 @@ namespace AnalysisDefs
 				}
             }
         }
+
+		static string notepadPath = string.Empty;
+		static bool bNotepadHappensToBeThere = false;
+		static void PrepNotepad()
+		{
+			if (string.IsNullOrEmpty(notepadPath))
+			{
+				notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
+				bNotepadHappensToBeThere =  System.IO.File.Exists(notepadPath);
+			}
+		}
     }
 
 
