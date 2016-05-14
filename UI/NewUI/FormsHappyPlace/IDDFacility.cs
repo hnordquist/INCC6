@@ -72,11 +72,9 @@ namespace NewUI
             DetectorIdComboBox.Items.Clear();
             foreach (Detector d in NC.App.DB.Detectors)
             {
-                //if (!d.ListMode)
-                    DetectorIdComboBox.Items.Add(d);
+	            DetectorIdComboBox.Items.Add(d);
             }
 
-            //Bolth.Checked = (det != null && det.ListMode);  // EH reloads combo box with LMs if true 
             if (det != null)
                 DetectorIdComboBox.SelectedItem = det;
             DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
@@ -104,17 +102,12 @@ namespace NewUI
         private void DetectorIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             det = (Detector)((ComboBox)sender).SelectedItem;
-            acq.detector_id =  String.Copy(det.Id.DetectorId);
-            acq.meas_detector_id = String.Copy(det.Id.DetectorId);
+            acq.detector_id =  string.Copy(det.Id.DetectorId);
+            acq.meas_detector_id = string.Copy(det.Id.DetectorId);
             ElectronicsIdTextBox.Text = det.Id.ElectronicsId;
             DetectorTypeTextBox.Text = det.Id.Type;
+            SRType.Text = " " + det.Id.SRType.ToString();
             acq.modified = true;
-        }
-
-
-        private void ChangeSysTimeBtn_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void ChangeDirBtn_Click(object sender, EventArgs e)
@@ -196,27 +189,5 @@ namespace NewUI
                 acq.campaign_id = text; acq.modified = true;
             }
         }
-
-        private void Bolth_CheckedChanged(object sender, EventArgs e)
-        {
-            if (Bolth.Checked)
-            {
-                DetectorIdComboBox.Items.Clear();
-                foreach (Detector d in NC.App.DB.Detectors)
-                {
-                    DetectorIdComboBox.Items.Add(d);
-                }
-            }
-            else
-            {
-                DetectorIdComboBox.Items.Clear();
-                foreach (Detector d in NC.App.DB.Detectors)
-                {
-                    if (!d.ListMode)
-                        DetectorIdComboBox.Items.Add(d);
-                }
-            }
-        }
-
     }
 }

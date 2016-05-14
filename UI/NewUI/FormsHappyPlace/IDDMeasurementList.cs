@@ -152,7 +152,8 @@ namespace NewUI
                 ListViewItem lvi = new ListViewItem(new string[] {
                     m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
-                    m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
+                    m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
+					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
                         });
                 listView1.Items.Add(lvi);
                 lvi.Tag = m.MeasDate;  // for proper column sorting
@@ -223,7 +224,7 @@ namespace NewUI
                 if (!lvi.Selected)
                     continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[6].Text, out lvIndex); // 6 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
                 SummarySelections.Apply(mlist[lvIndex]);
             }
             if (SummarySelections.HasAny)
@@ -269,7 +270,7 @@ namespace NewUI
                 if (lvi.Selected)
                 {
 					int lvIndex = 0;
-					int.TryParse(lvi.SubItems[6].Text, out lvIndex); // 6 has the original mlist index of this sorted row element
+					int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
 					if (bNotepadHappensToBeThere)
                     {
 						string path = GetMainFilePath(mlist[lvIndex].ResultsFiles, mlist[lvIndex].MeasOption, false);
