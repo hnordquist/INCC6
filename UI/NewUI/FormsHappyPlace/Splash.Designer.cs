@@ -69,7 +69,7 @@
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.richTextBox1.Location = new System.Drawing.Point(2, 77);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(484, 105);
+            this.richTextBox1.Size = new System.Drawing.Size(484, 96);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "";
             // 
@@ -77,9 +77,9 @@
             // 
             this.richTextBox2.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox2.Location = new System.Drawing.Point(2, 188);
+            this.richTextBox2.Location = new System.Drawing.Point(2, 179);
             this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(484, 156);
+            this.richTextBox2.Size = new System.Drawing.Size(484, 154);
             this.richTextBox2.TabIndex = 3;
             this.richTextBox2.Text = "";
             // 
@@ -87,16 +87,16 @@
             // 
             this.richTextBox3.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox3.Location = new System.Drawing.Point(2, 350);
+            this.richTextBox3.Location = new System.Drawing.Point(2, 339);
             this.richTextBox3.Name = "richTextBox3";
-            this.richTextBox3.Size = new System.Drawing.Size(483, 295);
+            this.richTextBox3.Size = new System.Drawing.Size(483, 306);
             this.richTextBox3.TabIndex = 4;
             this.richTextBox3.Text = "";
             // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(326, 48);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(121, 24);
             this.button2.TabIndex = 5;
@@ -108,7 +108,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(488, 596);
+            this.ClientSize = new System.Drawing.Size(488, 611);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.richTextBox3);
             this.Controls.Add(this.richTextBox2);

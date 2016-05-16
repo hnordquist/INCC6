@@ -29,13 +29,16 @@ using System;
 
 namespace NCCReporter
 {
-
+ #if EXCEL
 	using Excel = Microsoft.Office.Interop.Excel;
+#endif
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
     {
         protected LMLoggers.LognLM ctrllog;
+#if EXCEL
         protected Excel.Application target;
+#endif
 
         // dev note: pre-define template somewhere, and use it, having the very nice graph already prepared for line by line updating here
         public ExcelPush(string existingWB, LMLoggers.LognLM ctrllog)
@@ -68,13 +71,15 @@ namespace NCCReporter
         {
             try
             {
-				if (target == null)
+#if EXCEL
+                if (target == null)
 				{
 					target = new Excel.Application();
 					target.Workbooks.Add(); // add a new empty WB
 					target.Visible = true;  // pop it up to the front, really annoying, in the traditional Windows way!
 				}
-			}
+#endif
+            }
             catch (Exception e)
             {
                 ctrllog.TraceException(e);

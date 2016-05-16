@@ -87,10 +87,12 @@ namespace AnalysisDefs
                 }
                 // optional enablement
 				if (ExcelPush.ExcelPresent() && !string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path))
-				{ 
-					Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+				{
+#if EXCEL
+                    Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
 					Microsoft.Office.Interop.Excel.Workbook wb = excel.Workbooks.Open(m.ResultsFiles.CSVResultsFileName.Path);
 					excel.Visible = true;
+#endif
 				}
             }
         }

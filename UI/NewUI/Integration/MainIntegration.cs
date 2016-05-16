@@ -97,7 +97,11 @@ namespace NewUI
 
         public static DialogResult GetUsersFilesFolder(string title, string dir, string name, string ext, string ext2 = "")
         {
-            if (!ChooseFiles())
+            FoldorFile.FileOrFolderChoice choice = ChooseFiles();
+            if (choice == FoldorFile.FileOrFolderChoice.Cancel)
+                return DialogResult.Cancel;
+
+            if (choice == FoldorFile.FileOrFolderChoice.Folder)
             {
                 string xs = UIIntegration.GetUsersFolder("Select folder", dir);
                 if (!String.IsNullOrEmpty(xs))
@@ -108,6 +112,7 @@ namespace NewUI
                 else
                     return DialogResult.Cancel;
             }
+            // choice == files
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog(); 
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
@@ -141,10 +146,12 @@ namespace NewUI
             return r;
         }
 
-        static public bool ChooseFiles()
+        static public FoldorFile.FileOrFolderChoice ChooseFiles()
         {
-            DialogResult r = System.Windows.Forms.MessageBox.Show("Select specific files?", "Choose specific files, or a single folder containing files", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            return r == DialogResult.Yes;
+            FoldorFile x = new FoldorFile();
+            x.TopMost = true;
+            x.ShowDialog();
+            return x.Choice;
         }
 
     }

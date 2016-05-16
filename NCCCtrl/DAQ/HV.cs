@@ -376,10 +376,12 @@ namespace DAQ
             Row row = SimpleHVReport.CreateRow(h, r);
             try
             {
+#if EXCEL
                 for (int j = 1; j <= lc; j++)
                 {
                     target.Cells[r + 1, j] = row[j - 1];
                 }
+#endif
             }
             catch (Exception e)
             {
