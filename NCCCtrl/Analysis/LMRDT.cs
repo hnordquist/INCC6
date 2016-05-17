@@ -51,16 +51,48 @@ namespace Analysis
             }
         }
 
-        internal void InitParseBuffers(uint parsebufflenMb, uint unitbytes, bool useRawDataBuff)
-        {
+		internal void InitParseBuffers(uint parsebufflenMb, uint unitBytes, bool useRawDataBuff)
+		{
             eventBufferLength = parsebufflenMb * 1024 * 1024;
+			maxValuesInBuffer = eventBufferLength / unitBytes;
 			if (useRawDataBuff)
+			{
+				if (rawDataBuff != null && rawDataBuff.Length != eventBufferLength)
+				{
+					rawDataBuff = null;
+				}
+			}
+			if (timeArray != null && timeArray.Count != maxValuesInBuffer)
+			{
+				timeArray = null;
+			}
+			if (neutronEventArray != null && neutronEventArray.Count != maxValuesInBuffer)
+			{
+				neutronEventArray = null;
+			}
+            sup = null;
+			GCCollect();  // GC now, then allocate new if needed
+			if (useRawDataBuff && (rawDataBuff == null))
 				rawDataBuff = new byte[eventBufferLength];
-            maxValuesInBuffer = eventBufferLength / unitbytes;
-            timeArray = new List<ulong>(new ulong[maxValuesInBuffer]);
-            neutronEventArray = new List<uint>(new uint[maxValuesInBuffer]);
-            sup = new Supporter();
-        }
+			if (timeArray == null)
+				timeArray = new List<ulong>(new ulong[maxValuesInBuffer]);
+			if (neutronEventArray == null)
+				neutronEventArray = new List<uint>(new uint[maxValuesInBuffer]);
+			sup = new Supporter();
+
+		}
+		internal static void GCCollect()
+		{
+			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+            long mem = GC.GetTotalMemory(false);
+            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+            log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
+            mem = GC.GetTotalMemory(true);
+            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+		}
 
         internal uint[] chnmask;
 

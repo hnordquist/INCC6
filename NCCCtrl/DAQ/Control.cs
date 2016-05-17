@@ -345,7 +345,7 @@ namespace DAQ
                 while (iter.MoveNext())
                 {
                     LMInstrument lmi = (LMInstrument)iter.Current;
-                    if (lmi.id.SRType.IsSocketBasedLM())   /// URGENT: implement a new interface implemented for LMMM and MCA-527 separately
+                    if (lmi.id.SRType == InstrType.LMMM && (lmi.DAQState != DAQInstrState.Offline) && (lmi.instrSocketEvent != null)) // if LMMM and connected
                         _SL.StopClient(lmi.instrSocketEvent);
                 }
             }

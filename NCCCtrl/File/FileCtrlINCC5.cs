@@ -659,21 +659,24 @@ namespace NCCFile
             }
         }
 
-
+		static void GCCollect()
+		{
+			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+            long mem = GC.GetTotalMemory(false);
+            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+            log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
+            mem = GC.GetTotalMemory(true);
+            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+		}
         static void ResetMeasurement()
         {
             if (NC.App.Opstate.Measurement != null)
             {
                 NC.App.Opstate.Measurement = null;
-                LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
-                long mem = GC.GetTotalMemory(false);
-                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-                log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
-                mem = GC.GetTotalMemory(true);
-                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+				GCCollect();
             }
         }
 

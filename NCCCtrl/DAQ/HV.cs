@@ -141,7 +141,7 @@ namespace DAQ
                 }
             }
             instId = inst.id.DetectorId + "-" + inst.id.SRType.ToString();
-
+			bool res = true;
 			if (hvCalibPoint <= hvMaxCalibPoint)
             {
 
@@ -175,19 +175,23 @@ namespace DAQ
                     else
                     {                        
                         // (re)init the SR
-                        if (hvCalibPoint == hvMinCalibPoint)
-                            control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.InitializeSR, hvCalibPoint, hvp.HVDuration);
-                        else
-                        {   // reinit the SR to the next step up in the plateaux
-                            control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.ReInitializeSR, hvCalibPoint, hvp.HVDuration);
-                        }                           
+						int status = 0;
+                        if (hvCalibPoint == hvMinCalibPoint)  // starting point
+                            status = control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.InitializeSR, hvCalibPoint, hvp.HVDuration);
+                        else  // reinit the SR to the next step up in the plateaux
+                            status = control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.ReInitializeSR, hvCalibPoint, hvp.HVDuration);                                                 
 
-                        // do the run
-                        int status = control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.StartSRDAQ);  // NEXT: check if pending here is going to be an issue
-                        if (status == INCCSR.MEAS_CONTINUE)  // the SR started
-                        {
-                            control.SRWrangler.SetAction(inst.id, SRTakeDataHandler.SROp.WaitForResults); // event handler will pick up results when the internal timer polling in the thread detects results and fires the event
-                        }
+						if (status == INCCSR.SUCCESS || status == INCCSR.MEAS_CONTINUE)
+						{	
+							// do the run
+							status = control.SRWrangler.StartSRActionAndWait(inst.id, SRTakeDataHandler.SROp.StartSRDAQ);  // NEXT: check if pending here is going to be an issue
+							if (status == INCCSR.MEAS_CONTINUE)  // the SR started
+							{
+								control.SRWrangler.SetAction(inst.id, SRTakeDataHandler.SROp.WaitForResults); // event handler will pick up results when the internal timer polling in the thread detects results and fires the event
+							}
+						}
+						else
+							res = false;
                     }
                     control.FireEvent(ActionEvents.EventType.ActionInProgress, control);
 
@@ -203,7 +207,7 @@ namespace DAQ
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 inst.PendingComplete(); // each instr must complete for the waitall to move forward 
             }
-            return true;
+            return res;
         }
 
         public void GenerateReport()

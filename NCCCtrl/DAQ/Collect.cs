@@ -260,7 +260,10 @@ namespace DAQ
         public void HVCoreOp()
         {
             if (Instruments.Active.ConnectedLMCount() <= 0 && !Instruments.Active.HasSR()) // LM only and non connected earlier
+			{
+				NC.App.Opstate.ResetTokens();
                 return;  //nothing to do
+			}
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.HVCalibration;
             bool ok = HVCalibInception(); // the current thread pends in this method until the active instrument completes HV processing
@@ -269,6 +272,7 @@ namespace DAQ
             CurState.StopTimer(); // started in StartHVCalib
             FireEvent(EventType.ActionStop, this);
             NC.App.Opstate.Action = x;
+			NC.App.Opstate.ResetTokens();
         }
 
         public Thread HVCalibOperation()

@@ -56,7 +56,7 @@ namespace LMRawAnalysis
         /// neutron-event queues too large, and making the event too small makes the analyzers increase the
         /// size of the queue more often.  Other than that, this value shouldn't matter much.
         /// </summary>
-        static public int circularListBlockIncrement = 42000;  //used for block size for various circular linked lists
+        static public int circularListBlockIncrement = 96000;  //used for block size for various circular linked lists
 
         /// <summary>
         /// numRAGatesPerWindow is the number of Rossi-Alpha gates assessed after each neutron trigger.
