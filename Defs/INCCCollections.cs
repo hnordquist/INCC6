@@ -1724,7 +1724,7 @@ namespace AnalysisDefs
         public INCCResults.results_rec Get(long mid)
 		{
 			DB.Results r = new DB.Results();
-			DataTable dt = r.Result(mid);
+			DataTable dt = r.ResultForMeasId(mid);
 			INCCResults.results_rec rr = null;
 			string curr_det = string.Empty;
 			foreach (DataRow dr in dt.Rows)
@@ -1738,7 +1738,7 @@ namespace AnalysisDefs
         public static INCCResults.results_rec Get(long mid, DB.DB existing)
 		{
 			DB.Results r = new DB.Results(existing);
-			DataTable dt = r.Result(mid);
+			DataTable dt = r.ResultForMeasId(mid);
 			INCCResults.results_rec rr = null;
 			string curr_det = string.Empty;
 			foreach (DataRow dr in dt.Rows)
@@ -3721,6 +3721,8 @@ namespace AnalysisDefs
 						DB.Utils.DBDateTimeOffset(dr["DateTime"]),
 						dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"]));
 					INCCResults.results_rec rec = ResultsRecs.Get(MeaId.UniqueId, mdb.db);
+					if (rec == null)
+						continue;
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);

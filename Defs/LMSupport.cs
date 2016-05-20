@@ -3,9 +3,9 @@ Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software. 
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -46,17 +46,17 @@ namespace LMRawAnalysis
         static public int maxEventsPerBlock = 100000;
 
         /// <summary>
-        /// ChannelCount is the number of neutron-detector bits.  The value 32 matches both certain detector hardware
+        /// ChannelCount is the number of neutron-detector bits. The value 32 matches both certain detector hardware
         /// and the number of bits in a UInt32 used to report neutrons, e.g. from NCD files.
         /// </summary>
         public const Int32 ChannelCount = 32; // forever, or until we integrate the n-channel code 
 
         /// <summary>
-        /// circularListBlockIncrement is a moderate-size heuristic.  Making the value too large makes the
+        /// circularListBlockIncrement is a moderate-size heuristic. Making the value too large makes the
         /// neutron-event queues too large, and making the event too small makes the analyzers increase the
-        /// size of the queue more often.  Other than that, this value shouldn't matter much.
+        /// size of the queue more often. Other than that, this value shouldn't matter much.
         /// </summary>
-        static public int circularListBlockIncrement = 96000;  //used for block size for various circular linked lists
+        static public int circularListBlockIncrement = 43000;  //used for block size for various circular linked lists
 
         /// <summary>
         /// numRAGatesPerWindow is the number of Rossi-Alpha gates assessed after each neutron trigger.
@@ -66,10 +66,10 @@ namespace LMRawAnalysis
 
         /// <summary>
         /// maxNeutronsPerMultiplicityGate is the largest number of neutrons that can be counted in any single
-        /// multiplicity time gate.  The numbers of neutrons in gates are used in the factorial calculations,
+        /// multiplicity time gate. The numbers of neutrons in gates are used in the factorial calculations,
         /// so there is a practical upper bound of 1029 for which the factorial calculations overflow the
-        /// largest value that can be stored inside an IEEE double.  Using 1000 instead of 1029 allows
-        /// considerable headroom for a multiplicative coefficient.  As in the legacy code, the last value
+        /// largest value that can be stored inside an IEEE double. Using 1000 instead of 1029 allows
+        /// considerable headroom for a multiplicative coefficient. As in the legacy code, the last value
         /// of the vector of the neutron histrogram is used to count any gates that exceede this max value.
         /// The legacy value for this max at least in some codes was 128.
         /// </summary>
@@ -110,7 +110,7 @@ namespace LMRawAnalysis
         /// </summary>
         /// <param name="realsPlusAccidentalsHistogram"> The histogram of gate populations. </param>
         /// <param name="accidentalsHistogram"> The histogram of gate populations - NOT NORMALIZED. </param>
-        /// <param name="wasFastAccidentals"> true or false.  Affects how PTsingles are calculated, etc. </param>
+        /// <param name="wasFastAccidentals"> true or false. Affects how PTsingles are calculated, etc. </param>
         /// <param name="multiplicityGateWidth"> as a UInt64, in 100-nanosecond tics. </param>
         /// <param name="multiplicityDeadDelay"> as a UInt64, in 100-nanosecond tics. </param>
         /// <param name="accidentalsDelay"> as a UInt64, in 100-nanosecond tics. </param>

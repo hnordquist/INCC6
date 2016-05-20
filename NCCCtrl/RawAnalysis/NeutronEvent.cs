@@ -42,5 +42,13 @@ namespace LMRawAnalysis
             //store the ID for this event
             this.serialNumber = identifyingNumber;
         }
+
+		public void Set(int identifyingNumber)
+        {
+            serialNumber = identifyingNumber;
+			eventTime = 0L;
+			eventNeutrons = 0;
+			numNeutrons = 0;
+		}
     }
 }

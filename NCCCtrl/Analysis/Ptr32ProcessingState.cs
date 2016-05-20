@@ -44,7 +44,7 @@ namespace Analysis
         /// </summary>
         public Ptr32ProcessingState()
         {
-              InitParseBuffers(1,4, false);
+            InitParseBuffers(1, 4, false);
             m_parser = new Ptr32Parser(Analyze);
             m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }

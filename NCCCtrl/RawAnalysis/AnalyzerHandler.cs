@@ -128,7 +128,7 @@ namespace LMRawAnalysis
             ResetSpinTime();
 #endif
             //create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
-            InitializeEventList();
+            //InitializeEventList(RawAnalysisProperties.circularListBlockIncrement);
 
             permissionToUseEndOfEvents = new SemaphoreSlim(1, 1); // LMKV-52 fix: create here with counter set at 1 and only 1 thread
 
@@ -1073,6 +1073,8 @@ namespace LMRawAnalysis
             //WAIT for permission to use the shared end-of-stack object
             PermissionToUseEndOfEventsWait();
 
+			InitializeEventList(actualEventCount);
+
             for (which = 0; which < numEvents; which++)
             {
                 if (timeOfNewEvents[which] <= timeOfLastNeutronEvent)
@@ -1123,7 +1125,8 @@ namespace LMRawAnalysis
                     endOfNeutronEventList.numNeutrons = numNeutrons;
 
                     //check to see if the circular linked list would overflow
-                    ExtendListIfNeeded();
+                    if ((numEvents - which) > 1)
+						ExtendListIfNeeded();
 
                     //move endOfNeutronEventList to the next empty struct
                     endOfNeutronEventList = endOfNeutronEventList.next;
@@ -1135,6 +1138,7 @@ namespace LMRawAnalysis
                     }
                 }
             }
+			//AHGCCollect();  // needed here at all now after buffer sizing change?
 
             //unblock the BackgroundWorker which will dispense events to the analyzers
             waitingForEvent.Set();
@@ -1166,6 +1170,25 @@ namespace LMRawAnalysis
                 log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler increasing CircularArraySize to "
                                                                                                     + numEventsInCircularLinkedList);
             }
+        }
+		void ExtendListBy(int num)
+        {
+                int i;
+                NeutronEvent anEvent;
+                NeutronEvent nextEvent;
+
+                anEvent = endOfNeutronEventList;
+                nextEvent = endOfNeutronEventList.next;
+                for (i = 0; i < num; i++)
+                {
+                    anEvent.next = new NeutronEvent(i + numEventsInCircularLinkedList);
+                    anEvent = anEvent.next;
+                }
+                anEvent.next = nextEvent;  //re-close the linked list, pointing the last new event back to the next event in list
+                numEventsInCircularLinkedList += num;
+
+                log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler extending CircularArraySize by " + num + " to "
+                                                                                                    + numEventsInCircularLinkedList);
         }
         #endregion
 
@@ -1509,17 +1532,20 @@ namespace LMRawAnalysis
 #endif
 
             //break the circular references, so garbage collector will do its thing
-            nextEvent = theEventCircularLinkedList;
-            while (nextEvent != null)
-            {
-                thisEvent = nextEvent;
-                nextEvent = thisEvent.next;
-                thisEvent.next = null;
-            }
-            thisEvent = null;
-            theEventCircularLinkedList = null;
-            startOfNeutronEventList = null;
-            endOfNeutronEventList = null;
+			if (closeCounters)
+			{
+				nextEvent = theEventCircularLinkedList;
+				while (nextEvent != null)
+				{
+					thisEvent = nextEvent;
+					nextEvent = thisEvent.next;
+					thisEvent.next = null;
+				}
+				thisEvent = null;
+				theEventCircularLinkedList = null;
+				startOfNeutronEventList = null;
+				endOfNeutronEventList = null;
+			}
 
             // selectively invoke the garbage collector now
             AHGCCollect();
@@ -1528,7 +1554,7 @@ namespace LMRawAnalysis
 				return;
 
             //create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
-            InitializeEventList();
+            //InitializeEventList(RawAnalysisProperties.circularListBlockIncrement);
 
             //set up the AH BackgroundWorker
             waitingForEvent.Reset();
@@ -1553,20 +1579,67 @@ namespace LMRawAnalysis
 
 
         ///
-        void InitializeEventList()
+        void InitializeEventList(int num)
         {
-            //create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
-            theEventCircularLinkedList = new NeutronEvent(0);  //make the first event in the list
-            startOfNeutronEventList = theEventCircularLinkedList;     //set pointer to start of list to this first event
-            endOfNeutronEventList = theEventCircularLinkedList;       //set pointer to end of list to this first event
-            for (int i = 1; i < RawAnalysisProperties.circularListBlockIncrement; i++)
-            {
-                endOfNeutronEventList.next = new NeutronEvent(i);  //after the present end of list, make a new event
-                endOfNeutronEventList = endOfNeutronEventList.next;       //move the pointer to the new end of list
-            }
-            endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
-            endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
-            numEventsInCircularLinkedList = RawAnalysisProperties.circularListBlockIncrement;
+			if (numEventsInCircularLinkedList == 0 || theEventCircularLinkedList == null)
+			{
+				//AHGCCollect(); 
+				//create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
+				theEventCircularLinkedList = new NeutronEvent(0);  //make the first event in the list
+				startOfNeutronEventList = theEventCircularLinkedList;     //set pointer to start of list to this first event
+				endOfNeutronEventList = theEventCircularLinkedList;       //set pointer to end of list to this first event
+				for (int i = 1; i < num; i++)
+				{
+					endOfNeutronEventList.next = new NeutronEvent(i);  //after the present end of list, make a new event
+					endOfNeutronEventList = endOfNeutronEventList.next;       //move the pointer to the new end of list
+				}
+				endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
+				endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
+				numEventsInCircularLinkedList = num;
+
+				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler new "
+                                                                                                    + numEventsInCircularLinkedList);
+			}
+			else if (numEventsInCircularLinkedList < num) // extend
+			{
+				//AHGCCollect(); 
+				ExtendListBy(num - numEventsInCircularLinkedList);
+			}
+			else if (numEventsInCircularLinkedList > num) // clear it, shrink it
+			{
+				startOfNeutronEventList = theEventCircularLinkedList;     //set pointer to start of list to this first event
+				endOfNeutronEventList = theEventCircularLinkedList;       //set pointer to end of list to this first event
+				theEventCircularLinkedList.Set(0);
+				NeutronEvent ende = startOfNeutronEventList, two = startOfNeutronEventList;
+				for (int i = 0; i < num; i++)
+				{
+					ende.Set(i);
+					two = ende;
+					ende = ende.next;
+				}
+				ende = two; // move back 1
+				endOfNeutronEventList = ende;
+				endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
+				endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
+
+				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear "
+                                                             + numEventsInCircularLinkedList + " (remove " + (numEventsInCircularLinkedList - num) + ")");
+
+				numEventsInCircularLinkedList = num;
+				//AHGCCollect(); 
+			} 
+			else // same size just clear it
+			{
+				theEventCircularLinkedList.Set(0);
+				NeutronEvent ende = startOfNeutronEventList.next;
+				for (int i = 0; i < num; i++)
+				{
+					ende.Set(i);
+					ende = ende.next;
+				}
+
+				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear same size " + numEventsInCircularLinkedList);
+			}
 
         }
 
@@ -1583,7 +1656,7 @@ namespace LMRawAnalysis
                 log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
+                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete {0:N0}Kb", GC.GetTotalMemory(true) / 1024L);
             }
         }
 
@@ -1645,7 +1718,7 @@ namespace LMRawAnalysis
 #endif
 
             //create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
-            InitializeEventList();
+            //InitializeEventList(RawAnalysisProperties.circularListBlockIncrement);
 
             //set up the AH BackgroundWorker
             waitingForEvent.Reset();

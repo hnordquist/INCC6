@@ -145,17 +145,7 @@ namespace Analysis
 
         public void HandleAnArrayOfNeutronEvents(List<ulong> timeOfNewEvents, List<uint> neutronsOfNewEvents, int actualEventCount)
         {
-            //if (actualEventCount < timeOfNewEvents.Length)
-            //{
-            //    UInt64[] tcopy = new ulong[actualEventCount];
-            //    UInt32[] ncopy = new UInt32[actualEventCount];
-            //    Array.Copy(timeOfNewEvents, tcopy, actualEventCount);
-            //    Array.Copy(neutronsOfNewEvents, ncopy, actualEventCount);
-
-            //    handler.HandleAnArrayOfNeutronEvents(tcopy, ncopy, actualEventCount);
-            //}
-            //else
-                handler.HandleAnArrayOfNeutronEvents(timeOfNewEvents, neutronsOfNewEvents, actualEventCount);
+			handler.HandleAnArrayOfNeutronEvents(timeOfNewEvents, neutronsOfNewEvents, actualEventCount);
         }
 
         // dev note: this can only be called ONCE in response to AnalyzerHandler.NeutronOutOfSequenceErrorEvent or AnalyzerHandler.BlockCountMismatchErrorEvent

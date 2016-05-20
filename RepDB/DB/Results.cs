@@ -68,10 +68,17 @@ namespace DB
             long id = Lookup(name, dt);
             return Result(id);
         }
-        public DataTable Result(long M_id)
+        public DataTable Result(long id)
         {
             db.SetConnection();
-            string sSQL = "SELECT * from results_rec where id=" + M_id;
+            string sSQL = "SELECT * from results_rec where id=" + id;
+            return db.DT(sSQL);
+        }
+
+		public DataTable ResultForMeasId(long mid)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * from results_rec where mid=" + mid;
             return db.DT(sSQL);
         }
         public long Create(long measid, ElementList sParams) 
