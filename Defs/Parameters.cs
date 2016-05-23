@@ -2114,14 +2114,13 @@ namespace AnalysisDefs
         {
             get
             {
-				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && 
-					!string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))
+				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && !string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))  // set specifically
 					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.IsNullOrEmpty(results))
-                {
-                    return NCC.CentralizedState.App.AppContext.RootPathOverride();
-                }
-                else if (NCC.CentralizedState.App.AppContext.DailyRootPath)
+				else if (string.Equals(results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
+					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
+				else if (string.IsNullOrEmpty(results))   // use the daily path if nothing is set
+                    return NCC.CentralizedState.App.AppContext.RootPathOverride();                
+                else if (NCC.CentralizedState.App.AppContext.DailyRootPath)  // if daily path set, check the current path for a match
                 {
                     string part = DateTime.Now.ToString("yyyy-MMdd");
                     if (!results.EndsWith(part))  // it's not the current day

@@ -920,12 +920,12 @@ namespace NCCFile
                 ulong ShakeTime = 0, prevBuffLastShakeTime = 0; // like ptr32 files 10^e-8
 
                 int maxValuesInBuffer = (int)fps.maxValuesInBuffer;
+				int tbindex = 0; // event count
                 try
                 {
 
                     rdt.NumProcessedRawDataBuffers = 0;
                     string issue = string.Empty;
-                    int tbindex = 0; // event count
 
                     // read the two headers from the MCA file, can throw exceptions that cause skipping
                     mcaFile.ReadHeader();
@@ -942,31 +942,21 @@ namespace NCCFile
                         if (tbindex < maxValuesInBuffer)
                         {
                             fps.timeInBuffer[tbindex++] = ShakeTime;
-                            if (mcaFile.ReaderPosition > 0 && mcaFile.ReaderPosition < FBbytes)         // more bytes to read				
-                                continue;
+                            if (mcaFile.ReaderPosition > 0)
+							{
+								if (mcaFile.ReaderPosition < FBbytes)         // more bytes to read
+									continue;
+							}
                         }
-                        Console.WriteLine("total {0}; last delta {1}; event count {2}; file length time {3}; start {4}; seconds {5};", ShakeTime, deltaTime, tbindex, mcaFile.RealTime, mcaFile.StartTime, mcaFile.MeasTime);
-                        if (NC.App.Opstate.IsQuitRequested)
-						{
-							NC.App.Opstate.SOH = NC.App.Opstate.Requested;
-                            break;
-						}
-						rdt.NumProcessedRawDataBuffers++; 
-                        // push the time deltas through the convertor code and then the counting analyzer threads
-                        StreamStatusBlock ssb = rdt.PassBufferToTheCounters(tbindex);
-                        totalBuffersProcessed++;
-                        if (ssb != null)
-                        {
-                            rdt.ParseStatusBlock(ssb, cycle);
-                            ctrllog.TraceEvent(LogLevels.Verbose, 412, "End of stream, status message at byte {0}, len {1}", ssb.index, ssb.msglen);
-                        }
-
-                        tbindex = 0;
-                        rdt.StartNewBuffer();
-                        prevBuffLastShakeTime = ShakeTime;
-                        ctrllog.TraceEvent(LogLevels.Verbose, 411, "[{0}] Counted {1} triggers, {2} hits, over {3} secs", rdt.NumProcessedRawDataBuffers, cycle.TotalEvents, cycle.Totals, cycle.TS.TotalSeconds);
-                        NC.App.Loggers.Flush();
+						bool breakit = MCABody(rdt, ShakeTime, mcaFile, deltaTime, cycle, ref tbindex, ref totalBuffersProcessed, ref prevBuffLastShakeTime);
+						if (breakit)
+							break;
                     }
+
+					if (tbindex > 0 && rdt.NumProcessedRawDataBuffers == 0) // bad end-of-file condition
+					{
+						MCABody(rdt, ShakeTime, mcaFile, 0, cycle, ref tbindex, ref totalBuffersProcessed, ref prevBuffLastShakeTime);
+					}
                 }
                 catch (NotImplementedException e)
                 {
@@ -1031,6 +1021,33 @@ namespace NCCFile
 			FireEvent(EventType.ActionFinished, this);
 
         }
+
+		bool MCABody(LMRawDataTransform rdt, ulong ShakeTime, MCAFile mcaFile, ulong deltaTime, Cycle cycle, 
+								ref int tbindex, ref ulong totalBuffersProcessed, ref ulong prevBuffLastShakeTime)
+		{
+            ctrllog.TraceEvent(LogLevels.Verbose, 410, "total {0}; last delta {1}; event count {2}; file length time {3}; start {4}; seconds {5};", ShakeTime, deltaTime, tbindex, mcaFile.RealTime, mcaFile.StartTime, mcaFile.MeasTime);
+            if (NC.App.Opstate.IsQuitRequested)
+			{
+				NC.App.Opstate.SOH = NC.App.Opstate.Requested;
+                return false;
+			}
+			rdt.NumProcessedRawDataBuffers++; 
+            // push the time deltas through the convertor code and then the counting analyzer threads
+            StreamStatusBlock ssb = rdt.PassBufferToTheCounters(tbindex);
+            totalBuffersProcessed++;
+            if (ssb != null)
+            {
+                rdt.ParseStatusBlock(ssb, cycle);
+                ctrllog.TraceEvent(LogLevels.Verbose, 412, "End of stream, status message at byte {0}, len {1}", ssb.index, ssb.msglen);
+            }
+
+            tbindex = 0;
+            rdt.StartNewBuffer();
+            prevBuffLastShakeTime = ShakeTime;
+            ctrllog.TraceEvent(LogLevels.Verbose, 411, "[{0}] Counted {1} triggers, {2} hits, over {3} secs", rdt.NumProcessedRawDataBuffers, cycle.TotalEvents, cycle.Totals, cycle.TS.TotalSeconds);
+            NC.App.Loggers.Flush();
+			return true;
+		}
 
 
 

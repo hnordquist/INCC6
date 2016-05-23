@@ -1594,7 +1594,7 @@ namespace LMRawAnalysis
 					endOfNeutronEventList = endOfNeutronEventList.next;       //move the pointer to the new end of list
 				}
 				endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
-				endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
+				//endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
 				numEventsInCircularLinkedList = num;
 
 				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler new "
@@ -1620,7 +1620,7 @@ namespace LMRawAnalysis
 				ende = two; // move back 1
 				endOfNeutronEventList = ende;
 				endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
-				endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
+				//endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
 
 				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear "
                                                              + numEventsInCircularLinkedList + " (remove " + (numEventsInCircularLinkedList - num) + ")");
