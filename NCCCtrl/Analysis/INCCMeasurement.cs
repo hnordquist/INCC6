@@ -172,10 +172,12 @@ namespace AnalysisDefs
                 return;
 
             uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);
-			if (meas.Cycles.Count < 1 || (validMultCyclesCount == 0 && meas.Cycles.Count == 1) )  // nothing can be done
+			if (meas.Cycles.Count < 1)  // nothing can be done
+				return;
+			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
 				return;
 
-            foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in meas.CountingAnalysisResults)  // set to cycle max bin counts, per multi analyzer, by key
+			foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in meas.CountingAnalysisResults)  // set to cycle max bin counts, per multi analyzer, by key
             {
                 if (pair.Key is Multiplicity && !pair.Key.suspect)
                 {

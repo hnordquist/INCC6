@@ -952,11 +952,12 @@ namespace NCCFile
 						if (breakit)
 							break;
                     }
-
+					bool finalbreak = false;
 					if (tbindex > 0 && rdt.NumProcessedRawDataBuffers == 0) // bad end-of-file condition
 					{
-						MCABody(rdt, ShakeTime, mcaFile, 0, cycle, ref tbindex, ref totalBuffersProcessed, ref prevBuffLastShakeTime);
+						finalbreak = MCABody(rdt, ShakeTime, mcaFile, 0, cycle, ref tbindex, ref totalBuffersProcessed, ref prevBuffLastShakeTime);
 					}
+					cycle.DaqStatus = !finalbreak ? CycleDAQStatus.Completed : CycleDAQStatus.UnspecifiedTruncation; // got here without an exception or a cancel
                 }
                 catch (NotImplementedException e)
                 {
