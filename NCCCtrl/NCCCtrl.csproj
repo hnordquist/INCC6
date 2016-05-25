@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;EXCEL;NETFX_40;NETFX_35;NETFX_30</DefineConstants>
+    <DefineConstants>TRACE;NETFX_40;NETFX_35;NETFX_30;NETFX_40;NETFX_35;NETFX_30</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
