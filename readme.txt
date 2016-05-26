@@ -68,16 +68,16 @@ Issues for basic INCC5/6 feature COMPLETION
 #84*	Implement Collar
 #76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75*	LM wizard setting for cycle count not used in Live DAQ
+#66* 	Delete measurements crashes the code 
 #31*	Implement the INCC5 Reanalysis
+#23*	how to delete list mode detector?
 #86+	List mode results database persistence 
 #79+	Plot Norm, Plot Ver diagnostic tools
 #78+	Find Deming curve fitting tool replacement
 #69+	Present the proposed List Mode Config UI from DB enhancement
-#66+ 	Delete measurements crashes the code 
 #40+	source ID in 'initial source' does not get passed to results
 #35+	Hold-up analysis required
 #32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
-#23+	how to delete list mode detector?
 
 *HIGH Priority, +MEDIUM Priority
 

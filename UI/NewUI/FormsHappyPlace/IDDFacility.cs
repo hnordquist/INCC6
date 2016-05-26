@@ -92,6 +92,7 @@ namespace NewUI
         private void FacilityComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             acq.facility = new INCCDB.Descriptor((INCCDB.Descriptor)FacilityComboBox.SelectedItem);
+			((MainWindow)System.Windows.Application.Current.MainWindow).Title = NCC.IntegrationHelpers.GetAppTitle();
         }
 
         private void MBAComboBox_SelectedIndexChanged(object sender, EventArgs e)

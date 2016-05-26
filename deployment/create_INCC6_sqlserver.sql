@@ -25,8 +25,8 @@ CREATE TABLE material_types(
 GO
 CREATE TABLE active_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -46,25 +46,29 @@ CREATE TABLE active_rec(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE active_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[vt1] float,
 	[vt2] float,
 	[vt3] float,
 	[vf1] float,
 	[vf2] float,
-	[vf3] float
+	[vf3] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE active_passive_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -82,13 +86,15 @@ CREATE TABLE active_passive_rec(
 	[sigma_x] float,
 	[cal_curve_equation] int,
 	[lower_mass_limit] float,
-	[upper_mass_limit] float
+	[upper_mass_limit] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE add_a_source_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -119,13 +125,15 @@ CREATE TABLE add_a_source_rec(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE cal_curve_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -149,13 +157,15 @@ CREATE TABLE cal_curve_rec(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE collar_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[Cf252] int,
 	[a] float,
 	[b] float,
@@ -190,27 +200,33 @@ CREATE TABLE collar_rec(
 	[u_mass_corr_fact_b] float,
 	[u_mass_corr_fact_b_err] float,
 	[sample_corr_fact] float,
-	[sample_corr_fact_err] float
+	[sample_corr_fact_err] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE collar_detector_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[reference_date] nvarchar(40),
 	[relative_doubles_rate] float,
-	[collar_detector_mode] int
+	[collar_detector_mode] int,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE collar_k5_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[k5_mode] int,
 	[k5_label] ntext,
 	[k5_checkbox] ntext,
 	[k5] ntext,
-	[k5_err] ntext
+	[k5_err] ntext,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE curium_ratio_rec(
@@ -288,8 +304,8 @@ CREATE TABLE known_alpha_rec(
 GO
 CREATE TABLE known_m_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[sf_rate] float,
 	[vs1] float,
 	[vs2] float,
@@ -299,13 +315,15 @@ CREATE TABLE known_m_rec(
 	[c] float,
 	[sigma_x] float,
 	[lower_mass_limit] float,
-	[upper_mass_limit] float
+	[upper_mass_limit] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE multiplicity_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[solve_efficiency] int,
 	[sf_rate] float,
 	[vs1] float,
@@ -321,34 +339,40 @@ CREATE TABLE multiplicity_rec(
 	[alpha_weight] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[eff_cor] float
+	[eff_cor] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE truncated_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[known_eff] int,
-	[solve_eff] int
+	[solve_eff] int,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE de_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[item_type_id] INTEGER REFERENCES material_types(id),
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[item_type_id] INTEGER NOT NULL,
+	[detector_id] INTEGER NOT NULL,
 	[neutron_energy] ntext NULL,
 	[detector_efficiency] ntext NULL,
 	[inner_outer_ring_ratio] ntext NULL,
 	[inner_ring_efficiency] float,
-	[outer_ring_efficiency] float
+	[outer_ring_efficiency] float,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE analysis_method_rec(
    [id] INTEGER IDENTITY Primary Key,
    [item_type_id] INTEGER NOT NULL,
-   [analysis_method_detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+   [analysis_method_detector_id] INTEGER NOT NULL,
    [cal_curve] int,
    [known_alpha] int,
    [known_m] int,
@@ -365,7 +389,9 @@ CREATE TABLE analysis_method_rec(
    [spare1] int,
    [spare2] int,
    [spare3] int,
-   [spare4] int
+   [spare4] int,
+	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
+	FOREIGN KEY(analysis_method_detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE acquire_parms_rec(
@@ -417,7 +443,7 @@ CREATE TABLE acquire_parms_rec(
 );
 GO
 CREATE TABLE add_a_source_setup_rec(
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[detector_id] INTEGER NOT NULL,
 	[type] nvarchar(40),
 	[port_number] int NULL,
 	[forward_over_travel] float NULL,
@@ -433,7 +459,8 @@ CREATE TABLE add_a_source_setup_rec(
 	[cm_slow_inches] float NULL,
 	[plc_steps_per_inch] float NULL,
 	[scale_conversion_factor] float NULL,
-	[cm_rotation] int NULL
+	[cm_rotation] int NULL,
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE alpha_beta_rec(
@@ -445,7 +472,7 @@ CREATE TABLE alpha_beta_rec(
 );
 GO
 CREATE TABLE bkg_parms_rec(
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[detector_id] INTEGER NOT NULL,
 	[passive_bkg_singles_rate] float NULL,
 	[passive_bkg_singles_rate_err] float NULL,
 	[passive_bkg_doubles_rate] float NULL,
@@ -461,7 +488,8 @@ CREATE TABLE bkg_parms_rec(
 	[passive_bkg_scaler1_rate] float NULL,
 	[passive_bkg_scaler2_rate] float NULL,
 	[active_bkg_scaler1_rate] float NULL,
-	[active_bkg_scaler2_rate] float NULL
+	[active_bkg_scaler2_rate] float NULL,
+	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE composite_isotopics_rec(
@@ -495,7 +523,7 @@ CREATE TABLE composite_isotopic_rec(
 GO
 CREATE TABLE cycles(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[cycle_time] float NOT NULL,
 	[singles] float NULL,
 	[scaler1] float NULL,
@@ -515,13 +543,15 @@ CREATE TABLE cycles(
 	[mass] float NULL,
 	[high_voltage] float NULL,
 	[status] int NULL,
-	[chnhits] nvarchar(1024) NULL
+	[chnhits] nvarchar(1024) NULL,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE cycleslm(
 	[id] INTEGER IDENTITY Primary Key,
-	[cid] INTEGER REFERENCES cycles(id) on DELETE CASCADE,
-	[chnhits] nvarchar(1024) NULL
+	[cid] INTEGER NOT NULL,
+	[chnhits] nvarchar(1024) NULL,
+	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE detector_types(
@@ -669,12 +699,13 @@ CREATE TABLE stratum_ids(
 );
 GO
 CREATE TABLE stratum_id_detector(
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
-	[stratum_id] INTEGER NOT NULL 
+	[detector_id] INTEGER NOT NULL, 
+	[stratum_id] INTEGER NOT NULL,
+	FOREIGN KEY (detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE stratum_id_instances(
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[detector_id] INTEGER NOT NULL, 
 	[stratum_id] INTEGER NOT NULL,
 	[name] nvarchar(256) NULL,
 	[description] nvarchar(1024) NULL,
@@ -685,7 +716,8 @@ CREATE TABLE stratum_id_instances(
 	(
 		[detector_id],
 		[stratum_id]
-	)
+	),
+	FOREIGN KEY (detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 CREATE TABLE notification_log(
@@ -838,11 +870,12 @@ CREATE TABLE LMINCCAppContext(
 GO
 /* for Feynman, Rossi, Time, etc. */
 CREATE TABLE CountingParams(
-	[detector_id] INTEGER REFERENCES detectors(detector_id) on DELETE CASCADE,
+	[detector_id] INTEGER NOT NULL,
 	[gatewidth]float NULL,
 	[counter_type] nvarchar(40) NULL,
 	[active] int not NULL default 1,
-	[rank] int not NULL default 0
+	[rank] int not NULL default 0,
+	FOREIGN KEY (detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
 /* mult FA on, Mult Conv, Coincidence (Mult Conv) */
@@ -885,7 +918,7 @@ CREATE TABLE HVStatus(
 	[read] float NULL,
 	[counts] ntext,
 	[HVPDateTime] nvarchar(40) NOT NULL,
-	FOREIGN KEY([hvp_id]) REFERENCES HVResult(id)
+	FOREIGN KEY(hvp_id) REFERENCES HVResult(id)
 );
 GO
 CREATE TABLE collar_data_entry(
@@ -920,7 +953,7 @@ CREATE INDEX LMAcquireParamsixdid on LMAcquireParams(MeasDate);
 GO
 CREATE TABLE results_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[original_meas_date] nvarchar(40) NULL,
 
 	[facility] nvarchar(256) NULL,  /* from the acquire params def */
@@ -1069,13 +1102,14 @@ CREATE TABLE results_rec(
 	[passive_detector_id] nvarchar(256) NULL,
 	[active_DateTime] nvarchar(40) NULL,
 	[active_filename] nvarchar(1024) NULL,
-	[active_detector_id] nvarchar(256) NULL
+	[active_detector_id] nvarchar(256) NULL,
 	/* todo: list mode params analogized to sr parms */
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE results_active_passive_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id)  on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[delta_doubles] float,
 	[delta_doubles_err] float,
 	[u235_mass] float,
@@ -1089,13 +1123,14 @@ CREATE TABLE results_active_passive_rec(
 	[dcl_minus_asy_u235_mass] float,
 	[dcl_minus_asy_u235_mass_err] float,
 	[dcl_minus_asy_u235_mass_pct] float,
-	[pass] int
+	[pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE active_passive_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_active_passive_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1113,12 +1148,14 @@ CREATE TABLE active_passive_rec_m(
 	[sigma_x] float,
 	[cal_curve_equation] int,
 	[lower_mass_limit] float,
-	[upper_mass_limit] float
+	[upper_mass_limit] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_active_passive_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_add_a_source_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[dzero_cf252_doubles] float,
 	[sample_cf252_doubles] nvarchar(512),
 	[sample_cf252_doubles_err] nvarchar(512),
@@ -1147,13 +1184,14 @@ CREATE TABLE results_add_a_source_rec(
 	[tm_uncorr_doubles_err] float,
 	[tm_corr_doubles] float,
 	[tm_corr_doubles_err] float,
-	[add_a_source_equation] int
+	[add_a_source_equation] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE add_a_source_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_add_a_source_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1184,12 +1222,14 @@ CREATE TABLE add_a_source_rec_m(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_add_a_source_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_cal_curve_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[pu240e_mass] float,
 	[pu240e_mass_err] float,
 	[pu_mass] float,
@@ -1207,13 +1247,14 @@ CREATE TABLE results_cal_curve_rec(
 	[heavy_metal_corr_singles] float,
 	[heavy_metal_corr_singles_err] float,
 	[heavy_metal_corr_doubles] float,
-	[heavy_metal_corr_doubles_err] float
+	[heavy_metal_corr_doubles_err] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE cal_curve_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_cal_curve_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1237,12 +1278,14 @@ CREATE TABLE cal_curve_rec_m(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_cal_curve_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_curium_ratio_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[pu240e_mass] float,
 	[pu240e_mass_err] float,
 	[cm_mass] float,
@@ -1268,13 +1311,14 @@ CREATE TABLE results_curium_ratio_rec(
 	[cm_pu_ratio_decay_corr] float,
 	[cm_pu_ratio_decay_corr_err] float,
 	[cm_u_ratio_decay_corr] float,
-	[cm_u_ratio_decay_corr_err] float
+	[cm_u_ratio_decay_corr_err] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE cm_pu_ratio_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_curium_ratio_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[cm_pu_ratio] float,
 	[cm_pu_ratio_err] float,
 	[pu_half_life] float,
@@ -1286,13 +1330,15 @@ CREATE TABLE cm_pu_ratio_rec_m(
 	[cm_id] nvarchar(512),
 	[cm_input_batch_id] nvarchar(512),
 	[dcl_u_mass] float,
-	[dcl_u235_mass] float
+	[dcl_u235_mass] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_curium_ratio_rec(id) on DELETE NO ACTION
 );
 GO  
 CREATE TABLE curium_ratio_rec_m(
-	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_curium_ratio_rec(id),
+	[id] INTEGER Primary Key,
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1311,12 +1357,14 @@ CREATE TABLE curium_ratio_rec_m(
 	[cal_curve_equation] int,
 	[curium_ratio_type] int,
 	[lower_mass_limit] float,
-	[upper_mass_limit] float	
+	[upper_mass_limit] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_curium_ratio_rec(id) on DELETE NO ACTION
 );
 GO    
 CREATE TABLE results_known_alpha_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[mult] float,
 	[alpha] float,
 	[mult_corr_doubles] float,
@@ -1340,13 +1388,14 @@ CREATE TABLE results_known_alpha_rec(
 	[corr_doubles] float,
 	[corr_doubles_err] float,
 	[corr_factor] float,
-	[dry_alpha_or_mult_dbls] float
+	[dry_alpha_or_mult_dbls] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE known_alpha_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_known_alpha_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[alpha_wt] float,
 	[rho_zero] float,
 	[k] float,
@@ -1369,12 +1418,14 @@ CREATE TABLE known_alpha_rec_m(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_known_alpha_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_known_m_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[mult] float,
 	[mult_err] float,
 	[alpha] float,
@@ -1389,13 +1440,14 @@ CREATE TABLE results_known_m_rec(
 	[dcl_minus_asy_pu_mass] float,
 	[dcl_minus_asy_pu_mass_err] float,
 	[dcl_minus_asy_pu_mass_pct] float,
-	[pass] int
+	[pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE known_m_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_known_m_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[sf_rate] float,
 	[vs1] float,
 	[vs2] float,
@@ -1405,12 +1457,14 @@ CREATE TABLE known_m_rec_m(
 	[c] float,
 	[sigma_x] float,
 	[lower_mass_limit] float,
-	[upper_mass_limit] float
+	[upper_mass_limit] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_known_m_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_multiplicity_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[mult] float,
 	[mult_err] float,
 	[alpha] float,
@@ -1428,13 +1482,14 @@ CREATE TABLE results_multiplicity_rec(
 	[dcl_minus_asy_pu_mass] float,
 	[dcl_minus_asy_pu_mass_err] float,
 	[dcl_minus_asy_pu_mass_pct] float,
-	[pass] int
+	[pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE multiplicity_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_multiplicity_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[solve_efficiency] int,
 	[sf_rate] float,
 	[vs1] float,
@@ -1450,12 +1505,14 @@ CREATE TABLE multiplicity_rec_m(
 	[alpha_weight] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[eff_cor] float
+	[eff_cor] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_multiplicity_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_truncated_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[bkg_singles] float,
 	[bkg_singles_err] float,
 	[bkg_zeroes] float,
@@ -1497,22 +1554,25 @@ CREATE TABLE results_truncated_mult_rec(
 	[s_dcl_minus_asy_pu_mass] float,
 	[s_dcl_minus_asy_pu_mass_err] float,
 	[s_dcl_minus_asy_pu_mass_pct] float,
-	[s_pass] int
+	[s_pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE truncated_mult_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_multiplicity_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[known_eff] int,
-	[solve_eff] int
+	[solve_eff] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_truncated_mult_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_active_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[k0] float,
 	[k1] float,
 	[k1_err] float,
@@ -1524,13 +1584,14 @@ CREATE TABLE results_active_rec(
 	[dcl_minus_asy_u235_mass] float,
 	[dcl_minus_asy_u235_mass_err] float,
 	[dcl_minus_asy_u235_mass_pct] float,
-	[pass] int
+	[pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
  );
 GO
 CREATE TABLE active_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_active_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1550,31 +1611,36 @@ CREATE TABLE active_rec_m(
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
 	[dcl_mass] ntext,
-	[doubles] ntext
+	[doubles] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_active_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_active_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
     [mult] float,
-    [mult_err] float
+    [mult_err] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE active_mult_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_active_mult_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[vt1] float,
 	[vt2] float,
 	[vt3] float,
 	[vf1] float,
 	[vf2] float,
-	[vf3] float
+	[vf3] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_active_mult_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_collar_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[u235_mass] float,
 	[u235_mass_err] float,
 	[percent_u235] float,
@@ -1609,13 +1675,14 @@ CREATE TABLE results_collar_rec(
 	[dcl_minus_asy_u235_mass] float,
 	[dcl_minus_asy_u235_mass_err] float,
 	[dcl_minus_asy_u235_mass_pct] float,
-	[pass] int
+	[pass] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE collar_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_collar_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[a] float,
 	[b] float,
 	[c] float,
@@ -1659,31 +1726,36 @@ CREATE TABLE collar_rec_m(
 	[k5_label] ntext,
 	[k5_checkbox] ntext,
 	[k5] ntext,
-	[k5_err] ntext
+	[k5_err] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_de_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
     [de_energy_corr_factor] float,
 	[interpolated_neutron_energy] float,
-	[energy_corr_factor] float
+	[energy_corr_factor] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE de_mult_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[rid] INTEGER REFERENCES results_de_mult_rec(id),
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
 	[neutron_energy] ntext NULL,
 	[detector_efficiency] ntext NULL,
 	[inner_outer_ring_ratio] ntext NULL,
 	[inner_ring_efficiency] float,
-	[outer_ring_efficiency] float
+	[outer_ring_efficiency] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_de_mult_rec(id) on DELETE NO ACTION
 );
 GO
 CREATE TABLE results_tm_bkg_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[tm_singles_bkg] float NULL,
 	[tm_singles_bkg_err] float NULL,
 	[tm_zeros_bkg] float NULL,
@@ -1691,22 +1763,24 @@ CREATE TABLE results_tm_bkg_rec(
 	[tm_ones_bkg] float NULL,
 	[tm_ones_bkg_err] float NULL,
 	[tm_twos_bkg] float NULL,
-	[tm_twos_bkg_err] float NULL
+	[tm_twos_bkg_err] float NULL,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 /* todo: URGENT tm_bkg_parms_rec */
 
 CREATE TABLE results_init_src_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[init_src_id] nvarchar(512),
 	[pass] int,
-	[mode] int
+	[mode] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE results_bias_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[source_id] nvarchar(512),
 	[pass] int,
 	[mode] int,
@@ -1722,32 +1796,36 @@ CREATE TABLE results_bias_rec(
 	[new_norm_constant_err] float,
 	[meas_precision] float,
 	[required_precision] float,
-	[required_meas_seconds] float
+	[required_meas_seconds] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE results_precision_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[pass] int,
 	[sample_var] float,
 	[theoretical_var] float,
 	[chi_sq] float,
 	[chi_sq_lower_limit] float,
-	[chi_sq_upper_limit] float
+	[chi_sq_upper_limit] float,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE analysis_messages(
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
+	[mid] INTEGER NOT NULL,
 	[msgid] int NOT NULL,
 	[level] int NOT NULL,
 	[text] nvarchar(1024),
-	[ts] nvarchar(40) NOT NULL 
+	[ts] nvarchar(40) NOT NULL ,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 CREATE TABLE results_filenames(
 	[id] INTEGER IDENTITY Primary Key,
-	[mid] INTEGER REFERENCES measurements(id) on DELETE CASCADE,
-	[FileName] nvarchar(1024) NULL
+	[mid] INTEGER NOT NULL,
+	[FileName] nvarchar(1024) NULL,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
 INSERT INTO [test_parms_rec] VALUES(999.0,0.1,4.0,3.0,1.0,1.0,99.0,10,1.0,3.0,100,1,'Measure');

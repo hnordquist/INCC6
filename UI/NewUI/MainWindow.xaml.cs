@@ -335,7 +335,7 @@ namespace NewUI
 
         private void MaintainSomeSettingsClick(object sender, RoutedEventArgs e)
         {
-            NewUI.Preferences f = new NewUI.Preferences();
+            Preferences f = new Preferences();
             f.ShowDialog();
         }
 

@@ -73,10 +73,10 @@ namespace LMRawAnalysis
     /// </summary>
     sealed public class RossiAlphaCircularStackAnalysis
     {
-        public UInt64 rossiAlphaGateWidth;
-        public UInt64 rossiAlphaWindowWidth;  //equal to RawAnalysisProperties.numRAGatesPerWindow * gate width
-        public UInt32[] neutronsPerRossiAlphaGate = new UInt32[RawAnalysisProperties.numRAGatesPerWindow];
-        public UInt64 totalRossiAlphaAnalysisTime;  //the time of the closing of the last completed RA gate, in other words, the duration of this experiment
+        public ulong rossiAlphaGateWidth;
+        public ulong rossiAlphaWindowWidth;  //equal to RawAnalysisProperties.numRAGatesPerWindow * gate width
+        public uint[] neutronsPerRossiAlphaGate = new uint[RawAnalysisProperties.numRAGatesPerWindow];
+        public ulong totalRossiAlphaAnalysisTime;  //the time of the closing of the last completed RA gate, in other words, the duration of this experiment
 
         public RossiAlphaCircularNeutronEvent theEventCircularLinkedList;
         public RossiAlphaCircularNeutronEvent startOfList;
@@ -90,9 +90,9 @@ namespace LMRawAnalysis
         //because it might be milliseconds between neutron events and we don't want to spin that long
         public ManualResetEventSlim waitingForMessage = new ManualResetEventSlim(false);  //set initial permission to false, so thread will wait
 
-        public UInt64[] inputEventTime;  //another thread places neutron-event time data here for processing
-        public UInt32[] inputEventNeutrons;  //another thread places neutron-event neutron data here for processing
-        public UInt32[] inputEventNumNeutrons;
+        public ulong[] inputEventTime;  //another thread places neutron-event time data here for processing
+        public uint[] inputEventNeutrons;  //another thread places neutron-event neutron data here for processing
+        public uint[] inputEventNumNeutrons;
         public int numEventsThisBlock;
 
         public bool keepRunning;
@@ -127,9 +127,9 @@ namespace LMRawAnalysis
             }
 
             //initialize the event inputs
-            inputEventTime = new UInt64[RawAnalysisProperties.maxEventsPerBlock];
-            inputEventNeutrons = new UInt32[RawAnalysisProperties.maxEventsPerBlock];
-            inputEventNumNeutrons = new UInt32[RawAnalysisProperties.maxEventsPerBlock];
+            inputEventTime = new ulong[RawAnalysisProperties.maxEventsPerBlock];
+            inputEventNeutrons = new uint[RawAnalysisProperties.maxEventsPerBlock];
+            inputEventNumNeutrons = new uint[RawAnalysisProperties.maxEventsPerBlock];
             numEventsThisBlock = 0;
 
             //create the circular linked list
@@ -177,9 +177,9 @@ namespace LMRawAnalysis
 
         void RACWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            UInt64 deltaTimeInQueue;
+            ulong deltaTimeInQueue;
 
-            String threadName = "RossiAlphaAnalyzer_" + rossiAlphaGateWidth;
+            string threadName = "RossiAlphaAnalyzer_" + rossiAlphaGateWidth;
             Thread.CurrentThread.Name = threadName;
 
 #if USE_SPINTIME
@@ -212,10 +212,12 @@ namespace LMRawAnalysis
 
                 if (keepRunning == true)
                 {
-                    UInt64 eventTime;
-                    UInt32 eventNeutrons;
-                    UInt32 eventNumNeutrons;
-                    int j;
+					int i, j;
+                    ulong eventTime;
+                    uint eventNeutrons;
+                    uint eventNumNeutrons;
+                    RossiAlphaCircularNeutronEvent anEvent;
+                    RossiAlphaCircularNeutronEvent nextEvent;
 
                     for (j = 0; j < numEventsThisBlock; j++)
                     {
@@ -231,9 +233,7 @@ namespace LMRawAnalysis
                         //check to see if the circular list will overflow
                         if (endOfList.next.serialNumber == startOfList.serialNumber)
                         {
-                            int i;
-                            RossiAlphaCircularNeutronEvent anEvent;
-                            RossiAlphaCircularNeutronEvent nextEvent;
+
 
                             //if stack would overflow, add RawAnalysisProperties.circularListBlockIncrement neutron events at this spot in the stack...
                             anEvent = endOfList;
@@ -267,8 +267,7 @@ namespace LMRawAnalysis
                             //do RossiAlpha analysis here, accumulating statistics
                             //add up how many neutrons there were in each RossiAlpha gate from the time of the expiring event
                             int whichBin;
-                            UInt64 deltaTime;
-                            RossiAlphaCircularNeutronEvent anEvent;
+                            ulong deltaTime;
 
                             //skip the event at the head of the list.  
                             //To match data from the legacy code, start with the neutron event following this expiring head event.

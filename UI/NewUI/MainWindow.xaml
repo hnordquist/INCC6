@@ -84,7 +84,7 @@
                 <Separator />
                 <MenuItem Header="_Add-a-source Setup..." Click="MaintainAddASourceSetupClick" IsEnabled="False"/>
                 <Separator />
-                <MenuItem Header="_Delete Measurements..." Click="MaintainDeleteMeasurementClick" IsEnabled="False" />
+                <MenuItem Header="_Delete Measurements..." Click="MaintainDeleteMeasurementClick" IsEnabled="True" />
                 <Separator />
                 <MenuItem Header="Measure _High Voltage Plateau" Click="HVPClick" IsEnabled="True"/>
                 <Separator />
