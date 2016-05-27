@@ -159,29 +159,6 @@ namespace DB
             }
         }
 
-		public static DbCommand DBCmd
-        {
-            get
-            {
-                if (fact == null)
-                {
-					DbProviderFactory f = DBProvider;
-				}
-				return fact.CreateCommand();
-            }
-        }
-
-		public static DbCommandBuilder DBCmdBuilder
-        {
-            get
-            {
-                if (bld == null || fact == null)
-                {
-					DbProviderFactory f = DBProvider;
-				}
-                return bld;
-            }
-        }
         /// <summary>
         /// The current DBProvider factory creates the typed DBConnection subclass
         /// </summary>
@@ -248,7 +225,7 @@ namespace DB
             csb["Version"]="3";
             csb["New"]="False";
             csb["Compress"]="True";
-            csb["foreign keys"] = "true";
+            csb["foreign_keys"] = "true";
             return TryConnection(csb.ConnectionString, newDB, provider, dbfile);
         }
         public static string GetProviderStringFromEnum (DbsWeLove type)

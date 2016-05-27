@@ -258,19 +258,6 @@ namespace DB
             return s;
         }
 
-		public static string FK(string sql)
-		{
-            switch (DBMain.Provider)
-            {
-				case DBMain.DbsWeLove.SQLite:
-					//return "PRAGMA foreign_keys=on;" + sql;
-					break;
-				default:
-					break;
-			}
-			return sql;
-		}
-
 		public static void OpenConn(DbConnection conn)
 		{
   			conn.Open();
