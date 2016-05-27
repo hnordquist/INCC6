@@ -53,6 +53,7 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+			bool notify = true;
 			NCCReporter.LMLoggers.LognLM ctrllog = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
             foreach (ListViewItem lvi in MeasurementView.Items)
             {
@@ -65,9 +66,10 @@ namespace NewUI
 					ctrllog.TraceEvent(NCCReporter.LogLevels.Info, 22222, 
 						"Deleting " + mid.MeasOption.PrintName() + " " + mid.MeasDateTime.ToString("yy.MM.dd HH:mm:ss") + ", #" + mid.UniqueId + " for " + det.Id.DetectorId);
 					N.App.DB.DeleteMeasurement(mlist[lvIndex].MeasurementId);
+					notify = false;
                 }
             }
-			LoadList();
+			LoadList(notify);
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -79,13 +81,13 @@ namespace NewUI
         {
 
         }
-        private void LoadMeasurementList()
+        private void LoadMeasurementList(bool notify = true)
         {
 			MeasurementView.Items.Clear();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
 			ilist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
 			mlist = N.App.DB.MeasurementsFor(ilist, LMOnly: false);
-            if (mlist.Count == 0)
+            if (notify && mlist.Count == 0)
             {
                 string msg = string.Format("No measurements for {0} found.", det == null ? "any" : det.Id.DetectorId);
                 MessageBox.Show(msg, "WARNING");
@@ -111,7 +113,7 @@ namespace NewUI
 					lvi.ToolTipText = "No results file available";
 				mlistIndex++;
             }
-			MCountSel.Text = MeasurementView.Items.Count.ToString() + " measurements";
+            MCount.Text = MeasurementView.Items.Count.ToString() + " measurements";
 			if (MeasurementView.SelectedItems.Count > 0)
 				MCountSel.Text = MeasurementView.SelectedItems.Count.ToString();
 			else
@@ -192,13 +194,13 @@ namespace NewUI
 			MeasurementView.Cursor = sav;
 		}
 
-		private void LoadList()
+		private void LoadList(bool notify = true)
 		{
 			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 			try
 			{
 				Refresh();
-				LoadMeasurementList();
+				LoadMeasurementList(notify);
 			}
 			finally
 			{

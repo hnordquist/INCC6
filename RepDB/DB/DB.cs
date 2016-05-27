@@ -25,22 +25,6 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-// SQL Server CE 
-// id integer PRIMARY KEY IDENTITY
-// GO
-// insert into Tool13 (Column) values('foo');
-
-// SQLite3
-// id integer PRIMARY KEY
-// or sometimes this keyword is required, unsure why not always
-// id integer PRIMARY KEY AUTOINCREMENT
-// insert into Tool13 values('foo');
-
-//
-//     [temptid] int NOT NULL,
-//     FOREIGN KEY(temptid) REFERENCES Tempted(id)
-// or
-//     [temptid] int REFERENCES Tempted(id),
 
 using System;
 using System.Collections;
@@ -142,14 +126,14 @@ namespace DB
         public static string ProviderInvariantName
         {
             get {   if (pest != null)  return pest.cfg.MyProviderName; 
-                    else return String.Empty; }
+                    else return string.Empty; }
         }
 
         // a pass-thru method exposing the app-wide connection string from the app config state
         public static string ConnStr
         {
-            // e.g. "Data Source=.\\Listmode.SQLite;Version=3;New=False;Compress=True;" 
-            get { if (pest != null) return pest.cfg.MyDBConnectionString; else return String.Empty; }
+            // e.g. "Data Source=.\\Listmode.SQLite;Version=3;New=False;Compress=True;Foreign_Keys=On;" 
+            get { if (pest != null) return pest.cfg.MyDBConnectionString; else return string.Empty; }
         }
 
         // the factory created from the ProviderInvariantName
@@ -366,7 +350,7 @@ namespace DB
         public DbConnection sql_con;
         public DbCommand sql_cmd;
         public DbDataAdapter sql_da;
-
+		 
         public DB(bool connect = true)
         {
             sql_con = null;
@@ -393,7 +377,7 @@ namespace DB
         {
 			SetConnection();
             sql_cmd = sql_con.CreateCommand();
-			sql_cmd.CommandText = sSQL;
+			sql_cmd.CommandText =  sSQL;
         }
 
         // assumes DB is there, but might need to build it before we get here 
@@ -404,8 +388,8 @@ namespace DB
             try
             {
                 sql_cmd = sql_con.CreateCommand();
-                sql_cmd.CommandText = sSQL;
-                sql_con.Open();
+                sql_cmd.CommandText =  sSQL;
+                SQLSpecific.OpenConn(sql_con);
                 try
                 {
                     int i = sql_cmd.ExecuteNonQuery();
@@ -444,7 +428,7 @@ namespace DB
             DataTable DT = new DataTable();
             try
             {
-                sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
 
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.CommandText = sSQL;
@@ -471,9 +455,9 @@ namespace DB
             string sData = "";
             try
             {
-                sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
                 sql_cmd = sql_con.CreateCommand();
-                sql_cmd.CommandText = sSQL;
+                sql_cmd.CommandText =  sSQL;
                 var o = sql_cmd.ExecuteScalar();
                 if (o != null)
                     sData = o.ToString();
@@ -501,7 +485,7 @@ namespace DB
 			int iData = -1;
 			try
 			{
-				sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
 				var wht = sql_cmd.ExecuteScalar();
 				if (wht == null)
 					iData = 0;
@@ -529,14 +513,14 @@ namespace DB
             Int32 result = -1; // what to return here?
             try
             {
-                sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
                 sql_cmd = sql_con.CreateCommand();
                 bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
                     if (!sqlList[i].ToString().Equals(""))
                     {
-                        sql_cmd.CommandText = sqlList[i].ToString();
+                        sql_cmd.CommandText =  sqlList[i].ToString();
                         try
                         {
                             if (sqlList[i].ToString().ToUpper().StartsWith("SELECT"))
@@ -591,14 +575,14 @@ namespace DB
             string sRtn = "";
             try
             {
-                sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
                 Trans = sql_con.BeginTransaction();
                 sql_cmd = sql_con.CreateCommand();
                 sql_cmd.Transaction = Trans;
                 bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
-                    sql_cmd.CommandText = sqlList[i].ToString();
+                    sql_cmd.CommandText =  sqlList[i].ToString();
                     try
                     {
                         if (sqlList[i].ToString().ToUpper().StartsWith("SELECT"))
@@ -656,7 +640,7 @@ namespace DB
             Int32 result = -1; // what to return here?
             try
             {
-                sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
                 Trans = sql_con.BeginTransaction();
 
                 sql_cmd = sql_con.CreateCommand();
@@ -666,7 +650,7 @@ namespace DB
                 {
                     if (!sqlList[i].ToString().Equals(""))
                     {
-                        sql_cmd.CommandText = sqlList[i].ToString();
+                        sql_cmd.CommandText =  sqlList[i].ToString();
                        //DBMain.AltLog(LogLevels.Info, 70115, "sql => " + sql_cmd.CommandText);
                         try
                         {
@@ -797,7 +781,7 @@ namespace DB
                     if (DBMain.ProviderInvariantName.Equals("")) return;
                     sql_con = DBMain.CreateConnection(useConnStr: true);
                     sql_da = DBMain.CreateDataAdapter();
-                    sql_con.Open();
+					SQLSpecific.OpenConn(sql_con);
                     sql_cmd = sql_con.CreateCommand();
                 }
                 catch (Exception caught)
@@ -815,7 +799,7 @@ namespace DB
             try
             {
                 if (sql_cmd == null) sql_cmd = sql_con.CreateCommand();
-                sql_cmd.CommandText = sSQL;
+                sql_cmd.CommandText =  sSQL;
                 try
                 {
                     sql_cmd.ExecuteNonQuery();
@@ -897,7 +881,7 @@ namespace DB
 			int iData = -1;
 			try
 			{
-				sql_con.Open();
+                SQLSpecific.OpenConn(sql_con);
 				var wht = sql_cmd.ExecuteScalar();
 				if (wht == null)
 					iData = 0;
@@ -990,7 +974,7 @@ namespace DB
                 bool needDb = false;
                 for (int i = 0; i < sqlList.Count; i++)
                 {
-                    sql_cmd.CommandText = sqlList[i].ToString();
+                    sql_cmd.CommandText =  sqlList[i].ToString();
                     try
                     {
                         if (sqlList[i].ToString().ToUpper().StartsWith("SELECT"))
@@ -1058,7 +1042,7 @@ namespace DB
                 {
                     if (!sqlList[i].ToString().Equals(""))
                     {
-                        sql_cmd.CommandText = sqlList[i].ToString();
+                        sql_cmd.CommandText =  sqlList[i].ToString();
                         //DBMain.AltLog(LogLevels.Info, 70115, "sql => " + sql_cmd.CommandText);
                         try
                         {

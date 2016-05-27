@@ -270,7 +270,7 @@ namespace DB
         public long getItemID(string item_name)
         {
             //Check item name against current entries
-            db.CreateCommand("Select item_id from items where item_name=" + SQLSpecific.QVal(item_name));
+            db.CreateCommand( "Select item_id from items where item_name=" + SQLSpecific.QVal(item_name));
             db.SetConnection();
             return db.ScalarIntx();
         }
