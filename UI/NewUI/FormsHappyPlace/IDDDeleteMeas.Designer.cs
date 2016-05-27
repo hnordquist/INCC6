@@ -32,17 +32,18 @@
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
             this.MeasurementView = new System.Windows.Forms.ListView();
-            this.DetID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.MeasType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ItemId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.StratumId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Date = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Time = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.DT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Comment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.MCountSel = new System.Windows.Forms.TextBox();
+            this.MCount = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // OKBtn
             // 
-            this.OKBtn.Location = new System.Drawing.Point(752, 12);
+            this.OKBtn.Location = new System.Drawing.Point(421, 11);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
             this.OKBtn.TabIndex = 6;
@@ -52,7 +53,7 @@
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(752, 41);
+            this.CancelBtn.Location = new System.Drawing.Point(421, 39);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 7;
@@ -62,7 +63,7 @@
             // 
             // HelpBtn
             // 
-            this.HelpBtn.Location = new System.Drawing.Point(752, 70);
+            this.HelpBtn.Location = new System.Drawing.Point(421, 68);
             this.HelpBtn.Name = "HelpBtn";
             this.HelpBtn.Size = new System.Drawing.Size(75, 23);
             this.HelpBtn.TabIndex = 8;
@@ -73,62 +74,83 @@
             // MeasurementView
             // 
             this.MeasurementView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.DetID,
             this.MeasType,
             this.ItemId,
             this.StratumId,
-            this.Date,
-            this.Time});
+            this.DT,
+            this.Comment});
             this.MeasurementView.FullRowSelect = true;
             this.MeasurementView.Location = new System.Drawing.Point(12, 12);
             this.MeasurementView.Name = "MeasurementView";
-            this.MeasurementView.Size = new System.Drawing.Size(722, 461);
+            this.MeasurementView.Size = new System.Drawing.Size(404, 461);
             this.MeasurementView.TabIndex = 9;
             this.MeasurementView.UseCompatibleStateImageBehavior = false;
             this.MeasurementView.View = System.Windows.Forms.View.Details;
-            // 
-            // DetID
-            // 
-            this.DetID.Text = "Detector ID";
-            this.DetID.Width = 102;
+            this.MeasurementView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.MeasurementView_ColumnClick);
+            this.MeasurementView.SelectedIndexChanged += new System.EventHandler(this.MeasurementView_SelectedIndexChanged);
             // 
             // MeasType
             // 
-            this.MeasType.Text = "Measurement Type";
-            this.MeasType.Width = 135;
+            this.MeasType.Text = "Meas. Type";
+            this.MeasType.Width = 112;
             // 
             // ItemId
             // 
             this.ItemId.Text = "Item id";
-            this.ItemId.Width = 120;
+            this.ItemId.Width = 74;
             // 
             // StratumId
             // 
             this.StratumId.Text = "Stratum id";
-            this.StratumId.Width = 115;
+            this.StratumId.Width = 74;
             // 
-            // Date
+            // DT
             // 
-            this.Date.Text = "Date";
-            this.Date.Width = 126;
+            this.DT.Text = "Date and Time";
+            this.DT.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.DT.Width = 120;
             // 
-            // Time
+            // Comment
             // 
-            this.Time.Text = "Time";
-            this.Time.Width = 118;
+            this.Comment.Text = "Comment";
+            this.Comment.Width = 72;
+            // 
+            // MCountSel
+            // 
+            this.MCountSel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.MCountSel.CausesValidation = false;
+            this.MCountSel.Location = new System.Drawing.Point(421, 245);
+            this.MCountSel.Name = "MCountSel";
+            this.MCountSel.ReadOnly = true;
+            this.MCountSel.Size = new System.Drawing.Size(87, 13);
+            this.MCountSel.TabIndex = 12;
+            // 
+            // MCount
+            // 
+            this.MCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.MCount.CausesValidation = false;
+            this.MCount.Location = new System.Drawing.Point(422, 226);
+            this.MCount.Name = "MCount";
+            this.MCount.ReadOnly = true;
+            this.MCount.Size = new System.Drawing.Size(87, 13);
+            this.MCount.TabIndex = 13;
             // 
             // IDDDeleteMeas
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(837, 488);
+            this.ClientSize = new System.Drawing.Size(512, 488);
+            this.Controls.Add(this.MCount);
+            this.Controls.Add(this.MCountSel);
             this.Controls.Add(this.MeasurementView);
             this.Controls.Add(this.HelpBtn);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDDeleteMeas";
             this.Text = "Delete Measurements From Database";
+            this.Shown += new System.EventHandler(this.IDDDeleteMeas_Shown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -137,12 +159,13 @@
         private System.Windows.Forms.Button OKBtn;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
-        private System.Windows.Forms.ListView MeasurementView;
+        public System.Windows.Forms.ListView MeasurementView;
         private System.Windows.Forms.ColumnHeader MeasType;
         private System.Windows.Forms.ColumnHeader ItemId;
         private System.Windows.Forms.ColumnHeader StratumId;
-        private System.Windows.Forms.ColumnHeader Date;
-        private System.Windows.Forms.ColumnHeader Time;
-        private System.Windows.Forms.ColumnHeader DetID;
+        private System.Windows.Forms.ColumnHeader DT;
+		private System.Windows.Forms.ColumnHeader Comment;
+		private System.Windows.Forms.TextBox MCountSel;
+        private System.Windows.Forms.TextBox MCount;
     }
 }

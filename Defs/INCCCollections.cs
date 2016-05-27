@@ -120,6 +120,11 @@ namespace AnalysisDefs
         /// <returns>true if map and database entries deleted</returns>
         bool Delete(Detector det);
 
+		/// <summary>
+        /// Force DB read and reconstruction of in-memory internal map
+		/// </summary>
+		void Reset();
+
     }
 
     public interface IAPI<T>
@@ -1687,7 +1692,10 @@ namespace AnalysisDefs
             }
             return b;
         }
-
+		public void Reset()
+		{
+			normParameters = null;
+		}
     }
 
 
@@ -2003,6 +2011,12 @@ namespace AnalysisDefs
             return b;
         }
 
+		
+		public void Reset()
+		{
+			unattParameters = null;
+		}
+
     }
 
     public class BackgroundParamsImpl : IDetAPI<BackgroundParameters>
@@ -2228,6 +2242,11 @@ namespace AnalysisDefs
             return b;
         }
 
+		public void Reset()
+		{
+			bkgParameters = null;
+		}
+
     }
 
     public class AASParamsImpl : IDetAPI<AddASourceSetup>
@@ -2415,6 +2434,11 @@ namespace AnalysisDefs
             }
             return b;
         }
+
+		public void Reset()
+		{
+			aasParameters = null;
+		}
     }
 
 
@@ -2596,7 +2620,11 @@ namespace AnalysisDefs
             }
             return b;
         }
-
+		
+		public void Reset()
+		{
+			hvp = null;
+		}
     }
 
     /// <summary>
@@ -3313,6 +3341,12 @@ namespace AnalysisDefs
                 return acqParameters;
             }
         }
+
+		public void ResetAcquireParametersMap()
+		{
+			acqParameters = null;
+		}
+
         private Stratums stratums;
         public Stratums Stratums
         {
@@ -3786,6 +3820,12 @@ namespace AnalysisDefs
             }
             return ms;
         }
+
+		public bool DeleteMeasurement(MeasId id)
+		{
+			DB.Measurements mdb = new DB.Measurements();
+			return mdb.Delete(id.UniqueId);
+		}
 
 		List<string> GetResultFiles(MeasId id)
 		{

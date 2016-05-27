@@ -176,8 +176,7 @@ namespace NewUI
             logLevels.SelectedIndex = NC.App.AppContext.LevelAsUInt16;
             logResults.SelectedIndex = NC.App.AppContext.LogResults;
 
-            ((Window)sender).Title = (NC.App.Name + " " + NC.App.Config.VersionString);
-
+            ((Window)sender).Title = NCC.IntegrationHelpers.GetAppTitle();
             // Find the WPF trace listener
             WPFTraceListener listener = null;
 

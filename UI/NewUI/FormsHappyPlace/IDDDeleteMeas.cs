@@ -31,35 +31,45 @@ using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
 
-    public partial class IDDDeleteMeas : Form
+	public partial class IDDDeleteMeas : Form
     {
+        private List<INCCDB.IndexedResults> ilist;
         private List<Measurement> mlist;
+        SortOrder[] cols;
+        private AcquireParameters acq;
+		private Detector det;
 
         public IDDDeleteMeas()
         {
             InitializeComponent();
-            LoadMeasurementList();
+			//IDDMeasurementList.PrepNotepad();
+            cols = new SortOrder[MeasurementView.Columns.Count];
+            for (int i = 0; i < cols.Length; i++) cols[i] = SortOrder.Descending;
+            cols[3] = SortOrder.Ascending;  // datetime column
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            return;
-            //  NEXT: delete from collections, AND delete from DB.
-            //DB.Measurements meas = new DB.Measurements ();
-            //bool success = true;
-            //foreach (ListViewItem lvi in MeasurementView.Items)
-            //{
-            //    if (lvi.Selected)
-            //    {
-            //        DateTime dt;
-            //        DateTime.TryParseExact (lvi.SubItems[4].Text + lvi.SubItems[5].Text,"yyyy/MM/ddHH:mm:ss",null,System.Globalization.DateTimeStyles.None, out dt);
-            //        success = meas.Delete((long)lvi.Tag) || success;
-            //        LoadMeasurementList();
-            //    }
-            //}
+			bool notify = true;
+			NCCReporter.LMLoggers.LognLM ctrllog = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+            foreach (ListViewItem lvi in MeasurementView.Items)
+            {
+                if (lvi.Selected)
+                {
+					int lvIndex = 0;
+					if (!int.TryParse(lvi.SubItems[5].Text, out lvIndex)) // 5 has the original mlist index of this sorted row element
+						continue;
+					MeasId mid = mlist[lvIndex].MeasurementId;
+					ctrllog.TraceEvent(NCCReporter.LogLevels.Info, 22222, 
+						"Deleting " + mid.MeasOption.PrintName() + " " + mid.MeasDateTime.ToString("yy.MM.dd HH:mm:ss") + ", #" + mid.UniqueId + " for " + det.Id.DetectorId);
+					N.App.DB.DeleteMeasurement(mlist[lvIndex].MeasurementId);
+					notify = false;
+                }
+            }
+			LoadList(notify);
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -71,27 +81,136 @@ namespace NewUI
         {
 
         }
-        private void LoadMeasurementList()
+        private void LoadMeasurementList(bool notify = true)
         {
-            Detector det = Integ.GetCurrentAcquireDetector();
-            mlist = NC.App.DB.MeasurementsFor(det.Id.DetectorId);
+			MeasurementView.Items.Clear();
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			ilist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
+			mlist = N.App.DB.MeasurementsFor(ilist, LMOnly: false);
+            if (notify && mlist.Count == 0)
+            {
+                string msg = string.Format("No measurements for {0} found.", det == null ? "any" : det.Id.DetectorId);
+                MessageBox.Show(msg, "WARNING");
+                return;
+            }
             MeasurementView.ShowItemToolTips = true;
+			int mlistIndex = 0;
 
             foreach (Measurement m in mlist)
             {
                 ListViewItem lvi = new ListViewItem(new string[] {
-                    det.Id.DetectorName,
                     m.MeasOption.PrintName(),
                     m.AcquireState.item_id,
-                    m.AcquireState.stratum_id.Name == String.Empty ? "Default" : m.AcquireState.stratum_id.Name,
-                    m.MeasDate.ToString("yyyy/MM/dd"),
-                    m.MeasDate.ToString("HH:mm:ss") });
-                lvi.Tag = m.MeasurementId;
+					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "Default" : m.AcquireState.stratum_id.Name,
+                    m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), m.AcquireState.comment,
+					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
+					});
                 MeasurementView.Items.Add(lvi);
+
+				lvi.Tag = m.MeasDate;  // for proper column sorting
+                lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
+				if (string.IsNullOrEmpty(lvi.ToolTipText))
+					lvi.ToolTipText = "No results file available";
+				mlistIndex++;
             }
-            Refresh();
-            if (MeasurementView.Items.Count <= 0)
-                MessageBox.Show("There are no measurements in the database.", "WARNING");
+            MCount.Text = MeasurementView.Items.Count.ToString() + " measurements";
+			if (MeasurementView.SelectedItems.Count > 0)
+				MCountSel.Text = MeasurementView.SelectedItems.Count.ToString();
+			else
+				MCountSel.Text = string.Empty;
+			//Refresh();
         }
-    }
+
+		private string GetMainFilePath(ResultFiles files, AssaySelector.MeasurementOption mo, bool elide)
+		{
+            string res = string.Empty;
+			switch (mo)
+			{
+			case AssaySelector.MeasurementOption.unspecified:
+				res = files.CSVResultsFileName.Path;
+                break;
+			default:
+				res = files.PrimaryINCC5Filename.Path;
+                break;
+			}
+            if (elide)
+                res= System.IO.Path.GetFileName(res);
+            return res;
+
+		}
+
+		public void ListItemSorter(object sender, ColumnClickEventArgs e)
+        {
+            ListView list = (ListView)sender;
+            int total = list.Items.Count;
+            list.BeginUpdate();
+            ListViewItem[] items = new ListViewItem[total];
+            for (int i = 0; i < total; i++)
+            {
+                int count = list.Items.Count;
+                int minIdx = 0;
+                for (int j = 1; j < count; j++)
+                {
+                    bool test = MeasListColumnCompare(list.Items[j], list.Items[minIdx], e.Column);
+                    if ((cols[e.Column] == SortOrder.Ascending && test) || 
+                        (cols[e.Column] == SortOrder.Descending && !test))
+                        minIdx = j;
+                }
+
+                items[i] = list.Items[minIdx];
+                list.Items.RemoveAt(minIdx);
+            }
+            list.Items.AddRange(items);
+            list.EndUpdate();
+            if (cols[e.Column] == SortOrder.Descending)
+                cols[e.Column] = SortOrder.Ascending;
+            else if (cols[e.Column] == SortOrder.Ascending)
+                cols[e.Column] = SortOrder.Descending;
+        }
+
+		private void MeasurementView_SelectedIndexChanged(object sender, EventArgs e)
+		{
+            if (MeasurementView.SelectedItems.Count > 0)
+                MCountSel.Text = MeasurementView.SelectedItems.Count.ToString() + " selected";
+            else
+                MCountSel.Text = string.Empty;   
+		}
+
+		bool MeasListColumnCompare(ListViewItem a, ListViewItem b, int column)
+        {
+            bool res = false;
+            if (column != 3)
+                res = a.SubItems[column].Text.CompareTo(b.SubItems[column].Text) < 0;
+            else if (column == 3)  // 3 is the datetime column, such fragile coding ... fix by adding a type value to the column header Tag 
+                res = (((DateTimeOffset)a.Tag).CompareTo((DateTimeOffset)b.Tag)) < 0;
+            return res;
+        }
+
+		private void MeasurementView_ColumnClick(object sender, ColumnClickEventArgs e)
+		{
+			Cursor sav = MeasurementView.Cursor;
+			MeasurementView.Cursor = Cursors.WaitCursor;
+            ListItemSorter(sender, e);
+			MeasurementView.Cursor = sav;
+		}
+
+		private void LoadList(bool notify = true)
+		{
+			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+			try
+			{
+				Refresh();
+				LoadMeasurementList(notify);
+			}
+			finally
+			{
+				System.Windows.Input.Mouse.OverrideCursor = null;
+			}
+		}
+
+		private void IDDDeleteMeas_Shown(object sender, EventArgs e)
+		{
+			LoadList();
+		}
+	}
 }

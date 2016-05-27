@@ -40,16 +40,16 @@
 			this.StratumId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.DT = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.FileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.Comment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.MCount = new System.Windows.Forms.TextBox();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.MCountSel = new System.Windows.Forms.TextBox();
-			this.Comment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.SuspendLayout();
 			// 
 			// PrintBtn
 			// 
 			this.PrintBtn.Location = new System.Drawing.Point(767, 15);
-			this.PrintBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.PrintBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.PrintBtn.Name = "PrintBtn";
 			this.PrintBtn.Size = new System.Drawing.Size(100, 28);
 			this.PrintBtn.TabIndex = 5;
@@ -60,7 +60,7 @@
 			// OKBtn
 			// 
 			this.OKBtn.Location = new System.Drawing.Point(767, 69);
-			this.OKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OKBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.OKBtn.Name = "OKBtn";
 			this.OKBtn.Size = new System.Drawing.Size(100, 28);
 			this.OKBtn.TabIndex = 6;
@@ -71,7 +71,7 @@
 			// CancelBtn
 			// 
 			this.CancelBtn.Location = new System.Drawing.Point(767, 105);
-			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.CancelBtn.Name = "CancelBtn";
 			this.CancelBtn.Size = new System.Drawing.Size(100, 28);
 			this.CancelBtn.TabIndex = 7;
@@ -82,7 +82,7 @@
 			// HelpBtn
 			// 
 			this.HelpBtn.Location = new System.Drawing.Point(767, 140);
-			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.HelpBtn.Name = "HelpBtn";
 			this.HelpBtn.Size = new System.Drawing.Size(100, 28);
 			this.HelpBtn.TabIndex = 8;
@@ -102,7 +102,7 @@
             this.Comment});
 			this.listView1.FullRowSelect = true;
 			this.listView1.Location = new System.Drawing.Point(3, 15);
-			this.listView1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.listView1.Margin = new System.Windows.Forms.Padding(4);
 			this.listView1.Name = "listView1";
 			this.listView1.ShowItemToolTips = true;
 			this.listView1.Size = new System.Drawing.Size(755, 448);
@@ -116,7 +116,7 @@
 			// Option
 			// 
 			this.Option.Text = "Meas Option";
-			this.Option.Width = 72;
+			this.Option.Width = 89;
 			// 
 			// Det
 			// 
@@ -146,12 +146,17 @@
 			this.FileName.Text = "File Name";
 			this.FileName.Width = 120;
 			// 
+			// Comment
+			// 
+			this.Comment.Text = "Comment";
+			this.Comment.Width = 72;
+			// 
 			// MCount
 			// 
 			this.MCount.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MCount.CausesValidation = false;
 			this.MCount.Location = new System.Drawing.Point(767, 329);
-			this.MCount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MCount.Margin = new System.Windows.Forms.Padding(4);
 			this.MCount.Name = "MCount";
 			this.MCount.ReadOnly = true;
 			this.MCount.Size = new System.Drawing.Size(116, 15);
@@ -163,17 +168,12 @@
 			this.MCountSel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.MCountSel.CausesValidation = false;
 			this.MCountSel.Location = new System.Drawing.Point(767, 361);
-			this.MCountSel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MCountSel.Margin = new System.Windows.Forms.Padding(4);
 			this.MCountSel.Name = "MCountSel";
 			this.MCountSel.ReadOnly = true;
 			this.MCountSel.Size = new System.Drawing.Size(116, 15);
 			this.MCountSel.TabIndex = 11;
 			this.toolTip1.SetToolTip(this.MCountSel, "Measurements available for use");
-			// 
-			// Comment
-			// 
-			this.Comment.Text = "Comment";
-			this.Comment.Width = 72;
 			// 
 			// IDDMeasurementList
 			// 
@@ -187,7 +187,7 @@
 			this.Controls.Add(this.CancelBtn);
 			this.Controls.Add(this.OKBtn);
 			this.Controls.Add(this.PrintBtn);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "IDDMeasurementList";
 			this.Text = "Verification Measurement Selection";
 			this.ResumeLayout(false);

@@ -176,7 +176,7 @@ namespace DB
                 {
                     if (sql_con != null)
                     {
-                        sql_con.Open();
+		                SQLSpecific.OpenConn(sql_con);
                         sql_cmd = sql_con.CreateCommand();
                         res = true;
                     }

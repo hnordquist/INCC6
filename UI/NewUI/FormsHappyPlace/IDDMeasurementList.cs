@@ -25,27 +25,34 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using AnalysisDefs;
-using NCCReporter;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-
+using AnalysisDefs;
+using NCCReporter;
 namespace NewUI
 {
-    using N = NCC.CentralizedState;   
-    public partial class IDDMeasurementList : Form
+	using N = NCC.CentralizedState;
+	public partial class IDDMeasurementList : Form
     {
 
         public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, bool report, Detector detector = null)
         {
             InitializeComponent();
-			PrepNotepad();
-            SetTitlesAndChoices(filter, alltypes, report,
-                detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
-            mlist = N.App.DB.MeasurementsFor(detector == null? string.Empty : detector.Id.DetectorId, filter);
-            bGood = PrepList(filter, detector);
+			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+			try
+			{
+				PrepNotepad();
+		        SetTitlesAndChoices(filter, alltypes, report,
+			        detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
+				mlist = N.App.DB.MeasurementsFor(detector == null? string.Empty : detector.Id.DetectorId, filter);
+				bGood = PrepList(filter, detector);
+			}
+			finally
+			{
+				System.Windows.Input.Mouse.OverrideCursor = null;
+			}
             SummarySelections = null;
         }
 
@@ -53,14 +60,21 @@ namespace NewUI
                     AssaySelector.MeasurementOption filter, 
                     bool report, bool lmonly, string inspnum = "", Detector detector = null)
         {
-            LMOnly = lmonly;
-            bool alltypes = (AssaySelector.MeasurementOption.unspecified == filter) && !lmonly;
-			PrepNotepad();
-            SetTitlesAndChoices(filter, alltypes, report,
-                detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
-            mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
-            bGood = PrepList(filter, detector);
-        }
+			LMOnly = lmonly;
+			bool alltypes = (AssaySelector.MeasurementOption.unspecified == filter) && !lmonly;
+			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+			try
+			{
+				PrepNotepad();
+				SetTitlesAndChoices(filter, alltypes, report,
+					detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
+				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
+				bGood = PrepList(filter, detector);
+			} finally
+			{
+				System.Windows.Input.Mouse.OverrideCursor = null;
+			}
+		}
 
         public IDDMeasurementList()
         {
@@ -325,7 +339,10 @@ namespace NewUI
 
         private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            ListItemSorter(sender, e);
+			Cursor sav = listView1.Cursor;
+			listView1.Cursor = Cursors.WaitCursor;
+			ListItemSorter(sender, e);
+			listView1.Cursor = sav;
         }
 
         public void ListItemSorter(object sender, ColumnClickEventArgs e)
@@ -385,5 +402,5 @@ namespace NewUI
 				bNotepadHappensToBeThere =  File.Exists(notepadPath);
 			}
 		}
-    }
+	}
 }

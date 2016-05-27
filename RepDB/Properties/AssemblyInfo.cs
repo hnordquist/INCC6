@@ -30,4 +30,4 @@ using NCCConfig;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("6.0.1.7")]
+[assembly: AssemblyVersion("6.0.1.8")]

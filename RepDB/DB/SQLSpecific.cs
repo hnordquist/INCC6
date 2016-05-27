@@ -258,6 +258,22 @@ namespace DB
             return s;
         }
 
+		public static void OpenConn(DbConnection conn)
+		{
+  			conn.Open();
+			switch (DBMain.Provider)
+            {
+				case DBMain.DbsWeLove.SQLite:				
+					DbCommand cmd = conn.CreateCommand();
+					cmd.CommandText= ("PRAGMA foreign_keys=on;");
+					int i = cmd.ExecuteNonQuery();
+					break;
+				default:
+					break;
+			}
+		}
+
+
 
         // todo: unused, but could be 
         public static DbConnection createDB()
@@ -280,7 +296,7 @@ namespace DB
         // devnote: is this needed. Better that all DB init, create, reset ops be performed outside the product
         public static bool buildDB(DbConnection sql_con)
         {
-            sql_con.Open();
+			SQLSpecific.OpenConn(sql_con);
             DbCommand sql_cmd = sql_con.CreateCommand();
 
             //Build tables....

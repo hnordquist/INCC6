@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -32,7 +32,7 @@ namespace NewUI
 {
 
     using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+    using N = NCC.CentralizedState;
     public partial class IDDDetectorDelete : Form
     {
         Detector target;
@@ -41,7 +41,7 @@ namespace NewUI
         {
             // Populate the combobox in the selector panel
             DetectorIdComboBox.Items.Clear();
-            foreach (Detector d in NC.App.DB.Detectors)
+            foreach (Detector d in N.App.DB.Detectors)
             {
                 //if (!d.ListMode)
                     DetectorIdComboBox.Items.Add(d);
@@ -65,10 +65,10 @@ namespace NewUI
         {
             if (target == null)
                 return;
-            if (null != NC.App.DB.Detectors.Find(d => String.Compare(d.Id.DetectorName, target.Id.DetectorName, true) == 0))
+            if (null != N.App.DB.Detectors.Find(d => String.Compare(d.Id.DetectorName, target.Id.DetectorName, true) == 0))
             {
                 DialogResult r = MessageBox.Show(
-                    String.Format("Do you want to delete detector {0}, including all its measurements and all its database parameters?", target.Id.DetectorName),
+                    string.Format("Do you want to delete detector {0}, including all its measurements and all its database parameters?", target.Id.DetectorName),
                      "Confirm Delete", MessageBoxButtons.YesNo);
                 if (r == System.Windows.Forms.DialogResult.Yes)
                 {
@@ -83,25 +83,12 @@ namespace NewUI
         }
 
         /*
-
-            These are all deleted from the DB via CASCADE, so their correspoding in-memory maps need to be refeshed
-
-add_a_source_setup_rec		interface IDetAPI
-alpha_beta_rec			interface IDetAPI
-bkg_parms_rec			interface IDetAPI
-norm_parms_rec			interface IDetAPI
-unattended_parms_rec		interface IDetAPI
-HVCalibrationParams		interface IDetAPI
-
-Has a dual key, so can optionally delete it I guess, (det + mtl type)
+		URGENT doing this step by step
+			
 analysis_method_rec             INCCAnalysisMethodMap DetectorMaterialAnalysisMethods
 
-Like the measurement, this one has a text field for the detector field, not a foreign key
-so can optionally delete it I guess (det + mtl type) 
-acquire_parms_rec 		Dictionary<AcquireSelector, AcquireParameters> AcquireParametersMap
-
-// optional if defined, not in-memory, cascade delete causes deleteion in DB, 
-// these do not have in memory maps or list beyond DetectorMaterialAnalysisMethods 
+// optional if defined, not in-memory, cascade delete causes deletion in DB, 
+// these do not have in-memory maps or lists other than DetectorMaterialAnalysisMethods 
 active_rec
 active_mult_rec
 active_passive_rec
@@ -140,7 +127,8 @@ LMMultiplicity
 
         private void HelpButton_Click(object sender, EventArgs e)
         {
-
+                string msg = "Select the detector id you want to delete. WARNNG: all database parameters and measurements associated with this detector id will be deleted. ";
+                MessageBox.Show(msg, "WARNING");
         }
     }
 }

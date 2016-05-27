@@ -585,15 +585,16 @@ namespace NCC
         /// <returns>true if detector is deleted from in-memory map and database</returns>
         static public bool DeleteDetectorAndAssociations(Detector det)
         {
-            bool gone = CentralizedState.App.DB.DeleteDetector(det); // removes from DB then from Detectors list, just like isotopics
+            bool gone = CentralizedState.App.DB.DeleteDetector(det); // removes from DB then from Detectors list, just like isotopics. Delet cascades thorug the datbase, so only in-memory collecitons need to be refreshed
             if (gone)
             {
                 // remove from in-memory and database 
-                CentralizedState.App.DB.NormParameters.Delete(det);
-                CentralizedState.App.DB.UnattendedParameters.Delete(det);
-                CentralizedState.App.DB.BackgroundParameters.Delete(det);
-                CentralizedState.App.DB.AASSParameters.Delete(det);
-                CentralizedState.App.DB.HVParameters.Delete(det);
+                CentralizedState.App.DB.NormParameters.Reset();
+                CentralizedState.App.DB.UnattendedParameters.Reset();
+                CentralizedState.App.DB.BackgroundParameters.Reset();
+                CentralizedState.App.DB.AASSParameters.Reset();
+                CentralizedState.App.DB.HVParameters.Reset();
+				CentralizedState.App.DB.ResetAcquireParametersMap();
             }
             return gone;
         }
@@ -767,6 +768,12 @@ namespace NCC
 				det.MultiplicityParams.FA = acq.lm.FADefault;
             return det;
         }
+
+		public static string GetAppTitle()
+		{
+            AcquireParameters acq = CentralizedState.App.DB.LastAcquire();
+			return acq.facility.Name + " - " + CentralizedState.App.Name + " " + CentralizedState.App.Config.VersionString;
+		}
 
         public static AnalysisDefs.Isotopics GetAcquireIsotopics(AcquireParameters acq)
         {
