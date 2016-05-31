@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -27,35 +27,58 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
+using AnalysisDefs;
 
 namespace NewUI
 {
-    public partial class IDDHeavyMetalItemData : Form
+    using Integ = NCC.IntegrationHelpers;
+    using NC = NCC.CentralizedState;
+
+	public partial class IDDPercentU235 : Form
     {
-        public IDDHeavyMetalItemData()
+
+        double percent;
+		bool modified = false;
+
+		// all of this so the parameters can be updated upon OK
+        public Detector det;
+        public AcquireParameters acq = null;
+        public INCCAnalysisParams.INCCMethodDescriptor imd;
+        public AnalysisMethods ams;
+
+        public IDDPercentU235(AnalysisMethods ams_, INCCAnalysisParams.cal_curve_rec c)
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			percent = c.percent_u235;
+            U235PercentTextBox.Text = percent.ToString("F3"); 
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			ams = ams_;
         }
 
-        private void DeclaredUMassTextBox_TextChanged(object sender, EventArgs e)
+        private void U235PercentTextBox_Leave(object sender, EventArgs e)
         {
-
-        }
-
-        private void LengthTextBox_TextChanged(object sender, EventArgs e)
-        {
-
+            double d = percent;
+            modified = (Format.ToDblBracket(((TextBox)sender).Text, ref d, 0.0, 100.0));
+            if (modified) { percent = d; }
+            ((TextBox)sender).Text = percent.ToString("F3");
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+			if (modified)
+			{
+				AnalysisMethod am = AnalysisMethod.CalibrationCurve;
+                INCCAnalysisParams.INCCMethodDescriptor c = ams.GetMethodParameters(am);
+                ((INCCAnalysisParams.cal_curve_rec)c).percent_u235 = percent;
+                INCCSelector sel = new INCCSelector(acq.detector_id, acq.item_type);
+                NC.App.DB.UpdateAnalysisMethod(sel, ams);  // flush changes on internal map to the DB
+			}
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

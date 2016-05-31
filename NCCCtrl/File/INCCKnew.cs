@@ -216,7 +216,13 @@ namespace NCCTransfer
                 Multiplicity mkey = new Multiplicity(srtype.DefaultFAFor());
                 mkey.SR = new ShiftRegisterParameters(det.SRParams);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(srtype.DefaultFAFor(), 0);
-                CycleProcessing.calc_alpha_beta(mkey, mcr);
+				ABKey abkey = new ABKey(mkey, mcr);
+				AnalysisDefs.AlphaBeta AB = AlphaBetaCache.GetAlphaBeta(abkey);
+				if (AB == null)
+				{
+					CycleProcessing.calc_alpha_beta(mkey, mcr);
+					AlphaBetaCache.AddAlphaBeta(abkey, mcr.AB);
+				}
                 det.AB.TransferIntermediates(mcr.AB);
             }
             catch (Exception e)
@@ -1792,7 +1798,13 @@ namespace NCCTransfer
                 // AB is calculated at runtime when conditioning a cycle AFAICT, so its gotta be worked here at least once
                 if (det.AB.Unset)
                 {
-                    CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);                    
+					ABKey abkey = new ABKey(det.MultiplicityParams, mcr);
+					AnalysisDefs.AlphaBeta AB = AlphaBetaCache.GetAlphaBeta(abkey);
+					if (AB == null)
+					{
+						CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
+						AlphaBetaCache.AddAlphaBeta(abkey, mcr.AB);
+					}                  
                 }
                 mcr.AB.TransferIntermediates(det.AB);  // copy alpha beta onto the cycle's results 
             }

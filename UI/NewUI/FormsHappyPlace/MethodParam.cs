@@ -65,7 +65,7 @@ namespace NewUI
             foreach (INCCAnalysisParams.CurveEquation cs in System.Enum.GetValues(typeof(INCCAnalysisParams.CurveEquation)))
             {
                 //Per Martyn, use equation string, not named value.  7/17/2014 HN
-                        cb.Items.Add(cs.ToDisplayString());                
+                cb.Items.Add(cs.ToDisplayString());                
             }
             cb.Refresh();
             cb.SelectedIndex = cb.FindString (v.cal_curve_equation.ToDisplayString());

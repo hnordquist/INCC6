@@ -45,9 +45,8 @@ namespace NewUI
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.verification;
-            this.Text += " for detector " + ah.det.Id.DetectorName;
+            Text += " for detector " + ah.det.Id.DetectorName;
             FieldFiller();
-            //this.SetDesktopLocation(this.Parent.DisplayRectangle.X + this.Parent.DisplayRectangle.Width + 10, this.Parent.DisplayRectangle.Y);
             ToolTip mustSelect = new ToolTip();
             mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
             mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
@@ -67,51 +66,51 @@ namespace NewUI
         {
             // Populate the UI fields with values from the local AcquireParameters object
 
-            this.QCTestsCheckBox.Checked = ah.ap.qc_tests;
-            this.PrintResultsCheckBox.Checked = ah.ap.print;
-            this.CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
-            this.NumPassiveCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
-            this.NumActiveCyclesTextBox.Text = Format.Rend(ah.ap.active_num_runs);
-            this.CommentTextBox.Text = ah.ap.comment;
-            this.CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
-            this.MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
-            this.MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
-            this.MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
-            this.DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
-            this.DrumWeightTextBox.Text = ah.ap.drum_empty_weight.ToString("F3");
-            this.MBAComboBox.Items.Clear();
+            QCTestsCheckBox.Checked = ah.ap.qc_tests;
+            PrintResultsCheckBox.Checked = ah.ap.print;
+            CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
+            NumPassiveCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
+            NumActiveCyclesTextBox.Text = Format.Rend(ah.ap.active_num_runs);
+            CommentTextBox.Text = ah.ap.comment;
+            CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
+            MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
+            MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
+            MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
+            DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
+            DrumWeightTextBox.Text = ah.ap.drum_empty_weight.ToString("F3");
+            MBAComboBox.Items.Clear();
 
             InventoryChangeCodeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.InvChangeCodes.GetList())
             {
-                this.InventoryChangeCodeComboBox.Items.Add(desc.Name);
+                InventoryChangeCodeComboBox.Items.Add(desc.Name);
             }
             IOCodeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.IOCodes.GetList())
             {
-                this.IOCodeComboBox.Items.Add(desc.Name);
+                IOCodeComboBox.Items.Add(desc.Name);
             }
             foreach (INCCDB.Descriptor desc in NC.App.DB.MBAs.GetList())
             {
                 MBAComboBox.Items.Add(desc);
             }
-            this.ItemIdComboBox.Items.Clear();
+            ItemIdComboBox.Items.Clear();
             foreach (ItemId id in NC.App.DB.ItemIds.GetList())
             {
                 ItemIdComboBox.Items.Add(id.item);
             }
-            this.StratumIdComboBox.Items.Clear();
+            StratumIdComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
             {
                 StratumIdComboBox.Items.Add(desc);
             }
-            this.MaterialTypeComboBox.Items.Clear();
+            MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
             {
                 MaterialTypeComboBox.Items.Add(desc.Name);
             }
 
-            this.DataSourceComboBox.Items.Clear();
+            DataSourceComboBox.Items.Clear();
             foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
@@ -122,19 +121,19 @@ namespace NewUI
 
             if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
-                this.UseNumCyclesRadioButton.Checked = true;
+                UseNumCyclesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.DoublesPrecision)
             {
-                this.UseDoublesRadioButton.Checked = true;
+                UseDoublesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
             {
-                this.UseTriplesRadioButton.Checked = true;
+                UseTriplesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.Pu240EffPrecision)
             {
-                this.UsePu240eRadioButton.Checked = true;
+                UsePu240eRadioButton.Checked = true;
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
@@ -165,12 +164,12 @@ namespace NewUI
         }
         private void Pu240eCoeffBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm");
+			Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm");
         }
 
         private void MaterialTypeHelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/materialtypeadddelete.htm");
+			Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/materialtypeadddelete.htm");
         }
 
         private void IsotopicsBtn_Click(object sender, EventArgs e)
@@ -186,12 +185,12 @@ namespace NewUI
                 return;
             ah.RefreshParams();
             Isotopics selected = f.GetSelectedIsotopics;
-            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
+            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id. Isotopics already saved to DB in IDDIsotopics*/
             {
                 ah.ap.isotopics_id = selected.id;
-                // do new item id stuff right after this
+                // NEXT: do new item id stuff right after this
             }
-            else  if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
+            else if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
             {
                 // isotopic settings will be loaded from DB prior to running measurement
 
@@ -201,7 +200,6 @@ namespace NewUI
                     return;
                 Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
                 Cur.modified = true;
-
             }
         }
 
@@ -213,7 +211,7 @@ namespace NewUI
                 return;
             ah.RefreshParams();
             CompositeIsotopics selected = f.GetSelectedIsotopics;
-            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id.  Isotopics already saved to DB in IDDIsotopics*/
+            if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id. Isotopics already saved to DB in IDDIsotopics*/
             {
                 ah.ap.isotopics_id = selected.id;
                 ah.ap.comp_isotopics_id = selected.id;
@@ -234,57 +232,79 @@ namespace NewUI
 
         }
 
-        private void OKBtn_Click(object sender, EventArgs e)
+		private bool GetAdditionalParameters()
+		{
+			bool res = false;
+
+			AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
+			if (am != null)
+			{
+				DialogResult dlgres = DialogResult.OK;
+				// if Verif + cal curve get U235 percent/get heavy metal data
+				if (am.Has(AnalysisMethod.CalibrationCurve))
+				{
+					INCCAnalysisParams.cal_curve_rec cal_curve = (INCCAnalysisParams.cal_curve_rec)am.GetMethodParameters(AnalysisMethod.CalibrationCurve);
+					if (cal_curve.CalCurveType == INCCAnalysisParams.CalCurveType.U)
+						dlgres = (new IDDPercentU235(am, cal_curve).ShowDialog());
+					else if (cal_curve.CalCurveType == INCCAnalysisParams.CalCurveType.HM)
+						dlgres = (new IDDHeavyMetalItemData(am, ah.ap.ItemId).ShowDialog());
+				}
+				// if Verif + (cal curve or KA) get heavy metal data
+				if (am.Has(AnalysisMethod.KnownA))
+				{
+					INCCAnalysisParams.known_alpha_rec ka = (INCCAnalysisParams.known_alpha_rec)am.GetMethodParameters(AnalysisMethod.KnownA);
+					if (ka.known_alpha_type == INCCAnalysisParams.KnownAlphaVariant.HeavyMetalCorrection)
+						dlgres = (new IDDHeavyMetalItemData(am, ah.ap.ItemId).ShowDialog());
+				}
+				// if Verif + collar  get collar data
+				if (am.Has(AnalysisMethod.Collar))
+				{
+					dlgres = (new IDDCollarData().ShowDialog()); // todo: implement collar data dlg
+				}
+				// if Verif + curium ratio, get cm_pu_ratio w dlg; 
+				if (am.Has(AnalysisMethod.CuriumRatio))
+				{
+					dlgres = (new IDDCmPuRatio(ah.ap).ShowDialog());
+				}
+				res = (dlgres == DialogResult.OK); 
+			} else
+			{
+				MessageBox.Show(string.Format("No analysis methods specified for detector {0} and material {1}", ah.ap.detector_id, ah.ap.item_type),
+					"Verification", MessageBoxButtons.OK);
+			}
+			return res;
+		}
+
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			if (string.IsNullOrEmpty(ItemIdComboBox.Text))
+				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
+			else
+			{
+				// save/update item id changes only when user selects OK
+				NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+				NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+				bool ocntinue = GetAdditionalParameters();
+				if (ocntinue && (ah.OKButton_Click(sender, e) == DialogResult.OK))
+				{
+					Visible = false;
+					// Add strata update to measurement object.    HN 9.23.2015              
+					//user can cancel in here during LM set-up, account for it.
+					UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
+					UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
+					Close();
+				}
+			}
+		}
+
+		private void CancelBtn_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(ItemIdComboBox.Text))
-                MessageBox.Show("You must enter an item id for this assay.", "ERROR");
-            else
-            {
-                // save/update item id changes only when user selects OK
-                NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-                NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
-                if (ah.OKButton_Click(sender, e) == DialogResult.OK)
-                {
-                    //This is fubar. Must save changed parameters before running analysis. HN 9.10.2015
-                    AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
-                    if (am != null)
-                    {
-
-                        // NEXT: implement these choices, needs dialogs
-                        // if Verif + cal curve get U235 percent
-                        // if Verif + (cal curve or KA) get heavy metal data
-                        // if Verif + collar  get collar data
-
-                        // if Verif + curium ratio, get cm_pu_ratio w dlg; 
-                        if (am.Has(AnalysisMethod.CuriumRatio))
-                        {
-                            new IDDCmPuRatio(ah.ap).ShowDialog();
-                        }
-                        Visible = false;
-                        // Add strata update to measurement object.    HN 9.23.2015              
-
-                        //user can cancel in here during LM set-up, account for it.
-                        UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
-                        UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-                        this.Close();
-                    }
-                    else
-                    {
-                        MessageBox.Show(String.Format("No analysis methods specified for detector {0} and material {1}", ah.ap.detector_id, ah.ap.item_type),
-                            "Verification", MessageBoxButtons.OK);
-                    }
-                }
-            }
-        }
-
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm");
+			Help.ShowHelp(null, ".\\inccuser.chm");
         }
 
         private void MBAComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -294,14 +314,12 @@ namespace NewUI
 
         private void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ItemId Cur = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, ItemIdComboBox.Text, false) == 0);
+            ItemId Cur = NC.App.DB.ItemIds.Get(d => string.Compare(d.item, ItemIdComboBox.Text, false) == 0);
             if (Cur == null)
             {
-                return; // 
+                return;
             }
-  /*      
-           Copy the value back after an existing item id is selected from the combo box
-                */
+        // Copy the value back after an existing item id is selected from the combo box
         //    else /*if (iid.item != ah.ap.item_id)*/ // This did not catch situation in which isotopics had changed for item. hn 5.12.2015
         //    {
                 //existing item id.....just update hn 5.14.2015
@@ -313,7 +331,7 @@ namespace NewUI
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ah.MaterialTypeComboBox_SelectedIndexChanged(sender, e);;
+            ah.MaterialTypeComboBox_SelectedIndexChanged(sender, e);
         }
 
         private void UseNumCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -497,7 +515,7 @@ namespace NewUI
             if (Cur == null)
             {
                 // new items need the isotopics specified
-                UpdateIsotopics(straight:false);
+                UpdateIsotopics(straight: false);
                 //Add the item id if not found in DB. Use the current values on the dialog for the item id content
                 ah.ItemIdComboBox_Leave(sender, e);  // put the new id on the acq helper
                 Cur = ah.ap.ItemId;  // the dlg and acq parms are the same, use the ItemId helper to construct. Create a new object if there is no match.

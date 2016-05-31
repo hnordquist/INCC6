@@ -61,7 +61,7 @@
             this.DeclaredUMassTextBox.Name = "DeclaredUMassTextBox";
             this.DeclaredUMassTextBox.Size = new System.Drawing.Size(100, 20);
             this.DeclaredUMassTextBox.TabIndex = 2;
-            this.DeclaredUMassTextBox.TextChanged += new System.EventHandler(this.DeclaredUMassTextBox_TextChanged);
+            this.DeclaredUMassTextBox.Leave += new System.EventHandler(this.DeclaredUMassTextBox_Leave);
             // 
             // LengthTextBox
             // 
@@ -69,7 +69,7 @@
             this.LengthTextBox.Name = "LengthTextBox";
             this.LengthTextBox.Size = new System.Drawing.Size(100, 20);
             this.LengthTextBox.TabIndex = 3;
-            this.LengthTextBox.TextChanged += new System.EventHandler(this.LengthTextBox_TextChanged);
+            this.LengthTextBox.Leave += new System.EventHandler(this.LengthTextBox_Leave);
             // 
             // OKBtn
             // 

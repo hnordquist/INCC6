@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -1001,7 +1001,127 @@ namespace AnalysisDefs
 
 
     }
-    public class MultiplicityCountingRes : ParameterBase, ICountingResult
+
+	/// <summary>
+	/// Cache of computed AlphaBeta values
+	/// The calculation can be expensive with high bin counts
+	/// This cache reduces the calculations to once per unique AlphaBeta key
+	/// </summary>
+	static public class AlphaBetaCache
+	{
+		static private Dictionary<ABKey, AlphaBeta> ABCache;
+
+		static public AlphaBeta GetAlphaBeta(ABKey abkey)
+		{
+			AlphaBeta AB = null;
+			if (ABCache == null)
+				ABCache = new Dictionary<ABKey, AlphaBeta>();
+
+			if (ABCache.ContainsKey(abkey))
+			{
+				//ABKey.log.TraceEvent(NCCReporter.LogLevels.Info, 5439, "Got " + abkey.ToString());
+				AB = ABCache[abkey];
+			}
+
+			return AB;
+		}
+
+		static public void AddAlphaBeta(ABKey abkey, AlphaBeta AB)
+		{
+			if (ABCache == null)
+				ABCache = new Dictionary<ABKey, AlphaBeta>();
+			ABCache[abkey] = AB; //  new AlphaBeta(AB);
+		}
+	}
+
+	/// <summary>
+	/// 3 element Key for the Alpha Beta cache,
+	/// Alpha beta depends upon
+	///    Multiplicity bin count
+	///    Phi or really the precursor Deadtime Coefficient T
+	///    The gatewidth
+	///    
+	/// So the cache uses a 3 element key
+	/// </summary>
+	public class ABKey : IEquatable<ABKey>, IComparable<ABKey>
+	{
+
+		public ABKey()
+		{
+		}
+
+		public ABKey(Multiplicity mkey, MultiplicityCountingRes mcr)
+		{
+			bins = (uint)mcr.MaxBins;
+			deadTimeCoefficientTinNanoSecs = mkey.sr.deadTimeCoefficientTinNanoSecs;
+			gateWidthTics = mkey.gateWidthTics;
+		}
+
+		public bool Equals(ABKey other)
+		{
+			return other != null &&
+				other.gateWidthTics == gateWidthTics &&
+				other.bins == bins &&
+				other.deadTimeCoefficientTinNanoSecs == deadTimeCoefficientTinNanoSecs;
+		}
+
+		public int CompareTo(ABKey other)
+		{
+			if (other == null)
+				return 1;
+			else
+			{
+				int res = bins.CompareTo(other.bins);
+				if (res == 0)
+					res = deadTimeCoefficientTinNanoSecs.CompareTo(other.deadTimeCoefficientTinNanoSecs);
+				if (res == 0)
+					res = gateWidthTics.CompareTo(other.gateWidthTics);
+				return res;
+			}
+		}
+
+		public override string ToString()
+		{
+			return gateWidthTics.ToString() + "," + deadTimeCoefficientTinNanoSecs.ToString() + "," + bins.ToString();
+		}
+
+		public override int GetHashCode()
+		{
+			return gateWidthTics.GetHashCode() ^ deadTimeCoefficientTinNanoSecs.GetHashCode() ^ bins.GetHashCode();
+		}
+
+
+		public uint bins;
+		public double deadTimeCoefficientTinNanoSecs;
+		public ulong gateWidthTics;
+	}
+
+	//use:
+	//input is an mcr and an mkey
+
+	//            // check if the arrays have not been computed
+	//            AlphaBeta AB = GetAlphaBeta(abkey);
+	//            if (AB != null)
+	//                return AB;
+
+
+	//// if not already computed and stored in cache, create a key and compute alphabeta and store the computed alpha beta in the cache
+	//           ABKey abkey = new ABKey(mkey, mcr);
+	//           mcr.AB = cached_calc_alpha_beta(abkey);
+
+	//       static AlphaBeta cached_calc_alpha_beta(ABKey abkey)
+	//       {
+	//           // check if the arrays have not been computed
+	//           AlphaBeta AB = GetAlphaBeta(abkey);
+	//           if (AB != null)
+	//               return AB;
+
+	//           AB = new AlphaBeta((int)abkey.bins);
+	//           AddAlphaBeta(abkey, AB);
+
+
+
+	public class MultiplicityCountingRes : ParameterBase, ICountingResult
     {
 
         public TimeSpan TS;
