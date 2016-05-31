@@ -1083,7 +1083,10 @@ namespace AnalysisDefs
             stratum_id = new INCCDB.Descriptor(id.stratum, string.Copy(id.stratum));
             inventory_change_code = string.Copy(id.inventoryChangeCode);
             io_code = string.Copy(id.IOCode);
-            mass = id.declaredMass;
+			mass = id.declaredMass;
+			if (id.declaredUMass > 0)  // overrides default
+				mass = id.declaredUMass;
+			// length = id.length;
         }
 
         public ItemId ItemId
@@ -1098,7 +1101,7 @@ namespace AnalysisDefs
                 id.IOCode = string.Copy(io_code);
                 id.declaredMass = mass;
                 id.declaredUMass = mass; // devnote: these two mass values cannot exist at the same time, so the input is always one value
-                //id.length = 
+                //id.length = ?? not on the acq rec
                 return id;
             }
         }

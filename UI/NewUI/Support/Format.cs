@@ -253,6 +253,22 @@ namespace NewUI
             return false;
         }
 
+        static public bool ToDblBracket(string s, ref double TargetValue, double low = double.MinValue, double high = double.MaxValue)
+        {
+            double NewValue;
+            if (double.TryParse(s, out NewValue))
+            {
+				if (NewValue != TargetValue)
+				{
+					if (NewValue >= low && NewValue <= high)
+					{
+						TargetValue = NewValue;
+						return true;
+					} 
+				}
+            }
+            return false;
+        }		
 
         static public bool ToInt32(string s, ref int TargetValue, int low = int.MinValue, int high = int.MaxValue)
         {

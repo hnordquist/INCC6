@@ -339,12 +339,6 @@
     <Compile Include="Unready\IDDDemingFitSelect.Designer.cs">
       <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDDialog1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDDialog1.Designer.cs">
-      <DependentUpon>IDDDialog1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Unready\IDDDiskAcqPathFilename.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -393,10 +387,10 @@
     <Compile Include="Unready\IDDGloveboxEdit.Designer.cs">
       <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDHeavyMetalItemData.cs">
+    <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDHeavyMetalItemData.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.Designer.cs">
       <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDHelpInfoDialog.cs">
@@ -531,10 +525,10 @@
     <Compile Include="Unready\IDDPasswordEdit.Designer.cs">
       <DependentUpon>IDDPasswordEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPercentU235.cs">
+    <Compile Include="FormsHappyPlace\IDDPercentU235.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPercentU235.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPercentU235.Designer.cs">
       <DependentUpon>IDDPercentU235.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDPLCSetup.cs">
@@ -1399,9 +1393,6 @@
     <EmbeddedResource Include="Unready\IDDDemingFitSelect.resx">
       <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDDialog1.resx">
-      <DependentUpon>IDDDialog1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDDiskAcqPathFilename.resx">
       <DependentUpon>IDDDiskAcqPathFilename.cs</DependentUpon>
     </EmbeddedResource>
@@ -1426,7 +1417,7 @@
     <EmbeddedResource Include="Unready\IDDGloveboxEdit.resx">
       <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDHeavyMetalItemData.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDHeavyMetalItemData.resx">
       <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDHelpInfoDialog.resx">
@@ -1495,7 +1486,7 @@
     <EmbeddedResource Include="Unready\IDDPasswordEdit.resx">
       <DependentUpon>IDDPasswordEdit.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPercentU235.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPercentU235.resx">
       <DependentUpon>IDDPercentU235.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDPLCSetup.resx">

@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works, 
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -27,30 +27,70 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
-    public partial class IDDPercentU235 : Form
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
+
+	public partial class IDDHeavyMetalItemData : Form
     {
-        public IDDPercentU235()
+        double umass, length;
+		bool modified = false;
+
+		// all of this so the item id and acquire params can be updated upon OK
+        public Detector det;
+        public AcquireParameters acq = null;
+
+		public IDDHeavyMetalItemData(AnalysisMethods ams_, ItemId item)
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			umass = item.declaredUMass;
+			length = item.length;
+            DeclaredUMassTextBox.Text = umass.ToString("F3"); 
+            LengthTextBox.Text = length.ToString("F3"); 
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
         }
 
-        private void U235PercentTextBox_TextChanged(object sender, EventArgs e)
+        private void DeclaredUMassTextBox_Leave(object sender, EventArgs e)
         {
+			//0.001, 1e6
+            double d = umass;
+            modified = (Format.ToDblBracket(((TextBox)sender).Text, ref d, 0.001, 1e6));
+            if (modified) { umass = d; }
+            ((TextBox)sender).Text = umass.ToString("F3");
+        }
 
+        private void LengthTextBox_Leave(object sender, EventArgs e)
+        {
+			// 0.001, 10000.0
+            double d = length;
+            modified = (Format.ToDblBracket(((TextBox)sender).Text, ref d, 0.001, 1e4));
+            if (modified) { length = d; }
+            ((TextBox)sender).Text = length.ToString("F3");
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+			if (modified)
+			{
+				ItemId id = NC.App.DB.ItemIds.Get(acq.ItemId.item);
+				if (id != null)
+				{
+					id.length = length;
+					id.declaredUMass = umass;
+					id.modified = true;
+					NC.App.DB.ItemIds.SetList();
+					acq.ApplyItemId(id);
+					NC.App.DB.UpdateAcquireParams(acq, det.ListMode); // update the acquire params too
+				}
+			}
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

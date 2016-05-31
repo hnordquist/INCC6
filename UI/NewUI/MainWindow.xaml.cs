@@ -95,7 +95,7 @@ namespace NewUI
             {
                 //det.SRParams.CopyValues(f.sr);
                 // only SR values copied here, changes to baud and det type (not on SRParams) already copied in dlg OK event 
-                // NEXT: if type changed from SR to LMMM, call up the LMMM dialogs now
+                // Conceptually possible, but practically too much work: if type changed from SR to LMMM, call up the LMMM dialogs now
                 //NC.App.DB.UpdateDetector(det);
             }
             
