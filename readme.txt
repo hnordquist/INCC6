@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 8
-6.0.1.8 May 27, 2016 J. Longo
+INCC6 Beta Release 9
+6.0.1.9 June 1, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International

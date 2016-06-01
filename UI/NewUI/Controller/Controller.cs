@@ -526,6 +526,7 @@ namespace NewUI
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 base.StartAction();
@@ -616,6 +617,7 @@ namespace NewUI
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 base.StartAction();

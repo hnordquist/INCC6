@@ -410,6 +410,7 @@ namespace DAQ
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             SRControlThread srct = (SRControlThread)sender;
             SRControl sr = srct.SRCtrl;
             string identifier = "<unset>";
@@ -493,6 +494,7 @@ namespace DAQ
                                 // run this out-of-thread so that caller wait is reset prior to the restart in StartLMCAssay!
                                 Action<object> action = (object obj) =>
                                 {
+                                    System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
                                     SRControlThread talsrct = (SRControlThread)obj;
                                     talsrct.SROpCompletedEvent(talsrct.status);
                                 };

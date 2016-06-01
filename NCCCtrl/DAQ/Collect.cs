@@ -278,6 +278,7 @@ namespace DAQ
         public Thread HVCalibOperation()
         {
             Thread hvt = new Thread(HVCoreOp);
+            hvt.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             hvt.Start();
             return hvt;
         }
@@ -455,6 +456,7 @@ namespace DAQ
         public Thread AssayOperation()
         {
             Thread at = new Thread(ThreadAssayCoreOp);
+            at.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;    
             at.Start();
             return at;
         }

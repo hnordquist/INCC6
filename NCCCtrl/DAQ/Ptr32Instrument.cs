@@ -158,7 +158,9 @@ namespace Instr
         /// <exception cref="Ptr32Exception">An error occurred communicating with the device.</exception>
         protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
-            try {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            try
+            {
                 m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Started assay", DeviceName);
                 m_logger.Flush();
 
@@ -265,7 +267,9 @@ namespace Instr
         /// <exception cref="Ptr32Exception">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
-            try {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            try
+            {
                 m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Started HV calibration", DeviceName);
                 m_logger.Flush();
 				cancellationToken.ThrowIfCancellationRequested();

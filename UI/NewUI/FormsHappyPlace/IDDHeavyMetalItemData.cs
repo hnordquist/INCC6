@@ -85,6 +85,7 @@ namespace NewUI
 					NC.App.DB.UpdateAcquireParams(acq, det.ListMode); // update the acquire params too
 				}
 			}
+			DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
         }
 
