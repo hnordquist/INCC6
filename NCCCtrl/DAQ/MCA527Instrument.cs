@@ -212,9 +212,10 @@ namespace Instr
 		protected void PerformAssay(Measurement measurement, MeasTrackParams mparams, CancellationToken cancellationToken)
 		{
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-			try
-			{
+            try
+            {
 				if (ps == null)
 					throw new Exception("Big L bogus state");  // caught cleanly below
 				if (ps.writingFile && (ps.file == null || ps.file.writer == null))
@@ -528,7 +529,9 @@ namespace Instr
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(Measurement measurement, int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
-            try {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            try
+            {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
                 m_logger.Flush();
 				cancellationToken.ThrowIfCancellationRequested();

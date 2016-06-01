@@ -73,6 +73,7 @@ namespace NewUI
                 INCCSelector sel = new INCCSelector(acq.detector_id, acq.item_type);
                 NC.App.DB.UpdateAnalysisMethod(sel, ams);  // flush changes on internal map to the DB
 			}
+			DialogResult = System.Windows.Forms.DialogResult.OK;
             Close();
         }
 
