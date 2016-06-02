@@ -98,12 +98,12 @@ Closed issues
 #92 File locations are not fully coherent 
 #88 Show type (SR or LM) on facility setup dlg 
 #85 Implement full SQL database implementation 
-#83 Selecting isotopics for use bug 
+#83 Selecting isotopics for use 
 #82 Implement the report subsection filter feature 
 #80 Summary results CSV reports 
 #77 Add support for INCC5 date/time encoded file names 
 #74 Measurement report dialog print feature broken 
-#72 Enhance cmd line to support INCC5-style NCC processing cmdline 
+#72 Enhance cmd line to support INCC5-style NCC processing 
 #71 Add support for reading MCA-527 single channel list mode data files 
 #70 Add MCA-527 single channel list mode DAQ 
 #68 Limit the instrument type selections for List Mode to those actually supported now 
