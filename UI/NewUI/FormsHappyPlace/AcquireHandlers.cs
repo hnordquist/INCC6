@@ -25,20 +25,19 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using System;
+using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
 using Instr;
 using NCCReporter;
-using System;
-using System.Windows.Forms;
 namespace NewUI
 {
 
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    // NEXT: revisit enabling of radio buttons on per-meas option basis, seems to not be following INCC5
-    public class AcquireHandlers
+	public class AcquireHandlers
     {
         public Detector det;
         public AcquireParameters ap;
@@ -161,28 +160,45 @@ namespace NewUI
 
         //// CHECKEDCHANGED HANDLERS ///////////////////////////////////////////
 
+		public bool CycleCount { get { return ap.acquire_type == AcquireConvergence.CycleCount; } }
+		public bool DoublesPrecision { get { return ap.acquire_type == AcquireConvergence.DoublesPrecision; } }
+		public bool TriplesPrecision { get { return ap.acquire_type == AcquireConvergence.TriplesPrecision; } }
+		public bool Pu240EffPrecision { get { return ap.acquire_type == AcquireConvergence.Pu240EffPrecision; } }
+
         public void NumberOfCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.CycleCount;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (CycleCount != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.CycleCount;
+            }
         }
 
         public void DoublesMeasurementPrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.DoublesPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (DoublesPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.DoublesPrecision;
+            }
         }
 
         public void TriplesMeasurementPrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.TriplesPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (TriplesPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.TriplesPrecision;
+            }
         }
 
         public void Pu240ePrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.Pu240EffPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (Pu240EffPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.Pu240EffPrecision;
+            }
         }
 
         public void QCTestsCheckbox_CheckedChanged(object sender, EventArgs e)

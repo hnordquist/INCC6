@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 9
-6.0.1.9 June 1, 2016 J. Longo
+INCC6 Beta Release 10
+6.0.1.10 June 7, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -92,7 +92,8 @@ Issues for basic INCC5/6 feature COMPLETION
 
 Closed issues
 
-#87 DB issues with non En language and region settings
+#98 Acquisition measurement termination conditions NYI
+#97 DB issues with non En language and region settings
 #94 Add a comment column to the various measurement reports dialogues 
 #93 File or folder query for list mode input files confusing 
 #92 File locations are not fully coherent 
