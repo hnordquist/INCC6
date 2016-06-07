@@ -69,7 +69,7 @@ namespace NewUI
         {
             IDDMeasurementList measlist = new IDDMeasurementList(
                 AssaySelector.MeasurementOption.normalization,
-                alltypes: false, report: true, detector: det);
+                alltypes: false, goal: IDDMeasurementList.EndGoal.Report, detector: det);
             if (measlist.bGood)
                 measlist.ShowDialog();
 			SaveAcquireState();

@@ -52,6 +52,11 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
         }
 
+		public AcquireHandlers(AcquireParameters a, Detector dt)
+        {
+            ap = a; det = dt;
+        }
+
         public void RefreshParams()
         {
             ap = Integ.GetCurrentAcquireParamsFor(det);   

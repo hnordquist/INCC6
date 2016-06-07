@@ -104,7 +104,7 @@ namespace NewUI
             IDDMeasurementList measlist = new IDDMeasurementList(); 
             measlist.Init(list,
                     AssaySelector.MeasurementOption.unspecified,
-                    lmonly: bLMOnly, report: true, inspnum: inspnum, detector: det);
+                    lmonly: bLMOnly, goal: IDDMeasurementList.EndGoal.Report, inspnum: inspnum, detector: det);
             if (measlist.bGood)
                 measlist.ShowDialog();
 			SaveAcquireState();

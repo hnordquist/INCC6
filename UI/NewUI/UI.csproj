@@ -633,12 +633,6 @@
     <Compile Include="FormsHappyPlace\IDDReviewAssay.Designer.cs">
       <DependentUpon>IDDReviewAssay.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDReviewAssaySummary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDReviewAssaySummary.Designer.cs">
-      <DependentUpon>IDDReviewAssaySummary.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDReviewBackground.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1539,9 +1533,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewAssay.resx">
       <DependentUpon>IDDReviewAssay.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDReviewAssaySummary.resx">
-      <DependentUpon>IDDReviewAssaySummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewBackground.resx">
       <DependentUpon>IDDReviewBackground.cs</DependentUpon>

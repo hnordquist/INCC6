@@ -1,11 +1,11 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
-DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
-LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
-NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
-OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE.  If software is modified to produce derivative works, 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract
+DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security,
+LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.
+NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED,
+OR ASSUMES ANY LIABILITY FOR THE USE OF THIS SOFTWARE. If software is modified to produce derivative works,
 such modified software should be clearly marked, so as not to confuse it with the version available from LANL.
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
@@ -26,17 +26,60 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
-    public partial class IDDReanalyzeDBMeas : Form
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
+
+	public partial class IDDReanalyzeDBMeas : Form
     {
         public IDDReanalyzeDBMeas()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			this.Text += " for Detector " + det.Id.DetectorId;
+			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, "verification", "All");
         }
+
+
+		private List<INCCDB.IndexedResults> mlist;
+        AcquireParameters acq;
+		Detector det;
+
+		public void ShowOther()
+		{
+			IDDMeasurementList measlist = new IDDMeasurementList();
+			measlist.Init(mlist,
+						AssaySelector.MeasurementOption.verification,
+						goal: IDDMeasurementList.EndGoal.Reanalysis, lmonly: false, inspnum: "All", detector: det);
+            if (measlist.bGood)
+            {
+                DialogResult = measlist.ShowDialog();
+                if (DialogResult == DialogResult.OK)
+                {
+                    Measurement m = measlist.GetSingleSelectedMeas();
+                    if (m == null)
+                        return;
+					DateTimeOffset dto = m.MeasurementId.MeasDateTime;
+                    DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
+					// get the cycles for the selected measurement from the database, and add them to the current measurement
+					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId);
+					foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
+					{
+						cycle.UpdateDataSourceId(DetectorDefs.ConstructedSource.DB, det.Id.SRType,
+							cur.AddTicks(cycle.TS.Ticks), det.Id.FileName);
+						cur = cycle.DataSourceId.dt;
+					}
+					m.Add(cl);
+					new IDDReanalysisAssay(m, acq, det).ShowDialog();
+                }
+            }
+            else
+                DialogResult = DialogResult.None;
+		}
 
         private void OKbtn_Click(object sender, EventArgs e)
         {

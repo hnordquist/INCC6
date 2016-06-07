@@ -37,14 +37,16 @@ namespace NewUI
 	public partial class IDDMeasurementList : Form
     {
 
-        public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, bool report, Detector detector = null)
+		public enum EndGoal { Report, Summary, Reanalysis }
+
+        public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, Detector detector = null)
         {
             InitializeComponent();
 			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 			try
 			{
 				PrepNotepad();
-		        SetTitlesAndChoices(filter, alltypes, report,
+		        SetTitlesAndChoices(filter, alltypes, goal,
 			        detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
 				mlist = N.App.DB.MeasurementsFor(detector == null? string.Empty : detector.Id.DetectorId, filter);
 				bGood = PrepList(filter, detector);
@@ -58,7 +60,7 @@ namespace NewUI
 
         public void Init(List<INCCDB.IndexedResults> ilist, 
                     AssaySelector.MeasurementOption filter, 
-                    bool report, bool lmonly, string inspnum = "", Detector detector = null)
+                    EndGoal goal, bool lmonly, string inspnum = "", Detector detector = null)
         {
 			LMOnly = lmonly;
 			bool alltypes = (AssaySelector.MeasurementOption.unspecified == filter) && !lmonly;
@@ -66,7 +68,7 @@ namespace NewUI
 			try
 			{
 				PrepNotepad();
-				SetTitlesAndChoices(filter, alltypes, report,
+				SetTitlesAndChoices(filter, alltypes, goal,
 					detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
 				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
 				bGood = PrepList(filter, detector);
@@ -90,22 +92,28 @@ namespace NewUI
         SortOrder[] cols;
 
         bool AllMeas = false; // true means all measurements, false means the specified option type
-        bool Reports = false; // false means summary, summary means all detectors        
+        EndGoal Goal = EndGoal.Summary; // summary implies all detectors        
         bool LMOnly = false;
         public bool bGood = false;
 
-        void SetTitlesAndChoices(AssaySelector.MeasurementOption filter, bool alltypes, bool report, string detector = "", string inspnum = "")
+        void SetTitlesAndChoices(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, string detector = "", string inspnum = "")
         {
             string upthehill = "Measurement Selection for Detector";
             string backwards = "Measurement Selection for All Detectors";
+            string itllbe = "Select Measurement for Detector";
             AllMeas = alltypes;
-            Reports = report;
+            Goal = goal;
             string title = "";
-            if (Reports)
+            if (Goal == EndGoal.Report)
                 title = upthehill;
-            else
+            else if (Goal == EndGoal.Summary)
                 title = backwards;
-            if (!AllMeas)
+			else if (Goal == EndGoal.Reanalysis)
+			{
+                title = itllbe;
+				listView1.MultiSelect = false;
+			}
+            if (!AllMeas && Goal != EndGoal.Reanalysis)
                 title = (filter.PrintName() + " " + title);
             if (!string.IsNullOrEmpty(detector))
                 title += (" " + detector);
@@ -116,7 +124,7 @@ namespace NewUI
 
         bool PrepList(AssaySelector.MeasurementOption filter, Detector det)
         {
-            if (Reports)
+            if (Goal == EndGoal.Report)
             { 
                 if (LMOnly)  // LMOnly
                     mlist.RemoveAll(EmptyCSVFile);    // cull those without LM CSV results
@@ -131,14 +139,12 @@ namespace NewUI
                 return false;
             }
             LoadList(filter);
-            if (Reports)   // it is all detectors 
+            if (Goal == EndGoal.Report || Goal == EndGoal.Reanalysis)   // it is for a named detector so elide the detector column
                 listView1.Columns[1].Width = 0;
             if (!AllMeas)
 				listView1.Columns[0].Width = 0;
             if (filter == AssaySelector.MeasurementOption.rates)    // show item id
-            {
                 listView1.Columns[2].Width = 0;
-            }
             if (filter == AssaySelector.MeasurementOption.normalization)
             {
                 listView1.Columns[2].Width = 0;
@@ -223,10 +229,13 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            if (Reports)
+            if (Goal == EndGoal.Report)
                 ShowResults();
-            else
-                WriteSummary();          
+            else if (Goal == EndGoal.Summary)
+                WriteSummary();
+            else if (Goal == EndGoal.Reanalysis)
+                DialogResult = DialogResult.OK;
+				// do something here        
             Close();
         }
 
@@ -317,14 +326,27 @@ namespace NewUI
             return res;
 		}
 
-		private void CancelBtn_Click(object sender, EventArgs e)
+        public Measurement GetSingleSelectedMeas()
+        {
+            foreach (ListViewItem lvi in listView1.Items)
+            {
+                if (!lvi.Selected)
+                    continue;
+                int lvIndex = 0;
+                int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+                return (mlist[lvIndex]);
+            }
+            return null;
+        }
+
+        private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
         }
 
         private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (Reports)
+            if (Goal == EndGoal.Report)
                 ShowResults();
         }
         public void SetSummarySelections(ResultsSummary sel)
