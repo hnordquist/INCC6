@@ -36,14 +36,21 @@ namespace NewUI
     
     public partial class IDDBackgroundSetup : Form
     {
-
+		public BackgroundParameters GetBP { get { return bp; } } 
         BackgroundParameters bp;
         Detector det;
-        public IDDBackgroundSetup()
+        public IDDBackgroundSetup(Detector dt = null, BackgroundParameters bg = null)
         {
             InitializeComponent();
-            det = Integ.GetCurrentAcquireDetector();
-            bp = Integ.GetCurrentBackgroundParams(det);
+			if (det == null)
+				det = Integ.GetCurrentAcquireDetector();
+			else
+				det = dt;
+			if (bp == null)
+	            bp = Integ.GetCurrentBackgroundParams(det);
+			else
+				bp = bg;
+
             bp.modified = false;
             this.Text += " for detector " + det.Id.DetectorName;
             foreach (Control nt in this.Controls)
@@ -90,25 +97,22 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
             DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            if (PassiveSinglesTextBox.Value != bp.rates.DeadtimeCorrectedRates.SinglesRate)
+            if (PassiveSinglesTextBox.Value != bp.DeadtimeCorrectedRates.SinglesRate)
             {
-                //Are there really three copies of this?
-                bp.DeadtimeCorrectedSinglesRate.v = PassiveSinglesTextBox.Value;
-                bp.rates.DeadtimeCorrectedRates.SinglesRate= PassiveSinglesTextBox.Value;
+				//Are there really three copies of this? No, these were meant to be helpers and aliases for convenience. needs to be rewritten
+				bp.DeadtimeCorrectedSinglesRate.v = PassiveSinglesTextBox.Value;
                 bp.rates.DTCRates.Singles.v = PassiveSinglesTextBox.Value;
                 bp.modified = true;
             }
-            if (PassiveDoublesTextBox.Value != bp.rates.DeadtimeCorrectedRates.DoublesRate)
+            if (PassiveDoublesTextBox.Value != bp.DeadtimeCorrectedRates.DoublesRate)
             {
                 bp.DeadtimeCorrectedRates.Doubles.v = PassiveDoublesTextBox.Value;
-                bp.rates.DeadtimeCorrectedRates.DoublesRate = PassiveDoublesTextBox.Value;
                 bp.rates.DTCRates.Doubles.v = PassiveDoublesTextBox.Value;
                 bp.modified = true;
             }
-            if (PassiveTriplesTextBox.Value != bp.rates.DeadtimeCorrectedRates.TriplesRate)
+            if (PassiveTriplesTextBox.Value != bp.DeadtimeCorrectedRates.TriplesRate)
             {
                 bp.DeadtimeCorrectedRates.Triples.v = PassiveTriplesTextBox.Value;
-                bp.rates.DeadtimeCorrectedRates.TriplesRate = PassiveTriplesTextBox.Value;
                 bp.rates.DTCRates.Triples.v = PassiveTriplesTextBox.Value;
                 bp.modified = true;
             }
@@ -144,19 +148,16 @@ namespace NewUI
             if (ActiveSinglesTextBox.Value != bp.INCCActive.SinglesRate)
             {
                 bp.INCCActive.SinglesRate = ActiveSinglesTextBox.Value;
-                bp.INCCActive.Singles.v = ActiveSinglesTextBox.Value;
                 bp.modified = true;
             }
             if (ActiveDoublesTextBox.Value != bp.INCCActive.DoublesRate)
             {
                 bp.INCCActive.DoublesRate = ActiveDoublesTextBox.Value;
-                bp.INCCActive.Doubles.v = ActiveDoublesTextBox.Value;
                 bp.modified = true;
             }
             if (ActiveTriplesTextBox.Value != bp.INCCActive.TriplesRate)
             {
                 bp.INCCActive.TriplesRate = ActiveTriplesTextBox.Value;
-                bp.INCCActive.Triples.v = ActiveTriplesTextBox.Value;
                 bp.modified = true;
             }
             if (ActiveSinglesErrorTextBox.Value != bp.INCCActive.Singles.err)

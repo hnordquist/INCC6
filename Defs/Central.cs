@@ -652,13 +652,20 @@ namespace NCC
             // create the context holder for the measurement. Everything is rooted here ...
             Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
 
-            if (det.ListMode)
+            FillOutMeasurement(meas);
+            // ready for insertion of methods and processing start
+
+        }
+
+        public static void FillOutMeasurement(Measurement meas)
+        {
+            if (meas.Detector.ListMode)
             {
                 // dev note: design flaw exposed by this mess here, when LM has > 1 SVR, there is no way to associate > 1 SVRs with a single detector/SR/Mult/Conn pairing
                 // It should be the other way around, the Mult params for each LMMultiplicity analyzer override the single entry on the sr_parms_rec when each analyis is performed. 
 
-                meas.AnalysisParams =  CentralizedState.App.LMBD.CountingParameters(det, applySRFromDetector:true);
-                if (mo == AssaySelector.MeasurementOption.unspecified) // pure List Mode, not INCC5
+                meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
+                if (meas.MeasOption == AssaySelector.MeasurementOption.unspecified) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
                     ApplyVSRChangesToDefaultDetector(meas);
@@ -666,21 +673,21 @@ namespace NCC
                 else // it is an INCC5 analysis driven with LM data
                 {
                     // check to see if detector settings are copied into an active CA entry
-                    if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(det.MultiplicityParams) && w.Active; }))
-                        meas.AnalysisParams.Add(det.MultiplicityParams);
+                    if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(meas.Detector.MultiplicityParams) && w.Active; }))
+                        meas.AnalysisParams.Add(meas.Detector.MultiplicityParams);
                 }
             }
             else
             {
                 // prepare analyzer params from detector SR params
-                meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(det, applySRFromDetector:false);
-                if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(det.MultiplicityParams); }))
-                    meas.AnalysisParams.Add(det.MultiplicityParams);
+                meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: false);
+                if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(meas.Detector.MultiplicityParams); }))
+                    meas.AnalysisParams.Add(meas.Detector.MultiplicityParams);
             }
 
             // get the INCC5 analysis methods
             meas.INCCAnalysisState = new INCCAnalysisState();
-            INCCSelector sel = new INCCSelector(acq.detector_id, acq.item_type);
+            INCCSelector sel = new INCCSelector(meas.AcquireState.detector_id, meas.AcquireState.item_type);
             AnalysisMethods am;
             bool found = CentralizedState.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
             if (found)
@@ -697,7 +704,7 @@ namespace NCC
 
             // next: stratum not set
             List<INCCDB.StratumDescriptor> sl = CentralizedState.App.DB.StrataList();
-            INCCDB.StratumDescriptor s = sl.Find(w => w.Desc.CompareTo(acq.stratum_id) == 0);
+            INCCDB.StratumDescriptor s = sl.Find(w => w.Desc.CompareTo(meas.AcquireState.stratum_id) == 0);
             if (s == null)
                 meas.Stratum = new Stratum();
             else
@@ -706,8 +713,6 @@ namespace NCC
             INCCResults.results_rec xres = new INCCResults.results_rec(meas);
             meas.INCCAnalysisResults.TradResultsRec = xres;
             CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
-
-            // ready for insertion of methods and processing start
 
         }
 

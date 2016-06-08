@@ -1378,6 +1378,11 @@ namespace AnalysisDefs
         public Tuple Scaler1, Scaler2;
         public StdRates INCCActive; // old active rates from the INCCbkg table
 
+		public void CopyFrom(Rates _rates)
+		{
+			rates = new Rates(_rates);
+		}
+
         // for later merging with multiplicity Results class, since each detector with an SR parm set should have it;s own bkg parms 
         public Tuple RawSinglesRate
         {

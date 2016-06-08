@@ -372,7 +372,7 @@ namespace AnalysisDefs
                                 meas.Background.INCCActive.CopyFrom(results.rates.DeadtimeCorrectedRates);
                             }
                             else
-                                meas.Background.rates = new Rates(results.rates);
+                                meas.Background.CopyFrom(results.rates);
                             //  maybe if (INCCAnalysisState.Methods.Has(AnalysisMethod.TruncatedMultiplicity))
                             if (meas.Background.TMBkgParams.ComputeTMBkg)
                                 // Trunc Mult Bkg step, calc_tm_rates, sets TM bkg rates on Measurement.Background

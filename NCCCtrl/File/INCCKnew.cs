@@ -109,12 +109,12 @@ namespace NCCTransfer
                 DetectorIndex = DB.Detectors.Count - 1;
 
                 BackgroundParameters bkg = new BackgroundParameters();
-                bkg.rates.DeadtimeCorrectedRates.Singles.v = bkh.curr_passive_bkg_singles_rate;
-                bkg.rates.DeadtimeCorrectedRates.Doubles.v = bkh.curr_passive_bkg_doubles_rate;
-                bkg.rates.DeadtimeCorrectedRates.Triples.v = bkh.curr_passive_bkg_triples_rate;
-                bkg.rates.DeadtimeCorrectedRates.Singles.err = bkh.curr_passive_bkg_singles_err;
-                bkg.rates.DeadtimeCorrectedRates.Doubles.err = bkh.curr_passive_bkg_doubles_err;
-                bkg.rates.DeadtimeCorrectedRates.Triples.err = bkh.curr_passive_bkg_triples_err;
+                bkg.DeadtimeCorrectedRates.Singles.v = bkh.curr_passive_bkg_singles_rate;
+                bkg.DeadtimeCorrectedRates.Doubles.v = bkh.curr_passive_bkg_doubles_rate;
+                bkg.DeadtimeCorrectedRates.Triples.v = bkh.curr_passive_bkg_triples_rate;
+                bkg.DeadtimeCorrectedRates.Singles.err = bkh.curr_passive_bkg_singles_err;
+                bkg.DeadtimeCorrectedRates.Doubles.err = bkh.curr_passive_bkg_doubles_err;
+                bkg.DeadtimeCorrectedRates.Triples.err = bkh.curr_passive_bkg_triples_err;
                 bkg.Scaler1.v = bkh.curr_passive_bkg_scaler1_rate;
                 bkg.Scaler2.v = bkh.curr_passive_bkg_scaler2_rate;
                 bkg.INCCActive.Singles.v = bkh.curr_active_bkg_singles_rate;

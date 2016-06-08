@@ -37,24 +37,24 @@ namespace NewUI
     {
         AcquireHandlers ah;
         AnalysisMethods am;
-
+		Measurement meas;
 		// local for this specifc dlg
 		VTuple norm;
 		bool normmodified;
-        public IDDReanalysisAssay(Measurement m, AcquireParameters acq, Detector det)
+        public IDDReanalysisAssay(Measurement m, Detector det)
         {
             InitializeComponent();
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
-            ah = new AcquireHandlers(acq, det);
+            ah = new AcquireHandlers(m.AcquireState, det);
             ah.mo = AssaySelector.MeasurementOption.verification;
-            Text += " for detector " + ah.det.Id.DetectorName;
-            ToolTip mustSelect = new ToolTip();
-            mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
-            mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
-            mustSelect.SetToolTip(UseCurrentCalibCheckBox, "x = use current calibration parameters for the selected material type.\r\nblank = use calibration parameters from the original measurement.");
-			norm = new VTuple(1,0);  // todo: fill from m
+            Text = "Select measurement for detector " + ah.det.Id.DetectorName;
+            toolTip1.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
+            toolTip1.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
+            toolTip1.SetToolTip(UseCurrentCalibCheckBox, "x = use current calibration parameters for the selected material type.\r\nblank = use calibration parameters from the original measurement.");
 			normmodified = false;
-			FieldFiller();
+			meas = m;
+            norm = new VTuple(meas.Norm.currNormalizationConstant);  // fill from m
+            FieldFiller();
         }
 
         private void FieldFillerOnItemId()
@@ -78,6 +78,7 @@ namespace NewUI
 			DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
 			NormConst.Text = norm.v.ToString("F4");
 			NormConstErr.Text = norm.err.ToString("F4");
+            dateTimePicker1.Value = new DateTime(meas.MeasDate.Ticks);
 
             InventoryChangeCodeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in N.App.DB.InvChangeCodes.GetList())
@@ -106,7 +107,6 @@ namespace NewUI
                 MaterialTypeComboBox.Items.Add(desc.Name);
             }
 
-
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
             StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
@@ -121,20 +121,24 @@ namespace NewUI
                     IsotopicsBtn.Enabled = false; BackgroundBtn.Enabled = false;
                 }
             }
-
         }
 
         private void IsotopicsBtn_Click(object sender, EventArgs e)
         {
-            UpdateIsotopics(straight: true);
+            Isotopics selected = UpdateIsotopics(straight: true);
+			if (selected != null && selected.CompareTo(meas.Isotopics) != 0) // copy any changes to the measurement
+			{
+				meas.Isotopics.Copy(selected);
+				meas.MeasurementId.Item.IsoApply(selected);           // apply the pssibly new iso dates to the item
+			}
         }
 
-        void UpdateIsotopics(bool straight)      // straight means from iso button
+        Isotopics UpdateIsotopics(bool straight)      // straight means from iso button
         {
             IDDIsotopics f = new IDDIsotopics(ah.ap.isotopics_id);
             DialogResult dlg = f.ShowDialog();
             if (dlg != DialogResult.OK)
-                return;
+                return null;
             ah.RefreshParams();
             Isotopics selected = f.GetSelectedIsotopics;
             if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id. Isotopics already saved to DB in IDDIsotopics*/
@@ -149,10 +153,11 @@ namespace NewUI
                 // change the isotopics setting on the current item id state
                 ItemId Cur = N.App.DB.ItemIds.Get(ah.ap.item_id);
                 if (Cur == null)                         // blank or unspecified somehow
-                    return;
+                    return null;
                 Cur.IsoApply(N.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
                 Cur.modified = true;
             }
+			return selected;
         }
 
 		private bool GetAdditionalParameters()
@@ -204,19 +209,25 @@ namespace NewUI
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
 			else
 			{
+                Integ.FillOutMeasurement(meas);  
+                if (normmodified)
+					meas.Norm.currNormalizationConstant = norm;
 				// save/update item id changes only when user selects OK
 				N.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
 				N.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
-				bool ocntinue = GetAdditionalParameters();
-				if (ocntinue && (ah.OKButton_Click(sender, e) == DialogResult.OK))
-				{
-					Visible = false;
-					// Add strata update to measurement object.    HN 9.23.2015              
-					//user can cancel in here during LM set-up, account for it.
-					UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
-					UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-					Close();
-				}
+				bool keepgoing = GetAdditionalParameters();
+                if (keepgoing)
+                {
+                    ah.ap.data_src = DetectorDefs.ConstructedSource.Æther;
+                    if (ah.OKButton_Click(sender, e) == DialogResult.OK)
+				    {
+                        N.App.Opstate.Measurement = meas;
+                        Visible = false;
+                        UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
+                        UIIntegration.Controller.Perform();  // start the thread
+                        Close();
+                    }
+                }
 			}
 		}
 
@@ -384,10 +395,10 @@ namespace NewUI
 
 		private void BackgroundBtn_Click(object sender, EventArgs e)
 		{
-            IDDBackgroundSetup f = new IDDBackgroundSetup();
+            IDDBackgroundSetup f = new IDDBackgroundSetup(ah.det, meas.Background);
             if (f.ShowDialog() == DialogResult.OK)
 			{
-				// todo: update on acq and m
+				f.GetBP.CopyTo(meas.Background);
 			}
 		}
 	}

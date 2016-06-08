@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 10
-6.0.1.10 June 7, 2016 J. Longo
+6.0.1.10 June 9, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -71,7 +71,6 @@ Issues for basic INCC5/6 feature COMPLETION
 #84*	Implement Collar
 #76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75*	LM wizard setting for cycle count not used in Live DAQ
-#31*	Implement the INCC5 Reanalysis
 #86+	List mode results database persistence 
 #79+	Plot Norm, Plot Ver diagnostic tools
 #78+	Find Deming curve fitting tool replacement

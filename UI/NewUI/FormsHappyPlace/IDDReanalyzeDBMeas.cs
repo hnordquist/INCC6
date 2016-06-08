@@ -40,7 +40,7 @@ namespace NewUI
         {
             InitializeComponent();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
-			this.Text += " for Detector " + det.Id.DetectorId;
+			Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, "verification", "All");
         }
 
@@ -74,7 +74,7 @@ namespace NewUI
 						cur = cycle.DataSourceId.dt;
 					}
 					m.Add(cl);
-					new IDDReanalysisAssay(m, acq, det).ShowDialog();
+					new IDDReanalysisAssay(m, det).ShowDialog();
                 }
             }
             else

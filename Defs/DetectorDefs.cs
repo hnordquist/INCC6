@@ -266,7 +266,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransfer, "Transfer");
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
-                PrettyName.Add(ConstructedSource.Æther, "Æthereal");
+                PrettyName.Add(ConstructedSource.Æther, "Reanalysis");
             }
 		}
 
@@ -535,7 +535,7 @@ namespace DetectorDefs
 				l = "Manual";
 				break;
 			case ConstructedSource.Æther:
-				l += (" " + source.ToString());
+				l += (" " + source.HappyFunName());
 				break;
 			}
 			return l;
@@ -574,7 +574,7 @@ namespace DetectorDefs
 					l = "Manual";
 					break;
 				case ConstructedSource.Æther:
-					l += (" " + source.ToString());
+					l += (" " + source.HappyFunName());
 					break;
 
 				}

@@ -585,10 +585,10 @@
     <Compile Include="Unready\IDDReadRadRevFileWaitMsg.Designer.cs">
       <DependentUpon>IDDReadRadRevFileWaitMsg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDReanalysisAssay.cs">
+    <Compile Include="FormsHappyPlace\IDDReanalysisAssay.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDReanalysisAssay.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDReanalysisAssay.Designer.cs">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDReanalysisHoldup.cs">
@@ -597,10 +597,10 @@
     <Compile Include="Unready\IDDReanalysisHoldup.Designer.cs">
       <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDReanalyzeDBMeas.cs">
+    <Compile Include="FormsHappyPlace\IDDReanalyzeDBMeas.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDReanalyzeDBMeas.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDReanalyzeDBMeas.Designer.cs">
       <DependentUpon>IDDReanalyzeDBMeas.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDReimportMsg.cs">
@@ -1510,13 +1510,13 @@
     <EmbeddedResource Include="Unready\IDDReadRadRevFileWaitMsg.resx">
       <DependentUpon>IDDReadRadRevFileWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDReanalysisAssay.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDReanalysisAssay.resx">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReanalysisHoldup.resx">
       <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDReanalyzeDBMeas.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDReanalyzeDBMeas.resx">
       <DependentUpon>IDDReanalyzeDBMeas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReimportMsg.resx">
