@@ -1022,7 +1022,7 @@ namespace AnalysisDefs
         }
 
         /// Timestamp for last content modification of this acquire record
-        /// not the measuremnt timestamp
+        /// not the measurement timestamp
         public DateTimeOffset CheckDateTime
         {
             get

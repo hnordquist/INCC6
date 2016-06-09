@@ -73,7 +73,7 @@ namespace NewUI
 				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
 				bGood = PrepList(filter, detector);
 			} finally
-			{
+			  {
 				System.Windows.Input.Mouse.OverrideCursor = null;
 			}
 		}

@@ -652,12 +652,12 @@ namespace NCC
             // create the context holder for the measurement. Everything is rooted here ...
             Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
 
-            FillOutMeasurement(meas);
+            FillInMeasurementDetails(meas);
             // ready for insertion of methods and processing start
 
         }
 
-        public static void FillOutMeasurement(Measurement meas)
+        public static void FillInMeasurementDetails(Measurement meas)
         {
             if (meas.Detector.ListMode)
             {

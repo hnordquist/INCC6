@@ -210,7 +210,7 @@ namespace NewUI
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
 			else
 			{
-                Integ.FillOutMeasurement(meas);
+                Integ.FillInMeasurementDetails(meas);
                 meas.ResultsFiles.Reset(); 
                 if (normmodified)
 					meas.Norm.currNormalizationConstant = norm;
