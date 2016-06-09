@@ -199,6 +199,27 @@ namespace AnalysisDefs
                     Array.Resize(ref mcr.NormedAMult, (int)mcr.MaxBins);
                     Array.Resize(ref mcr.UnAMult, (int)mcr.MaxBins);
                     mcr.AB.Resize((int)mcr.MaxBins);
+
+					// do the scaler summaries here since they are not done in CalcAvgsAndSums
+					double denom = 0.0;
+					foreach (Cycle cc in meas.Cycles)
+                    {
+						if (!cc.QCStatusValid((Multiplicity)pair.Key))
+							continue;
+                        bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
+                        if (!there)
+                            continue;
+                        ccm = (MultiplicityCountingRes)obj;
+
+						denom++;
+                        mcr.S1Sum += ccm.Scaler1.v;
+                        mcr.S2Sum += ccm.Scaler2.v;
+                    }
+					if (denom > 0)
+					{
+						mcr.Scaler1.v = mcr.S1Sum / denom;
+						mcr.Scaler2.v = mcr.S2Sum / denom;
+					}
                 }
                 else if (pair.Key is BaseRate && !pair.Key.suspect) // Rates counts merge
                 {
@@ -228,6 +249,8 @@ namespace AnalysisDefs
                             if (!there)
                                 continue;
                             cr.Accumulate((ICountingResult)obj);
+
+
                         }
                     }
                 }
@@ -372,7 +395,7 @@ namespace AnalysisDefs
                                 meas.Background.INCCActive.CopyFrom(results.rates.DeadtimeCorrectedRates);
                             }
                             else
-                                meas.Background.rates = new Rates(results.rates);
+                                meas.Background.CopyFrom(results.rates);
                             //  maybe if (INCCAnalysisState.Methods.Has(AnalysisMethod.TruncatedMultiplicity))
                             if (meas.Background.TMBkgParams.ComputeTMBkg)
                                 // Trunc Mult Bkg step, calc_tm_rates, sets TM bkg rates on Measurement.Background

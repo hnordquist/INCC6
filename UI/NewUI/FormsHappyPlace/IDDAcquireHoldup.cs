@@ -78,7 +78,7 @@ namespace NewUI
             //}
             foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
             {
-                StratumIdComboBox.Items.Add(desc.Desc);
+                StratumIdComboBox.Items.Add(desc.Name);
             }
             this.MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())

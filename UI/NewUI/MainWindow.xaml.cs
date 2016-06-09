@@ -424,8 +424,8 @@ namespace NewUI
 
         private void ReanalyzeVerificationClick(object sender, RoutedEventArgs e)
         {
-            IDDReviewAssaySummary f = new IDDReviewAssaySummary();
-            f.Show();
+            IDDReanalyzeDBMeas f = new IDDReanalyzeDBMeas();
+            f.ShowOther();
         }
 
         ///////////////////

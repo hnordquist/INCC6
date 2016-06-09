@@ -47,6 +47,7 @@ namespace NewUI
             ah.mo = AssaySelector.MeasurementOption.verification;
             Text += " for detector " + ah.det.Id.DetectorName;
             FieldFiller();
+			EnableTermControls();
             ToolTip mustSelect = new ToolTip();
             mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
             mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
@@ -55,7 +56,7 @@ namespace NewUI
         private void FieldFillerOnItemId()
         {
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -102,7 +103,7 @@ namespace NewUI
             StratumIdComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
             {
-                StratumIdComboBox.Items.Add(desc);
+                StratumIdComboBox.Items.Add(desc.Name);
             }
             MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
@@ -137,7 +138,7 @@ namespace NewUI
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -337,21 +338,25 @@ namespace NewUI
         private void UseNumCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.NumberOfCyclesRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void UseDoublesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.DoublesMeasurementPrecisionRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void UseTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.TriplesMeasurementPrecisionRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void UsePu240eRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.Pu240ePrecisionRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void QCTestsCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -379,6 +384,36 @@ namespace NewUI
             ah.IOCodeComboBox_SelectedIndexChanged(sender, e);
         }
 
+		void EnableTermControls()
+		{
+			switch (ah.ap.data_src)
+			{
+				case ConstructedSource.Live:
+					CountTimeTextBox.Enabled = true;
+					UseNumCyclesRadioButton.Enabled = true;
+					UseDoublesRadioButton.Enabled = true;
+					UseTriplesRadioButton.Enabled = true;
+					UsePu240eRadioButton.Enabled = true;
+					NumPassiveCyclesTextBox.Enabled = ah.CycleCount;
+					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
+					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
+					MaxNumCyclesTextBox.Enabled = !ah.CycleCount;
+					break;
+				default:
+					CountTimeTextBox.Enabled = false;
+					UseNumCyclesRadioButton.Enabled = false;
+					UseDoublesRadioButton.Enabled = false;
+					UseTriplesRadioButton.Enabled = false;
+					UsePu240eRadioButton.Enabled = false;
+
+					MeasPrecisionTextBox.Enabled = false;
+					MinNumCyclesTextBox.Enabled = false;
+					MaxNumCyclesTextBox.Enabled = false;
+					NumPassiveCyclesTextBox.Enabled = false;
+				break;
+			}
+		}
+
         private void DataSourceComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ah.DataSourceComboBox_SelectedIndexChanged(sender, e);
@@ -386,10 +421,9 @@ namespace NewUI
             UseNumCyclesRadioButton.Enabled = true;
             UseDoublesRadioButton.Enabled = true;
             UseTriplesRadioButton.Enabled = true;
-            UseNumCyclesRadioButton.Enabled = true;
+            UsePu240eRadioButton.Enabled = true;
             CommentTextBox.Enabled = true;
 
-            //only verification uses these
             MeasPrecisionTextBox.Enabled = false;
             MinNumCyclesTextBox.Enabled = false;
             MaxNumCyclesTextBox.Enabled = false;
@@ -408,14 +442,14 @@ namespace NewUI
                     UseNumCyclesRadioButton.Enabled = false;
                     UseDoublesRadioButton.Enabled = false;
                     UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
+                    UsePu240eRadioButton.Enabled = false;
                     break;
                 case ConstructedSource.CycleFile:
                     CountTimeTextBox.Enabled = false;
                     UseNumCyclesRadioButton.Enabled = false;
                     UseDoublesRadioButton.Enabled = false;
                     UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
+                    UsePu240eRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     break;
                 case ConstructedSource.Manual:
@@ -423,7 +457,7 @@ namespace NewUI
                     UseNumCyclesRadioButton.Enabled = false;
                     UseDoublesRadioButton.Enabled = false;
                     UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
+                    UsePu240eRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     break;
                 case ConstructedSource.ReviewFile:
@@ -432,7 +466,7 @@ namespace NewUI
                     UseNumCyclesRadioButton.Enabled = false;
                     UseDoublesRadioButton.Enabled = false;
                     UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
+                    UsePu240eRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     //PrintResultsCheckbox.Enabled = false;
                     break;
@@ -531,21 +565,6 @@ namespace NewUI
                     ItemIdComboBox.Items.Add(id.item);
                 }
             }
-        }
-
-        private void MaterialTypeComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void StratumIdComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void ItemIdComboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
         }
     }
 }

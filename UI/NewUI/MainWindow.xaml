@@ -103,7 +103,7 @@
                 <MenuItem Header="_List Mode" Click="AnalysisWizardClick" ToolTip="List Mode measurement and analysis" IsEnabled="True"/>
             </MenuItem>
             <MenuItem Header="_Reanalyze">
-                <MenuItem Header="_Verification..." Click="ReanalyzeVerificationClick" ToolTip="Change selected parameters and reanalyze a verification measurement." IsEnabled="False"/>
+                <MenuItem Header="_Verification..." Click="ReanalyzeVerificationClick" ToolTip="Change selected parameters and reanalyze a verification measurement." IsEnabled="True"/>
                 <MenuItem Header="_Holdup..." ToolTip="Change selected parameters and reanalyze a holdup measurement." IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="_Report">

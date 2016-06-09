@@ -1022,7 +1022,7 @@ namespace AnalysisDefs
         }
 
         /// Timestamp for last content modification of this acquire record
-        /// not the measuremnt timestamp
+        /// not the measurement timestamp
         public DateTimeOffset CheckDateTime
         {
             get
@@ -1377,6 +1377,11 @@ namespace AnalysisDefs
         public Rates rates;
         public Tuple Scaler1, Scaler2;
         public StdRates INCCActive; // old active rates from the INCCbkg table
+
+		public void CopyFrom(Rates _rates)
+		{
+			rates = new Rates(_rates);
+		}
 
         // for later merging with multiplicity Results class, since each detector with an SR parm set should have it;s own bkg parms 
         public Tuple RawSinglesRate
@@ -2680,10 +2685,15 @@ namespace AnalysisDefs
 				CSVResultsFileName.Path = path;
 			}
 			else
-				Add(new ResultFile(path));
-
+				Add(new ResultFile(path));  
 		}
-	}
+
+        public void Reset()
+        {
+            Clear();
+            CSVResultsFileName = new ResultFile();
+        }
+    }
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };
     public class DBParamList
     {

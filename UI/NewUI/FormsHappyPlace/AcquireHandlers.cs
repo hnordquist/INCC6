@@ -25,20 +25,19 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using System;
+using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
 using Instr;
 using NCCReporter;
-using System;
-using System.Windows.Forms;
 namespace NewUI
 {
 
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    // NEXT: revisit enabling of radio buttons on per-meas option basis, seems to not be following INCC5
-    public class AcquireHandlers
+	public class AcquireHandlers
     {
         public Detector det;
         public AcquireParameters ap;
@@ -51,6 +50,11 @@ namespace NewUI
         public AcquireHandlers()
         {
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
+        }
+
+		public AcquireHandlers(AcquireParameters a, Detector dt)
+        {
+            ap = a; det = dt;
         }
 
         public void RefreshParams()
@@ -161,28 +165,45 @@ namespace NewUI
 
         //// CHECKEDCHANGED HANDLERS ///////////////////////////////////////////
 
+		public bool CycleCount { get { return ap.acquire_type == AcquireConvergence.CycleCount; } }
+		public bool DoublesPrecision { get { return ap.acquire_type == AcquireConvergence.DoublesPrecision; } }
+		public bool TriplesPrecision { get { return ap.acquire_type == AcquireConvergence.TriplesPrecision; } }
+		public bool Pu240EffPrecision { get { return ap.acquire_type == AcquireConvergence.Pu240EffPrecision; } }
+
         public void NumberOfCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.CycleCount;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (CycleCount != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.CycleCount;
+            }
         }
 
         public void DoublesMeasurementPrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.DoublesPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (DoublesPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.DoublesPrecision;
+            }
         }
 
         public void TriplesMeasurementPrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.TriplesPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (TriplesPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.TriplesPrecision;
+            }
         }
 
         public void Pu240ePrecisionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            ap.modified = true;
-            if (((RadioButton)sender).Checked) ap.acquire_type = AnalysisDefs.AcquireConvergence.Pu240EffPrecision;
+			bool Checked = ((RadioButton)sender).Checked;
+			if (Pu240EffPrecision != Checked)
+            {
+                ap.modified = true; if (Checked) ap.acquire_type = AcquireConvergence.Pu240EffPrecision;
+            }
         }
 
         public void QCTestsCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -233,7 +254,10 @@ namespace NewUI
         public void StratumIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ap.modified = true;
-            ap.stratum_id = (INCCDB.Descriptor)((ComboBox)sender).SelectedItem;
+            string name = (string)((ComboBox)sender).SelectedItem;
+            INCCDB.Descriptor d = NC.App.DB.Stratums.Get(name);
+            if (d != null)
+                ap.stratum_id = d;
         }
 
         public void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -266,13 +290,13 @@ namespace NewUI
                 NC.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
             }
 
-            // The acquire is set to occur, build up the measurement state 
+            // The acquire is set to occur
             AnalysisWizard.ResetMeasurement();
-            Integ.BuildMeasurement(ap, det, mo);
 
             switch (ap.data_src)
             {
                 case ConstructedSource.Live:             // set up the instrument list for the action controller
+					Integ.BuildMeasurement(ap, det, mo);
                     UIIntegration.Controller.file = false;  // make sure to use the DAQ controller, not the file controller
                     NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
                     if (det.ListMode)
@@ -315,6 +339,7 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.DB:
+					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.DBDataAssay = true;
                     UIIntegration.Controller.file = true;
                     IDDAcquireDBMeas dbdlg = new IDDAcquireDBMeas(this);
@@ -345,8 +370,6 @@ namespace NewUI
 								NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time
 									= cl[0].TS.TotalSeconds;
                             NC.App.DB.UpdateAcquireParams(ap); //update it again
-
-                            // TODO: for Reanalysis, a full reconstruction of the measurement state based on the ResultsRec state and the method parameter map contents (for Calib and Verif)
                         }
                     }
                     else
@@ -363,18 +386,26 @@ namespace NewUI
                         // the work is done in the dialog class
                     }
                     break;
-
+                case ConstructedSource.Æther:
+                    UIIntegration.Controller.file = true;
+                    NC.App.AppContext.DBDataAssay = true;
+                    dr = DialogResult.OK;
+                    // the measurement re-creation work is done in the IDDReanalysisAssay dialog class                    
+                    break;
                 case ConstructedSource.CycleFile:
+ 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.TestDataFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select a test data (disk) file", NC.App.AppContext.FileInput, "INCC5 Test data (disk)", "dat", "cnn");
                     break;
                 case ConstructedSource.ReviewFile:
+					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.ReviewFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");
                     break;
                 case ConstructedSource.NCDFile:
+					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
@@ -388,6 +419,7 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.SortedPulseTextFile:
+					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PulseFileAssay = true;
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
@@ -401,6 +433,7 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.PTRFile: 
+					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
@@ -414,7 +447,8 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.MCA527File:
-                    NC.App.AppContext.MCA527FileAssay = true;
+ 					Integ.BuildMeasurement(ap, det, mo);
+                   NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFilesFolder("Select MCA files or folder", NC.App.AppContext.FileInput, "MCA527", "mca");
                     //dr = DialogResult.Cancel;

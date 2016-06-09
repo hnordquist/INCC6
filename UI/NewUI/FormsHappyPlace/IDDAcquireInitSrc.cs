@@ -133,17 +133,20 @@ namespace NewUI
         private void UseNumCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.NumberOfCyclesRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void UseDoublesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.DoublesMeasurementPrecisionRadioButton_CheckedChanged(sender, e);
+			EnableTermControls();
         }
 
         private void UseTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             ah.TriplesMeasurementPrecisionRadioButton_CheckedChanged(sender, e);
-        }
+ 			EnableTermControls();
+       }
 
         private void QCTestsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
@@ -160,65 +163,58 @@ namespace NewUI
             ah.CommentCheckbox_CheckedChanged(sender, e);
         }
 
+ 		void EnableTermControls()
+		{
+			switch (ah.ap.data_src)
+			{
+				case ConstructedSource.Live:
+					CountTimeTextBox.Enabled = true;
+					UseNumCyclesRadioButton.Enabled = true;
+					UseDoublesRadioButton.Enabled = true;
+					UseTriplesRadioButton.Enabled = true;
+					NumCyclesTextBox.Enabled = ah.CycleCount;
+					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
+					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
+					MaxNumCyclesTextBox.Enabled = !ah.CycleCount;
+					break;
+				default:
+					CountTimeTextBox.Enabled = false;
+					UseNumCyclesRadioButton.Enabled = false;
+					UseDoublesRadioButton.Enabled = false;
+					UseTriplesRadioButton.Enabled = false;
+					MeasPrecisionTextBox.Enabled = false;
+					MinNumCyclesTextBox.Enabled = false;
+					MaxNumCyclesTextBox.Enabled = false;
+					NumCyclesTextBox.Enabled = false;
+				break;
+			}
+		}
         private void DataSourceComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ah.DataSourceComboBox_SelectedIndexChanged(sender, e);
-            CountTimeTextBox.Enabled = true;
-            UseNumCyclesRadioButton.Enabled = true;
-            UseDoublesRadioButton.Enabled = true;
-            UseTriplesRadioButton.Enabled = true;
-            UseNumCyclesRadioButton.Enabled = true;
-
-            //only verification uses these
-            MeasPrecisionTextBox.Enabled = false;
-            MinNumCyclesTextBox.Enabled = false;
-            MaxNumCyclesTextBox.Enabled = false;
-
+			EnableTermControls();
             CommentAtEndCheckBox.Enabled = true;
             PrintResultsCheckBox.Enabled = true;
-
-            //enable/disable selected controls here
             switch (ah.ap.data_src)
             {
                 case ConstructedSource.Live:
                     // every set as above
                     break;
                 case ConstructedSource.DB:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
                     break;
                 case ConstructedSource.CycleFile:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     break;
                 case ConstructedSource.Manual:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     break;
                 case ConstructedSource.ReviewFile:
                 default:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
                     CommentAtEndCheckBox.Enabled = false;
                     //PrintResultsCheckbox.Enabled = false;
                     break;
             }
         }
-
         private void OKBtn_Click(object sender, EventArgs e)
         {
             if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)

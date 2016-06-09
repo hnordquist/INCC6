@@ -1830,7 +1830,7 @@ CREATE TABLE results_filenames(
 GO
 INSERT INTO [test_parms_rec] VALUES(999.0,0.1,4.0,3.0,1.0,1.0,99.0,10,1.0,3.0,100,1,'Measure');
 GO
-INSERT INTO [facility_names] VALUES(1, 'Empty','Empty');
+INSERT INTO [facility_names] VALUES(1, 'XXXX','XXXX');
 GO
 INSERT INTO [material_types] VALUES(2, 'Pu','Pu');
 GO
@@ -2054,7 +2054,7 @@ INSERT INTO [analysis_method_rec] VALUES(4,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,NULL,NU
 GO
 INSERT INTO [cal_curve_rec] VALUES(1,2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
-INSERT INTO [acquire_parms_rec] VALUES(1, 'Empty','Empty','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
+INSERT INTO [acquire_parms_rec] VALUES(1, 'XXXX','XXXX','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
 GO
 INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO

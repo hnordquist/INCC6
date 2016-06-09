@@ -124,7 +124,7 @@ namespace NewUI
             List<INCCDB.IndexedResults> list = null;
             list = mlist.FindAll(ir => CheckForMeasIDMatch(ir));
             IDDMeasurementList measlist = new IDDMeasurementList();
-            measlist.Init(list, option, false, false, sel.InspectionNumber);
+            measlist.Init(list, option, IDDMeasurementList.EndGoal.Summary, false, sel.InspectionNumber);
             measlist.SetSummarySelections(sel); // does a pre-sort before display
             if (measlist.bGood)
                 measlist.ShowDialog();

@@ -136,7 +136,7 @@ namespace NewUI
             for (int i = 0; i < MAX_MANUAL_ENTRIES; i++) // lame
             {
                 DataGridViewRow r = cyclesGridView.Rows[i];
-                if (r.Cells == null || (r.Cells[1].Value == null) || r.Cells[1].Value.ToString() == String.Empty)
+                if (r.Cells == null || (r.Cells[1].Value == null) || r.Cells[1].Value.ToString() == string.Empty)
                     break;
                 
                 Cycle cycle = new AnalysisDefs.Cycle(m_log);

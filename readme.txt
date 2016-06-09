@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 9
-6.0.1.9 June 1, 2016 J. Longo
+INCC6 Beta Release 10
+6.0.1.10 June 9, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -71,7 +71,6 @@ Issues for basic INCC5/6 feature COMPLETION
 #84*	Implement Collar
 #76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75*	LM wizard setting for cycle count not used in Live DAQ
-#31*	Implement the INCC5 Reanalysis
 #86+	List mode results database persistence 
 #79+	Plot Norm, Plot Ver diagnostic tools
 #78+	Find Deming curve fitting tool replacement
@@ -92,18 +91,19 @@ Issues for basic INCC5/6 feature COMPLETION
 
 Closed issues
 
-#87 DB issues with non En language and region settings
+#98 Acquisition measurement termination conditions NYI
+#97 DB issues with non En language and region settings
 #94 Add a comment column to the various measurement reports dialogues 
 #93 File or folder query for list mode input files confusing 
 #92 File locations are not fully coherent 
 #88 Show type (SR or LM) on facility setup dlg 
 #85 Implement full SQL database implementation 
-#83 Selecting isotopics for use bug 
+#83 Selecting isotopics for use 
 #82 Implement the report subsection filter feature 
 #80 Summary results CSV reports 
 #77 Add support for INCC5 date/time encoded file names 
 #74 Measurement report dialog print feature broken 
-#72 Enhance cmd line to support INCC5-style NCC processing cmdline 
+#72 Enhance cmd line to support INCC5-style NCC processing 
 #71 Add support for reading MCA-527 single channel list mode data files 
 #70 Add MCA-527 single channel list mode DAQ 
 #68 Limit the instrument type selections for List Mode to those actually supported now 

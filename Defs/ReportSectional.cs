@@ -54,6 +54,10 @@ namespace AnalysisDefs
 			Selections[(int)RS.Messages] = true;
 			Selections[(int)RS.MassResults] = true;
 			Selections[(int)RS.Reference] = true;
+			DetectorParameters = true;
+			CalibrationParameters = true;
+			Isotopics = true;
+			RateCycleData = true;
 		}
 
 		public ReportSectional(ReportSectional src)

@@ -3618,25 +3618,6 @@ namespace AnalysisDefs
             }
         }
 
-        public class MeasurementResults : Tuple<MeasId, INCCResults.results_rec>
-        {
-            public MeasurementResults(MeasId id, INCCResults.results_rec res)
-                : base(id, res)
-            {
-            }
-
-            public MeasurementResults()
-                : base(null, null)
-            {
-            }
-
-            public MeasurementResults(MeasurementResults src)
-                : base(new MeasId(src.Item1), new INCCResults.results_rec(src.Item2))
-            {
-            }
-
-        }
-
         ///
         public List<MeasId> MeasurementIds(string detectorName, string mtype)
         {
@@ -3691,30 +3672,35 @@ namespace AnalysisDefs
 		}
 
 		public List<IndexedResults> IndexedResultsFor(string det, string option, string inspnum)
-        {
+		{
 			List<IndexedResults> res = new List<IndexedResults>();
 
 			DB.Results r = new DB.Results();
 			DataTable dt = r.ResultsForDetWithC(det);
 			foreach (DataRow dr in dt.Rows)
-            {
+			{
 				string s = dr["campaign_id"].ToString();
-				if ((string.Compare(inspnum,"All") == 0) || (!string.IsNullOrEmpty(inspnum) && (string.Compare(inspnum,s, true) == 0)))
-				{ 
-					IndexedResults ir = new IndexedResults();
-					ir.Campaign = s;
-					ir.Option = dr["meas_option"].ToString();
-					ir.Detector = det;
-					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
-                    ir.Rid = DB.Utils.DBInt64(dr["id"]);
-                    ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
-                    res.Add(ir);
+				if ((string.Compare(inspnum, "All") == 0) || (!string.IsNullOrEmpty(inspnum) && (string.Compare(inspnum, s, true) == 0)))
+				{
+					string o = dr["meas_option"].ToString();
+					if (string.IsNullOrEmpty(option) ||
+						string.Compare(option, o) == 0)
+					{
+						IndexedResults ir = new IndexedResults();
+						ir.Campaign = s;
+						ir.Option = dr["meas_option"].ToString();
+						ir.Detector = det;
+						ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+						ir.Rid = DB.Utils.DBInt64(dr["id"]);
+						ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+						res.Add(ir);
+					}
 				}
 			}
 			return res;
-        }
+		}
 
-		
+
 		public List<IndexedResults> IndexedResultsFor(string option)
         {
 			List<IndexedResults> res = new List<IndexedResults>();
@@ -3760,7 +3746,7 @@ namespace AnalysisDefs
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
-					if (m.ResultsFiles != null)
+					if (m.ResultsFiles != null)   // it is never null
 					{
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
 							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
@@ -3805,7 +3791,7 @@ namespace AnalysisDefs
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
-					if (m.ResultsFiles != null)
+					if (m.ResultsFiles != null)      // it is never null
 					{
 						bool LMOnly = (option == AssaySelector.MeasurementOption.unspecified);
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
@@ -3816,7 +3802,7 @@ namespace AnalysisDefs
 					}
                     IngestAnalysisMethodResultsFromDB(m);
                 }
-                // URGENT: needed for Reanalysis, and Assay summary: cycles, results, etc 
+                // for Reanalysis, and Assay summary: cycles, results, etc 
             }
             return ms;
         }
@@ -4321,49 +4307,7 @@ namespace AnalysisDefs
             }   
             
         }
-
-
-
-        /// <summary>
-        /// Update the stored state (theDB) with modifications on the collections in this class
-        /// * resolve conflicts involving replacements and updates to each collection and contained object automatically (as much as possible)
-        /// * some state is required to make these choices, e.g. 'overwrite', 'ask before overwrite' 'never overwrite'
-        /// * go for the detector and it's cousins
-        /// * finally do the measurement
-        /// </summary>
-        /// <returns></returns>
-        public bool Udpate()
-        {
-            try
-            {
-                // after BuildMeasurement, these are already taken care of in-memory and in the DB
-                // measurement
-                // background
-                // norm
-                // test
-                // acquire 
-                // detectors
-                // stratum                
-                // isotopics
-                // unattended
-                // (Detector, Material) -> Analysis Methods
-                // materials
-                // MBAs
-                // facilities
-
-                // todo: needs DB persistence
-                // finish all results, including Mult Results
-                // 
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
-                NC.App.Pest.logger.TraceException(e, false);
-            }
-            return false;
-        }
+				  
     }
 }
 
