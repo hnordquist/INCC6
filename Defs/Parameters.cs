@@ -2685,10 +2685,15 @@ namespace AnalysisDefs
 				CSVResultsFileName.Path = path;
 			}
 			else
-				Add(new ResultFile(path));
-
+				Add(new ResultFile(path));  
 		}
-	}
+
+        public void Reset()
+        {
+            Clear();
+            CSVResultsFileName = new ResultFile();
+        }
+    }
     public enum DBParamType { Bytes, String, Boolean, Double, UInt8, UInt16, UInt32, UInt64, Int8, Int16, Int32, Int64, DT, TS, DTOffset };
     public class DBParamList
     {

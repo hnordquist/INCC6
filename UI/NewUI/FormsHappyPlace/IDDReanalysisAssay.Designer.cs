@@ -70,7 +70,6 @@
             this.ItemIdComboBox.Size = new System.Drawing.Size(269, 21);
             this.ItemIdComboBox.TabIndex = 1;
             this.ItemIdComboBox.SelectedIndexChanged += new System.EventHandler(this.ItemIdComboBox_SelectedIndexChanged);
-            this.ItemIdComboBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ItemIdComboBox_KeyDown);
             this.ItemIdComboBox.Leave += new System.EventHandler(this.ItemIdComboBox_Leave);
             // 
             // StratumIdComboBox
@@ -81,7 +80,6 @@
             this.StratumIdComboBox.Size = new System.Drawing.Size(269, 21);
             this.StratumIdComboBox.TabIndex = 2;
             this.StratumIdComboBox.SelectedIndexChanged += new System.EventHandler(this.StratumIdComboBox_SelectedIndexChanged);
-            this.StratumIdComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.StratumIdComboBox_KeyPress);
             // 
             // MaterialTypeComboBox
             // 
@@ -91,7 +89,6 @@
             this.MaterialTypeComboBox.Size = new System.Drawing.Size(269, 21);
             this.MaterialTypeComboBox.TabIndex = 3;
             this.MaterialTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.MaterialTypeComboBox_SelectedIndexChanged);
-            this.MaterialTypeComboBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MaterialTypeComboBox_KeyPress);
             // 
             // InventoryChangeCodeComboBox
             // 

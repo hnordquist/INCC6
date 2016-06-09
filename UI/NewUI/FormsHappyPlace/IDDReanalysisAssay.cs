@@ -99,8 +99,9 @@ namespace NewUI
             StratumIdComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in N.App.DB.Stratums.GetList())
             {
-                StratumIdComboBox.Items.Add(desc);
+                StratumIdComboBox.Items.Add(desc.Name);
             }
+            StratumIdComboBox.SelectedItem = null;
             MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in N.App.DB.Materials.GetList())
             {
@@ -108,7 +109,7 @@ namespace NewUI
             }
 
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
             ItemIdComboBox.SelectedItem = ah.ap.item_id;
@@ -129,7 +130,7 @@ namespace NewUI
 			if (selected != null && selected.CompareTo(meas.Isotopics) != 0) // copy any changes to the measurement
 			{
 				meas.Isotopics.Copy(selected);
-				meas.MeasurementId.Item.IsoApply(selected);           // apply the pssibly new iso dates to the item
+				meas.MeasurementId.Item.IsoApply(selected);           // apply the possibly new iso dates to the item
 			}
         }
 
@@ -209,7 +210,8 @@ namespace NewUI
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
 			else
 			{
-                Integ.FillOutMeasurement(meas);  
+                Integ.FillOutMeasurement(meas);
+                meas.ResultsFiles.Reset(); 
                 if (normmodified)
 					meas.Norm.currNormalizationConstant = norm;
 				// save/update item id changes only when user selects OK
@@ -345,21 +347,6 @@ namespace NewUI
                     ItemIdComboBox.Items.Add(id.item);
                 }
             }
-        }
-
-        private void MaterialTypeComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void StratumIdComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void ItemIdComboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
         }
 
 		private void UseCurrentCalibCheckBox_CheckedChanged(object sender, EventArgs e)

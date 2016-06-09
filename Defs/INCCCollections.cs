@@ -3746,7 +3746,7 @@ namespace AnalysisDefs
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
-					if (m.ResultsFiles != null)
+					if (m.ResultsFiles != null)   // it is never null
 					{
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
 							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
@@ -3791,7 +3791,7 @@ namespace AnalysisDefs
 					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
-					if (m.ResultsFiles != null)
+					if (m.ResultsFiles != null)      // it is never null
 					{
 						bool LMOnly = (option == AssaySelector.MeasurementOption.unspecified);
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))

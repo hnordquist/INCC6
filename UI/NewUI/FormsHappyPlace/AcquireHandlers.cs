@@ -254,7 +254,10 @@ namespace NewUI
         public void StratumIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ap.modified = true;
-            ap.stratum_id = (INCCDB.Descriptor)((ComboBox)sender).SelectedItem;
+            string name = (string)((ComboBox)sender).SelectedItem;
+            INCCDB.Descriptor d = NC.App.DB.Stratums.Get(name);
+            if (d != null)
+                ap.stratum_id = d;
         }
 
         public void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)

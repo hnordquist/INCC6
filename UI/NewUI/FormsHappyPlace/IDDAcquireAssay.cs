@@ -56,7 +56,7 @@ namespace NewUI
         private void FieldFillerOnItemId()
         {
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -103,7 +103,7 @@ namespace NewUI
             StratumIdComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
             {
-                StratumIdComboBox.Items.Add(desc);
+                StratumIdComboBox.Items.Add(desc.Name);
             }
             MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
@@ -138,7 +138,7 @@ namespace NewUI
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id;
+            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -565,21 +565,6 @@ namespace NewUI
                     ItemIdComboBox.Items.Add(id.item);
                 }
             }
-        }
-
-        private void MaterialTypeComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void StratumIdComboBox_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
-        }
-
-        private void ItemIdComboBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            e.Handled = true;
         }
     }
 }
