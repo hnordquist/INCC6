@@ -216,6 +216,8 @@ namespace NewUI
                 bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original);
                 if (found)
                 {
+					if (original.selector == null) // empty initial value, copy the selector here
+						original.selector = new INCCSelector(am.selector);
                     if (!am.Equals(original)) // an existing has changed,
                     {
                         // copy updated changes back to original on the map
