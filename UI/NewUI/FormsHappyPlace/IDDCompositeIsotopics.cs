@@ -433,6 +433,16 @@ namespace NewUI
         const double TOLERANCE = .00001;
         NCCReporter.LMLoggers.LognLM applog;
         bool modified = false, calcQ = false;
+
+		private void SelButton_Click(object sender, EventArgs e)
+		{
+			IsotopicsList il = new IsotopicsList(false);
+			if (il.ShowDialog() == DialogResult.OK)
+			{
+				m_comp_iso = il.GetSingleSelectedCompIsotopics();
+				IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;
+			}
+		}
 	}
 
 	public class CalendarColumn : DataGridViewColumn

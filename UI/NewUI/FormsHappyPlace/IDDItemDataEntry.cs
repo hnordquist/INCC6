@@ -38,11 +38,11 @@ namespace NewUI
     {
 
             // the stringified lists for the item combos
-        List<String> mbas, isotopics, mats, strats, iocodes, invcodes;
+        List<string> mbas, isotopics, mats, strats, iocodes, invcodes;
         List<ItemId> newIDs;
 
         // Flag set if user enters new data 
-        Boolean NewContent = false;
+        bool NewContent = false;
 
         void buildlists()
         {
@@ -97,12 +97,15 @@ namespace NewUI
             foreach (string s in invcodes)
                 c.Items.Add(s);
 
-            DataGridViewRowCollection rows = this.ItemIdDataGrid.Rows;
+            DataGridViewRowCollection rows = ItemIdDataGrid.Rows;
             foreach (ItemId ito in NC.App.DB.ItemIds.GetList())
             {
-                string[] a = ito.ToSimpleValueArray();
-                rows.Add(a);
-            }
+                string[] a = ToSimpleValueArray(ito);
+                int i = rows.Add(a);
+				rows[i].Cells[7].Tag = ito.declaredMass;
+				rows[i].Cells[8].Tag = ito.declaredUMass;
+				rows[i].Cells[9].Tag = ito.length;
+			}
 
             // Generate a copy of the ItemId string in case the user changes it so we can tell what is a new row and what is a name change
             for (int i = 0; i < rows.Count; i++)
@@ -117,6 +120,22 @@ namespace NewUI
 
         }
 
+		string[] ToSimpleValueArray(ItemId ito)
+		{
+			string[] vals = new string[10];
+			vals[0] = ito.item;
+			vals[1] = ito.mba;
+			vals[2] = ito.material;
+			vals[3] = ito.isotopics;
+			vals[4] = ito.stratum;
+			vals[5] = ito.inventoryChangeCode;
+			vals[6] = ito.IOCode;
+			vals[7] = ito.declaredMass.ToString("F3");
+			vals[8] = ito.declaredUMass.ToString("F3");
+			vals[9] = ito.length.ToString("F3");
+			return vals;
+		}
+
         private void OKBtn_Click(object sender, EventArgs e)
         {
             bool newrow;
@@ -124,7 +143,7 @@ namespace NewUI
             if (NewContent)
             {
                 // User has added to or changed content in the table; process table row-by-row back into database
-                foreach (DataGridViewRow row in this.ItemIdDataGrid.Rows)
+                foreach (DataGridViewRow row in ItemIdDataGrid.Rows)
                 {
                     newrow = false;
                     //bool changedName = false;
@@ -156,17 +175,17 @@ namespace NewUI
                         iid.inventoryChangeCode = (string)((DataGridViewComboBoxCell)row.Cells["InvChangeCode"]).Value;
                         iid.IOCode = (string)((DataGridViewComboBoxCell)row.Cells["IOCode"]).Value;
 
-                        if (!Double.TryParse((string)row.Cells["Mass"].Value, out iid.declaredMass))
+                        if (!double.TryParse((string)row.Cells["Mass"].Value, out iid.declaredMass))
                         {
                             // Value in mass column did not parse as a number; set to default?
                         }
 
-                        if (!Double.TryParse((string)row.Cells["HvyMetalUMass"].Value, out iid.declaredUMass))
+                        if (!double.TryParse((string)row.Cells["HvyMetalUMass"].Value, out iid.declaredUMass))
                         {
                             // Value in U mass column did not parse as a number; set to default?
                         }
 
-                        if (!Double.TryParse((string)row.Cells["HeavyMetalLen"].Value, out iid.length))
+                        if (!double.TryParse((string)row.Cells["HeavyMetalLen"].Value, out iid.length))
                         {
                             // Value in length column did not parse as a number; set to default?
                         }
@@ -181,12 +200,12 @@ namespace NewUI
                 // Commit the in-memory data to the database
                 NC.App.DB.ItemIds.SetList();
             }
-            this.Close();
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -199,7 +218,18 @@ namespace NewUI
 
         }
 
-        private void DeleteBtn_Click(object sender, EventArgs e)
+		private void ItemIdDataGrid_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+		{
+			if (e.Column.Name == "Mass" || (e.Column.Name== "HvyMetalUMass") ||  (e.Column.Name== "HeavyMetalLen"))
+			{
+				double d1 = (double)ItemIdDataGrid.Rows[e.RowIndex1].Cells[e.Column.Name].Tag;
+				double d2 = (double)ItemIdDataGrid.Rows[e.RowIndex2].Cells[e.Column.Name].Tag;
+				e.SortResult = d1.CompareTo(d2);
+				e.Handled = true;
+			}
+		}
+
+		private void DeleteBtn_Click(object sender, EventArgs e)
         {
 
         }

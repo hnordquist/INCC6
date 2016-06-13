@@ -1,6 +1,6 @@
 **********************************************************************************
 
-INCC6 Beta Release 10
+INCC6 Beta Release 11
 6.0.1.11 June 18, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
@@ -81,20 +81,20 @@ Issues for basic INCC5/6 feature COMPLETION
 
 *HIGH Priority, +MEDIUM Priority
 
-#67	PTR-32 data handling question 
-#59	Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45	calc_alpha_beta performance and efficiency
-#43	Performing LM as SR after doing LM Acquire craps*
-#25	List mode acquisition predelay not stored
-#16	Accidental Singles test Failure for PTR32
-#13	PTR-32 -- Results different if reading file/doing live acquisition
+#109 LM memory issues continue
+#108 Coincidence not completed
+#107 Rossis sometimes gets lost
+#106 Time interval summary incomplete
+# 67 PTR-32 data handling question 
+# 59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+# 45 calc_alpha_beta performance and efficiency
+# 43 Performing LM as SR after doing LM Acquire craps*
+# 25 List mode acquisition predelay not stored
+# 16 Accidental Singles test Failure for PTR32
+# 13 PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
 
- 109 LM memory issues continue
- 108 Coincidence not completed
- 107 Rossis sometimes gets lost
- 106 Time interval summary incomplete
   98 Acquisition measurement termination conditions NYI
   97 DB issues with non En language and region settings
   94 Add a comment column to the various measurement reports dialogues 
@@ -103,7 +103,8 @@ Closed issues
   88 Show type (SR or LM) on facility setup dlg 
   85 Implement full SQL database implementation 
   83 Selecting isotopics for use 
-  82 Implement the report subsection filter feature 
+  82 Implement the report subsection filter feature
+  81 Tools for managing large sets of isotopics and items
   80 Summary results CSV reports 
   77 Add support for INCC5 date/time encoded file names 
   74 Measurement report dialog print feature broken 

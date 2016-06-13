@@ -146,6 +146,12 @@
     <Compile Include="FormsHappyPlace\IDDK5CollarItemData.Designer.cs">
       <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\IsotopicsList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IsotopicsList.Designer.cs">
+      <DependentUpon>IsotopicsList.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\MeasSetup.xaml.cs">
       <DependentUpon>MeasSetup.xaml</DependentUpon>
     </Compile>

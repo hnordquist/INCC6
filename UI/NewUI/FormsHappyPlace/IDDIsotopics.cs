@@ -543,5 +543,15 @@ namespace NewUI
         const double isomax = 100.3;
         const double TOLERANCE = .00001;
 
-    }
+		private void IsoList_Click(object sender, EventArgs e)
+		{
+			IsotopicsList il = new IsotopicsList(true);
+			if (il.ShowDialog() == DialogResult.OK)
+			{
+				m_iso = il.GetSingleSelectedIsotopics();
+				IsotopicsIdComboBox.SelectedItem = m_iso.id;
+			}
+
+		}
+	}
 }
