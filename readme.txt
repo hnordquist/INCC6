@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 10
-6.0.1.10 June 9, 2016 J. Longo
+INCC6 Beta Release 11
+6.0.1.11 June 18, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -81,50 +81,56 @@ Issues for basic INCC5/6 feature COMPLETION
 
 *HIGH Priority, +MEDIUM Priority
 
-#67	PTR-32 data handling question 
-#59	Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45	calc_alpha_beta performance and efficiency
-#43	Performing LM as SR after doing LM Acquire craps*
-#25	List mode acquisition predelay not stored
-#16	Accidental Singles test Failure for PTR32
-#13	PTR-32 -- Results different if reading file/doing live acquisition
+#109 LM memory issues continue
+#108 Coincidence not completed
+#107 Rossis sometimes gets lost
+#106 Time interval summary incomplete
+# 67 PTR-32 data handling question 
+# 59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+# 45 calc_alpha_beta performance and efficiency
+# 43 Performing LM as SR after doing LM Acquire craps*
+# 25 List mode acquisition predelay not stored
+# 16 Accidental Singles test Failure for PTR32
+# 13 PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
 
-#98 Acquisition measurement termination conditions NYI
-#97 DB issues with non En language and region settings
-#94 Add a comment column to the various measurement reports dialogues 
-#93 File or folder query for list mode input files confusing 
-#92 File locations are not fully coherent 
-#88 Show type (SR or LM) on facility setup dlg 
-#85 Implement full SQL database implementation 
-#83 Selecting isotopics for use 
-#82 Implement the report subsection filter feature 
-#80 Summary results CSV reports 
-#77 Add support for INCC5 date/time encoded file names 
-#74 Measurement report dialog print feature broken 
-#72 Enhance cmd line to support INCC5-style NCC processing 
-#71 Add support for reading MCA-527 single channel list mode data files 
-#70 Add MCA-527 single channel list mode DAQ 
-#68 Limit the instrument type selections for List Mode to those actually supported now 
-#67 PTR-32 data handling question - Joe, Heather 
-#66 Delete measurements crashes the code 
-#65 Isotopics should not be stored on cancel 
-#62 Save measurements only if successful or completed 
-#58 When doing an LM measurement, start at Step 3 
-#54 Output location should be sub-specified into four optionally distinct paths 
-#51 LM input source file folder selection is too limited
-#50 Current acquire state retention and recall is not consistent 
-#47 A second calib assay does not recall the previous calib assay item id
-#46 HV Plateau enhancement 
-#38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
-#34 Implement Composite Isotopics dlg and use
-#33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
-#27 Cancel assay does not fully stop acquisition
-#23 how to delete list mode detector? 
-#15 Implement Reports | Verification 
-#11 Implement progress and cancel features for lengthy operations
- #9 List mode analysis results reports can have empty sections 
+  98 Acquisition measurement termination conditions NYI
+  97 DB issues with non En language and region settings
+  94 Add a comment column to the various measurement reports dialogues 
+  93 File or folder query for list mode input files confusing 
+  92 File locations are not fully coherent 
+  88 Show type (SR or LM) on facility setup dlg 
+  85 Implement full SQL database implementation 
+  83 Selecting isotopics for use 
+  82 Implement the report subsection filter feature
+  81 Tools for managing large sets of isotopics and items
+  80 Summary results CSV reports 
+  77 Add support for INCC5 date/time encoded file names 
+  74 Measurement report dialog print feature broken 
+  72 Enhance cmd line to support INCC5-style NCC processing 
+  71 Add support for reading MCA-527 single channel list mode data files 
+  70 Add MCA-527 single channel list mode DAQ 
+  68 Limit the instrument type selections for List Mode to those actually supported now 
+  67 PTR-32 data handling question - Joe, Heather 
+  66 Delete measurements crashes the code 
+  65 Isotopics should not be stored on cancel 
+  62 Save measurements only if successful or completed 
+  58 When doing an LM measurement, start at Step 3 
+  54 Output location should be sub-specified into four optionally distinct paths 
+  51 LM input source file folder selection is too limited
+  50 Current acquire state retention and recall is not consistent 
+  47 A second calib assay does not recall the previous calib assay item id
+  46 HV Plateau enhancement 
+  38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
+  34 Implement Composite Isotopics dlg and use
+  33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
+  31 Implement the INCC5 Reanalysis
+  27 Cancel assay does not fully stop acquisition
+  23 how to delete list mode detector? 
+  15 Implement Reports | Verification 
+  11 Implement progress and cancel features for lengthy operations
+   9 List mode analysis results reports can have empty sections 
 
 
 **********************************************************************************

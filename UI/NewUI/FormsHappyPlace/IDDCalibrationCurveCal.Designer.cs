@@ -582,7 +582,7 @@
             this.PassiveUraniumMeasLabel.Name = "PassiveUraniumMeasLabel";
             this.PassiveUraniumMeasLabel.Size = new System.Drawing.Size(145, 13);
             this.PassiveUraniumMeasLabel.TabIndex = 48;
-            this.PassiveUraniumMeasLabel.Text = "Pasive uranium measurement";
+            this.PassiveUraniumMeasLabel.Text = "Passive uranium measurement";
             // 
             // U235PercentLabel
             // 
