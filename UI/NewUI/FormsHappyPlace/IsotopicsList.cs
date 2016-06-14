@@ -27,7 +27,6 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using AnalysisDefs;
 using NCCReporter;

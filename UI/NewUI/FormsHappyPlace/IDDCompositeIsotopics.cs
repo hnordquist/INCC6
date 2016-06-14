@@ -436,7 +436,7 @@ namespace NewUI
 
 		private void SelButton_Click(object sender, EventArgs e)
 		{
-			IsotopicsList il = new IsotopicsList(false);
+			IsotopicsList il = new IsotopicsList(iso: false);
 			if (il.ShowDialog() == DialogResult.OK)
 			{
 				m_comp_iso = il.GetSingleSelectedCompIsotopics();

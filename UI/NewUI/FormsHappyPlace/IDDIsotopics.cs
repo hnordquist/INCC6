@@ -545,7 +545,7 @@ namespace NewUI
 
 		private void IsoList_Click(object sender, EventArgs e)
 		{
-			IsotopicsList il = new IsotopicsList(true);
+			IsotopicsList il = new IsotopicsList(iso: true);
 			if (il.ShowDialog() == DialogResult.OK)
 			{
 				m_iso = il.GetSingleSelectedIsotopics();

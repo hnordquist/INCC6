@@ -98,7 +98,7 @@ namespace AnalysisDefs
                 switch (section)
                 {
 
-                    // NEXT: in progress, an identical copy of full INCC report sections
+                    // An identical copy of full INCC report sections
                     case INCCReportSection.SummedRawData:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Summary);
                         sec.SetFPCurrentFormatPrecision(0);

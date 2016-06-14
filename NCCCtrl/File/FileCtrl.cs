@@ -319,6 +319,17 @@ namespace NCCFile
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "LMMM NCD data file processing requires a List Mode detector; '" + meas.Detector.ToString() + "' is not");
 				return;
 			}
+			
+            // get the list of files from the named folder, or use the supplied list
+            if (NC.App.AppContext.FileInputList == null)
+                files = (FileList<NCDFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, false);
+            else
+                files = (FileList<NCDFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
+            if (files == null || files.Count() < 1)
+            {
+                NC.App.Opstate.StopTimer();
+                return;
+            }
             PseudoInstrument = new LMInstrument(meas.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.selected = true;
             if (!Instruments.Active.Contains(PseudoInstrument))

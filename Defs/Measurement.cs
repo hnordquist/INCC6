@@ -1044,7 +1044,7 @@ namespace AnalysisDefs
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
                                 mtype: MeasOption.PrintName(),
                                 filename: MeasurementId.FileName,  // the file names are generated at the end of the process, in GenerateReports, subsequently the database entry is updated with the new file names
-                                notes: "2015");
+                                notes: "2016");
 
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
 
