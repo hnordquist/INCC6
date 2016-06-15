@@ -132,11 +132,13 @@ namespace NCCTransfer
     {
         protected LMLoggers.LognLM mlogger;
         public string Path;
+		public bool Select;  // for UI-based filtering
 
         public INCCTransferBase(LMLoggers.LognLM logger, string mpath)
         {
             mlogger = logger;
             Path = string.Copy(mpath);
+			Select = true;
         }
         unsafe public virtual bool Restore(string source_path_filename)
         {
@@ -145,6 +147,7 @@ namespace NCCTransfer
 
         // new material type
         public List<string> item_type_names_table = new List<string>();
+
 
     }
     
@@ -706,6 +709,17 @@ namespace NCCTransfer
 
         }
     }
+
+	public class TransferSummary
+	{
+			public DateTime dt;
+			public string item, stratum, path, det;
+			public bool overwrite; 
+			public INCCTransferFile itf;
+			public TransferSummary()
+			{
+			}
+	}
 
     public class INCCTransferFile : INCCTransferBase
     {

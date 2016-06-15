@@ -36,14 +36,14 @@ using Instr;
 using NCCReporter;
 namespace NewUI
 {
+	using System.Windows.Input;
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
 
-    using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
-
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+	/// <summary>
+	/// Interaction logic for MainWindow.xaml
+	/// </summary>
+	public partial class MainWindow : Window
     {
 
         private WinPos main;
@@ -713,7 +713,25 @@ namespace NewUI
                 UIIntegration.Controller.file = true;
                 UIIntegration.Controller.SetFileTransform();  // it is a file action
                 NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  //enable only xfer file processing
-                UIIntegration.Controller.Perform();  // run the current specified operation
+
+				Cursor sav = this.Cursor;
+				this.Cursor = Cursors.Wait;
+				System.Collections.Generic.List<NCCTransfer.INCCKnew.TransferSummary> x = null;
+				UIIntegration.Controller.procFctrl.PrepTransferProcessing(ref x);
+				if (x.Count > 0)
+				{
+					TransferList tl = new TransferList(x);
+					System.Windows.Forms.DialogResult dr = tl.ShowDialog();
+					// update the stored prepared list from the user's selections
+					UIIntegration.Controller.procFctrl.ApplyTransferSelections(tl.list);
+					if (!UIIntegration.Controller.procFctrl.HasTransferEntries)
+					{
+						this.Cursor = sav;
+						return;
+					}    
+				}
+				this.Cursor = sav;
+				UIIntegration.Controller.Perform();  // run the current specified operation
             }
         }
 

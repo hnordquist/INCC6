@@ -775,6 +775,46 @@ namespace NCCTransfer
             set { meas = value; }
         }
 
+		public class TransferSummary
+		{
+			public DateTime dt;
+			public string item, stratum, path, det, comment;
+			public bool select; 
+			public int index;
+			public TransferSummary()
+			{
+			}
+		}
+
+		public static unsafe TransferSummary ConstructSummary(INCCTransferFile itf, int index)
+		{
+			TransferSummary t = new TransferSummary();
+			results_rec results = itf.results_rec_list[0];
+			t.path = itf.Path;
+			t.det = TransferUtils.str(results.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
+            t.stratum = TransferUtils.str(results.stratum_id, INCC.MAX_STRATUM_ID_LENGTH);
+            t.item = TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH);
+			t.dt = INCC.DateTimeFrom(TransferUtils.str(results.meas_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(results.meas_time, INCC.DATE_TIME_LENGTH));
+			t.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);
+			t.select = false;
+			t.index = index;
+			return t;
+		}
+
+		public static List<INCCKnew.TransferSummary> ConstructSummaryList(List<INCCTransferBase> it)
+		{
+			List<INCCKnew.TransferSummary> list = new List<TransferSummary>();
+			foreach (INCCTransferBase itf in it)
+			{ 
+				if (itf is INCCTransferFile)
+				{
+					int idx = it.IndexOf(itf);
+					list.Add(ConstructSummary((INCCTransferFile)itf, idx));
+				}
+			}
+			return list;
+		}
+
         public unsafe bool BuildMeasurement(INCCTransferFile itf, int num)
         {
 

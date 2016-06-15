@@ -120,6 +120,7 @@ namespace NewUI
                 }
             }
 
+			am = Integ.GetMethodSelections(ah.ap);
             if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
                 UseNumCyclesRadioButton.Checked = true;
@@ -144,7 +145,6 @@ namespace NewUI
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
             ItemIdComboBox.SelectedItem = ah.ap.item_id;
 
-            am = Integ.GetMethodSelections(ah.ap);
             if (am != null)
             {
                 if (am.Has(AnalysisMethod.CuriumRatio))
@@ -389,15 +389,24 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
-					CountTimeTextBox.Enabled = true;
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = true;
-					UsePu240eRadioButton.Enabled = true;
+					UseTriplesRadioButton.Enabled = false;
+					UsePu240eRadioButton.Enabled = false;
 					NumPassiveCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
 					MaxNumCyclesTextBox.Enabled = !ah.CycleCount;
+					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
+					if (ah.det.Id.SRType == InstrType.PSR || ah.det.Id.SRType == InstrType.AMSR || ah.det.Id.SRType == InstrType.MSR4A || ah.det.ListMode)
+					{
+						UseTriplesRadioButton.Enabled = true;
+						if ( (am != null) && am.HasMethod(AnalysisMethod.Multiplicity))
+						{
+							UsePu240eRadioButton.Enabled = true;
+						}
+					}
+
 					break;
 				default:
 					CountTimeTextBox.Enabled = false;
@@ -413,6 +422,7 @@ namespace NewUI
 				break;
 			}
 		}
+
 
         private void DataSourceComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {

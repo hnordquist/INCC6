@@ -168,6 +168,12 @@
     <Compile Include="FormsHappyPlace\Splash.Designer.cs">
       <DependentUpon>Splash.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\TransferList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\TransferList.Designer.cs">
+      <DependentUpon>TransferList.cs</DependentUpon>
+    </Compile>
     <Compile Include="NumericTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -183,18 +189,6 @@
     <Compile Include="Support\Folder.cs" />
     <Compile Include="Support\Format.cs" />
     <Compile Include="Support\SelSum.cs" />
-    <Compile Include="Unready\IDDAboutINCC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDAboutINCC.Designer.cs">
-      <DependentUpon>IDDAboutINCC.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDAboutNCC.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDAboutNCC.Designer.cs">
-      <DependentUpon>IDDAboutNCC.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDActiveCal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -327,12 +321,6 @@
     <Compile Include="FormsHappyPlace\IDDDeleteMeas.Designer.cs">
       <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDDeleteMeasWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDDeleteMeasWaitMsg.Designer.cs">
-      <DependentUpon>IDDDeleteMeasWaitMsg.cs</DependentUpon>
-    </Compile>
     <Compile Include="Unready\IDDDemingFit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -428,18 +416,6 @@
     </Compile>
     <Compile Include="Unready\IDDINCCWarningMsg.Designer.cs">
       <DependentUpon>IDDINCCWarningMsg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDIsoCompAdd.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDIsoCompAdd.Designer.cs">
-      <DependentUpon>IDDIsoCompAdd.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDIsoCompEdit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDIsoCompEdit.Designer.cs">
-      <DependentUpon>IDDIsoCompEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDKnownAlphaCal.cs">
       <SubType>Form</SubType>
@@ -1308,15 +1284,12 @@
     <EmbeddedResource Include="FormsHappyPlace\Splash.resx">
       <DependentUpon>Splash.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\TransferList.resx">
+      <DependentUpon>TransferList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDAboutINCC.resx">
-      <DependentUpon>IDDAboutINCC.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDAboutNCC.resx">
-      <DependentUpon>IDDAboutNCC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDActiveCal.resx">
       <DependentUpon>IDDActiveCal.cs</DependentUpon>
@@ -1384,9 +1357,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDDeleteMeas.resx">
       <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDDeleteMeasWaitMsg.resx">
-      <DependentUpon>IDDDeleteMeasWaitMsg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDDemingFit.resx">
       <DependentUpon>IDDDemingFit.cs</DependentUpon>
     </EmbeddedResource>
@@ -1434,12 +1404,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDINCCWarningMsg.resx">
       <DependentUpon>IDDINCCWarningMsg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDIsoCompAdd.resx">
-      <DependentUpon>IDDIsoCompAdd.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDIsoCompEdit.resx">
-      <DependentUpon>IDDIsoCompEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDKnownAlphaCal.resx">
       <DependentUpon>IDDKnownAlphaCal.cs</DependentUpon>

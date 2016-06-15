@@ -89,7 +89,14 @@ namespace NCCFile
                         break;
                     case NCCAction.File:
                         if (NC.App.AppContext.INCCXfer)
-                            INCCTransferFileProcessing();
+						{
+							if (!gui)
+							{
+								List<INCCKnew.TransferSummary> x = null;
+								PrepTransferProcessing(ref x);
+							}
+							INCCTransferFileProcessing();
+						}				
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
                         else
@@ -192,11 +199,22 @@ namespace NCCFile
             m.PersistFileNames();
         }
 
-        void INCCTransferFileProcessing()
-        {
-            FireEvent(EventType.ActionPrep, this);
-            NC.App.Opstate.StampOperationStartTime();
+		List<INCCTransferBase> xferlist;
 
+		public bool HasTransferEntries { get { return xferlist.Count > 0;  } }
+
+
+		public void ApplyTransferSelections(List<INCCKnew.TransferSummary> slist)
+		{
+			foreach(INCCKnew.TransferSummary ts in slist)
+			{
+				xferlist[ts.index].Select = ts.select;
+			}
+			xferlist.RemoveAll(itb => { return !itb.Select; } );
+		}
+
+		public void PrepTransferProcessing(ref List<INCCKnew.TransferSummary> slist)
+		{
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog);
             if (NC.App.AppContext.FileInputList == null)
                 foo.SetPath(NC.App.AppContext.FileInput);
@@ -204,11 +222,11 @@ namespace NCCFile
                 foo.SetFileList(NC.App.AppContext.FileInputList);
             FireEvent(EventType.ActionStart, foo);
             foo.eh += new TransferEventHandler((s,e) => { FireEvent(EventType.ActionInProgress, e); } );
-            List<INCCTransferBase> res = foo.Restore();
-            if (res != null)
+            xferlist = foo.Restore();
+            if (xferlist != null)
             {
                 // do the detectors and the methods first, then do the transfer files with the data and results
-                res.Sort((itb1, itb2) =>
+                xferlist.Sort((itb1, itb2) =>
                 {
                     if (itb1 is INCCInitialDataDetectorFile)
                         if (!(itb2 is INCCInitialDataDetectorFile))
@@ -230,83 +248,94 @@ namespace NCCFile
                     return 0;
                 });
 
-                // the in-memory load now occurs 
-                if (res.Count > 0)
-                {
-                    ctrllog.TraceInformation("=== Processing the intermediate transfer content");
-                    int j = 1;
-                    // when processing a detector, detector calib, and 1 or more transfer files in batch, the order is important.
-                    bool modI = false, modC = false;
-                    foreach (INCCTransferBase bar in res)
-                    {
-                        if (bar is INCCInitialDataDetectorFile)  // first in the list, define the detectors
-                        {
-                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)res.Count)), "Constructing detector from " + System.IO.Path.GetFileName(bar.Path)));
-                            INCCKnew k = new INCCKnew(ctrllog);
-                            k.BuildDetector((INCCInitialDataDetectorFile)bar, j); j++;
-                            modI = true;
-                        }
-                        if (NC.App.Opstate.IsQuitRequested)
-                            goto enditall;
-                    }
-                    if (modI) // detector files have these various related parameters, update the in-memory collection state and the database to reflect this
-                    {
-                        // DB create/update on all records
-                        NC.App.DB.UpdateDetectors();
-                        NC.App.DB.BackgroundParameters.SetMap();
-                        NC.App.DB.UnattendedParameters.SetMap();  // created from scratch
-                        NC.App.DB.NormParameters.SetMap();
-                        NC.App.DB.AASSParameters.SetMap();
-                        NC.App.DB.HVParameters.SetMap();
-                    }
-                    foreach (INCCTransferBase bar in res)
-                    {
-                        if (bar is INCCInitialDataCalibrationFile)   // second in the list, get the calib info attached to detectors
-                        {
-                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / res.Count)), "Constructing calibration from " + System.IO.Path.GetFileName(bar.Path)));
-                            INCCKnew k = new INCCKnew(ctrllog);
-                            k.BuildCalibration((INCCInitialDataCalibrationFile)bar, j); j++;
-                            modC = true;
-                        }
-                        if (NC.App.Opstate.IsQuitRequested)
-                            goto enditall;
-                    }
-                    if (modC) // update the datbase with new material defs and method analysis parameters 
-                    {
-                        NC.App.DB.Materials.SetList(); NC.App.DB.Materials.Reset();   
-                        NC.App.DB.UpdateAnalysisMethods();
-                    }
-                    foreach (INCCTransferBase bar in res)
-                    {
-                        if (bar is INCCTransferFile)   // third, after prep with detector data and calib, this is measurement data and results derived using detectors and thier calibration parameters.
-                        {
-                            FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)res.Count)), "Constructing measurement from " + System.IO.Path.GetFileName(bar.Path)));
-                            INCCKnew k = new INCCKnew(ctrllog);
-                            bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j); j++;
-                            if (!supercool)
-                                continue;
-                            if (NC.App.AppContext.Replay)
-                                Replay(k.Meas, ConstructedSource.INCCTransfer);
-                            else
-                                PassThru(k.Meas);
-                        }
-                        if (NC.App.Opstate.IsQuitRequested)
-                            goto enditall;
-                    }
-                }
+				slist = INCCKnew.ConstructSummaryList(xferlist);
+			}
+		}
 
-                enditall:
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
-                NC.App.Opstate.StampOperationStopTime();
-                FireEvent(EventType.ActionFinished, this);
+        void INCCTransferFileProcessing()
+        {
+			FireEvent(EventType.ActionPrep, this);
+			NC.App.Opstate.StampOperationStartTime();
+			// the in-memory load now occurs 
+			if (xferlist != null && xferlist.Count > 0)
+			{
+				ctrllog.TraceInformation("=== Processing the intermediate transfer content");
+				int j = 1;
+				// when processing a detector, detector calib, and 1 or more transfer files in batch, the order is important.
+				bool modI = false, modC = false;
+				foreach (INCCTransferBase bar in xferlist)
+				{
+					if (bar is INCCInitialDataDetectorFile)  // first in the list, define the detectors
+					{
+						FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)xferlist.Count)), "Constructing detector from " + System.IO.Path.GetFileName(bar.Path)));
+						INCCKnew k = new INCCKnew(ctrllog);
+						k.BuildDetector((INCCInitialDataDetectorFile)bar, j);
+						j++;
+						modI = true;
+					}
+					if (NC.App.Opstate.IsQuitRequested)
+						goto enditall;
+				}
+				if (modI) // detector files have these various related parameters, update the in-memory collection state and the database to reflect this
+				{
+					// DB create/update on all records
+					NC.App.DB.UpdateDetectors();
+					NC.App.DB.BackgroundParameters.SetMap();
+					NC.App.DB.UnattendedParameters.SetMap();  // created from scratch
+					NC.App.DB.NormParameters.SetMap();
+					NC.App.DB.AASSParameters.SetMap();
+					NC.App.DB.HVParameters.SetMap();
+				}
+				foreach (INCCTransferBase bar in xferlist)
+				{
+					if (bar is INCCInitialDataCalibrationFile)   // second in the list, get the calib info attached to detectors
+					{
+						FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / xferlist.Count)), "Constructing calibration from " + System.IO.Path.GetFileName(bar.Path)));
+						INCCKnew k = new INCCKnew(ctrllog);
+						k.BuildCalibration((INCCInitialDataCalibrationFile)bar, j);
+						j++;
+						modC = true;
+					}
+					if (NC.App.Opstate.IsQuitRequested)
+						goto enditall;
+				}
+				if (modC) // update the datbase with new material defs and method analysis parameters 
+				{
+					NC.App.DB.Materials.SetList();
+					NC.App.DB.Materials.Reset();
+					NC.App.DB.UpdateAnalysisMethods();
+				}
+				foreach (INCCTransferBase bar in xferlist)
+				{
+					if (bar is INCCTransferFile)   // third, after prep with detector data and calib, this is measurement data and results derived using detectors and thier calibration parameters.
+					{
+						FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)xferlist.Count)), "Constructing measurement from " + System.IO.Path.GetFileName(bar.Path)));
+						INCCKnew k = new INCCKnew(ctrllog);
+						bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j);
+						j++;
+						if (!supercool)
+							continue;
+						if (NC.App.AppContext.Replay)
+							Replay(k.Meas, ConstructedSource.INCCTransfer);
+						else
+							PassThru(k.Meas);
+					}
+					if (NC.App.Opstate.IsQuitRequested)
+						goto enditall;
+				}
+			}
 
-            }
-        }
+enditall:
+			NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
+			NC.App.Opstate.StampOperationStopTime();
+			FireEvent(EventType.ActionFinished, this);
 
-        /// <summary>
-        /// Process a list of NCD files
-        /// </summary>
-        void NCDFileAssay()
+		}
+
+		/// <summary>
+		/// Process a list of NCD files
+		/// </summary>
+		void NCDFileAssay()
         {
             List<string> ext = new List<string>() { ".ncd" };
             FileList<NCDFile> hdlr = new FileList<NCDFile>();
