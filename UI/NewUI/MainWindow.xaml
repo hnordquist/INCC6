@@ -126,11 +126,6 @@
                 <MenuItem Header="_Plot Normalization History..." Click="ReportPlotNormHistoryClick" IsEnabled="False"/>
                 <MenuItem Header="_Plot Calibration and Verification Results..." Click="ReportPlotCalVerificationClick" IsEnabled="False"/>
             </MenuItem>
-            <MenuItem Header="_Window">
-                <MenuItem Header="_Arrange Icons" Click="WindowArrangeIconsClick" IsEnabled="False"/>
-                <MenuItem Header="_Cascade" Click="WindowCascadeClick" IsEnabled="False"/>
-                <MenuItem Header="_Tile" Click="WindowTileClick" IsEnabled="False"/>
-            </MenuItem>
             <MenuItem Header="_Help" IsEnabled="True">
                 <MenuItem Header="_Topics" Click="HelpTopicsClick" IsEnabled="True"/>
                 <MenuItem Header="_Procedures" Click="HelpProceduresClick" IsEnabled="False"/>

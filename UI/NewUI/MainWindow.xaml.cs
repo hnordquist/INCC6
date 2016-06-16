@@ -532,25 +532,6 @@ namespace NewUI
             f.Show();
         }
 
-        ///////////////////
-        //  WINDOW MENU  //
-        ///////////////////
-
-        private void WindowArrangeIconsClick(object sender, RoutedEventArgs e)
-        {
-           
-        }
-
-        private void WindowCascadeClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void WindowTileClick(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         /////////////////
         //  HELP MENU  //
         /////////////////
