@@ -35,10 +35,10 @@ using NCCFile;
 using NCCReporter;
 namespace NewUI
 {
+	using System.Threading;
+	using NC = NCC.CentralizedState;
 
-    using NC = NCC.CentralizedState;
-
-    public delegate void UILoggingFunc(String s, bool newline = false);
+	public delegate void UILoggingFunc(String s, bool newline = false);
 
 
     public partial class Controller
@@ -512,6 +512,22 @@ namespace NewUI
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, NC.App.Opstate.Action == NCCAction.Assay);
         }
 
+		bool okxferprep;
+		public bool SpecialPrepAction()
+        {
+			okxferprep = false;
+            mProgressTracker = new ProgressTracker();
+            task = Task.Factory.StartNew(() => SpecialPrepThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken); 
+            string titletext = "Transfer File Processing";
+            Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, isAssay:false);
+			bool go = true;
+			while (go && task.Status < TaskStatus.RanToCompletion)
+			{
+				go = task.Wait(421, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+			}
+			return okxferprep; 
+        }
+
         public new void CancelCurrentAction()
         {
             base.CancelCurrentAction();
@@ -554,6 +570,26 @@ namespace NewUI
         public NCCAction CurAction
         {
             get { return NC.App.Opstate.Action; }
+        }
+
+		
+		void SpecialPrepThreadOp(object sender, DoWorkEventArgs ea)
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            try
+            {
+				System.Collections.Generic.List<NCCTransfer.INCCKnew.TransferSummary> x = null;
+				PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+            }
+            catch (Exception e)
+            {
+                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+                applog.TraceException(e, true);
+                applog.EmitFatalErrorMsg();
+           }  
+			NC.App.Opstate.ResetTokens();
+			NC.App.Opstate.SOH = NCC.OperatingState.Stopped;   
         }
     }
 

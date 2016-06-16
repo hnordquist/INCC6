@@ -695,23 +695,9 @@ namespace NewUI
                 UIIntegration.Controller.SetFileTransform();  // it is a file action
                 NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  //enable only xfer file processing
 
-				Cursor sav = this.Cursor;
-				this.Cursor = Cursors.Wait;
-				System.Collections.Generic.List<NCCTransfer.INCCKnew.TransferSummary> x = null;
-				UIIntegration.Controller.procFctrl.PrepTransferProcessing(ref x);
-				if (x.Count > 0)
-				{
-					TransferList tl = new TransferList(x);
-					System.Windows.Forms.DialogResult dr = tl.ShowDialog();
-					// update the stored prepared list from the user's selections
-					UIIntegration.Controller.procFctrl.ApplyTransferSelections(tl.list);
-					if (!UIIntegration.Controller.procFctrl.HasTransferEntries)
-					{
-						this.Cursor = sav;
-						return;
-					}    
-				}
-				this.Cursor = sav;
+				bool ok = UIIntegration.Controller.procFctrl.SpecialPrepAction();
+				if (!ok)
+					return;
 				UIIntegration.Controller.Perform();  // run the current specified operation
             }
         }

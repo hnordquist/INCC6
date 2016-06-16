@@ -90,10 +90,10 @@ namespace NCCFile
                     case NCCAction.File:
                         if (NC.App.AppContext.INCCXfer)
 						{
-							if (!gui)
+							if (!gui) // test this from cmd line
 							{
 								List<INCCKnew.TransferSummary> x = null;
-								PrepTransferProcessing(ref x);
+								PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
 							}
 							INCCTransferFileProcessing();
 						}				
@@ -213,9 +213,10 @@ namespace NCCFile
 			xferlist.RemoveAll(itb => { return !itb.Select; } );
 		}
 
-		public void PrepTransferProcessing(ref List<INCCKnew.TransferSummary> slist)
+		public void PrepTransferProcessing(ref List<INCCKnew.TransferSummary> slist, CancellationToken ct)
 		{
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog);
+			foo.mct = ct;
             if (NC.App.AppContext.FileInputList == null)
                 foo.SetPath(NC.App.AppContext.FileInput);
             else

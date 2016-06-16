@@ -48,6 +48,7 @@ namespace NCCTransfer
         protected string mpath;
         protected eFileType mft;
         protected LMLoggers.LognLM mlogger;
+		public System.Threading.CancellationToken mct;
 
         public static readonly string INTEGRATED_REVIEW =  "IREV";
         public static readonly string OLD_REVIEW = "RAW";
@@ -436,6 +437,8 @@ namespace NCCTransfer
                         string p = f.Substring(f.LastIndexOf("\\") + 1);
                         mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
                         eh(this, new TransferEventArgs((int)(100.0 * (j / (float)fcount)),"Doing " + p));
+						if (mct != null && mct.IsCancellationRequested)
+							break;
                         base.SetFilePath(f);
                         INCCTransferBase itf = base.Restore();
                         if (itf == null)
@@ -466,6 +469,8 @@ namespace NCCTransfer
                     string p = f.Substring(f.LastIndexOf("\\") + 1);
                     mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
                     eh(this, new TransferEventArgs((int)(100.0 * (j / (float)paths.Count)), "Doing " + p));
+					if (mct != null && mct.IsCancellationRequested)
+						break;
                     base.SetFilePath(f);
                     INCCTransferBase itf = base.Restore();
                     if (itf == null)
