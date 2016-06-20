@@ -70,7 +70,7 @@ namespace NewUI
 				PrepNotepad();
 				SetTitlesAndChoices(filter, alltypes, goal,
 					detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
-				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly);
+				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly, skipMethods: false);
 				bGood = PrepList(filter, detector);
 			} finally
 			  {

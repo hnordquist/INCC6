@@ -3726,7 +3726,7 @@ namespace AnalysisDefs
 			return res;
         }
 
-		public List<Measurement> MeasurementsFor(List<IndexedResults> ilist, bool LMOnly)
+		public List<Measurement> MeasurementsFor(List<IndexedResults> ilist, bool LMOnly, bool skipMethods)
 		{
             List<Measurement> ms = new List<Measurement>();
 			DB.Measurements mdb = new DB.Measurements();
@@ -3754,7 +3754,8 @@ namespace AnalysisDefs
 						foreach (string rfpath in lrfpaths)
 							m.ResultsFiles.Add(LMOnly, rfpath);
 					}
-					IngestAnalysisMethodResultsFromDB(m, mdb.db);
+					if (!skipMethods)
+						IngestAnalysisMethodResultsFromDB(m, mdb.db);
 				}
 			}
 			return ms;

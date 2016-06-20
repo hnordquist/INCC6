@@ -63,55 +63,57 @@ namespace NewUI
             return skip;
         }
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            DialogResult r = DialogResult.No;
-            List<string> paths = new List<string>();
-            if (RestoreDetectorParametersRadioButton.Checked)
-            {
-                RestoreFileDialog.Filter = "All files (*.*)|*.*";
-                RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
-                RestoreFileDialog.Title = "Select INCC Detector files for processing";
-                RestoreFileDialog.Multiselect = true;
-                RestoreFileDialog.RestoreDirectory = true;
-                r = RestoreFileDialog.ShowDialog(this);
-                if (r == DialogResult.OK)
-                    foreach (string s in RestoreFileDialog.FileNames)
-                    {
-                        if (Skip(s))
-                            continue;
-                        paths.Add(s);
-                    }    
-            }
-            else
-            {
-                RestoreFileDialog.DefaultExt = "CAL";
-                RestoreFileDialog.Filter = "INCC Calibration files (*.cal)|*.cal|All files (*.*)|*.*";
-                RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
-                RestoreFileDialog.Title = "Select INCC Calibration files for processing";
-                RestoreFileDialog.Multiselect = true;
-                RestoreFileDialog.RestoreDirectory = true;
-                r = RestoreFileDialog.ShowDialog(this);
-                if (r == DialogResult.OK)
-                    foreach (string s in RestoreFileDialog.FileNames)
-                    {
-                        paths.Add(s);
-                    }
-            }
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			DialogResult r = DialogResult.No;
+			List<string> paths = new List<string>();
+			if (RestoreDetectorParametersRadioButton.Checked)
+			{
+				RestoreFileDialog.Filter = "All files (*.*)|*.*";
+				RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
+				RestoreFileDialog.Title = "Select INCC Detector files for processing";
+				RestoreFileDialog.Multiselect = true;
+				RestoreFileDialog.RestoreDirectory = true;
+				r = RestoreFileDialog.ShowDialog(this);
+				if (r == DialogResult.OK)
+					foreach (string s in RestoreFileDialog.FileNames)
+					{
+						if (Skip(s))
+							continue;
+						paths.Add(s);
+					}
+			} 
+			else
+			{
+				RestoreFileDialog.DefaultExt = "CAL";
+				RestoreFileDialog.Filter = "INCC Calibration files (*.cal)|*.cal|All files (*.*)|*.*";
+				RestoreFileDialog.InitialDirectory = NC.App.AppContext.FileInput;
+				RestoreFileDialog.Title = "Select INCC Calibration files for processing";
+				RestoreFileDialog.Multiselect = true;
+				RestoreFileDialog.RestoreDirectory = true;
+				r = RestoreFileDialog.ShowDialog(this);
+				if (r == DialogResult.OK)
+					foreach (string s in RestoreFileDialog.FileNames)
+					{
+						paths.Add(s);
+					}
+			}
 
+			if (r == DialogResult.OK)
+			{
+				NC.App.AppContext.FileInputList = paths;
+				UIIntegration.Controller.file = true;
+				UIIntegration.Controller.SetFileTransform();  // it is a file action
+				NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  // only xfer file processing
+				bool ok = UIIntegration.Controller.procFctrl.SpecialPrepAction();
+				if (!ok)
+					return;
+				UIIntegration.Controller.Perform();  // run the current specified operation
+			}
+			Close();
+		}
 
-            if (r == DialogResult.OK)
-            {
-                NC.App.AppContext.FileInputList = paths;
-                UIIntegration.Controller.file = true;
-                UIIntegration.Controller.SetFileTransform();  // it is a file action
-                NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  //enable only xfer file processing
-                UIIntegration.Controller.Perform();  // run the current specified operation
-            }
-            Close();
-        }
-
-        private void CancelBtn_Click(object sender, EventArgs e)
+		private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
         }

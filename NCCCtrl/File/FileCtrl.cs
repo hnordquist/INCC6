@@ -90,12 +90,14 @@ namespace NCCFile
                     case NCCAction.File:
                         if (NC.App.AppContext.INCCXfer)
 						{
+							bool go = true; // got here from ui or cmd line, if from ui then go is true
 							if (!gui) // test this from cmd line
 							{
 								List<INCCKnew.TransferSummary> x = null;
-								PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+								go = PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
 							}
-							INCCTransferFileProcessing();
+							if (go)
+								INCCTransferFileProcessing();
 						}				
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
@@ -201,9 +203,6 @@ namespace NCCFile
 
 		List<INCCTransferBase> xferlist;
 
-		public bool HasTransferEntries { get { return xferlist.Count > 0;  } }
-
-
 		public void ApplyTransferSelections(List<INCCKnew.TransferSummary> slist)
 		{
 			foreach(INCCKnew.TransferSummary ts in slist)
@@ -211,10 +210,14 @@ namespace NCCFile
 				xferlist[ts.index].Select = ts.select;
 			}
 			xferlist.RemoveAll(itb => { return !itb.Select; } );
+
+			ctrllog.TraceInformation("Using {0} transfer files out of {1}", xferlist.Count, slist.Count);
+
 		}
 
-		public void PrepTransferProcessing(ref List<INCCKnew.TransferSummary> slist, CancellationToken ct)
+		public bool PrepTransferProcessing(ref List<INCCKnew.TransferSummary> slist, CancellationToken ct)
 		{
+			bool ok = true;
             INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog);
 			foo.mct = ct;
             if (NC.App.AppContext.FileInputList == null)
@@ -224,9 +227,10 @@ namespace NCCFile
             FireEvent(EventType.ActionStart, foo);
             foo.eh += new TransferEventHandler((s,e) => { FireEvent(EventType.ActionInProgress, e); } );
             xferlist = foo.Restore();
-            if (xferlist != null)
+			ok = !ct.IsCancellationRequested;
+            if (xferlist != null && ok) // sort and construct if files found and method not canceled
             {
-                // do the detectors and the methods first, then do the transfer files with the data and results
+                // sort to do the detectors and the methods first, then do the transfer files with the data and results
                 xferlist.Sort((itb1, itb2) =>
                 {
                     if (itb1 is INCCInitialDataDetectorFile)
@@ -248,9 +252,9 @@ namespace NCCFile
                             return 0;
                     return 0;
                 });
-
 				slist = INCCKnew.ConstructSummaryList(xferlist);
 			}
+			return ok;
 		}
 
         void INCCTransferFileProcessing()
@@ -260,7 +264,7 @@ namespace NCCFile
 			// the in-memory load now occurs 
 			if (xferlist != null && xferlist.Count > 0)
 			{
-				ctrllog.TraceInformation("=== Processing the intermediate transfer content");
+				ctrllog.TraceInformation("Processing the intermediate transfer content");
 				int j = 1;
 				// when processing a detector, detector calib, and 1 or more transfer files in batch, the order is important.
 				bool modI = false, modC = false;
@@ -325,6 +329,8 @@ namespace NCCFile
 						goto enditall;
 				}
 			}
+			else
+				ctrllog.TraceInformation("No files transferred");
 
 enditall:
 			NC.App.Opstate.SOH = NCC.OperatingState.Stopping;

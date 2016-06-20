@@ -85,8 +85,10 @@ namespace NewUI
         {
 			MeasurementView.Items.Clear();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			Text = "Delete Measurements" + (det != null ? " for Detector " + det.Id.DetectorId : string.Empty);
+
 			ilist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
-			mlist = N.App.DB.MeasurementsFor(ilist, LMOnly: false);
+			mlist = N.App.DB.MeasurementsFor(ilist, LMOnly: false, skipMethods: true);
             if (notify && mlist.Count == 0)
             {
                 string msg = string.Format("No measurements for {0} found.", det == null ? "any" : det.Id.DetectorId);
@@ -96,7 +98,7 @@ namespace NewUI
             MeasurementView.ShowItemToolTips = true;
 			int mlistIndex = 0;
 
-            foreach (Measurement m in mlist)
+			foreach (Measurement m in mlist)
             {
                 ListViewItem lvi = new ListViewItem(new string[] {
                     m.MeasOption.PrintName(),
@@ -113,6 +115,7 @@ namespace NewUI
 					lvi.ToolTipText = "No results file available";
 				mlistIndex++;
             }
+
             MCount.Text = MeasurementView.Items.Count.ToString() + " measurements";
 			if (MeasurementView.SelectedItems.Count > 0)
 				MCountSel.Text = MeasurementView.SelectedItems.Count.ToString();

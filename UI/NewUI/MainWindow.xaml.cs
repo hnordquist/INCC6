@@ -683,36 +683,35 @@ namespace NewUI
         }
 
 
-        private void TransferFileInClick(object sender, RoutedEventArgs e)
-        {
+		private void TransferFileInClick(object sender, RoutedEventArgs e)
+		{
 
-            String s = UIIntegration.GetUsersFolder("Select Input Transfer File Folder", NC.App.AppContext.FileInput);
-            if (!String.IsNullOrEmpty(s))
-            {
-                NC.App.AppContext.FileInput = s;
-                NC.App.AppContext.FileInputList = null;  // no explicit file list
-                UIIntegration.Controller.file = true;
-                UIIntegration.Controller.SetFileTransform();  // it is a file action
-                NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  //enable only xfer file processing
-
+			string s = UIIntegration.GetUsersFolder("Select Input Transfer File Folder", NC.App.AppContext.FileInput);
+			if (!string.IsNullOrEmpty(s))
+			{
+				NC.App.AppContext.FileInput = s;
+				NC.App.AppContext.FileInputList = null;  // no explicit file list
+				UIIntegration.Controller.file = true;
+				UIIntegration.Controller.SetFileTransform();  // it is a file action
+				NC.App.AppContext.MutuallyExclusiveFileActions(NCCConfig.NCCFlags.INCCXfer, true);  // xfer file processing only
 				bool ok = UIIntegration.Controller.procFctrl.SpecialPrepAction();
 				if (!ok)
 					return;
 				UIIntegration.Controller.Perform();  // run the current specified operation
-            }
-        }
+			}
+		}
 
-        private void TransferFileOutClick(object sender, RoutedEventArgs e)
-        {
-            String s = UIIntegration.GetUsersFolder("Select Transfer File Folder for Output", NC.App.AppContext.FileInput);
-           if (!String.IsNullOrEmpty(s))
-           {
-               UIIntegration.Controller.file = true;
-               // JFL todo: we do not have a way to export transfer files in this code, so this is a placeholder
-           }
-        }
+		private void TransferFileOutClick(object sender, RoutedEventArgs e)
+		{
+			string s = UIIntegration.GetUsersFolder("Select Transfer File Folder for Output", NC.App.AppContext.FileInput);
+			if (!string.IsNullOrEmpty(s))
+			{
+				UIIntegration.Controller.file = true;
+				// todo: we do not have a way to export transfer files in this code, so this is a placeholder
+			}
+		}
 
-        private void InitialDataSelectorClick(object sender, RoutedEventArgs e)
+		private void InitialDataSelectorClick(object sender, RoutedEventArgs e)
         {
             IDDRestoreInitialData d = new IDDRestoreInitialData();  // all processing occurs in the OK handler 
             d.ShowDialog();
@@ -780,7 +779,7 @@ namespace NewUI
         private void Exit(object sender, RoutedEventArgs e)
         {
             //todo: Are there other cleanup tasks to do on closing?
-            this.Close();
+            Close();
         }
 
         private void SaveAsExportClick(object sender, RoutedEventArgs e)

@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 11
-6.0.1.11 June 21, 2016 J. Longo
+6.0.1.11 June 20, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -97,7 +97,7 @@ Issues for basic INCC5/6 feature COMPLETION
 Closed issues
 
  103 Transfer measurement selection dlg just like INCC5
- 102 NCD file prcesing drops input
+ 102 NCD file processing drops input
   98 Acquisition measurement termination conditions on dlgs NYI
   97 DB issues with non En language and region settings
   94 Add a comment column to the various measurement reports dialogues 

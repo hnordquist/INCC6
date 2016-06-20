@@ -436,7 +436,7 @@ namespace NCCTransfer
                         j++;
                         string p = f.Substring(f.LastIndexOf("\\") + 1);
                         mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
-                        eh(this, new TransferEventArgs((int)(100.0 * (j / (float)fcount)),"Doing " + p));
+                        eh(this, new TransferEventArgs((int)(100.0 * (j / (float)fcount)),"Scanning " + p));
 						if (mct != null && mct.IsCancellationRequested)
 							break;
                         base.SetFilePath(f);
@@ -468,7 +468,7 @@ namespace NCCTransfer
                     j++;
                     string p = f.Substring(f.LastIndexOf("\\") + 1);
                     mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
-                    eh(this, new TransferEventArgs((int)(100.0 * (j / (float)paths.Count)), "Doing " + p));
+                    eh(this, new TransferEventArgs((int)(100.0 * (j / (float)paths.Count)), "Scanning " + p));
 					if (mct != null && mct.IsCancellationRequested)
 						break;
                     base.SetFilePath(f);

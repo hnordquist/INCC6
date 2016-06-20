@@ -26,7 +26,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using AnalysisDefs;
 using DAQ;
@@ -35,7 +37,7 @@ using NCCFile;
 using NCCReporter;
 namespace NewUI
 {
-	using System.Threading;
+
 	using NC = NCC.CentralizedState;
 
 	public delegate void UILoggingFunc(String s, bool newline = false);
@@ -43,7 +45,7 @@ namespace NewUI
 
     public partial class Controller
     {
-        NCC.MeasurementStatus measStatus;
+		MeasurementStatus measStatus;
         public bool updateGUIWithNewData = true;
         public bool updateGUIWithChannelRatesData = false;
 
@@ -516,14 +518,28 @@ namespace NewUI
 		public bool SpecialPrepAction()
         {
 			okxferprep = false;
-            mProgressTracker = new ProgressTracker();
-            task = Task.Factory.StartNew(() => SpecialPrepThreadOp(null, null), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken); 
+            mProgressTracker = new ProgressTracker(true);
+			bool canceled = false;
+			DoWorkEventArgs ea = new DoWorkEventArgs(canceled);
+            task = Task.Factory.StartNew(() => SpecialPrepThreadOp(null, ea), NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken); 
             string titletext = "Transfer File Processing";
             Progress.ProgressDialog.Show(null,  titletext, NC.App.Name, task, NC.App.Opstate.CancelStopAbort, mProgressTracker, isAssay:false);
 			bool go = true;
-			while (go && task.Status < TaskStatus.RanToCompletion)
+			while (!(task.IsCompleted || task.IsCanceled || task.IsFaulted))
 			{
-				go = task.Wait(421, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+				go = task.Wait(500); // this is a totally lame way to force the ui to continue, I need the WPF logging to appear responsive 
+			}
+			if (ea.Result is bool)
+				okxferprep = (bool)ea.Result;  // state of process; no files is ok, but cancel button state needs to be caught here
+			else
+			{ 
+				okxferprep = true; // there *is* a file list, it might be empty
+				TransferList tldr = new TransferList((List<NCCTransfer.INCCKnew.TransferSummary>)ea.Result);
+				tldr.ShowDialog();  // show user her choice
+				if (tldr.DialogResult == System.Windows.Forms.DialogResult.OK)
+					ApplyTransferSelections(tldr.list);  // apply her choice to the final list for processing
+				else
+					okxferprep = false;  // nothing to do so make state canceled
 			}
 			return okxferprep; 
         }
@@ -575,21 +591,29 @@ namespace NewUI
 		
 		void SpecialPrepThreadOp(object sender, DoWorkEventArgs ea)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
-				System.Collections.Generic.List<NCCTransfer.INCCKnew.TransferSummary> x = null;
-				PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+				List<NCCTransfer.INCCKnew.TransferSummary> x = null;
+				bool ok = PrepTransferProcessing(ref x, NC.App.Opstate.CancelStopAbort.LinkedCancelStopAbortToken);
+				if (ok && x.Count > 0)
+					ea.Result = x;  // save the constructed list if the operation was not canceled or not a measurement xfer, o.w. Result is a bool
+				else
+					ea.Result = ok;
+				NC.App.Opstate.SOH = OperatingState.Stopped;   
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
-           }  
-			NC.App.Opstate.ResetTokens();
-			NC.App.Opstate.SOH = NCC.OperatingState.Stopped;   
+            }  
+			finally
+			{
+				NC.App.Opstate.ResetTokens();
+			}
+			
         }
     }
 
