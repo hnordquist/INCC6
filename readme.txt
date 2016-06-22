@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 11
-6.0.1.11 June 20, 2016 J. Longo
+INCC6 Beta Release 12
+6.0.1.12 June 30, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -68,34 +68,40 @@ Please use direct email to j.longo@iaea.org or heather@lanl.gov for support and 
 ISSUES
 See https://github.com/hnordquist/INCC6/issues
 
+
+Doing these for Beta 12
+#99+    Time interval summary incomplete
+#76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
+#75*	LM wizard setting for cycle count not used in Live DAQ
+
+#78+	Find Deming curve fitting tool replacement
+#40+	source ID in 'initial source' does not get passed to results
+#69+	Present the proposed List Mode Config UI from DB enhancement
+#32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
+
+#104 HV plateau, waiting for a neutron that never arrives (MCA-527)
+#25 List mode acquisition predelay not stored
+#59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
+
 Issues for basic INCC5/6 feature COMPLETION
 
-# 84*	Implement Collar
-# 76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
-# 75*	LM wizard setting for cycle count not used in Live DAQ
+#84*	Implement Collar
+#79+	Plot Norm, Plot Ver diagnostic tools
 #101+   Coincidence matrix calculation needs completion
-# 99+   Time interval summary incomplete
-# 86+	List mode results database persistence 
-# 79+	Plot Norm, Plot Ver diagnostic tools
-# 78+	Find Deming curve fitting tool replacement
-# 69+	Present the proposed List Mode Config UI from DB enhancement
-# 40+	source ID in 'initial source' does not get passed to results
-# 35+	Hold-up analysis required
-# 32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
+#35+	Hold-up analysis required
 
 *HIGH Priority, +MEDIUM Priority
 
 #100 Rossi processing too slow and can sometimes hang
-# 67 PTR-32 data handling question 
-# 59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-# 45 calc_alpha_beta performance and efficiency
-# 43 Performing LM as SR after doing LM Acquire craps*
-# 25 List mode acquisition predelay not stored
-# 16 Accidental Singles test Failure for PTR32
-# 13 PTR-32 -- Results different if reading file/doing live acquisition
+#67 PTR-32 data handling question 
+#45 calc_alpha_beta performance and efficiency
+#43 Performing LM as SR after doing LM Acquire craps*
+#16 Accidental Singles test Failure for PTR32
+#13 PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
 
+ 104 HV plateau, waiting for a neutron that never arrives (MCA-527)
  103 Transfer measurement selection dlg just like INCC5
  102 NCD file processing drops input
   98 Acquisition measurement termination conditions on dlgs NYI

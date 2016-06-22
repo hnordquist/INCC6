@@ -212,7 +212,7 @@ namespace Instr
 		protected void PerformAssay(Measurement measurement, MeasTrackParams mparams, CancellationToken cancellationToken)
 		{
 			MCA527ProcessingState ps = (MCA527ProcessingState)(RDT.State);
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             try
             {
@@ -415,6 +415,7 @@ namespace Instr
 					{
 						// give the device a break, not needed now because PassBufferToTheCounters processing takes time
 						//Thread.Sleep(40); // 100? ms
+						//m_logger.TraceEvent(LogLevels.Verbose, 99899, "{0} {1} handling {2} timestampsCount {3} num", elapsed, duration, 0, RDT.State.NumValuesParsed);
 					}
 					elapsed = stopwatch.Elapsed;  // snapshot the time after the processing and before the next query
 
@@ -449,14 +450,19 @@ namespace Instr
 					m_logger.TraceEvent(LogLevels.Verbose, 11921, "WriteHeader for {0}", seq);
 					m_logger.Flush();
 				}
+
 				lock (m_monitor)
 				{
 					m_cancellationTokenSource.Dispose();
 					m_cancellationTokenSource = null;
 				}
-				DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
-				m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
-				m_logger.Flush();
+
+				if (totalEvents != 0)  // nothing to handle if no events, close up and continue 
+				{
+					DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
+					m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);
+					m_logger.Flush();
+				}
 			}
 			catch (OperationCanceledException)
 			{
@@ -529,7 +535,7 @@ namespace Instr
 		/// <exception cref="MCADeviceLostConnectionException">An error occurred communicating with the device.</exception>
         private void PerformHVCalibration(Measurement measurement, int voltage, TimeSpan duration, CancellationToken cancellationToken)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Started HV calibration", DeviceName);
@@ -562,9 +568,11 @@ namespace Instr
 				m_setvoltage = false; // override DB settings here
 				PerformAssay(measurement, new MeasTrackParams() {seq = 1, interval = duration.TotalSeconds}, cancellationToken);
 				/// end TakeMeasurement
-
+				
 				for (int i = 0; i < 1; i++)
+				{
 					status.counts[i] = (ulong)cycle.HitsPerChannel[i];
+				}
 
 				if (m_cancellationTokenSource != null)
 					lock (m_monitor)

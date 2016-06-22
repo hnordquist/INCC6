@@ -331,7 +331,7 @@ namespace LMRawAnalysis
                     {
                         PermissionToUseEndOfEventsWait();
                         //see if we have processed the last neutron...
-                        if (startOfNeutronEventList.serialNumber == endOfNeutronEventList.serialNumber)
+                        if (startOfNeutronEventList == null || (startOfNeutronEventList.serialNumber == endOfNeutronEventList.serialNumber))
                         {
                             quittingAtEndOfList = true;
                             AHWorkerStopNow = true;
