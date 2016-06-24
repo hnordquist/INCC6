@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using NCCReporter;
 
 namespace NCCTransfer
@@ -137,7 +138,7 @@ namespace NCCTransfer
         public INCCTransferBase(LMLoggers.LognLM logger, string mpath)
         {
             mlogger = logger;
-            Path = string.Copy(mpath);
+            Path = string.IsNullOrEmpty(mpath) ? string.Empty : string.Copy(mpath);
 			Select = true;
         }
         unsafe public virtual bool Restore(string source_path_filename)
@@ -145,8 +146,37 @@ namespace NCCTransfer
             return false;
         }
 
+		unsafe public virtual bool Save(string path_filename)
+        {
+            return false;
+        }
+
         // new material type
         public List<string> item_type_names_table = new List<string>();
+
+		static internal string CleansePotentialFilename(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return string.Empty;
+            char[] ca = s.ToCharArray();
+            int i;
+            char dchar;
+
+			StringBuilder sb = new StringBuilder();
+            char[] inv = System.IO.Path.GetInvalidFileNameChars();
+            for (i = 0; i < ca.Length; i++)
+            {
+                dchar = ca[i];
+                foreach (char c in inv)
+                    if (dchar == c)
+                    {
+                        dchar = '_';
+                        break;
+                    }
+                sb.Append(dchar);
+            }
+            return sb.ToString();
+        }
 
 
     }
@@ -164,8 +194,8 @@ namespace NCCTransfer
         public List<sr_parms_rec> SRParms = new List<sr_parms_rec>();
         public List<bkg_parms_rec> BKGParms = new List<bkg_parms_rec>();
         public List<norm_parms_rec> NormParms = new List<norm_parms_rec>();
-        public List<tm_bkg_parms_rec> TMBKGParms = new List<tm_bkg_parms_rec>();
         public List<add_a_source_setup_rec> AASParms = new List<add_a_source_setup_rec>();
+        public List<tm_bkg_parms_rec> TMBKGParms = new List<tm_bkg_parms_rec>();
         // dev note:  mid.SRType rides on the sr_parms struct, dont have it here unless it can be looked up in existing state
         public int tm_count = 0;
 
@@ -350,6 +380,84 @@ namespace NCCTransfer
             }
             return result;
         }
+
+		unsafe new public bool Save(string path)
+        {
+			int len = Detector.Count;
+			for (int i = 0; i < len; i++)
+			{
+				detector_rec det = Detector[i];
+				string detname =TransferUtils.str(det.detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
+				string s = CleansePotentialFilename(detname);
+				Path = System.IO.Path.Combine(path, s + ".dat");
+				FileStream stream = File.Create(Path);
+				BinaryWriter bw = new BinaryWriter(stream);
+				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.DETECTOR_SAVE_RESTORE));
+				WriteDetector(i, bw);
+				WriteSRParms(i, bw);
+				WriteBKGParms(i, bw);
+				WriteNormParms(i, bw);
+				WriteAASParms(i, bw);
+				WriteTMBKGParms(i, bw);
+				bw.Close();
+				bw.Dispose();
+				mlogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
+			}
+
+            return false;
+        }
+
+		unsafe void WriteDetector(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(detector_rec);
+			detector_rec p = Detector[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
+		unsafe void WriteSRParms(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(sr_parms_rec);
+			sr_parms_rec p = SRParms[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
+		unsafe void WriteBKGParms(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(bkg_parms_rec);
+			bkg_parms_rec p = BKGParms[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
+
+		unsafe void WriteNormParms(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(norm_parms_rec);
+			norm_parms_rec p = NormParms[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
+
+		unsafe void WriteAASParms(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(add_a_source_setup_rec);
+			add_a_source_setup_rec p = AASParms[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
+
+		unsafe void WriteTMBKGParms(int i, BinaryWriter bw)
+		{
+			int sz = sizeof(tm_bkg_parms_rec);
+			tm_bkg_parms_rec p = TMBKGParms[i];
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
     }
 
     public class INCCInitialDataCalibrationFile : INCCTransferBase
@@ -707,6 +815,34 @@ namespace NCCTransfer
             }
             return result;
 
+        }
+
+		unsafe new public bool Save(string path)
+        {
+			int len = DetectorMaterialMethodParameters.Keys.Count;
+			for (int i = 0; i < len; i++)
+			{
+				//detector_rec det = Detector[i];
+				//string detname =TransferUtils.str(det.detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
+				//string s = CleansePotentialFilename(detname);
+				//Path = System.IO.Path.Combine(path, s + ".dat");
+				//FileStream stream = File.Create(Path);
+				//BinaryWriter bw = new BinaryWriter(stream);
+				//bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.DETECTOR_SAVE_RESTORE));
+				//WriteDetector(i, bw);
+				//WriteSRParms(i, bw);
+				//WriteBKGParms(i, bw);
+				//WriteNormParms(i, bw);
+				//WriteAASParms(i, bw);
+				//WriteTMBKGParms(i, bw);
+				//bw.Close();
+				//bw.Dispose();
+				//mlogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
+			}
+			mlogger.TraceInformation("{0} calibration sets to save off", len);
+
+
+            return false;
         }
     }
 

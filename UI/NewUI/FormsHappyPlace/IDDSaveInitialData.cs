@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,16 +26,21 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using AnalysisDefs;
+using NCCTransfer;
 
 namespace NewUI
 {
-    public partial class IDDSaveInitialData : Form
+	using Integ = NCC.IntegrationHelpers;
+	using NC = NCC.CentralizedState;
+
+	public partial class IDDSaveInitialData : Form
     {
         public IDDSaveInitialData()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void DetectorCurrentRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -60,12 +65,41 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
-        }
+			string dest = UIIntegration.GetUsersFolder("Select Destination", "Select a path to backup data.");
+            if (string.IsNullOrEmpty(dest))
+				return;
+			if (DetectorCurrentRadioButton.Checked)
+			{
+				List<Detector> l = new List<Detector>();
+				l.Add(Integ.GetCurrentAcquireDetector());
+				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+				iddf.Save(dest);
+			}
+			else if (DetectorAllRadioButton.Checked)
+			{
+				List<Detector> l = NC.App.DB.Detectors;				
+				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+				iddf.Save(dest);
+			}
+			else if (CalibrationCurrentRadioButton.Checked)
+			{
+				List<Detector> l = new List<Detector>();
+				l.Add(Integ.GetCurrentAcquireDetector());
+				INCCInitialDataCalibrationFile idcf = INCCKnew.CalibFromDetectors(l);
+				idcf.Save(dest);
+			}
+			else if (CalibrationAllRadioButton.Checked)
+			{
+				List<Detector> l = NC.App.DB.Detectors;				
+				INCCInitialDataCalibrationFile idcf = INCCKnew.CalibFromDetectors(l);
+				idcf.Save(dest);
+			}
+            Close();
+		}
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

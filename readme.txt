@@ -75,11 +75,9 @@ Doing these for Beta 12
 #75*	LM wizard setting for cycle count not used in Live DAQ
 
 #78+	Find Deming curve fitting tool replacement
-#40+	source ID in 'initial source' does not get passed to results
 #69+	Present the proposed List Mode Config UI from DB enhancement
 #32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
 
-#104 HV plateau, waiting for a neutron that never arrives (MCA-527)
 #25 List mode acquisition predelay not stored
 #59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
 
@@ -131,6 +129,7 @@ Closed issues
   50 Current acquire state retention and recall is not consistent 
   47 A second calib assay does not recall the previous calib assay item id
   46 HV Plateau enhancement 
+  40 source ID in 'initial source' does not get passed to results
   38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
   34 Implement Composite Isotopics dlg and use
   33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files

@@ -34,10 +34,10 @@ using DetectorDefs;
 using NCCReporter;
 namespace NCCTransfer
 {
-    using Tuple = AnalysisDefs.VTuple;
-    using NC = NCC.CentralizedState;
-
-    public class INCCKnew
+	using Tuple = AnalysisDefs.VTuple;
+	using NC = NCC.CentralizedState;
+	using System.Text;
+	public class INCCKnew
     {
         LMLoggers.LognLM mlogger;
 
@@ -48,6 +48,134 @@ namespace NCCTransfer
         {
             mlogger = logger;
         }
+
+		public static unsafe INCCInitialDataDetectorFile FromDetectors(List<Detector> dets)
+		{
+			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+			foreach(Detector det in dets)
+			{
+				detector_rec dr = new detector_rec();
+				byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+				char[] a = det.Id.DetectorId.ToCharArray(0, Math.Min(det.Id.DetectorId.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,dr.detector_id);
+				b = new byte[INCC.DETECTOR_TYPE_LENGTH];
+				a = det.Id.Type.ToCharArray(0, Math.Min(det.Id.Type.Length, INCC.DETECTOR_TYPE_LENGTH));
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,dr.detector_type);
+				b = new byte[INCC.ELECTRONICS_ID_LENGTH];
+				a = det.Id.ElectronicsId.ToCharArray(0, Math.Min(det.Id.ElectronicsId.Length, INCC.ELECTRONICS_ID_LENGTH));
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,dr.electronics_id);
+				iddf.Detector.Add(dr);
+
+				sr_parms_rec sr = new sr_parms_rec();
+				b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+				a = det.Id.DetectorId.ToCharArray(0, Math.Min(det.Id.DetectorId.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,sr.sr_detector_id);
+				sr.sr_type = (short)det.Id.SRType;
+				sr.sr_port_number = (short)det.Id.SerialPort;
+				sr.predelay = det.SRParams.predelayMS;
+				sr.die_away_time = det.SRParams.dieAwayTimeMS;
+				sr.gate_length = det.SRParams.gateLengthMS;
+				sr.coeff_a_deadtime = det.SRParams.deadTimeCoefficientAinMicroSecs;
+				sr.coeff_b_deadtime = det.SRParams.deadTimeCoefficientBinPicoSecs;
+				sr.coeff_c_deadtime = det.SRParams.deadTimeCoefficientCinNanoSecs;
+				sr.multiplicity_deadtime = det.SRParams.deadTimeCoefficientMultiplicityinNanoSecs;
+				sr.doubles_gate_fraction = det.SRParams.doublesGateFraction;
+				sr.triples_gate_fraction = det.SRParams.triplesGateFraction;
+				sr.efficiency = det.SRParams.efficiency;
+				sr.high_voltage = det.SRParams.highVoltage;
+				iddf.SRParms.Add(sr);
+
+				BackgroundParameters bkgp = NC.App.DB.BackgroundParameters.Get(det);
+				bkg_parms_rec bkg = new bkg_parms_rec();
+				bkg.curr_active_bkg_scaler1_rate = bkgp.INCCActive.Scaler1Rate;
+				bkg.curr_active_bkg_scaler2_rate = bkgp.INCCActive.Scaler2Rate;
+				bkg.curr_active_bkg_singles_err = bkgp.INCCActive.Singles.err;
+				bkg.curr_active_bkg_singles_rate = bkgp.INCCActive.Singles.v;
+				bkg.curr_passive_bkg_doubles_err = bkgp.DeadtimeCorrectedRates.Doubles.err;
+				bkg.curr_passive_bkg_doubles_rate = bkgp.DeadtimeCorrectedRates.Doubles.v;
+				bkg.curr_passive_bkg_scaler1_rate = bkgp.Scaler1.v;
+				bkg.curr_passive_bkg_scaler2_rate = bkgp.Scaler2.v;
+				bkg.curr_passive_bkg_singles_err = bkgp.DeadtimeCorrectedRates.Singles.err;
+				bkg.curr_passive_bkg_singles_rate = bkgp.DeadtimeCorrectedRates.Singles.v;
+				bkg.curr_passive_bkg_triples_err = bkgp.DeadtimeCorrectedRates.Triples.err;
+				bkg.curr_passive_bkg_triples_rate = bkgp.DeadtimeCorrectedRates.Triples.v;
+				iddf.BKGParms.Add(bkg);
+				tm_bkg_parms_rec tm = new tm_bkg_parms_rec();
+				tm.tm_singles_bkg = bkgp.TMBkgParams.Singles.v;
+				tm.tm_ones_bkg = bkgp.TMBkgParams.Ones.v;
+				tm.tm_twos_bkg = bkgp.TMBkgParams.Twos.v;
+				tm.tm_zeros_bkg = bkgp.TMBkgParams.Zeros.v;
+				tm.tm_singles_bkg_err = bkgp.TMBkgParams.Singles.err;
+				tm.tm_ones_bkg_err = bkgp.TMBkgParams.Ones.err;
+				tm.tm_twos_bkg_err = bkgp.TMBkgParams.Twos.err;
+				tm.tm_zeros_bkg_err = bkgp.TMBkgParams.Zeros.err;
+				tm.tm_bkg = (bkgp.TMBkgParams.ComputeTMBkg ? (byte)0x1 : (byte)0x0);
+				iddf.TMBKGParms.Add(tm);
+
+				NormParameters normp = NC.App.DB.NormParameters.Get(det);
+				norm_parms_rec norm = new norm_parms_rec();
+				norm.acceptance_limit_percent = normp.acceptanceLimitPercent;
+				norm.acceptance_limit_std_dev = normp.acceptanceLimitStdDev;
+				norm.amli_ref_singles_rate = normp.amliRefSinglesRate;
+				norm.bias_mode = NewToOldBiasTestId(normp.biasMode);
+				norm.bias_precision_limit = normp.biasPrecisionLimit;
+				norm.bias_test_addasrc_position = normp.biasTestAddasrcPosition;
+				norm.bias_test_use_addasrc = (byte)(normp.biasTestUseAddasrc ? 1 : 0);
+				norm.cf252_ref_doubles_rate = normp.cf252RefDoublesRate.v;
+				norm.cf252_ref_doubles_rate_err = normp.cf252RefDoublesRate.v;
+				norm.curr_normalization_constant = normp.currNormalizationConstant.v;
+				norm.curr_normalization_constant_err = normp.currNormalizationConstant.err;
+				norm.init_src_precision_limit = normp.initSrcPrecisionLimit;
+				norm.meas_rate = normp.measRate.v;
+				norm.meas_rate_err = normp.measRate.err;
+				norm.yield_relative_to_mrc_95 = normp.yieldRelativeToMrc95;
+				b = new byte[INCC.DATE_TIME_LENGTH];
+				a = normp.refDate.ToString("yy.MM.dd").ToCharArray();
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,norm.ref_date);
+				b = new byte[INCC.SOURCE_ID_LENGTH];
+				a = normp.sourceId.ToCharArray(0, Math.Min(normp.sourceId.Length, INCC.SOURCE_ID_LENGTH));
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b,norm.source_id);
+				iddf.NormParms.Add(norm);
+
+				AddASourceSetup aasp = NC.App.DB.AASSParameters.Get(det);
+				add_a_source_setup_rec aas = new add_a_source_setup_rec();
+				TransferUtils.CopyDbls(aasp.dist_to_move, aas.ad_dist_to_move);
+				aas.ad_forward_over_travel = aasp.forward_over_travel;
+				aas.ad_number_positions = aasp.number_positions;
+				aas.ad_port_number = aasp.port_number;
+				aas.ad_reverse_over_travel = aasp.reverse_over_travel;
+				aas.ad_type = NewToOldAASId(aasp.type);
+				aas.cm_axis_number = aasp.cm_axis_number;
+				aas.cm_forward_mask = aasp.cm_forward_mask;
+				aas.cm_over_travel_state = aasp.cm_over_travel_state;
+				aas.cm_reverse_mask = aasp.cm_reverse_mask;
+				aas.cm_rotation = (byte)(aasp.cm_rotation ? 1 : 0);
+				aas.cm_slow_inches = aasp.cm_slow_inches;
+				aas.cm_steps_per_inch = aasp.cm_steps_per_inch;
+				aas.cm_step_ratio = aasp.cm_step_ratio;
+				aas.plc_steps_per_inch = aasp.plc_steps_per_inch;
+				aas.scale_conversion_factor = aasp.scale_conversion_factor;
+				iddf.AASParms.Add(aas);
+
+			}
+
+			return iddf;
+		}
+
+		public static unsafe INCCInitialDataCalibrationFile CalibFromDetectors(List<Detector> dets)
+		{
+			INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+			foreach(Detector det in dets)
+			{
+			}
+			return idcf;
+		}
 
         public int DetectorIndex;
 
@@ -717,6 +845,27 @@ namespace NCCTransfer
             return nt;
         }
 
+		private static ushort NewToOldBiasTestId(NormTest id)
+        {
+            ushort nt = INCC.IDC_BIAS_SINGLES;
+            switch (id)
+            {
+				case NormTest.AmLiSingles:				
+                    nt = INCC.IDC_BIAS_SINGLES;
+                    break;
+				case NormTest.Cf252Doubles:				
+                    nt = INCC.IDC_BIAS_DOUBLES;
+                    break;
+				case NormTest.Collar:				
+                    nt = INCC.IDC_BIAS_COLLAR;
+                    break;
+				case NormTest.Cf252Singles:				
+                    nt = INCC.IDC_BIAS_CF252_SINGLES;
+                    break;
+            }
+            return nt;
+        }
+
         private INCCAnalysisParams.CuriumRatioVariant OldToNewCRVariants(int id)
         {
             INCCAnalysisParams.CuriumRatioVariant isdh = INCCAnalysisParams.CuriumRatioVariant.UseDoubles;
@@ -766,6 +915,35 @@ namespace NCCTransfer
             return nt;
         }
 
+		private static ushort NewToOldAASId(AddASourceFlavors id)
+        {
+            ushort nt = 0;
+            switch (id)
+            {
+                case AddASourceFlavors.None:
+                    nt = INCC.IDC_NONE;
+                    break;
+                case AddASourceFlavors.CompuMotor_4000:
+                    nt = INCC.IDC_COMPUMOTOR_4000;
+                    break;
+                case AddASourceFlavors.CompuMotor_3000:
+                    nt = INCC.IDC_COMPUMOTOR_3000;
+                    break;
+                case AddASourceFlavors.PLC_JCC21:
+                    nt = INCC.IDC_PLC_JCC21;
+                    break;
+                case AddASourceFlavors.PLC_WM3100:
+                    nt = INCC.IDC_PLC_WM3100;
+                    break;
+                case AddASourceFlavors.Canberra_Counter:
+                    nt = INCC.IDC_CANBERRA_COUNTER;
+                    break;
+                case AddASourceFlavors.Manual:
+                    nt = INCC.IDC_MANUAL;
+                    break;
+            }
+            return nt;
+        }
 
         private Measurement meas;
 

@@ -36,7 +36,6 @@ using Instr;
 using NCCReporter;
 namespace NewUI
 {
-	using System.Windows.Input;
 	using Integ = NCC.IntegrationHelpers;
 	using NC = NCC.CentralizedState;
 
@@ -782,10 +781,6 @@ namespace NewUI
             Close();
         }
 
-        private void SaveAsExportClick(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
-        }
 
         private void PSALogsheetOutClick(object sender, RoutedEventArgs e)
         {
@@ -799,7 +794,8 @@ namespace NewUI
 
         private void InitialDataOutClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			IDDSaveInitialData f = new IDDSaveInitialData();
+			f.ShowDialog();
         }
 
         private void StratumAuthorityFileClick(object sender, RoutedEventArgs e)

@@ -6,11 +6,11 @@
     <DockPanel>
         <Menu Background="{x:Null}" DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Header="_Save As/Export..." Click="SaveAsExportClick" IsEnabled="True">
+                <MenuItem Header="_Save As/Export..." IsEnabled="True">
                     <MenuItem Header="_PSA/Logsheet File..." Click="PSALogsheetOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Performance Monitoring File..." Click="PerformanceMonitoringFileOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Transfer..." Click="TransferFileOutClick" IsEnabled="False"/>
-                    <MenuItem Header="_Initial Data..." Click="InitialDataOutClick" IsEnabled="False"/>
+                    <MenuItem Header="_Initial Data..." Click="InitialDataOutClick" IsEnabled="True"/>
                 </MenuItem>
                 <MenuItem Header="_Get External Data...">
                     <MenuItem Header="_Stratum Authority File..." Click="StratumAuthorityFileClick" IsEnabled="True"  ToolTip="Read a Stratum authority data file in CSV format."/>

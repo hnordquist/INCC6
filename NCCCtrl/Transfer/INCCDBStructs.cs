@@ -212,7 +212,7 @@ namespace NCCTransfer
             return longs;
         }
 
-        static unsafe public String str(byte* ptr, int len)
+        static unsafe public string str(byte* ptr, int len)
         {
 
             byte[] bytes = new byte[len];
@@ -222,7 +222,7 @@ namespace NCCTransfer
             if (idx > -1)
                 len = idx;
 
-            string s = System.Text.ASCIIEncoding.ASCII.GetString(bytes, 0, len);
+            string s = System.Text.Encoding.ASCII.GetString(bytes, 0, len);
 
             return s;
         }
@@ -252,12 +252,25 @@ namespace NCCTransfer
             return i == len;
         }
 
-
+		static unsafe public byte[] GetBytes(byte* ptr, int len)
+		{
+            if (ptr == null)
+            {
+                throw new ArgumentException();
+            }
+			byte[] res = new byte[len];
+            for (int i = 0; i < len; i++)
+            {
+                res[i] = *ptr;
+                ptr += 1;
+            }
+			return res;
+		}
         static unsafe public void Copy(byte[] src, byte* dst)
         {
             if (src == null || dst == null)
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
 
             // The following fixed statement pins the location of the src and dst objects
@@ -274,23 +287,48 @@ namespace NCCTransfer
                 }
 
             }
-
         }
 
-        // The unsafe keyword allows pointers to be used within the following method:
-        static unsafe public void Copy(byte* src, int srcIndex, byte* dst, int dstIndex, int count)
+		static unsafe public void CopyDbls(double[] src, double* dst)
         {
-            if (src == null || srcIndex < 0 ||
-                dst == null || dstIndex < 0 || count < 0)
+            if (src == null || dst == null)
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
 
             // The following fixed statement pins the location of the src and dst objects
             // in memory so that they will not be moved by garbage collection.
             //fixed (byte* pSrc = src, pDst = dst)
             {
-                byte* ps = src;
+                byte* pd = (byte*)dst;
+
+                // Loop over the count in blocks of 8 bytes, copying a double (8 bytes) at a time:
+                for (int i = 0; i < src.Length; i++)
+                {
+					byte[] bx = BitConverter.GetBytes(src[i]);
+					for (int j = 0; j < bx.Length; j++)
+					{
+						*((byte*)pd) = bx[i];
+						pd += 1;
+					}
+                }
+
+            }
+        }
+        // The unsafe keyword allows pointers to be used within the following method:
+        static unsafe public void Copy(byte* src, int srcIndex, byte* dst, int dstIndex, int count)
+        {
+            if (src == null || srcIndex < 0 ||
+                dst == null || dstIndex < 0 || count < 0)
+            {
+                throw new ArgumentException();
+            }
+
+            // The following fixed statement pins the location of the src and dst objects
+            // in memory so that they will not be moved by garbage collection.
+            //fixed (byte* pSrc = src, pDst = dst)
+            {
+                byte* ps = src; 
                 byte* pd = dst;
 
                 // Loop over the count in bytes:
@@ -309,7 +347,7 @@ namespace NCCTransfer
             if (src == null || srcIndex < 0 ||
                 dst == null || dstIndex < 0 || count < 0)
             {
-                throw new System.ArgumentException();
+                throw new ArgumentException();
             }
 
             {

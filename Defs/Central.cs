@@ -275,7 +275,7 @@ namespace NCC
         {
             get
             {
-                CancellationToken[] cta = new System.Threading.CancellationToken[3];
+                CancellationToken[] cta = new CancellationToken[3];
                 cta[0] = CancellationToken;
                 cta[1] = StopToken;
                 cta[2] = AbortToken;
@@ -289,7 +289,7 @@ namespace NCC
             {
                 if (lcta == null)
                 { 
-                    CancellationToken[] cta = new System.Threading.CancellationToken[3];
+                    CancellationToken[] cta = new CancellationToken[3];
                     cta[0] = CancellationToken;
                     cta[1] = StopToken;
                     cta[2] = AbortToken;
@@ -306,7 +306,7 @@ namespace NCC
         CancellationTokenSource lctac;
         public CancellationTokenSource NewLinkedCancelStopAbortAndClientTokenSources(CancellationToken ct)
         {
-                CancellationToken[] cta = new System.Threading.CancellationToken[4];
+                CancellationToken[] cta = new CancellationToken[4];
                 cta[0] = CancellationToken;
                 cta[1] = StopToken;
                 cta[2] = AbortToken;
@@ -393,7 +393,7 @@ namespace NCC
     // global state for synchronized operations and access to singleton class instances for logging, configuration, DB access API+parameters
     public class CentralizedState
     {
-        public const Int32 ChannelCount = 32; // forever, but what about MCA-527 single channel now eh?
+        public const int ChannelCount = 32; // forever, but what about MCA-527 single channel now eh?
 
         static public CentralizedState App
         {
@@ -466,9 +466,9 @@ namespace NCC
             pest = new Persistence(Logger(LMLoggers.AppSection.DB), mynewdb);
             DB = new INCCDB();
             DB.Populate(pest);
-            lmdb = new ListModeDB.LMDB();
+            lmdb = new LMDB();
             lmdb.Populate(pest);
-            appctx = ListModeDB.LMDB.AppContext;
+            appctx = LMDB.AppContext;
         }
 
         public LMLoggers.LognLM Logger(LMLoggers.AppSection wp)
@@ -736,11 +736,11 @@ namespace NCC
         public static void GetCurrentAcquireDetectorPair(ref AcquireParameters acq, ref Detector det)
         {
             acq = CentralizedState.App.DB.LastAcquire();
-            String curdet = acq.detector_id;
+            string curdet = acq.detector_id;
             det = CentralizedState.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, curdet, true) == 0);
             if (det == null || string.IsNullOrWhiteSpace(det.Id.DetectorName))
             {
-                det = new AnalysisDefs.Detector();
+                det = new Detector();
                 CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
             }
 			if (det.ListMode)
@@ -768,7 +768,7 @@ namespace NCC
             string curdet = acq.detector_id;
             det = CentralizedState.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, curdet, true) == 0);
             if (det == null)
-                det = new AnalysisDefs.Detector();
+                det = new Detector();
 			if (det.ListMode)
 				det.MultiplicityParams.FA = acq.lm.FADefault;
             return det;
@@ -791,7 +791,7 @@ namespace NCC
 
         public static AddASourceSetup GetCurrentAASSParams(Detector det)
         {
-            AddASourceSetup aass = new AnalysisDefs.AddASourceSetup();
+            AddASourceSetup aass = new AddASourceSetup();
             if ((det != null) && CentralizedState.App.DB.AASSParameters.Map.ContainsKey(det))
                 aass.Copy(CentralizedState.App.DB.AASSParameters.Map[det]);
             return aass;
@@ -800,7 +800,7 @@ namespace NCC
 
         public static NormParameters GetCurrentNormParams(Detector det)
         {
-            NormParameters np = new AnalysisDefs.NormParameters();
+            NormParameters np = new NormParameters();
             if ((det != null) && CentralizedState.App.DB.NormParameters.Map.ContainsKey(det))
                 np.Copy(CentralizedState.App.DB.NormParameters.Map[det]);
             return np;
@@ -808,7 +808,7 @@ namespace NCC
 
         public static BackgroundParameters GetCurrentBackgroundParams(Detector det)
         {
-            BackgroundParameters bp = new AnalysisDefs.BackgroundParameters();
+            BackgroundParameters bp = new BackgroundParameters();
             if ((det != null) && (CentralizedState.App.DB.BackgroundParameters.Get(det.Id.DetectorName) != null))
                 bp.Copy(CentralizedState.App.DB.BackgroundParameters.Map[det]);
             return bp;
@@ -816,7 +816,7 @@ namespace NCC
 
         public static HVCalibrationParameters GetCurrentHVCalibrationParams(Detector det)
         {
-            HVCalibrationParameters bp = new AnalysisDefs.HVCalibrationParameters();
+            HVCalibrationParameters bp = new HVCalibrationParameters();
             if (det != null)
             {
                 if (CentralizedState.App.DB.HVParameters.Map.ContainsKey(det))
@@ -824,7 +824,7 @@ namespace NCC
                 else if (det.ListMode)
                 {
                     AcquireParameters acq = GetCurrentAcquireParamsFor(det);
-                    bp = new AnalysisDefs.HVCalibrationParameters(acq.lm);
+                    bp = new HVCalibrationParameters(acq.lm);
                 }
             }
             return bp;
@@ -854,7 +854,7 @@ namespace NCC
  				if (checkForExistence)
 					return false;			
 				else
-					det = new AnalysisDefs.Detector();
+					det = new Detector();
 			}
 			acq.MeasDateTime = DateTime.Now;
             if (!acq.detector_id.Equals(name, StringComparison.OrdinalIgnoreCase) || !acq.meas_detector_id.Equals(name, StringComparison.OrdinalIgnoreCase))
@@ -938,8 +938,8 @@ namespace NCC
                 string output = null;
 
                 // Handle only integral types.
-                if (arg is Byte)
-                    bytes = BitConverter.GetBytes((Byte)arg);
+                if (arg is byte)
+                    bytes = BitConverter.GetBytes((byte)arg);
                 else if (arg is Int16)
                     bytes = BitConverter.GetBytes((Int16)arg);
                 else if (arg is Int32)
@@ -954,8 +954,8 @@ namespace NCC
                     bytes = BitConverter.GetBytes((UInt32)arg);
                 else if (arg is UInt64)
                     bytes = BitConverter.GetBytes((UInt64)arg);
-                else if (arg is Byte[])
-                    bytes = (Byte[])arg;
+                else if (arg is byte[])
+                    bytes = (byte[])arg;
                 else
                     return null;
 

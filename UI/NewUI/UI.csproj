@@ -146,6 +146,12 @@
     <Compile Include="FormsHappyPlace\IDDK5CollarItemData.Designer.cs">
       <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveInitialData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveInitialData.Designer.cs">
+      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\IsotopicsList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -680,12 +686,6 @@
     </Compile>
     <Compile Include="Unready\IDDsaveDataWaitMsg.Designer.cs">
       <DependentUpon>IDDsaveDataWaitMsg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDSaveInitialData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDSaveInitialData.Designer.cs">
-      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDSaveSelect.cs">
       <SubType>Form</SubType>
@@ -1254,6 +1254,9 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDRestoreSelect.resx">
       <DependentUpon>IDDRestoreSelect.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveInitialData.resx">
+      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDSetupUnattendedMeas.resx">
       <DependentUpon>IDDSetupUnattendedMeas.cs</DependentUpon>
     </EmbeddedResource>
@@ -1536,9 +1539,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDsaveDataWaitMsg.resx">
       <DependentUpon>IDDsaveDataWaitMsg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDSaveInitialData.resx">
-      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDSaveSelect.resx">
       <DependentUpon>IDDSaveSelect.cs</DependentUpon>
