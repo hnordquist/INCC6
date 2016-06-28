@@ -477,12 +477,30 @@ namespace NCCTransfer
             }
 
             // returns the individual detector and material type pairings, use these as input to the GetMethodEnumerator 
-            public System.Collections.IEnumerator GetDetectorMaterialEnumerator()
+            public System.Collections.IEnumerator GetDetectorMaterialEnumerator(string det = null)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
                 {
                     if (pair.Value.GetType().Equals(typeof(analysis_method_rec)))
-                        yield return pair.Key;
+					{
+						if (det == null || ((det != null) && pair.Key.detector_id.Equals(det)))
+                        yield return pair;
+					}
+                }
+            }
+
+			public List<string> GetDetectors
+			{
+				get
+				{
+					List<string> l = new List<string>();
+					foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
+					{
+						if (l.Contains(pair.Key.detector_id))
+								continue;
+						l.Add(pair.Key.detector_id);                
+					}
+					return l;
                 }
             }
         }
@@ -520,7 +538,7 @@ namespace NCCTransfer
             byte[] los_bytos = new byte[stream.Length];
 
             int thisread = reader.Read(los_bytos, 0, INCCFileInfo.CALIBRATION_SAVE_RESTORE.Length);  // cannot throw due to length check under normal circumstances, so this is ok 
-            string str2 = System.Text.ASCIIEncoding.ASCII.GetString(los_bytos, 0, thisread);
+            string str2 = Encoding.ASCII.GetString(los_bytos, 0, thisread);
 
             if (!str2.Equals(INCCFileInfo.CALIBRATION_SAVE_RESTORE)) // pre-check should prevent this condition 
             {

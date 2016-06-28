@@ -308,14 +308,14 @@ namespace NCCTransfer
 					byte[] bx = BitConverter.GetBytes(src[i]);
 					for (int j = 0; j < bx.Length; j++)
 					{
-						*((byte*)pd) = bx[i];
+						*((byte*)pd) = bx[j];
 						pd += 1;
 					}
                 }
 
             }
         }
-        // The unsafe keyword allows pointers to be used within the following method:
+
         static unsafe public void Copy(byte* src, int srcIndex, byte* dst, int dstIndex, int count)
         {
             if (src == null || srcIndex < 0 ||

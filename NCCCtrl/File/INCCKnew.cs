@@ -391,7 +391,7 @@ namespace NCCTransfer
             return am;
         }
 
-        private int OldTypeToOldMethodId(object o)
+        private static int OldTypeToOldMethodId(object o)
         {
             System.Type t = o.GetType();
             if (t.Equals(typeof(NCCTransfer.analysis_method_rec)))
@@ -428,6 +428,36 @@ namespace NCCTransfer
             return -1;
         }
 
+        private static int NewTypeToOldMethodId(AnalysisMethod am)
+        {
+            int id = 0;
+            if (am == AnalysisMethod.None)
+                id = INCC.METHOD_NONE;
+            else if (am <= AnalysisMethod.TruncatedMultiplicity)
+                id = (int)(am) - 1;
+            else
+                switch (am)
+                {
+                    case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:	// Dual energy multiplicity
+                        id = INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
+                        break;
+                    case AnalysisMethod.COLLAR_SAVE_RESTORE:
+                        id = INCC.COLLAR_SAVE_RESTORE;
+                        break;
+                    case AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE:
+                        id = INCC.COLLAR_DETECTOR_SAVE_RESTORE;
+                        break;
+                    case AnalysisMethod.COLLAR_K5_SAVE_RESTORE:
+                        id = INCC.COLLAR_K5_SAVE_RESTORE;
+                        break;
+                    case AnalysisMethod.WMV_CALIB_TOKEN:
+                        id = INCC.WMV_CALIB_TOKEN;
+                        break;
+                }
+            return id;
+        }
+
+
         static unsafe public Tuple[] Copy(double* vptr, double* errptr, int len)
         {
 
@@ -436,6 +466,25 @@ namespace NCCTransfer
                 vals[i] = new Tuple(vptr[i], errptr[i]);
             return vals;
         }
+
+		static unsafe public void CopyTuples(Tuple[] src, double* dstval, double* dsterr, int maxlen)
+        {
+            if (dstval == null || dsterr == null || src == null)
+				throw new ArgumentException();            
+
+			int len = src.Length;
+			double [] v = new double[maxlen];
+			double [] err = new double[maxlen];
+
+			for (int i = 0; i < maxlen; i++)
+			{
+				v[i] = src[i].v;
+				err[i] = src[i].err;
+			}
+			TransferUtils.CopyDbls(v, dstval);
+			TransferUtils.CopyDbls(err, dsterr);
+
+		}
 
         public unsafe void BuildCalibration(INCCInitialDataCalibrationFile idcf, int num)
         {
@@ -883,6 +932,23 @@ namespace NCCTransfer
             }
             return isdh;
         }
+		private static ushort NewToOldCRVariants(INCCAnalysisParams.CuriumRatioVariant id)
+        {
+            ushort isdh = INCC.IDC_USE_DOUBLES;
+            switch (id)
+            {
+                case INCCAnalysisParams.CuriumRatioVariant.UseDoubles:
+                    isdh = INCC.IDC_USE_DOUBLES;
+                    break;
+			case INCCAnalysisParams.CuriumRatioVariant.UseSingles:  
+                    isdh = INCC.IDC_USE_SINGLES;
+                    break;
+                case INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles:
+                    isdh = INCC.IDC_USE_ADD_A_SOURCE_DOUBLES;
+                    break;
+            }
+            return isdh;
+        }
 
 
         private AddASourceFlavors OldToNewAASId(int id)
@@ -955,7 +1021,7 @@ namespace NCCTransfer
 
 		public class TransferSummary
 		{
-			public DateTime dt;
+			public DateTimeOffset dto;
 			public string item, stratum, path, det, comment;
 			public bool select; 
 			public int index;
@@ -972,16 +1038,16 @@ namespace NCCTransfer
 			t.det = TransferUtils.str(results.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
             t.stratum = TransferUtils.str(results.stratum_id, INCC.MAX_STRATUM_ID_LENGTH);
             t.item = TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH);
-			t.dt = INCC.DateTimeFrom(TransferUtils.str(results.meas_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(results.meas_time, INCC.DATE_TIME_LENGTH));
+			t.dto = INCC.DateTimeFrom(TransferUtils.str(results.meas_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(results.meas_time, INCC.DATE_TIME_LENGTH));
 			t.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);
 			t.select = false;
 			t.index = index;
 			return t;
 		}
 
-		public static List<INCCKnew.TransferSummary> ConstructSummaryList(List<INCCTransferBase> it)
+		public static List<TransferSummary> ConstructSummaryList(List<INCCTransferBase> it)
 		{
-			List<INCCKnew.TransferSummary> list = new List<TransferSummary>();
+			List<TransferSummary> list = new List<TransferSummary>();
 			foreach (INCCTransferBase itf in it)
 			{ 
 				if (itf is INCCTransferFile)

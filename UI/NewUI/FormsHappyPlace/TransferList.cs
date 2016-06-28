@@ -63,12 +63,12 @@ namespace NewUI
                  ListViewItem lvi = new ListViewItem(new string[] {
                     ts.det, ts.item,
 					string.IsNullOrEmpty(ts.stratum) ? "-" : ts.stratum,
-                    ts.dt.ToString("yy.MM.dd  HH:mm:ss"), System.IO.Path.GetFileName(ts.path),
+                    ts.dto.ToString("yy.MM.dd  HH:mm:ss"), System.IO.Path.GetFileName(ts.path),
                     ts.comment,
 					mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
                         });
                 listView1.Items.Add(lvi);
-                lvi.Tag = ts.dt;  // for proper column sorting
+                lvi.Tag = ts.dto;  // for proper column sorting
 				mlistIndex++;
             }
             MCount.Text = listView1.Items.Count.ToString() + " files";
