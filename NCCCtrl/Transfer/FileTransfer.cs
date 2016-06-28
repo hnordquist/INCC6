@@ -26,6 +26,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -837,31 +838,55 @@ namespace NCCTransfer
 
 		unsafe new public bool Save(string path)
         {
-			int len = DetectorMaterialMethodParameters.Keys.Count;
-			for (int i = 0; i < len; i++)
+			List<string> l = DetectorMaterialMethodParameters.GetDetectors;
+			mlogger.TraceInformation("{0} calibration sets to save off", l.Count);
+			int i = 0;
+			foreach (string det in l)
 			{
-				//detector_rec det = Detector[i];
-				//string detname =TransferUtils.str(det.detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
-				//string s = CleansePotentialFilename(detname);
-				//Path = System.IO.Path.Combine(path, s + ".dat");
-				//FileStream stream = File.Create(Path);
-				//BinaryWriter bw = new BinaryWriter(stream);
-				//bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.DETECTOR_SAVE_RESTORE));
-				//WriteDetector(i, bw);
+				string s = CleansePotentialFilename(det);
+				Path = System.IO.Path.Combine(path, s + ".cal");
+				FileStream stream = File.Create(Path);
+				BinaryWriter bw = new BinaryWriter(stream);
+				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.CALIBRATION_SAVE_RESTORE));
+				IEnumerator iter = DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator(det);
+				while (iter.MoveNext())
+			{
+					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
+					WriteAM(rec, bw);
 				//WriteSRParms(i, bw);
 				//WriteBKGParms(i, bw);
 				//WriteNormParms(i, bw);
 				//WriteAASParms(i, bw);
 				//WriteTMBKGParms(i, bw);
-				//bw.Close();
-				//bw.Dispose();
-				//mlogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
 			}
-			mlogger.TraceInformation("{0} calibration sets to save off", len);
-
-
+				bw.Close();
+				bw.Dispose();
+				mlogger.TraceInformation("{0} Transfer calibration {1}, saved as {2}", i, det, Path);
+				i++;
+			}
             return false;
         }
+
+		unsafe void WriteAM(analysis_method_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(analysis_method_rec);
+			analysis_method_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_NONE);
+			bw.Write(zb, 0, sz);
+		}
+
+		unsafe void WriteMul(multiplicity_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(multiplicity_rec);
+			multiplicity_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_MULT);
+			bw.Write(zb, 0, sz);
+        }
+
     }
 
 	public class TransferSummary

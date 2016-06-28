@@ -173,8 +173,469 @@ namespace NCCTransfer
 			INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
 			foreach(Detector det in dets)
 			{
+                foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
+                {
+                    INCCSelector se = new INCCSelector(det.Id.DetectorId, desc.Name);
+                    if (!NC.App.DB.DetectorMaterialAnalysisMethods.ContainsKey(se))
+                        continue;
+
+					// do the method choice rec first
+					DetectorMaterialMethod dmm = new DetectorMaterialMethod(se.material, se.detectorid, INCC.METHOD_NONE);
+                    idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAMR(se));
+
+ 					// URGENT: next do each method rec
+                    AnalysisMethods ams = NC.App.DB.DetectorMaterialAnalysisMethods[se];
+                    IEnumerator iter = ams.GetMethodEnumerator();
+                    while (iter.MoveNext())
+                    {
+                        Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor> md = (Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>)iter.Current;
+                        dmm = new DetectorMaterialMethod(se.material, se.detectorid, (byte)NewTypeToOldMethodId(md.Item1));
+						switch(md.Item1)
+						{
+							case AnalysisMethod.KnownA:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveKA(se, md.Item2));
+								break;
+							case AnalysisMethod.CalibrationCurve:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCC(se, md.Item2));
+								break;
+							case AnalysisMethod.KnownM:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveKM(se, md.Item2));
+								break;
+							case AnalysisMethod.Multiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveMult(se, md.Item2));
+								break;
+							case AnalysisMethod.TruncatedMultiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveTM(se, md.Item2));
+								break;
+							case AnalysisMethod.AddASource:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAS(se, md.Item2));
+								break;
+							case AnalysisMethod.CuriumRatio:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCR(se, md.Item2));
+								break;
+							case AnalysisMethod.Active:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCA(se, md.Item2));
+								break;
+							case AnalysisMethod.ActivePassive:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAP(se, md.Item2));
+								break;
+							case AnalysisMethod.Collar:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCO(se, md.Item2));
+								break;
+							case AnalysisMethod.ActiveMultiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAM(se, md.Item2));
+								break;
+							case AnalysisMethod.INCCNone:
+								break;
+							default:
+								break;
+						}                       
+                    }					
+				}
 			}
 			return idcf;
+		}
+
+		unsafe static analysis_method_rec MoveAMR(INCCSelector se)
+		{
+			analysis_method_rec amr = new analysis_method_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b,amr.analysis_method_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, amr.item_type);
+			AnalysisMethods ams = NC.App.DB.DetectorMaterialAnalysisMethods[se];
+			amr.backup_method = (byte)NewTypeToOldMethodId(ams.Backup);
+			amr.normal_method = (byte)NewTypeToOldMethodId(ams.Normal);
+			amr.cal_curve = (byte)(ams.choices[(int)AnalysisMethod.CalibrationCurve] ? 1 : 0);
+			amr.active = (byte)(ams.choices[(int)AnalysisMethod.Active] ? 1 : 0);
+			amr.active_mult = (byte)(ams.choices[(int)AnalysisMethod.ActiveMultiplicity] ? 1 : 0);
+			amr.active_passive = (byte)(ams.choices[(int)AnalysisMethod.ActivePassive] ? 1 : 0);
+			amr.add_a_source = (byte)(ams.choices[(int)AnalysisMethod.AddASource] ? 1 : 0);
+			amr.collar = (byte)(ams.choices[(int)AnalysisMethod.Collar] ? 1 : 0);
+			amr.curium_ratio = (byte)(ams.choices[(int)AnalysisMethod.CuriumRatio] ? 1 : 0);
+			amr.known_alpha = (byte)(ams.choices[(int)AnalysisMethod.KnownA] ? 1 : 0);
+			amr.known_m = (byte)(ams.choices[(int)AnalysisMethod.KnownM] ? 1 : 0);
+			amr.multiplicity = (byte)(ams.choices[(int)AnalysisMethod.Multiplicity] ? 1 : 0);
+			amr.truncated_mult = (byte)(ams.choices[(int)AnalysisMethod.TruncatedMultiplicity] ? 1 : 0);
+			return amr;
+		}
+
+		unsafe static multiplicity_rec MoveMult(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.multiplicity_rec imr = (INCCAnalysisParams.multiplicity_rec)md;
+			multiplicity_rec mr = new multiplicity_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, mr.multiplicity_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, mr.multiplicity_item_type);
+			mr.mul_a = imr.a;
+			mr.mul_b = imr.b;
+			mr.mul_c = imr.c;
+			mr.mul_vi1 = imr.vi1;
+			mr.mul_vi2 = imr.vi2;
+			mr.mul_vi3 = imr.vi3;
+			mr.mul_vs1 = imr.vs1;
+			mr.mul_vs2 = imr.vs2;
+			mr.mul_vs3 = imr.vs3;
+			mr.mul_alpha_weight = imr.alpha_weight;
+			mr.mul_sf_rate = imr.sf_rate;
+			mr.mul_sigma_x = imr.sigma_x;
+			mr.mul_solve_efficiency = (byte)imr.solve_efficiency;			
+			return mr;
+		}
+
+		unsafe static known_alpha_rec MoveKA(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.known_alpha_rec imr = (INCCAnalysisParams.known_alpha_rec)md;
+			known_alpha_rec m = new known_alpha_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_alpha_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_alpha_item_type);
+			m.ka_a = imr.cev.a;
+			m.ka_b = imr.cev.b;
+			m.ka_var_a = imr.cev.var_a;
+			m.ka_var_b = imr.cev.var_b;
+			m.ka_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ka_sigma_x = imr.cev.sigma_x;
+			m.ka_ring_ratio_a = imr.ring_ratio.a;
+			m.ka_ring_ratio_b = imr.ring_ratio.b;
+			m.ka_ring_ratio_c = imr.ring_ratio.c;
+			m.ka_ring_ratio_d = imr.ring_ratio.d;
+			m.ka_alpha_wt = imr.alpha_wt;
+			m.ka_rho_zero = imr.rho_zero;
+			m.ka_ring_ratio_equation = (double)imr.ring_ratio.cal_curve_equation;
+			m.ka_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.ka_lower_mass_limit = imr.cev.lower_mass_limit;
+			m.ka_heavy_metal_corr_factor = imr.heavy_metal_corr_factor;		
+			m.ka_heavy_metal_reference = imr.heavy_metal_reference;		
+			m.ka_k = imr.k;
+			m.ka_known_alpha_type = (double)imr.known_alpha_type;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.ka_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.ka_doubles);
+
+			return m;
+		}
+
+		unsafe static known_m_rec MoveKM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.known_m_rec imr = (INCCAnalysisParams.known_m_rec)md;
+			known_m_rec m = new known_m_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_m_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_m_item_type);
+			m.km_b = imr.b;
+			m.km_c = imr.c;
+			m.km_sf_rate =  imr.sf_rate;
+			m.km_sigma_x = imr.sigma_x;
+			m.km_upper_mass_limit = imr.upper_mass_limit;		
+			m.km_lower_mass_limit = imr.lower_mass_limit;
+			m.km_vi1 = imr.vi1;
+			m.km_vi2 = imr.vi2;
+			m.km_vs1 = imr.vs1;
+			m.km_vs2 = imr.vs2;	
+			return m;
+		}
+ 
+		unsafe static cal_curve_rec MoveCC(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.cal_curve_rec imr = (INCCAnalysisParams.cal_curve_rec)md;
+			cal_curve_rec m = new cal_curve_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.cal_curve_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.cal_curve_item_type);
+			m.cc_a = imr.cev.a;
+			m.cc_b = imr.cev.b;
+			m.cc_c = imr.cev.c;
+			m.cc_d = imr.cev.d;
+			m.cc_cal_curve_type = (double)imr.CalCurveType;
+			m.cc_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.cc_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.cc_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.cc_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.cc_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.cc_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.cc_var_a = imr.cev.var_a;
+			m.cc_var_b = imr.cev.var_b;
+			m.cc_var_c = imr.cev.var_c;
+			m.cc_var_d = imr.cev.var_d;
+			m.cc_sigma_x = imr.cev.sigma_x;
+			m.cc_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.cc_lower_mass_limit = imr.cev.lower_mass_limit;
+			m.cc_heavy_metal_corr_factor = imr.heavy_metal_corr_factor;		
+			m.cc_heavy_metal_reference = imr.heavy_metal_reference;
+			m.cc_cal_curve_type = (double)imr.CalCurveType;
+			m.cc_percent_u235 = imr.percent_u235;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.cc_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.cc_doubles);
+			return m;
+		}
+
+		unsafe static truncated_mult_rec MoveTM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.truncated_mult_rec imr = (INCCAnalysisParams.truncated_mult_rec)md;
+			truncated_mult_rec m = new truncated_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.truncated_mult_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.truncated_mult_item_type);
+			m.tm_a = imr.a;
+			m.tm_b = imr.b;
+			m.tm_known_eff = (byte)(imr.known_eff ? 1 : 0);
+			m.tm_solve_eff = (byte)(imr.solve_eff ? 1 : 0);
+			return m;
+		}
+
+		unsafe static curium_ratio_rec MoveCR(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.curium_ratio_rec imr = (INCCAnalysisParams.curium_ratio_rec)md;
+			curium_ratio_rec m = new curium_ratio_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.curium_ratio_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.curium_ratio_item_type);
+			m.cr_a = imr.cev.a;
+			m.cr_b = imr.cev.b;
+			m.cr_c = imr.cev.c;
+			m.cr_d = imr.cev.d;
+			m.curium_ratio_equation = (byte)imr.cev.cal_curve_equation;
+			m.curium_ratio_type = NewToOldCRVariants(imr.curium_ratio_type);
+			m.cr_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.cr_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.cr_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.cr_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.cr_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.cr_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.cr_var_a = imr.cev.var_a;
+			m.cr_var_b = imr.cev.var_b;
+			m.cr_var_c = imr.cev.var_c;
+			m.cr_var_d = imr.cev.var_d;
+			m.cr_sigma_x = imr.cev.sigma_x;
+			m.cr_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.cr_lower_mass_limit = imr.cev.lower_mass_limit;
+			return m;
+		}
+
+		unsafe static active_mult_rec MoveAM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_mult_rec imr = (INCCAnalysisParams.active_mult_rec)md;
+			active_mult_rec m = new active_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_mult_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_mult_item_type);
+			m.am_vf1 = imr.vf1;
+			m.am_vf2 = imr.vf2;
+			m.am_vf3 = imr.vf3;
+			m.am_vt1 = imr.vt1;
+			m.am_vt2 = imr.vt2;
+			m.am_vt3 = imr.vt3;
+			return m;
+		}
+
+		unsafe static active_rec MoveCA(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_rec imr = (INCCAnalysisParams.active_rec)md;
+			active_rec m = new active_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_item_type);
+			m.act_a = imr.cev.a;
+			m.act_b = imr.cev.b;
+			m.act_c = imr.cev.c;
+			m.act_d = imr.cev.d;
+			m.active_equation = (byte)imr.cev.cal_curve_equation;
+			m.act_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.act_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.act_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.act_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.act_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.act_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.act_var_a = imr.cev.var_a;
+			m.act_var_b = imr.cev.var_b;
+			m.act_var_c = imr.cev.var_c;
+			m.act_var_d = imr.cev.var_d;
+			m.act_sigma_x = imr.cev.sigma_x;
+			m.act_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.act_lower_mass_limit = imr.cev.lower_mass_limit;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.act_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.act_doubles);
+			return m;
+		}
+
+		unsafe static active_passive_rec MoveAP(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_passive_rec imr = (INCCAnalysisParams.active_passive_rec)md;
+			active_passive_rec m = new active_passive_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_passive_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_passive_item_type);
+			m.ap_a = imr.cev.a;
+			m.ap_b = imr.cev.b;
+			m.ap_c = imr.cev.c;
+			m.ap_d = imr.cev.d;
+			m.active_passive_equation = (byte)imr.cev.cal_curve_equation;
+			m.ap_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ap_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.ap_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.ap_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.ap_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.ap_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.ap_var_a = imr.cev.var_a;
+			m.ap_var_b = imr.cev.var_b;
+			m.ap_var_c = imr.cev.var_c;
+			m.ap_var_d = imr.cev.var_d;
+			m.ap_sigma_x = imr.cev.sigma_x;
+			m.ap_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.ap_lower_mass_limit = imr.cev.lower_mass_limit;
+			return m;
+		}
+
+		unsafe static add_a_source_rec MoveAS(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.add_a_source_rec imr = (INCCAnalysisParams.add_a_source_rec)md;
+			add_a_source_rec m = new add_a_source_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.add_a_source_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.add_a_source_item_type);
+			m.ad_a = imr.cev.a;
+			m.ad_b = imr.cev.b;
+			m.ad_c = imr.cev.c;
+			m.ad_d = imr.cev.d;
+			m.add_a_source_equation = (byte)imr.cev.cal_curve_equation;
+			m.ad_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ad_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.ad_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.ad_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.ad_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.ad_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.ad_var_a = imr.cev.var_a;
+			m.ad_var_b = imr.cev.var_b;
+			m.ad_var_c = imr.cev.var_c;
+			m.ad_var_d = imr.cev.var_d;
+			m.ad_sigma_x = imr.cev.sigma_x;
+			m.ad_upper_mass_limit = imr.cev.upper_mass_limit;
+			m.ad_lower_mass_limit = imr.cev.lower_mass_limit;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.ad_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.ad_doubles);
+			TransferUtils.CopyDbls(imr.position_dzero, m.ad_position_dzero);
+			m.ad_cf_a = imr.cf.a;
+			m.ad_cf_b = imr.cf.b;
+			m.ad_cf_c = imr.cf.c;
+			m.ad_cf_d = imr.cf.d;
+			m.ad_dzero_avg = imr.dzero_avg;
+			m.ad_num_runs = imr.num_runs;
+			m.ad_tm_dbls_rate_upper_limit = imr.tm_dbls_rate_upper_limit;
+			m.ad_tm_weighting_factor = imr.tm_weighting_factor;
+			m.ad_use_truncated_mult = imr.use_truncated_mult ? 1 : 0;
+			b = new byte[INCC.DATE_TIME_LENGTH];
+			a = imr.dzero_ref_date.ToString("yy.MM.dd").ToCharArray();
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.ad_dzero_ref_date);
+			return m;
+		}
+
+		unsafe static collar_rec MoveCO(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.collar_rec imr = (INCCAnalysisParams.collar_rec)md;
+			collar_rec m = new collar_rec();
+			byte[] b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			char[] a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_item_type);
+			m.col_a = imr.cev.a;
+			m.col_b = imr.cev.b;
+			m.col_c = imr.cev.c;
+			m.col_d = imr.cev.d;
+			m.collar_equation = (byte)imr.cev.cal_curve_equation;
+			m.col_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.col_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.col_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.col_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.col_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.col_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.col_var_a = imr.cev.var_a;
+			m.col_var_b = imr.cev.var_b;
+			m.col_var_c = imr.cev.var_c;
+			m.col_var_d = imr.cev.var_d;
+			m.col_sigma_x = imr.cev.sigma_x;
+			m.col_upper_mass_limit = imr.cev.upper_mass_limit;
+			m.col_lower_mass_limit = imr.cev.lower_mass_limit;
+
+			m.col_number_calib_rods = imr.number_calib_rods;
+			m.col_sample_corr_fact = imr.sample_corr_fact.v;
+			m.col_sample_corr_fact_err = imr.sample_corr_fact.err;
+			m.col_u_mass_corr_fact_a = imr.u_mass_corr_fact_a.v;
+			m.col_u_mass_corr_fact_a_err = imr.u_mass_corr_fact_a.err;
+			m.col_u_mass_corr_fact_b = imr.u_mass_corr_fact_b.v;
+			m.col_u_mass_corr_fact_b_err = imr.u_mass_corr_fact_b.err;
+			m.collar_mode = (byte)(imr.collar_mode ? 1 : 0);
+
+			byte[] bb = new byte[INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH];
+			int indx = 0;
+			for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
+			{
+				char[] aa = imr.poison_rod_type[i].ToCharArray(0, Math.Min(imr.poison_rod_type[i].Length, INCC.MAX_ROD_TYPE_LENGTH));
+				Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+				indx += 2;
+			}
+			TransferUtils.Copy(bb, 0, m.col_poison_rod_type, 0, INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH);
+
+			TransferUtils.CopyDbls(imr.poison_absorption_fact, m.col_poison_absorption_fact);
+			CopyTuples(imr.poison_rod_a, m.col_poison_rod_a, m.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
+			CopyTuples(imr.poison_rod_b, m.col_poison_rod_b, m.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
+			CopyTuples(imr.poison_rod_c, m.col_poison_rod_c, m.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
+
+			return m;
 		}
 
         public int DetectorIndex;
@@ -494,7 +955,7 @@ namespace NCCTransfer
             IEnumerator iter = idcf.DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator();
             while (iter.MoveNext())
             {
-                DetectorMaterialMethod mkey = (DetectorMaterialMethod)iter.Current;
+                DetectorMaterialMethod mkey = ((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Key;
 
                 mlogger.TraceEvent(LogLevels.Verbose, 34210, "Constructing calibration for {0} {1}", mkey.detector_id, mkey.item_type);
 
