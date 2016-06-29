@@ -811,6 +811,9 @@ namespace AnalysisDefs
 					case AnalysisMethod.ActivePassive:
 					case AnalysisMethod.Collar:
 					case AnalysisMethod.TruncatedMultiplicity:
+					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
+						break;
 					default:
 						break;
 					}

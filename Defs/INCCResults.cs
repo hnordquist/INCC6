@@ -1952,7 +1952,7 @@ namespace AnalysisDefs
                         r.k5 = methodParamsck5;
                         return r;
                 }
-                set { base.methodParams = value; }
+                //set { base.methodParams = value; }
             }
             public INCCAnalysisParams.collar_rec methodParamsc;
             public INCCAnalysisParams.collar_detector_rec methodParamscd;

@@ -219,11 +219,19 @@ namespace NCCTransfer
 							case AnalysisMethod.ActivePassive:
 								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAP(se, md.Item2));
 								break;
+							case AnalysisMethod.ActiveMultiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAM(se, md.Item2));
+								break;
+							case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveDE(se, md.Item2));
+								break;
+							case AnalysisMethod.COLLAR_SAVE_RESTORE:
 							case AnalysisMethod.Collar:
 								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCO(se, md.Item2));
 								break;
-							case AnalysisMethod.ActiveMultiplicity:
-								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAM(se, md.Item2));
+							case AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE:
+							case AnalysisMethod.COLLAR_K5_SAVE_RESTORE:
+									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
 								break;
 							case AnalysisMethod.INCCNone:
 								break;
@@ -638,6 +646,28 @@ namespace NCCTransfer
 			return m;
 		}
 
+		unsafe static de_mult_rec MoveDE(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.de_mult_rec imr = (INCCAnalysisParams.de_mult_rec)md;
+			de_mult_rec m = new de_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.de_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.de_item_type);
+			m.de_inner_ring_efficiency = imr.inner_ring_efficiency;
+			m.de_outer_ring_efficiency = imr.outer_ring_efficiency;
+
+			TransferUtils.CopyDbls(imr.neutron_energy, m.de_neutron_energy);
+			TransferUtils.CopyDbls(imr.detector_efficiency, m.de_detector_efficiency);
+			TransferUtils.CopyDbls(imr.inner_outer_ring_ratio, m.de_inner_outer_ring_ratio);
+			TransferUtils.CopyDbls(imr.relative_fission, m.de_relative_fission);
+			return m;
+		}
+
         public int DetectorIndex;
 
         public unsafe void BuildDetector(INCCInitialDataDetectorFile iddf, int num)
@@ -836,7 +866,7 @@ namespace NCCTransfer
                         am = AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE;
                         break;
                     case INCC.COLLAR_SAVE_RESTORE:
-                        am = AnalysisMethod.COLLAR_SAVE_RESTORE;
+                        am = AnalysisMethod.Collar;
                         break;
                     case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
                         am = AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE;
@@ -854,36 +884,36 @@ namespace NCCTransfer
 
         private static int OldTypeToOldMethodId(object o)
         {
-            System.Type t = o.GetType();
-            if (t.Equals(typeof(NCCTransfer.analysis_method_rec)))
+			Type t = o.GetType();
+            if (t.Equals(typeof(analysis_method_rec)))
                 return INCC.METHOD_NONE;	// No analysis method selected
-            else if (t.Equals(typeof(NCCTransfer.cal_curve_rec)))
+            else if (t.Equals(typeof(cal_curve_rec)))
                 return INCC.METHOD_CALCURVE;	// Passive Calibration Curve
-            else if (t.Equals(typeof(NCCTransfer.known_alpha_rec)))
+            else if (t.Equals(typeof(known_alpha_rec)))
                 return INCC.METHOD_AKNOWN;	// Known Alpha
-            else if (t.Equals(typeof(NCCTransfer.known_m_rec)))
+            else if (t.Equals(typeof(known_m_rec)))
                 return INCC.METHOD_MKNOWN;	// Known M
-            else if (t.Equals(typeof(NCCTransfer.multiplicity_rec)))
+            else if (t.Equals(typeof(multiplicity_rec)))
                 return INCC.METHOD_MULT;// Multiplicity
-            else if (t.Equals(typeof(NCCTransfer.add_a_source_rec)))
+            else if (t.Equals(typeof(add_a_source_rec)))
                 return INCC.METHOD_ADDASRC;	// Add-a-source
-            else if (t.Equals(typeof(NCCTransfer.active_rec)))
+            else if (t.Equals(typeof(active_rec)))
                 return INCC.METHOD_ACTIVE;	// Active Calibration Curve
-            else if (t.Equals(typeof(NCCTransfer.active_mult_rec)))
+            else if (t.Equals(typeof(active_mult_rec)))
                 return INCC.METHOD_ACTIVE_MULT;	// Active Multiplicity
-            else if (t.Equals(typeof(NCCTransfer.active_passive_rec)))
+            else if (t.Equals(typeof(active_passive_rec)))
                 return INCC.METHOD_ACTPAS;	// Active/Passive
-            else if (t.Equals(typeof(NCCTransfer.curium_ratio_rec)))
+            else if (t.Equals(typeof(curium_ratio_rec)))
                 return INCC.METHOD_CURIUM_RATIO;	// Curium Ratio
-            else if (t.Equals(typeof(NCCTransfer.truncated_mult_rec)))
+            else if (t.Equals(typeof(truncated_mult_rec)))
                 return INCC.METHOD_TRUNCATED_MULT;	// Truncated multiplicity 
-            else if (t.Equals(typeof(NCCTransfer.collar_detector_rec)))
+            else if (t.Equals(typeof(collar_detector_rec)))
                 return INCC.COLLAR_DETECTOR_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.collar_rec)))
+            else if (t.Equals(typeof(collar_rec)))
                 return INCC.COLLAR_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.collar_k5_rec)))
+            else if (t.Equals(typeof(collar_k5_rec)))
                 return INCC.COLLAR_K5_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.de_mult_rec)))
+            else if (t.Equals(typeof(de_mult_rec)))
                 return INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
 
             return -1;
@@ -902,6 +932,7 @@ namespace NCCTransfer
                     case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:	// Dual energy multiplicity
                         id = INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
                         break;
+                    case AnalysisMethod.Collar:
                     case AnalysisMethod.COLLAR_SAVE_RESTORE:
                         id = INCC.COLLAR_SAVE_RESTORE;
                         break;
@@ -1223,7 +1254,8 @@ namespace NCCTransfer
                             cdr.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
                             cdr.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
                             cdr.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar det has mode {0}", cdr.collar_mode);
+                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar det has mode {0}", cdr.collar_mode);
+                            am.AddMethod(AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE, cdr);
                             //NEXT: detector factor the dual collar mode domain key issue, need to bridge into these tables some other way
                             break;
                         case INCC.COLLAR_SAVE_RESTORE:
@@ -1258,7 +1290,7 @@ namespace NCCTransfer
                                 int index = i * INCC.MAX_ROD_TYPE_LENGTH;
                                 c.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
                             }
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar params has mode {0}", c.collar_mode);
+                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar params has mode {0}", c.collar_mode);
                             //NEXT: collar factor the dual collar mode domain key issue, need to bridge into these tables some other way
 
                             am.AddMethod(AnalysisMethod.Collar, c);
@@ -1275,8 +1307,11 @@ namespace NCCTransfer
                                 int index = i * INCC.MAX_K5_LABEL_LENGTH;
                                 ck5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
                             }
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar k5 has mode {0}", ck5.k5_mode);
+                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar k5 has mode {0}", ck5.k5_mode);
+							am.AddMethod(AnalysisMethod.COLLAR_K5_SAVE_RESTORE, ck5);
                             //NEXT: k5 factor the dual collar mode domain key issue, need to bridge into these tables some other way
+							// URGENT: k5 is 3rd in order, so look up the collar_rec and collar_detector_rec for the indicated mode here, then build the recs inot another structure using
+
                             break;
                         case INCC.METHOD_ACTIVE_MULT:
                             active_mult_rec active_mult = (active_mult_rec)miter2.Current;

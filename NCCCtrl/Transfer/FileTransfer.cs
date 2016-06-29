@@ -526,7 +526,7 @@ namespace NCCTransfer
             mlogger.TraceEvent(LogLevels.Info, 33290, "Parsing the calibration initial data file {0}", source_path_filename);
             try
             {
-		fi = new System.IO.FileInfo(source_path_filename);
+				fi = new System.IO.FileInfo(source_path_filename);
                 stream = fi.OpenRead();
                 reader = new BinaryReader(stream);
             }
@@ -837,7 +837,7 @@ namespace NCCTransfer
         }
 
 		unsafe new public bool Save(string path)
-        {
+		{
 			List<string> l = DetectorMaterialMethodParameters.GetDetectors;
 			mlogger.TraceInformation("{0} calibration sets to save off", l.Count);
 			int i = 0;
@@ -850,22 +850,22 @@ namespace NCCTransfer
 				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.CALIBRATION_SAVE_RESTORE));
 				IEnumerator iter = DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator(det);
 				while (iter.MoveNext())
-			{
+				{
 					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
 					WriteAM(rec, bw);
-				//WriteSRParms(i, bw);
-				//WriteBKGParms(i, bw);
-				//WriteNormParms(i, bw);
-				//WriteAASParms(i, bw);
-				//WriteTMBKGParms(i, bw);
-			}
+					//WriteSRParms(i, bw);
+					//WriteBKGParms(i, bw);
+					//WriteNormParms(i, bw);
+					//WriteAASParms(i, bw);
+					//WriteTMBKGParms(i, bw);
+				}
 				bw.Close();
 				bw.Dispose();
 				mlogger.TraceInformation("{0} Transfer calibration {1}, saved as {2}", i, det, Path);
 				i++;
 			}
-            return false;
-        }
+			return false;
+		}
 
 		unsafe void WriteAM(analysis_method_rec rec, BinaryWriter bw)
 		{
