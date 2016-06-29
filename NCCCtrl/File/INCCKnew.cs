@@ -866,7 +866,7 @@ namespace NCCTransfer
                         am = AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE;
                         break;
                     case INCC.COLLAR_SAVE_RESTORE:
-                        am = AnalysisMethod.Collar;
+                        am = AnalysisMethod.COLLAR_SAVE_RESTORE;
                         break;
                     case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
                         am = AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE;
@@ -1056,7 +1056,7 @@ namespace NCCTransfer
                             cc.percent_u235 = cal_curve.cc_percent_u235;
                             cc.dcl_mass = TransferUtils.Copy(cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
                             cc.doubles = TransferUtils.Copy(cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
-
+  
                             cc.cev.a = cal_curve.cc_a; cc.cev.b = cal_curve.cc_b;
                             cc.cev.c = cal_curve.cc_c; cc.cev.d = cal_curve.cc_d;
                             cc.cev.var_a = cal_curve.cc_var_a; cc.cev.var_b = cal_curve.cc_var_b;
@@ -1248,70 +1248,18 @@ namespace NCCTransfer
                             apr.cev.sigma_x = active_passive.ap_sigma_x;
                             am.AddMethod(AnalysisMethod.ActivePassive, apr);
                             break;
-                        case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
-                            collar_detector_rec collar_detector = (collar_detector_rec)miter2.Current;
-                            INCCAnalysisParams.collar_detector_rec cdr = new INCCAnalysisParams.collar_detector_rec();
-                            cdr.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
-                            cdr.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
-                            cdr.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar det has mode {0}", cdr.collar_mode);
-                            am.AddMethod(AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE, cdr);
-                            //NEXT: detector factor the dual collar mode domain key issue, need to bridge into these tables some other way
-                            break;
                         case INCC.COLLAR_SAVE_RESTORE:
-                            collar_rec collar = (collar_rec)miter2.Current;
-                            INCCAnalysisParams.collar_rec c = new INCCAnalysisParams.collar_rec();
-                            c.cev.lower_mass_limit = collar.col_lower_mass_limit;
-                            c.cev.upper_mass_limit = collar.col_upper_mass_limit;
-                            c.cev.a = collar.col_a; c.cev.b = collar.col_b;
-                            c.cev.c = collar.col_c; c.cev.d = collar.col_d;
-                            c.cev.var_a = collar.col_var_a; c.cev.var_b = collar.col_var_b;
-                            c.cev.var_c = collar.col_var_c; c.cev.var_d = collar.col_var_d;
-                            c.cev.setcovar(Coeff.a,Coeff.b,collar.col_covar_ab);
-                            c.cev._covar[0, 2] = collar.col_covar_ac;
-                            c.cev._covar[0, 3] = collar.col_covar_ad;
-                            c.cev._covar[1, 2] = collar.col_covar_bc;
-                            c.cev._covar[1, 3] = collar.col_covar_bd;
-                            c.cev._covar[2, 3] = collar.col_covar_cd;
-                            c.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)collar.collar_equation;
-                            c.cev.sigma_x = collar.col_sigma_x;
-
-                            c.poison_absorption_fact = TransferUtils.Copy(collar.col_poison_absorption_fact, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_a = Copy(collar.col_poison_rod_a, collar.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_b = Copy(collar.col_poison_rod_b, collar.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_c = Copy(collar.col_poison_rod_c, collar.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.collar_mode = (collar.collar_mode == 0 ? false : true);
-                            c.u_mass_corr_fact_a.v = collar.col_u_mass_corr_fact_a;c.u_mass_corr_fact_a.err = collar.col_u_mass_corr_fact_a_err;
-                            c.u_mass_corr_fact_b.v = collar.col_u_mass_corr_fact_b; c.u_mass_corr_fact_b.err = collar.col_u_mass_corr_fact_b_err;
-                            c.sample_corr_fact.v = collar.col_sample_corr_fact;c.sample_corr_fact.err = collar.col_sample_corr_fact_err;
-                            c.number_calib_rods = (int)collar.col_number_calib_rods;
-                            for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
-                            {
-                                int index = i * INCC.MAX_ROD_TYPE_LENGTH;
-                                c.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
-                            }
-                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar params has mode {0}", c.collar_mode);
-                            //NEXT: collar factor the dual collar mode domain key issue, need to bridge into these tables some other way
-
-                            am.AddMethod(AnalysisMethod.Collar, c);
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- COLLAR_SAVE_RESTORE");							
+							break;					
+                        case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- COLLAR_DETECTOR_SAVE_RESTORE");
                             break;
                         case INCC.COLLAR_K5_SAVE_RESTORE:
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
-                            INCCAnalysisParams.collar_k5_rec ck5 = new INCCAnalysisParams.collar_k5_rec();
-                            ck5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
-                            ck5.k5_item_type = TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
-                            ck5.k5 = Copy(collar_k5.collar_k5, collar_k5.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
-                            ck5.k5_checkbox = TransferUtils.Copy(collar_k5.collar_k5_checkbox,INCC.MAX_COLLAR_K5_PARAMETERS);
-                            for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
-                            {
-                                int index = i * INCC.MAX_K5_LABEL_LENGTH;
-                                ck5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
-                            }
-                            mlogger.TraceEvent(LogLevels.Verbose, 34211, " -- Collar k5 has mode {0}", ck5.k5_mode);
-							am.AddMethod(AnalysisMethod.COLLAR_K5_SAVE_RESTORE, ck5);
-                            //NEXT: k5 factor the dual collar mode domain key issue, need to bridge into these tables some other way
-							// URGENT: k5 is 3rd in order, so look up the collar_rec and collar_detector_rec for the indicated mode here, then build the recs inot another structure using
-
+							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf,sel, collar_k5.collar_k5_mode);
+							if (combined != null)
+								am.AddMethod(AnalysisMethod.Collar, combined);							
                             break;
                         case INCC.METHOD_ACTIVE_MULT:
                             active_mult_rec active_mult = (active_mult_rec)miter2.Current;
@@ -1332,11 +1280,120 @@ namespace NCCTransfer
             }
         }
 
+		INCCAnalysisParams.collar_combined_rec CollarEntryProcesser(INCCInitialDataCalibrationFile idcf, INCCSelector sel, byte mode)
+		{
+			DetectorMaterialMethod m1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); m1.extra = mode;
+			DetectorMaterialMethod m2 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_SAVE_RESTORE); m2.extra = mode;
+			DetectorMaterialMethod m3 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_K5_SAVE_RESTORE); m3.extra = mode;
 
-        #region measurement data transfer
+			KeyValuePair<DetectorMaterialMethod, object> k1, k2, k3;
+			bool ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
+			if (!ok)
+				return null;
+			ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
+			if (!ok)
+				return null;
+			ok = idcf.DetectorMaterialMethodParameters.GetPair(m3, out k3);
+			if (!ok)
+				return null;
+			collar_rec collar;
+			collar_detector_rec collar_detector;
+			collar_k5_rec collar_k5;
+			if (k1.Key.extra == -1)
+				return null;
+			collar_detector = (collar_detector_rec)k1.Value;
+			if (k2.Key.extra == -1)
+				return null;
+			collar = (collar_rec)k2.Value;
+			if (k3.Key.extra == -1)
+				return null;
+			collar_k5 = (collar_k5_rec)k3.Value;
+			// got the three
+			INCCAnalysisParams.collar_combined_rec combined = new INCCAnalysisParams.collar_combined_rec();
+			ushort bonk = 0;
+			Collar1(combined, collar_detector, bonk);
+			bonk = 1;
+			Collar2(combined, collar, bonk);
+			bonk = 2;
+			Collar3(combined, collar_k5, bonk);
+			bonk = 3;
+
+			k1.Key.extra = -1;
+			k2.Key.extra = -1;
+			k3.Key.extra = -1;
+			return combined;
+		}
+
+		unsafe void Collar3(INCCAnalysisParams.collar_combined_rec combined, collar_k5_rec collar_k5, ushort bonk)
+		{
+			combined.k5 = new INCCAnalysisParams.collar_k5_rec();
+			combined.k5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
+			combined.k5.k5_item_type = TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+			combined.k5.k5 = Copy(collar_k5.collar_k5, collar_k5.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
+			combined.k5.k5_checkbox = TransferUtils.Copy(collar_k5.collar_k5_checkbox,INCC.MAX_COLLAR_K5_PARAMETERS);
+			for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
+			{
+				int index = i * INCC.MAX_K5_LABEL_LENGTH;
+				combined.k5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
+			}
+			mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- Collar k5 has mode {0} and is ready to be bonked", combined.k5.k5_mode);
+		}
+
+		unsafe void Collar1(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
+		{
+			combined.collar_det = new INCCAnalysisParams.collar_detector_rec();
+			combined.collar_det.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
+			combined.collar_det.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
+			combined.collar_det.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
+			mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
+		}
+
+		unsafe void Collar2(INCCAnalysisParams.collar_combined_rec combined, collar_rec collar, ushort bonk)
+		{
+			combined.collar = new INCCAnalysisParams.collar_rec();
+			combined.collar.cev.lower_mass_limit = collar.col_lower_mass_limit;
+			combined.collar.cev.upper_mass_limit = collar.col_upper_mass_limit;
+			combined.collar.cev.a = collar.col_a;
+			combined.collar.cev.b = collar.col_b;
+			combined.collar.cev.c = collar.col_c;
+			combined.collar.cev.d = collar.col_d;
+			combined.collar.cev.var_a = collar.col_var_a;
+			combined.collar.cev.var_b = collar.col_var_b;
+			combined.collar.cev.var_c = collar.col_var_c;
+			combined.collar.cev.var_d = collar.col_var_d;
+			combined.collar.cev.setcovar(Coeff.a, Coeff.b, collar.col_covar_ab);
+			combined.collar.cev._covar[0, 2] = collar.col_covar_ac;
+			combined.collar.cev._covar[0, 3] = collar.col_covar_ad;
+			combined.collar.cev._covar[1, 2] = collar.col_covar_bc;
+			combined.collar.cev._covar[1, 3] = collar.col_covar_bd;
+			combined.collar.cev._covar[2, 3] = collar.col_covar_cd;
+			combined.collar.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)collar.collar_equation;
+			combined.collar.cev.sigma_x = collar.col_sigma_x;
+
+			combined.collar.poison_absorption_fact = TransferUtils.Copy(collar.col_poison_absorption_fact, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_a = Copy(collar.col_poison_rod_a, collar.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_b = Copy(collar.col_poison_rod_b, collar.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_c = Copy(collar.col_poison_rod_c, collar.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.collar_mode = (collar.collar_mode == 0 ? false : true);
+			combined.collar.u_mass_corr_fact_a.v = collar.col_u_mass_corr_fact_a;
+			combined.collar.u_mass_corr_fact_a.err = collar.col_u_mass_corr_fact_a_err;
+			combined.collar.u_mass_corr_fact_b.v = collar.col_u_mass_corr_fact_b;
+			combined.collar.u_mass_corr_fact_b.err = collar.col_u_mass_corr_fact_b_err;
+			combined.collar.sample_corr_fact.v = collar.col_sample_corr_fact;
+			combined.collar.sample_corr_fact.err = collar.col_sample_corr_fact_err;
+			combined.collar.number_calib_rods = (int)collar.col_number_calib_rods;
+			for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
+			{
+				int index = i * INCC.MAX_ROD_TYPE_LENGTH;
+				combined.collar.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
+			}
+			mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- Collar params has mode {0} {1}", combined.collar.collar_mode, bonk);
+		}
+
+		#region measurement data transfer
 
 
-        private ErrorCalculationTechnique INCCErrorCalculationTechnique(int idx)
+		private ErrorCalculationTechnique INCCErrorCalculationTechnique(int idx)
         {
             ErrorCalculationTechnique a = ErrorCalculationTechnique.Sample;
             switch (idx)

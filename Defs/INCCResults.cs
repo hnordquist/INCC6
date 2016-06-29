@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Reflection;
 namespace AnalysisDefs
 {
-    using Tuple = AnalysisDefs.VTuple;
+    using Tuple = VTuple;
     
     /* state-based INCC Results must include:
      * 1 bkg params, norm params, test params, acq params, isotopics, meas date time stamp, (meas and meas.cms)
@@ -257,7 +257,7 @@ namespace AnalysisDefs
 
             public results_init_src_rec()
             {
-                init_src_id = String.Empty;
+                init_src_id = string.Empty;
             }
 
             // Uses 3 external datums: the meas date, and the corrected rates and corrected rates selector appear on the parent class Mult Counting results
@@ -314,7 +314,7 @@ namespace AnalysisDefs
 
             public results_bias_rec()
             {
-                sourceId = String.Empty;
+                sourceId = string.Empty;
                 biasSnglsRateExpect = new Tuple();
                 biasSnglsRateExpectMeas = new Tuple();
                 biasDblsRateExpect = new Tuple();
@@ -326,7 +326,7 @@ namespace AnalysisDefs
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                string h = String.Format("Normalization results for reference source: {0}", sourceId);
+                string h = string.Format("Normalization results for reference source: {0}", sourceId);
                 sec.AddHeader(h);  // section header
                 sec.AddNumericRow("Current normalization constant", m.Norm.currNormalizationConstant);
 
@@ -1725,7 +1725,7 @@ namespace AnalysisDefs
 
                 for (int i = 0; i < aass.number_positions; i++)
                 {
-                    string s = String.Format("Position {0} Cf252 - item doubles:", i+1);
+                    string s = string.Format("Position {0} Cf252 - item doubles:", i+1);
                     sec.AddNumericRowWithExtra(s, sample_cf252_doubles[i],sample_cf252_ratio[i]);
                 }
 
@@ -1944,19 +1944,23 @@ namespace AnalysisDefs
             public double dcl_minus_asy_u235_mass_pct;
             public bool pass;
 
-            public new INCCAnalysisParams.collar_combined_rec methodParams
-            {
-                get {   INCCAnalysisParams.collar_combined_rec r = (INCCAnalysisParams.collar_combined_rec)base.methodParams;
-                        r.collar = methodParamsc;
-                        r.collar_det = methodParamscd;
-                        r.k5 = methodParamsck5;
-                        return r;
-                }
-                //set { base.methodParams = value; }
-            }
-            public INCCAnalysisParams.collar_rec methodParamsc;
-            public INCCAnalysisParams.collar_detector_rec methodParamscd;
-            public INCCAnalysisParams.collar_k5_rec methodParamsck5;
+			public void InitMethodParams()
+			{
+				methodParams = new INCCAnalysisParams.collar_combined_rec();
+			}
+			
+			public void InitMethodParams(results_collar_rec src)
+			{
+				methodParams = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)src.methodParams);
+			}
+
+
+            public INCCAnalysisParams.collar_rec methodParamsc { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar; }
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar = value; } }
+			public INCCAnalysisParams.collar_detector_rec methodParamscd  { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det; }
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det = value; } }
+			public INCCAnalysisParams.collar_k5_rec methodParamsck5 { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).k5; } 
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).k5 = value; } }
             public string poison_rod_type
             {
                 get { return methodParamsc.poison_rod_type[0]; }
@@ -1979,12 +1983,8 @@ namespace AnalysisDefs
             }
             public results_collar_rec()
             {
-                methodParams = new INCCAnalysisParams.collar_combined_rec();
-                methodParamsc = new INCCAnalysisParams.collar_rec();
-                methodParamscd = new INCCAnalysisParams.collar_detector_rec();
-                methodParamsck5 = new INCCAnalysisParams.collar_k5_rec();
-                methodParams.collar = methodParamsc; methodParams.k5 = methodParamsck5; methodParams.collar_det = methodParamscd;
-                source_id = String.Empty;
+				InitMethodParams();
+                source_id = string.Empty;
                 k0= new Tuple();k1= new Tuple();k2= new Tuple();k3= new Tuple();k4= new Tuple();k5 = new Tuple();
                 u235_mass = new Tuple();
                 total_corr_fact = new Tuple();
@@ -1995,17 +1995,13 @@ namespace AnalysisDefs
 
             public results_collar_rec(results_collar_rec src)
             {
-                methodParamsc = new INCCAnalysisParams.collar_rec(src.methodParamsc);
-                methodParamscd = new INCCAnalysisParams.collar_detector_rec(src.methodParamscd);
-                methodParamsck5 = new INCCAnalysisParams.collar_k5_rec(src.methodParamsck5);
-                methodParams = new INCCAnalysisParams.collar_combined_rec();
-                methodParams.collar = methodParamsc; methodParams.k5 = methodParamsck5; methodParams.collar_det = methodParamscd; 
+                InitMethodParams(src);
                 k0 = new Tuple(src.k0); k1 = new Tuple(src.k1); k2 = new Tuple(src.k2); k3 = new Tuple(src.k3); k4 = new Tuple(src.k4); k5 = new Tuple(src.k5);
                 u235_mass = new Tuple(src.u235_mass);
                 percent_u235 = src.percent_u235;
                 total_u_mass = src.total_u_mass;
                 total_corr_fact = new Tuple(src.total_corr_fact);
-                source_id = String.Copy(src.source_id);
+                source_id = string.Copy(src.source_id);
                 corr_doubles = new Tuple(src.corr_doubles); dcl_length = new Tuple(src.dcl_length); dcl_total_u235 = new Tuple(src.dcl_total_u235); dcl_total_u238 = new Tuple(src.dcl_total_u238);
                 dcl_poison_percent = new Tuple(src.dcl_poison_percent);
                 dcl_total_rods = src.dcl_total_rods;
@@ -2022,7 +2018,7 @@ namespace AnalysisDefs
                 tgt.u235_mass = u235_mass;
                 tgt.percent_u235 = percent_u235;
                 tgt.total_corr_fact = new Tuple(total_corr_fact);
-                tgt.source_id = String.Copy(source_id);
+                tgt.source_id = string.Copy(source_id);
                 tgt.corr_doubles = new Tuple(corr_doubles); tgt.dcl_length = new Tuple(dcl_length); tgt.dcl_total_u235 = new Tuple(dcl_total_u235); tgt.dcl_total_u238 = new Tuple(dcl_total_u238);
                 tgt.dcl_poison_percent = new Tuple(dcl_poison_percent);
                 tgt.dcl_total_rods = dcl_total_rods;
@@ -2031,10 +2027,6 @@ namespace AnalysisDefs
                 tgt.dcl_minus_asy_u235_mass_pct = dcl_minus_asy_u235_mass_pct;
                 tgt.pass = pass;
                 methodParams.CopyTo(tgt.methodParams);
-                methodParamscd.CopyTo(tgt.methodParamscd);
-                methodParamsck5.CopyTo(tgt.methodParamsck5);
-                tgt.methodParams.collar = tgt.methodParamsc; tgt.methodParams.k5 = tgt.methodParamsck5; tgt.methodParams.collar_det = tgt.methodParamscd; 
-
                 imr.modified = true;
             }
 

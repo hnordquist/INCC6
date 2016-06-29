@@ -52,30 +52,6 @@ namespace NCCTransfer
         }
     }
 
-    public class CollarDetectorMaterialMethod : DetectorMaterialMethod
-    {
-        public DateTime reference_date;
-        public double relative_doubles_rate;
-
-        public CollarDetectorMaterialMethod(CollarDetectorMaterialMethod src)
-            : base(src)
-        {
-            reference_date = new DateTime(src.reference_date.Ticks);
-            relative_doubles_rate = src.relative_doubles_rate;
-        }
-
-        public CollarDetectorMaterialMethod(DetectorMaterialMethod src)
-            : base(src)
-        {
-
-        }
-
-        public CollarDetectorMaterialMethod(string it, string did, byte am)
-            : base(it, did, am)
-        {
-        }
-
-    }
     public class DetectorMaterialMethod : IEquatable<DetectorMaterialMethod>
     {
         public DetectorMaterialMethod()
@@ -99,12 +75,12 @@ namespace NCCTransfer
         public string item_type;
         public string detector_id;
         public byte analysis_method;
-        public int extra; // collar stuff
+        public short extra; // -1, 0, 1 collar flag
 
         public bool Equals(DetectorMaterialMethod other)
         {
-            if (this.detector_id.Equals(other.detector_id) & this.item_type.Equals(other.item_type)
-                & this.analysis_method.Equals(other.analysis_method) & this.extra.Equals(other.extra))
+            if (detector_id.Equals(other.detector_id) & item_type.Equals(other.item_type)
+                & analysis_method.Equals(other.analysis_method) & extra.Equals(other.extra))
             {
                 return true;
             }
@@ -123,7 +99,7 @@ namespace NCCTransfer
             }
             public override bool Equals(DetectorMaterialMethod b1, DetectorMaterialMethod b2)
             {
-                return EqualityComparer<DetectorMaterialMethod>.Default.Equals(b1, b2);
+                return Default.Equals(b1, b2);
             }
         }
     }
@@ -468,7 +444,7 @@ namespace NCCTransfer
             /// <summary>
             /// enumerate all the method calibration structs for this detector/material pair
             /// </summary>
-            public System.Collections.IEnumerator GetMethodEnumerator(string det, string mtl)
+            public IEnumerator GetMethodEnumerator(string det, string mtl)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
                 {
@@ -478,7 +454,7 @@ namespace NCCTransfer
             }
 
             // returns the individual detector and material type pairings, use these as input to the GetMethodEnumerator 
-            public System.Collections.IEnumerator GetDetectorMaterialEnumerator(string det = null)
+            public IEnumerator GetDetectorMaterialEnumerator(string det = null)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
                 {
@@ -489,6 +465,20 @@ namespace NCCTransfer
 					}
                 }
             }
+
+			public bool GetPair(DetectorMaterialMethod dmm, out KeyValuePair<DetectorMaterialMethod, object> val)
+			{
+                foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
+				{
+					if (dmm.Equals(pair.Key))
+					{
+						val = pair;
+						return true;
+					}
+				}
+				val = new KeyValuePair<DetectorMaterialMethod, object>();
+				return false;
+			}
 
 			public List<string> GetDetectors
 			{
@@ -691,14 +681,14 @@ namespace NCCTransfer
                                 fixed (byte* pData = los_bytos) { collar_detector = *(collar_detector_rec*)pData; }
                             else
                                 throw new TransferUtils.TransferParsingException("collar_detector_rec read failed");
-                            current = new CollarDetectorMaterialMethod(
+                            current = new DetectorMaterialMethod(
                                 TransferUtils.str(collar_detector.collar_detector_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
                                 TransferUtils.str(collar_detector.collar_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar_detector.collar_detector_mode;
-                            ((CollarDetectorMaterialMethod)current).reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
-                            ((CollarDetectorMaterialMethod)current).relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-                            DetectorMaterialMethodParameters.Add(current, collar_detector);
-                            mlogger.TraceEvent(LogLevels.Info, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}",current.detector_id,current.item_type,current.extra);
+                            //((CollarDetectorMaterialMethod)current).reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
+                            //((CollarDetectorMaterialMethod)current).relative_doubles_rate = collar_detector.col_relative_doubles_rate;
+							current.extra = (short)(collar_detector.collar_detector_mode == 0 ? 0 : 1);
+							DetectorMaterialMethodParameters.Add(current, collar_detector);
+                            mlogger.TraceEvent(LogLevels.Info, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}",current.detector_id,current.item_type,collar_detector.collar_detector_mode);
 
                             break;
                         case INCC.COLLAR_SAVE_RESTORE:
@@ -712,9 +702,9 @@ namespace NCCTransfer
                             current = new DetectorMaterialMethod(
                                 TransferUtils.str(collar.collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
                                 TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar.collar_mode;
+							current.extra = (short)(collar.collar_mode == 0 ? 0 : 1);
                             DetectorMaterialMethodParameters.Add(current, collar);
-                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, current.extra);
+                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar.collar_mode);
                             // dev note: if no preceding COLLAR_DETECTOR_SAVE_RESTORE, do not skip this entry!
                             break;
                         case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series x 2
@@ -727,10 +717,10 @@ namespace NCCTransfer
                                 throw new TransferUtils.TransferParsingException("collar_k5_rec read failed");
                             current = new DetectorMaterialMethod(
                                 TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar_k5.collar_k5_mode;
+                                TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);                            
+							current.extra = (short)(collar_k5.collar_k5_mode == 0 ? 0 : 1);
                             DetectorMaterialMethodParameters.Add(current, collar_k5);
-                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, current.extra);
+                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar_k5.collar_k5_mode);
                             // dev note: if no preceding COLLAR_SAVE_RESTORE, skip this entry!
                             break;
                         case INCC.METHOD_ADDASRC:

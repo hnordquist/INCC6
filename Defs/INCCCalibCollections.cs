@@ -148,7 +148,6 @@ namespace AnalysisDefs
 
         }
 
-        // todo: collar/k5 detached params (no explicit detector mapping)
         /// the details
         public void UpdateAnalysisMethodSpecifics(string detname, string mat, DB.AnalysisMethodSpecifiers db = null)
         {
@@ -178,38 +177,37 @@ namespace AnalysisDefs
                             switch (md.Item1)
                             {
                                 case AnalysisMethod.Active:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_rec();
+                                    rec = new INCCAnalysisParams.active_rec();
                                     break;
                                 case AnalysisMethod.ActiveMultiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_mult_rec();
+                                    rec = new INCCAnalysisParams.active_mult_rec();
                                     break;
                                 case AnalysisMethod.ActivePassive:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_passive_rec();
+                                    rec = new INCCAnalysisParams.active_passive_rec();
                                     break;
                                 case AnalysisMethod.AddASource:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.add_a_source_rec();
+                                    rec = new INCCAnalysisParams.add_a_source_rec();
                                     break;
                                 case AnalysisMethod.CalibrationCurve:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.cal_curve_rec();
+                                    rec = new INCCAnalysisParams.cal_curve_rec();
                                     break;
                                 case AnalysisMethod.Collar:
-                                    //This may not be enough for collar params creation. hn 9.23.2015
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.collar_combined_rec();
+                                    rec = new INCCAnalysisParams.collar_combined_rec();
                                     break;
                                 case AnalysisMethod.CuriumRatio:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.curium_ratio_rec();
+                                    rec = new INCCAnalysisParams.curium_ratio_rec();
                                     break;
                                 case AnalysisMethod.KnownA:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.known_alpha_rec();
+                                    rec = new INCCAnalysisParams.known_alpha_rec();
                                     break;
                                 case AnalysisMethod.KnownM:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.known_m_rec();
+                                    rec = new INCCAnalysisParams.known_m_rec();
                                     break;
                                 case AnalysisMethod.Multiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.multiplicity_rec();
+                                    rec = new INCCAnalysisParams.multiplicity_rec();
                                     break;
                                 case AnalysisMethod.TruncatedMultiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.truncated_mult_rec();
+                                    rec = new INCCAnalysisParams.truncated_mult_rec();
                                     break;
                                 default:
                                     break;
@@ -224,7 +222,6 @@ namespace AnalysisDefs
                     switch (md.Item1)
                     {
                         case AnalysisMethod.KnownA:
-
                         case AnalysisMethod.CalibrationCurve:
                         case AnalysisMethod.KnownM:
                         case AnalysisMethod.Multiplicity:
@@ -235,7 +232,7 @@ namespace AnalysisDefs
                         case AnalysisMethod.ActivePassive:
                         case AnalysisMethod.Collar:
                         case AnalysisMethod.ActiveMultiplicity:
-                            parms = ((ParameterBase)md.Item2).ToDBElementList();
+                            parms = (md.Item2).ToDBElementList();
                             break;
                         default:
                             break;
@@ -464,25 +461,46 @@ namespace AnalysisDefs
                         ams.AddMethod(am, acp);
                         break;
                     case AnalysisMethod.Collar:
-                        INCCAnalysisParams.collar_rec cr = new INCCAnalysisParams.collar_rec();
-                        dr = db.Get(sel.detectorid, sel.material, "collar_rec");
+                        INCCAnalysisParams.collar_combined_rec cr = new INCCAnalysisParams.collar_combined_rec();
+                        dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
                         if (dr != null)
                         {
-                            CalCurveDBSnock(cr.cev, dr);
-                            cr.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
-                            cr.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
-                            cr.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
-                            cr.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
-                            cr.u_mass_corr_fact_a.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_a"]);
-                            cr.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
-                            cr.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
-                            cr.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
-                            cr.poison_absorption_fact = DB.Utils.ReifyDoubles((string)dr["poison_absorption_fact"]);
-                            cr.poison_rod_type = DB.Utils.ReifyStrings((string)dr["poison_rod_type"]);
-
-                            cr.poison_rod_a = TupleArraySlurp(ref cr.poison_rod_a, "poison_rod_a", dr);
-                            cr.poison_rod_b = TupleArraySlurp(ref cr.poison_rod_b, "poison_rod_b", dr);
-                            cr.poison_rod_c = TupleArraySlurp(ref cr.poison_rod_c, "poison_rod_c", dr);
+                            CalCurveDBSnock(cr.collar.cev, dr);
+                            cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
+                            cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
+                            cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
+                        }
+                        else
+                            lvl = LogLevels.Info;
+						dr = db.Get(sel.detectorid, sel.material, "collar_rec");
+                        if (dr != null)
+                        {
+                            CalCurveDBSnock(cr.collar.cev, dr);
+                            cr.collar.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
+                            cr.collar.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
+                            cr.collar.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
+                            cr.collar.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
+                            cr.collar.u_mass_corr_fact_a.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_a"]);
+                            cr.collar.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
+                            cr.collar.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
+                            cr.collar.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
+                            cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles((string)dr["poison_absorption_fact"]);
+                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings((string)dr["poison_rod_type"]);
+                            TupleArraySlurp(ref cr.collar.poison_rod_a, "poison_rod_a", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
+                        }
+                        else
+                            lvl = LogLevels.Info;
+						dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
+                        if (dr != null)
+                        {
+                            CalCurveDBSnock(cr.collar.cev, dr);
+                            cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+                            cr.k5.k5_checkbox = DB.Utils.ReifyBools((string)dr["k5_checkbox"]);
+							cr.k5.k5_item_type = string.Copy(sel.material);
+							cr.k5.k5_label = DB.Utils.ReifyStrings((string)dr["k5_label"]);
+                            TupleArraySlurp(ref cr.k5.k5, "k5", dr);
                         }
                         else
                             lvl = LogLevels.Info;
@@ -812,7 +830,7 @@ namespace AnalysisDefs
 					case AnalysisMethod.Collar:
 					case AnalysisMethod.TruncatedMultiplicity:
 					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
-						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
+						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName()); // URGENT: do these
 						break;
 					default:
 						break;

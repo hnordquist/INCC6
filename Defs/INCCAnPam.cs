@@ -1733,11 +1733,18 @@ namespace AnalysisDefs
                 collar = new collar_rec();
                 k5 = new collar_k5_rec();
             }
-            public collar_combined_rec (collar_combined_rec src)
+            public collar_combined_rec(collar_combined_rec src)
             {
                 src.collar.CopyTo(collar);
                 src.collar_det.CopyTo(collar_det);
                 src.k5.CopyTo(k5);
+            }
+
+			public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
+            {
+                collar = col;
+                collar_det = det;
+                k5 = k5e;
             }
 
             public override void CopyTo(INCCMethodDescriptor imd)
@@ -1748,7 +1755,7 @@ namespace AnalysisDefs
                 tgt.k5.CopyTo(k5);
                 imd.modified = true;
             }
-            public override void GenParamList()
+            public override void GenParamList()  // URGENT: this won't work, there are actually 3 such tables not one
             {
                 base.GenParamList();
                 this.Table = "collar_combined_rec";
