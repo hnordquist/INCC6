@@ -166,8 +166,9 @@ namespace DB
         public ElementList()
         {
         }
-        // NEXT: add caching of constructed string, add exclusion for lists of params
-        public string ColumnsValues
+        public string OptTable { get; set;  }
+
+		public string ColumnsValues
         {
             get
             {
@@ -189,7 +190,6 @@ namespace DB
             }
         }
 
-        // NEXT: add caching of constructed string, add exclusion for lists of params
         public string ColumnEqValueList {
             get
             {
@@ -205,7 +205,7 @@ namespace DB
                 return cv.ToString();
             }
         }
-        // NEXT: add caching of constructed string, add exclusion for lists of params
+
         public string ColumnEqValueAndList
         {
             get

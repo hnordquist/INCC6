@@ -239,7 +239,14 @@ namespace AnalysisDefs
                             parms = (md.Item2).ToDBElementList();
 							break;
                         case AnalysisMethod.Collar:  // bad mojo with the design break here
-                            break;
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = null; bonk = false;  // skip the final processing step below
+							break;
                         default:
 							bonk = true;
                             break;
@@ -251,18 +258,6 @@ namespace AnalysisDefs
                         //Didn't exist, so create and store. hn 9.22.2015
                         sam.AddMethod(md.Item1, md.Item2);
                     }
-
-					parms = (md.Item2).ToDBElementList();  // do the three here
-					switch (md.Item1)
-                    {
-                        case AnalysisMethod.Collar:  // bad mojo with the design break here
-                            break;
-                        default:
-							bonk = true;
-                            break;
-                    }
-                    if (parms != null)
-                        db.UpdateCalib(detname, mat, md.Item2.GetType().Name, parms);  // do the three here
                 }
             }
         }
@@ -483,7 +478,6 @@ namespace AnalysisDefs
                         dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
                         if (dr != null)
                         {
-                            CalCurveDBSnock(cr.collar.cev, dr);
                             cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
                             cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
                             cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
@@ -513,7 +507,6 @@ namespace AnalysisDefs
 						dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
                         if (dr != null)
                         {
-                            CalCurveDBSnock(cr.collar.cev, dr);
                             cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
                             cr.k5.k5_checkbox = DB.Utils.ReifyBools((string)dr["k5_checkbox"]);
 							cr.k5.k5_item_type = string.Copy(sel.material);
@@ -797,9 +790,6 @@ namespace AnalysisDefs
                             m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
                         ar.table = "results_curium_ratio_rec";
                         dt = ar.GetCombinedResults(mid);
-                        ar.table = "cm_pu_ratio_rec";
-                        //long rid =                   // URGENT
-                        //DataTable dt2 = ar.GetMethodResultsMethodd(mid, rid);
                         foreach (DataRow dr in dt.Rows)
                         {
                                    // DB.Utils.DBInt64(dr["pu_half_life"]);
@@ -843,12 +833,20 @@ namespace AnalysisDefs
                         }
                     }
                     break;
-					case AnalysisMethod.ActiveMultiplicity:
+
+					case AnalysisMethod.Collar: // URGENT: collar 
+					{ 
+						INCCMethodResults.results_collar_rec res = (INCCMethodResults.results_collar_rec)
+                            m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                        ar.table = "results_collar_rec";
+                        dt = ar.GetCombinedResults(mid); // URGENT: now check
+					}
+						break;
+					case AnalysisMethod.ActiveMultiplicity:// URGENT: do all of these
 					case AnalysisMethod.ActivePassive:
-					case AnalysisMethod.Collar:
 					case AnalysisMethod.TruncatedMultiplicity:
 					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
-						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName()); // URGENT: do these
+						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
 						break;
 					default:
 						break;

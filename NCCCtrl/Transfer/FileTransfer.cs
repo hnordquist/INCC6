@@ -707,7 +707,7 @@ namespace NCCTransfer
 						DetectorMaterialMethodParameters.Add(current, collar);
 						mlogger.TraceEvent(LogLevels.Verbose, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar.collar_mode);
 						break;
-					case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series x 2
+					case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series
 						collar_k5_rec collar_k5 = new collar_k5_rec();
 						sz = Marshal.SizeOf(collar_k5);
 						los_bytos = TransferUtils.TryReadBytes(reader, sz);
@@ -840,7 +840,7 @@ namespace NCCTransfer
 				while (iter.MoveNext())
 				{
 					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
-					WriteAM(rec, bw);
+					WriteAM(rec, bw);  // URGENT: collar etc. finish this output
 					//WriteSRParms(i, bw);
 					//WriteBKGParms(i, bw);
 					//WriteNormParms(i, bw);

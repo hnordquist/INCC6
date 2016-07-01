@@ -123,7 +123,7 @@ namespace Instr
 			try 
 			{ 
 				m_device =  MCADevice.ConnectToDeviceAtAddress(DeviceInfo.Address);
-				//m_device.CallbackObject = new MCADeviceCallbackObject();  // URGENT: next fill this callback in
+				//m_device.CallbackObject = new MCADeviceCallbackObject();  // fill this callback in if you are using it
 				m_device.Initialize();
 				DAQState = DAQInstrState.Online;
 				m_logger.TraceEvent(LogLevels.Info, 0, "MCA527[{0}]: Connected to {1}, MCA527 firmware version is {2}", ElectronicsId, DeviceName, DeviceInfo.FirmwareVersion);

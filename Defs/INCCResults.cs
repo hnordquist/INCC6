@@ -1958,32 +1958,12 @@ namespace AnalysisDefs
 			}
 
 
-            public INCCAnalysisParams.collar_rec methodParamsc { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar; }
+            public INCCAnalysisParams.collar_rec methodParamsC { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar; }
 																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar = value; } }
-			public INCCAnalysisParams.collar_detector_rec methodParamscd  { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det; }
+			public INCCAnalysisParams.collar_detector_rec methodParamsDetector  { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det; }
 																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det = value; } }
-			public INCCAnalysisParams.collar_k5_rec methodParamsck5 { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).k5; } 
+			public INCCAnalysisParams.collar_k5_rec methodParamsK5 { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).k5; } 
 																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).k5 = value; } }
-            public string poison_rod_type
-            {
-                get { return methodParamsc.poison_rod_type[0]; }
-            }
-            public double poison_absorption_fact
-            {
-                get { return methodParamsc.poison_absorption_fact[0]; }
-            }
-            public Tuple poison_rod_a
-            {
-                get { return methodParamsc.poison_rod_a[0]; }
-            }
-            public Tuple poison_rod_b
-            {
-                get { return methodParamsc.poison_rod_b[0]; }
-            }
-            public Tuple poison_rod_c
-            {
-                get { return methodParamsc.poison_rod_c[0]; }
-            }
             public results_collar_rec()
             {
 				InitMethodParams();

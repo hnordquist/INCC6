@@ -842,7 +842,7 @@ namespace NewUI
 
         private void BackupAllDataClick(object sender, RoutedEventArgs e)
         {
-            string dest = UIIntegration.GetUsersFolder("Select Destination", "Select a path to backup data.");
+            string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
             if (!string.IsNullOrEmpty(dest))
             {
                 string source = System.IO.Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());

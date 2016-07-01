@@ -44,17 +44,18 @@ namespace NewUI
         public IDDCollarCrossRef(INCCAnalysisParams.collar_combined_rec c = null, bool mod = false)
         {
             InitializeComponent();
-            mp = new MethodParamFormFields(AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE);
+            mp = new MethodParamFormFields(AnalysisMethod.Collar);
 
             PoisonAbsorptionFactorTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             PoisonAbsorptionFactorTextBox.NumberFormat = NumericTextBox.Formatter.F3;
-            RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
+             RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             RelativeDoublesRateTextBox.NumberFormat = NumericTextBox.Formatter.F3;
 
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             this.Text += " for " + mp.det.Id.DetectorName;
             modified = mod;
             mp.RefreshMatTypeComboBox(MaterialTypeComboBox);
+			mp.SelectMaterialType(MaterialTypeComboBox);
             if (mp.HasMethod && c == null)
             {
                 mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
@@ -64,17 +65,14 @@ namespace NewUI
             else if (mp.HasMethod && c != null)
             {
                 col = c;
-                c.GenParamList();
             }
             else
             {
                 mp.imd = new INCCAnalysisParams.collar_combined_rec(); // not mapped, so make a new one
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
-                col.GenParamList();
                 modified = true;
             }
 
-            mp.RefreshMatTypeComboBox(MaterialTypeComboBox);
             CrossReferenceFieldFiller(col);
             this.TopMost = true;
         }
@@ -159,6 +157,7 @@ namespace NewUI
             {
                 mp.acq.item_type = MaterialTypeComboBox.Text;
                 modified = true;
+				mp.SelectMaterialType((ComboBox)sender);
             }
         }
 
@@ -166,9 +165,10 @@ namespace NewUI
         {
             if (col.collar.collar_mode != Convert.ToBoolean(ModeComboBox.SelectedIndex))
             {
-                // Is there some reason this is both places?
+                // copied three times as in INCC5, keeping it the same
                 col.collar.collar_mode = Convert.ToBoolean(ModeComboBox.SelectedIndex);
                 col.collar_det.collar_mode = col.collar.collar_mode;
+                col.k5.k5_mode = col.collar.collar_mode;
                 modified = true;
             }
         }

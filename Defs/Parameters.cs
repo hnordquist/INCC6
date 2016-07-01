@@ -2724,7 +2724,7 @@ namespace AnalysisDefs
         /// For the DB API, just native types and an Array
         /// </summary>
         /// <returns></returns>
-        public DB.ElementList ToDBElementList(bool generate = true)
+        virtual public DB.ElementList ToDBElementList(bool generate = true)
         {
             if (generate)
                 GenParamList(); // resolved in the child class

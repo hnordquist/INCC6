@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 12
-6.0.1.12 June 30, 2016 J. Longo
+6.0.1.12 July 5, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -69,31 +69,27 @@ ISSUES
 See https://github.com/hnordquist/INCC6/issues
 
 
-Doing these for Beta 12
+Issues for basic INCC5/6 feature COMPLETION
+
+#84*	Implement Collar
+#101+   Coincidence matrix calculation needs completion
 #99+    Time interval summary incomplete
+#79+	Plot Norm, Plot Ver diagnostic tools
 #76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75*	LM wizard setting for cycle count not used in Live DAQ
 
 #78+	Find Deming curve fitting tool replacement
 #69+	Present the proposed List Mode Config UI from DB enhancement
-#32+	Implement INCC5 File > Save As/Export > Transfer and Initial Data
-
-#25 List mode acquisition predelay not stored
-#59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-
-Issues for basic INCC5/6 feature COMPLETION
-
-#84*	Implement Collar
-#79+	Plot Norm, Plot Ver diagnostic tools
-#101+   Coincidence matrix calculation needs completion
 #35+	Hold-up analysis required
 
 *HIGH Priority, +MEDIUM Priority
 
 #100 Rossi processing too slow and can sometimes hang
 #67 PTR-32 data handling question 
+#59 Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
 #45 calc_alpha_beta performance and efficiency
 #43 Performing LM as SR after doing LM Acquire craps*
+#25 List mode acquisition predelay not stored
 #16 Accidental Singles test Failure for PTR32
 #13 PTR-32 -- Results different if reading file/doing live acquisition
 
@@ -133,6 +129,7 @@ Closed issues
   38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
   34 Implement Composite Isotopics dlg and use
   33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
+  32 Implement INCC5 File > Save As/Export > Transfer and Initial Data
   31 Implement the INCC5 Reanalysis
   27 Cancel assay does not fully stop acquisition
   23 how to delete list mode detector? 

@@ -289,6 +289,33 @@ namespace NCCTransfer
             }
         }
 
+		static unsafe public void CopyBoolsToInts(bool[] src, int* dst)
+        {
+			int[] x = new int[src.Length];
+			for (int i = 0; i < src.Length; i++)
+				x[i] = (src[i] ? 1: 0);
+			CopyInts(x, dst);
+		}
+		static unsafe public void CopyInts(int[] src, int* dst)
+        {
+            if (src == null || dst == null)
+                throw new ArgumentException();
+
+                byte* pd = (byte*)dst;
+
+                // Loop over the count in blocks of 4 bytes, copying a int (4 bytes) at a time:
+                for (int i = 0; i < src.Length; i++)
+                {
+					byte[] bx = BitConverter.GetBytes(src[i]);
+					for (int j = 0; j < bx.Length; j++)
+					{
+						*(pd) = bx[j];
+						pd += 1;
+					}
+                }
+        }
+
+
 		static unsafe public void CopyDbls(double[] src, double* dst)
         {
             if (src == null || dst == null)
