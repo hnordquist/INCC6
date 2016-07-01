@@ -1249,13 +1249,13 @@ namespace NCCTransfer
                             am.AddMethod(AnalysisMethod.ActivePassive, apr);
                             break;
                         case INCC.COLLAR_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- COLLAR_SAVE_RESTORE");							
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34213, " Collar params entry for COLLAR_SAVE_RESTORE");							
 							break;					
                         case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- COLLAR_DETECTOR_SAVE_RESTORE");
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34212, " Main entry for COLLAR_DETECTOR_SAVE_RESTORE");
                             break;
                         case INCC.COLLAR_K5_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- COLLAR_K5_SAVE_RESTORE");
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
 							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf,sel, collar_k5.collar_k5_mode);
 							if (combined != null)
@@ -1289,13 +1289,22 @@ namespace NCCTransfer
 			KeyValuePair<DetectorMaterialMethod, object> k1, k2, k3;
 			bool ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
 			if (!ok)
+			{
+				mlogger.TraceEvent(LogLevels.Verbose, 30811, "No collar detector values for " + m1.ToString());
 				return null;
+			}
 			ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
 			if (!ok)
+			{
+				mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
 				return null;
+			}
 			ok = idcf.DetectorMaterialMethodParameters.GetPair(m3, out k3);
 			if (!ok)
+			{
+				mlogger.TraceEvent(LogLevels.Verbose, 30813, "No k5 values for " + m3.ToString());
 				return null;
+			}
 			collar_rec collar;
 			collar_detector_rec collar_detector;
 			collar_k5_rec collar_k5;
@@ -1311,11 +1320,11 @@ namespace NCCTransfer
 			// got the three
 			INCCAnalysisParams.collar_combined_rec combined = new INCCAnalysisParams.collar_combined_rec();
 			ushort bonk = 0;
-			Collar1(combined, collar_detector, bonk);
+			CollarDet(combined, collar_detector, bonk);
 			bonk = 1;
-			Collar2(combined, collar, bonk);
+			CollarParm(combined, collar, bonk);
 			bonk = 2;
-			Collar3(combined, collar_k5, bonk);
+			CollarK5(combined, collar_k5, bonk);
 			bonk = 3;
 
 			k1.Key.extra = -1;
@@ -1324,7 +1333,7 @@ namespace NCCTransfer
 			return combined;
 		}
 
-		unsafe void Collar3(INCCAnalysisParams.collar_combined_rec combined, collar_k5_rec collar_k5, ushort bonk)
+		unsafe void CollarK5(INCCAnalysisParams.collar_combined_rec combined, collar_k5_rec collar_k5, ushort bonk)
 		{
 			combined.k5 = new INCCAnalysisParams.collar_k5_rec();
 			combined.k5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
@@ -1339,7 +1348,7 @@ namespace NCCTransfer
 			mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- Collar k5 has mode {0} and is ready to be bonked", combined.k5.k5_mode);
 		}
 
-		unsafe void Collar1(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
+		unsafe void CollarDet(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
 		{
 			combined.collar_det = new INCCAnalysisParams.collar_detector_rec();
 			combined.collar_det.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
@@ -1348,7 +1357,7 @@ namespace NCCTransfer
 			mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
 		}
 
-		unsafe void Collar2(INCCAnalysisParams.collar_combined_rec combined, collar_rec collar, ushort bonk)
+		unsafe void CollarParm(INCCAnalysisParams.collar_combined_rec combined, collar_rec collar, ushort bonk)
 		{
 			combined.collar = new INCCAnalysisParams.collar_rec();
 			combined.collar.cev.lower_mass_limit = collar.col_lower_mass_limit;

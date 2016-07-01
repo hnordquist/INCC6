@@ -209,6 +209,9 @@ namespace AnalysisDefs
                                 case AnalysisMethod.TruncatedMultiplicity:
                                     rec = new INCCAnalysisParams.truncated_mult_rec();
                                     break;
+                                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                                    rec = new INCCAnalysisParams.de_mult_rec();
+                                    break;
                                 default:
                                     break;
                             }
@@ -219,6 +222,7 @@ namespace AnalysisDefs
 
                     NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34030, "Updating {0},{1} {2}", detname, mat, md.Item2.GetType().Name);
                     DB.ElementList parms = null;
+					bool bonk = false;
                     switch (md.Item1)
                     {
                         case AnalysisMethod.KnownA:
@@ -230,21 +234,35 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar:
                         case AnalysisMethod.ActiveMultiplicity:
+						case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = (md.Item2).ToDBElementList();
+							break;
+                        case AnalysisMethod.Collar:  // bad mojo with the design break here
                             break;
                         default:
+							bonk = true;
                             break;
                     }
                     if (parms != null)
                         db.UpdateCalib(detname, mat, md.Item2.GetType().Name, parms);  // det, mat, amid, params
-                    //Something amiss and sometimes not storing. Could this be it?
-                    else
+                    else if (bonk)
                     {
                         //Didn't exist, so create and store. hn 9.22.2015
                         sam.AddMethod(md.Item1, md.Item2);
                     }
+
+					parms = (md.Item2).ToDBElementList();  // do the three here
+					switch (md.Item1)
+                    {
+                        case AnalysisMethod.Collar:  // bad mojo with the design break here
+                            break;
+                        default:
+							bonk = true;
+                            break;
+                    }
+                    if (parms != null)
+                        db.UpdateCalib(detname, mat, md.Item2.GetType().Name, parms);  // do the three here
                 }
             }
         }
@@ -917,8 +935,9 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar:
+                        case AnalysisMethod.Collar: // bad mojo with the design break here
                         case AnalysisMethod.ActiveMultiplicity:
+                        case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = ((ParameterBase)md.Item2).ToDBElementList();
                             break;
                         default:

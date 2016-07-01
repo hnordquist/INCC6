@@ -97,6 +97,9 @@ namespace AnalysisDefs
                 case AnalysisMethod.INCCNone:
                     s = "INCC5 Analysis method selector";
                     break;
+                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                    s = "Dual energy multiplicity";
+                    break;
                 default:
                     s = am.ToString();
                     break;

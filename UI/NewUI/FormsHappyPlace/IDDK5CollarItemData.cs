@@ -135,7 +135,7 @@ namespace NewUI
 
         private void SaveParamsToDb ()
         {
-            mp = new MethodParamFormFields(AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE);
+            mp = new MethodParamFormFields(AnalysisMethod.Collar);
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             INCCAnalysisParams.collar_combined_rec inDB;
 
@@ -160,8 +160,8 @@ namespace NewUI
                     mp.acq.item_type = col.k5.k5_item_type;
                 }
 
-                col.CopyTo(mp.imd);
-                mp.imd.modified = true;
+                col.k5.CopyTo(inDB.k5);
+                inDB.k5.modified = true;
                 mp.Persist();
             }
         }

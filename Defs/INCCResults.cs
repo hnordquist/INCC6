@@ -226,6 +226,9 @@ namespace AnalysisDefs
                 case AnalysisMethod.ActivePassive:
                     res = typeof(INCCMethodResults.results_active_passive_rec);
                     break;
+                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                    res = typeof(INCCMethodResults.results_de_mult_rec);
+                    break;
                 default:
                     res = typeof(INCCMethodResult);
                     break;
