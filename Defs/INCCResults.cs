@@ -1957,6 +1957,11 @@ namespace AnalysisDefs
 				methodParams = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)src.methodParams);
 			}
 
+			public new INCCAnalysisParams.collar_combined_rec methodParams
+            {
+                get { return (INCCAnalysisParams.collar_combined_rec)base.methodParams; }
+                set { base.methodParams = value; }
+            }
 
             public INCCAnalysisParams.collar_rec methodParamsC { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar; }
 																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar = value; } }
@@ -2013,7 +2018,7 @@ namespace AnalysisDefs
                 imr.modified = true;
             }
 
-            // NEXT: report line generation needed; start with INCC5 style, then expand 
+            // URGENT: report line generation needed; start with INCC5 style, then expand 
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);

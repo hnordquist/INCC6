@@ -903,7 +903,7 @@ namespace NCCTransfer
             FileStream stream;
             BinaryReader reader;
             FileInfo fi;
-            UInt16 n, number_runs;
+			ushort n, number_runs;
             results_multiplicity_rec results_multiplicity;
             INCC.SaveResultsMask results_status;
             item_id_entry_rec item_id_entry;

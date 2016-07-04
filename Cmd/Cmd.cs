@@ -41,6 +41,7 @@ namespace NCCCmd
 		static void Main(string[] args)
 		{
 			new NC("INCC6 Console");
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
 			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
