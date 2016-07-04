@@ -1731,6 +1731,30 @@ CREATE TABLE collar_rec_m(
 	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE CASCADE
 );
 GO
+CREATE TABLE collar_detector_rec_m(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
+	[reference_date] nvarchar(40),
+	[relative_doubles_rate] float,
+	[collar_detector_mode] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE CASCADE
+);
+GO
+CREATE TABLE collar_k5_rec_m(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
+	[k5_mode] int,
+	[k5_label] ntext,
+	[k5_checkbox] ntext,
+	[k5] ntext,
+	[k5_err] ntext,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE CASCADE
+);
+GO
 CREATE TABLE results_de_mult_rec(
 	[id] INTEGER Primary Key,
 	[mid] INTEGER NOT NULL,

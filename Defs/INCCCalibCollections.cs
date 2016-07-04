@@ -496,8 +496,8 @@ namespace AnalysisDefs
                             cr.collar.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
                             cr.collar.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
                             cr.collar.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
-                            cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles((string)dr["poison_absorption_fact"]);
-                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings((string)dr["poison_rod_type"]);
+                            cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles(dr["poison_absorption_fact"].ToString());
+                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings(dr["poison_rod_type"].ToString());
                             TupleArraySlurp(ref cr.collar.poison_rod_a, "poison_rod_a", dr);
                             TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
                             TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
@@ -508,9 +508,9 @@ namespace AnalysisDefs
                         if (dr != null)
                         {
                             cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
-                            cr.k5.k5_checkbox = DB.Utils.ReifyBools((string)dr["k5_checkbox"]);
+                            cr.k5.k5_checkbox = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
 							cr.k5.k5_item_type = string.Copy(sel.material);
-							cr.k5.k5_label = DB.Utils.ReifyStrings((string)dr["k5_label"]);
+							cr.k5.k5_label = DB.Utils.ReifyStrings(dr["k5_label"].ToString());
                             TupleArraySlurp(ref cr.k5.k5, "k5", dr);
                         }
                         else
@@ -875,12 +875,12 @@ namespace AnalysisDefs
                             cr.collar.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
                             cr.collar.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
                             cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles(dr["poison_absorption_fact"].ToString());
-                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings((string)dr["poison_rod_type"]);
+                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings(dr["poison_rod_type"].ToString());
                             TupleArraySlurp(ref cr.collar.poison_rod_a, "poison_rod_a", dr);
                             TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
                             TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
 
-						//	                        dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
+	  //	              dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
       //                  if (dr != null)
       //                  {
       //                      cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
@@ -889,19 +889,19 @@ namespace AnalysisDefs
       //                  }
       //                  else
       //                      lvl = LogLevels.Info;
-						//dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
+	  //				  dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
       //                  if (dr != null)
       //                  {
       //                      cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
       //                      cr.k5.k5_checkbox = DB.Utils.ReifyBools((string)dr["k5_checkbox"]);
-						//	cr.k5.k5_item_type = string.Copy(sel.material);
-						//	cr.k5.k5_label = DB.Utils.ReifyStrings((string)dr["k5_label"]);
+	  //					  cr.k5.k5_item_type = string.Copy(sel.material);
+	  //					  cr.k5.k5_label = DB.Utils.ReifyStrings((string)dr["k5_label"]);
       //                      TupleArraySlurp(ref cr.k5.k5, "k5", dr);
                         }
 
                     }
                     break;
-					case AnalysisMethod.ActiveMultiplicity:// URGENT: do all of these
+					case AnalysisMethod.ActiveMultiplicity:// URGENT: do these results restores
 					case AnalysisMethod.ActivePassive:
 					case AnalysisMethod.TruncatedMultiplicity:
 					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
@@ -910,7 +910,6 @@ namespace AnalysisDefs
 					default:
 						break;
 					}
-
 				} // for
 			}
 
@@ -919,17 +918,15 @@ namespace AnalysisDefs
 
 		static VTuple[] TupleArraySlurp(ref VTuple[] dest, string field, DataRow dr)
         {
-            double[] v = DB.Utils.ReifyDoubles((string)dr[field]);
-            double[] err = DB.Utils.ReifyDoubles((string)dr[field+"_err"]);
-
-            for (int i = 0; i < dest.Length; i++)
+            double[] v = DB.Utils.ReifyDoubles(dr[field].ToString());
+            double[] err = DB.Utils.ReifyDoubles(dr[field + "_err"].ToString());
+            for (int i = 0; i < v.Length && i < dest.Length; i++)
                 dest[i] = new VTuple(v[i], err[i]);
             return dest;
         }
 
         static void CalCurveDBSnock(INCCAnalysisParams.CurveEquationVals cev, DataRow dr)
-        {
-            
+        {            
             if (dr == null) return;
             cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)(DB.Utils.DBInt32(dr["cal_curve_equation"]));
             cev.a = DB.Utils.DBDouble(dr["a"]);

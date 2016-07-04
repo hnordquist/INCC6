@@ -2704,6 +2704,7 @@ namespace AnalysisDefs
         public DBParamList()
         {
             ps = new List<DBParamEntry>();  // eliminate, occurs during the Get below
+			Pump = -1;
         }
         public List<DBParamEntry> ps;
 
@@ -2784,8 +2785,12 @@ namespace AnalysisDefs
             return l;
         }
 
+		// the table name for the parameters
+		public string Table { get; set;  }
 
-        public string Table { get; set;  }
+		// use Pump >= 0 to iterate through multiple method instances
+		public short Pump { get; set; }
+
     }
 
 

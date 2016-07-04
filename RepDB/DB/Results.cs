@@ -169,14 +169,22 @@ namespace DB
         }
         DB db;
 
-        string MethodTableName { get {
+        string MethodTableName(string opttable = null)
+		{ 
             if (string.IsNullOrEmpty(table)) 
                 return "__";  // guaranteed to throw exceptions
             else
-                return
-                    table.Remove(0, 8) + "_m";  // 8 is length of 'results_'
-            } 
-        } 
+			{
+				if (string.IsNullOrEmpty(opttable))
+				{
+					return table.Remove(0, 8) + "_m";  // 8 is length of 'results_'
+				}
+				else
+				{
+					return opttable + "_m"; // crude hack to accomodate old 3 method tables for collar scheme that I kept for some lame reason
+				}
+			}
+       } 
 
         public long CreateMethod(long resid, long mid, ElementList resParams)
         {
@@ -184,10 +192,10 @@ namespace DB
             resParams.Add(new Element("rid", resid));
             resParams.Add(new Element("mid", mid));
             ArrayList sqlList = new ArrayList();
-            string sSQL1 = "Insert into " + MethodTableName + " ";
+            string sSQL1 = "Insert into " + MethodTableName(resParams.OptTable) + " ";
             string sSQL = sSQL1 + resParams.ColumnsValues;
             sqlList.Add(sSQL);
-            sqlList.Add(SQLSpecific.getLastID(MethodTableName));
+            sqlList.Add(SQLSpecific.getLastID(MethodTableName(resParams.OptTable)));
             return db.ExecuteTransactionID(sqlList);
         }
 
@@ -207,7 +215,7 @@ namespace DB
 		public DataTable GetCombinedResults(long mid)
         {
 			db.SetConnection();
-			string sSQL = "SELECT * FROM " + table + "," + MethodTableName + " where "+ table + ".mid=" + mid.ToString() + " AND " + MethodTableName + ".rid=" + table + ".id";
+			string sSQL = "SELECT * FROM " + table + "," + MethodTableName() + " where "+ table + ".mid=" + mid.ToString() + " AND " + MethodTableName() + ".rid=" + table + ".id";
             return db.DT(sSQL);
         }
 		

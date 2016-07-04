@@ -60,7 +60,6 @@ namespace NewUI
             {
                 mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
-                col.GenParamList();
             }
             else if (mp.HasMethod && c != null)
             {

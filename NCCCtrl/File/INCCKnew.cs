@@ -2657,9 +2657,11 @@ namespace NCCTransfer
 										ElementList els = _imr.ToDBElementList(); // also sets table property, gotta do it first
 										ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(_imr.Table);
 										long resid = ar.Create(mid, els);
-										ElementList mels = _imr.methodParams.ToDBElementList();
-	              /*// URGENT: collar result */									long resmid = ar.CreateMethod(resid, mid, mels);
-										mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+										do
+										{
+											long resmid = ar.CreateMethod(resid, mid, _imr.methodParams.ToDBElementList());
+											mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+										} while (_imr.methodParams.Pump > 0);
 									} 
 									catch (Exception e)
 									{

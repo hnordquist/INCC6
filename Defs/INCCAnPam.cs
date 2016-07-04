@@ -1740,63 +1740,72 @@ namespace AnalysisDefs
             
             public collar_combined_rec()
             {
-                collar_det = new collar_detector_rec();
-                collar = new collar_rec();
-                k5 = new collar_k5_rec();
+				Init();
             }
             public collar_combined_rec(collar_combined_rec src)
             {
-                src.collar.CopyTo(collar);
+				Init();
+				src.collar.CopyTo(collar);
                 src.collar_det.CopyTo(collar_det);
                 src.k5.CopyTo(k5);
-            }
+           }
 
 			public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
             {
                 collar = col; // shallow copies, ok?
                 collar_det = det;
                 k5 = k5e;
+				Pump = 0; // prep for use
             }
+
+			public void Init()
+			{
+                collar_det = new collar_detector_rec();
+                collar = new collar_rec();
+                k5 = new collar_k5_rec();
+				Pump = 0; // prep for use
+			}
 
             public override void CopyTo(INCCMethodDescriptor imd)
             {
                 collar_combined_rec tgt = (collar_combined_rec)imd;
+				if (tgt == null)
+					return;
                 tgt.collar.CopyTo (collar);
                 tgt.collar_det.CopyTo(collar_det);
                 tgt.k5.CopyTo(k5);
-                imd.modified = true;
+                tgt.modified = true;
             }
-            public override void GenParamList()  // this does not fill in the three data structures 
+            public override void GenParamList()  // this does not fill in the three data structures, see the pump processing below 
             {
                 base.GenParamList();
-                Table = "collar_combined_rec";  //never used
+                Table = "collar_combined_rec";  // not a database table name, only a contextual placeholder
             }
-			
-			private ushort f = 0; // round and round and round we go
+
 			public override DB.ElementList ToDBElementList(bool generate = true)
             {
 				DB.ElementList el = null;
-                if (f == 0)
+                if (Pump == 0)
 				{
-					f = 1;
+					Pump = 1;
 					el = collar_det.ToDBElementList(generate);
 					el.OptTable = collar_det.Table;
 				} else
-                if (f == 1)
+                if (Pump == 1)
 				{
-					f = 2;
+					Pump = 2;
 					el = collar.ToDBElementList(generate);
 					el.OptTable = collar.Table;
  				} else
-				if (f == 2)
+				if (Pump == 2)
 				{
-					f = 0;
+					Pump = 0;
 					el = k5.ToDBElementList(generate);
 					el.OptTable = k5.Table;
 				}
 				else  // can never get here lol
 				{
-					f = 0;
+					Pump = 0;
 					el = this.ToDBElementList(generate);
 				}
 				return el;

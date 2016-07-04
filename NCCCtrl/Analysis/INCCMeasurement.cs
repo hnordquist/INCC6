@@ -1404,8 +1404,11 @@ namespace AnalysisDefs
                     DB.ElementList els = imr.ToDBElementList(); // generates the Table property content too
                     DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(imr.Table);
                     long resid = ar.Create(mid, els);  // save the method results in the relevant results table
-              /*// URGENT: collar result */      long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
-                    m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, String.Format("Method results {0} preserved ({1}{2})", imr.Table, resid, mresid));
+					do
+					{
+						long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
+						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}{2})", imr.Table, resid, mresid));
+					} while (imr.methodParams.Pump > 0);
                 }
             }                        
         }
