@@ -905,16 +905,116 @@ namespace AnalysisDefs
                             for (int i = 0; i < s.Length && i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
                                 cr.k5.k5_label[i] = s[i];
                             TupleArraySlurp(ref cr.k5.k5, "k5", dr);
-                        } 
+                       } 
                     }
                     break;
-					case AnalysisMethod.ActiveMultiplicity:// URGENT: do these last four results restores
+					case AnalysisMethod.ActiveMultiplicity:
+					{
+						INCCMethodResults.results_active_mult_rec res = (INCCMethodResults.results_active_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_active_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.mult = VTupleHelper.Make(dr, "mult");
+							res.methodParams.vf1 = DB.Utils.DBDouble(dr["vf1"]);
+							res.methodParams.vf2 = DB.Utils.DBDouble(dr["vf2"]);
+							res.methodParams.vf3 = DB.Utils.DBDouble(dr["vf3"]);
+							res.methodParams.vt1 = DB.Utils.DBDouble(dr["vt1"]);
+							res.methodParams.vt2 = DB.Utils.DBDouble(dr["vt2"]);
+							res.methodParams.vt3 = DB.Utils.DBDouble(dr["vt3"]);
+						}
+					}
+					break;
 					case AnalysisMethod.ActivePassive:
+					{
+						INCCMethodResults.results_active_passive_rec res = (INCCMethodResults.results_active_passive_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_active_passive_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.k0.v = DB.Utils.DBDouble(dr["k0"]);
+							res.k = VTupleHelper.Make(dr, "k");
+							res.k1 = VTupleHelper.Make(dr, "k1");
+							res.delta_doubles = VTupleHelper.Make(dr, "delta_doubles");
+							res.u235_mass = VTupleHelper.Make(dr, "u235_mass");
+							res.dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
+							res.dcl_minus_asy_u235_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+							res.dcl_minus_asy_u235_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.pass = DB.Utils.DBBool(dr["pass"]);
+
+                            INCCAnalysisParams.active_passive_rec a = res.methodParams;
+                            CalCurveDBSnock(a.cev, dr);
+						}
+					}
+					break;
 					case AnalysisMethod.TruncatedMultiplicity:
+					{
+						INCCMethodResults.results_truncated_mult_rec res = (INCCMethodResults.results_truncated_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_truncated_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.bkg.Singles = VTupleHelper.Make(dr, "bkg_singles");
+							res.bkg.Zeros = VTupleHelper.Make(dr, "bkg_zeros");
+							res.bkg.Ones = VTupleHelper.Make(dr, "bkg_ones");
+							res.bkg.Twos = VTupleHelper.Make(dr, "bkg_twos");
+							res.net.Singles = VTupleHelper.Make(dr, "net_singles");
+							res.net.Zeros = VTupleHelper.Make(dr, "net_zeros");
+							res.net.Ones = VTupleHelper.Make(dr, "net_ones");
+							res.net.Twos = VTupleHelper.Make(dr, "net_twos");
+
+                            res.k.alpha = VTupleHelper.Make(dr, "k_alpha");
+                            res.k.pu240e_mass = VTupleHelper.Make(dr, "k_pu240e_mass");
+                            res.k.mass = VTupleHelper.Make(dr, "k_pu_mass");
+                            res.k.dcl_pu240e_mass = DB.Utils.DBDouble(dr["k_dcl_pu240e_mass"]);
+                            res.k.dcl_pu_mass = DB.Utils.DBDouble(dr["k_dcl_pu_mass"]);
+                            res.k.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "k_dcl_minus_asy_pu_mass");
+                            res.k.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["k_dcl_minus_asy_pu_mass_pct"]);
+                            res.k.pass = DB.Utils.DBBool(dr["k_pass"]);
+
+							res.s.eff = VTupleHelper.Make(dr, "s_eff");
+							res.s.alpha = VTupleHelper.Make(dr, "s_alpha");
+                            res.s.pu240e_mass = VTupleHelper.Make(dr, "s_pu240e_mass");
+                            res.s.mass = VTupleHelper.Make(dr, "s_pu_mass");
+                            res.s.dcl_pu240e_mass = DB.Utils.DBDouble(dr["s_dcl_pu240e_mass"]);
+                            res.s.dcl_pu_mass = DB.Utils.DBDouble(dr["s_dcl_pu_mass"]);
+                            res.s.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "s_dcl_minus_asy_pu_mass");
+                            res.s.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["s_dcl_minus_asy_pu_mass_pct"]);
+                            res.s.pass = DB.Utils.DBBool(dr["s_pass"]);
+
+							INCCAnalysisParams.truncated_mult_rec a = res.methodParams;
+                            a.known_eff = DB.Utils.DBBool(dr["known_eff"]);
+                            a.solve_eff = DB.Utils.DBBool(dr["vs1"]);
+                            a.a = DB.Utils.DBDouble(dr["a"]);
+                            a.b = DB.Utils.DBDouble(dr["b"]);						}
+					}
+					break;
 					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
-						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
+					{
+						INCCMethodResults.results_de_mult_rec res = (INCCMethodResults.results_de_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_de_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.meas_ring_ratio = DB.Utils.DBDouble(dr["meas_ring_ratio"]);
+							res.interpolated_neutron_energy = DB.Utils.DBDouble(dr["interpolated_neutron_energy"]);
+							res.energy_corr_factor = DB.Utils.DBDouble(dr["energy_corr_factor"]);
+							INCCAnalysisParams.de_mult_rec a = res.methodParams;
+                            a.inner_ring_efficiency = DB.Utils.DBDouble(dr["inner_ring_efficiency"]);
+                            a.outer_ring_efficiency = DB.Utils.DBDouble(dr["outer_ring_efficiency"]);
+							a.neutron_energy = DB.Utils.ReifyDoubles(dr["neutron_energy"].ToString());
+							a.detector_efficiency = DB.Utils.ReifyDoubles(dr["detector_efficiency"].ToString());
+							a.inner_outer_ring_ratio = DB.Utils.ReifyDoubles(dr["inner_outer_ring_ratio"].ToString());
+							a.relative_fission = DB.Utils.ReifyDoubles(dr["relative_fission"].ToString());
+						}
+					}
 						break;
 					default:
+						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
 						break;
 					}
 				} // for
