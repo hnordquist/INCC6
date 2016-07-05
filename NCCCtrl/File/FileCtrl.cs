@@ -304,7 +304,7 @@ namespace NCCFile
 					if (NC.App.Opstate.IsQuitRequested)
 						goto enditall;
 				}
-				if (modC) // update the datbase with new material defs and method analysis parameters 
+				if (modC) // update the database with new material defs and method analysis parameters 
 				{
 					NC.App.DB.Materials.SetList();
 					NC.App.DB.Materials.Reset();

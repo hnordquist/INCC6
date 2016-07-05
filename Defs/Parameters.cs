@@ -888,14 +888,18 @@ namespace AnalysisDefs
                                 break;
                             case AnalysisMethod.Collar:
                                 INCCMethodResults.results_collar_rec collrec = new INCCMethodResults.results_collar_rec ();
-                                am.GetMethodParameters(AnalysisMethod.Collar).CopyTo(collrec.methodParams.collar);
-                                // todo: more needed here due to the combined nature of the collar params
+                                am.GetMethodParameters(AnalysisMethod.Collar).CopyTo(collrec.methodParams);
                                 imr.AddMethodResults(sel, method, collrec);
                                 break;
                             case AnalysisMethod.CuriumRatio:
                                 INCCMethodResults.results_curium_ratio_rec cmrec = new INCCMethodResults.results_curium_ratio_rec ();
                                 am.GetMethodParameters(AnalysisMethod.CuriumRatio).CopyTo(cmrec.methodParams);
                                 imr.AddMethodResults(sel, method, cmrec);
+                                break;
+                           case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                                INCCMethodResults.results_de_mult_rec derec = new INCCMethodResults.results_de_mult_rec ();
+                                am.GetMethodParameters(AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE).CopyTo(derec.methodParams);
+                                imr.AddMethodResults(sel, method, derec);
                                 break;
                             default:
                                 imr.AddMethodResults(sel, method, new INCCMethodResult());
@@ -2700,6 +2704,7 @@ namespace AnalysisDefs
         public DBParamList()
         {
             ps = new List<DBParamEntry>();  // eliminate, occurs during the Get below
+			Pump = -1;
         }
         public List<DBParamEntry> ps;
 
@@ -2720,7 +2725,7 @@ namespace AnalysisDefs
         /// For the DB API, just native types and an Array
         /// </summary>
         /// <returns></returns>
-        public DB.ElementList ToDBElementList(bool generate = true)
+        virtual public DB.ElementList ToDBElementList(bool generate = true)
         {
             if (generate)
                 GenParamList(); // resolved in the child class
@@ -2780,8 +2785,12 @@ namespace AnalysisDefs
             return l;
         }
 
+		// the table name for the parameters
+		public string Table { get; set;  }
 
-        public string Table { get; set;  }
+		// use Pump >= 0 to iterate through multiple method instances
+		public short Pump { get; set; }
+
     }
 
 

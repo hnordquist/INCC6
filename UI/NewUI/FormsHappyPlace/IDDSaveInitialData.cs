@@ -65,7 +65,7 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-			string dest = UIIntegration.GetUsersFolder("Select Destination", "Select a path to backup data.");
+			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
             if (string.IsNullOrEmpty(dest))
 				return;
 			if (DetectorCurrentRadioButton.Checked)

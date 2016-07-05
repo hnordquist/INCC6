@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Reflection;
 namespace AnalysisDefs
 {
-    using Tuple = AnalysisDefs.VTuple;
+    using Tuple = VTuple;
     
     /* state-based INCC Results must include:
      * 1 bkg params, norm params, test params, acq params, isotopics, meas date time stamp, (meas and meas.cms)
@@ -226,6 +226,9 @@ namespace AnalysisDefs
                 case AnalysisMethod.ActivePassive:
                     res = typeof(INCCMethodResults.results_active_passive_rec);
                     break;
+                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                    res = typeof(INCCMethodResults.results_de_mult_rec);
+                    break;
                 default:
                     res = typeof(INCCMethodResult);
                     break;
@@ -257,7 +260,7 @@ namespace AnalysisDefs
 
             public results_init_src_rec()
             {
-                init_src_id = String.Empty;
+                init_src_id = string.Empty;
             }
 
             // Uses 3 external datums: the meas date, and the corrected rates and corrected rates selector appear on the parent class Mult Counting results
@@ -314,7 +317,7 @@ namespace AnalysisDefs
 
             public results_bias_rec()
             {
-                sourceId = String.Empty;
+                sourceId = string.Empty;
                 biasSnglsRateExpect = new Tuple();
                 biasSnglsRateExpectMeas = new Tuple();
                 biasDblsRateExpect = new Tuple();
@@ -326,7 +329,7 @@ namespace AnalysisDefs
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                string h = String.Format("Normalization results for reference source: {0}", sourceId);
+                string h = string.Format("Normalization results for reference source: {0}", sourceId);
                 sec.AddHeader(h);  // section header
                 sec.AddNumericRow("Current normalization constant", m.Norm.currNormalizationConstant);
 
@@ -1343,7 +1346,8 @@ namespace AnalysisDefs
             public Tuple mult;
 
             public new INCCAnalysisParams.active_mult_rec methodParams 
-                    {   get { return (INCCAnalysisParams.active_mult_rec)base.methodParams; } 
+                    {
+						get { return (INCCAnalysisParams.active_mult_rec)base.methodParams; } 
                         set { base.methodParams = value; }
                     }
 
@@ -1375,7 +1379,7 @@ namespace AnalysisDefs
             {
                 base.GenParamList();
                 this.Table = "results_active_mult_rec";
-                ps.AddRange(DBParamList.TuplePair(mult, "mult"));
+                ps.AddRange(TuplePair(mult, "mult"));
             }
         }
 
@@ -1450,16 +1454,15 @@ namespace AnalysisDefs
                 base.GenParamList();
                 this.Table = "results_active_passive_rec";
 
-                ps.AddRange(DBParamList.TuplePair(delta_doubles, "delta_doubles"));
-                ps.AddRange(DBParamList.TuplePair(delta_doubles, "u235_mass"));
+                ps.AddRange(TuplePair(delta_doubles, "delta_doubles"));
+                ps.AddRange(TuplePair(u235_mass, "u235_mass"));
 
                 ps.Add(new DBParamEntry("k0", k0.v));
-                ps.AddRange(DBParamList.TuplePair(k, "k"));
-                ps.AddRange(DBParamList.TuplePair(k, "k1"));
+                ps.AddRange(TuplePair(k, "k"));
+                ps.AddRange(TuplePair(k1, "k1"));
 
                 ps.Add(new DBParamEntry("dcl_u235_mass", dcl_u235_mass));
-                ps.AddRange(DBParamList.TuplePair(u235_mass, "u235_mass"));
-                ps.AddRange(DBParamList.TuplePair(dcl_minus_asy_u235_mass, "u235_mass"));
+                ps.AddRange(TuplePair(dcl_minus_asy_u235_mass, "dcl_minus_asy_u235_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u235_mass_pct", dcl_minus_asy_u235_mass_pct));
 
                 ps.Add(new DBParamEntry("pass", pass));
@@ -1622,25 +1625,21 @@ namespace AnalysisDefs
                 this.Table = "results_truncated_mult_rec";
                 bkg.prefix = "bkg"; bkg.GenParamList(); ps.AddRange(bkg.ps);
                 net.prefix = "net"; net.GenParamList(); ps.AddRange(net.ps);
-                ps.AddRange(DBParamList.TuplePair("k_alpha", k.alpha));
-                ps.AddRange(DBParamList.TuplePair("k_pu240e_mass", k.pu240e_mass));
-                ps.AddRange(DBParamList.TuplePair("k_pu_mass", k.pu_mass));
-                ps.AddRange(DBParamList.TuplePair("k_pu240e_mass", k.pu240e_mass));
-                ps.AddRange(DBParamList.TuplePair("pu_mass", k.pu_mass));
+                ps.AddRange(TuplePair("k_alpha", k.alpha));
+                ps.AddRange(TuplePair("k_pu240e_mass", k.pu240e_mass));
+                ps.AddRange(TuplePair("k_pu_mass", k.pu_mass));
                 ps.Add(new DBParamEntry("k_dcl_pu240e_mass", k.dcl_pu240e_mass));
                 ps.Add(new DBParamEntry("k_dcl_pu_mass", k.dcl_pu_mass));
-                ps.AddRange(DBParamList.TuplePair("k_dcl_minus_asy_pu_mass", k.dcl_minus_asy_pu_mass));
+                ps.AddRange(TuplePair("k_dcl_minus_asy_pu_mass", k.dcl_minus_asy_pu_mass));
                 ps.Add(new DBParamEntry("k_dcl_minus_asy_pu_mass_pct", k.dcl_minus_asy_pu_mass_pct));
                 ps.Add(new DBParamEntry("k_pass", k.pass));
-                ps.AddRange(DBParamList.TuplePair( "s_eff", s.eff));
-                ps.AddRange(DBParamList.TuplePair("s_alpha", s.alpha));
-                ps.AddRange(DBParamList.TuplePair( "s_pu240e_mass", s.pu240e_mass));
-                ps.AddRange(DBParamList.TuplePair("s_pu_mass", s.pu_mass));
-                ps.AddRange(DBParamList.TuplePair("s_pu240e_mass", s.pu240e_mass));
-                ps.AddRange(DBParamList.TuplePair("pu_mass", s.pu_mass));
+                ps.AddRange(TuplePair("s_eff", s.eff));
+                ps.AddRange(TuplePair("s_alpha", s.alpha));
+                ps.AddRange(TuplePair("s_pu240e_mass", s.pu240e_mass));
+                ps.AddRange(TuplePair("s_pu_mass", s.pu_mass));
                 ps.Add(new DBParamEntry("s_dcl_pu240e_mass", s.dcl_pu240e_mass));
                 ps.Add(new DBParamEntry("s_dcl_pu_mass", s.dcl_pu_mass));
-                ps.AddRange(DBParamList.TuplePair( "s_dcl_minus_asy_pu_mass", s.dcl_minus_asy_pu_mass));
+                ps.AddRange(TuplePair("s_dcl_minus_asy_pu_mass", s.dcl_minus_asy_pu_mass));
                 ps.Add(new DBParamEntry("s_dcl_minus_asy_pu_mass_pct", s.dcl_minus_asy_pu_mass_pct));
                 ps.Add(new DBParamEntry("s_pass", s.pass));   
             }
@@ -1725,7 +1724,7 @@ namespace AnalysisDefs
 
                 for (int i = 0; i < aass.number_positions; i++)
                 {
-                    string s = String.Format("Position {0} Cf252 - item doubles:", i+1);
+                    string s = string.Format("Position {0} Cf252 - item doubles:", i+1);
                     sec.AddNumericRowWithExtra(s, sample_cf252_doubles[i],sample_cf252_ratio[i]);
                 }
 
@@ -1944,47 +1943,32 @@ namespace AnalysisDefs
             public double dcl_minus_asy_u235_mass_pct;
             public bool pass;
 
-            public new INCCAnalysisParams.collar_combined_rec methodParams
+			public void InitMethodParams()
+			{
+				methodParams = new INCCAnalysisParams.collar_combined_rec();
+			}
+			
+			public void InitMethodParams(results_collar_rec src)
+			{
+				methodParams = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)src.methodParams);
+			}
+
+			public new INCCAnalysisParams.collar_combined_rec methodParams
             {
-                get {   INCCAnalysisParams.collar_combined_rec r = (INCCAnalysisParams.collar_combined_rec)base.methodParams;
-                        r.collar = methodParamsc;
-                        r.collar_det = methodParamscd;
-                        r.k5 = methodParamsck5;
-                        return r;
-                }
+                get { return (INCCAnalysisParams.collar_combined_rec)base.methodParams; }
                 set { base.methodParams = value; }
             }
-            public INCCAnalysisParams.collar_rec methodParamsc;
-            public INCCAnalysisParams.collar_detector_rec methodParamscd;
-            public INCCAnalysisParams.collar_k5_rec methodParamsck5;
-            public string poison_rod_type
-            {
-                get { return methodParamsc.poison_rod_type[0]; }
-            }
-            public double poison_absorption_fact
-            {
-                get { return methodParamsc.poison_absorption_fact[0]; }
-            }
-            public Tuple poison_rod_a
-            {
-                get { return methodParamsc.poison_rod_a[0]; }
-            }
-            public Tuple poison_rod_b
-            {
-                get { return methodParamsc.poison_rod_b[0]; }
-            }
-            public Tuple poison_rod_c
-            {
-                get { return methodParamsc.poison_rod_c[0]; }
-            }
+
+            public INCCAnalysisParams.collar_rec methodParamsC { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar; }
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar = value; } }
+			public INCCAnalysisParams.collar_detector_rec methodParamsDetector  { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det; }
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).collar_det = value; } }
+			public INCCAnalysisParams.collar_k5_rec methodParamsK5 { get { return ((INCCAnalysisParams.collar_combined_rec)methodParams).k5; } 
+																 set { ((INCCAnalysisParams.collar_combined_rec)methodParams).k5 = value; } }
             public results_collar_rec()
             {
-                methodParams = new INCCAnalysisParams.collar_combined_rec();
-                methodParamsc = new INCCAnalysisParams.collar_rec();
-                methodParamscd = new INCCAnalysisParams.collar_detector_rec();
-                methodParamsck5 = new INCCAnalysisParams.collar_k5_rec();
-                methodParams.collar = methodParamsc; methodParams.k5 = methodParamsck5; methodParams.collar_det = methodParamscd;
-                source_id = String.Empty;
+				InitMethodParams();
+                source_id = string.Empty;
                 k0= new Tuple();k1= new Tuple();k2= new Tuple();k3= new Tuple();k4= new Tuple();k5 = new Tuple();
                 u235_mass = new Tuple();
                 total_corr_fact = new Tuple();
@@ -1995,17 +1979,13 @@ namespace AnalysisDefs
 
             public results_collar_rec(results_collar_rec src)
             {
-                methodParamsc = new INCCAnalysisParams.collar_rec(src.methodParamsc);
-                methodParamscd = new INCCAnalysisParams.collar_detector_rec(src.methodParamscd);
-                methodParamsck5 = new INCCAnalysisParams.collar_k5_rec(src.methodParamsck5);
-                methodParams = new INCCAnalysisParams.collar_combined_rec();
-                methodParams.collar = methodParamsc; methodParams.k5 = methodParamsck5; methodParams.collar_det = methodParamscd; 
+                InitMethodParams(src);
                 k0 = new Tuple(src.k0); k1 = new Tuple(src.k1); k2 = new Tuple(src.k2); k3 = new Tuple(src.k3); k4 = new Tuple(src.k4); k5 = new Tuple(src.k5);
                 u235_mass = new Tuple(src.u235_mass);
                 percent_u235 = src.percent_u235;
                 total_u_mass = src.total_u_mass;
                 total_corr_fact = new Tuple(src.total_corr_fact);
-                source_id = String.Copy(src.source_id);
+                source_id = string.Copy(src.source_id);
                 corr_doubles = new Tuple(src.corr_doubles); dcl_length = new Tuple(src.dcl_length); dcl_total_u235 = new Tuple(src.dcl_total_u235); dcl_total_u238 = new Tuple(src.dcl_total_u238);
                 dcl_poison_percent = new Tuple(src.dcl_poison_percent);
                 dcl_total_rods = src.dcl_total_rods;
@@ -2022,7 +2002,7 @@ namespace AnalysisDefs
                 tgt.u235_mass = u235_mass;
                 tgt.percent_u235 = percent_u235;
                 tgt.total_corr_fact = new Tuple(total_corr_fact);
-                tgt.source_id = String.Copy(source_id);
+                tgt.source_id = string.Copy(source_id);
                 tgt.corr_doubles = new Tuple(corr_doubles); tgt.dcl_length = new Tuple(dcl_length); tgt.dcl_total_u235 = new Tuple(dcl_total_u235); tgt.dcl_total_u238 = new Tuple(dcl_total_u238);
                 tgt.dcl_poison_percent = new Tuple(dcl_poison_percent);
                 tgt.dcl_total_rods = dcl_total_rods;
@@ -2031,18 +2011,129 @@ namespace AnalysisDefs
                 tgt.dcl_minus_asy_u235_mass_pct = dcl_minus_asy_u235_mass_pct;
                 tgt.pass = pass;
                 methodParams.CopyTo(tgt.methodParams);
-                methodParamscd.CopyTo(tgt.methodParamscd);
-                methodParamsck5.CopyTo(tgt.methodParamsck5);
-                tgt.methodParams.collar = tgt.methodParamsc; tgt.methodParams.k5 = tgt.methodParamsck5; tgt.methodParams.collar_det = tgt.methodParamscd; 
-
                 imr.modified = true;
             }
 
-            // NEXT: report line generation needed; start with INCC5 style, then expand 
+            // URGENT: collar report line generation needed; start with INCC5 style, then expand 
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.AddHeader("Do this next results (collar)");  // section header
+				/*
+ Passive singles bkgrnd:      7.042 +-     0.125
+ Passive doubles bkgrnd:      0.004 +-     0.005
+ Passive triples bkgrnd:      0.000 +-     0.000
+ Passive scaler1 bkgrnd:      0.000
+ Passive scaler2 bkgrnd:      0.000
+  Active singles bkgrnd:      0.000 +-     0.000
+  Active doubles bkgrnd:      0.004 +-     0.005
+  Active triples bkgrnd:      0.000 +-     0.000
+  Active scaler1 bkgrnd:      0.000
+  Active scaler2 bkgrnd:      0.000
+
+  Number passive cycles:         00
+       Count time (sec):         00
+
+   Number active cycles:          0
+       Count time (sec):         00
+
+Active messages
+
+Collar: failed stratum rejection limits
+
+Passive results
+
+                            Singles:        000.000 +-     0.000
+                            Doubles:         00.000 +-     0.000
+                            Triples:          0.000 +-     0.000
+                           Scaler 1:          0.000 +-     0.000
+                           Scaler 2:          0.000 +-     0.000
+
+Active results
+
+                            Singles:       0000.000 +-     0.000
+                            Doubles:        000.000 +-     0.000
+                            Triples:          0.000 +-     0.000
+                           Scaler 1:          0.000 +-     0.000
+                           Scaler 2:          0.000 +-     0.000
+
+Collar results
+
+                     AmLi source id:            
+                               Mode:  Thermal (no Cd)
+             Declared U235 mass (g):      00000.000 +-    0.0000
+             Declared U238 mass (g):     000000.000 +-    0.0000
+                    Declared length:        000.000 +-    0.0000
+                Declared total rods:            000
+         Declared total poison rods:              0
+           Declared poison rod type:              G
+                  Declared poison %:          0.000 +-    0.0000
+           k0 (source yield factor):          0.867 +-    0.0000
+              k1 (stability factor):          0.000 +-    0.0000
+      k2 (detector response factor):          0.000 +-    0.0000
+                 k3 (poison factor):          0.000 +-    0.0000
+                k4 (uranium factor):          0.000 +-    0.0000
+       k5 (other correction factor):          0.000 +-    0.0000
+        K (total correction factor):          0.000 +-    0.0000
+              Corrected net doubles:        000.000 +-    4.0000
+                      U235 mass (g):      00000.000 +- 0000.0000
+     Declared - assay U235 mass (g):       0000.000 +- 0000.0000
+     Declared - assay U235 mass (%):          0.000 +-    0.000
+
+Collar calibration parameters
+
+                         Equation:  D = (a * m) / (1 + b * m)
+                                a:  1.000000e+001
+                                b:  3.000000e-002
+                                c:  0.000000e+000
+                                d:  0.000000e+000
+                       variance a:  3.00000e-002
+                       variance b:  1.00000e-006
+                       variance c:  0.000000e+000
+                       variance d:  0.000000e+000
+                    covariance ab:  2.000000e-004
+                    covariance ac:  0.000000e+000
+                    covariance ad:  0.000000e+000
+                    covariance bc:  0.000000e+000
+                    covariance bd:  0.000000e+000
+                    covariance cd:  0.000000e+000
+                          sigma x:  0.000000e+000
+       number of calibration rods:            000
+                  poison rod type:              G
+         poison absorption factor:          0.647
+       poison correction factor a:  0.000000e-002
+ poison correction factor a error:  0.000000e+000
+       poison correction factor b:  0.000000e+000
+ poison correction factor b error:  0.000000e+000
+       poison correction factor c:  0.000000e-001
+ poison correction factor c error:  0.000000e+000
+       U mass correction factor a:  0.000000e-004
+ U mass correction factor a error:  0.000000e+000
+       U mass correction factor b:  0.000000e+003
+ U mass correction factor b error:  0.000000e+000
+           item correction factor:  0.000000e+000
+     item correction factor error:  0.000000e+000
+                   reference date:       89.10.17
+            relative doubles rate:  0.000000e+000
+K5 item correction factors
+No correction                       1.0000 +- 0.0000
+
+Passive cycle raw data
+
+Cycle   Singles      R+A         A       Scaler1    Scaler2  QC Tests
+
+Passive cycle rate data
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+
+Active cycle raw data
+
+Cycle   Singles      R+A         A       Scaler1    Scaler2  QC Tests
+
+Active cycle rate data
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+*/
 
 
                 return sec;

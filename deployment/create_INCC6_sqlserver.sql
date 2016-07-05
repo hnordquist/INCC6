@@ -23,6 +23,14 @@ CREATE TABLE material_types(
 	[description] nvarchar(1024) NULL
 );
 GO
+CREATE TABLE holdup_config_rec(
+	[id] INTEGER IDENTITY Primary Key,
+	[glovebox_id] nvarchar(256) NULL,
+	[num_rows] int NULL,
+	[num_columns] int NULL,
+	[distance] float NULL
+);
+GO
 CREATE TABLE active_rec(
 	[id] INTEGER IDENTITY Primary Key,
 	[item_type_id] INTEGER NOT NULL,
@@ -45,8 +53,8 @@ CREATE TABLE active_rec(
 	[cal_curve_equation] int,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
@@ -124,8 +132,8 @@ CREATE TABLE add_a_source_rec(
 	[tm_dbls_rate_upper_limit] float, 
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
@@ -156,8 +164,8 @@ CREATE TABLE cal_curve_rec(
 	[percent_u235] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
@@ -187,14 +195,14 @@ CREATE TABLE collar_rec(
 	[upper_mass_limit] float,
 	[number_calib_rods] int,
 	[collar_mode] int,
-	[poison_rod_type] ntext,
-	[poison_absorption_fact] ntext,
-	[poison_rod_a] ntext,
-	[poison_rod_a_err] ntext,
-	[poison_rod_b] ntext,
-	[poison_rod_b_err] ntext,
-	[poison_rod_c] ntext,
-	[poison_rod_c_err] ntext,
+	[poison_rod_type] nvarchar(max),
+	[poison_absorption_fact] nvarchar(max),
+	[poison_rod_a] nvarchar(max),
+	[poison_rod_a_err] nvarchar(max),
+	[poison_rod_b] nvarchar(max),
+	[poison_rod_b_err] nvarchar(max),
+	[poison_rod_c] nvarchar(max),
+	[poison_rod_c_err] nvarchar(max),
 	[u_mass_corr_fact_a] float,
 	[u_mass_corr_fact_a_err] float,
 	[u_mass_corr_fact_b] float,
@@ -221,10 +229,10 @@ CREATE TABLE collar_k5_rec(
 	[item_type_id] INTEGER NOT NULL,
 	[detector_id] INTEGER NOT NULL,
 	[k5_mode] int,
-	[k5_label] ntext,
-	[k5_checkbox] ntext,
-	[k5] ntext,
-	[k5_err] ntext,
+	[k5_label] nvarchar(max),
+	[k5_checkbox] nvarchar(max),
+	[k5] nvarchar(max),
+	[k5_err] nvarchar(max),
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
@@ -296,8 +304,8 @@ CREATE TABLE known_alpha_rec(
 	[upper_corr_factor_limit] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
@@ -360,9 +368,9 @@ CREATE TABLE de_mult_rec(
 	[id] INTEGER IDENTITY Primary Key,
 	[item_type_id] INTEGER NOT NULL,
 	[detector_id] INTEGER NOT NULL,
-	[neutron_energy] ntext NULL,
-	[detector_efficiency] ntext NULL,
-	[inner_outer_ring_ratio] ntext NULL,
+	[neutron_energy] nvarchar(max) NULL,
+	[detector_efficiency] nvarchar(max) NULL,
+	[inner_outer_ring_ratio] nvarchar(max) NULL,
 	[inner_ring_efficiency] float,
 	[outer_ring_efficiency] float,
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
@@ -449,7 +457,7 @@ CREATE TABLE add_a_source_setup_rec(
 	[forward_over_travel] float NULL,
 	[reverse_over_travel] float NULL,
 	[number_positions] int NULL,
-	[dist_to_move] ntext,
+	[dist_to_move] nvarchar(max),
 	[cm_steps_per_inch] float NULL,
 	[cm_forward_mask] int NULL,
 	[cm_reverse_mask] int NULL,
@@ -466,8 +474,8 @@ GO
 CREATE TABLE alpha_beta_rec(
 	[detector_id] INTEGER NOT NULL, 
 	--/*[factorial] nvarchar(1024) NULL, not needed post-2010*/
-	[alpha_array] ntext NULL,
-	[beta_array] ntext NULL,
+	[alpha_array] nvarchar(max) NULL,
+	[beta_array] nvarchar(max) NULL,
 	FOREIGN KEY(detector_id) REFERENCES detectors(detector_id) on DELETE CASCADE
 );
 GO
@@ -825,7 +833,7 @@ CREATE TABLE LMAcquireParams(
 );
 GO
 CREATE TABLE LMINCCAppContext(
-	[root] ntext NULL, 
+	[root] nvarchar(max) NULL, 
 	[dailyRootPath] int NULL,
 	[logging] int NULL,
 	[logDetails] int NULL,
@@ -836,9 +844,9 @@ CREATE TABLE LMINCCAppContext(
 	[fpPrec] int NULL,
 	[openResults] int NULL,
 	[verbose] int NULL,
-	[emulatorapp] ntext NULL,
+	[emulatorapp] nvarchar(max) NULL,
 	[serveremulation] int NULL,
-	[fileinput] ntext NULL,
+	[fileinput] nvarchar(max) NULL,
 
 	[recurse] int NULL,
 	[parseGen2] int NULL,
@@ -862,8 +870,8 @@ CREATE TABLE LMINCCAppContext(
 	[overwriteDefs] int NULL,
 	[gen5RevDataFile] int NULL,
 	[liveFileWrite] int NULL,
-	[resultsFilePath] ntext NULL, 
-	[logFilePath] ntext NULL,
+	[resultsFilePath] nvarchar(max) NULL, 
+	[logFilePath] nvarchar(max) NULL,
 	[results8Char] int NULL,
 	[assayTypeSuffix] int NULL
 );
@@ -916,7 +924,7 @@ CREATE TABLE HVStatus(
 	[hvp_id] int NOT NULL,
 	[setpt] float NULL,
 	[read] float NULL,
-	[counts] ntext,
+	[counts] nvarchar(max),
 	[HVPDateTime] nvarchar(40) NOT NULL,
 	FOREIGN KEY(hvp_id) REFERENCES HVResult(id)
 );
@@ -1221,8 +1229,8 @@ CREATE TABLE add_a_source_rec_m(
 	[tm_dbls_rate_upper_limit] float, 
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
 	FOREIGN KEY(rid) REFERENCES results_add_a_source_rec(id) on DELETE NO ACTION
 );
@@ -1277,8 +1285,8 @@ CREATE TABLE cal_curve_rec_m(
 	[percent_u235] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
 	FOREIGN KEY(rid) REFERENCES results_cal_curve_rec(id) on DELETE NO ACTION
 );
@@ -1417,8 +1425,8 @@ CREATE TABLE known_alpha_rec_m(
 	[upper_corr_factor_limit] float,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
 	FOREIGN KEY(rid) REFERENCES results_known_alpha_rec(id) on DELETE NO ACTION
 );
@@ -1610,8 +1618,8 @@ CREATE TABLE active_rec_m(
 	[cal_curve_equation] int,
 	[lower_mass_limit] float,
 	[upper_mass_limit] float,
-	[dcl_mass] ntext,
-	[doubles] ntext,
+	[dcl_mass] nvarchar(max),
+	[doubles] nvarchar(max),
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
 	FOREIGN KEY(rid) REFERENCES results_active_rec(id) on DELETE NO ACTION
 );
@@ -1703,14 +1711,14 @@ CREATE TABLE collar_rec_m(
 	[upper_mass_limit] float,
 	[number_calib_rods] int,
 	[collar_mode] int,
-	[poison_rod_type] ntext,
-	[poison_absorption_fact] ntext,
-	[poison_rod_a] ntext,
-	[poison_rod_a_err] ntext,
-	[poison_rod_b] ntext,
-	[poison_rod_b_err] ntext,
-	[poison_rod_c] ntext,
-	[poison_rod_c_err] ntext,
+	[poison_rod_type] nvarchar(max),
+	[poison_absorption_fact] nvarchar(max),
+	[poison_rod_a] nvarchar(max),
+	[poison_rod_a_err] nvarchar(max),
+	[poison_rod_b] nvarchar(max),
+	[poison_rod_b_err] nvarchar(max),
+	[poison_rod_c] nvarchar(max),
+	[poison_rod_c_err] nvarchar(max),
 	[u_mass_corr_fact_a] float,
 	[u_mass_corr_fact_a_err] float,
 	[u_mass_corr_fact_b] float,
@@ -1723,10 +1731,34 @@ CREATE TABLE collar_rec_m(
 	[collar_detector_mode] int,
 	/* collar_k5_rec */
 	[k5_mode] int,
-	[k5_label] ntext,
-	[k5_checkbox] ntext,
-	[k5] ntext,
-	[k5_err] ntext,
+	[k5_label] nvarchar(max),
+	[k5_checkbox] nvarchar(max),
+	[k5] nvarchar(max),
+	[k5_err] nvarchar(max),
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE NO ACTION
+);
+GO
+CREATE TABLE collar_detector_rec_m(
+	[id] INTEGER IDENTITY Primary Key,
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
+	[reference_date] nvarchar(40),
+	[relative_doubles_rate] float,
+	[collar_detector_mode] int,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
+	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE NO ACTION
+);
+GO
+CREATE TABLE collar_k5_rec_m(
+	[id] INTEGER IDENTITY Primary Key,
+	[mid] INTEGER NOT NULL,
+	[rid] INTEGER NOT NULL,
+	[k5_mode] int,
+	[k5_label] nvarchar(max),
+	[k5_checkbox] nvarchar(max),
+	[k5] nvarchar(max),
+	[k5_err] nvarchar(max),
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
 	FOREIGN KEY(rid) REFERENCES results_collar_rec(id) on DELETE NO ACTION
 );
@@ -1744,9 +1776,9 @@ CREATE TABLE de_mult_rec_m(
 	[id] INTEGER IDENTITY Primary Key,
 	[mid] INTEGER NOT NULL,
 	[rid] INTEGER NOT NULL,
-	[neutron_energy] ntext NULL,
-	[detector_efficiency] ntext NULL,
-	[inner_outer_ring_ratio] ntext NULL,
+	[neutron_energy] nvarchar(max) NULL,
+	[detector_efficiency] nvarchar(max) NULL,
+	[inner_outer_ring_ratio] nvarchar(max) NULL,
 	[inner_ring_efficiency] float,
 	[outer_ring_efficiency] float,
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,

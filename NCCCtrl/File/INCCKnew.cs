@@ -173,8 +173,557 @@ namespace NCCTransfer
 			INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
 			foreach(Detector det in dets)
 			{
+                foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
+                {
+                    INCCSelector se = new INCCSelector(det.Id.DetectorId, desc.Name);
+                    if (!NC.App.DB.DetectorMaterialAnalysisMethods.ContainsKey(se))
+                        continue;
+
+					// do the method choice rec first
+					DetectorMaterialMethod dmm = new DetectorMaterialMethod(se.material, se.detectorid, INCC.METHOD_NONE);
+                    idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAMR(se));
+
+ 					// next do each method rec
+                    AnalysisMethods ams = NC.App.DB.DetectorMaterialAnalysisMethods[se];
+                    IEnumerator iter = ams.GetMethodEnumerator();
+                    while (iter.MoveNext())
+                    {
+                        Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor> md = (Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>)iter.Current;
+                        dmm = new DetectorMaterialMethod(se.material, se.detectorid, (byte)NewTypeToOldMethodId(md.Item1));
+						switch(md.Item1)
+						{
+							case AnalysisMethod.KnownA:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveKA(se, md.Item2));
+								break;
+							case AnalysisMethod.CalibrationCurve:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCC(se, md.Item2));
+								break;
+							case AnalysisMethod.KnownM:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveKM(se, md.Item2));
+								break;
+							case AnalysisMethod.Multiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveMult(se, md.Item2));
+								break;
+							case AnalysisMethod.TruncatedMultiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveTM(se, md.Item2));
+								break;
+							case AnalysisMethod.AddASource:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAS(se, md.Item2));
+								break;
+							case AnalysisMethod.CuriumRatio:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCR(se, md.Item2));
+								break;
+							case AnalysisMethod.Active:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveCA(se, md.Item2));
+								break;
+							case AnalysisMethod.ActivePassive:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAP(se, md.Item2));
+								break;
+							case AnalysisMethod.ActiveMultiplicity:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveAM(se, md.Item2));
+								break;
+							case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveDE(se, md.Item2));
+								break;
+							case AnalysisMethod.Collar:
+                                try
+                                { 
+									  idcf.DetectorMaterialMethodParameters.
+											Add(new DetectorMaterialMethod(se.material, se.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE), MoveCD(se, md.Item2));
+									  idcf.DetectorMaterialMethodParameters.
+											Add(new DetectorMaterialMethod(se.material, se.detectorid, INCC.COLLAR_SAVE_RESTORE), MoveCO(se, md.Item2));
+									  idcf.DetectorMaterialMethodParameters.
+											Add(new DetectorMaterialMethod(se.material, se.detectorid, INCC.COLLAR_K5_SAVE_RESTORE), MoveCK(se, md.Item2));
+								}
+								catch (Exception e)
+								{
+									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 34102, "Collar xfer processing error {0} {1}", md.Item1.FullName(), e.Message);
+								}
+								break;
+							case AnalysisMethod.COLLAR_SAVE_RESTORE:
+							case AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE:
+							case AnalysisMethod.COLLAR_K5_SAVE_RESTORE:
+									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
+								break;
+							case AnalysisMethod.INCCNone:
+								break;
+							default:
+								break;
+						}                       
+                    }					
+				}
 			}
 			return idcf;
+		}
+
+		unsafe static analysis_method_rec MoveAMR(INCCSelector se)
+		{
+			analysis_method_rec amr = new analysis_method_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b,amr.analysis_method_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, amr.item_type);
+			AnalysisMethods ams = NC.App.DB.DetectorMaterialAnalysisMethods[se];
+			amr.backup_method = (byte)NewTypeToOldMethodId(ams.Backup);
+			amr.normal_method = (byte)NewTypeToOldMethodId(ams.Normal);
+			amr.cal_curve = (byte)(ams.choices[(int)AnalysisMethod.CalibrationCurve] ? 1 : 0);
+			amr.active = (byte)(ams.choices[(int)AnalysisMethod.Active] ? 1 : 0);
+			amr.active_mult = (byte)(ams.choices[(int)AnalysisMethod.ActiveMultiplicity] ? 1 : 0);
+			amr.active_passive = (byte)(ams.choices[(int)AnalysisMethod.ActivePassive] ? 1 : 0);
+			amr.add_a_source = (byte)(ams.choices[(int)AnalysisMethod.AddASource] ? 1 : 0);
+			amr.collar = (byte)(ams.choices[(int)AnalysisMethod.Collar] ? 1 : 0);
+			amr.curium_ratio = (byte)(ams.choices[(int)AnalysisMethod.CuriumRatio] ? 1 : 0);
+			amr.known_alpha = (byte)(ams.choices[(int)AnalysisMethod.KnownA] ? 1 : 0);
+			amr.known_m = (byte)(ams.choices[(int)AnalysisMethod.KnownM] ? 1 : 0);
+			amr.multiplicity = (byte)(ams.choices[(int)AnalysisMethod.Multiplicity] ? 1 : 0);
+			amr.truncated_mult = (byte)(ams.choices[(int)AnalysisMethod.TruncatedMultiplicity] ? 1 : 0);
+			return amr;
+		}
+
+		unsafe static multiplicity_rec MoveMult(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.multiplicity_rec imr = (INCCAnalysisParams.multiplicity_rec)md;
+			multiplicity_rec mr = new multiplicity_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, mr.multiplicity_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, mr.multiplicity_item_type);
+			mr.mul_a = imr.a;
+			mr.mul_b = imr.b;
+			mr.mul_c = imr.c;
+			mr.mul_vi1 = imr.vi1;
+			mr.mul_vi2 = imr.vi2;
+			mr.mul_vi3 = imr.vi3;
+			mr.mul_vs1 = imr.vs1;
+			mr.mul_vs2 = imr.vs2;
+			mr.mul_vs3 = imr.vs3;
+			mr.mul_alpha_weight = imr.alpha_weight;
+			mr.mul_sf_rate = imr.sf_rate;
+			mr.mul_sigma_x = imr.sigma_x;
+			mr.mul_solve_efficiency = (byte)imr.solve_efficiency;			
+			return mr;
+		}
+
+		unsafe static known_alpha_rec MoveKA(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.known_alpha_rec imr = (INCCAnalysisParams.known_alpha_rec)md;
+			known_alpha_rec m = new known_alpha_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_alpha_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_alpha_item_type);
+			m.ka_a = imr.cev.a;
+			m.ka_b = imr.cev.b;
+			m.ka_var_a = imr.cev.var_a;
+			m.ka_var_b = imr.cev.var_b;
+			m.ka_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ka_sigma_x = imr.cev.sigma_x;
+			m.ka_ring_ratio_a = imr.ring_ratio.a;
+			m.ka_ring_ratio_b = imr.ring_ratio.b;
+			m.ka_ring_ratio_c = imr.ring_ratio.c;
+			m.ka_ring_ratio_d = imr.ring_ratio.d;
+			m.ka_alpha_wt = imr.alpha_wt;
+			m.ka_rho_zero = imr.rho_zero;
+			m.ka_ring_ratio_equation = (double)imr.ring_ratio.cal_curve_equation;
+			m.ka_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.ka_lower_mass_limit = imr.cev.lower_mass_limit;
+			m.ka_heavy_metal_corr_factor = imr.heavy_metal_corr_factor;		
+			m.ka_heavy_metal_reference = imr.heavy_metal_reference;		
+			m.ka_k = imr.k;
+			m.ka_known_alpha_type = (double)imr.known_alpha_type;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.ka_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.ka_doubles);
+
+			return m;
+		}
+
+		unsafe static known_m_rec MoveKM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.known_m_rec imr = (INCCAnalysisParams.known_m_rec)md;
+			known_m_rec m = new known_m_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_m_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.known_m_item_type);
+			m.km_b = imr.b;
+			m.km_c = imr.c;
+			m.km_sf_rate =  imr.sf_rate;
+			m.km_sigma_x = imr.sigma_x;
+			m.km_upper_mass_limit = imr.upper_mass_limit;		
+			m.km_lower_mass_limit = imr.lower_mass_limit;
+			m.km_vi1 = imr.vi1;
+			m.km_vi2 = imr.vi2;
+			m.km_vs1 = imr.vs1;
+			m.km_vs2 = imr.vs2;	
+			return m;
+		}
+ 
+		unsafe static cal_curve_rec MoveCC(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.cal_curve_rec imr = (INCCAnalysisParams.cal_curve_rec)md;
+			cal_curve_rec m = new cal_curve_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.cal_curve_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.cal_curve_item_type);
+			m.cc_a = imr.cev.a;
+			m.cc_b = imr.cev.b;
+			m.cc_c = imr.cev.c;
+			m.cc_d = imr.cev.d;
+			m.cc_cal_curve_type = (double)imr.CalCurveType;
+			m.cc_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.cc_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.cc_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.cc_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.cc_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.cc_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.cc_var_a = imr.cev.var_a;
+			m.cc_var_b = imr.cev.var_b;
+			m.cc_var_c = imr.cev.var_c;
+			m.cc_var_d = imr.cev.var_d;
+			m.cc_sigma_x = imr.cev.sigma_x;
+			m.cc_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.cc_lower_mass_limit = imr.cev.lower_mass_limit;
+			m.cc_heavy_metal_corr_factor = imr.heavy_metal_corr_factor;		
+			m.cc_heavy_metal_reference = imr.heavy_metal_reference;
+			m.cc_cal_curve_type = (double)imr.CalCurveType;
+			m.cc_percent_u235 = imr.percent_u235;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.cc_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.cc_doubles);
+			return m;
+		}
+
+		unsafe static truncated_mult_rec MoveTM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.truncated_mult_rec imr = (INCCAnalysisParams.truncated_mult_rec)md;
+			truncated_mult_rec m = new truncated_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.truncated_mult_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.truncated_mult_item_type);
+			m.tm_a = imr.a;
+			m.tm_b = imr.b;
+			m.tm_known_eff = (byte)(imr.known_eff ? 1 : 0);
+			m.tm_solve_eff = (byte)(imr.solve_eff ? 1 : 0);
+			return m;
+		}
+
+		unsafe static curium_ratio_rec MoveCR(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.curium_ratio_rec imr = (INCCAnalysisParams.curium_ratio_rec)md;
+			curium_ratio_rec m = new curium_ratio_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.curium_ratio_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.curium_ratio_item_type);
+			m.cr_a = imr.cev.a;
+			m.cr_b = imr.cev.b;
+			m.cr_c = imr.cev.c;
+			m.cr_d = imr.cev.d;
+			m.curium_ratio_equation = (byte)imr.cev.cal_curve_equation;
+			m.curium_ratio_type = NewToOldCRVariants(imr.curium_ratio_type);
+			m.cr_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.cr_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.cr_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.cr_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.cr_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.cr_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.cr_var_a = imr.cev.var_a;
+			m.cr_var_b = imr.cev.var_b;
+			m.cr_var_c = imr.cev.var_c;
+			m.cr_var_d = imr.cev.var_d;
+			m.cr_sigma_x = imr.cev.sigma_x;
+			m.cr_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.cr_lower_mass_limit = imr.cev.lower_mass_limit;
+			return m;
+		}
+
+		unsafe static active_mult_rec MoveAM(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_mult_rec imr = (INCCAnalysisParams.active_mult_rec)md;
+			active_mult_rec m = new active_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_mult_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_mult_item_type);
+			m.am_vf1 = imr.vf1;
+			m.am_vf2 = imr.vf2;
+			m.am_vf3 = imr.vf3;
+			m.am_vt1 = imr.vt1;
+			m.am_vt2 = imr.vt2;
+			m.am_vt3 = imr.vt3;
+			return m;
+		}
+
+		unsafe static active_rec MoveCA(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_rec imr = (INCCAnalysisParams.active_rec)md;
+			active_rec m = new active_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_item_type);
+			m.act_a = imr.cev.a;
+			m.act_b = imr.cev.b;
+			m.act_c = imr.cev.c;
+			m.act_d = imr.cev.d;
+			m.active_equation = (byte)imr.cev.cal_curve_equation;
+			m.act_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.act_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.act_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.act_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.act_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.act_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.act_var_a = imr.cev.var_a;
+			m.act_var_b = imr.cev.var_b;
+			m.act_var_c = imr.cev.var_c;
+			m.act_var_d = imr.cev.var_d;
+			m.act_sigma_x = imr.cev.sigma_x;
+			m.act_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.act_lower_mass_limit = imr.cev.lower_mass_limit;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.act_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.act_doubles);
+			return m;
+		}
+
+		unsafe static active_passive_rec MoveAP(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.active_passive_rec imr = (INCCAnalysisParams.active_passive_rec)md;
+			active_passive_rec m = new active_passive_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_passive_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.active_passive_item_type);
+			m.ap_a = imr.cev.a;
+			m.ap_b = imr.cev.b;
+			m.ap_c = imr.cev.c;
+			m.ap_d = imr.cev.d;
+			m.active_passive_equation = (byte)imr.cev.cal_curve_equation;
+			m.ap_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ap_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.ap_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.ap_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.ap_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.ap_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.ap_var_a = imr.cev.var_a;
+			m.ap_var_b = imr.cev.var_b;
+			m.ap_var_c = imr.cev.var_c;
+			m.ap_var_d = imr.cev.var_d;
+			m.ap_sigma_x = imr.cev.sigma_x;
+			m.ap_upper_mass_limit = imr.cev.upper_mass_limit;		
+			m.ap_lower_mass_limit = imr.cev.lower_mass_limit;
+			return m;
+		}
+
+		unsafe static add_a_source_rec MoveAS(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.add_a_source_rec imr = (INCCAnalysisParams.add_a_source_rec)md;
+			add_a_source_rec m = new add_a_source_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.add_a_source_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.add_a_source_item_type);
+			m.ad_a = imr.cev.a;
+			m.ad_b = imr.cev.b;
+			m.ad_c = imr.cev.c;
+			m.ad_d = imr.cev.d;
+			m.add_a_source_equation = (byte)imr.cev.cal_curve_equation;
+			m.ad_covar_ab = imr.cev.covar(Coeff.a, Coeff.b);
+			m.ad_covar_ac = imr.cev.covar(Coeff.a, Coeff.c);
+			m.ad_covar_ad = imr.cev.covar(Coeff.a, Coeff.d);
+			m.ad_covar_bc = imr.cev.covar(Coeff.b, Coeff.c);
+			m.ad_covar_bd = imr.cev.covar(Coeff.b, Coeff.d);
+			m.ad_covar_cd = imr.cev.covar(Coeff.c, Coeff.d);
+			m.ad_var_a = imr.cev.var_a;
+			m.ad_var_b = imr.cev.var_b;
+			m.ad_var_c = imr.cev.var_c;
+			m.ad_var_d = imr.cev.var_d;
+			m.ad_sigma_x = imr.cev.sigma_x;
+			m.ad_upper_mass_limit = imr.cev.upper_mass_limit;
+			m.ad_lower_mass_limit = imr.cev.lower_mass_limit;
+			TransferUtils.CopyDbls(imr.dcl_mass, m.ad_dcl_mass);
+			TransferUtils.CopyDbls(imr.doubles, m.ad_doubles);
+			TransferUtils.CopyDbls(imr.position_dzero, m.ad_position_dzero);
+			m.ad_cf_a = imr.cf.a;
+			m.ad_cf_b = imr.cf.b;
+			m.ad_cf_c = imr.cf.c;
+			m.ad_cf_d = imr.cf.d;
+			m.ad_dzero_avg = imr.dzero_avg;
+			m.ad_num_runs = imr.num_runs;
+			m.ad_tm_dbls_rate_upper_limit = imr.tm_dbls_rate_upper_limit;
+			m.ad_tm_weighting_factor = imr.tm_weighting_factor;
+			m.ad_use_truncated_mult = imr.use_truncated_mult ? 1 : 0;
+			b = new byte[INCC.DATE_TIME_LENGTH];
+			a = imr.dzero_ref_date.ToString("yy.MM.dd").ToCharArray();
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.ad_dzero_ref_date);
+			return m;
+		}
+
+		unsafe static collar_detector_rec MoveCD(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.collar_combined_rec imr = (INCCAnalysisParams.collar_combined_rec)md;
+			collar_detector_rec m = new collar_detector_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_item_type);
+			m.collar_detector_mode = (byte)(imr.collar_det.collar_mode ? 1 : 0);
+
+			b = new byte[INCC.DATE_TIME_LENGTH];
+			a = imr.collar_det.reference_date.ToString("yy.MM.dd").ToCharArray();
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.col_reference_date);
+			m.col_relative_doubles_rate = imr.collar_det.relative_doubles_rate; 
+			return m;
+		}
+		unsafe static collar_rec MoveCO(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.collar_combined_rec imr = (INCCAnalysisParams.collar_combined_rec)md;
+			collar_rec m = new collar_rec();
+			byte[] b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			char[] a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_item_type);
+			m.col_a = imr.collar.cev.a;
+			m.col_b = imr.collar.cev.b;
+			m.col_c = imr.collar.cev.c;
+			m.col_d = imr.collar.cev.d;
+			m.collar_equation = (byte)imr.collar.cev.cal_curve_equation;
+			m.col_covar_ab = imr.collar.cev.covar(Coeff.a, Coeff.b);
+			m.col_covar_ac = imr.collar.cev.covar(Coeff.a, Coeff.c);
+			m.col_covar_ad = imr.collar.cev.covar(Coeff.a, Coeff.d);
+			m.col_covar_bc = imr.collar.cev.covar(Coeff.b, Coeff.c);
+			m.col_covar_bd = imr.collar.cev.covar(Coeff.b, Coeff.d);
+			m.col_covar_cd = imr.collar.cev.covar(Coeff.c, Coeff.d);
+			m.col_var_a = imr.collar.cev.var_a;
+			m.col_var_b = imr.collar.cev.var_b;
+			m.col_var_c = imr.collar.cev.var_c;
+			m.col_var_d = imr.collar.cev.var_d;
+			m.col_sigma_x = imr.collar.cev.sigma_x;
+			m.col_upper_mass_limit = imr.collar.cev.upper_mass_limit;
+			m.col_lower_mass_limit = imr.collar.cev.lower_mass_limit;
+
+			m.col_number_calib_rods = imr.collar.number_calib_rods;
+			m.col_sample_corr_fact = imr.collar.sample_corr_fact.v;
+			m.col_sample_corr_fact_err = imr.collar.sample_corr_fact.err;
+			m.col_u_mass_corr_fact_a = imr.collar.u_mass_corr_fact_a.v;
+			m.col_u_mass_corr_fact_a_err = imr.collar.u_mass_corr_fact_a.err;
+			m.col_u_mass_corr_fact_b = imr.collar.u_mass_corr_fact_b.v;
+			m.col_u_mass_corr_fact_b_err = imr.collar.u_mass_corr_fact_b.err;
+			m.collar_mode = (byte)(imr.collar.collar_mode ? 1 : 0);
+
+			byte[] bb = new byte[INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH];
+			int indx = 0;
+			for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
+			{
+				if (string.IsNullOrEmpty(imr.collar.poison_rod_type[i]))
+				{	
+					char[] aa = imr.collar.poison_rod_type[i].ToCharArray(0, Math.Min(imr.collar.poison_rod_type[i].Length, INCC.MAX_ROD_TYPE_LENGTH));
+					Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+				}
+				indx += 2;
+			}
+			TransferUtils.Copy(bb, 0, m.col_poison_rod_type, 0, INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH);
+
+			TransferUtils.CopyDbls(imr.collar.poison_absorption_fact, m.col_poison_absorption_fact);
+			CopyTuples(imr.collar.poison_rod_a, m.col_poison_rod_a, m.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
+			CopyTuples(imr.collar.poison_rod_b, m.col_poison_rod_b, m.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
+			CopyTuples(imr.collar.poison_rod_c, m.col_poison_rod_c, m.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
+			return m;
+		}
+		unsafe static collar_k5_rec MoveCK(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.collar_combined_rec imr = (INCCAnalysisParams.collar_combined_rec)md;
+			collar_k5_rec m = new collar_k5_rec();
+			byte[] b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			char[] a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_k5_item_type);
+			CopyTuples(imr.k5.k5, m.collar_k5, m.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
+			TransferUtils.CopyBoolsToInts(imr.k5.k5_checkbox, m.collar_k5_checkbox);
+			m.collar_k5_mode = (byte)(imr.k5.k5_mode ? 1 : 0);
+
+			byte[] bb = new byte[INCC.MAX_COLLAR_K5_PARAMETERS * INCC.MAX_K5_LABEL_LENGTH];
+			int indx = 0;
+			for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
+			{
+				char[] aa = imr.k5.k5_label[i].ToCharArray(0, Math.Min(imr.k5.k5_label[i].Length, INCC.MAX_K5_LABEL_LENGTH));
+				Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+				indx += INCC.MAX_K5_LABEL_LENGTH;
+			}
+			TransferUtils.Copy(bb, 0, m.collar_k5_label, 0, INCC.MAX_COLLAR_K5_PARAMETERS * INCC.MAX_K5_LABEL_LENGTH);
+			return m;
+		}
+
+		unsafe static de_mult_rec MoveDE(INCCSelector se, INCCAnalysisParams.INCCMethodDescriptor md)
+		{
+			INCCAnalysisParams.de_mult_rec imr = (INCCAnalysisParams.de_mult_rec)md;
+			de_mult_rec m = new de_mult_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.de_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.de_item_type);
+			m.de_inner_ring_efficiency = imr.inner_ring_efficiency;
+			m.de_outer_ring_efficiency = imr.outer_ring_efficiency;
+
+			TransferUtils.CopyDbls(imr.neutron_energy, m.de_neutron_energy);
+			TransferUtils.CopyDbls(imr.detector_efficiency, m.de_detector_efficiency);
+			TransferUtils.CopyDbls(imr.inner_outer_ring_ratio, m.de_inner_outer_ring_ratio);
+			TransferUtils.CopyDbls(imr.relative_fission, m.de_relative_fission);
+			return m;
 		}
 
         public int DetectorIndex;
@@ -393,36 +942,36 @@ namespace NCCTransfer
 
         private static int OldTypeToOldMethodId(object o)
         {
-            System.Type t = o.GetType();
-            if (t.Equals(typeof(NCCTransfer.analysis_method_rec)))
+			Type t = o.GetType();
+            if (t.Equals(typeof(analysis_method_rec)))
                 return INCC.METHOD_NONE;	// No analysis method selected
-            else if (t.Equals(typeof(NCCTransfer.cal_curve_rec)))
+            else if (t.Equals(typeof(cal_curve_rec)))
                 return INCC.METHOD_CALCURVE;	// Passive Calibration Curve
-            else if (t.Equals(typeof(NCCTransfer.known_alpha_rec)))
+            else if (t.Equals(typeof(known_alpha_rec)))
                 return INCC.METHOD_AKNOWN;	// Known Alpha
-            else if (t.Equals(typeof(NCCTransfer.known_m_rec)))
+            else if (t.Equals(typeof(known_m_rec)))
                 return INCC.METHOD_MKNOWN;	// Known M
-            else if (t.Equals(typeof(NCCTransfer.multiplicity_rec)))
+            else if (t.Equals(typeof(multiplicity_rec)))
                 return INCC.METHOD_MULT;// Multiplicity
-            else if (t.Equals(typeof(NCCTransfer.add_a_source_rec)))
+            else if (t.Equals(typeof(add_a_source_rec)))
                 return INCC.METHOD_ADDASRC;	// Add-a-source
-            else if (t.Equals(typeof(NCCTransfer.active_rec)))
+            else if (t.Equals(typeof(active_rec)))
                 return INCC.METHOD_ACTIVE;	// Active Calibration Curve
-            else if (t.Equals(typeof(NCCTransfer.active_mult_rec)))
+            else if (t.Equals(typeof(active_mult_rec)))
                 return INCC.METHOD_ACTIVE_MULT;	// Active Multiplicity
-            else if (t.Equals(typeof(NCCTransfer.active_passive_rec)))
+            else if (t.Equals(typeof(active_passive_rec)))
                 return INCC.METHOD_ACTPAS;	// Active/Passive
-            else if (t.Equals(typeof(NCCTransfer.curium_ratio_rec)))
+            else if (t.Equals(typeof(curium_ratio_rec)))
                 return INCC.METHOD_CURIUM_RATIO;	// Curium Ratio
-            else if (t.Equals(typeof(NCCTransfer.truncated_mult_rec)))
+            else if (t.Equals(typeof(truncated_mult_rec)))
                 return INCC.METHOD_TRUNCATED_MULT;	// Truncated multiplicity 
-            else if (t.Equals(typeof(NCCTransfer.collar_detector_rec)))
+            else if (t.Equals(typeof(collar_detector_rec)))
                 return INCC.COLLAR_DETECTOR_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.collar_rec)))
+            else if (t.Equals(typeof(collar_rec)))
                 return INCC.COLLAR_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.collar_k5_rec)))
+            else if (t.Equals(typeof(collar_k5_rec)))
                 return INCC.COLLAR_K5_SAVE_RESTORE;
-            else if (t.Equals(typeof(NCCTransfer.de_mult_rec)))
+            else if (t.Equals(typeof(de_mult_rec)))
                 return INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
 
             return -1;
@@ -441,6 +990,7 @@ namespace NCCTransfer
                     case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:	// Dual energy multiplicity
                         id = INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
                         break;
+                    case AnalysisMethod.Collar:
                     case AnalysisMethod.COLLAR_SAVE_RESTORE:
                         id = INCC.COLLAR_SAVE_RESTORE;
                         break;
@@ -494,7 +1044,7 @@ namespace NCCTransfer
             IEnumerator iter = idcf.DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator();
             while (iter.MoveNext())
             {
-                DetectorMaterialMethod mkey = (DetectorMaterialMethod)iter.Current;
+                DetectorMaterialMethod mkey = ((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Key;
 
                 mlogger.TraceEvent(LogLevels.Verbose, 34210, "Constructing calibration for {0} {1}", mkey.detector_id, mkey.item_type);
 
@@ -564,7 +1114,7 @@ namespace NCCTransfer
                             cc.percent_u235 = cal_curve.cc_percent_u235;
                             cc.dcl_mass = TransferUtils.Copy(cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
                             cc.doubles = TransferUtils.Copy(cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
-
+  
                             cc.cev.a = cal_curve.cc_a; cc.cev.b = cal_curve.cc_b;
                             cc.cev.c = cal_curve.cc_c; cc.cev.d = cal_curve.cc_d;
                             cc.cev.var_a = cal_curve.cc_var_a; cc.cev.var_b = cal_curve.cc_var_b;
@@ -756,66 +1306,18 @@ namespace NCCTransfer
                             apr.cev.sigma_x = active_passive.ap_sigma_x;
                             am.AddMethod(AnalysisMethod.ActivePassive, apr);
                             break;
-                        case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
-                            collar_detector_rec collar_detector = (collar_detector_rec)miter2.Current;
-                            INCCAnalysisParams.collar_detector_rec cdr = new INCCAnalysisParams.collar_detector_rec();
-                            cdr.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
-                            cdr.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
-                            cdr.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar det has mode {0}", cdr.collar_mode);
-                            //NEXT: detector factor the dual collar mode domain key issue, need to bridge into these tables some other way
-                            break;
                         case INCC.COLLAR_SAVE_RESTORE:
-                            collar_rec collar = (collar_rec)miter2.Current;
-                            INCCAnalysisParams.collar_rec c = new INCCAnalysisParams.collar_rec();
-                            c.cev.lower_mass_limit = collar.col_lower_mass_limit;
-                            c.cev.upper_mass_limit = collar.col_upper_mass_limit;
-                            c.cev.a = collar.col_a; c.cev.b = collar.col_b;
-                            c.cev.c = collar.col_c; c.cev.d = collar.col_d;
-                            c.cev.var_a = collar.col_var_a; c.cev.var_b = collar.col_var_b;
-                            c.cev.var_c = collar.col_var_c; c.cev.var_d = collar.col_var_d;
-                            c.cev.setcovar(Coeff.a,Coeff.b,collar.col_covar_ab);
-                            c.cev._covar[0, 2] = collar.col_covar_ac;
-                            c.cev._covar[0, 3] = collar.col_covar_ad;
-                            c.cev._covar[1, 2] = collar.col_covar_bc;
-                            c.cev._covar[1, 3] = collar.col_covar_bd;
-                            c.cev._covar[2, 3] = collar.col_covar_cd;
-                            c.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)collar.collar_equation;
-                            c.cev.sigma_x = collar.col_sigma_x;
-
-                            c.poison_absorption_fact = TransferUtils.Copy(collar.col_poison_absorption_fact, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_a = Copy(collar.col_poison_rod_a, collar.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_b = Copy(collar.col_poison_rod_b, collar.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.poison_rod_c = Copy(collar.col_poison_rod_c, collar.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
-                            c.collar_mode = (collar.collar_mode == 0 ? false : true);
-                            c.u_mass_corr_fact_a.v = collar.col_u_mass_corr_fact_a;c.u_mass_corr_fact_a.err = collar.col_u_mass_corr_fact_a_err;
-                            c.u_mass_corr_fact_b.v = collar.col_u_mass_corr_fact_b; c.u_mass_corr_fact_b.err = collar.col_u_mass_corr_fact_b_err;
-                            c.sample_corr_fact.v = collar.col_sample_corr_fact;c.sample_corr_fact.err = collar.col_sample_corr_fact_err;
-                            c.number_calib_rods = (int)collar.col_number_calib_rods;
-                            for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
-                            {
-                                int index = i * INCC.MAX_ROD_TYPE_LENGTH;
-                                c.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
-                            }
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar params has mode {0}", c.collar_mode);
-                            //NEXT: collar factor the dual collar mode domain key issue, need to bridge into these tables some other way
-
-                            am.AddMethod(AnalysisMethod.Collar, c);
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34213, " Collar params entry for COLLAR_SAVE_RESTORE");							
+							break;					
+                        case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34212, " Main entry for COLLAR_DETECTOR_SAVE_RESTORE");
                             break;
                         case INCC.COLLAR_K5_SAVE_RESTORE:
+ 							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
-                            INCCAnalysisParams.collar_k5_rec ck5 = new INCCAnalysisParams.collar_k5_rec();
-                            ck5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
-                            ck5.k5_item_type = TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
-                            ck5.k5 = Copy(collar_k5.collar_k5, collar_k5.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
-                            ck5.k5_checkbox = TransferUtils.Copy(collar_k5.collar_k5_checkbox,INCC.MAX_COLLAR_K5_PARAMETERS);
-                            for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
-                            {
-                                int index = i * INCC.MAX_K5_LABEL_LENGTH;
-                                ck5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
-                            }
-                            mlogger.TraceEvent(LogLevels.Info, 34211, " -- Collar k5 has mode {0}", ck5.k5_mode);
-                            //NEXT: k5 factor the dual collar mode domain key issue, need to bridge into these tables some other way
+							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf, sel, collar_k5.collar_k5_mode);
+							if (combined != null)
+								am.AddMethod(AnalysisMethod.Collar, combined);							
                             break;
                         case INCC.METHOD_ACTIVE_MULT:
                             active_mult_rec active_mult = (active_mult_rec)miter2.Current;
@@ -836,11 +1338,174 @@ namespace NCCTransfer
             }
         }
 
+		unsafe collar_detector_rec MakeAFake(collar_detector_rec src, string det, string mat)
+		{
+			collar_detector_rec m = new collar_detector_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = det.ToCharArray(0, Math.Min(det.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = mat.ToCharArray(0, Math.Min(mat.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_item_type);
+			//m.collar_detector_mode = (byte)(imr.collar_det.collar_mode ? 1 : 0);
 
-        #region measurement data transfer
+			b = new byte[INCC.DATE_TIME_LENGTH];
+			a = @"89.10.17".ToCharArray();
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.col_reference_date);
+			m.col_relative_doubles_rate = 1.0;
+			return m;
+		}
+
+		INCCAnalysisParams.collar_combined_rec CollarEntryProcesser(INCCInitialDataCalibrationFile idcf, INCCSelector sel, byte mode)
+		{
+			DetectorMaterialMethod m1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); m1.extra = mode;
+			DetectorMaterialMethod m2 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_SAVE_RESTORE); m2.extra = mode;
+			DetectorMaterialMethod m3 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_K5_SAVE_RESTORE); m3.extra = mode;
+
+			KeyValuePair<DetectorMaterialMethod, object> k1, k2, k3;
+			bool ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
+			if (!ok)
+			{
+				mlogger.TraceEvent(LogLevels.Verbose, 30811, "No collar detector values for " + m1.ToString());
+				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
+				if (ok)
+				{
+					// k5 and collar but no det entry, find the closest match det entry and make a fake one and use it
+					List<KeyValuePair<DetectorMaterialMethod, object>> l = idcf.DetectorMaterialMethodParameters.GetDetectorsWithEntries;
+					if (l.Count > 0)
+					{
+						object o = l[0].Value;
+						collar_detector_rec rec = MakeAFake((collar_detector_rec)o, sel.detectorid, sel.material);
+                        DetectorMaterialMethod mf1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); mf1.extra = mode;
+                        //idcf.DetectorMaterialMethodParameters.Add(mf1, rec);
+                        //ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
+                        k1 = new KeyValuePair<DetectorMaterialMethod, object>(mf1, rec);
+					}
+					else
+						return null;
+				}
+				else
+				{
+					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					return null;
+				}
+			}
+			else
+			{
+				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
+				if (!ok)
+				{
+					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					return null;
+				}
+			}
+			ok = idcf.DetectorMaterialMethodParameters.GetPair(m3, out k3);
+			if (!ok)
+			{
+				mlogger.TraceEvent(LogLevels.Verbose, 30813, "No k5 values for " + m3.ToString());
+				return null;
+			}
+			collar_rec collar;
+			collar_detector_rec collar_detector;
+			collar_k5_rec collar_k5;
+			if (k1.Key.extra == -1)
+				return null;
+			collar_detector = (collar_detector_rec)k1.Value;
+			if (k2.Key.extra == -1)
+				return null;
+			collar = (collar_rec)k2.Value;
+			if (k3.Key.extra == -1)
+				return null;
+			collar_k5 = (collar_k5_rec)k3.Value;
+			// got the three
+			INCCAnalysisParams.collar_combined_rec combined = new INCCAnalysisParams.collar_combined_rec();
+			ushort bonk = 0;
+			CollarDet(combined, collar_detector, bonk);
+			bonk = 1;
+			CollarParm(combined, collar, bonk);
+			bonk = 2;
+			CollarK5(combined, collar_k5, bonk);
+			bonk = 3;
+
+			k1.Key.extra = -1;
+			k2.Key.extra = -1;
+			k3.Key.extra = -1;
+			return combined;
+		}
+
+		unsafe void CollarK5(INCCAnalysisParams.collar_combined_rec combined, collar_k5_rec collar_k5, ushort bonk)
+		{
+			combined.k5 = new INCCAnalysisParams.collar_k5_rec();
+			combined.k5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
+			combined.k5.k5_item_type = TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+			combined.k5.k5 = Copy(collar_k5.collar_k5, collar_k5.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
+			combined.k5.k5_checkbox = TransferUtils.Copy(collar_k5.collar_k5_checkbox,INCC.MAX_COLLAR_K5_PARAMETERS);
+			for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
+			{
+				int index = i * INCC.MAX_K5_LABEL_LENGTH;
+				combined.k5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
+			}
+			mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- Collar k5 has mode {0} and is ready to be bonked", combined.k5.k5_mode);
+		}
+
+		unsafe void CollarDet(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
+		{
+			combined.collar_det = new INCCAnalysisParams.collar_detector_rec();
+			combined.collar_det.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
+			combined.collar_det.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
+			combined.collar_det.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
+			mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
+		}
+
+		unsafe void CollarParm(INCCAnalysisParams.collar_combined_rec combined, collar_rec collar, ushort bonk)
+		{
+			combined.collar = new INCCAnalysisParams.collar_rec();
+			combined.collar.cev.lower_mass_limit = collar.col_lower_mass_limit;
+			combined.collar.cev.upper_mass_limit = collar.col_upper_mass_limit;
+			combined.collar.cev.a = collar.col_a;
+			combined.collar.cev.b = collar.col_b;
+			combined.collar.cev.c = collar.col_c;
+			combined.collar.cev.d = collar.col_d;
+			combined.collar.cev.var_a = collar.col_var_a;
+			combined.collar.cev.var_b = collar.col_var_b;
+			combined.collar.cev.var_c = collar.col_var_c;
+			combined.collar.cev.var_d = collar.col_var_d;
+			combined.collar.cev.setcovar(Coeff.a, Coeff.b, collar.col_covar_ab);
+			combined.collar.cev._covar[0, 2] = collar.col_covar_ac;
+			combined.collar.cev._covar[0, 3] = collar.col_covar_ad;
+			combined.collar.cev._covar[1, 2] = collar.col_covar_bc;
+			combined.collar.cev._covar[1, 3] = collar.col_covar_bd;
+			combined.collar.cev._covar[2, 3] = collar.col_covar_cd;
+			combined.collar.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)collar.collar_equation;
+			combined.collar.cev.sigma_x = collar.col_sigma_x;
+
+			combined.collar.poison_absorption_fact = TransferUtils.Copy(collar.col_poison_absorption_fact, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_a = Copy(collar.col_poison_rod_a, collar.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_b = Copy(collar.col_poison_rod_b, collar.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.poison_rod_c = Copy(collar.col_poison_rod_c, collar.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
+			combined.collar.collar_mode = (collar.collar_mode == 0 ? false : true);
+			combined.collar.u_mass_corr_fact_a.v = collar.col_u_mass_corr_fact_a;
+			combined.collar.u_mass_corr_fact_a.err = collar.col_u_mass_corr_fact_a_err;
+			combined.collar.u_mass_corr_fact_b.v = collar.col_u_mass_corr_fact_b;
+			combined.collar.u_mass_corr_fact_b.err = collar.col_u_mass_corr_fact_b_err;
+			combined.collar.sample_corr_fact.v = collar.col_sample_corr_fact;
+			combined.collar.sample_corr_fact.err = collar.col_sample_corr_fact_err;
+			combined.collar.number_calib_rods = (int)collar.col_number_calib_rods;
+			for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
+			{
+				int index = i * INCC.MAX_ROD_TYPE_LENGTH;
+				combined.collar.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
+			}
+			mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- Collar params has mode {0} {1}", combined.collar.collar_mode, bonk);
+		}
+
+		#region measurement data transfer
 
 
-        private ErrorCalculationTechnique INCCErrorCalculationTechnique(int idx)
+		private ErrorCalculationTechnique INCCErrorCalculationTechnique(int idx)
         {
             ErrorCalculationTechnique a = ErrorCalculationTechnique.Sample;
             switch (idx)
@@ -1768,7 +2433,8 @@ namespace NCCTransfer
                         newres.delta_doubles.v = oldres.ap_delta_doubles;
                         newres.delta_doubles.err = oldres.ap_delta_doubles_err;
                     }
-                    else if (r is results_active_rec) {
+                    else if (r is results_active_rec)
+					{
                         mlogger.TraceEvent(LogLevels.Verbose, 34058, ("Transferring method results for " + r.GetType().ToString()));
                         results_active_rec oldres = (results_active_rec)r;
                         INCCMethodResults.results_active_rec newres =
@@ -1844,43 +2510,41 @@ namespace NCCTransfer
                         newres.dcl_minus_asy_u235_mass.v = oldres.col_dcl_minus_asy_u235_mass;
                         newres.dcl_minus_asy_u235_mass.err = oldres.col_dcl_minus_asy_u235_mass_err;
 
-                        //newres.c = new INCCAnalysisParams.collar_rec();
-                        newres.methodParamsc.cev.a = oldres.col_a_res; newres.methodParamsc.cev.b = oldres.col_b_res;
-                        newres.methodParamsc.cev.c = oldres.col_c_res; newres.methodParamsc.cev.d = oldres.col_d_res;
-                        newres.methodParamsc.cev.var_a = oldres.col_var_a_res; newres.methodParamsc.cev.var_b = oldres.col_var_b_res;
-                        newres.methodParamsc.cev.var_c = oldres.col_var_c_res; newres.methodParamsc.cev.var_d = oldres.col_var_d_res;
-                        newres.methodParamsc.cev.setcovar(Coeff.a,Coeff.b,oldres.col_covar_ab_res);
-                        newres.methodParamsc.cev._covar[0, 2] = oldres.col_covar_ac_res;
-                        newres.methodParamsc.cev._covar[0, 3] = oldres.col_covar_ad_res;
-                        newres.methodParamsc.cev._covar[1, 2] = oldres.col_covar_bc_res;
-                        newres.methodParamsc.cev._covar[1, 3] = oldres.col_covar_bd_res;
-                        newres.methodParamsc.cev._covar[2, 3] = oldres.col_covar_cd_res;
-                        newres.methodParamsc.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)oldres.col_collar_equation;
-                        //newres.methodParamsc.cev.CalCurveType = (INCCAnalysisParams.CalCurveType)oldres.;
-                        newres.methodParamsc.cev.sigma_x = oldres.col_sigma_x_res;
-                        newres.methodParamsc.poison_absorption_fact[0] = oldres.col_poison_absorption_fact_res;
-                        newres.methodParamsc.poison_rod_a[0] = new Tuple(oldres.col_poison_rod_a_res, oldres.col_poison_rod_a_err_res);
-                        newres.methodParamsc.poison_rod_b[0] = new Tuple(oldres.col_poison_rod_b_res, oldres.col_poison_rod_b_err_res);
-                        newres.methodParamsc.poison_rod_c[0] = new Tuple(oldres.col_poison_rod_c_res, oldres.col_poison_rod_c_err_res);
-                        newres.methodParamsc.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
-                        newres.methodParamsc.number_calib_rods = (int)oldres.col_number_calib_rods_res;
-                        newres.methodParamsc.poison_rod_type[0] = TransferUtils.str(oldres.col_poison_rod_type_res, INCC.MAX_ROD_TYPE_LENGTH);
-                        newres.methodParamsc.u_mass_corr_fact_a.v = oldres.col_u_mass_corr_fact_a_res; newres.methodParamsc.u_mass_corr_fact_a.err = oldres.col_u_mass_corr_fact_a_err_res;
-                        newres.methodParamsc.u_mass_corr_fact_b.v = oldres.col_u_mass_corr_fact_b_res; newres.methodParamsc.u_mass_corr_fact_b.err = oldres.col_u_mass_corr_fact_b_err_res;
-                        newres.methodParamsc.sample_corr_fact.v = oldres.col_sample_corr_fact_res; newres.methodParamsc.sample_corr_fact.err = oldres.col_sample_corr_fact_err_res;
+                        newres.methodParamsC.cev.a = oldres.col_a_res; newres.methodParamsC.cev.b = oldres.col_b_res;
+                        newres.methodParamsC.cev.c = oldres.col_c_res; newres.methodParamsC.cev.d = oldres.col_d_res;
+                        newres.methodParamsC.cev.var_a = oldres.col_var_a_res; newres.methodParamsC.cev.var_b = oldres.col_var_b_res;
+                        newres.methodParamsC.cev.var_c = oldres.col_var_c_res; newres.methodParamsC.cev.var_d = oldres.col_var_d_res;
+                        newres.methodParamsC.cev.setcovar(Coeff.a,Coeff.b,oldres.col_covar_ab_res);
+                        newres.methodParamsC.cev._covar[0, 2] = oldres.col_covar_ac_res;
+                        newres.methodParamsC.cev._covar[0, 3] = oldres.col_covar_ad_res;
+                        newres.methodParamsC.cev._covar[1, 2] = oldres.col_covar_bc_res;
+                        newres.methodParamsC.cev._covar[1, 3] = oldres.col_covar_bd_res;
+                        newres.methodParamsC.cev._covar[2, 3] = oldres.col_covar_cd_res;
+                        newres.methodParamsC.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)oldres.col_collar_equation;
+                        newres.methodParamsC.cev.sigma_x = oldres.col_sigma_x_res;
+                        newres.methodParamsC.poison_absorption_fact[0] = oldres.col_poison_absorption_fact_res;
+                        newres.methodParamsC.poison_rod_a[0] = new Tuple(oldres.col_poison_rod_a_res, oldres.col_poison_rod_a_err_res);
+                        newres.methodParamsC.poison_rod_b[0] = new Tuple(oldres.col_poison_rod_b_res, oldres.col_poison_rod_b_err_res);
+                        newres.methodParamsC.poison_rod_c[0] = new Tuple(oldres.col_poison_rod_c_res, oldres.col_poison_rod_c_err_res);
+                        newres.methodParamsC.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsC.number_calib_rods = (int)oldres.col_number_calib_rods_res;
+                        newres.methodParamsC.poison_rod_type[0] = TransferUtils.str(oldres.col_poison_rod_type_res, INCC.MAX_ROD_TYPE_LENGTH);
+                        newres.methodParamsC.u_mass_corr_fact_a.v = oldres.col_u_mass_corr_fact_a_res; newres.methodParamsC.u_mass_corr_fact_a.err = oldres.col_u_mass_corr_fact_a_err_res;
+                        newres.methodParamsC.u_mass_corr_fact_b.v = oldres.col_u_mass_corr_fact_b_res; newres.methodParamsC.u_mass_corr_fact_b.err = oldres.col_u_mass_corr_fact_b_err_res;
+                        newres.methodParamsC.sample_corr_fact.v = oldres.col_sample_corr_fact_res; newres.methodParamsC.sample_corr_fact.err = oldres.col_sample_corr_fact_err_res;
 
-                        newres.methodParamscd.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
-                        newres.methodParamscd.reference_date = INCC.DateFrom(TransferUtils.str(oldres.col_reference_date_res, INCC.DATE_TIME_LENGTH));
-                        newres.methodParamscd.relative_doubles_rate = oldres.col_relative_doubles_rate_res;
+                        newres.methodParamsDetector.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsDetector.reference_date = INCC.DateFrom(TransferUtils.str(oldres.col_reference_date_res, INCC.DATE_TIME_LENGTH));
+                        newres.methodParamsDetector.relative_doubles_rate = oldres.col_relative_doubles_rate_res;
 
-                        newres.methodParamsck5.k5_mode = (oldres.col_collar_mode == 0 ? false : true);
-                        newres.methodParamsck5.k5_item_type = TransferUtils.str(oldres.col_collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
-                        newres.methodParamsck5.k5 = Copy(oldres.collar_k5_res, oldres.collar_k5_err_res, INCC.MAX_COLLAR_K5_PARAMETERS);
-                        newres.methodParamsck5.k5_checkbox = TransferUtils.Copy(oldres.collar_k5_checkbox_res, INCC.MAX_COLLAR_K5_PARAMETERS);
+                        newres.methodParamsK5.k5_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsK5.k5_item_type = TransferUtils.str(oldres.col_collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+                        newres.methodParamsK5.k5 = Copy(oldres.collar_k5_res, oldres.collar_k5_err_res, INCC.MAX_COLLAR_K5_PARAMETERS);
+                        newres.methodParamsK5.k5_checkbox = TransferUtils.Copy(oldres.collar_k5_checkbox_res, INCC.MAX_COLLAR_K5_PARAMETERS);
                         for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
                         {
                             int index = i * INCC.MAX_K5_LABEL_LENGTH;
-                            newres.methodParamsck5.k5_label[i] = TransferUtils.str(oldres.collar_k5_label_res + index, INCC.MAX_K5_LABEL_LENGTH);
+                            newres.methodParamsK5.k5_label[i] = TransferUtils.str(oldres.collar_k5_label_res + index, INCC.MAX_K5_LABEL_LENGTH);
                         }
 
                         CollarItemId cid = new CollarItemId(TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH));
@@ -1892,7 +2556,7 @@ namespace NCCTransfer
                         cid.poison_percent = new Tuple(newres.dcl_poison_percent);
                         cid.modified = true;
 
-                        List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();
+                        List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();  // what do we do with these, where is the collar item id list?
 						bool glump = list.Exists(i => { return string.Compare(cid.item_id, i.item_id, true) == 0; });
                         if (glump && overwrite)
                         {
@@ -2038,9 +2702,11 @@ namespace NCCTransfer
 										ElementList els = _imr.ToDBElementList(); // also sets table property, gotta do it first
 										ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(_imr.Table);
 										long resid = ar.Create(mid, els);
-										ElementList mels = _imr.methodParams.ToDBElementList();
-										long resmid = ar.CreateMethod(resid, mid, mels);
-										mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+										do
+										{
+											long resmid = ar.CreateMethod(resid, mid, _imr.methodParams.ToDBElementList());
+											mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+										} while (_imr.methodParams.Pump > 0);
 									} 
 									catch (Exception e)
 									{

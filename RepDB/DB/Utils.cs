@@ -84,65 +84,65 @@ namespace DB
 
         public Element(Element src)
         {
-            Name = String.Copy(src.Name); Value = String.Copy(src.Value); Quote = src.Quote;
+            Name = string.Copy(src.Name); Value = string.Copy(src.Value); Quote = src.Quote;
         }
 
         public Element(string NewName, Element src)
         {
-            Name = String.Copy(NewName); Value = String.Copy(src.Value); Quote = src.Quote;
+            Name = string.Copy(NewName); Value = string.Copy(src.Value); Quote = src.Quote;
         }
         public Element(string Name, DateTime dt)
         {
-            this.Name = String.Copy(Name); Value = SQLSpecific.getDate(dt); Quote = false;
+            this.Name = string.Copy(Name); Value = SQLSpecific.getDate(dt); Quote = false;
         }
         public Element(string Name, DateTimeOffset dto)
         {
-            this.Name = String.Copy(Name); Value = SQLSpecific.getDate(dto); Quote = false;
+            this.Name = string.Copy(Name); Value = SQLSpecific.getDate(dto); Quote = false;
         }
         public Element(string Name, string Value)
         {
-            this.Name = String.Copy(Name); this.Value = Value; Quote = true;
+            this.Name = string.Copy(Name); this.Value = Value; Quote = true;
         }
         public Element(string Name, bool Value)
         {
-            this.Name = String.Copy(Name); this.Value = (Value ? "1" : "0");
+            this.Name = string.Copy(Name); this.Value = (Value ? "1" : "0");
         }
 
         public Element(string Name, double Value)
         {
-            this.Name = String.Copy(Name); this.Value = NaNFilter(Value);
+            this.Name = string.Copy(Name); this.Value = NaNFilter(Value);
         }
         public Element(string Name, Int32 Value)
         {
-            this.Name = String.Copy(Name); this.Value = Value.ToString();
+            this.Name = string.Copy(Name); this.Value = Value.ToString();
         }
         public Element(string Name, UInt64 Value)
         {
-            this.Name = String.Copy(Name); this.Value = Value.ToString();
+            this.Name = string.Copy(Name); this.Value = Value.ToString();
         }
         public Element(string Name, string[] Value)
         {
-            this.Name = String.Copy(Name); this.Value = Utils.Stringify(Value); Quote = true;
+            this.Name = string.Copy(Name); this.Value = Utils.Stringify(Value); Quote = true;
         }
         //public Element(string Name, double[] Value)
         //{
-        //    this.Name = String.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
+        //    this.Name = string.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
         //}
         //public Element(string Name, long[] Value)
         //{
-        //    this.Name = String.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
+        //    this.Name = string.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
         //}
         //public Element(string Name, ulong[] Value)
         //{
-        //    this.Name = String.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
+        //    this.Name = string.Copy(Name); this.Bytes = Utils.ToBytes(Value); IsBytes = true;
         //}
         //public Element(string Name, int[] Value)
         //{
-        //    this.Name = String.Copy(Name); this.Bytes = Utils.ToBytes(Value); 
+        //    this.Name = string.Copy(Name); this.Bytes = Utils.ToBytes(Value); 
         //}
         //public Element(string Name, bool[] Value)
         //{
-        //    this.Name = String.Copy(Name); this.Bytes = Utils.ToBytes(Value); 
+        //    this.Name = string.Copy(Name); this.Bytes = Utils.ToBytes(Value); 
         //}
 
         // dev note: could use Double.Epsilon as a signal value for this condition, then NaN can be written to DB and restored on read
@@ -166,8 +166,9 @@ namespace DB
         public ElementList()
         {
         }
-        // NEXT: add caching of constructed string, add exclusion for lists of params
-        public string ColumnsValues
+        public string OptTable { get; set;  }
+
+		public string ColumnsValues
         {
             get
             {
@@ -189,7 +190,6 @@ namespace DB
             }
         }
 
-        // NEXT: add caching of constructed string, add exclusion for lists of params
         public string ColumnEqValueList {
             get
             {
@@ -205,7 +205,7 @@ namespace DB
                 return cv.ToString();
             }
         }
-        // NEXT: add caching of constructed string, add exclusion for lists of params
+
         public string ColumnEqValueAndList
         {
             get
@@ -223,14 +223,7 @@ namespace DB
             }
         }
     }
-
-    public static class SqliteCB
-    {
-
-        //SqliteCommand = ElementList
-
-    }
-    
+ 
 
     public static class  Utils
     {
@@ -352,8 +345,8 @@ namespace DB
 
         public static object ConverttoDateTime(string sValue)
         {
-            //Return DateTime value or DBNull
-            System.DateTime Value;
+            // Return DateTime value or DBNull
+            DateTime Value;
             try
             {
                 Value = Convert.ToDateTime(sValue);
@@ -365,8 +358,7 @@ namespace DB
         }
         public static string ConverttoDateTimeString(string sValue)
         {
-            //Return DateTime value or DBNull
-            System.DateTime Value;
+            DateTime Value;
             try
             {
                 Value = Convert.ToDateTime(sValue);
@@ -431,18 +423,29 @@ namespace DB
             return res;
         }
 
+		/// <summary>
+		/// "1,0" -> bool[] fron = new {true, false}
+		/// "true,false" -> bool[] fron = new {true, false}
+		/// </summary>
+		/// <param name="bools"></param>
+		/// <returns></returns>
         public static bool[] ReifyBools(string bools)
         {
             string[] s = bools.Split(',');
             bool[] res = new bool[s.Length];
             for (int i = 0; i < s.Length; i++)
             {
-                bool.TryParse(s[i], out res[i]);
+                bool good = bool.TryParse(s[i], out res[i]);
+				if (!good) // it is likely the integer-based string
+				{
+					short r = 0;
+					good = short.TryParse(s[i], out r);
+					if (good) res[i] = (r == 0 ? false : true);
+				}
             }
             return res;
         }
 
-        // this probably does not work yet
         public static string[] ReifyStrings(string strings)
         {
             string[] res = strings.Split(',');
@@ -456,11 +459,11 @@ namespace DB
         public static string Stringify(bool[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder(a.Length * 2);
             foreach (bool b in a)
             {
-                s.Append(b ? '1' : '0');
+                s.Append(b ? '1' : '0');  // use 1, 0 cuz it makes shorter strings, kinda lame
                 s.Append(',');
             }
             s.Remove(s.Length - 1, 1);
@@ -469,7 +472,7 @@ namespace DB
         public static string Stringify(double[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder(a.Length * (2 + 14));
             foreach (double d in a)
             {
@@ -482,7 +485,7 @@ namespace DB
         public static string Stringify(ulong[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder(a.Length * (2 + 14));
             foreach (ulong ul in a)
             {
@@ -495,7 +498,7 @@ namespace DB
         public static string Stringify(long[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder(a.Length * (2 + 14));
             foreach (long l in a)
             {
@@ -508,12 +511,12 @@ namespace DB
         public static string Stringify(string[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder();
             foreach (string ls in a)
             {
                 s.Append('"');
-                s.Append(@""",");  // TODO: works with SQLite ,but dunno with others yet
+                s.Append(@""",");
             }
             s.Remove(s.Length - 1, 1);
             return s.ToString();
@@ -521,7 +524,7 @@ namespace DB
         public static string Stringify(int[] a)
         {
             if (a.Length < 1)
-                return String.Empty;
+                return string.Empty;
             StringBuilder s = new StringBuilder();
             foreach (int i in a)
             {
@@ -540,7 +543,7 @@ namespace DB
         // 21588 unicode chars for SQL CE and SQLite implies 43176 bytes long, 
         // The SQLite text/blob/string max is 5x10^8 chars or 1,000,000,000 bytes by default, no issue there
         // The SQL CE 4 NTEXT limit is 2^30-2/2 chars or 2^30 -2 bytes, no issue there
-        // todo: determine max value and type for SQL Server (NTEXT?)
+        // SQL Server ntext or nvarchar(max) or "national text" are 2^30-1 bytes
         public static byte[] AsBytes(string s)
         {
             Encoding unicode = Encoding.Unicode;
@@ -559,7 +562,7 @@ namespace DB
 
         public static bool[] BoolsFromBytes(byte[] bools)
         {
-            String decodedString = StrFromBytes(bools);
+            string decodedString = StrFromBytes(bools);
             return ReifyBools(decodedString);
         }
 
@@ -574,7 +577,7 @@ namespace DB
 
         public static double[] DoublesFromBytes(byte[] dbls)
         {
-            String decodedString = StrFromBytes(dbls);
+            string decodedString = StrFromBytes(dbls);
             return ReifyDoubles(decodedString);
         }
 
@@ -589,7 +592,7 @@ namespace DB
 
         public static int[] IntsFromBytes(byte[] ints)
         {
-            String decodedString = StrFromBytes(ints);
+            string decodedString = StrFromBytes(ints);
             return ReifyInt32s(decodedString);
         }
 
@@ -604,7 +607,7 @@ namespace DB
 
         public static ulong[] ULongsFromBytes(byte[] ulongs)
         {
-            String decodedString = StrFromBytes(ulongs);
+            string decodedString = StrFromBytes(ulongs);
             return ReifyUInt64s(decodedString);
         }
 
@@ -619,14 +622,14 @@ namespace DB
 
         public static long[] LongsFromBytes(byte[] longs)
         {
-            String decodedString = StrFromBytes(longs);
+            string decodedString = StrFromBytes(longs);
             return ReifyInt64s(decodedString);
         }
 
         public static string StrFromBytes(byte[] dbls)
         {
             UTF8Encoding utf8 = new UTF8Encoding();
-            String decodedString = utf8.GetString(dbls);
+            string decodedString = utf8.GetString(dbls);
             return decodedString;
         }
 

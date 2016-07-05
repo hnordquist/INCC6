@@ -97,6 +97,9 @@ namespace AnalysisDefs
                 case AnalysisMethod.INCCNone:
                     s = "INCC5 Analysis method selector";
                     break;
+                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                    s = "Dual energy multiplicity";
+                    break;
                 default:
                     s = am.ToString();
                     break;
@@ -1539,7 +1542,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "collar_detector_rec";
+                Table = "collar_detector_rec";
                 ps.Add(new DBParamEntry("collar_detector_mode", collar_mode));
                 ps.Add(new DBParamEntry("reference_date", reference_date));
                 ps.Add(new DBParamEntry("relative_doubles_rate", relative_doubles_rate));
@@ -1567,19 +1570,19 @@ namespace AnalysisDefs
             public collar_rec()
             {
                 cev = new CurveEquationVals();
-                poison_absorption_fact = new double[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                poison_absorption_fact = new double[MAX_POISON_ROD_TYPES];
                 poison_absorption_fact[0] = 0.647;
-                poison_rod_a = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
-                poison_rod_b = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
-                poison_rod_c = new Tuple[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
-                for (int i = 0; i < INCCAnalysisParams.MAX_POISON_ROD_TYPES; i ++ )
+                poison_rod_a = new Tuple[MAX_POISON_ROD_TYPES];
+                poison_rod_b = new Tuple[MAX_POISON_ROD_TYPES];
+                poison_rod_c = new Tuple[MAX_POISON_ROD_TYPES];
+                poison_rod_type = new string[MAX_POISON_ROD_TYPES];
+                for (int i = 0; i < MAX_POISON_ROD_TYPES; i++)
                 {
                     poison_rod_a[i]= new Tuple (0.0,0.0);
                     poison_rod_b[i] = new Tuple(0.0, 0.0);
                     poison_rod_c[i] = new Tuple(0.0, 0.0);
+	                poison_rod_type[i] = "G";
                 }
-                poison_rod_type = new string[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
-                poison_rod_type[0] = "G";
                 number_calib_rods = 2;
                 u_mass_corr_fact_a = new Tuple();
                 u_mass_corr_fact_b = new Tuple();
@@ -1591,16 +1594,20 @@ namespace AnalysisDefs
                 cev = new CurveEquationVals(src.cev);
                 number_calib_rods = src.number_calib_rods;
                 collar_mode = src.collar_mode;
-                poison_absorption_fact = new double[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                poison_absorption_fact = new double[MAX_POISON_ROD_TYPES];
                 poison_rod_a = Tuple.Copy(src.poison_rod_a);
                 poison_rod_b = Tuple.Copy(src.poison_rod_b);
                 poison_rod_c = Tuple.Copy(src.poison_rod_c);
-                poison_rod_type = new string[INCCAnalysisParams.MAX_POISON_ROD_TYPES];
+                poison_rod_type = new string[MAX_POISON_ROD_TYPES];
+				for (int i = 0; i < MAX_POISON_ROD_TYPES; i++)
+                {
+					if (!string.IsNullOrEmpty(src.poison_rod_type[i]))
+						poison_rod_type[i] = string.Copy(src.poison_rod_type[i]);
+				}
                 u_mass_corr_fact_a = new Tuple(src.u_mass_corr_fact_a);
                 u_mass_corr_fact_b = new Tuple(src.u_mass_corr_fact_b);
                 sample_corr_fact = new Tuple(src.sample_corr_fact);
                 Array.Copy(src.poison_absorption_fact, poison_absorption_fact, poison_absorption_fact.Length);
-                Array.Copy(src.poison_rod_type, poison_rod_type, poison_rod_type.Length); // todo: not a deep copy but does it matter?
             }
 
             public override void CopyTo(INCCMethodDescriptor imd)
@@ -1613,7 +1620,11 @@ namespace AnalysisDefs
                 tgt.poison_rod_a = Tuple.Copy(poison_rod_a);
                 tgt.poison_rod_b = Tuple.Copy(poison_rod_b);
                 tgt.poison_rod_c = Tuple.Copy(poison_rod_c);
-                Array.Copy(poison_rod_type, tgt.poison_rod_type, poison_rod_type.Length); // todo: not a deep copy but does it matter?
+				for (int i = 0; i < MAX_POISON_ROD_TYPES; i++)
+                {
+					if (!string.IsNullOrEmpty(poison_rod_type[i]))
+						tgt.poison_rod_type[i] = string.Copy(poison_rod_type[i]);
+				}
                 tgt.u_mass_corr_fact_a = new Tuple(u_mass_corr_fact_a);
                 tgt.u_mass_corr_fact_b = new Tuple(u_mass_corr_fact_b);
                 tgt.sample_corr_fact = new Tuple(sample_corr_fact);
@@ -1634,20 +1645,20 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "collar_rec";
+                Table = "collar_rec";
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
                 ps.Add(new DBParamEntry("number_calib_rods", number_calib_rods));
                 ps.Add(new DBParamEntry("collar_mode", collar_mode));
                 ps.Add(new DBParamEntry("poison_absorption_fact", poison_absorption_fact));
-                ps.AddRange(DBParamList.TupleArrayPair("poison_rod_a", poison_rod_a));
-                ps.AddRange(DBParamList.TupleArrayPair("poison_rod_b", poison_rod_b));
-                ps.AddRange(DBParamList.TupleArrayPair("poison_rod_c", poison_rod_c));
+                ps.AddRange(TupleArrayPair("poison_rod_a", poison_rod_a));
+                ps.AddRange(TupleArrayPair("poison_rod_b", poison_rod_b));
+                ps.AddRange(TupleArrayPair("poison_rod_c", poison_rod_c));
                 ps.Add(new DBParamEntry("poison_rod_type", poison_rod_type));
 
-                ps.AddRange(DBParamList.TuplePair("u_mass_corr_fact_a", u_mass_corr_fact_a));
-                ps.AddRange(DBParamList.TuplePair("u_mass_corr_fact_b", u_mass_corr_fact_b));
-                ps.AddRange(DBParamList.TuplePair("sample_corr_fact", sample_corr_fact));
+                ps.AddRange(TuplePair("u_mass_corr_fact_a", u_mass_corr_fact_a));
+                ps.AddRange(TuplePair("u_mass_corr_fact_b", u_mass_corr_fact_b));
+                ps.AddRange(TuplePair("sample_corr_fact", sample_corr_fact));
             }
         }
 
@@ -1664,27 +1675,27 @@ namespace AnalysisDefs
 
             public collar_k5_rec()
             {
-                k5_checkbox = new bool[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
-                k5 = new Tuple[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
-                k5_label = new string[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
+                k5_checkbox = new bool[MAX_COLLAR_K5_PARAMETERS];
+                k5 = new Tuple[MAX_COLLAR_K5_PARAMETERS];
+                k5_label = new string[MAX_COLLAR_K5_PARAMETERS];
                 for (int j = 0; j < MAX_COLLAR_K5_PARAMETERS; j++)
                 {
                     k5_checkbox[j]= false;
                     k5[j] = new Tuple(0, 0);
-                    k5_label[j] = String.Empty;
+                    k5_label[j] = string.Empty;
                 }
             }
 
             public collar_k5_rec(collar_k5_rec src)
             {
                 k5_mode = src.k5_mode;
-                k5 = new Tuple[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
-                k5_checkbox = new bool[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
-                k5_label = new string[INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS];
+                k5 = new Tuple[MAX_COLLAR_K5_PARAMETERS];
+                k5_checkbox = new bool[MAX_COLLAR_K5_PARAMETERS];
+                k5_label = new string[MAX_COLLAR_K5_PARAMETERS];
                 k5 = Tuple.Copy(src.k5);
                 Array.Copy(src.k5_checkbox, k5_checkbox, k5_checkbox.Length);
                 Array.Copy(src.k5_label, k5_label, k5_label.Length); // todo: not a deep copy but does it matter?
-                k5_item_type = String.Copy(src.k5_item_type);
+                k5_item_type = string.Copy(src.k5_item_type);
             }
 
             public override void CopyTo(INCCMethodDescriptor imd)
@@ -1711,11 +1722,11 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "collar_k5_rec";
+                Table = "collar_k5_rec";
 
                 ps.Add(new DBParamEntry("k5_mode", k5_mode));
                 ps.Add(new DBParamEntry("k5_checkbox", k5_checkbox));
-                ps.AddRange(DBParamList.TupleArrayPair("k5", k5));
+                ps.AddRange(TupleArrayPair("k5", k5));
                 // devnote: "k5_item_type" now handled by relation back to relevant item type entry in DB ps.Add(new DBParamEntry("k5_item_type", k5_item_type));
                 ps.Add(new DBParamEntry("k5_label", k5_label));
             }
@@ -1729,35 +1740,75 @@ namespace AnalysisDefs
             
             public collar_combined_rec()
             {
+				Init();
+            }
+            public collar_combined_rec(collar_combined_rec src)
+            {
+				Init();
+				src.collar.CopyTo(collar);
+                src.collar_det.CopyTo(collar_det);
+                src.k5.CopyTo(k5);
+           }
+
+			public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
+            {
+                collar = col; // shallow copies, ok?
+                collar_det = det;
+                k5 = k5e;
+				Pump = 0; // prep for use
+            }
+
+			public void Init()
+			{
                 collar_det = new collar_detector_rec();
                 collar = new collar_rec();
                 k5 = new collar_k5_rec();
-            }
-            public collar_combined_rec (collar_combined_rec src)
-            {
-                src.collar.CopyTo(collar);
-                src.collar_det.CopyTo(collar_det);
-                src.k5.CopyTo(k5);
-            }
+				Pump = 0; // prep for use
+			}
 
             public override void CopyTo(INCCMethodDescriptor imd)
             {
                 collar_combined_rec tgt = (collar_combined_rec)imd;
+				if (tgt == null)
+					return;
                 tgt.collar.CopyTo (collar);
                 tgt.collar_det.CopyTo(collar_det);
                 tgt.k5.CopyTo(k5);
-                imd.modified = true;
+                tgt.modified = true;
             }
-            public override void GenParamList()
+            public override void GenParamList()  // this does not fill in the three data structures, see the pump processing below 
             {
                 base.GenParamList();
-                this.Table = "collar_combined_rec";
-                k5.GenParamList();
-                collar.GenParamList();
-                collar_det.GenParamList();
-                ps.AddRange(k5.ps);
-                ps.AddRange(collar.ps);
-                ps.AddRange(collar_det.ps);
+                Table = "collar_combined_rec";  // not a database table name, only a contextual placeholder
+            }
+
+			public override DB.ElementList ToDBElementList(bool generate = true)
+            {
+				DB.ElementList el = null;
+                if (Pump == 0)
+				{
+					Pump = 1;
+					el = collar_det.ToDBElementList(generate);
+					el.OptTable = collar_det.Table;
+				} else
+                if (Pump == 1)
+				{
+					Pump = 2;
+					el = collar.ToDBElementList(generate);
+					el.OptTable = collar.Table;
+ 				} else
+				if (Pump == 2)
+				{
+					Pump = 0;
+					el = k5.ToDBElementList(generate);
+					el.OptTable = k5.Table;
+				}
+				else  // can never get here lol
+				{
+					Pump = 0;
+					el = this.ToDBElementList(generate);
+				}
+				return el;
             }
         }
     }

@@ -82,44 +82,6 @@ namespace NewUI
 
         }
 
-        /*
-		URGENT doing this step by step
-			
-analysis_method_rec             INCCAnalysisMethodMap DetectorMaterialAnalysisMethods
-
-// optional if defined, not in-memory, cascade delete causes deletion in DB, 
-// these do not have in-memory maps or lists other than DetectorMaterialAnalysisMethods 
-active_rec
-active_mult_rec
-active_passive_rec
-add_a_source_rec
-cal_curve_rec
-collar_rec
-collar_detector_rec
-collar_k5_rec
-curium_ratio_rec
-known_alpha_rec
-known_m_rec
-multiplicity_rec
-
-
-
-
-
-sr_parms_rec
-sr_parms_ext
-stratum_id_detector
-stratum_id_instances
-tm_bkg_parms_rec		
-
-LMNetComm
-LMHWParams
-LMAcquireParams
-CountingParams
-LMMultiplicity
-
-        */
-
         private void CancelButton_Click(object sender, EventArgs e)
         {
             this.Close();

@@ -148,7 +148,6 @@ namespace AnalysisDefs
 
         }
 
-        // todo: collar/k5 detached params (no explicit detector mapping)
         /// the details
         public void UpdateAnalysisMethodSpecifics(string detname, string mat, DB.AnalysisMethodSpecifiers db = null)
         {
@@ -178,38 +177,40 @@ namespace AnalysisDefs
                             switch (md.Item1)
                             {
                                 case AnalysisMethod.Active:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_rec();
+                                    rec = new INCCAnalysisParams.active_rec();
                                     break;
                                 case AnalysisMethod.ActiveMultiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_mult_rec();
+                                    rec = new INCCAnalysisParams.active_mult_rec();
                                     break;
                                 case AnalysisMethod.ActivePassive:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.active_passive_rec();
+                                    rec = new INCCAnalysisParams.active_passive_rec();
                                     break;
                                 case AnalysisMethod.AddASource:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.add_a_source_rec();
+                                    rec = new INCCAnalysisParams.add_a_source_rec();
                                     break;
                                 case AnalysisMethod.CalibrationCurve:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.cal_curve_rec();
+                                    rec = new INCCAnalysisParams.cal_curve_rec();
                                     break;
                                 case AnalysisMethod.Collar:
-                                    //This may not be enough for collar params creation. hn 9.23.2015
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.collar_combined_rec();
+                                    rec = new INCCAnalysisParams.collar_combined_rec();
                                     break;
                                 case AnalysisMethod.CuriumRatio:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.curium_ratio_rec();
+                                    rec = new INCCAnalysisParams.curium_ratio_rec();
                                     break;
                                 case AnalysisMethod.KnownA:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.known_alpha_rec();
+                                    rec = new INCCAnalysisParams.known_alpha_rec();
                                     break;
                                 case AnalysisMethod.KnownM:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.known_m_rec();
+                                    rec = new INCCAnalysisParams.known_m_rec();
                                     break;
                                 case AnalysisMethod.Multiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.multiplicity_rec();
+                                    rec = new INCCAnalysisParams.multiplicity_rec();
                                     break;
                                 case AnalysisMethod.TruncatedMultiplicity:
-                                    rec = (INCCAnalysisParams.INCCMethodDescriptor)new INCCAnalysisParams.truncated_mult_rec();
+                                    rec = new INCCAnalysisParams.truncated_mult_rec();
+                                    break;
+                                case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                                    rec = new INCCAnalysisParams.de_mult_rec();
                                     break;
                                 default:
                                     break;
@@ -221,10 +222,10 @@ namespace AnalysisDefs
 
                     NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34030, "Updating {0},{1} {2}", detname, mat, md.Item2.GetType().Name);
                     DB.ElementList parms = null;
+					bool bonk = false;
                     switch (md.Item1)
                     {
                         case AnalysisMethod.KnownA:
-
                         case AnalysisMethod.CalibrationCurve:
                         case AnalysisMethod.KnownM:
                         case AnalysisMethod.Multiplicity:
@@ -233,17 +234,26 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar:
                         case AnalysisMethod.ActiveMultiplicity:
-                            parms = ((ParameterBase)md.Item2).ToDBElementList();
-                            break;
+						case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                            parms = (md.Item2).ToDBElementList();
+							break;
+                        case AnalysisMethod.Collar:  // bad mojo with the design break here
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = (md.Item2).ToDBElementList();
+							db.UpdateCalib(detname, mat, parms.OptTable, parms);
+							parms = null; bonk = false;  // skip the final processing step below
+							break;
                         default:
+							bonk = true;
                             break;
                     }
                     if (parms != null)
                         db.UpdateCalib(detname, mat, md.Item2.GetType().Name, parms);  // det, mat, amid, params
-                    //Something amiss and sometimes not storing. Could this be it?
-                    else
+                    else if (bonk)
                     {
                         //Didn't exist, so create and store. hn 9.22.2015
                         sam.AddMethod(md.Item1, md.Item2);
@@ -464,25 +474,44 @@ namespace AnalysisDefs
                         ams.AddMethod(am, acp);
                         break;
                     case AnalysisMethod.Collar:
-                        INCCAnalysisParams.collar_rec cr = new INCCAnalysisParams.collar_rec();
-                        dr = db.Get(sel.detectorid, sel.material, "collar_rec");
+                        INCCAnalysisParams.collar_combined_rec cr = new INCCAnalysisParams.collar_combined_rec();
+                        dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
                         if (dr != null)
                         {
-                            CalCurveDBSnock(cr.cev, dr);
-                            cr.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
-                            cr.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
-                            cr.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
-                            cr.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
-                            cr.u_mass_corr_fact_a.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_a"]);
-                            cr.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
-                            cr.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
-                            cr.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
-                            cr.poison_absorption_fact = DB.Utils.ReifyDoubles((string)dr["poison_absorption_fact"]);
-                            cr.poison_rod_type = DB.Utils.ReifyStrings((string)dr["poison_rod_type"]);
-
-                            cr.poison_rod_a = TupleArraySlurp(ref cr.poison_rod_a, "poison_rod_a", dr);
-                            cr.poison_rod_b = TupleArraySlurp(ref cr.poison_rod_b, "poison_rod_b", dr);
-                            cr.poison_rod_c = TupleArraySlurp(ref cr.poison_rod_c, "poison_rod_c", dr);
+                            cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
+                            cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
+                            cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
+                        }
+                        else
+                            lvl = LogLevels.Info;
+						dr = db.Get(sel.detectorid, sel.material, "collar_rec");
+                        if (dr != null)
+                        {
+                            CalCurveDBSnock(cr.collar.cev, dr);
+                            cr.collar.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
+                            cr.collar.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
+                            cr.collar.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
+                            cr.collar.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
+                            cr.collar.u_mass_corr_fact_a.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_a"]);
+                            cr.collar.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
+                            cr.collar.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
+                            cr.collar.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
+                            cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles(dr["poison_absorption_fact"].ToString());
+                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings(dr["poison_rod_type"].ToString());
+                            TupleArraySlurp(ref cr.collar.poison_rod_a, "poison_rod_a", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
+                        }
+                        else
+                            lvl = LogLevels.Info;
+						dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
+                        if (dr != null)
+                        {
+                            cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+                            cr.k5.k5_checkbox = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
+							cr.k5.k5_item_type = string.Copy(sel.material);
+							cr.k5.k5_label = DB.Utils.ReifyStrings(dr["k5_label"].ToString());
+                            TupleArraySlurp(ref cr.k5.k5, "k5", dr);
                         }
                         else
                             lvl = LogLevels.Info;
@@ -761,9 +790,6 @@ namespace AnalysisDefs
                             m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
                         ar.table = "results_curium_ratio_rec";
                         dt = ar.GetCombinedResults(mid);
-                        ar.table = "cm_pu_ratio_rec";
-                        //long rid =                   // URGENT
-                        //DataTable dt2 = ar.GetMethodResultsMethodd(mid, rid);
                         foreach (DataRow dr in dt.Rows)
                         {
                                    // DB.Utils.DBInt64(dr["pu_half_life"]);
@@ -807,14 +833,190 @@ namespace AnalysisDefs
                         }
                     }
                     break;
-					case AnalysisMethod.ActiveMultiplicity:
-					case AnalysisMethod.ActivePassive:
+
 					case AnalysisMethod.Collar:
+                    {
+                        INCCMethodResults.results_collar_rec res = (INCCMethodResults.results_collar_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+                        ar.table = "results_collar_rec";
+                        dt = ar.GetCombinedResults(mid);  // results_collar_rec + collar_rec_m
+						long rid = 0;
+						if (dt.Rows.Count > 0)
+								rid = DB.Utils.DBInt64(dt.Rows[0]["rid"]);  // the results key (rid) relates the 3 collar params in the results to the typed collar results
+						else
+								continue;
+						DataTable dt_collar_detector_rec_m = ar.GetMethodResultsMethod(mid, rid, "collar_detector_rec");
+						DataTable dt_collar_k5_rec_m = ar.GetMethodResultsMethod(mid, rid, "collar_k5_rec");
+                        for (int di = 0; di < dt.Rows.Count; di++)
+                        {
+							DataRow dr = dt.Rows[di];
+                            res.k0 = VTupleHelper.Make(dr, "k0");
+                            res.k1 = VTupleHelper.Make(dr, "k1");
+                            res.k2 = VTupleHelper.Make(dr, "k2");
+                            res.k3 = VTupleHelper.Make(dr, "k3");
+                            res.k4 = VTupleHelper.Make(dr, "k4");
+                            res.k5 = VTupleHelper.Make(dr, "k5");
+                            res.u235_mass = VTupleHelper.Make(dr, "u235_mass");
+                            res.total_corr_fact = VTupleHelper.Make(dr, "total_corr_fact");
+                            res.dcl_length = VTupleHelper.Make(dr, "dcl_length");
+                            res.dcl_total_u235 = VTupleHelper.Make(dr, "dcl_total_u235");
+                            res.dcl_total_u238 = VTupleHelper.Make(dr, "dcl_total_u238");
+                            res.dcl_poison_percent = VTupleHelper.Make(dr, "dcl_poison_percent");
+                            res.dcl_minus_asy_u235_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.corr_doubles = VTupleHelper.Make(dr, "corr_doubles");
+                            res.percent_u235 = DB.Utils.DBDouble(dr["percent_u235"]);
+                            res.total_u_mass = DB.Utils.DBDouble(dr["total_u_mass"]);
+                            res.dcl_total_rods = DB.Utils.DBDouble(dr["dcl_total_rods"]);
+                            res.dcl_total_poison_rods = DB.Utils.DBDouble(dr["dcl_total_poison_rods"]);
+                            res.dcl_minus_asy_u235_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+                            res.pass = DB.Utils.DBBool(dr["pass"]);
+                            res.source_id = dr["source_id"].ToString();
+
+                            INCCAnalysisParams.collar_combined_rec cr = res.methodParams;
+                            CalCurveDBSnock(cr.collar.cev, dr);
+                            cr.collar.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
+                            cr.collar.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
+                            cr.collar.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
+                            cr.collar.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
+                            cr.collar.u_mass_corr_fact_a.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_a"]);
+                            cr.collar.u_mass_corr_fact_a.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_a_err"]);
+                            cr.collar.u_mass_corr_fact_b.v = DB.Utils.DBDouble(dr["u_mass_corr_fact_b"]);
+                            cr.collar.u_mass_corr_fact_b.err = DB.Utils.DBDouble(dr["u_mass_corr_fact_b_err"]);
+                            cr.collar.poison_absorption_fact = DB.Utils.ReifyDoubles(dr["poison_absorption_fact"].ToString());
+                            cr.collar.poison_rod_type = DB.Utils.ReifyStrings(dr["poison_rod_type"].ToString());
+                            TupleArraySlurp(ref cr.collar.poison_rod_a, "poison_rod_a", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
+                            TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
+
+							if (di < dt_collar_detector_rec_m.Rows.Count)
+								dr = dt_collar_detector_rec_m.Rows[di];
+                            cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
+                            cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
+                            cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
+
+							if (di < dt_collar_k5_rec_m.Rows.Count)
+								dr = dt_collar_k5_rec_m.Rows[di];
+							cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+                            bool[] b = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
+                            for (int i = 0; i < b.Length && i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
+                                cr.k5.k5_checkbox[i] = b[i];
+                            cr.k5.k5_item_type = string.Copy(m.INCCAnalysisState.Methods.selector.material);
+                            string[] s = DB.Utils.ReifyStrings(dr["k5_label"].ToString());
+                            for (int i = 0; i < s.Length && i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
+                                cr.k5.k5_label[i] = s[i];
+                            TupleArraySlurp(ref cr.k5.k5, "k5", dr);
+                       } 
+                    }
+                    break;
+					case AnalysisMethod.ActiveMultiplicity:
+					{
+						INCCMethodResults.results_active_mult_rec res = (INCCMethodResults.results_active_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_active_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.mult = VTupleHelper.Make(dr, "mult");
+							res.methodParams.vf1 = DB.Utils.DBDouble(dr["vf1"]);
+							res.methodParams.vf2 = DB.Utils.DBDouble(dr["vf2"]);
+							res.methodParams.vf3 = DB.Utils.DBDouble(dr["vf3"]);
+							res.methodParams.vt1 = DB.Utils.DBDouble(dr["vt1"]);
+							res.methodParams.vt2 = DB.Utils.DBDouble(dr["vt2"]);
+							res.methodParams.vt3 = DB.Utils.DBDouble(dr["vt3"]);
+						}
+					}
+					break;
+					case AnalysisMethod.ActivePassive:
+					{
+						INCCMethodResults.results_active_passive_rec res = (INCCMethodResults.results_active_passive_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_active_passive_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.k0.v = DB.Utils.DBDouble(dr["k0"]);
+							res.k = VTupleHelper.Make(dr, "k");
+							res.k1 = VTupleHelper.Make(dr, "k1");
+							res.delta_doubles = VTupleHelper.Make(dr, "delta_doubles");
+							res.u235_mass = VTupleHelper.Make(dr, "u235_mass");
+							res.dcl_u235_mass = DB.Utils.DBDouble(dr["dcl_u235_mass"]);
+							res.dcl_minus_asy_u235_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+							res.dcl_minus_asy_u235_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.pass = DB.Utils.DBBool(dr["pass"]);
+
+                            INCCAnalysisParams.active_passive_rec a = res.methodParams;
+                            CalCurveDBSnock(a.cev, dr);
+						}
+					}
+					break;
 					case AnalysisMethod.TruncatedMultiplicity:
+					{
+						INCCMethodResults.results_truncated_mult_rec res = (INCCMethodResults.results_truncated_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_truncated_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.bkg.Singles = VTupleHelper.Make(dr, "bkg_singles");
+							res.bkg.Zeros = VTupleHelper.Make(dr, "bkg_zeros");
+							res.bkg.Ones = VTupleHelper.Make(dr, "bkg_ones");
+							res.bkg.Twos = VTupleHelper.Make(dr, "bkg_twos");
+							res.net.Singles = VTupleHelper.Make(dr, "net_singles");
+							res.net.Zeros = VTupleHelper.Make(dr, "net_zeros");
+							res.net.Ones = VTupleHelper.Make(dr, "net_ones");
+							res.net.Twos = VTupleHelper.Make(dr, "net_twos");
+
+                            res.k.alpha = VTupleHelper.Make(dr, "k_alpha");
+                            res.k.pu240e_mass = VTupleHelper.Make(dr, "k_pu240e_mass");
+                            res.k.mass = VTupleHelper.Make(dr, "k_pu_mass");
+                            res.k.dcl_pu240e_mass = DB.Utils.DBDouble(dr["k_dcl_pu240e_mass"]);
+                            res.k.dcl_pu_mass = DB.Utils.DBDouble(dr["k_dcl_pu_mass"]);
+                            res.k.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "k_dcl_minus_asy_pu_mass");
+                            res.k.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["k_dcl_minus_asy_pu_mass_pct"]);
+                            res.k.pass = DB.Utils.DBBool(dr["k_pass"]);
+
+							res.s.eff = VTupleHelper.Make(dr, "s_eff");
+							res.s.alpha = VTupleHelper.Make(dr, "s_alpha");
+                            res.s.pu240e_mass = VTupleHelper.Make(dr, "s_pu240e_mass");
+                            res.s.mass = VTupleHelper.Make(dr, "s_pu_mass");
+                            res.s.dcl_pu240e_mass = DB.Utils.DBDouble(dr["s_dcl_pu240e_mass"]);
+                            res.s.dcl_pu_mass = DB.Utils.DBDouble(dr["s_dcl_pu_mass"]);
+                            res.s.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "s_dcl_minus_asy_pu_mass");
+                            res.s.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["s_dcl_minus_asy_pu_mass_pct"]);
+                            res.s.pass = DB.Utils.DBBool(dr["s_pass"]);
+
+							INCCAnalysisParams.truncated_mult_rec a = res.methodParams;
+                            a.known_eff = DB.Utils.DBBool(dr["known_eff"]);
+                            a.solve_eff = DB.Utils.DBBool(dr["vs1"]);
+                            a.a = DB.Utils.DBDouble(dr["a"]);
+                            a.b = DB.Utils.DBDouble(dr["b"]);						}
+					}
+					break;
+					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+					{
+						INCCMethodResults.results_de_mult_rec res = (INCCMethodResults.results_de_mult_rec)
+							m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
+						ar.table = "results_de_mult_rec";
+						dt = ar.GetCombinedResults(mid);
+						foreach (DataRow dr in dt.Rows)
+						{
+							res.meas_ring_ratio = DB.Utils.DBDouble(dr["meas_ring_ratio"]);
+							res.interpolated_neutron_energy = DB.Utils.DBDouble(dr["interpolated_neutron_energy"]);
+							res.energy_corr_factor = DB.Utils.DBDouble(dr["energy_corr_factor"]);
+							INCCAnalysisParams.de_mult_rec a = res.methodParams;
+                            a.inner_ring_efficiency = DB.Utils.DBDouble(dr["inner_ring_efficiency"]);
+                            a.outer_ring_efficiency = DB.Utils.DBDouble(dr["outer_ring_efficiency"]);
+							a.neutron_energy = DB.Utils.ReifyDoubles(dr["neutron_energy"].ToString());
+							a.detector_efficiency = DB.Utils.ReifyDoubles(dr["detector_efficiency"].ToString());
+							a.inner_outer_ring_ratio = DB.Utils.ReifyDoubles(dr["inner_outer_ring_ratio"].ToString());
+							a.relative_fission = DB.Utils.ReifyDoubles(dr["relative_fission"].ToString());
+						}
+					}
+						break;
 					default:
+						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
 						break;
 					}
-
 				} // for
 			}
 
@@ -823,17 +1025,15 @@ namespace AnalysisDefs
 
 		static VTuple[] TupleArraySlurp(ref VTuple[] dest, string field, DataRow dr)
         {
-            double[] v = DB.Utils.ReifyDoubles((string)dr[field]);
-            double[] err = DB.Utils.ReifyDoubles((string)dr[field+"_err"]);
-
-            for (int i = 0; i < dest.Length; i++)
+            double[] v = DB.Utils.ReifyDoubles(dr[field].ToString());
+            double[] err = DB.Utils.ReifyDoubles(dr[field + "_err"].ToString());
+            for (int i = 0; i < v.Length && i < dest.Length; i++)
                 dest[i] = new VTuple(v[i], err[i]);
             return dest;
         }
 
         static void CalCurveDBSnock(INCCAnalysisParams.CurveEquationVals cev, DataRow dr)
-        {
-            
+        {            
             if (dr == null) return;
             cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)(DB.Utils.DBInt32(dr["cal_curve_equation"]));
             cev.a = DB.Utils.DBDouble(dr["a"]);
@@ -896,8 +1096,9 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar:
+                        case AnalysisMethod.Collar: // bad mojo with the design break here
                         case AnalysisMethod.ActiveMultiplicity:
+                        case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = ((ParameterBase)md.Item2).ToDBElementList();
                             break;
                         default:

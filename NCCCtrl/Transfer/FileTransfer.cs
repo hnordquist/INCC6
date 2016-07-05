@@ -26,6 +26,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -51,30 +52,6 @@ namespace NCCTransfer
         }
     }
 
-    public class CollarDetectorMaterialMethod : DetectorMaterialMethod
-    {
-        public DateTime reference_date;
-        public double relative_doubles_rate;
-
-        public CollarDetectorMaterialMethod(CollarDetectorMaterialMethod src)
-            : base(src)
-        {
-            reference_date = new DateTime(src.reference_date.Ticks);
-            relative_doubles_rate = src.relative_doubles_rate;
-        }
-
-        public CollarDetectorMaterialMethod(DetectorMaterialMethod src)
-            : base(src)
-        {
-
-        }
-
-        public CollarDetectorMaterialMethod(string it, string did, byte am)
-            : base(it, did, am)
-        {
-        }
-
-    }
     public class DetectorMaterialMethod : IEquatable<DetectorMaterialMethod>
     {
         public DetectorMaterialMethod()
@@ -98,12 +75,17 @@ namespace NCCTransfer
         public string item_type;
         public string detector_id;
         public byte analysis_method;
-        public int extra; // collar stuff
+        public short extra; // -1, 0, 1 collar flag
+
+		public override string ToString()
+		{
+			return detector_id + ", " + item_type + ", " + analysis_method.ToString() + ", "+ extra.ToString();
+		}
 
         public bool Equals(DetectorMaterialMethod other)
         {
-            if (this.detector_id.Equals(other.detector_id) & this.item_type.Equals(other.item_type)
-                & this.analysis_method.Equals(other.analysis_method) & this.extra.Equals(other.extra))
+            if (detector_id.Equals(other.detector_id) & item_type.Equals(other.item_type)
+                & analysis_method.Equals(other.analysis_method) & extra.Equals(other.extra))
             {
                 return true;
             }
@@ -122,7 +104,7 @@ namespace NCCTransfer
             }
             public override bool Equals(DetectorMaterialMethod b1, DetectorMaterialMethod b2)
             {
-                return EqualityComparer<DetectorMaterialMethod>.Default.Equals(b1, b2);
+                return Default.Equals(b1, b2);
             }
         }
     }
@@ -467,7 +449,7 @@ namespace NCCTransfer
             /// <summary>
             /// enumerate all the method calibration structs for this detector/material pair
             /// </summary>
-            public System.Collections.IEnumerator GetMethodEnumerator(string det, string mtl)
+            public IEnumerator GetMethodEnumerator(string det, string mtl)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
                 {
@@ -476,8 +458,8 @@ namespace NCCTransfer
                 }
             }
 
-            // returns the individual detector and material type pairings, use these as input to the GetMethodEnumerator 
-            public System.Collections.IEnumerator GetDetectorMaterialEnumerator(string det = null)
+            // returns the method map struct for each individual detector and the material types, if any
+            public IEnumerator GetDetectorMaterialEnumerator(string det = null)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
                 {
@@ -488,6 +470,20 @@ namespace NCCTransfer
 					}
                 }
             }
+
+			public bool GetPair(DetectorMaterialMethod dmm, out KeyValuePair<DetectorMaterialMethod, object> val)
+			{
+                foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
+				{
+					if (dmm.Equals(pair.Key))
+					{
+						val = pair;
+						return true;
+					}
+				}
+				val = new KeyValuePair<DetectorMaterialMethod, object>();
+				return false;
+			}
 
 			public List<string> GetDetectors
 			{
@@ -503,6 +499,20 @@ namespace NCCTransfer
 					return l;
                 }
             }
+
+			public List<KeyValuePair<DetectorMaterialMethod, object>> GetDetectorsWithEntries
+			{
+				get
+				{
+					List<KeyValuePair<DetectorMaterialMethod, object>> l = new List<KeyValuePair<DetectorMaterialMethod, object>>();
+					foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
+					{
+						if (pair.Key.analysis_method == INCC.COLLAR_DETECTOR_SAVE_RESTORE)
+							l.Add(pair);                
+					}
+					return l;
+                }
+            }
         }
 
         public INCCInitialDataCalibrationFile(LMLoggers.LognLM logger, string mpath)
@@ -514,354 +524,371 @@ namespace NCCTransfer
         public List<analysis_method_multiplicity> mmkeyPtrList = new List<analysis_method_multiplicity>();
 
         public XFerDetectorMaterialMethodMap DetectorMaterialMethodParameters = new XFerDetectorMaterialMethodMap();
-        
-        unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
-        {
-            bool result = false;
-            FileStream stream;
-            BinaryReader reader;
-            FileInfo fi;
 
-            mlogger.TraceEvent(LogLevels.Info, 33290, "Parsing the calibration initial data file {0}", source_path_filename);
-            try
-            {
-		fi = new System.IO.FileInfo(source_path_filename);
-                stream = fi.OpenRead();
-                reader = new BinaryReader(stream);
-            }
-            catch (Exception e)
-            {
-                mlogger.TraceException(e);
-                mlogger.TraceEvent(LogLevels.Warning, 33284, "Cannot open file {0}", source_path_filename);
-                return result;
-            }
-            byte[] los_bytos = new byte[stream.Length];
+		unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
+		{
+			bool result = false;
+			FileStream stream;
+			BinaryReader reader;
+			FileInfo fi;
 
-            int thisread = reader.Read(los_bytos, 0, INCCFileInfo.CALIBRATION_SAVE_RESTORE.Length);  // cannot throw due to length check under normal circumstances, so this is ok 
-            string str2 = Encoding.ASCII.GetString(los_bytos, 0, thisread);
+			mlogger.TraceEvent(LogLevels.Info, 33290, "Parsing the calibration initial data file {0}", source_path_filename);
+			try
+			{
+				fi = new System.IO.FileInfo(source_path_filename);
+				stream = fi.OpenRead();
+				reader = new BinaryReader(stream);
+			} catch (Exception e)
+			{
+				mlogger.TraceException(e);
+				mlogger.TraceEvent(LogLevels.Warning, 33284, "Cannot open file {0}", source_path_filename);
+				return result;
+			}
+			byte[] los_bytos = new byte[stream.Length];
 
-            if (!str2.Equals(INCCFileInfo.CALIBRATION_SAVE_RESTORE)) // pre-check should prevent this condition 
-            {
-                reader.Close();
-                return result;
-            }
-            try
-            {
-                byte current_analysis_method = 0;
-                DetectorMaterialMethod current = new DetectorMaterialMethod();
-                int sz = 0;
-                for (; ; )
-                {
-                    if (reader.PeekChar() != -1)
-                        current_analysis_method = TransferUtils.ReadByte(reader, "analysis method");
-                    else
-                        break; // done with file I/O
-                    switch (current_analysis_method)
-                    {
-                        case INCC.METHOD_NONE:  // important; this is the selected analyses for this detector/material type pair
-                            analysis_method_rec analysis_method_record = new analysis_method_rec();
-                            sz = Marshal.SizeOf(analysis_method_record);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { analysis_method_record = *(analysis_method_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("analysis_method_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(analysis_method_record.item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, analysis_method_record);
-                            break;
-                        case INCC.METHOD_CALCURVE:
-                            cal_curve_rec cal_curve = new cal_curve_rec();
-                            sz = Marshal.SizeOf(cal_curve);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { cal_curve = *(cal_curve_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("cal_curve_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(cal_curve.cal_curve_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(cal_curve.cal_curve_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, cal_curve); 
-                            break;
-                        case INCC.METHOD_AKNOWN:
-                            known_alpha_rec known_alpha = new known_alpha_rec();
-                            sz = Marshal.SizeOf(known_alpha);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { known_alpha = *(known_alpha_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("known_alpha read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(known_alpha.known_alpha_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(known_alpha.known_alpha_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, known_alpha);
-                            break;
-                        case INCC.METHOD_MKNOWN:
-                            known_m_rec known_m = new known_m_rec();
-                            sz = Marshal.SizeOf(known_m);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { known_m = *(known_m_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("known_m_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(known_m.known_m_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(known_m.known_m_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, known_m);       
-                            break;
-                        case INCC.METHOD_MULT:
-                            multiplicity_rec multiplicity = new multiplicity_rec();
-                            sz = Marshal.SizeOf(multiplicity);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { multiplicity = *(multiplicity_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("multiplicity_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(multiplicity.multiplicity_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(multiplicity.multiplicity_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, multiplicity);
-                            if (multiplicity.mul_solve_efficiency == INCC.CONVENTIONAL_MULT_WEIGHTED)
-                            {
-                                analysis_method_multiplicity pmmkey = new analysis_method_multiplicity();
-                                //            strcpy (pmmkey->multiplicity_item_type, current_item_type);
-                                //            strcpy (pmmkey->multiplicity_detector_id, current_detector_id);
-                                mmkeyPtrList.Add(pmmkey); //dev note: why isn't this finished? Do we need this part of the old INCC scheme?
-                            }
-                            break;
-                        case INCC.DUAL_ENERGY_MULT_SAVE_RESTORE:
-                           de_mult_rec de_mult = new de_mult_rec();
-                           sz = Marshal.SizeOf(de_mult);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { de_mult = *(de_mult_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("de_mult_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(de_mult.de_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(de_mult.de_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, de_mult);  
-                            break;
-                        case INCC.METHOD_TRUNCATED_MULT:
-                            truncated_mult_rec truncated_mult = new truncated_mult_rec();
-                            sz = Marshal.SizeOf(truncated_mult);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { truncated_mult = *(truncated_mult_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("truncated_mult_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(truncated_mult.truncated_mult_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(truncated_mult.truncated_mult_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, truncated_mult);
-                            break;
-                        case INCC.METHOD_ACTIVE:
-                            active_rec active = new active_rec();
-                            sz = Marshal.SizeOf(active);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { active = *(active_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("active_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(active.active_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(active.active_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, active);
-                            break;
-                        case INCC.METHOD_ACTPAS:
-                            active_passive_rec active_passive = new active_passive_rec();
-                            sz = Marshal.SizeOf(active_passive);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { active_passive = *(active_passive_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("active_passive_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(active_passive.active_passive_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(active_passive.active_passive_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, active_passive);
-                            break;
-                        case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
-                            collar_detector_rec collar_detector = new collar_detector_rec();
-                            sz = Marshal.SizeOf(collar_detector);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { collar_detector = *(collar_detector_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("collar_detector_rec read failed");
-                            current = new CollarDetectorMaterialMethod(
-                                TransferUtils.str(collar_detector.collar_detector_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(collar_detector.collar_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar_detector.collar_detector_mode;
-                            ((CollarDetectorMaterialMethod)current).reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
-                            ((CollarDetectorMaterialMethod)current).relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-                            DetectorMaterialMethodParameters.Add(current, collar_detector);
-                            mlogger.TraceEvent(LogLevels.Info, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}",current.detector_id,current.item_type,current.extra);
+			int thisread = reader.Read(los_bytos, 0, INCCFileInfo.CALIBRATION_SAVE_RESTORE.Length);  // cannot throw due to length check under normal circumstances, so this is ok 
+			string str2 = Encoding.ASCII.GetString(los_bytos, 0, thisread);
 
-                            break;
-                        case INCC.COLLAR_SAVE_RESTORE:
-                            collar_rec collar = new collar_rec();
-                            sz = Marshal.SizeOf(collar);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { collar = *(collar_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("collar_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(collar.collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar.collar_mode;
-                            DetectorMaterialMethodParameters.Add(current, collar);
-                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, current.extra);
-                            // dev note: if no preceding COLLAR_DETECTOR_SAVE_RESTORE, do not skip this entry!
-                            break;
-                        case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series x 2
-                            collar_k5_rec collar_k5 = new collar_k5_rec();
-                            sz = Marshal.SizeOf(collar_k5);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { collar_k5 = *(collar_k5_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("collar_k5_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            current.extra = collar_k5.collar_k5_mode;
-                            DetectorMaterialMethodParameters.Add(current, collar_k5);
-                            mlogger.TraceEvent(LogLevels.Info, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, current.extra);
-                            // dev note: if no preceding COLLAR_SAVE_RESTORE, skip this entry!
-                            break;
-                        case INCC.METHOD_ADDASRC:
-                            add_a_source_rec add_a_source = new add_a_source_rec();
-                            sz = Marshal.SizeOf(add_a_source);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { add_a_source = *(add_a_source_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("add_a_source_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(add_a_source.add_a_source_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(add_a_source.add_a_source_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, add_a_source);  
-                            break;
-                        case INCC.METHOD_ACTIVE_MULT:
-                            active_mult_rec active_mult = new active_mult_rec();
-                            sz = Marshal.SizeOf(active_mult);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { active_mult = *(active_mult_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("active_mult_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(active_mult.active_mult_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(active_mult.active_mult_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, active_mult);  
-                            break;
-                        case INCC.METHOD_CURIUM_RATIO:
-                            curium_ratio_rec curium_ratio = new curium_ratio_rec();
-                            sz = Marshal.SizeOf(curium_ratio);
-                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                            if (los_bytos != null)
-                                fixed (byte* pData = los_bytos) { curium_ratio = *(curium_ratio_rec*)pData; }
-                            else
-                                throw new TransferUtils.TransferParsingException("curium_ratio_rec read failed");
-                            current = new DetectorMaterialMethod(
-                                TransferUtils.str(curium_ratio.curium_ratio_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
-                                TransferUtils.str(curium_ratio.curium_ratio_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
-                            DetectorMaterialMethodParameters.Add(current, curium_ratio);  
-                            break;
+			if (!str2.Equals(INCCFileInfo.CALIBRATION_SAVE_RESTORE)) // pre-check should prevent this condition 
+			{
+				reader.Close();
+				return result;
+			}
+			try
+			{
+				byte current_analysis_method = 0;
+				DetectorMaterialMethod current = new DetectorMaterialMethod();
+				int sz = 0;
+				for (;;)
+				{
+					if (reader.PeekChar() != -1)
+						current_analysis_method = TransferUtils.ReadByte(reader, "analysis method");
+					else
+						break; // done with file I/O
+					switch (current_analysis_method)
+					{
+					case INCC.METHOD_NONE:  // important; this is the selected analyses for this detector/material type pair
+						analysis_method_rec analysis_method_record = new analysis_method_rec();
+						sz = Marshal.SizeOf(analysis_method_record);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ analysis_method_record = *(analysis_method_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("analysis_method_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(analysis_method_record.item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, analysis_method_record);
+						break;
+					case INCC.METHOD_CALCURVE:
+						cal_curve_rec cal_curve = new cal_curve_rec();
+						sz = Marshal.SizeOf(cal_curve);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ cal_curve = *(cal_curve_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("cal_curve_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(cal_curve.cal_curve_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(cal_curve.cal_curve_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, cal_curve);
+						break;
+					case INCC.METHOD_AKNOWN:
+						known_alpha_rec known_alpha = new known_alpha_rec();
+						sz = Marshal.SizeOf(known_alpha);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ known_alpha = *(known_alpha_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("known_alpha read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(known_alpha.known_alpha_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(known_alpha.known_alpha_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, known_alpha);
+						break;
+					case INCC.METHOD_MKNOWN:
+						known_m_rec known_m = new known_m_rec();
+						sz = Marshal.SizeOf(known_m);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ known_m = *(known_m_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("known_m_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(known_m.known_m_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(known_m.known_m_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, known_m);
+						break;
+					case INCC.METHOD_MULT:
+						multiplicity_rec multiplicity = new multiplicity_rec();
+						sz = Marshal.SizeOf(multiplicity);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ multiplicity = *(multiplicity_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("multiplicity_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(multiplicity.multiplicity_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(multiplicity.multiplicity_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, multiplicity);
+						if (multiplicity.mul_solve_efficiency == INCC.CONVENTIONAL_MULT_WEIGHTED)
+						{
+							analysis_method_multiplicity pmmkey = new analysis_method_multiplicity();
+							//            strcpy (pmmkey->multiplicity_item_type, current_item_type);
+							//            strcpy (pmmkey->multiplicity_detector_id, current_detector_id);
+							mmkeyPtrList.Add(pmmkey); //dev note: why isn't this finished? Do we need this part of the old INCC scheme?
+						}
+						break;
+					case INCC.DUAL_ENERGY_MULT_SAVE_RESTORE:
+						de_mult_rec de_mult = new de_mult_rec();
+						sz = Marshal.SizeOf(de_mult);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ de_mult = *(de_mult_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("de_mult_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(de_mult.de_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(de_mult.de_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, de_mult);
+						break;
+					case INCC.METHOD_TRUNCATED_MULT:
+						truncated_mult_rec truncated_mult = new truncated_mult_rec();
+						sz = Marshal.SizeOf(truncated_mult);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ truncated_mult = *(truncated_mult_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("truncated_mult_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(truncated_mult.truncated_mult_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(truncated_mult.truncated_mult_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, truncated_mult);
+						break;
+					case INCC.METHOD_ACTIVE:
+						active_rec active = new active_rec();
+						sz = Marshal.SizeOf(active);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ active = *(active_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("active_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(active.active_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(active.active_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, active);
+						break;
+					case INCC.METHOD_ACTPAS:
+						active_passive_rec active_passive = new active_passive_rec();
+						sz = Marshal.SizeOf(active_passive);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ active_passive = *(active_passive_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("active_passive_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(active_passive.active_passive_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(active_passive.active_passive_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, active_passive);
+						break;
+					case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
+						collar_detector_rec collar_detector = new collar_detector_rec();
+						sz = Marshal.SizeOf(collar_detector);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ collar_detector = *(collar_detector_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("collar_detector_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(collar_detector.collar_detector_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(collar_detector.collar_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						current.extra = (short)(collar_detector.collar_detector_mode == 0 ? 0 : 1);
+						DetectorMaterialMethodParameters.Add(current, collar_detector);
+						mlogger.TraceEvent(LogLevels.Verbose, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}", current.detector_id, current.item_type, collar_detector.collar_detector_mode);
+						break;
+					case INCC.COLLAR_SAVE_RESTORE:
+						collar_rec collar = new collar_rec();
+						sz = Marshal.SizeOf(collar);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ collar = *(collar_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("collar_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(collar.collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						current.extra = (short)(collar.collar_mode == 0 ? 0 : 1);
+						DetectorMaterialMethodParameters.Add(current, collar);
+						mlogger.TraceEvent(LogLevels.Verbose, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar.collar_mode);
+						break;
+					case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series
+						collar_k5_rec collar_k5 = new collar_k5_rec();
+						sz = Marshal.SizeOf(collar_k5);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ collar_k5 = *(collar_k5_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("collar_k5_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						current.extra = (short)(collar_k5.collar_k5_mode == 0 ? 0 : 1);
+						DetectorMaterialMethodParameters.Add(current, collar_k5);
+						mlogger.TraceEvent(LogLevels.Verbose, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar_k5.collar_k5_mode);
+						break;
+					case INCC.METHOD_ADDASRC:
+						add_a_source_rec add_a_source = new add_a_source_rec();
+						sz = Marshal.SizeOf(add_a_source);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ add_a_source = *(add_a_source_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("add_a_source_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(add_a_source.add_a_source_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(add_a_source.add_a_source_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, add_a_source);
+						break;
+					case INCC.METHOD_ACTIVE_MULT:
+						active_mult_rec active_mult = new active_mult_rec();
+						sz = Marshal.SizeOf(active_mult);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ active_mult = *(active_mult_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("active_mult_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(active_mult.active_mult_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(active_mult.active_mult_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, active_mult);
+						break;
+					case INCC.METHOD_CURIUM_RATIO:
+						curium_ratio_rec curium_ratio = new curium_ratio_rec();
+						sz = Marshal.SizeOf(curium_ratio);
+						los_bytos = TransferUtils.TryReadBytes(reader, sz);
+						if (los_bytos != null)
+							fixed (byte* pData = los_bytos)
+							{ curium_ratio = *(curium_ratio_rec*)pData; } else
+							throw new TransferUtils.TransferParsingException("curium_ratio_rec read failed");
+						current = new DetectorMaterialMethod(
+							TransferUtils.str(curium_ratio.curium_ratio_item_type, INCC.MAX_ITEM_TYPE_LENGTH),
+							TransferUtils.str(curium_ratio.curium_ratio_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
+						DetectorMaterialMethodParameters.Add(current, curium_ratio);
+						break;
 
-                        case INCC.WMV_CALIB_TOKEN:
-                            break;
+					case INCC.WMV_CALIB_TOKEN:
+						break;
 
-                        default:
-                            mlogger.TraceEvent(LogLevels.Warning, 33086, "Unhandled method value '{0:x8}'", current_analysis_method);
-                            break;
-                    }
-                       
-
-                    // add the current item info to the list
-                    item_type_names_table.Add(current.item_type);
-                        /* end processing for one set of calibration parameters */
-
-                } /* end forever */
-
-                if (mmkeyPtrList.Count > 0 && current_analysis_method == INCC.WMV_CALIB_TOKEN)
-                {
-                    //    fseek(fp, -1, SEEK_CUR);  //move back over 1 unsigned char WMV_CALIB_TOKEN marker for subsequent padder read
-                    //    POSITION pos;
-                    //    struct analysis_method_multiplicity *pmmkey;
-                    //    for( pos = mmkeyPtrList.GetHeadPosition(); pos != NULL; )
-                    //    {
-                    //        pmmkey = (struct analysis_method_multiplicity *)mmkeyPtrList.GetNext( pos );
-                    //        if (pmmkey)
-                    //            DoWMVParametersTransfer(false, *pmmkey, fp);
-                    //    }
-                    //    for( pos = mmkeyPtrList.GetHeadPosition(); pos != NULL; )
-                    //    {
-                    //        pmmkey = (struct analysis_method_multiplicity *)mmkeyPtrList.GetNext( pos );
-                    //        if (pmmkey)
-                    //            delete pmmkey;
-                    //    }
-
-                }
+					default:
+						mlogger.TraceEvent(LogLevels.Warning, 33086, "Unhandled method value '{0:x8}'", current_analysis_method);
+						break;
+					}
 
 
-                    result = true;
-                //    mlogger.BatchLogL("Successfully applied calibration parameters from %.256s", source_path_filename);
-                
+					// add the current item info to the list
+					item_type_names_table.Add(current.item_type);
+					/* end processing for one set of calibration parameters */
 
-            }
-            catch (TransferUtils.TransferParsingException tpe)
-            {
-                mlogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
-                result = false;
-            }
-            catch (Exception e)
-            {
-                if (mlogger != null) mlogger.TraceException(e);
-            }
+				} /* end forever */
 
-            try
-            {
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                if (mlogger != null) mlogger.TraceException(e);
-            }
-            return result;
+				if (mmkeyPtrList.Count > 0 && current_analysis_method == INCC.WMV_CALIB_TOKEN)
+				{
+					//    fseek(fp, -1, SEEK_CUR);  //move back over 1 unsigned char WMV_CALIB_TOKEN marker for subsequent padder read
+					//    POSITION pos;
+					//    struct analysis_method_multiplicity *pmmkey;
+					//    for( pos = mmkeyPtrList.GetHeadPosition(); pos != NULL; )
+					//    {
+					//        pmmkey = (struct analysis_method_multiplicity *)mmkeyPtrList.GetNext( pos );
+					//        if (pmmkey)
+					//            DoWMVParametersTransfer(false, *pmmkey, fp);
+					//    }
+					//    for( pos = mmkeyPtrList.GetHeadPosition(); pos != NULL; )
+					//    {
+					//        pmmkey = (struct analysis_method_multiplicity *)mmkeyPtrList.GetNext( pos );
+					//        if (pmmkey)
+					//            delete pmmkey;
+					//    }
 
-        }
+				}
+
+
+				result = true;
+				//    mlogger.BatchLogL("Successfully applied calibration parameters from %.256s", source_path_filename);
+
+
+			} catch (TransferUtils.TransferParsingException tpe)
+			{
+				mlogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
+				result = false;
+			} catch (Exception e)
+			{
+				if (mlogger != null)
+					mlogger.TraceException(e);
+			}
+
+			try
+			{
+				reader.Close();
+			} catch (Exception e)
+			{
+				if (mlogger != null)
+					mlogger.TraceException(e);
+			}
+			return result;
+
+		}
 
 		unsafe new public bool Save(string path)
-        {
-			int len = DetectorMaterialMethodParameters.Keys.Count;
-			for (int i = 0; i < len; i++)
+		{
+			List<string> l = DetectorMaterialMethodParameters.GetDetectors;
+			mlogger.TraceInformation("{0} calibration sets to save off", l.Count);
+			int i = 0;
+			foreach (string det in l)
 			{
-				//detector_rec det = Detector[i];
-				//string detname =TransferUtils.str(det.detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
-				//string s = CleansePotentialFilename(detname);
-				//Path = System.IO.Path.Combine(path, s + ".dat");
-				//FileStream stream = File.Create(Path);
-				//BinaryWriter bw = new BinaryWriter(stream);
-				//bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.DETECTOR_SAVE_RESTORE));
-				//WriteDetector(i, bw);
-				//WriteSRParms(i, bw);
-				//WriteBKGParms(i, bw);
-				//WriteNormParms(i, bw);
-				//WriteAASParms(i, bw);
-				//WriteTMBKGParms(i, bw);
-				//bw.Close();
-				//bw.Dispose();
-				//mlogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
+				string s = CleansePotentialFilename(det);
+				Path = System.IO.Path.Combine(path, s + ".cal");
+				FileStream stream = File.Create(Path);
+				BinaryWriter bw = new BinaryWriter(stream);
+				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.CALIBRATION_SAVE_RESTORE));
+				IEnumerator iter = DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator(det);
+				while (iter.MoveNext())
+				{
+					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
+					WriteAM(rec, bw);  // URGENT: collar etc. finish this byte-level binary write for each method and make sure it is in the right order
+					//WriteSRParms(i, bw);
+					//WriteBKGParms(i, bw);
+					//WriteNormParms(i, bw);
+					//WriteAASParms(i, bw);
+					//WriteTMBKGParms(i, bw);
+				}
+				bw.Close();
+				bw.Dispose();
+				mlogger.TraceInformation("{0} Transfer calibration {1}, saved as {2}", i, det, Path);
+				i++;
 			}
-			mlogger.TraceInformation("{0} calibration sets to save off", len);
+			return false;
+		}
 
+		unsafe void WriteAM(analysis_method_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(analysis_method_rec);
+			analysis_method_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_NONE);
+			bw.Write(zb, 0, sz);
+		}
 
-            return false;
+		unsafe void WriteMul(multiplicity_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(multiplicity_rec);
+			multiplicity_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_MULT);
+			bw.Write(zb, 0, sz);
         }
+
     }
 
 	public class TransferSummary
@@ -890,7 +917,7 @@ namespace NCCTransfer
             FileStream stream;
             BinaryReader reader;
             FileInfo fi;
-            UInt16 n, number_runs;
+			ushort n, number_runs;
             results_multiplicity_rec results_multiplicity;
             INCC.SaveResultsMask results_status;
             item_id_entry_rec item_id_entry;

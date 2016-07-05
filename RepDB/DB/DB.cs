@@ -401,7 +401,6 @@ namespace DB
         //Return a DataTable based on SQL query
         public DataTable DT(string sSQL)
         {
-            //DataSet DS = new DataSet();
             DataTable DT = new DataTable();
             try
             {
@@ -689,6 +688,7 @@ namespace DB
         /// 6.0.1.1			db.TableHasColumn("composite_isotopics_rec","id");
         /// 6.0.1.2			new table composite_isotopic_rec, mod cm_pu_ratio_rec
         /// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas, mod results_curium_ratio_rec and cm_pu_ratio_rec
+        /// 6.0.1.12		new tables collar_detector_rec_m and collar_k5_rec_m (for results), type name change: ntext to nvarchar
         /// </summary>
         /// <param name="table"></param>
         /// <param name="col"></param>

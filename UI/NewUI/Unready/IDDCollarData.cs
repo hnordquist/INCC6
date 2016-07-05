@@ -35,7 +35,7 @@ namespace NewUI
         public IDDCollarData()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not complete yet.", "RESULTS UNKNOWN AT THIS TIME");
+            MessageBox.Show("This functionality is not complete yet.", "RESULTS UNKNOWN AT THIS TIME");  // URGENT: implement collar data dlg
         }
 
         private void OKBtn_Click(object sender, EventArgs e)

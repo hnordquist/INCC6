@@ -71,6 +71,10 @@ DROP TABLE [active_mult_rec_m];
 GO
 DROP TABLE [collar_rec_m];
 GO
+DROP TABLE [collar_detector_rec_m];
+GO
+DROP TABLE [collar_k5_rec_m];
+GO
 DROP TABLE [de_mult_rec_m];
 GO
 DROP TABLE [results_truncated_mult_rec];
@@ -162,6 +166,8 @@ GO
 DROP TABLE [acquire_parms_rec];
 GO
 DROP TABLE [material_types];
+GO
+DROP TABLE [holdup_config_rec];
 GO
 DROP TABLE [HVStatus];
 GO
