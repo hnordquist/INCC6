@@ -225,9 +225,9 @@ namespace NCCTransfer
 							case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
 								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveDE(se, md.Item2));
 								break;
-							case AnalysisMethod.Collar:  // try catch around these until fully tested
-								try
-								{ 
+							case AnalysisMethod.Collar: // urgent: verify results persist is complete 
+                                try
+                                { 
 									  idcf.DetectorMaterialMethodParameters.
 											Add(new DetectorMaterialMethod(se.material, se.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE), MoveCD(se, md.Item2));
 									  idcf.DetectorMaterialMethodParameters.
@@ -1315,7 +1315,7 @@ namespace NCCTransfer
                         case INCC.COLLAR_K5_SAVE_RESTORE:
  							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
-							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf,sel, collar_k5.collar_k5_mode);
+							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf, sel, collar_k5.collar_k5_mode);
 							if (combined != null)
 								am.AddMethod(AnalysisMethod.Collar, combined);							
                             break;
@@ -1338,6 +1338,27 @@ namespace NCCTransfer
             }
         }
 
+		unsafe collar_detector_rec MakeAFake(collar_detector_rec src, string det, string mat)
+		{
+			collar_detector_rec m = new collar_detector_rec();
+			byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
+			char[] a = det.ToCharArray(0, Math.Min(det.Length, INCC.MAX_DETECTOR_ID_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_id);
+			b = new byte[INCC.MAX_ITEM_TYPE_LENGTH];
+			a = mat.ToCharArray(0, Math.Min(mat.Length, INCC.MAX_ITEM_TYPE_LENGTH));
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.collar_detector_item_type);
+			//m.collar_detector_mode = (byte)(imr.collar_det.collar_mode ? 1 : 0);
+
+			b = new byte[INCC.DATE_TIME_LENGTH];
+			a = @"89.10.17".ToCharArray();
+			Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+			TransferUtils.Copy(b, m.col_reference_date);
+			m.col_relative_doubles_rate = 1.0;
+			return m;
+		}
+
 		INCCAnalysisParams.collar_combined_rec CollarEntryProcesser(INCCInitialDataCalibrationFile idcf, INCCSelector sel, byte mode)
 		{
 			DetectorMaterialMethod m1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); m1.extra = mode;
@@ -1349,13 +1370,37 @@ namespace NCCTransfer
 			if (!ok)
 			{
 				mlogger.TraceEvent(LogLevels.Verbose, 30811, "No collar detector values for " + m1.ToString());
-				return null;
+				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
+				if (ok)
+				{
+					// k5 and collar but no det entry, find the closest match det entry and make a fake one and use it
+					List<KeyValuePair<DetectorMaterialMethod, object>> l = idcf.DetectorMaterialMethodParameters.GetDetectorsWithEntries;
+					if (l.Count > 0)
+					{
+						object o = l[0].Value;
+						collar_detector_rec rec = MakeAFake((collar_detector_rec)o, sel.detectorid, sel.material);
+                        DetectorMaterialMethod mf1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); mf1.extra = mode;
+                        //idcf.DetectorMaterialMethodParameters.Add(mf1, rec);
+                        //ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
+                        k1 = new KeyValuePair<DetectorMaterialMethod, object>(mf1, rec);
+					}
+					else
+						return null;
+				}
+				else
+				{
+					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					return null;
+				}
 			}
-			ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
-			if (!ok)
+			else
 			{
-				mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
-				return null;
+				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
+				if (!ok)
+				{
+					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					return null;
+				}
 			}
 			ok = idcf.DetectorMaterialMethodParameters.GetPair(m3, out k3);
 			if (!ok)

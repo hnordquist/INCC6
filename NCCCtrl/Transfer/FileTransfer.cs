@@ -458,7 +458,7 @@ namespace NCCTransfer
                 }
             }
 
-            // returns the individual detector and material type pairings, use these as input to the GetMethodEnumerator 
+            // returns the method map struct for each individual detector and the material types, if any
             public IEnumerator GetDetectorMaterialEnumerator(string det = null)
             {
                 foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
@@ -495,6 +495,20 @@ namespace NCCTransfer
 						if (l.Contains(pair.Key.detector_id))
 								continue;
 						l.Add(pair.Key.detector_id);                
+					}
+					return l;
+                }
+            }
+
+			public List<KeyValuePair<DetectorMaterialMethod, object>> GetDetectorsWithEntries
+			{
+				get
+				{
+					List<KeyValuePair<DetectorMaterialMethod, object>> l = new List<KeyValuePair<DetectorMaterialMethod, object>>();
+					foreach (KeyValuePair<DetectorMaterialMethod, object> pair in this)
+					{
+						if (pair.Key.analysis_method == INCC.COLLAR_DETECTOR_SAVE_RESTORE)
+							l.Add(pair);                
 					}
 					return l;
                 }

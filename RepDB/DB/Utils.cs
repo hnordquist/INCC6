@@ -442,7 +442,6 @@ namespace DB
             return res;
         }
 
-        // this probably does not work yet
         public static string[] ReifyStrings(string strings)
         {
             string[] res = strings.Split(',');
