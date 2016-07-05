@@ -225,7 +225,7 @@ namespace NCCTransfer
 							case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
 								  idcf.DetectorMaterialMethodParameters.Add(dmm, MoveDE(se, md.Item2));
 								break;
-							case AnalysisMethod.Collar: // urgent: verify results persist is complete 
+							case AnalysisMethod.Collar:
                                 try
                                 { 
 									  idcf.DetectorMaterialMethodParameters.

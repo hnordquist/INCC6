@@ -854,7 +854,7 @@ namespace NCCTransfer
 				while (iter.MoveNext())
 				{
 					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
-					WriteAM(rec, bw);  // URGENT: collar etc. finish this for each method and mske sure it is in the right order
+					WriteAM(rec, bw);  // URGENT: collar etc. finish this byte-level binary write for each method and make sure it is in the right order
 					//WriteSRParms(i, bw);
 					//WriteBKGParms(i, bw);
 					//WriteNormParms(i, bw);

@@ -233,6 +233,14 @@ namespace DB
             return db.DT(sSQL);
         }
 
+		public DataTable GetMethodResultsMethod(long mid, long rid, string opttable)
+        {
+			db.SetConnection();
+			string newtable = opttable + "_m";
+			string sSQL = "SELECT * FROM "+ newtable + " where mid=" + mid.ToString() + " AND " + newtable + ".rid=" + rid.ToString();
+            return db.DT(sSQL);
+        }
+
     }
 
 }

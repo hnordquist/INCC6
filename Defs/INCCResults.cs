@@ -2018,7 +2018,7 @@ namespace AnalysisDefs
                 imr.modified = true;
             }
 
-            // URGENT: report line generation needed; start with INCC5 style, then expand 
+            // URGENT: collar report line generation needed; start with INCC5 style, then expand 
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);

@@ -431,13 +431,26 @@ namespace DB
             return res;
         }
 
+		/// <summary>
+		/// "1,0" -> bool[] fron = new {true, false}
+		/// "true,false" -> bool[] fron = new {true, false}
+		/// </summary>
+		/// <param name="bools"></param>
+		/// <returns></returns>
         public static bool[] ReifyBools(string bools)
         {
             string[] s = bools.Split(',');
             bool[] res = new bool[s.Length];
             for (int i = 0; i < s.Length; i++)
             {
-                bool.TryParse(s[i], out res[i]);
+                bool good = bool.TryParse(s[i], out res[i]);
+				if (!good) // it is likely the integer-based string
+				{
+					short r = 0;
+					good = short.TryParse(s[i], out r);
+					if (good) res[i] = (r == 0 ? false : true);
+				}
+
             }
             return res;
         }
@@ -459,7 +472,7 @@ namespace DB
             StringBuilder s = new StringBuilder(a.Length * 2);
             foreach (bool b in a)
             {
-                s.Append(b ? '1' : '0');
+                s.Append(b ? '1' : '0');  // use 1, 0 cuz it makes shorter strings, kinda lame
                 s.Append(',');
             }
             s.Remove(s.Length - 1, 1);
@@ -539,7 +552,7 @@ namespace DB
         // 21588 unicode chars for SQL CE and SQLite implies 43176 bytes long, 
         // The SQLite text/blob/string max is 5x10^8 chars or 1,000,000,000 bytes by default, no issue there
         // The SQL CE 4 NTEXT limit is 2^30-2/2 chars or 2^30 -2 bytes, no issue there
-        // todo: determine max value and type for SQL Server (NTEXT?)
+        // SQL Server ntext or nvarchar(max) or "national text" are 2^30-1 bytes
         public static byte[] AsBytes(string s)
         {
             Encoding unicode = Encoding.Unicode;

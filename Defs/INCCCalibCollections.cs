@@ -839,9 +839,17 @@ namespace AnalysisDefs
                         INCCMethodResults.results_collar_rec res = (INCCMethodResults.results_collar_rec)
                         m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
                         ar.table = "results_collar_rec";
-                        dt = ar.GetCombinedResults(mid);
-                        foreach (DataRow dr in dt.Rows)
+                        dt = ar.GetCombinedResults(mid);  // results_collar_rec + collar_rec_m
+						long rid = 0;
+						if (dt.Rows.Count > 0)
+								rid = DB.Utils.DBInt64(dt.Rows[0]["rid"]);  // the results key (rid) relates the 3 collar params in the results to the typed collar results
+						else
+								continue;
+						DataTable dt_collar_detector_rec_m = ar.GetMethodResultsMethod(mid, rid, "collar_detector_rec");
+						DataTable dt_collar_k5_rec_m = ar.GetMethodResultsMethod(mid, rid, "collar_k5_rec");
+                        for (int di = 0; di < dt.Rows.Count; di++)
                         {
+							DataRow dr = dt.Rows[di];
                             res.k0 = VTupleHelper.Make(dr, "k0");
                             res.k1 = VTupleHelper.Make(dr, "k1");
                             res.k2 = VTupleHelper.Make(dr, "k2");
@@ -880,12 +888,15 @@ namespace AnalysisDefs
                             TupleArraySlurp(ref cr.collar.poison_rod_b, "poison_rod_b", dr);
                             TupleArraySlurp(ref cr.collar.poison_rod_c, "poison_rod_c", dr);
 
+							if (di < dt_collar_detector_rec_m.Rows.Count)
+								dr = dt_collar_detector_rec_m.Rows[di];
                             cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
                             cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
                             cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
 
-                             // urgent: verify results persist is complete
-                            cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+							if (di < dt_collar_k5_rec_m.Rows.Count)
+								dr = dt_collar_k5_rec_m.Rows[di];
+							cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
                             bool[] b = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
                             for (int i = 0; i < b.Length && i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
                                 cr.k5.k5_checkbox[i] = b[i];
@@ -897,7 +908,7 @@ namespace AnalysisDefs
                         } 
                     }
                     break;
-					case AnalysisMethod.ActiveMultiplicity:// URGENT: do these results restores
+					case AnalysisMethod.ActiveMultiplicity:// URGENT: do these last four results restores
 					case AnalysisMethod.ActivePassive:
 					case AnalysisMethod.TruncatedMultiplicity:
 					case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
