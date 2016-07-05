@@ -167,6 +167,8 @@ DROP TABLE [acquire_parms_rec];
 GO
 DROP TABLE [material_types];
 GO
+DROP TABLE [holdup_config_rec];
+GO
 DROP TABLE [HVStatus];
 GO
 DROP TABLE [HVResult];

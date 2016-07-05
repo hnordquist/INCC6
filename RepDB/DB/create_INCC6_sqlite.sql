@@ -23,6 +23,14 @@ CREATE TABLE material_types(
 	[description] nvarchar(1024) NULL
 );
 GO
+CREATE TABLE holdup_config_rec(
+	[id] INTEGER Primary Key,
+	[glovebox_id] nvarchar(256) NULL,
+	[num_rows] int NULL,
+	[num_columns] int NULL,
+	[distance] float NULL
+);
+GO
 CREATE TABLE active_rec(
 	[id] INTEGER Primary Key,
 	[item_type_id] INTEGER NOT NULL,
