@@ -1860,8 +1860,26 @@ namespace AnalysisDefs
         public holdup_config_rec()
         {
         }
-        public UInt16 num_rows { get; set; }
-        public UInt16 num_columns { get; set; }
+
+		public void CopyTo(holdup_config_rec hc) 
+        {
+			hc.glovebox_id = string.Copy(glovebox_id);
+			hc.num_rows = num_rows;
+			hc.num_columns = num_columns;
+			hc.distance = distance;
+            hc.modified = true;
+        }
+
+		public void Copy(holdup_config_rec hc) 
+        {
+			glovebox_id = string.Copy(hc.glovebox_id);
+			num_rows = hc.num_rows;
+			num_columns = hc.num_columns;
+			distance = hc.distance;
+            modified = true;
+        }
+        public ushort num_rows { get; set; }
+        public ushort num_columns { get; set; }
         public double distance { get; set; }
         public string glovebox_id { get; set; }
 
@@ -1890,7 +1908,7 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "x";
+            this.Table = "holdup_config_rec";
             this.ps.Add(new DBParamEntry("num_rows", num_rows));
             this.ps.Add(new DBParamEntry("num_columns", num_columns));
             this.ps.Add(new DBParamEntry("glovebox_id", glovebox_id));

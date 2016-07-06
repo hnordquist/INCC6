@@ -1305,6 +1305,258 @@ namespace AnalysisDefs
         }
     }
 
+	public class HoldupListImpl : IAPI<holdup_config_rec>
+    {
+        // the holdup_config_rec list 
+        List<holdup_config_rec> holdup_config;
+
+        public HoldupListImpl()
+        {
+            holdup_config = null;
+        }
+
+        public bool Has(holdup_config_rec hc)
+        {
+            return null != GetList().Find(il => { return hc.CompareTo(il) == 0; });
+        }
+        public bool Has(string name)
+        {
+            return null != GetList().Find(il => { return string.Compare(name, il.glovebox_id, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+
+        public List<holdup_config_rec> GetMatch(Predicate<holdup_config_rec> match)
+        {
+            return GetList().FindAll(match);
+        }
+
+        public holdup_config_rec Get(string name)
+        {
+            return GetList().Find(il => { return string.Compare(name, il.glovebox_id, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+        public holdup_config_rec Get(Predicate<holdup_config_rec> match)
+        {
+            return GetList().Find(match);
+        }
+
+        public holdup_config_rec GetDefault()
+        {
+            holdup_config_rec hc = Get();
+            if (hc == null)
+            {
+                hc = new holdup_config_rec();
+                GetList().Add(hc);
+                Set(hc);
+            }
+            return hc;
+        }
+
+        public static holdup_config_rec GetHoldupByRow(DataRow dr, bool resultsSubset = false)
+        {
+            holdup_config_rec hc = new holdup_config_rec();
+            hc.distance = DB.Utils.DBDouble(dr["distance"]);
+            hc.num_columns = DB.Utils.DBUInt16(dr["num_columns"]);
+            hc.num_rows = DB.Utils.DBUInt16(dr["num_rows"]);
+            hc.glovebox_id = dr["glovebox_id"].ToString();
+            return hc;
+        }
+
+		/// <summary>
+		/// Load an in-memory list from the database
+		/// </summary>
+		/// <returns>List of holdup_config_rec</returns>
+        public List<holdup_config_rec> GetList()
+        {
+            if (holdup_config == null)
+            {
+                holdup_config = new List<holdup_config_rec>();
+                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.HoldupConfigs);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    holdup_config_rec iso = GetHoldupByRow(dr);
+                    holdup_config.Add(iso);
+                }
+                if (holdup_config.Count < 1) // if the list was not loaded in the foreach above
+                    holdup_config.Add(new holdup_config_rec()); // add the default holdup_config_rec instance
+            }
+            return holdup_config;
+        }
+
+        public holdup_config_rec Get()
+        {
+             return null;
+        }
+
+		/// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+			holdup_config = null;
+			GetList();
+        }
+
+        public void Replace(holdup_config_rec hc)
+        {
+            holdup_config_rec i = Get(hc.glovebox_id);
+            hc.CopyTo(i);
+        }
+        private DB.holdup_config_rec hcdb;
+
+		/// <summary>
+		/// Insert or update an holdup_config_rec definition in the database
+		/// </summary>
+		/// <param name="hc">The holdup_config_rec instance</param>
+		/// <returns>The unique database key for the record</returns>
+        public long Set(holdup_config_rec hc)
+        {
+            long id = -1;
+            if (hc.modified)
+            {
+                if (hcdb == null)
+                    hcdb = new DB.holdup_config_rec();
+                id = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a holdup_config_rec Id {0} ({1})", hc.glovebox_id, id);
+                if (id >= 0) hc.modified = false;                
+            }
+            return id;
+        }
+
+        public long SetList(List<holdup_config_rec> vals = null)
+        {
+            hcdb = new DB.holdup_config_rec();
+            if (vals != null)
+            {
+                long updated = 0;
+                foreach (holdup_config_rec i in vals)
+                {
+                    try
+                    {
+                        updated += hcdb.Update(i.glovebox_id, i.ToDBElementList());
+                    }
+                    catch (Exception e)
+                    {
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
+                    }
+                }
+                holdup_config = vals;
+                return updated;
+            }
+            else // an empty list implies writing the in-memory list to the database 
+            {
+                long res = 0;
+                if (holdup_config == null)
+                {
+                    int count = GetList().Count;
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} holdup_config initially from DB", count);
+					return res; // nothing to write
+                }               
+
+                try
+                {
+                    foreach (holdup_config_rec hc in holdup_config)
+                    {
+                        if (hc.modified)
+                        {
+                            res = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created holdup_config_rec {0} ({1})", hc.glovebox_id, res);
+                            if (res >= 0) 
+							{
+								res++; hc.modified = false;
+							}
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
+                }
+                return res;
+            }
+        }
+
+		/// <summary>
+		/// Delete a holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="hc">The holdup_config_rec instance subject to deletion</param>
+		/// <returns>true iff deleted</returns>
+        public bool Delete(holdup_config_rec hc)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            if (db.Delete(hc.glovebox_id))
+                return holdup_config.Remove(hc);
+            else
+                return false;
+        }
+
+		/// <summary>
+		/// Delete a holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="name">The holdup_config_rec instance subject to deletion</param>
+		/// <returns>true iff deleted</returns>
+        public bool Delete(string name)
+        {
+           holdup_config_rec i = Get(name);
+           return Delete(i);
+        }
+
+
+		/// <summary>
+		/// Delete a list of holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="hcl">The list</param>
+		/// <returns>true iff all deleted</returns>
+        public bool Delete(List<holdup_config_rec> hcl)
+        {
+            bool res = false;
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            foreach (holdup_config_rec hc in hcl)
+            {
+                if (db.Delete(hc.glovebox_id))
+                    res = res && holdup_config.Remove(hc);
+                else
+                    res = false;
+            }
+            return res;
+        }
+
+		/// <summary>
+		///  Change the "id" (name) of a holdup_config_rec in the database 
+		/// </summary>
+		/// <param name="old">existing "id"</param>
+		/// <param name="NewId">new "id"</param>
+		/// <returns></returns>
+        public bool Rename(string OldId, string NewId)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            return db.Update(db.PrimaryKey(OldId), NewId);
+        }
+
+
+        /// <summary>
+        /// Revert this holdup_config_rec on in-memory list back to DB values
+        /// </summary>
+        /// <param name="hc">The holdup_config_rec instance subject to reversion</param>
+        /// <returns>true iff reverted</returns>
+        public bool Revert(holdup_config_rec hc)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            DataTable dt = db.GetRows(hc.glovebox_id);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow drl = dt.Rows[0];
+                holdup_config_rec lhc = GetHoldupByRow(drl);
+                hc.Copy(lhc);
+                hc.modified = false;
+                return true;
+            }
+            return false;
+        }
+
+        
+    }
+
     public class  cm_pu_ratio_Impl : IAPI<INCCAnalysisParams.cm_pu_ratio_rec>
     {
 
@@ -2924,6 +3176,7 @@ namespace AnalysisDefs
             aasParameters = new AASParamsImpl();
             HVParameters = new HVParamsImpl();
             cm_pu_ratioparams = new cm_pu_ratio_Impl();
+            holdup_configparams = new HoldupListImpl();
         }
 
         public static string MakeFrag(bool good)
@@ -3499,6 +3752,14 @@ namespace AnalysisDefs
             }
         }
 
+		private HoldupListImpl holdup_configparams;
+        public HoldupListImpl HoldupConfigParameters
+        {
+            get
+            {
+                return holdup_configparams;
+            }
+        }
         public HVParamsImpl HVParameters { get; set; }
 
         /// <summary>
