@@ -1380,8 +1380,6 @@ namespace NCCTransfer
 						object o = l[0].Value;
 						collar_detector_rec rec = MakeAFake((collar_detector_rec)o, sel.detectorid, sel.material);
                         DetectorMaterialMethod mf1 = new DetectorMaterialMethod(sel.material, sel.detectorid, INCC.COLLAR_DETECTOR_SAVE_RESTORE); mf1.extra = mode;
-                        //idcf.DetectorMaterialMethodParameters.Add(mf1, rec);
-                        //ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
                         k1 = new KeyValuePair<DetectorMaterialMethod, object>(mf1, rec);
 					}
 					else
@@ -2554,6 +2552,7 @@ namespace NCCTransfer
                         cid.total_rods = newres.dcl_total_rods;
                         cid.total_poison_rods = newres.dcl_total_poison_rods;
                         cid.poison_percent = new Tuple(newres.dcl_poison_percent);
+                        cid.rod_type = newres.methodParamsC.poison_rod_type[0];
                         cid.modified = true;
 
                         List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();  // what do we do with these, where is the collar item id list?
@@ -2581,17 +2580,25 @@ namespace NCCTransfer
                         newres.methodParams.inner_ring_efficiency = oldres.de_inner_ring_efficiency_res;
                         newres.methodParams.outer_ring_efficiency = oldres.de_outer_ring_efficiency_res;
                     }
-                    else 
+                    else if (r is results_tm_bkg_rec)
                     {
-                        if (r is results_tm_bkg_rec)
-                        {
-                            mlogger.TraceEvent(LogLevels.Warning, 34062, ("todo: Transferring method results for " + r.GetType().ToString()));  // todo: tm bkg 
-                            results_tm_bkg_rec oldres = (results_tm_bkg_rec)r;
-                            //INCCMethodResults.results_tm_bkg_rec newres =
-                            //    (INCCMethodResults.results_tm_bkg_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod., true);
-                        }
-                        else mlogger.TraceEvent(LogLevels.Warning, 34040, ("todo: Transferring method results for " + r.GetType().ToString())); // todo: complete the list
+                        mlogger.TraceEvent(LogLevels.Warning, 34062, ("Transferring method results for " + r.GetType().ToString()));
+                        results_tm_bkg_rec oldres = (results_tm_bkg_rec)r;
+                        //INCCMethodResults.results_tm_bkg_rec newres =
+                        //    (INCCMethodResults.results_tm_bkg_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod., true);
+                        //newres.methodParams.Singles.v = oldres.results_tm_singles_bkg;
+                        //newres.methodParams.Singles.err = oldres.results_tm_singles_bkg_err;
+                        //newres.methodParams.Zeros.v = oldres.results_tm_zeros_bkg;
+                        //newres.methodParams.Zeros.err = oldres.results_tm_zeros_bkg_err;
+                        //newres.methodParams.Ones.v = oldres.results_tm_ones_bkg;
+                        //newres.methodParams.Ones.err = oldres.results_tm_ones_bkg_err;
+                        //newres.methodParams.Twos.v = oldres.results_tm_twos_bkg;
+                        //newres.methodParams.Twos.err = oldres.results_tm_twos_bkg_err;                        
                     }
+				    else 
+                    {
+                        mlogger.TraceEvent(LogLevels.Warning, 34040, ("todo: Transferring method results for " + r.GetType().ToString())); // todo: complete the list
+					}
                 }
 
             }

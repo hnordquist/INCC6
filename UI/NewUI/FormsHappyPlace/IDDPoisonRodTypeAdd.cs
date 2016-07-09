@@ -26,55 +26,71 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-	using NC = NCC.CentralizedState;
-    public partial class IDDGloveboxEdit : Form
+    using NC = NCC.CentralizedState;
+
+    public partial class IDDPoisonRodTypeAdd : Form
     {
-        public IDDGloveboxEdit()
+
+        poison_rod_type_rec model;
+
+        public IDDPoisonRodTypeAdd()
         {
             InitializeComponent();
-			RefreshHCCombo();
+            RefreshCombo();
         }
-        void RefreshHCCombo()
+
+
+        void RefreshCombo()
         {
             // Populate the combobox in the selector panel
-            GloveboxIdComboBox.Items.Clear();
-			List<holdup_config_rec> list = NC.App.DB.HoldupConfigParameters.GetList();
-            foreach (holdup_config_rec hc in list)
+            CurrentPoisonRodTypesComboBox.Items.Clear();
+            foreach (poison_rod_type_rec p in NC.App.DB.PoisonRods.GetList())
             {
-				GloveboxIdComboBox.Items.Add(hc.glovebox_id);
+                CurrentPoisonRodTypesComboBox.Items.Add(p.rod_type);
             }
         }
-        private void GloveboxIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void CurrentPoisonRodTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-			 //GloveboxIdTextBox.Text = 
-			 //NumRowsTextBox.Text = 
-			 //NumColsTextBox.Text = 
-			 //DistanceTextBox =
-        }
-
-        private void NumRowsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NumColsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void DistanceTextBox_TextChanged(object sender, EventArgs e)
-        {
-
+            model = new poison_rod_type_rec(NC.App.DB.PoisonRods.Get((string)CurrentPoisonRodTypesComboBox.SelectedItem));
+            if (model != null)
+            {
+                DefaultPoisonAbsorptionTextBox.Text = model.absorption_factor.ToString("F3");
+                PoisonRodTypeTextBox.Text = model.rod_type;
+            }
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(PoisonRodTypeTextBox.Text))
+            {
+                DialogResult = DialogResult.Cancel;
+                return;
+            }
 
+            if (model == null)
+            {
+                model = new poison_rod_type_rec();
+                DefaultPoisonAbsorptionTextBox_Leave(DefaultPoisonAbsorptionTextBox, null);
+                PoisonRodTypeTextBox_Leave(PoisonRodTypeTextBox, null);
+            }
+            if (model != null && model.modified)
+            {
+                if (NC.App.DB.PoisonRods.Has(model))  // it is already there, nothing to do, user must select cancel (INCC5-style) to close
+                {
+                    return;
+                }
+                else
+                {
+                    NC.App.DB.PoisonRods.Set(model);
+                    NC.App.DB.PoisonRods.Refresh();
+                    DialogResult = DialogResult.OK;
+                    RefreshCombo();
+                }
+            }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -86,5 +102,25 @@ namespace NewUI
         {
 
         }
-    }
+
+        private void DefaultPoisonAbsorptionTextBox_Leave(object sender, EventArgs e)
+        { 
+            if (model != null)
+            {
+                double d = model.absorption_factor;
+                bool modified = Format.ToDbl(((TextBox)sender).Text, ref d);
+                if (modified) { model.absorption_factor = d; model.modified = true; }
+                ((TextBox)sender).Text = model.absorption_factor.ToString("F3");
+		    }
+        }
+
+		private void PoisonRodTypeTextBox_Leave(object sender, EventArgs e)
+		{
+            if (model != null && !model.rod_type.Equals(((TextBox)sender).Text))
+            {
+                model.rod_type = ((TextBox)sender).Text;
+                model.modified = true;
+            }
+		}
+	}
 }

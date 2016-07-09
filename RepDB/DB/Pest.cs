@@ -39,7 +39,8 @@ namespace DB
         Detectors, TestParams, NormParams, BackgroundParams, AASSetupParams, Facilities, MBAs, Materials, Items, Isotopics, DetectorTypes, CollarItems,
         Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams,
         AnalysisMethodSpecifiers,
-        CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams, Results, CompositeIsotopics, HoldupConfigs}
+        CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams, Results, CompositeIsotopics, HoldupConfigs, PoisonRods
+    }
 
     public class Persistence
     {
@@ -238,6 +239,10 @@ namespace DB
                     case Pieces.HoldupConfigs:
                         holdup_config_rec hc = new holdup_config_rec();
                         dt = hc.Get();
+                        break;
+                    case Pieces.PoisonRods:
+                        poison_rod_type_rec prt = new poison_rod_type_rec();
+                        dt = prt.Get();
                         break;
                 }
             }

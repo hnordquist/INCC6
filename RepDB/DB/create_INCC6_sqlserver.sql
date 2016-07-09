@@ -953,6 +953,12 @@ CREATE TABLE collar_data_entry(
 	[total_poison_rods] float NULL
 );
 GO
+CREATE TABLE poison_rod_type_rec(
+	[id] INTEGER IDENTITY Primary Key,
+	[poison_rod_type] nvarchar,
+	[poison_absorption_fact] nvarchar
+);
+GO
 CREATE INDEX  alpha_beta_recixdid on alpha_beta_rec(detector_id);
 GO
 CREATE INDEX LMHWParamsixdid on LMHWParams(detector_id);

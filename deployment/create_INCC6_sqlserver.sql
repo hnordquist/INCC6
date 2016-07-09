@@ -953,6 +953,12 @@ CREATE TABLE collar_data_entry(
 	[total_poison_rods] float NULL
 );
 GO
+CREATE TABLE poison_rod_type_rec(
+	[id] INTEGER IDENTITY Primary Key,
+	[poison_rod_type] nvarchar NULL,
+	[poison_absorption_fact] float NULL
+);
+GO
 CREATE INDEX  alpha_beta_recixdid on alpha_beta_rec(detector_id);
 GO
 CREATE INDEX LMHWParamsixdid on LMHWParams(detector_id);
@@ -2091,4 +2097,6 @@ GO
 INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO
 INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
+GO
+INSERT INTO [poison_rod_type_rec] VALUES('G',0.647);
 GO

@@ -39,7 +39,6 @@ namespace NewUI
 
             // the stringified lists for the item combos
         List<string> mbas, isotopics, mats, strats, iocodes, invcodes;
-        List<ItemId> newIDs;
 
         // Flag set if user enters new data 
         bool NewContent = false;
@@ -68,7 +67,6 @@ namespace NewUI
 
         public IDDItemDataEntry()
         {
-            newIDs = new List<ItemId>();
             InitializeComponent();
             buildlists();
             DataGridViewColumnCollection dgvcc =  ItemIdDataGrid.Columns;
@@ -95,32 +93,36 @@ namespace NewUI
 
             c = (DataGridViewComboBoxColumn)dgvcc["InvChangeCode"];
             foreach (string s in invcodes)
-                c.Items.Add(s);
+                c.Items.Add(s);   
+            BuildRows();  
+        }
 
+        void BuildRows()
+        {
             DataGridViewRowCollection rows = ItemIdDataGrid.Rows;
             foreach (ItemId ito in NC.App.DB.ItemIds.GetList())
             {
                 string[] a = ToSimpleValueArray(ito);
                 int i = rows.Add(a);
-				rows[i].Cells[7].Tag = ito.declaredMass;
-				rows[i].Cells[8].Tag = ito.declaredUMass;
-				rows[i].Cells[9].Tag = ito.length;
-			}
+                rows[i].Cells[7].Tag = ito.declaredMass;
+                rows[i].Cells[8].Tag = ito.declaredUMass;
+                rows[i].Cells[9].Tag = ito.length;
+            }
 
             // Generate a copy of the ItemId string in case the user changes it so we can tell what is a new row and what is a name change
             for (int i = 0; i < rows.Count; i++)
             {
-				DataGridViewRow row = rows[i];
-				if (string.IsNullOrEmpty((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value))
-					continue;
-				else
-					// Set the row's Tag member to a copy of the ItemId string
-					row.Tag = string.Copy((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value);
+                DataGridViewRow row = rows[i];
+                if (string.IsNullOrEmpty((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value))
+                    continue;
+                else
+                    // Set the row's Tag member to a copy of the ItemId string
+                    row.Tag = string.Copy((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value);
             }
 
         }
 
-		string[] ToSimpleValueArray(ItemId ito)
+        string[] ToSimpleValueArray(ItemId ito)
 		{
 			string[] vals = new string[10];
 			vals[0] = ito.item;
@@ -146,24 +148,16 @@ namespace NewUI
                 foreach (DataGridViewRow row in ItemIdDataGrid.Rows)
                 {
                     newrow = false;
-                    //bool changedName = false;
-
                     // Grab the Item ID cell value 
-                    string i = (string)row.Cells[0].Value;
-
-                    if (i != null)
+                    string iname = (string)row.Cells[0].Value;
+                    if (iname != null)
                     {
-                        // See if this row's ItemId string was changed
-                        //if (row.Tag != null && i.Equals(row.Tag.ToString(), StringComparison.InvariantCultureIgnoreCase)) 
-                        //{
-                        //    changedName = true;
-                        //}
 
                         // Look for an entry in the DB for that Item ID
-                        ItemId iid = NC.App.DB.ItemIds.Get(d => String.Compare(d.item, i, false) == 0);
+                        ItemId iid = NC.App.DB.ItemIds.Get(d => string.Compare(d.item, iname, false) == 0);
                         if (iid == null)
                         {
-                            iid = new ItemId(i);  // Create a new object if there is no match.
+                            iid = new ItemId(iname);  // Create a new object if there is no match.
                             newrow = true;
                         }
 
@@ -231,7 +225,15 @@ namespace NewUI
 
 		private void DeleteBtn_Click(object sender, EventArgs e)
         {
-
+            List<ItemId> list = new List<ItemId>();
+            foreach (DataGridViewRow row in ItemIdDataGrid.SelectedRows)
+            {
+                ItemId iid = NC.App.DB.ItemIds.Get((string)row.Cells["Item"].Value);
+                if (iid != null)
+                    list.Add(iid);
+            }
+            NC.App.DB.ItemIds.Delete(list);
+            //I//temIdDataGrid.Rows.RemoveAt
         }
 
         private void ItemIdDataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)

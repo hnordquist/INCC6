@@ -25,14 +25,15 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using AnalysisDefs;
+using NCCConfig;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using NCCConfig;
 namespace NewUI
 {
-
+    
     using NC = NCC.CentralizedState;
     public partial class Preferences : Form
     {
@@ -108,6 +109,14 @@ namespace NewUI
 			UseINCC5IniLocLabel.Visible =  NC.App.AppContext.UseINCC5Ini;
 			Incc5IniFileLoc.Visible =  NC.App.AppContext.UseINCC5Ini;
 			incc5IniLoc.Visible = NC.App.AppContext.UseINCC5Ini;
+
+            bool lmmm = false;
+            Detector det = NCC.IntegrationHelpers.GetCurrentAcquireDetector();
+            lmmm = (det.Id.SRType == DetectorDefs.InstrType.LMMM);
+            PollPacket.Visible = lmmm;
+            PollTimer.Visible = lmmm;
+            label2.Visible = lmmm;
+            label3.Visible = lmmm;
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {

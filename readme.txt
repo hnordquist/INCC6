@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 12
-6.0.1.12 July 5, 2016 J. Longo
+6.0.1.12 July 11, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -72,6 +72,7 @@ See https://github.com/hnordquist/INCC6/issues
 Issues for basic INCC5/6 feature COMPLETION
 
 #84*	Implement Collar
+105*	Measurement, waiting for a neutron that never arrives (MCA-527)
 #101+   Coincidence matrix calculation needs completion
 #99+    Time interval summary incomplete
 #79+	Plot Norm, Plot Ver diagnostic tools

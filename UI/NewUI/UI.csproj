@@ -267,10 +267,10 @@
     <Compile Include="Unready\IDDCollarAcquire.Designer.cs">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDCollarData.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDCollarData.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarData.Designer.cs">
       <DependentUpon>IDDCollarData.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDCollarItemData.cs">
@@ -549,22 +549,22 @@
     <Compile Include="Unready\IDDPlotBiasMeasHistory.Designer.cs">
       <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodType.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodType.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodType.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodType.Designer.cs">
       <DependentUpon>IDDPoisonRodType.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodTypeAdd.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeAdd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodTypeAdd.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeAdd.Designer.cs">
       <DependentUpon>IDDPoisonRodTypeAdd.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodTypeDelete.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeDelete.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPoisonRodTypeDelete.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeDelete.Designer.cs">
       <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDReadRadRevFileWaitMsg.cs">
@@ -901,12 +901,6 @@
     <Compile Include="FormsHappyPlace\IDDCf252SinglesNorm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDDeleteItems.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDeleteItems.Designer.cs">
-      <DependentUpon>IDDDeleteItems.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDDetectorAdd.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1179,9 +1173,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCorrectionFactors.resx">
       <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDDeleteItems.resx">
-      <DependentUpon>IDDDeleteItems.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDetectorAdd.resx">
       <DependentUpon>IDDDetectorAdd.cs</DependentUpon>
     </EmbeddedResource>
@@ -1330,7 +1321,7 @@
     <EmbeddedResource Include="Unready\IDDCollarAcquire.resx">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCollarData.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarData.resx">
       <DependentUpon>IDDCollarData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDCollarItemData.resx">
@@ -1471,13 +1462,13 @@
     <EmbeddedResource Include="Unready\IDDPlotBiasMeasHistory.resx">
       <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPoisonRodType.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodType.resx">
       <DependentUpon>IDDPoisonRodType.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPoisonRodTypeAdd.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodTypeAdd.resx">
       <DependentUpon>IDDPoisonRodTypeAdd.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPoisonRodTypeDelete.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodTypeDelete.resx">
       <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReadRadRevFileWaitMsg.resx">

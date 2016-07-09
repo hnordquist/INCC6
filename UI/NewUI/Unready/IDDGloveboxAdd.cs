@@ -45,8 +45,7 @@ namespace NewUI
         {
             // Populate the combobox in the selector panel
             CurrentGloveboxIdsComboBox.Items.Clear();
-			List<holdup_config_rec> list = NC.App.DB.HoldupConfigParameters.GetList();
-
+			List<holdup_config_rec> list = NC.App.DB.HoldupConfigParameters.GetList();  
             foreach (holdup_config_rec hc in list)
             {
 				CurrentGloveboxIdsComboBox.Items.Add(hc.glovebox_id);
@@ -82,12 +81,12 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

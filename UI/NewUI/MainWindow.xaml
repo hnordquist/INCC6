@@ -42,7 +42,7 @@
                 <MenuItem Header="_Composite Isotopics..." Click="SetupCompositeIsotopicsClick" ToolTip="Enter, or read from disk, an item's composite isotopics." />
                 <Separator />
                 <MenuItem Header="_Item Data Entry..." Click="SetupItemDataEntryClick" ToolTip="Enter item data for later verification and holdup measurements."  IsEnabled="True"/>
-                <MenuItem Header="_Collar Item Data Entry..." Click="SetupCollarItemDataEntryClick" ToolTip="Enter collar-specific item data for later collar verification measurements." IsEnabled="False"/>
+                <MenuItem Header="_Collar Item Data Entry..." Click="SetupCollarItemDataEntryClick" ToolTip="Enter collar-specific item data for later collar verification measurements." IsEnabled="True"/>
             </MenuItem>
             <MenuItem Header="_Maintain">
                 <MenuItem Header="_Calibration...">
@@ -79,7 +79,7 @@
                 <MenuItem Header="_MBA Add/Delete..." Click="MaintainMBAAddDeleteClick"  IsEnabled="True"/>
                 <MenuItem Header="_Stratum Id Add/Delete..." Click="MaintainStratumIdAddDeleteClick" IsEnabled="True"/>
                 <MenuItem Header="_Material Type Add/Delete..." Click="MaintainMaterialTypeAddDeleteClick" IsEnabled="True"/>
-                <MenuItem Header="_Poison Rod Type Add/Delete..." Click="MaintainPoisonRodTypeAddDeleteClick" IsEnabled="False"/>
+                <MenuItem Header="_Poison Rod Type Add/Delete..." Click="MaintainPoisonRodTypeAddDeleteClick" IsEnabled="True"/>
                 <MenuItem Header="_Glovebox Add/Edit/Delete..." Click="MaintainGloveboxAddEditDeleteClick" IsEnabled="True"/>
                 <Separator />
                 <MenuItem Header="_Add-a-source Setup..." Click="MaintainAddASourceSetupClick" IsEnabled="False"/>

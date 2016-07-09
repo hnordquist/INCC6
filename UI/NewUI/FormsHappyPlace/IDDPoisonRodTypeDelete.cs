@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,30 +27,62 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
+    using NC = NCC.CentralizedState;
     public partial class IDDPoisonRodTypeDelete : Form
     {
+		void RefreshCombo()
+        {
+            // Populate the combobox in the selector panel
+            PoisonRodTypeComboBox.Items.Clear();
+			foreach(poison_rod_type_rec p in NC.App.DB.PoisonRods.GetList())
+			{
+				PoisonRodTypeComboBox.Items.Add(p.rod_type);
+			}
+            if (PoisonRodTypeComboBox.Items.Count > 0)
+			    PoisonRodTypeComboBox.SelectedIndex = 0;
+        }
+
+        poison_rod_type_rec target;
+
         public IDDPoisonRodTypeDelete()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            RefreshCombo();
         }
 
-        private void PoisonRodTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		private void PoisonRodTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            target = NC.App.DB.PoisonRods.Get(((ComboBox)sender).Text);
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+            if (target == null)
+                return;
+            poison_rod_type_rec pr = null;
+            try
+            {
+                pr = NC.App.DB.PoisonRods.Get(target.rod_type);
+            }
+            catch (InvalidOperationException)  // not there, it's new
+            { }
+            if (null != pr)
+            {
+                if (NC.App.DB.PoisonRods.Delete(target)) // removes from DB, and then from in-memory list
+                {
+                    target = null;
+                    RefreshCombo();
+                }
+            }
         }
+
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

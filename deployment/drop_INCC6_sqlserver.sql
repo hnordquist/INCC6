@@ -169,6 +169,8 @@ DROP TABLE [material_types];
 GO
 DROP TABLE [holdup_config_rec];
 GO
+DROP TABLE [poison_rod_type_rec];
+GO
 DROP TABLE [HVStatus];
 GO
 DROP TABLE [HVResult];

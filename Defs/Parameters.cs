@@ -1773,7 +1773,8 @@ namespace AnalysisDefs
         {
             length = new Tuple(1,0);
             item_id = string.Empty;
-            rod_type = string.Empty;
+            rod_type = @"G";
+            total_rods = 1;
             total_pu = new Tuple(); 
             depleted_u = new Tuple(); natural_u = new Tuple(); enriched_u = new Tuple(); total_u235 = new Tuple(); total_u238 = new Tuple(); poison_percent = new Tuple();
         }
@@ -1791,8 +1792,10 @@ namespace AnalysisDefs
         {
             length = new Tuple(1, 0);
             this.item_id = string.Copy(item);
-            rod_type = string.Empty;
-            total_pu = new Tuple(); depleted_u = new Tuple(); natural_u = new Tuple(); enriched_u = new Tuple(); total_u235 = new Tuple(); total_u238 = new Tuple(); poison_percent = new Tuple();
+            rod_type = @"G";
+            total_rods = 1;
+            total_pu = new Tuple();
+            depleted_u = new Tuple(); natural_u = new Tuple(); enriched_u = new Tuple(); total_u235 = new Tuple(); total_u238 = new Tuple(); poison_percent = new Tuple();
         }
 
         public static int Compare(CollarItemId x, CollarItemId y)
@@ -1859,6 +1862,7 @@ namespace AnalysisDefs
         }
         public holdup_config_rec()
         {
+			glovebox_id = string.Empty;
         }
 
 		public void CopyTo(holdup_config_rec hc) 
@@ -1913,6 +1917,72 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("num_columns", num_columns));
             this.ps.Add(new DBParamEntry("glovebox_id", glovebox_id));
             this.ps.Add(new DBParamEntry("distance", distance));
+        }
+
+    }
+
+    public class poison_rod_type_rec : ParameterBase, IComparable<poison_rod_type_rec>, IEquatable<poison_rod_type_rec>
+    {
+        public poison_rod_type_rec(poison_rod_type_rec src)
+        {
+            if (src == null)
+            {
+                absorption_factor = 0.647;
+                rod_type = string.Empty;
+                return;
+            }
+			absorption_factor = src.absorption_factor;
+            rod_type = string.Copy(src.rod_type);
+        }
+        public poison_rod_type_rec()
+        {
+            absorption_factor = 0.647;
+            rod_type = string.Empty;
+        }
+
+        public void CopyTo(poison_rod_type_rec tgt)
+        {
+ 			if (tgt == null)
+				return;
+			tgt.rod_type = string.Copy(rod_type);
+            tgt.absorption_factor = absorption_factor;
+            tgt.modified = true;
+        }
+
+        public void Copy(poison_rod_type_rec pr)
+        {
+            rod_type = string.Copy(pr.rod_type);
+            absorption_factor = pr.absorption_factor;
+            modified = true;
+        }
+
+        public double absorption_factor { get; set; }
+        public string rod_type { get; set; }
+
+        public static int Compare(poison_rod_type_rec x, poison_rod_type_rec y)
+        {
+            int res = x.rod_type.CompareTo(y.rod_type);
+            if (res == 0)
+                res = x.absorption_factor.CompareTo(y.absorption_factor);
+            return res;
+        }
+
+        public int CompareTo(poison_rod_type_rec other)
+        {
+            return Compare(this, other);
+        }
+
+        public bool Equals(poison_rod_type_rec other)
+        {
+            return CompareTo(other) == 0;
+        }
+
+        public override void GenParamList()
+        {
+            base.GenParamList();
+            this.Table = "poison_rod_type_rec";
+            this.ps.Add(new DBParamEntry("poison_absorption_fact", absorption_factor));
+            this.ps.Add(new DBParamEntry("poison_rod_type", rod_type));
         }
 
     }
