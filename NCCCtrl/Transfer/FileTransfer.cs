@@ -525,6 +525,8 @@ namespace NCCTransfer
 
         public XFerDetectorMaterialMethodMap DetectorMaterialMethodParameters = new XFerDetectorMaterialMethodMap();
 
+        public string Name { get; set; }
+
 		unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
 		{
 			bool result = false;
@@ -841,27 +843,91 @@ namespace NCCTransfer
 		unsafe new public bool Save(string path)
 		{
 			List<string> l = DetectorMaterialMethodParameters.GetDetectors;
-			mlogger.TraceInformation("{0} calibration sets to save off", l.Count);
-			int i = 0;
-			foreach (string det in l)
+			mlogger.TraceEvent(LogLevels.Verbose, 33154, "{0} calibration set{1} to save off", l.Count, (l.Count != 1 ? "s" : string.Empty));
+			int i = 0; int count = 0;
+            foreach (string det in l)
 			{
 				string s = CleansePotentialFilename(det);
 				Path = System.IO.Path.Combine(path, s + ".cal");
 				FileStream stream = File.Create(Path);
 				BinaryWriter bw = new BinaryWriter(stream);
 				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.CALIBRATION_SAVE_RESTORE));
-				IEnumerator iter = DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator(det);
-				while (iter.MoveNext())
-				{
-					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
-					WriteAM(rec, bw);  // URGENT: collar etc. finish this byte-level binary write for each method and make sure it is in the right order
-				}
-				bw.Close();
+                IEnumerator miter = DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator(det);
+                while (miter.MoveNext())  // for a named detector, for each Material do this:
+                {
+                    analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)miter.Current).Value;
+                    WriteAM(rec, bw); count++;
+                    IEnumerator iiter = DetectorMaterialMethodParameters.GetMethodEnumerator(((KeyValuePair<DetectorMaterialMethod, object>)miter.Current).Key.detector_id, (((KeyValuePair<DetectorMaterialMethod, object>)miter.Current).Key.item_type));
+                    if (iiter == null)
+                        continue;
+                    while (iiter.MoveNext())             // todo: doesn't handle weighted multiplicity
+                    {
+                        int cam = INCCKnew.OldTypeToOldMethodId(iiter.Current);
+                        switch (cam)
+                        {                
+                            case INCC.METHOD_CALCURVE:
+                                WriteCalCurve((cal_curve_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_ACTIVE:
+                                WriteActiveCalCurve((active_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_AKNOWN:
+                                WriteKA((known_alpha_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_MKNOWN:
+                                WriteKM((known_m_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_MULT:
+                                WriteMul((multiplicity_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                                WriteDE((de_mult_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_ACTPAS:
+                                WriteActivePassive((active_passive_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
+                                WriteCollarDet((collar_detector_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.COLLAR_SAVE_RESTORE:
+                                WriteCollar((collar_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.COLLAR_K5_SAVE_RESTORE:
+                                WriteCollarK5((collar_k5_rec)iiter.Current, bw); count++;
+                                break;
+                            // collar detector save restore mode 0
+                            //    collar detector
+                            // collar detector save restore mode 1
+                            //    collar detector
+                            // COLLAR_SAVE_RESTORE mode 0
+                            //    collar
+                            // COLLAR_SAVE_RESTORE mode 1
+                            //    collar
+                            // COLLAR_K5_SAVE_RESTORE mode 0
+                            //    k5 
+                            // COLLAR_K5_SAVE_RESTORE mode 1
+                            //    k5
+                            case INCC.METHOD_ADDASRC:
+                                WriteAAS((add_a_source_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_ACTIVE_MULT:
+                                WriteActiveMul((active_mult_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_CURIUM_RATIO:
+                                WriteCR((curium_ratio_rec)iiter.Current, bw); count++;
+                                break;
+                            case INCC.METHOD_TRUNCATED_MULT:
+                                WriteTRMul((truncated_mult_rec)iiter.Current, bw); count++;
+                                break;
+                        }
+                    }
+                }
+                bw.Close();
 				bw.Dispose();
-				mlogger.TraceInformation("{0} Transfer calibration {1}, saved as {2}", i, det, Path);
+				mlogger.TraceInformation("{0} calibration parameters, saved to {1}", det, Path);
 				i++;
 			}
-			return false;
+			return count > 0;
 		}
 
 		unsafe void WriteAM(analysis_method_rec rec, BinaryWriter bw)
@@ -911,7 +977,16 @@ namespace NCCTransfer
 			bw.Write((byte)INCC.METHOD_ACTIVE);
 			bw.Write(zb, 0, sz);
         }
-		unsafe void WriteAAS(add_a_source_rec rec, BinaryWriter bw)
+        unsafe void WriteDE(de_mult_rec rec, BinaryWriter bw)
+        {
+            int sz = sizeof(de_mult_rec);
+            de_mult_rec p = rec;
+            byte* bytes = (byte*)&p;
+            byte[] zb = TransferUtils.GetBytes(bytes, sz);
+            bw.Write((byte)INCC.DUAL_ENERGY_MULT_SAVE_RESTORE);
+            bw.Write(zb, 0, sz);
+        }
+        unsafe void WriteAAS(add_a_source_rec rec, BinaryWriter bw)
 		{
 			int sz = sizeof(add_a_source_rec);
 			add_a_source_rec p = rec;
@@ -950,16 +1025,34 @@ namespace NCCTransfer
 			bw.Write(zb, 0, sz);
         }
 
-		unsafe void WriteCollar(active_passive_rec rec, BinaryWriter bw)
+		unsafe void WriteCollar(collar_rec rec, BinaryWriter bw)
 		{
-			int sz = sizeof(active_passive_rec);
-			active_passive_rec p = rec;
+			int sz = sizeof(collar_rec);
+            collar_rec p = rec;
 			byte* bytes = (byte*)&p;
 			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
-			bw.Write((byte)INCC.METHOD_COLLAR);
+			bw.Write((byte)INCC.COLLAR_SAVE_RESTORE);
 			bw.Write(zb, 0, sz);
         }
-		unsafe void WriteCR(curium_ratio_rec rec, BinaryWriter bw)
+        unsafe void WriteCollarK5(collar_k5_rec rec, BinaryWriter bw)
+        {
+            int sz = sizeof(collar_k5_rec);
+            collar_k5_rec p = rec;
+            byte* bytes = (byte*)&p;
+            byte[] zb = TransferUtils.GetBytes(bytes, sz);
+            bw.Write((byte)INCC.COLLAR_K5_SAVE_RESTORE);
+            bw.Write(zb, 0, sz);
+        }
+        unsafe void WriteCollarDet(collar_detector_rec rec, BinaryWriter bw)
+        {
+            int sz = sizeof(collar_detector_rec);
+            collar_detector_rec p = rec;
+            byte* bytes = (byte*)&p;
+            byte[] zb = TransferUtils.GetBytes(bytes, sz);
+            bw.Write((byte)INCC.COLLAR_DETECTOR_SAVE_RESTORE);
+            bw.Write(zb, 0, sz);
+        }
+        unsafe void WriteCR(curium_ratio_rec rec, BinaryWriter bw)
 		{
 			int sz = sizeof(curium_ratio_rec);
 			curium_ratio_rec p = rec;
