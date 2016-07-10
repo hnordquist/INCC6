@@ -51,10 +51,10 @@ namespace NCCTransfer
 
 		public static unsafe INCCInitialDataDetectorFile FromDetectors(List<Detector> dets)
 		{
-			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
-			foreach(Detector det in dets)
+            INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+            foreach (Detector det in dets)
 			{
-				detector_rec dr = new detector_rec();
+                detector_rec dr = new detector_rec();
 				byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
 				char[] a = det.Id.DetectorId.ToCharArray(0, Math.Min(det.Id.DetectorId.Length, INCC.MAX_DETECTOR_ID_LENGTH));
 				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
@@ -162,17 +162,18 @@ namespace NCCTransfer
 				aas.plc_steps_per_inch = aasp.plc_steps_per_inch;
 				aas.scale_conversion_factor = aasp.scale_conversion_factor;
 				iddf.AASParms.Add(aas);
-
 			}
+            return iddf;
+        }
 
-			return iddf;
-		}
+        public static unsafe List<INCCInitialDataCalibrationFile> CalibFromDetectors(List<Detector> dets)
+        {
+            List<INCCInitialDataCalibrationFile> list = new List<INCCInitialDataCalibrationFile>();
 
-		public static unsafe INCCInitialDataCalibrationFile CalibFromDetectors(List<Detector> dets)
-		{
-			INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
-			foreach(Detector det in dets)
+            foreach (Detector det in dets)
 			{
+                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+                idcf.Name = det.Id.DetectorId;
                 foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
                 {
                     INCCSelector se = new INCCSelector(det.Id.DetectorId, desc.Name);
@@ -252,8 +253,9 @@ namespace NCCTransfer
 						}                       
                     }					
 				}
+                list.Add(idcf);
 			}
-			return idcf;
+			return list;
 		}
 
 		unsafe static analysis_method_rec MoveAMR(INCCSelector se)
@@ -940,7 +942,7 @@ namespace NCCTransfer
             return am;
         }
 
-        private static int OldTypeToOldMethodId(object o)
+        public static int OldTypeToOldMethodId(object o)
         {
 			Type t = o.GetType();
             if (t.Equals(typeof(analysis_method_rec)))

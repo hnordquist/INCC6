@@ -65,34 +65,42 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+            NCCReporter.LMLoggers.LognLM applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
+            string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
             if (string.IsNullOrEmpty(dest))
 				return;
 			if (DetectorCurrentRadioButton.Checked)
 			{
 				List<Detector> l = new List<Detector>();
 				l.Add(Integ.GetCurrentAcquireDetector());
-				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
-				iddf.Save(dest);
+                INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+                iddf.Save(dest);
 			}
 			else if (DetectorAllRadioButton.Checked)
 			{
-				List<Detector> l = NC.App.DB.Detectors;				
-				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
-				iddf.Save(dest);
+				List<Detector> l = NC.App.DB.Detectors;
+                INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+                iddf.Save(dest);
 			}
 			else if (CalibrationCurrentRadioButton.Checked)
 			{
 				List<Detector> l = new List<Detector>();
 				l.Add(Integ.GetCurrentAcquireDetector());
-				INCCInitialDataCalibrationFile idcf = INCCKnew.CalibFromDetectors(l);
-				idcf.Save(dest);
-			}
-			else if (CalibrationAllRadioButton.Checked)
+                List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
+                if (lidcf.Count > 0)
+                    if (!lidcf[0].Save(dest))
+                        applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + lidcf[0].Name);
+
+            }
+            else if (CalibrationAllRadioButton.Checked)
 			{
 				List<Detector> l = NC.App.DB.Detectors;				
-				INCCInitialDataCalibrationFile idcf = INCCKnew.CalibFromDetectors(l);
-				idcf.Save(dest);
+				List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
+                foreach (INCCInitialDataCalibrationFile idcf in lidcf)
+                {
+                    if (!idcf.Save(dest))
+                        applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + idcf.Name);
+                }
 			}
             Close();
 		}

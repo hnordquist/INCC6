@@ -82,7 +82,7 @@ Issues for basic INCC5/6 feature COMPLETION
 #78+	Find Deming curve fitting tool replacement
 #69+	Present the proposed List Mode Config UI from DB enhancement
 #35+	Hold-up analysis required
-#32+    Implement INCC5 File > Save As/Export > Transfer and Initial Data
+#32+    Implement INCC5 File > Save As/Export > Transfer
 
 
 *HIGH Priority, +MEDIUM Priority
@@ -132,7 +132,7 @@ Closed issues
   38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
   34 Implement Composite Isotopics dlg and use
   33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
-  32 Implement INCC5 File > Save As/Export > Transfer and Initial Data (detector init data as of Jul 10, 2016)
+  32 Implement INCC5 File > Save As/Export > Initial Data (detector + calib init data as of Jul 10, 2016)
   31 Implement the INCC5 Reanalysis
   27 Cancel assay does not fully stop acquisition
   23 how to delete list mode detector? 
