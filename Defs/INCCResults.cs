@@ -512,7 +512,7 @@ namespace AnalysisDefs
                 if (mcr == null)
                     mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
 
-                hc = new holdup_config_rec();  // left unfinished in real code, only available on transfer op
+                hc = new holdup_config_rec(); // todo: implement the four glovebox dialogs
                 item = new ItemId(m.MeasurementId.Item);
                 // pu_date wiped out in item when was in measurement.
                 item.pu_date = m.Isotopics.pu_date;

@@ -203,7 +203,7 @@ namespace NCCTransfer
             BinaryReader reader;
             FileInfo fi;
 
-            mlogger.TraceEvent(LogLevels.Info, 33190, "Parsing the detector initial data  file {0}", source_path_filename);
+            mlogger.TraceEvent(LogLevels.Verbose, 33190, "Scanning the detector initial data file {0}", source_path_filename);
 
             try
             {
@@ -268,8 +268,8 @@ namespace NCCTransfer
                     TransferUtils.Copy(old_detector.electronics_id, 0, detector.electronics_id, 0, 9); // see struct dec
                 }
                 Detector.Add(detector);
-                mlogger.TraceEvent(LogLevels.Info, 33195, "Transferring the detector '{0}' data",
-                                 TransferUtils.str(detector.detector_id, INCC.MAX_DETECTOR_ID_LENGTH));
+                mlogger.TraceEvent(LogLevels.Info, 33195, "Transferring detector '{0}' data, from {1}",
+                                 TransferUtils.str(detector.detector_id, INCC.MAX_DETECTOR_ID_LENGTH), System.IO.Path.GetFileName(Path));
 
                 sz = Marshal.SizeOf(sr_parms);
                 los_bytos = TransferUtils.TryReadBytes(reader, sz);
@@ -532,7 +532,7 @@ namespace NCCTransfer
 			BinaryReader reader;
 			FileInfo fi;
 
-			mlogger.TraceEvent(LogLevels.Info, 33290, "Parsing the calibration initial data file {0}", source_path_filename);
+			mlogger.TraceEvent(LogLevels.Info, 33290, "Scanning the calibration initial data file {0}", System.IO.Path.GetFileName(source_path_filename));
 			try
 			{
 				fi = new System.IO.FileInfo(source_path_filename);
@@ -855,11 +855,6 @@ namespace NCCTransfer
 				{
 					analysis_method_rec rec = (analysis_method_rec)((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Value;
 					WriteAM(rec, bw);  // URGENT: collar etc. finish this byte-level binary write for each method and make sure it is in the right order
-					//WriteSRParms(i, bw);
-					//WriteBKGParms(i, bw);
-					//WriteNormParms(i, bw);
-					//WriteAASParms(i, bw);
-					//WriteTMBKGParms(i, bw);
 				}
 				bw.Close();
 				bw.Dispose();
@@ -879,6 +874,52 @@ namespace NCCTransfer
 			bw.Write(zb, 0, sz);
 		}
 
+		unsafe void WriteCalCurve(cal_curve_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(cal_curve_rec);
+			cal_curve_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_CALCURVE);
+			bw.Write(zb, 0, sz);
+        }
+
+		unsafe void WriteKA(known_alpha_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(known_alpha_rec);
+			known_alpha_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_AKNOWN);
+			bw.Write(zb, 0, sz);
+        }
+		unsafe void WriteKM(known_m_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(known_m_rec);
+			known_m_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_MKNOWN);
+			bw.Write(zb, 0, sz);
+        }
+		unsafe void WriteActiveCalCurve(active_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(active_rec);
+			active_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_ACTIVE);
+			bw.Write(zb, 0, sz);
+        }
+		unsafe void WriteAAS(add_a_source_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(add_a_source_rec);
+			add_a_source_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_ADDASRC);
+			bw.Write(zb, 0, sz);
+        }
 		unsafe void WriteMul(multiplicity_rec rec, BinaryWriter bw)
 		{
 			int sz = sizeof(multiplicity_rec);
@@ -889,7 +930,54 @@ namespace NCCTransfer
 			bw.Write(zb, 0, sz);
         }
 
-    }
+		unsafe void WriteActiveMul(active_mult_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(active_mult_rec);
+			active_mult_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_ACTIVE_MULT);
+			bw.Write(zb, 0, sz);
+        }
+
+		unsafe void WriteActivePassive(active_passive_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(active_passive_rec);
+			active_passive_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_ACTPAS);
+			bw.Write(zb, 0, sz);
+        }
+
+		unsafe void WriteCollar(active_passive_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(active_passive_rec);
+			active_passive_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_COLLAR);
+			bw.Write(zb, 0, sz);
+        }
+		unsafe void WriteCR(curium_ratio_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(curium_ratio_rec);
+			curium_ratio_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_CURIUM_RATIO);
+			bw.Write(zb, 0, sz);
+        }
+    	unsafe void WriteTRMul(truncated_mult_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(truncated_mult_rec);
+			truncated_mult_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write((byte)INCC.METHOD_TRUNCATED_MULT);
+			bw.Write(zb, 0, sz);
+        }
+	}
 
 	public class TransferSummary
 	{
@@ -922,7 +1010,7 @@ namespace NCCTransfer
             INCC.SaveResultsMask results_status;
             item_id_entry_rec item_id_entry;
 
-            mlogger.TraceEvent(LogLevels.Info, 33090, "Parsing the measurement transfer file {0}", source_path_filename);
+            mlogger.TraceEvent(LogLevels.Verbose, 33090, "Scanning the measurement transfer file {0}", source_path_filename);
 
             results_rec results = new results_rec();
             meas_id id = new meas_id();
@@ -979,11 +1067,13 @@ namespace NCCTransfer
                 TransferUtils.Copy(results.filename, 0, id.filename, 0, INCC.FILE_NAME_LENGTH);
                 TransferUtils.Copy(results.results_detector_id, 0, id.results_detector_id, 0, INCC.MAX_DETECTOR_ID_LENGTH);
 
-                mlogger.TraceEvent(LogLevels.Info, 33095, "Transferring the {0} measurement: {1}, detector {2}",
-                                            TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH),
-                                            INCC.DateTimeFrom(TransferUtils.str(id.meas_date, INCC.DATE_TIME_LENGTH), 
-                                            TransferUtils.str(id.meas_time, INCC.DATE_TIME_LENGTH)).ToString("yy.MM.dd HH:mm:ss.ff K"), // my IAEA format
-                                             TransferUtils.str(id.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH));
+                string fname = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
+                mlogger.TraceEvent(LogLevels.Info, 33095, "Transferring {0} measurement for {1} {2}, from {3}",
+                                            System.IO.Path.GetExtension(fname),
+                                            TransferUtils.str(id.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH),
+                                            INCC.DateTimeFrom(TransferUtils.str(id.meas_date, INCC.DATE_TIME_LENGTH),
+                                            TransferUtils.str(id.meas_time, INCC.DATE_TIME_LENGTH)).ToString("yy.MM.dd HH:mm:ss K"), // IAEA format
+                                             fname);
 
                 ///* get word defining which results are valid for this data set */
                 results_status = (INCC.SaveResultsMask)TransferUtils.ReadInt16(reader, "saved results");
@@ -1309,7 +1399,7 @@ namespace NCCTransfer
                 if (results.meas_option != INCC.OPTION_HOLDUP)
                 {
                     number_runs = TransferUtils.ReadUInt16(reader, "number of runs");
-                    mlogger.TraceEvent(LogLevels.Info, 33097, "Converting {0} INCC runs into cycles", number_runs);
+                    mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} INCC runs into cycles", number_runs);
                     run_rec run = new run_rec();
                     for (n = 0; n < number_runs; n++)
                     {
@@ -1339,7 +1429,7 @@ namespace NCCTransfer
                         for (int j = 0; j < INCC.MAX_ADDASRC_POSITIONS; j++)
                         {
                             number_runs = TransferUtils.ReadUInt16(reader, "number of AAS CF" + (j + 1).ToString() + " runs");
-                            mlogger.TraceEvent(LogLevels.Info, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
+                            mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
                             run_rec run = new run_rec();
                             for (n = 0; n < number_runs; n++)
                             {
@@ -2601,7 +2691,7 @@ namespace NCCTransfer
             BinaryReader reader;
             FileInfo fi;
 
-            mlogger.TraceEvent(LogLevels.Info, 37100, "Parsing a Radiation Review Measurement Data file {0}", source_path_filename);
+            mlogger.TraceEvent(LogLevels.Verbose, 37100, "Scanning the Radiation Review Measurement Data file {0}", source_path_filename);
 
             try
             {

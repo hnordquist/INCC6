@@ -133,7 +133,7 @@
             this.GloveboxIdTextBox.Name = "GloveboxIdTextBox";
             this.GloveboxIdTextBox.Size = new System.Drawing.Size(232, 20);
             this.GloveboxIdTextBox.TabIndex = 9;
-            this.GloveboxIdTextBox.TextChanged += new System.EventHandler(this.GloveboxIdTextBox_TextChanged);
+            this.GloveboxIdTextBox.Leave += new System.EventHandler(this.GloveboxIdTextBox_Leave);
             // 
             // NumRowsTextBox
             // 
@@ -141,7 +141,7 @@
             this.NumRowsTextBox.Name = "NumRowsTextBox";
             this.NumRowsTextBox.Size = new System.Drawing.Size(100, 20);
             this.NumRowsTextBox.TabIndex = 10;
-            this.NumRowsTextBox.TextChanged += new System.EventHandler(this.NumRowsTextBox_TextChanged);
+            this.NumRowsTextBox.Leave += new System.EventHandler(this.NumRowsTextBox_Leave);
             // 
             // NumColsTextBox
             // 
@@ -149,7 +149,7 @@
             this.NumColsTextBox.Name = "NumColsTextBox";
             this.NumColsTextBox.Size = new System.Drawing.Size(100, 20);
             this.NumColsTextBox.TabIndex = 11;
-            this.NumColsTextBox.TextChanged += new System.EventHandler(this.NumColsTextBox_TextChanged);
+            this.NumColsTextBox.Leave += new System.EventHandler(this.NumColsTextBox_Leave);
             // 
             // DistanceTextBox
             // 
@@ -157,7 +157,7 @@
             this.DistanceTextBox.Name = "DistanceTextBox";
             this.DistanceTextBox.Size = new System.Drawing.Size(100, 20);
             this.DistanceTextBox.TabIndex = 12;
-            this.DistanceTextBox.TextChanged += new System.EventHandler(this.DistanceTextBox_TextChanged);
+            this.DistanceTextBox.Leave += new System.EventHandler(this.DistanceTextBox_Leave);
             // 
             // IDDGloveboxAdd
             // 

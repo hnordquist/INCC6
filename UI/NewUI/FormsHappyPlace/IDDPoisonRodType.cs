@@ -30,22 +30,28 @@ using System.Windows.Forms;
 
 namespace NewUI
 {
-    public partial class IDDImportMeas : Form
+    public partial class IDDPoisonRodType : Form
     {
-        public IDDImportMeas()
+        public IDDPoisonRodType()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
-        private void PrintBtn_Click(object sender, EventArgs e)
+        private void AddPoisonRodTypeBtn_Click(object sender, EventArgs e)
         {
+            IDDPoisonRodTypeAdd f = new IDDPoisonRodTypeAdd();
+            f.Show();
+        }
 
+        private void DeletePoisonRodTypeBtn_Click(object sender, EventArgs e)
+        {
+            IDDPoisonRodTypeDelete f = new IDDPoisonRodTypeDelete();
+            f.Show();
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -54,11 +60,6 @@ namespace NewUI
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

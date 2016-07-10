@@ -125,11 +125,9 @@ namespace NCCFile
         }
 
 
-        void Replay(Measurement m, ConstructedSource src)
+        void Replay(Measurement m, ConstructedSource src, string fname)
         {
-            ctrllog.TraceEvent(LogLevels.Info, 34071, "Replay " +  m.MeasOption.PrintName() + " measurement for detector " + m.Detector.Id.DetectorId + ", " + m.MeasurementId.MeasDateTime.ToString());
-            m.AcquireState.comment += " replay";
-            // todo: make sure assay type on measurement is not overridden by cmd line artifacts 
+            ctrllog.TraceEvent(LogLevels.Info, 34071, "Replay " +  m.MeasOption.PrintName() + " measurement for detector " + m.Detector.Id.DetectorId + ", " + m.MeasurementId.MeasDateTime.ToString() + ", from " + fname);
             NC.App.Opstate.Measurement = m;
             SRInstrument PseudoInstrument = new SRInstrument(m.Detector);  // psuedo LM until we can map from user or deduce from file content at run-time
             PseudoInstrument.id.source = ConstructedSource.INCCTransfer;
@@ -183,11 +181,10 @@ namespace NCCFile
             Instruments.All.Remove(PseudoInstrument);
         }
 
-        void PassThru(Measurement m) // preserve existing measurement without re-computing it
+        void PassThru(Measurement m, string fname) // preserve existing measurement without re-computing it
         {
-            ctrllog.TraceEvent(LogLevels.Info, 34072, "Preserving " +  m.MeasOption.PrintName() + " measurement for detector " + m.Detector.Id.DetectorId + ", " + m.MeasurementId.MeasDateTime.ToString());
+            ctrllog.TraceEvent(LogLevels.Info, 34072, "Preserving " +  m.MeasOption.PrintName() + " measurement for detector " + m.Detector.Id.DetectorId + ", " + m.MeasurementId.MeasDateTime.ToString() + ", from " + fname);
             NC.App.Opstate.Measurement = m;
-            m.AcquireState.comment += " pass-through";
             MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults.First().Value;
             // need to get alpha beta onto the summary too.
             mcr.AB.TransferIntermediates(m.Detector.AB);
@@ -321,9 +318,9 @@ namespace NCCFile
 						if (!supercool)
 							continue;
 						if (NC.App.AppContext.Replay)
-							Replay(k.Meas, ConstructedSource.INCCTransfer);
+							Replay(k.Meas, ConstructedSource.INCCTransfer, System.IO.Path.GetFileName(bar.Path));
 						else
-							PassThru(k.Meas);
+							PassThru(k.Meas, System.IO.Path.GetFileName(bar.Path));
 					}
 					if (NC.App.Opstate.IsQuitRequested)
 						goto enditall;

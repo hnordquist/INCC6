@@ -750,8 +750,8 @@ namespace AnalysisDefs
 
         public List<CollarItemId> GetList()
         {
-            //if (items == null)
-            //{
+            if (items == null)
+            {
             items = new List<CollarItemId>();
             DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CollarItems);
             foreach (DataRow dr in dt.Rows)
@@ -772,7 +772,7 @@ namespace AnalysisDefs
 
                 items.Add(ito);
             }
-            // }
+            }
             return items;
         }
 
@@ -1303,6 +1303,500 @@ namespace AnalysisDefs
             bool res = false;
             return res;
         }
+    }
+
+	public class HoldupListImpl : IAPI<holdup_config_rec>
+    {
+        // the holdup_config_rec list 
+        List<holdup_config_rec> holdup_config;
+
+        public HoldupListImpl()
+        {
+            holdup_config = null;
+        }
+
+        public bool Has(holdup_config_rec hc)
+        {
+            return null != GetList().Find(il => { return hc.CompareTo(il) == 0; });
+        }
+        public bool Has(string name)
+        {
+            return null != GetList().Find(il => { return string.Compare(name, il.glovebox_id, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+
+        public List<holdup_config_rec> GetMatch(Predicate<holdup_config_rec> match)
+        {
+            return GetList().FindAll(match);
+        }
+
+        public holdup_config_rec Get(string name)
+        {
+            return GetList().Find(il => { return string.Compare(name, il.glovebox_id, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+        public holdup_config_rec Get(Predicate<holdup_config_rec> match)
+        {
+            return GetList().Find(match);
+        }
+
+        public holdup_config_rec GetDefault()
+        {
+            holdup_config_rec hc = Get();
+            if (hc == null)
+            {
+                hc = new holdup_config_rec();
+                GetList().Add(hc);
+                Set(hc);
+            }
+            return hc;
+        }
+
+        public static holdup_config_rec GetHoldupByRow(DataRow dr, bool resultsSubset = false)
+        {
+            holdup_config_rec hc = new holdup_config_rec();
+            hc.distance = DB.Utils.DBDouble(dr["distance"]);
+            hc.num_columns = DB.Utils.DBUInt16(dr["num_columns"]);
+            hc.num_rows = DB.Utils.DBUInt16(dr["num_rows"]);
+            hc.glovebox_id = dr["glovebox_id"].ToString();
+            return hc;
+        }
+
+		/// <summary>
+		/// Load an in-memory list from the database
+		/// </summary>
+		/// <returns>List of holdup_config_rec</returns>
+        public List<holdup_config_rec> GetList()
+        {
+            if (holdup_config == null)
+            {
+                holdup_config = new List<holdup_config_rec>();
+                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.HoldupConfigs);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    holdup_config_rec iso = GetHoldupByRow(dr);
+                    holdup_config.Add(iso);
+                }
+            }
+            return holdup_config;
+        }
+
+        public holdup_config_rec Get()
+        {
+             return null;
+        }
+
+		/// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+			holdup_config = null;
+			GetList();
+        }
+
+        public void Replace(holdup_config_rec hc)
+        {
+            holdup_config_rec i = Get(hc.glovebox_id);
+            hc.CopyTo(i);
+        }
+        private DB.holdup_config_rec hcdb;
+
+		/// <summary>
+		/// Insert or update an holdup_config_rec definition in the database
+		/// </summary>
+		/// <param name="hc">The holdup_config_rec instance</param>
+		/// <returns>The unique database key for the record</returns>
+        public long Set(holdup_config_rec hc)
+        {
+            long id = -1;
+            if (hc.modified)
+            {
+                if (hcdb == null)
+                    hcdb = new DB.holdup_config_rec();
+                id = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a holdup_config_rec Id {0} ({1})", hc.glovebox_id, id);
+                if (id >= 0) hc.modified = false;                
+            }
+            return id;
+        }
+
+        public long SetList(List<holdup_config_rec> vals = null)
+        {
+            hcdb = new DB.holdup_config_rec();
+            if (vals != null)
+            {
+                long updated = 0;
+                foreach (holdup_config_rec i in vals)
+                {
+                    try
+                    {
+                        updated += hcdb.Update(i.glovebox_id, i.ToDBElementList());
+                    }
+                    catch (Exception e)
+                    {
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
+                    }
+                }
+                holdup_config = vals;
+                return updated;
+            }
+            else // an empty list implies writing the in-memory list to the database 
+            {
+                long res = 0;
+                if (holdup_config == null)
+                {
+                    int count = GetList().Count;
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} holdup_config initially from DB", count);
+					return res; // nothing to write
+                }               
+
+                try
+                {
+                    foreach (holdup_config_rec hc in holdup_config)
+                    {
+                        if (hc.modified)
+                        {
+                            res = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created holdup_config_rec {0} ({1})", hc.glovebox_id, res);
+                            if (res >= 0) 
+							{
+								res++; hc.modified = false;
+							}
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
+                }
+                return res;
+            }
+        }
+
+		/// <summary>
+		/// Delete a holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="hc">The holdup_config_rec instance subject to deletion</param>
+		/// <returns>true iff deleted</returns>
+        public bool Delete(holdup_config_rec hc)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            if (db.Delete(hc.glovebox_id))
+                return holdup_config.Remove(hc);
+            else
+                return false;
+        }
+
+		/// <summary>
+		/// Delete a holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="name">The holdup_config_rec instance subject to deletion</param>
+		/// <returns>true iff deleted</returns>
+        public bool Delete(string name)
+        {
+           holdup_config_rec i = Get(name);
+           return Delete(i);
+        }
+
+
+		/// <summary>
+		/// Delete a list of holdup_config_rec from the database and the in-memory list
+		/// </summary>
+		/// <param name="hcl">The list</param>
+		/// <returns>true iff all deleted</returns>
+        public bool Delete(List<holdup_config_rec> hcl)
+        {
+            bool res = false;
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            foreach (holdup_config_rec hc in hcl)
+            {
+                if (db.Delete(hc.glovebox_id))
+                    res = res && holdup_config.Remove(hc);
+                else
+                    res = false;
+            }
+            return res;
+        }
+
+		/// <summary>
+		///  Change the "id" (name) of a holdup_config_rec in the database 
+		/// </summary>
+		/// <param name="old">existing "id"</param>
+		/// <param name="NewId">new "id"</param>
+		/// <returns></returns>
+        public bool Rename(string OldId, string NewId)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            return db.Update(db.PrimaryKey(OldId), NewId);
+        }
+
+
+        /// <summary>
+        /// Revert this holdup_config_rec on in-memory list back to DB values
+        /// </summary>
+        /// <param name="hc">The holdup_config_rec instance subject to reversion</param>
+        /// <returns>true iff reverted</returns>
+        public bool Revert(holdup_config_rec hc)
+        {
+            DB.holdup_config_rec db = new DB.holdup_config_rec();
+            DataTable dt = db.GetRows(hc.glovebox_id);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow drl = dt.Rows[0];
+                holdup_config_rec lhc = GetHoldupByRow(drl);
+                hc.Copy(lhc);
+                hc.modified = false;
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public class PoisonRodListImpl : IAPI<poison_rod_type_rec>
+    {
+        // the poison_rod_type_rec list 
+        List<poison_rod_type_rec> poison_rod_types;
+
+        public PoisonRodListImpl()
+        {
+            poison_rod_types = null;
+        }
+
+        public bool Has(poison_rod_type_rec pr)
+        {
+            return null != GetList().Find(il => { return pr.CompareTo(il) == 0; });
+        }
+        public bool Has(string name)
+        {
+            return null != GetList().Find(il => { return string.Compare(name, il.rod_type, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+
+        public List<poison_rod_type_rec> GetMatch(Predicate<poison_rod_type_rec> match)
+        {
+            return GetList().FindAll(match);
+        }
+
+        public poison_rod_type_rec Get(string name)
+        {
+            return GetList().Find(il => { return string.Compare(name, il.rod_type, StringComparison.OrdinalIgnoreCase) == 0; });
+        }
+        public poison_rod_type_rec Get(Predicate<poison_rod_type_rec> match)
+        {
+            return GetList().Find(match);
+        }
+
+        public poison_rod_type_rec GetDefault()
+        {
+            poison_rod_type_rec pr = Get();
+            if (pr == null)
+            {
+                pr = new poison_rod_type_rec();
+                GetList().Add(pr);
+                Set(pr);
+            }
+            return pr;
+        }
+
+        public static poison_rod_type_rec GetRodByRow(DataRow dr, bool resultsSubset = false)
+        {
+            poison_rod_type_rec pr = new poison_rod_type_rec();
+            pr.absorption_factor = DB.Utils.DBDouble(dr["poison_absorption_fact"]);
+            pr.rod_type =dr["poison_rod_type"].ToString();
+            return pr;
+        }
+
+        /// <summary>
+        /// Load an in-memory list from the database
+        /// </summary>
+        /// <returns>List of poison_rod_type_rec</returns>
+        public List<poison_rod_type_rec> GetList()
+        {
+            if (poison_rod_types == null)
+            {
+                poison_rod_types = new List<poison_rod_type_rec>();
+                DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.PoisonRods);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    poison_rod_type_rec pr = GetRodByRow(dr);
+                    poison_rod_types.Add(pr);
+                }
+            }
+            return poison_rod_types;
+        }
+
+        public poison_rod_type_rec Get()
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Force subsequent list request to refresh directly from the database
+        /// </summary>
+        public void Refresh()
+        {
+            poison_rod_types = null;
+            GetList();
+        }
+
+        public void Replace(poison_rod_type_rec pr)
+        {
+            poison_rod_type_rec i = Get(pr.rod_type);
+            pr.CopyTo(i);
+        }
+        private DB.poison_rod_type_rec prdb;
+
+        /// <summary>
+        /// Insert or update an poison_rod_type_rec definition in the database
+        /// </summary>
+        /// <param name="pr">The poison_rod_type_rec instance</param>
+        /// <returns>The unique database key for the record</returns>
+        public long Set(poison_rod_type_rec pr)
+        {
+            long id = -1;
+            if (pr.modified)
+            {
+                if (prdb == null)
+                    prdb = new DB.poison_rod_type_rec();
+                id = prdb.Update(pr.rod_type, pr.ToDBElementList());
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a poison_rod_type_rec Id {0} ({1})", pr.rod_type, id);
+                if (id >= 0) pr.modified = false;
+            }
+            return id;
+        }
+
+        public long SetList(List<poison_rod_type_rec> vals = null)
+        {
+            prdb = new DB.poison_rod_type_rec();
+            if (vals != null)
+            {
+                long updated = 0;
+                foreach (poison_rod_type_rec i in vals)
+                {
+                    try
+                    {
+                        updated += prdb.Update(i.rod_type, i.ToDBElementList());
+                    }
+                    catch (Exception e)
+                    {
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
+                    }
+                }
+                poison_rod_types = vals;
+                return updated;
+            }
+            else // an empty list implies writing the in-memory list to the database 
+            {
+                long res = 0;
+                if (poison_rod_types == null)
+                {
+                    int count = GetList().Count;
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} poison_rod_types initially from DB", count);
+                    return res; // nothing to write
+                }
+
+                try
+                {
+                    foreach (poison_rod_type_rec pr in poison_rod_types)
+                    {
+                        if (pr.modified)
+                        {
+                            res = prdb.Update(pr.rod_type, pr.ToDBElementList());
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created poison_rod_types {0} ({1})", pr.rod_type, res);
+                            if (res >= 0)
+                            {
+                                res++; pr.modified = false;
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
+                }
+                return res;
+            }
+        }
+
+        /// <summary>
+        /// Delete a poison_rod_type_rec from the database and the in-memory list
+        /// </summary>
+        /// <param name="pr">The poison_rod_type_rec instance subject to deletion</param>
+        /// <returns>true iff deleted</returns>
+        public bool Delete(poison_rod_type_rec pr)
+        {
+            DB.poison_rod_type_rec db = new DB.poison_rod_type_rec();
+            if (db.Delete(pr.rod_type))
+                return poison_rod_types.Remove(pr);
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Delete a poison_rod_type_rec from the database and the in-memory list
+        /// </summary>
+        /// <param name="name">The poison_rod_type_rec instance subject to deletion</param>
+        /// <returns>true iff deleted</returns>
+        public bool Delete(string name)
+        {
+            poison_rod_type_rec i = Get(name);
+            return Delete(i);
+        }
+
+
+        /// <summary>
+        /// Delete a list of poison_rod_type_rec from the database and the in-memory list
+        /// </summary>
+        /// <param name="prl">The list</param>
+        /// <returns>true iff all deleted</returns>
+        public bool Delete(List<poison_rod_type_rec> prl)
+        {
+            bool res = false;
+            DB.poison_rod_type_rec db = new DB.poison_rod_type_rec();
+            foreach (poison_rod_type_rec pr in prl)
+            {
+                if (db.Delete(pr.rod_type))
+                    res = res && poison_rod_types.Remove(pr);
+                else
+                    res = false;
+            }
+            return res;
+        }
+
+        /// <summary>
+        ///  Change the "id" (name) of a poison_rod_type_rec in the database 
+        /// </summary>
+        /// <param name="old">existing "id"</param>
+        /// <param name="NewId">new "id"</param>
+        /// <returns></returns>
+        public bool Rename(string OldId, string NewId)
+        {
+            DB.poison_rod_type_rec db = new DB.poison_rod_type_rec();
+            return db.Update(db.PrimaryKey(OldId), NewId);
+        }
+
+
+        /// <summary>
+        /// Revert this poison_rod_type_rec on in-memory list back to DB values
+        /// </summary>
+        /// <param name="pr">The poison_rod_type_rec instance subject to reversion</param>
+        /// <returns>true iff reverted</returns>
+        public bool Revert(poison_rod_type_rec pr)
+        {
+            DB.poison_rod_type_rec db = new DB.poison_rod_type_rec();
+            DataTable dt = db.GetRows(pr.rod_type);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                DataRow drl = dt.Rows[0];
+                poison_rod_type_rec lpr = GetRodByRow(drl);
+                pr.Copy(lpr);
+                pr.modified = false;
+                return true;
+            }
+            return false;
+        }   
     }
 
     public class  cm_pu_ratio_Impl : IAPI<INCCAnalysisParams.cm_pu_ratio_rec>
@@ -2924,6 +3418,8 @@ namespace AnalysisDefs
             aasParameters = new AASParamsImpl();
             HVParameters = new HVParamsImpl();
             cm_pu_ratioparams = new cm_pu_ratio_Impl();
+            holdup_configparams = new HoldupListImpl();
+			poisonrods = new PoisonRodListImpl();
         }
 
         public static string MakeFrag(bool good)
@@ -3496,6 +3992,24 @@ namespace AnalysisDefs
             get
             {
                 return cm_pu_ratioparams;
+            }
+        }
+
+		private HoldupListImpl holdup_configparams;
+        public HoldupListImpl HoldupConfigParameters
+        {
+            get
+            {
+                return holdup_configparams;
+            }
+        }
+
+        private PoisonRodListImpl poisonrods;
+        public PoisonRodListImpl PoisonRods
+        {
+            get
+            {
+                return poisonrods;
             }
         }
 

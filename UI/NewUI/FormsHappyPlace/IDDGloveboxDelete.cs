@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,51 +26,61 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
-    public partial class IDDGloveboxAdd : Form
+	using NC = NCC.CentralizedState;
+
+	public partial class IDDGloveboxDelete : Form
     {
-        public IDDGloveboxAdd()
+        public IDDGloveboxDelete()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			RefreshHCCombo();
         }
-
-        private void CurrentGloveboxIdsComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        void RefreshHCCombo()
         {
-
+            // Populate the combobox in the selector panel
+            GloveboxIdComboBox.Items.Clear();
+			List<holdup_config_rec> list = NC.App.DB.HoldupConfigParameters.GetList();
+            foreach (holdup_config_rec hc in list)
+            {
+				GloveboxIdComboBox.Items.Add(hc.glovebox_id);
+            }
         }
-
-        private void GloveboxIdTextBox_TextChanged(object sender, EventArgs e)
+        holdup_config_rec target;
+        private void GloveboxIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void NumRowsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NumColsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void DistanceTextBox_TextChanged(object sender, EventArgs e)
-        {
-
+            target = NC.App.DB.HoldupConfigParameters.Get(((ComboBox)sender).Text);
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            if (target == null)
+                return;
+            holdup_config_rec m = null;
+            try
+            {
+                m = NC.App.DB.HoldupConfigParameters.Get(target.glovebox_id);
+            }
+            catch (InvalidOperationException)  // id not there, it's new
+            { }
+            if (null != m)
+            {
+                if (NC.App.DB.HoldupConfigParameters.Delete(target)) // removes from DB then from in-memory list, just like isotopics
+                {
+                    target = null;
+                    RefreshHCCombo();
+                }
+            }
 
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

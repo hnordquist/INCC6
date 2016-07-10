@@ -29,11 +29,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 
 namespace DB
 {
-
     public class AppContext
     {
 
@@ -692,7 +690,7 @@ namespace DB
             return db.Execute(sSQL);        }
     }
 
-    public class cm_pu_ratio_rec
+	public class cm_pu_ratio_rec
     {
         public cm_pu_ratio_rec()
         {
@@ -736,10 +734,226 @@ namespace DB
 
         public bool Delete(string Id)
         {
+            if (string.IsNullOrEmpty(Id))
+                return false;
             db.SetConnection();
-            string s = "DELETE FROM cm_pu_ratio_rec";
+            string s = "DELETE FROM cm_pu_ratio_rec where cm_id=" + SQLSpecific.QVal(Id);
             return db.Execute(s);
         }
+    }
+
+    public class holdup_config_rec
+    {
+        public holdup_config_rec()
+        {
+            db = new DB(false);
+        }
+
+        DB db;
+
+        public bool Has() // has at least one
+        {
+            DataTable dt = Get();
+            return dt.Rows.Count > 0;
+        }
+
+        public long Create(ElementList sParams)
+        {
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQL = "Insert into holdup_config_rec ";
+            sSQL += sParams.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("holdup_config_rec"));
+            return db.ExecuteTransactionID(sqlList);
+        }
+
+        public bool Update(ElementList sParams)
+        {
+            db.SetConnection();
+            string sSQL = "UPDATE holdup_config_rec SET ";
+            sSQL += sParams.ColumnEqValueList;
+            return db.Execute(sSQL);
+        }
+
+        public DataTable Get() // all of them
+        {
+            db.SetConnection();
+            string sSQL = "Select * FROM holdup_config_rec";
+            DataTable dt = db.DT(sSQL);
+            return dt;
+        }
+
+        public bool Delete(string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+                return false;
+            db.SetConnection();
+            string s = "DELETE FROM holdup_config_rec where glovebox_id = " + SQLSpecific.QVal(Id);
+            return db.Execute(s);
+        }
+
+		public long PrimaryKey(string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+                return -1;
+            db.SetConnection();
+            string s = "SELECT id FROM holdup_config_rec where glovebox_id = " + SQLSpecific.QVal(Id);
+            string r = db.Scalar(s);
+            long l = -1;
+            if (!long.TryParse(r, out l))
+                l = -1;
+            return l;
+        }
+
+		public bool Update(long Id, string NewId)
+        {
+            db.SetConnection();
+            string wh = " where glovebox_id = " + Id.ToString();
+            string sSQL1 = "UPDATE holdup_config_rec SET glovebox_id=" + SQLSpecific.QVal(NewId);
+            string sSQL = sSQL1 + wh;
+            return db.Execute(sSQL);
+        }
+
+        public long Update(string Name, ElementList sParams)
+        {
+            db.SetConnection();
+            DataTable dt = GetRows(Name); // must be unknown or at least one with same name because unique did not fire
+            if (dt != null)
+            {
+                string wh = " where glovebox_id = " + SQLSpecific.QVal(Name);
+                string sSQL = "UPDATE holdup_config_rec SET ";
+                sSQL += sParams.ColumnEqValueList + wh;
+                return db.Execute(sSQL) ? 0 : -1;
+            }
+            else  // totally new 
+            {
+                ArrayList sqlList = new ArrayList();
+                string sSQL = "Insert into holdup_config_rec ";
+                sSQL += sParams.ColumnsValues;
+                sqlList.Add(sSQL);
+                sqlList.Add(SQLSpecific.getLastID("holdup_config_rec"));
+                return db.ExecuteTransactionID(sqlList);
+            }
+        }
+
+        public DataTable GetRows(string Name)
+        {
+            string sSQL = "SELECT * "
+                  + " FROM holdup_config_rec"
+                  + " Where glovebox_id = " + SQLSpecific.QVal(Name);
+            DataTable dt = db.DT(sSQL);
+            if (dt.Rows.Count > 0) return dt;
+            else return null;
+        }
+
+    }
+
+    public class poison_rod_type_rec
+    {
+        public poison_rod_type_rec()
+        {
+            db = new DB(false);
+        }
+
+        DB db;
+
+        public bool Has() // has at least one
+        {
+            DataTable dt = Get();
+            return dt.Rows.Count > 0;
+        }
+
+        public long Create(ElementList sParams)
+        {
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQL = "Insert into poison_rod_type_rec ";
+            sSQL += sParams.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("poison_rod_type_rec"));
+            return db.ExecuteTransactionID(sqlList);
+        }
+
+        public bool Update(ElementList sParams)
+        {
+            db.SetConnection();
+            string sSQL = "UPDATE poison_rod_type_rec SET ";
+            sSQL += sParams.ColumnEqValueList;
+            return db.Execute(sSQL);
+        }
+
+        public DataTable Get() // all of them
+        {
+            db.SetConnection();
+            string sSQL = "Select * FROM poison_rod_type_rec";
+            DataTable dt = db.DT(sSQL);
+            return dt;
+        }
+
+        public bool Delete(string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+                return false;
+            db.SetConnection();
+            string s = "DELETE FROM poison_rod_type_rec where poison_rod_type=" + SQLSpecific.QVal(Id);
+            return db.Execute(s);
+        }
+
+        public long PrimaryKey(string Id)
+        {
+            if (string.IsNullOrEmpty(Id))
+                return -1;
+            db.SetConnection();
+            string s = "SELECT id FROM poison_rod_type_rec where poison_rod_type = " + SQLSpecific.QVal(Id);
+            string r = db.Scalar(s);
+            long l = -1;
+            if (!long.TryParse(r, out l))
+                l = -1;
+            return l;
+        }
+
+        public bool Update(long Id, string NewId)
+        {
+            db.SetConnection();
+            string wh = " where id = " + Id.ToString();
+            string sSQL1 = "UPDATE poison_rod_type_rec SET poison_rod_type=" + SQLSpecific.QVal(NewId);
+            string sSQL = sSQL1 + wh;
+            return db.Execute(sSQL);
+        }
+
+        public long Update(string Name, ElementList sParams)
+        {
+            db.SetConnection();
+            DataTable dt = GetRows(Name); // must be unknown or at least one with same name because unique did not fire
+            if (dt != null)
+            {
+                string wh = " where poison_rod_type = " + SQLSpecific.QVal(Name);
+                string sSQL = "UPDATE poison_rod_type_rec SET ";
+                sSQL += sParams.ColumnEqValueList + wh;
+                return db.Execute(sSQL) ? 0 : -1;
+            }
+            else  // totally new 
+            {
+                ArrayList sqlList = new ArrayList();
+                string sSQL = "Insert into poison_rod_type_rec ";
+                sSQL += sParams.ColumnsValues;
+                sqlList.Add(sSQL);
+                sqlList.Add(SQLSpecific.getLastID("poison_rod_type_rec"));
+                return db.ExecuteTransactionID(sqlList);
+            }
+        }
+
+        public DataTable GetRows(string Name)
+        {
+            string sSQL = "SELECT * "
+                  + " FROM poison_rod_type_rec"
+                  + " Where poison_rod_type = " + SQLSpecific.QVal(Name);
+            DataTable dt = db.DT(sSQL);
+            if (dt.Rows.Count > 0) return dt;
+            else return null;
+        }
+
     }
 
 }
