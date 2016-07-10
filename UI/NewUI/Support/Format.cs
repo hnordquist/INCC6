@@ -188,6 +188,17 @@ namespace NewUI
             return false;
         }
 
+        static public bool ToUShort(string s, ref ushort TargetValue)
+        {
+            ushort NewValue;
+            if (ushort.TryParse(s, out NewValue) && NewValue != TargetValue)
+            {
+                TargetValue = NewValue;  // any range checking can go here
+                return true;
+            }
+            return false;
+        }
+
 
         /// <summary>
         /// Convert a string to a non-negative integer, if possible.

@@ -1858,7 +1858,10 @@ namespace AnalysisDefs
     {
         public holdup_config_rec(holdup_config_rec src)
         {
-            num_rows = src.num_rows; num_columns = src.num_columns; distance = src.distance; glovebox_id = string.Copy(src.glovebox_id);
+            if (src == null)
+                return;
+            num_rows = src.num_rows; num_columns = src.num_columns;
+            distance = src.distance; glovebox_id = string.Copy(src.glovebox_id);
         }
         public holdup_config_rec()
         {

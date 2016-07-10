@@ -32,9 +32,10 @@ using AnalysisDefs;
 namespace NewUI
 {
 	using NC = NCC.CentralizedState;
-    public partial class IDDGloveboxEdit : Form
+
+	public partial class IDDGloveboxDelete : Form
     {
-        public IDDGloveboxEdit()
+        public IDDGloveboxDelete()
         {
             InitializeComponent();
 			RefreshHCCombo();
@@ -49,31 +50,31 @@ namespace NewUI
 				GloveboxIdComboBox.Items.Add(hc.glovebox_id);
             }
         }
+        holdup_config_rec target;
         private void GloveboxIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-			 //GloveboxIdTextBox.Text = 
-			 //NumRowsTextBox.Text = 
-			 //NumColsTextBox.Text = 
-			 //DistanceTextBox =
-        }
-
-        private void NumRowsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void NumColsTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void DistanceTextBox_TextChanged(object sender, EventArgs e)
-        {
-
+            target = NC.App.DB.HoldupConfigParameters.Get(((ComboBox)sender).Text);
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            if (target == null)
+                return;
+            holdup_config_rec m = null;
+            try
+            {
+                m = NC.App.DB.HoldupConfigParameters.Get(target.glovebox_id);
+            }
+            catch (InvalidOperationException)  // id not there, it's new
+            { }
+            if (null != m)
+            {
+                if (NC.App.DB.HoldupConfigParameters.Delete(target)) // removes from DB then from in-memory list, just like isotopics
+                {
+                    target = null;
+                    RefreshHCCombo();
+                }
+            }
 
         }
 

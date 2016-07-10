@@ -228,12 +228,12 @@ namespace NCCTransfer
             if (str2.Equals(DETECTOR_SAVE_RESTORE))
             {
                 result = eFileType.eInitialDataDetector;
-                mlogger.TraceEvent(LogLevels.Info, 33009, "The file is an initial data file with detector parameters");
+                mlogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is an initial data file with detector parameters", source_path_filename);
             }
             else if (str2a.Equals(INTEGRATED_REVIEW))
             {
                 result = eFileType.eNCC;
-                mlogger.TraceEvent(LogLevels.Info, 33009, "The file is a Radiation Review data file");
+                mlogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is a Radiation Review data file", source_path_filename);
             }
             else if (str2b.Equals(OLD_REVIEW))
             {
@@ -269,7 +269,7 @@ namespace NCCTransfer
                             if (str2.Equals(CALIBRATION_SAVE_RESTORE))
                             {
                                 result = eFileType.eInitialDataCalibration;
-                                mlogger.TraceEvent(LogLevels.Info, 33013, "The file is an initial data calibration file");
+                                mlogger.TraceEvent(LogLevels.Info, 33013, "The file {0} is an initial data calibration file", source_path_filename);
                             }
                         }
                     }

@@ -268,8 +268,8 @@ namespace NCCTransfer
                     TransferUtils.Copy(old_detector.electronics_id, 0, detector.electronics_id, 0, 9); // see struct dec
                 }
                 Detector.Add(detector);
-                mlogger.TraceEvent(LogLevels.Info, 33195, "Transferring the detector '{0}' data",
-                                 TransferUtils.str(detector.detector_id, INCC.MAX_DETECTOR_ID_LENGTH));
+                mlogger.TraceEvent(LogLevels.Info, 33195, "Transferring detector '{0}' data, from {1}",
+                                 TransferUtils.str(detector.detector_id, INCC.MAX_DETECTOR_ID_LENGTH), System.IO.Path.GetFileName(Path));
 
                 sz = Marshal.SizeOf(sr_parms);
                 los_bytos = TransferUtils.TryReadBytes(reader, sz);
@@ -532,7 +532,7 @@ namespace NCCTransfer
 			BinaryReader reader;
 			FileInfo fi;
 
-			mlogger.TraceEvent(LogLevels.Info, 33290, "Scanning the calibration initial data file {0}", source_path_filename);
+			mlogger.TraceEvent(LogLevels.Info, 33290, "Scanning the calibration initial data file {0}", System.IO.Path.GetFileName(source_path_filename));
 			try
 			{
 				fi = new System.IO.FileInfo(source_path_filename);
@@ -1067,11 +1067,13 @@ namespace NCCTransfer
                 TransferUtils.Copy(results.filename, 0, id.filename, 0, INCC.FILE_NAME_LENGTH);
                 TransferUtils.Copy(results.results_detector_id, 0, id.results_detector_id, 0, INCC.MAX_DETECTOR_ID_LENGTH);
 
-                mlogger.TraceEvent(LogLevels.Info, 33095, "Transferring the {0} measurement: {1}, detector {2}",
-                                            TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH),
-                                            INCC.DateTimeFrom(TransferUtils.str(id.meas_date, INCC.DATE_TIME_LENGTH), 
-                                            TransferUtils.str(id.meas_time, INCC.DATE_TIME_LENGTH)).ToString("yy.MM.dd HH:mm:ss.ff K"), // my IAEA format
-                                             TransferUtils.str(id.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH));
+                string fname = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
+                mlogger.TraceEvent(LogLevels.Info, 33095, "Transferring {0} measurement for {1} {2}, from {3}",
+                                            System.IO.Path.GetExtension(fname),
+                                            TransferUtils.str(id.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH),
+                                            INCC.DateTimeFrom(TransferUtils.str(id.meas_date, INCC.DATE_TIME_LENGTH),
+                                            TransferUtils.str(id.meas_time, INCC.DATE_TIME_LENGTH)).ToString("yy.MM.dd HH:mm:ss K"), // IAEA format
+                                             fname);
 
                 ///* get word defining which results are valid for this data set */
                 results_status = (INCC.SaveResultsMask)TransferUtils.ReadInt16(reader, "saved results");

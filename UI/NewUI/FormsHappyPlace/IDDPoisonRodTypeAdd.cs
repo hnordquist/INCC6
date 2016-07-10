@@ -40,11 +40,12 @@ namespace NewUI
         public IDDPoisonRodTypeAdd()
         {
             InitializeComponent();
-            RefreshCombo();
+            model = new poison_rod_type_rec();
+            RefreshCombo(pick:false);
         }
 
 
-        void RefreshCombo()
+        void RefreshCombo(bool pick)
         {
             // Populate the combobox in the selector panel
             CurrentPoisonRodTypesComboBox.Items.Clear();
@@ -52,15 +53,14 @@ namespace NewUI
             {
                 CurrentPoisonRodTypesComboBox.Items.Add(p.rod_type);
             }
+            if (pick)
+                CurrentPoisonRodTypesComboBox.SelectedItem = model.rod_type;
         }
         private void CurrentPoisonRodTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             model = new poison_rod_type_rec(NC.App.DB.PoisonRods.Get((string)CurrentPoisonRodTypesComboBox.SelectedItem));
-            if (model != null)
-            {
-                DefaultPoisonAbsorptionTextBox.Text = model.absorption_factor.ToString("F3");
-                PoisonRodTypeTextBox.Text = model.rod_type;
-            }
+            DefaultPoisonAbsorptionTextBox.Text = model.absorption_factor.ToString("F3");
+            PoisonRodTypeTextBox.Text = model.rod_type;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -70,14 +70,7 @@ namespace NewUI
                 DialogResult = DialogResult.Cancel;
                 return;
             }
-
-            if (model == null)
-            {
-                model = new poison_rod_type_rec();
-                DefaultPoisonAbsorptionTextBox_Leave(DefaultPoisonAbsorptionTextBox, null);
-                PoisonRodTypeTextBox_Leave(PoisonRodTypeTextBox, null);
-            }
-            if (model != null && model.modified)
+            if (model.modified)
             {
                 if (NC.App.DB.PoisonRods.Has(model))  // it is already there, nothing to do, user must select cancel (INCC5-style) to close
                 {
@@ -88,7 +81,7 @@ namespace NewUI
                     NC.App.DB.PoisonRods.Set(model);
                     NC.App.DB.PoisonRods.Refresh();
                     DialogResult = DialogResult.OK;
-                    RefreshCombo();
+                    RefreshCombo(pick:true);
                 }
             }
         }

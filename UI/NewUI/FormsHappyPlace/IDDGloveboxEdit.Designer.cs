@@ -92,7 +92,7 @@
             this.NumRowsTextBox.Name = "NumRowsTextBox";
             this.NumRowsTextBox.Size = new System.Drawing.Size(68, 20);
             this.NumRowsTextBox.TabIndex = 5;
-            this.NumRowsTextBox.TextChanged += new System.EventHandler(this.NumRowsTextBox_TextChanged);
+            this.NumRowsTextBox.Leave += new System.EventHandler(this.NumRowsTextBox_Leave);
             // 
             // NumColsTextBox
             // 
@@ -100,7 +100,7 @@
             this.NumColsTextBox.Name = "NumColsTextBox";
             this.NumColsTextBox.Size = new System.Drawing.Size(68, 20);
             this.NumColsTextBox.TabIndex = 6;
-            this.NumColsTextBox.TextChanged += new System.EventHandler(this.NumColsTextBox_TextChanged);
+            this.NumColsTextBox.Leave += new System.EventHandler(this.NumColsTextBox_Leave);
             // 
             // DistanceTextBox
             // 
@@ -108,7 +108,7 @@
             this.DistanceTextBox.Name = "DistanceTextBox";
             this.DistanceTextBox.Size = new System.Drawing.Size(68, 20);
             this.DistanceTextBox.TabIndex = 7;
-            this.DistanceTextBox.TextChanged += new System.EventHandler(this.DistanceTextBox_TextChanged);
+            this.DistanceTextBox.Leave += new System.EventHandler(this.DistanceTextBox_Leave);
             // 
             // OKBtn
             // 

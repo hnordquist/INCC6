@@ -363,28 +363,28 @@
     <Compile Include="FormsHappyPlace\IDDErrorCalcMethod.Designer.cs">
       <DependentUpon>IDDErrorCalcMethod.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDGlovebox.cs">
+    <Compile Include="FormsHappyPlace\IDDGlovebox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDGlovebox.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDGlovebox.Designer.cs">
       <DependentUpon>IDDGlovebox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxAdd.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxAdd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxAdd.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxAdd.Designer.cs">
       <DependentUpon>IDDGloveboxAdd.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxDelete.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxDelete.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxDelete.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxDelete.Designer.cs">
       <DependentUpon>IDDGloveboxDelete.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxEdit.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDGloveboxEdit.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDGloveboxEdit.Designer.cs">
       <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.cs">
@@ -410,12 +410,6 @@
     </Compile>
     <Compile Include="Unready\IDDHoldupSelect.Designer.cs">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDImportMeas.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDImportMeas.Designer.cs">
-      <DependentUpon>IDDImportMeas.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDINCCWarningMsg.cs">
       <SubType>Form</SubType>
@@ -1369,16 +1363,16 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDErrorCalcMethod.resx">
       <DependentUpon>IDDErrorCalcMethod.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDGlovebox.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDGlovebox.resx">
       <DependentUpon>IDDGlovebox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDGloveboxAdd.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxAdd.resx">
       <DependentUpon>IDDGloveboxAdd.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDGloveboxDelete.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxDelete.resx">
       <DependentUpon>IDDGloveboxDelete.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDGloveboxEdit.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxEdit.resx">
       <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDHeavyMetalItemData.resx">
@@ -1392,9 +1386,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDHoldupSelect.resx">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDImportMeas.resx">
-      <DependentUpon>IDDImportMeas.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDINCCWarningMsg.resx">
       <DependentUpon>IDDINCCWarningMsg.cs</DependentUpon>

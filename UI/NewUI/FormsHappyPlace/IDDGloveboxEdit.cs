@@ -32,15 +32,15 @@ using AnalysisDefs;
 namespace NewUI
 {
 	using NC = NCC.CentralizedState;
-
-	public partial class IDDGloveboxDelete : Form
+    public partial class IDDGloveboxEdit : Form
     {
-        public IDDGloveboxDelete()
+        public IDDGloveboxEdit()
         {
             InitializeComponent();
-			RefreshHCCombo();
+            model = new holdup_config_rec();
+            RefreshHCCombo(pick:false);
         }
-        void RefreshHCCombo()
+        void RefreshHCCombo(bool pick)
         {
             // Populate the combobox in the selector panel
             GloveboxIdComboBox.Items.Clear();
@@ -49,15 +49,56 @@ namespace NewUI
             {
 				GloveboxIdComboBox.Items.Add(hc.glovebox_id);
             }
+            if (pick)
+                GloveboxIdComboBox.SelectedItem = model.glovebox_id; // yeah 
         }
+        holdup_config_rec model;
         private void GloveboxIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            model = new holdup_config_rec(NC.App.DB.HoldupConfigParameters.Get((string)GloveboxIdComboBox.SelectedItem)); // expect and use strings
+            NumRowsTextBox.Text = model.num_rows.ToString();
+            NumColsTextBox.Text = model.num_columns.ToString();
+            DistanceTextBox.Text = model.distance.ToString("F1");
+        }
 
+        private void NumRowsTextBox_Leave(object sender, EventArgs e)
+        {
+            ushort u = model.num_rows;
+            model.modified = (Format.ToUShort(((TextBox)sender).Text, ref u));
+            if (model.modified) { model.num_rows = u; }
+            ((TextBox)sender).Text = model.num_rows.ToString();
+        }
+
+        private void NumColsTextBox_Leave(object sender, EventArgs e)
+        {
+            ushort u = model.num_columns;
+            model.modified = (Format.ToUShort(((TextBox)sender).Text, ref u));
+            if (model.modified) { model.num_columns = u; }
+            ((TextBox)sender).Text = model.num_columns.ToString();
+        }
+
+        private void DistanceTextBox_Leave(object sender, EventArgs e)
+        {
+            double d = model.distance;
+            model.modified = (Format.ToDblBracket(((TextBox)sender).Text, ref d, 0.0, 1000000.0));   // lol
+            if (model.modified) { model.distance = d; }
+            ((TextBox)sender).Text = model.distance.ToString("F1");
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+            if (NC.App.DB.HoldupConfigParameters.Has(model))  // it is already there, nothing to do, user must select cancel (INCC5-style) to close
+            {
+                return;
+            }
+            else
+            {
+                NC.App.DB.HoldupConfigParameters.Replace(model);  // replace the element on the in-memory list
+                NC.App.DB.HoldupConfigParameters.SetList(); // write the updated element to the database (modified flag must be true)
+                NC.App.DB.HoldupConfigParameters.Refresh(); // re-load the in-memory list
+                DialogResult = DialogResult.OK;
+                RefreshHCCombo(pick: true);
+            }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -69,5 +110,6 @@ namespace NewUI
         {
 
         }
+
     }
 }

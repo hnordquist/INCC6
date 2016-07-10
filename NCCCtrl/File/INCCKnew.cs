@@ -904,7 +904,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 34064, "Detector transfer processing error {0} {1}", det.Id.DetectorName, e.Message);
+                mlogger.TraceEvent(LogLevels.Warning, 34064, "Detector transfer processing error {0} {1} ({2})", det.Id.DetectorName, e.Message, System.IO.Path.GetFileName(iddf.Path));
             }
         }
 

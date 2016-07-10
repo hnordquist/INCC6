@@ -1375,8 +1375,6 @@ namespace AnalysisDefs
                     holdup_config_rec iso = GetHoldupByRow(dr);
                     holdup_config.Add(iso);
                 }
-                if (holdup_config.Count < 1) // if the list was not loaded in the foreach above
-                    holdup_config.Add(new holdup_config_rec()); // add the default holdup_config_rec instance
             }
             return holdup_config;
         }
