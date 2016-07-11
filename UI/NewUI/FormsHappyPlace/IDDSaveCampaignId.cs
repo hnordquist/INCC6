@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,35 +27,72 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using System.Collections.Generic;
+using AnalysisDefs;
 namespace NewUI
 {
-    public partial class IDDSaveCampaignId : Form
-    {
-        public IDDSaveCampaignId()
-        {
-            InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
-        }
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
 
-        private void InspectionNumComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
+	public partial class IDDSaveCampaignId : Form
+	{
 
-        }
+		public IDDSaveCampaignId()
+		{
+			InitializeComponent();
+			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			Text += " for Detector " + det.Id.DetectorId;
+			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
+			FilteredList = new List<INCCDB.IndexedResults>();
+			LoadInspNumCombo();
+		}
+		private List<INCCDB.IndexedResults> mlist;
+		public List<INCCDB.IndexedResults> FilteredList;
+		public AcquireParameters acq;
+		public Detector det;
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
+		void LoadInspNumCombo()
+		{
+			SortedSet<string> set = new SortedSet<string>();
+			InspectionNumComboBox.Items.Add("All");
+			InspectionNumComboBox.SelectedItem = "All";
+			foreach (INCCDB.IndexedResults ir in mlist)
+			{
+				if (!string.IsNullOrEmpty(ir.Campaign))
+					set.Add(ir.Campaign);
+			}
+			foreach (string si in set)
+			{
+				InspectionNumComboBox.Items.Add(si);
+			}
+		}
 
-        }
+		private void InspectionNumComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+		}
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			string inspnum = string.Copy(InspectionNumComboBox.SelectedItem.ToString());
+			if (string.Compare(inspnum, "All", true) == 0)
+			{
+				inspnum = "";
+				FilteredList = mlist;
+			} else
+				FilteredList = mlist.FindAll(ir => (string.Compare(inspnum, ir.Campaign, true) == 0));
+			DialogResult = DialogResult.OK;
+			Close();
+		}
 
-        }
-    }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
+
+		}
+	}
 }

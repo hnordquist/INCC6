@@ -702,12 +702,8 @@ namespace NewUI
 
 		private void TransferFileOutClick(object sender, RoutedEventArgs e)
 		{
-			string s = UIIntegration.GetUsersFolder("Select Transfer File Folder for Output", NC.App.AppContext.FileInput);
-			if (!string.IsNullOrEmpty(s))
-			{
-				UIIntegration.Controller.file = true;
-				// todo: we do not have a way to export transfer files in this code, so this is a placeholder
-			}
+			IDDSaveTransfer q = new IDDSaveTransfer();
+			q.ShowDialog();
 		}
 
 		private void InitialDataSelectorClick(object sender, RoutedEventArgs e)

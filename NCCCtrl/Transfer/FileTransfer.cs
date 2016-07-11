@@ -163,8 +163,6 @@ namespace NCCTransfer
 
     }
     
-    //dev note: generally speaking the INCC DB item ids are not processed yet, only item types or materials types
-
     public class INCCInitialDataDetectorFile : INCCTransferBase
     {
         public INCCInitialDataDetectorFile(LMLoggers.LognLM logger, string mpath)
@@ -1091,6 +1089,50 @@ namespace NCCTransfer
 
         }
 
+		public string Name { set; get; }
+
+		unsafe new public bool Save(string path)  // URGENT: implement binary write
+		{
+			Path = System.IO.Path.Combine(path, Name);
+			mlogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
+			return false;
+
+            bool result = false;
+			FileStream stream = null;
+			BinaryWriter bw = null;
+
+			try
+            {
+				stream = File.Create(Path);
+				bw = new BinaryWriter(stream);
+            }
+            catch (Exception e)
+            {
+                mlogger.TraceException(e);
+                mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot create file {0}", Path);
+                return result;
+            }
+
+			try
+			{
+				result = true;
+            }
+            catch (Exception e)
+            {
+                if (mlogger != null) mlogger.TraceException(e);
+ 				result = false;
+           }
+            try
+            {
+                bw.Close();               
+            }
+            catch (Exception e)
+            {
+                if (mlogger != null) mlogger.TraceException(e);
+				result = false;
+            }
+			return result;
+		}
 
         unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
         {

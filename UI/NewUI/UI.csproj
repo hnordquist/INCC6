@@ -58,6 +58,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>rel.ico</ApplicationIcon>
@@ -669,10 +670,10 @@
     <Compile Include="Unready\IDDRotationTable.Designer.cs">
       <DependentUpon>IDDRotationTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDSaveCampaignId.cs">
+    <Compile Include="FormsHappyPlace\IDDSaveCampaignId.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDSaveCampaignId.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDSaveCampaignId.Designer.cs">
       <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDsaveDataWaitMsg.cs">
@@ -1516,7 +1517,7 @@
     <EmbeddedResource Include="Unready\IDDRotationTable.resx">
       <DependentUpon>IDDRotationTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDSaveCampaignId.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveCampaignId.resx">
       <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDsaveDataWaitMsg.resx">
