@@ -181,7 +181,7 @@ namespace AnalysisDefs
         public enum MeasurementOption // the term is from INCC
         {
             rates = 0, // the default operation
-            background = 1, initial = 2, normalization = 3, precision = 4, verification = 5, calibration = 6, holdup = 7, unspecified = 99
+            background = 1, initial = 2, normalization = 3, precision = 4, verification = 5, calibration = 6, holdup = 7, /* high voltage plateau = 10, */ unspecified = 99
         }
 
         public static bool ForMass(MeasurementOption mo)

@@ -734,15 +734,18 @@ namespace NCCTransfer
 		public static unsafe List<INCCTransferFile> XFerFromMeasurements(List<Measurement> meas)  // URGENT: implement binary xfer of results_rec, cycles, all method results 
 		{
 			List<INCCTransferFile> list = new List<INCCTransferFile>();
-			//... Result5.MoveResultsRec ...
 			foreach(Measurement m in meas)
 			{
 				INCCTransferFile itf = new INCCTransferFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
 				itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
 				list.Add(itf);
 				itf.results_rec_list.Add(Result5.MoveResultsRec(m));
+				// URGENT: method_results_list, run_rec_list, that is about it
+				/// foreach 
+				///    itf.method_results_list.Add(Result5.MoveMethodRec....)); 
+				/// foreach 
+				///    itf.run_rec_list.Add(Result5.MoveRun....)); 				
 			}
-
 			return list;
 		}
 
@@ -758,12 +761,13 @@ namespace NCCTransfer
 
 		internal static class Result5
 		{
+
 			internal unsafe static results_rec MoveResultsRec(Measurement m)
 			{
 				results_rec rec = new results_rec();
                 byte[] b = StringSquish(m.MeasDate.ToString("yy.MM.dd"), INCC.DATE_TIME_LENGTH);
 				TransferUtils.Copy(b, rec.meas_date);
-				TransferUtils.Copy(b, rec.original_meas_date);
+				TransferUtils.Copy(b, rec.original_meas_date);  // NEXT: this value is not properly tracked in INCC6
                 b = StringSquish(m.MeasDate.ToString("HH:mm:ss"), INCC.DATE_TIME_LENGTH);
 				TransferUtils.Copy(b, rec.meas_time);
 				
@@ -785,10 +789,12 @@ namespace NCCTransfer
 
                 b = StringSquish(m.AcquireState.item_id, INCC.MAX_ITEM_ID_LENGTH);
 				TransferUtils.Copy(b, rec.item_id);
-                b = StringSquish(m.AcquireState.campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
+
+				b = StringSquish(m.AcquireState.campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
 				TransferUtils.Copy(b, rec.results_campaign_id);
 				TransferUtils.Copy(b, rec.results_inspection_number);
-                b = StringSquish(m.AcquireState.item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+
+				b = StringSquish(m.AcquireState.item_type, INCC.MAX_ITEM_TYPE_LENGTH);
 				TransferUtils.Copy(b, rec.results_item_type);
 
 				rec.results_collar_mode = (byte)(m.AcquireState.collar_mode ? 1 : 0);
@@ -799,28 +805,205 @@ namespace NCCTransfer
 				TransferUtils.Copy(b, rec.results_detector_type);
                 b = StringSquish(m.Detector.Id.ElectronicsId, INCC.ELECTRONICS_ID_LENGTH);
 				TransferUtils.Copy(b, rec.results_electronics_id);
-				b = new byte[INCC.MAX_GLOVEBOX_ID_LENGTH];
-                b = StringSquish(m.AcquireState.glovebox_id, INCC.MAX_GLOVEBOX_ID_LENGTH);
+
+				b = StringSquish(m.AcquireState.glovebox_id, INCC.MAX_GLOVEBOX_ID_LENGTH);
 				TransferUtils.Copy(b, rec.results_glovebox_id);
 				rec.results_num_rows = m.INCCAnalysisResults.TradResultsRec.hc.num_rows;
 				rec.results_num_columns = m.INCCAnalysisResults.TradResultsRec.hc.num_columns;
 				rec.results_distance = m.INCCAnalysisResults.TradResultsRec.hc.distance;
+				
 				// devnote: full hc results record on a measurement is lost in the persist -> restore loop because upon 'read from DB' or restore we normally do not build out the TradResultsRec.
 				rec.bias_uncertainty = m.Stratum.bias_uncertainty;
 				rec.random_uncertainty = m.Stratum.random_uncertainty;
 				rec.systematic_uncertainty = m.Stratum.systematic_uncertainty;
 				rec.relative_std_dev = m.Stratum.relative_std_dev;
-/*
- *         public byte meas_option;
-        public fixed byte inventory_change_code[INCC.INVENTORY_CHG_LENGTH];
-        public fixed byte io_code[INCC.IO_CODE_LENGTH];
-        public byte well_config;
-        public byte data_source;
-        public byte results_qc_tests;
-        public UInt16 error_calc_method;
-        public byte results_print;
- */				// urgent: TBC
-				return rec;
+
+				b = StringSquish(m.AcquireState.inventory_change_code, INCC.INVENTORY_CHG_LENGTH);
+                TransferUtils.Copy(b, rec.inventory_change_code);
+                b = StringSquish(m.AcquireState.io_code, INCC.IO_CODE_LENGTH);
+                TransferUtils.Copy(b, rec.io_code);
+
+				rec.meas_option = (byte)m.MeasOption;
+
+				rec.well_config = (byte)m.AcquireState.well_config; 
+                rec.data_source = (byte)m.AcquireState.data_src; 
+                rec.results_qc_tests = (byte)(m.AcquireState.qc_tests ? 1 : 0);
+				rec.results_print = (byte)(m.AcquireState.print ? 1 : 0);
+				rec.error_calc_method = (ushort) (m.AcquireState.error_calc_method == ErrorCalculationTechnique.Sample ? INCC.IDC_SAMPLE_STD_DEV : INCC.IDC_THEORETICAL_STD_DEV);
+
+				b = StringSquish(m.AcquireState.user_id, INCC.CHAR_FIELD_LENGTH);
+                TransferUtils.Copy(b, rec.user_id);
+				b = StringSquish(m.AcquireState.comment, INCC.MAX_COMMENT_LENGTH);
+                TransferUtils.Copy(b, rec.comment);
+				b = StringSquish(m.AcquireState.ending_comment_str, INCC.MAX_COMMENT_LENGTH);
+				TransferUtils.Copy(b, rec.ending_comment);
+
+				rec.item_pu238 = m.Isotopics.pu238;
+				rec.item_pu238_err = m.Isotopics.pu238_err;
+				rec.item_pu239 = m.Isotopics.pu239;
+				rec.item_pu239_err = m.Isotopics.pu239_err;
+				rec.item_pu240 = m.Isotopics.pu240;
+				rec.item_pu240_err = m.Isotopics.pu240_err;
+				rec.item_pu241 = m.Isotopics.pu241;
+				rec.item_pu241_err = m.Isotopics.pu241_err;
+				rec.item_pu242 = m.Isotopics.pu242;
+				rec.item_pu242_err = m.Isotopics.pu242_err;
+				rec.item_am241 = m.Isotopics.am241;
+				rec.item_am241 = m.Isotopics.am241_err;
+				b = StringSquish(m.Isotopics.id, INCC.MAX_ISOTOPICS_ID_LENGTH);
+				TransferUtils.Copy(b, rec.item_isotopics_id);
+				b = StringSquish(m.Isotopics.source_code.ToString(), INCC.ISO_SOURCE_CODE_LENGTH);
+				TransferUtils.Copy(b, rec.item_isotopics_source_code);
+
+				rec.normalization_constant = m.Norm.currNormalizationConstant.v;
+				rec.normalization_constant_err = m.Norm.currNormalizationConstant.err;
+								
+				rec.results_predelay = m.Detector.SRParams.predelayMS;
+				rec.results_gate_length = m.Detector.SRParams.gateLengthMS;
+				rec.results_gate_length2 = m.Detector.SRParams.gateLengthMS; // not used
+				rec.results_high_voltage = m.Detector.SRParams.highVoltage; 
+				rec.results_die_away_time = m.Detector.SRParams.dieAwayTimeMS; 
+				rec.results_efficiency = m.Detector.SRParams.efficiency; 
+				rec.results_multiplicity_deadtime = m.Detector.SRParams.deadTimeCoefficientMultiplicityinNanoSecs; 
+				rec.results_coeff_a_deadtime = m.Detector.SRParams.deadTimeCoefficientAinMicroSecs;
+				rec.results_coeff_b_deadtime = m.Detector.SRParams.deadTimeCoefficientBinPicoSecs;
+				rec.results_coeff_c_deadtime = m.Detector.SRParams.deadTimeCoefficientCinNanoSecs;
+				rec.results_doubles_gate_fraction = m.Detector.SRParams.triplesGateFraction;
+				rec.results_triples_gate_fraction = m.Detector.SRParams.doublesGateFraction;
+
+                // get the first results from the results map 
+				MultiplicityCountingRes mcr = null;
+                if (m.CountingAnalysisResults.Count > 0 && m.CountingAnalysisResults.HasMultiplicity)
+                    try
+                    {
+                        mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];
+                    }
+                    catch (Exception)
+                    {
+                        if (mcr == null)
+                            mcr = m.CountingAnalysisResults.GetFirstMultiplicity;
+                    }
+                if (mcr == null)
+                    mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
+
+				rec.r_acc_sngl_test_rate_limit = m.Tests.accSnglTestRateLimit;
+				rec.r_acc_sngl_test_precision_limit = m.Tests.accSnglTestPrecisionLimit;
+				rec.r_acc_sngl_test_outlier_limit = m.Tests.accSnglTestOutlierLimit;
+				rec.r_outlier_test_limit = m.Tests.outlierTestLimit;
+				rec.r_bkg_doubles_rate_limit = m.Tests.bkgDoublesRateLimit;
+				rec.r_bkg_triples_rate_limit = m.Tests.bkgTriplesRateLimit;
+				rec.r_chisq_limit = m.Tests.chiSquaredLimit;
+				rec.r_max_num_failures = m.Tests.maxNumFailures;
+				rec.r_high_voltage_test_limit = m.Tests.highVoltageTestLimit;
+
+				rec.r_normal_backup_assay_test_lim = m.Tests.normalBackupAssayTestLimit;
+				rec.r_max_runs_for_outlier_test = m.Tests.maxCyclesForOutlierTest;
+				rec.r_checksum_test = (byte)(m.Tests.checksum ? 1 : 0);
+				rec.results_accidentals_method = (m.Tests.accidentalsMethod == AccidentalsMethod.Measure ? INCC.IDC_MEASURE_ACCIDENTALS : INCC.IDC_CALCULATE_ACCIDENTALS);
+
+				rec.passive_bkg_singles_rate = m.Background.DeadtimeCorrectedRates.Singles.v;
+				rec.passive_bkg_singles_rate_err = m.Background.DeadtimeCorrectedRates.Singles.err;
+				rec.passive_bkg_doubles_rate = m.Background.DeadtimeCorrectedRates.Doubles.v;
+				rec.passive_bkg_doubles_rate_err = m.Background.DeadtimeCorrectedRates.Doubles.err;
+				rec.passive_bkg_triples_rate = m.Background.DeadtimeCorrectedRates.Triples.v;
+				rec.passive_bkg_triples_rate_err = m.Background.DeadtimeCorrectedRates.Triples.err;
+				rec.active_bkg_singles_rate = m.Background.INCCActive.Singles.v;
+				rec.active_bkg_singles_rate_err = m.Background.INCCActive.Singles.err;
+				rec.passive_bkg_scaler1_rate = m.Background.Scaler1.v;
+				rec.passive_bkg_scaler2_rate = m.Background.Scaler2.v;
+				rec.active_bkg_scaler1_rate = m.Background.INCCActive.Scaler1Rate;
+				rec.active_bkg_scaler2_rate = m.Background.INCCActive.Scaler2Rate;
+
+				List<MeasurementMsg> msgs = m.GetMessageList(m.Detector.MultiplicityParams);
+				byte[] bb = new byte[INCC.NUM_ERROR_MSG_CODES * INCC.ERR_MSG_LENGTH];
+				int indx = 0, recidx = 0;
+				for (int i = 0; i < msgs.Count && recidx < INCC.NUM_ERROR_MSG_CODES; i++)
+				{
+					if (msgs.Count > i && string.IsNullOrEmpty(msgs[i].text) && msgs[i].IsError)
+					{
+						char[] aa = msgs[i].text.ToCharArray(0, Math.Min(msgs[i].text.Length, INCC.ERR_MSG_LENGTH));
+						Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+						recidx++;
+					}
+					indx += INCC.ERR_MSG_LENGTH;
+				}
+				TransferUtils.Copy(bb, 0, rec.error_msg_codes, 0, INCC.NUM_ERROR_MSG_CODES * INCC.ERR_MSG_LENGTH);
+				bb = new byte[INCC.NUM_ERROR_MSG_CODES * INCC.ERR_MSG_LENGTH];
+				indx = 0; recidx = 0;
+				for (int i = 0; i < msgs.Count && recidx < INCC.NUM_ERROR_MSG_CODES; i++)
+				{
+					if (msgs.Count > i && string.IsNullOrEmpty(msgs[i].text) && msgs[i].IsWarning)
+					{
+						char[] aa = msgs[i].text.ToCharArray(0, Math.Min(msgs[i].text.Length, INCC.ERR_MSG_LENGTH));
+						Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+						recidx++;
+					}
+					indx += INCC.ERR_MSG_LENGTH;
+				}
+				TransferUtils.Copy(bb, 0, rec.warning_msg_codes, 0, INCC.NUM_ERROR_MSG_CODES * INCC.ERR_MSG_LENGTH);
+
+				// these ride on, or can be computed from, m.Cycles, but they sum across multiple analyzers and so are not considered complete yet for LM measurements
+				rec.total_number_runs = (ushort)m.Cycles.GetValidCycleCount(); // any and all cycles
+				rec.number_good_runs = (ushort)m.Cycles.GetUseableCycleCount();  // those that are marked OK
+				rec.total_good_count_time = (ushort)m.Cycles.GetUseableCycleCount() * m.AcquireState.run_count_time;  // check against time on first cycle, to assert
+
+				rec.singles_sum = mcr.Totals;
+				rec.scaler1_sum = mcr.S1Sum;
+				rec.scaler2_sum = mcr.S2Sum;
+				rec.reals_plus_acc_sum = mcr.RASum;
+				rec.acc_sum = mcr.ASum;
+				rec.singles = mcr.DeadtimeCorrectedSinglesRate.v;
+				rec.singles_err = mcr.DeadtimeCorrectedSinglesRate.err;
+				rec.doubles = mcr.DeadtimeCorrectedDoublesRate.v;
+				rec.doubles_err = mcr.DeadtimeCorrectedDoublesRate.err;
+				rec.triples = mcr.DeadtimeCorrectedTriplesRate.v;
+				rec.triples_err = mcr.DeadtimeCorrectedTriplesRate.err;
+				rec.scaler1 = mcr.Scaler1.v;
+				rec.scaler1_err = mcr.Scaler1.err;
+				rec.scaler2 = mcr.Scaler2.v;
+				rec.scaler2_err = mcr.Scaler2.err;		
+				rec.uncorrected_doubles = mcr.RawDoublesRate.v;
+				rec.uncorrected_doubles_err = mcr.RawDoublesRate.err;
+				rec.singles_multi = mcr.singles_multi;
+				rec.doubles_multi = mcr.doubles_multi;
+				rec.triples_multi = mcr.triples_multi;
+				rec.declared_mass= mcr.mass;
+				TransferUtils.CopyULongsToDbls(mcr.RAMult, rec.mult_reals_plus_acc_sum);
+				TransferUtils.CopyULongsToDbls(mcr.NormedAMult, rec.mult_acc_sum);
+				for (int ix = 0; ix < 9; ix++)
+				    rec.covariance_matrix[ix] = mcr.covariance_matrix[ix];	
+
+				INCCMethodResults imr;
+				bool got = m.INCCAnalysisResults.TryGetINCCResults(m.Detector.MultiplicityParams, out imr);
+				if (got)
+					rec.primary_analysis_method = (byte)NewTypeToOldMethodId(imr.primaryMethod);
+
+				// rec.net_drum_weight =  // NEXT: no entry in INCC6 results for this result value, add it
+				// NEXT: duo of passive and active measurent results idenfier not prpely handled in INCC6 yet
+                b = StringSquish(m.MeasDate.ToString("yy.MM.dd"), INCC.DATE_TIME_LENGTH);
+				TransferUtils.Copy(b, rec.passive_meas_date);
+				TransferUtils.Copy(b, rec.active_meas_date);
+                b = StringSquish(m.MeasDate.ToString("HH:mm:ss"), INCC.DATE_TIME_LENGTH);
+				TransferUtils.Copy(b, rec.passive_meas_time);
+				TransferUtils.Copy(b, rec.active_meas_time);
+				
+				b = StringSquish(System.IO.Path.GetFileName(m.MeasurementId.FileName), INCC.FILE_NAME_LENGTH);
+				TransferUtils.Copy(b, rec.passive_filename);
+				TransferUtils.Copy(b, rec.active_filename);
+				b = StringSquish(System.IO.Path.GetFileName(m.MeasurementId.FileName), INCC.FILE_NAME_LENGTH);
+				TransferUtils.Copy(b, rec.passive_results_detector_id);
+				TransferUtils.Copy(b, rec.active_results_detector_id);
+                b = StringSquish(m.Detector.Id.DetectorId, INCC.MAX_DETECTOR_ID_LENGTH);
+				TransferUtils.Copy(b, rec.passive_results_detector_id);
+				TransferUtils.Copy(b, rec.active_results_detector_id);
+				ItemId itid = NC.App.DB.ItemIds.Get(m.AcquireState.item_id);		
+				if (itid != null)
+				{
+					rec.declared_u_mass = itid.declaredUMass;
+					rec.length = itid.length;
+				}
+				rec.db_version = 5.0;
+                return rec;
 			}
 		}
 
@@ -1938,11 +2121,12 @@ namespace NCCTransfer
             if (string.IsNullOrEmpty(acq.campaign_id))
                 acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
 			acq.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);//"Original file name " + meas.MeasurementId.FileName;
-            if (string.IsNullOrEmpty(acq.comment))
-			{
-				acq.comment = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
-				acq.ending_comment = !string.IsNullOrEmpty(acq.comment); // NEXT: nowhere to save the ending comment AND the standard comment
-			}
+			acq.ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
+			acq.ending_comment = !string.IsNullOrEmpty(acq.ending_comment_str);
+			
+			acq.data_src = (DetectorDefs.ConstructedSource)results.data_source;
+			acq.well_config = (WellConfiguration)results.well_config;
+			acq.print = TransferUtils.ByteBool(results.results_print);
 
             mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
@@ -2092,8 +2276,9 @@ namespace NCCTransfer
             mcr.NormedAMult = TransferUtils.multarrayxfer(results.mult_acc_sum, INCC.MULTI_ARRAY_SIZE);
             mcr.MaxBins = (ulong)Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length);
             mcr.MinBins = (ulong)Math.Min(mcr.RAMult.Length, mcr.NormedAMult.Length);
-            // dunno yet mcr.SemiCorrectedRates.v =  results.singles_multi;
-            mcr.singles_multi = results.singles_multi;
+			mcr.RawDoublesRate.v = results.uncorrected_doubles;
+			mcr.RawDoublesRate.err = results.uncorrected_doubles_err;
+			mcr.singles_multi = results.singles_multi;
             mcr.doubles_multi = results.doubles_multi;
             mcr.triples_multi = results.triples_multi;
 
@@ -2118,7 +2303,9 @@ namespace NCCTransfer
             result.NormedAMult = TransferUtils.multarrayxfer(results.mult_acc_sum, INCC.MULTI_ARRAY_SIZE);
             result.MaxBins = (ulong)Math.Max(result.RAMult.Length, result.NormedAMult.Length);
             result.MinBins = (ulong)Math.Min(result.RAMult.Length, result.NormedAMult.Length);
-            result.singles_multi = results.singles_multi;
+			mcr.RawDoublesRate.v = results.uncorrected_doubles;
+			mcr.RawDoublesRate.err = results.uncorrected_doubles_err;
+			result.singles_multi = results.singles_multi;
             result.doubles_multi = results.doubles_multi;
             result.triples_multi = results.triples_multi;
 

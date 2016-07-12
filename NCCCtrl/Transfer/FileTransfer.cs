@@ -1091,49 +1091,57 @@ namespace NCCTransfer
 
 		public string Name { set; get; }
 
-		unsafe new public bool Save(string path)  // URGENT: implement binary write
+		unsafe new public bool Save(string path)  // URGENT: write the results rec, the methods result and the run rec list in that order, see Restore for the details 
 		{
 			Path = System.IO.Path.Combine(path, Name);
 			mlogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
-			return false;
 
-            bool result = false;
+			bool result = false;
 			FileStream stream = null;
 			BinaryWriter bw = null;
 
 			try
-            {
+			{
 				stream = File.Create(Path);
 				bw = new BinaryWriter(stream);
-            }
-            catch (Exception e)
-            {
-                mlogger.TraceException(e);
-                mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot create file {0}", Path);
-                return result;
-            }
+			} catch (Exception e)
+			{
+				mlogger.TraceException(e);
+				mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot create file {0}", Path);
+				return result;
+			}
 
 			try
 			{
+				WriteResultsRec(results_rec_list[0], bw);
 				result = true;
-            }
-            catch (Exception e)
-            {
-                if (mlogger != null) mlogger.TraceException(e);
- 				result = false;
-           }
-            try
-            {
-                bw.Close();               
-            }
-            catch (Exception e)
-            {
-                if (mlogger != null) mlogger.TraceException(e);
+				mlogger.TraceInformation("Saved transfer file " + Path);
+			} catch (Exception e)
+			{
+				if (mlogger != null)
+					mlogger.TraceException(e);
 				result = false;
-            }
+			}
+			try
+			{
+				bw.Close();
+			} catch (Exception e)
+			{
+				if (mlogger != null)
+					mlogger.TraceException(e);
+				result = false;
+			}
 			return result;
 		}
 
+		unsafe void WriteResultsRec(results_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(results_rec);
+			results_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+        }
         unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
         {
             bool result = false;

@@ -88,7 +88,7 @@ namespace NewUI
 				if (string.IsNullOrEmpty(dest))
 					return;
 				List<Detector> l = NC.App.DB.Detectors;
-				// and then ????			
+				// URGENT: Every single one in the DB .... 
 			}
 		}
 

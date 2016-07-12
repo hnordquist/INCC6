@@ -315,6 +315,29 @@ namespace NCCTransfer
                 }
         }
 
+		static unsafe public void CopyULongsToDbls(ulong[] src, double* dst)
+        {
+            if (src == null || dst == null)
+            {
+                throw new ArgumentException();
+            }
+
+            {
+                byte* pd = (byte*)dst;
+
+                // Loop over the count in blocks of 8 bytes (ulong), copying ulong to a double (8 bytes) 1 byte at a time:
+                for (int i = 0; i < src.Length; i++)
+                {
+					byte[] bx = BitConverter.GetBytes(src[i]);
+					for (int j = 0; j < bx.Length; j++)
+					{
+						*((byte*)pd) = bx[j];
+						pd += 1;
+					}
+                }
+
+            }
+        }
 
 		static unsafe public void CopyDbls(double[] src, double* dst)
         {
