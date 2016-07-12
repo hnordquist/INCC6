@@ -37,82 +37,79 @@ namespace NewUI
 	using NC = NCC.CentralizedState;
 
 	public partial class IDDSaveInitialData : Form
-    {
-        public IDDSaveInitialData()
-        {
-            InitializeComponent();
-        }
+	{
+		public IDDSaveInitialData()
+		{
+			InitializeComponent();
+		}
 
-        private void DetectorCurrentRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+		private void DetectorCurrentRadioButton_CheckedChanged(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void DetectorAllRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+		private void DetectorAllRadioButton_CheckedChanged(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void CalibrationCurrentRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+		private void CalibrationCurrentRadioButton_CheckedChanged(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void CalibrationAllRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+		private void CalibrationAllRadioButton_CheckedChanged(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            NCCReporter.LMLoggers.LognLM applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
-            string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
-            if (string.IsNullOrEmpty(dest))
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			NCCReporter.LMLoggers.LognLM applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
+			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+			if (string.IsNullOrEmpty(dest))
 				return;
 			if (DetectorCurrentRadioButton.Checked)
 			{
 				List<Detector> l = new List<Detector>();
 				l.Add(Integ.GetCurrentAcquireDetector());
-                INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
-                iddf.Save(dest);
-			}
-			else if (DetectorAllRadioButton.Checked)
+				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+				iddf.Save(dest);
+			} else if (DetectorAllRadioButton.Checked)
 			{
 				List<Detector> l = NC.App.DB.Detectors;
-                INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
-                iddf.Save(dest);
-			}
-			else if (CalibrationCurrentRadioButton.Checked)
+				INCCInitialDataDetectorFile iddf = INCCKnew.FromDetectors(l);
+				iddf.Save(dest);
+			} else if (CalibrationCurrentRadioButton.Checked)
 			{
 				List<Detector> l = new List<Detector>();
 				l.Add(Integ.GetCurrentAcquireDetector());
-                List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
-                if (lidcf.Count > 0)
-                    if (!lidcf[0].Save(dest))
-                        applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + lidcf[0].Name);
-
-            }
-            else if (CalibrationAllRadioButton.Checked)
-			{
-				List<Detector> l = NC.App.DB.Detectors;				
 				List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
-                foreach (INCCInitialDataCalibrationFile idcf in lidcf)
-                {
-                    if (!idcf.Save(dest))
-                        applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + idcf.Name);
-                }
+				if (lidcf.Count > 0)
+					if (!lidcf[0].Save(dest))
+						applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + lidcf[0].Name);
+
+			} else if (CalibrationAllRadioButton.Checked)
+			{
+				List<Detector> l = NC.App.DB.Detectors;
+				List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
+				foreach (INCCInitialDataCalibrationFile idcf in lidcf)
+				{
+					if (!idcf.Save(dest))
+						applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + idcf.Name);
+				}
 			}
-            Close();
+			Close();
 		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
 
-        }
-    }
+		}
+	}
 }

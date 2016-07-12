@@ -215,7 +215,7 @@ namespace NewUI
 			case Selections.Comments:
 				entries["Comment"] = m.AcquireState.comment;
 				if (m.AcquireState.ending_comment)
-					entries["End Comment"] = "NYI";
+					entries["End Comment"] = m.AcquireState.ending_comment_str;  // URGENT: use once field is used in the code, blank for now
 				break;
 			case Selections.MassAnalysisMethods:
 				break;
