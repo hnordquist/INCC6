@@ -470,16 +470,14 @@ namespace AnalysisDefs
                 bkg = new BackgroundParameters(src.bkg); 
                 cycles = src.cycles;  // next: not a copy, so do not change list until this is saved!
    
-                hc = new holdup_config_rec(hc);  // left unfinished in real code, only available on transfer op
+                hc = new holdup_config_rec(src.hc);  // left unfinished in real code, only available on transfer op
                 item = new ItemId(src.item);
 
                 meas_option = src.meas_option;
 
                 mcr = new MultiplicityCountingRes(src.mcr);
 
-                //TODO INCCMethodResults imr;
-                //if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr))
-                //    primary = imr.primaryMethod;
+				primary = src.primary;
             }
 
             // this should be created at some correct moment, after analyzer and method map construction, AND THEN inserted into the meas.Result map
@@ -512,7 +510,7 @@ namespace AnalysisDefs
                 if (mcr == null)
                     mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
 
-                hc = new holdup_config_rec(); // todo: implement the four glovebox dialogs
+                hc = new holdup_config_rec();// next: from m.AcquireState.glovebox_id
                 item = new ItemId(m.MeasurementId.Item);
                 // pu_date wiped out in item when was in measurement.
                 item.pu_date = m.Isotopics.pu_date;

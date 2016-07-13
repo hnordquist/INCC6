@@ -953,6 +953,7 @@ namespace AnalysisDefs
         public string user_id;
         public string comment;
         public bool ending_comment;
+        public string ending_comment_str;
         public DetectorDefs.ConstructedSource data_src;
         public bool qc_tests;
         public bool print;
@@ -1003,6 +1004,7 @@ namespace AnalysisDefs
             error_calc_method = ErrorCalculationTechnique.Theoretical;
             inventory_change_code = string.Empty;
             io_code = string.Empty;
+			ending_comment_str = string.Empty;
             _MeasDateTime = new DateTimeOffset(2016, 2, 6, 0, 0, 0, DateTimeOffset.Now.Offset);
             _CheckDateTime = DateTimeOffset.Now;
             meas_detector_id = "XXXX/XXX/YY";
@@ -1053,6 +1055,7 @@ namespace AnalysisDefs
             user_id = string.Copy(src.user_id);
             comment = string.Copy(src.comment);
             ending_comment = src.ending_comment;
+			ending_comment_str = string.Copy(src.ending_comment_str);
             data_src = src.data_src;
             qc_tests = src.qc_tests;
             print = src.print;
@@ -1130,6 +1133,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("user_id", user_id));
             this.ps.Add(new DBParamEntry("comment", comment));
             this.ps.Add(new DBParamEntry("ending_comment", ending_comment));
+            //this.ps.Add(new DBParamEntry("ending_comment_str", ending_comment_str));  // URGENT: add to table
 
             this.ps.Add(new DBParamEntry("data_src", (int)data_src));
             this.ps.Add(new DBParamEntry("qc_tests", qc_tests));
@@ -1180,6 +1184,7 @@ namespace AnalysisDefs
             acr.Add(Find("user_id"));
             acr.Add(Find("comment"));
             acr.Add(Find("ending_comment"));
+            // acr.Add(Find("ending_comment_str")); // URGENT: add to table and results report rendering
             acr.Add(Find("num_runs"));
             return acr;
         }
@@ -2522,6 +2527,9 @@ namespace AnalysisDefs
             id = mid;
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
         }
+
+		public bool IsError { get { return lvl >= NCCReporter.LogLevels.Error; } }
+		public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
 
 
         public override string ToString()

@@ -9,7 +9,7 @@
                 <MenuItem Header="_Save As/Export..." IsEnabled="True">
                     <MenuItem Header="_PSA/Logsheet File..." Click="PSALogsheetOutClick" IsEnabled="False"/>
                     <MenuItem Header="_Performance Monitoring File..." Click="PerformanceMonitoringFileOutClick" IsEnabled="False"/>
-                    <MenuItem Header="_Transfer..." Click="TransferFileOutClick" IsEnabled="False"/>
+                    <MenuItem Header="_Transfer..." Click="TransferFileOutClick" IsEnabled="True"/>
                     <MenuItem Header="_Initial Data..." Click="InitialDataOutClick" IsEnabled="True"/>
                 </MenuItem>
                 <MenuItem Header="_Get External Data...">

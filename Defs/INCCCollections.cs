@@ -2264,6 +2264,7 @@ namespace AnalysisDefs
             resrec.norm = NormParamsImpl.GetFromDataRow(dr, resultsSubset: true);  // dev note: examine the reconstruction code in INCC5 to know if one must blend these values with current normalization settings for this detector?
             resrec.bkg = BackgroundParamsImpl.GetDataFromRow(dr, resultsSubset: true);
             resrec.st = INCCDB.GetStratumByRow(dr, resultsSubset: true);
+            resrec.hc = HoldupListImpl.GetHoldupByRow(dr, resultsSubset: true);
 
             // item id
             resrec.item = ItemIdListImpl.GetItemIdByRow(dr, resultsSubset: true);
@@ -4175,6 +4176,16 @@ namespace AnalysisDefs
         }
 
 
+		public INCCResults.results_rec ResultsRecFor(MeasId id)
+		{
+			ResultsRecs recs = new ResultsRecs();
+            // get the traditional results rec that matches the measurement id 
+			INCCResults.results_rec rec = recs.Get(id.UniqueId); 
+			return rec;
+		}
+
+
+
 		public class IndexedResults
 		{
 			public IndexedResults() { }
@@ -4317,7 +4328,7 @@ namespace AnalysisDefs
 					}
                     IngestAnalysisMethodResultsFromDB(m);
                 }
-                // for Reanalysis, and Assay summary: cycles, results, etc 
+                // for Reanalysis, and Assay summary: cycles restored elsewhere, trad results not yet, etc 
             }
             return ms;
         }
