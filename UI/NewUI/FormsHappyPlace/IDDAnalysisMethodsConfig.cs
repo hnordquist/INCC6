@@ -87,10 +87,6 @@ namespace NewUI
 
         private void choke(CheckBox cb)
         {
-            if (cb.Checked)
-            {
-                CollarCheckBox.Checked = false;
-            }
             collaractive();
         }
 
@@ -109,10 +105,13 @@ namespace NewUI
                         }
                     }
                 }
+                am.Normal = AnalysisMethod.Collar;
+                am.Backup = AnalysisMethod.None;
+                am.Auxiliary = AnalysisMethod.None;
             }
             else
             {
-                bool allUnchecked = true;
+                bool anyChecked = false;
                 string CollarName = CollarCheckBox.Name;
                 foreach (Control cb in this.Controls)
                 {
@@ -120,122 +119,159 @@ namespace NewUI
                     {
                         if (cb.Name != CollarCheckBox.Name)
                         {
-                            allUnchecked = ((CheckBox)cb).Checked == false;
+                            ((CheckBox)cb).Enabled = true;
+                            anyChecked |= ((CheckBox)cb).Checked;
                         }
                     }
                 }
-                this.CollarCheckBox.Enabled = allUnchecked;
+                this.CollarCheckBox.Enabled = !anyChecked;
+                if (am.AnySelected())
+                {
+                    if (!am.Has(am.Normal))
+                    {
+                        //set to first in list
+                        am.Normal = am.GetFirstSelected();
+                    }
+                    if (!am.Has(am.Backup))
+                    {
+                        //set to second in list
+                        am.Backup = am.GetSecondSelected();
+                    }
+                    if (!am.Has(am.Auxiliary))
+                    {
+                        //set to third in list
+                        am.Auxiliary = am.GetThirdSelected();
+                    }
+                }
             }
+            am.choices[0] = !am.AnySelected();
+            am.choices[10] = !am.AnySelected();
         }
         // collar disabled if any other enabled
 
         private void PassiveCalCurveCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.CalibrationCurve] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void KnownAlphaCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.KnownA] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void KnownMCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.KnownM] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void PassiveMultiplicityCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.Multiplicity] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void AddASourceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.AddASource] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void CuRatioCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.CuriumRatio] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void TruncatedMultCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.TruncatedMultiplicity] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void ActiveCalCurveCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.Active] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void CollarCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-               ActivePassiveCheckBox.Enabled = !((CheckBox)sender).Checked;
-                ActiveCalCurveCheckBox.Enabled = !((CheckBox)sender).Checked;
-                ActiveMultCheckBox.Enabled = !((CheckBox)sender).Checked;
-                PassiveCalCurveCheckBox.Enabled = !((CheckBox)sender).Checked;
-                KnownAlphaCheckBox.Enabled = !((CheckBox)sender).Checked;
-                KnownMCheckBox.Enabled = !((CheckBox)sender).Checked;
-                PassiveMultiplicityCheckBox.Enabled = !((CheckBox)sender).Checked;
-                AddASourceCheckBox.Enabled = !((CheckBox)sender).Checked;
-                CuRatioCheckBox.Enabled = !((CheckBox)sender).Checked;
-                TruncatedMultCheckBox.Enabled = !((CheckBox)sender).Checked;
-                CollarCheckBox.Enabled = ((CheckBox)sender).Checked;
-                am.choices.Initialize(); //  reset all the rest
-                am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;  
+            am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
+                  
         }
 
         private void ActiveMultCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.ActiveMultiplicity] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void ActivePassiveCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            choke((CheckBox)sender);
             am.choices[(int)AnalysisMethod.ActivePassive] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            // first, select priorities
-            IDDSelectPrimaryAM x = new IDDSelectPrimaryAM(am);
-            if (x.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            // First, check if selections changed.
+            AnalysisMethods original;
+            bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original);
+            if (found)
             {
-                AnalysisMethods original;
-                bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original);
-                if (found)
+                if (original.selector == null) // empty initial value, copy the selector here
+                    original.selector = new INCCSelector(am.selector);
+                if (!am.Equals(original)) // an existing has changed,
                 {
-					if (original.selector == null) // empty initial value, copy the selector here
-						original.selector = new INCCSelector(am.selector);
-                    if (!am.Equals(original)) // an existing has changed,
-                    {
-                        // copy updated changes back to original on the map
-                        original.CopySettings(am);
-                        NC.App.DB.UpdateAnalysisMethods(original.selector, am);
-                        NC.App.DB.UpdateAnalysisMethodSpecifics(original.selector.detectorid,original.selector.material);
-                        original.modified = false;
-                    }
-                    else if (am.modified) //  or created new one
-                    {
-                        NC.App.DB.UpdateAnalysisMethods(original.selector, am);
-                        NC.App.DB.UpdateAnalysisMethodSpecifics(original.selector.detectorid, original.selector.material);
-                        original.modified = false;
-                    }
-
-                    this.Close();
+                    // copy updated changes back to original on the map
+                    original.CopySettings(am);
+                    NC.App.DB.UpdateAnalysisMethods(original.selector, am);
+                    NC.App.DB.UpdateAnalysisMethodSpecifics(original.selector.detectorid, original.selector.material);
+                    original.modified = false;
+                }
+                else if (am.modified) //  or created new one
+                {
+                    NC.App.DB.UpdateAnalysisMethods(original.selector, am);
+                    NC.App.DB.UpdateAnalysisMethodSpecifics(original.selector.detectorid, original.selector.material);
+                    original.modified = false;
                 }
             }
+
+            // first, select priorities
+            if (am.AnySelected())
+            {
+                IDDSelectPrimaryAM x = new IDDSelectPrimaryAM(am);
+                if (x.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    AnalysisMethods original2;
+                    bool found2 = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original2);
+                    if (found2)
+                    {
+                        if (original2.selector == null) // empty initial value, copy the selector here
+                            original2.selector = new INCCSelector(am.selector);
+                        if (!am.Equals(original2)) // an existing has changed,
+                        {
+                            // copy updated changes back to original on the map
+                            original2.CopySettings(am);
+                            NC.App.DB.UpdateAnalysisMethods(original2.selector, am);
+                            NC.App.DB.UpdateAnalysisMethodSpecifics(original2.selector.detectorid, original.selector.material);
+                            original2.modified = false;
+                        }
+                        else if (am.modified) //  or created new one
+                        {
+                            NC.App.DB.UpdateAnalysisMethods(original2.selector, am);
+                            NC.App.DB.UpdateAnalysisMethodSpecifics(original2.selector.detectorid, original.selector.material);
+                            original2.modified = false;
+                        }
+
+                    }
+                }
+            }
+            this.Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

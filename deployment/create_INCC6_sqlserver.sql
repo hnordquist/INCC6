@@ -392,6 +392,7 @@ CREATE TABLE analysis_method_rec(
    [collar] int,
    [normal_method] int,
    [backup_method] int,
+   [aux_method] int,
    [curium_ratio] int,
    [truncated_mult] int,
    [spare1] int,

@@ -140,7 +140,6 @@ namespace AnalysisDefs
         public INCCSelector selector;
         public AnalysisMethod Normal;
         public AnalysisMethod Backup;
-        //No statefulness there for aux method?? hn 11.7.2014
         public AnalysisMethod Auxiliary;
         public bool[] choices;
 
@@ -169,6 +168,46 @@ namespace AnalysisDefs
                     return true;
             }
             return false;
+        }
+        public AnalysisMethod GetFirstSelected ()
+        {
+            int i = (int) AnalysisMethod.None + 1;
+            while ((choices[i]) == false && i <= (int) AnalysisMethod.TruncatedMultiplicity)
+            {
+                i++;
+            }
+            return i == (int) AnalysisMethod.TruncatedMultiplicity?AnalysisMethod.None:(AnalysisMethod) i;
+        }
+        public AnalysisMethod GetSecondSelected()
+        {
+            int i = (int) (GetFirstSelected());
+            int j = i;
+            if ((AnalysisMethod)i == AnalysisMethod.None)
+                return AnalysisMethod.None;
+            else
+            {
+                
+                while ((choices[i]) == false && i <= (int)AnalysisMethod.TruncatedMultiplicity)
+                {
+                    i++;
+                }
+                return i == (int)AnalysisMethod.TruncatedMultiplicity ? (AnalysisMethod)j : (AnalysisMethod)i;
+            }
+        }
+        public AnalysisMethod GetThirdSelected()
+        {
+            int i = (int)(GetSecondSelected());
+            int j = i;
+            if ((AnalysisMethod)i == AnalysisMethod.None)
+                return AnalysisMethod.None;
+            else
+            {
+                while ((choices[i]) == false && i <= (int)AnalysisMethod.TruncatedMultiplicity)
+                {
+                    i++;
+                }
+                return i == (int)AnalysisMethod.TruncatedMultiplicity ? (AnalysisMethod)j : (AnalysisMethod)i;
+            }
         }
         public bool VerificationAnalysisSelected() // todo: check this definition range
         {
@@ -266,6 +305,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("curium_ratio", choices[(int)AnalysisMethod.CuriumRatio]));
             ps.Add(new DBParamEntry("normal_method", (int)Normal));
             ps.Add(new DBParamEntry("backup_method", (int)Backup));
+            ps.Add(new DBParamEntry("aux_method", (int)Auxiliary));
         }
 
         static bool[] massoutlier;

@@ -40,8 +40,7 @@ namespace NewUI
             InitializeComponent();
             EnableThoseWhomAreChosen();
             if (am.Normal == AnalysisMethod.None)
-                am.Normal = GetFirst();
-
+                am.Normal = am.GetFirstSelected();
             switch (am.Normal)
             {
                 case AnalysisMethod.None:
@@ -71,135 +70,129 @@ namespace NewUI
             }
 
             if (am.Backup.IsNone() || am.Normal == am.Backup)
-                am.Backup = GetNext(am.Normal);
+                am.Backup = am.GetSecondSelected();
             switch (am.Backup)
             {
                 case AnalysisMethod.None:
                 case AnalysisMethod.INCCNone:
                     break;
                 case AnalysisMethod.CalibrationCurve:
-                    BCalibrationCurveCheckBox.Checked = true;
+                    BCalibrationCurveRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.KnownA:
-                    BKnownAlphaCheckBox.Checked = true;
+                    BKnownAlphaRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.KnownM:
-                    BKnownMCheckBox.Checked = true;
+                    BKnownMRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.Multiplicity:
-                    BMultiplicityCheckBox.Checked = true;
+                    BMultiplicityRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.AddASource:
-                    BAddASourceCheckBox.Checked = true;
+                    BAddASourceRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.CuriumRatio:
-                    BCuriumRatioCheckBox.Checked = true;
+                    BCuriumRatioRadioButton.Checked = true;
                     break;
                 case AnalysisMethod.TruncatedMultiplicity:
-                    BTruncatedMultiplicity.Checked = true;
+                    BTruncatedMultiplicityRadioButton.Checked = true;
                     break;
             }
-        }
 
-        AnalysisMethod GetFirst()
-        {
-            int res = 0;
-            for (int i = (int)AnalysisMethod.CalibrationCurve; i <= (int)AnalysisMethod.TruncatedMultiplicity; i++)
+            if (am.Auxiliary.IsNone() || am.Auxiliary == am.Backup)
+                am.Auxiliary = am.GetThirdSelected();
+            switch (am.Auxiliary)
             {
-                if (i >= (int)AnalysisMethod.Active && i <= (int)AnalysisMethod.ActivePassive)
-                    continue;
-                if (i == (int)AnalysisMethod.INCCNone)  // better to make an enumerator that skips this shit internally 
-                    continue;
-                if (am.choices[i])
-                {
-                    res = i;
+                case AnalysisMethod.None:
+                case AnalysisMethod.INCCNone:
                     break;
-                }
+                case AnalysisMethod.CalibrationCurve:
+                    ACalibrationCurveRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.KnownA:
+                    AKnownAlphaRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.KnownM:
+                    AKnownMRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.Multiplicity:
+                    AMultiplicityRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.AddASource:
+                    AAddASourceRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.CuriumRatio:
+                    ACuriumRatioRadioButton.Checked = true;
+                    break;
+                case AnalysisMethod.TruncatedMultiplicity:
+                    ATruncatedMultiplicityRadioButton.Checked = true;
+                    break;
             }
-            return (AnalysisMethod)res;
         }
 
         void EnableThoseWhomAreChosen()
         {
             CalibrationCurveRadioButton.Enabled = am.choices[(int)AnalysisMethod.CalibrationCurve];
-            BCalibrationCurveCheckBox.Enabled = am.choices[(int)AnalysisMethod.CalibrationCurve];
-            ACalibrationCurveCheckBox.Enabled = am.choices[(int)AnalysisMethod.CalibrationCurve];
+            BCalibrationCurveRadioButton.Enabled = am.choices[(int)AnalysisMethod.CalibrationCurve];
+            ACalibrationCurveRadioButton.Enabled = am.choices[(int)AnalysisMethod.CalibrationCurve];
 
             KnownAlphaRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownA];
-            BKnownAlphaCheckBox.Enabled = am.choices[(int)AnalysisMethod.KnownA];
-            AKnownAlphaCheckBox.Enabled = am.choices[(int)AnalysisMethod.KnownA];
+            BKnownAlphaRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownA];
+            AKnownAlphaRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownA];
 
             KnownMRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownM];
-            BKnownMCheckBox.Enabled = am.choices[(int)AnalysisMethod.KnownM];
-            AKnownMCheckBox.Enabled = am.choices[(int)AnalysisMethod.KnownM];
+            BKnownMRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownM];
+            AKnownMRadioButton.Enabled = am.choices[(int)AnalysisMethod.KnownM];
 
             MultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.Multiplicity];
-            BMultiplicityCheckBox.Enabled = am.choices[(int)AnalysisMethod.Multiplicity];
-            AMultiplicityCheckBox.Enabled = am.choices[(int)AnalysisMethod.Multiplicity];
+            BMultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.Multiplicity];
+            AMultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.Multiplicity];
 
             AddASourceRadioButton.Enabled = am.choices[(int)AnalysisMethod.AddASource];
-            BAddASourceCheckBox.Enabled = am.choices[(int)AnalysisMethod.AddASource];
-            AAddASourceCheckBox.Enabled = am.choices[(int)AnalysisMethod.AddASource];
+            BAddASourceRadioButton.Enabled = am.choices[(int)AnalysisMethod.AddASource];
+            AAddASourceRadioButton.Enabled = am.choices[(int)AnalysisMethod.AddASource];
 
             TruncatedMultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.TruncatedMultiplicity];
-            BTruncatedMultiplicity.Enabled = am.choices[(int)AnalysisMethod.TruncatedMultiplicity];
-            ATruncatedMultiplicityCheckBox.Enabled = am.choices[(int)AnalysisMethod.TruncatedMultiplicity];
+            BTruncatedMultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.TruncatedMultiplicity];
+            ATruncatedMultiplicityRadioButton.Enabled = am.choices[(int)AnalysisMethod.TruncatedMultiplicity];
 
             CuriumRatioRadioButton.Enabled = am.choices[(int)AnalysisMethod.CuriumRatio];
-            BCuriumRatioCheckBox.Enabled = am.choices[(int)AnalysisMethod.CuriumRatio];
-            ACuriumRatioCheckBox.Enabled = am.choices[(int)AnalysisMethod.CuriumRatio];
-        }
-        AnalysisMethod GetNext(AnalysisMethod firstm)
-        {
-            int res = 0;
-            int first = (int)firstm;
-            for (int i = (int)AnalysisMethod.CalibrationCurve; i <= (int)AnalysisMethod.TruncatedMultiplicity; i++)
-            {
-                if (i >= (int)AnalysisMethod.Active && i <= (int)AnalysisMethod.ActivePassive)
-                    continue;
-                if (i == (int)AnalysisMethod.INCCNone)
-                    continue;
-                if (am.choices[i] && i != first)
-                {
-                    res = i;
-                    break;
-                }
-            }
-            return (AnalysisMethod)res;
+            BCuriumRatioRadioButton.Enabled = am.choices[(int)AnalysisMethod.CuriumRatio];
+            ACuriumRatioRadioButton.Enabled = am.choices[(int)AnalysisMethod.CuriumRatio];
         }
         private void CalibrationCurveRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.CalibrationCurve, ((RadioButton)sender), BCalibrationCurveCheckBox, ACalibrationCurveCheckBox);
+            GroupHug(AnalysisMethod.CalibrationCurve, ((RadioButton)sender), BCalibrationCurveRadioButton, ACalibrationCurveRadioButton);
         }
 
         private void KnownAlphaRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.KnownA, ((RadioButton)sender), BKnownAlphaCheckBox, AKnownAlphaCheckBox);
+            GroupHug(AnalysisMethod.KnownA, ((RadioButton)sender), BKnownAlphaRadioButton, AKnownAlphaRadioButton);
         }
 
         private void KnownMRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.KnownM, ((RadioButton)sender), BKnownMCheckBox, AKnownMCheckBox);
+            GroupHug(AnalysisMethod.KnownM, ((RadioButton)sender), BKnownMRadioButton, AKnownMRadioButton);
         }
 
         private void MultiplicityRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.Multiplicity, ((RadioButton)sender), BMultiplicityCheckBox, AMultiplicityCheckBox);
+            GroupHug(AnalysisMethod.Multiplicity, ((RadioButton)sender), BMultiplicityRadioButton, AMultiplicityRadioButton);
         }
 
         private void AddASourceRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.AddASource, ((RadioButton)sender), BAddASourceCheckBox, AAddASourceCheckBox);
+            GroupHug(AnalysisMethod.AddASource, ((RadioButton)sender), BAddASourceRadioButton, AAddASourceRadioButton);
         }
 
         private void CuriumRatioRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.CuriumRatio, ((RadioButton)sender), BCuriumRatioCheckBox, ACuriumRatioCheckBox);
+            GroupHug(AnalysisMethod.CuriumRatio, ((RadioButton)sender), BCuriumRatioRadioButton, ACuriumRatioRadioButton);
         }
 
         private void TruncatedMultiplicityRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            GroupHug(AnalysisMethod.TruncatedMultiplicity, ((RadioButton)sender), BTruncatedMultiplicity, ATruncatedMultiplicityCheckBox);
+            GroupHug(AnalysisMethod.TruncatedMultiplicity, ((RadioButton)sender), BTruncatedMultiplicityRadioButton, ATruncatedMultiplicityRadioButton);
         }
 
         private void GroupHug(AnalysisMethod anm, RadioButton rb, RadioButton B, RadioButton A)
@@ -218,93 +211,15 @@ namespace NewUI
             }
         }
 
-        private void BCalibrationCurveCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BKnownAlphaCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BKnownMCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BMultiplicityCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BAddASourceCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BCuriumRatioCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BTruncatedMultiplicity_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ACalibrationCurveCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AKnownAlphaCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AKnownMCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AMultiplicityCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void AAddASourceCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ACuriumRatioCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ATruncatedMultiplicityCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            //am.choices[(int)AnalysisMethod.CalibrationCurve] = CalibrationCurveRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.KnownA] = KnownAlphaRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.KnownM] = KnownMRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.Multiplicity] = MultiplicityRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.AddASource] = AddASourceRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.TruncatedMultiplicity] = TruncatedMultiplicityRadioButton.Checked;
-            //am.choices[(int)AnalysisMethod.CuriumRatio] = CuriumRatioRadioButton.Checked;
-
                 if (CalibrationCurveRadioButton.Checked)
                      am.Normal = AnalysisMethod.CalibrationCurve;
                 else if (KnownAlphaRadioButton.Checked)
                     am.Normal = AnalysisMethod.KnownA;
                 else if (KnownMRadioButton.Checked)
                     am.Normal = AnalysisMethod.KnownM;
-                 else if (CalibrationCurveRadioButton.Checked)
+                 else if (MultiplicityRadioButton.Checked)
                     am.Normal = AnalysisMethod.Multiplicity;
                 else if (AddASourceRadioButton.Checked)
                     am.Normal = AnalysisMethod.AddASource;
@@ -313,21 +228,37 @@ namespace NewUI
                 else if (TruncatedMultiplicityRadioButton.Checked)
                     am.Normal = AnalysisMethod.TruncatedMultiplicity;
 
-                if (BCalibrationCurveCheckBox.Checked)
+                if (BCalibrationCurveRadioButton.Checked)
                      am.Backup = AnalysisMethod.CalibrationCurve;
-                else if (BKnownAlphaCheckBox.Checked)
+                else if (BKnownAlphaRadioButton.Checked)
                     am.Backup = AnalysisMethod.KnownA;
-                else if (BKnownMCheckBox.Checked)
+                else if (BKnownMRadioButton.Checked)
                     am.Backup = AnalysisMethod.KnownM;
-                 else if (BCalibrationCurveCheckBox.Checked)
+                 else if (BMultiplicityRadioButton.Checked)
                     am.Backup = AnalysisMethod.Multiplicity;
-                else if (BAddASourceCheckBox.Checked)
+                else if (BAddASourceRadioButton.Checked)
                     am.Backup = AnalysisMethod.AddASource;
-                 else if (BCuriumRatioCheckBox.Checked)
+                 else if (BCuriumRatioRadioButton.Checked)
                     am.Backup = AnalysisMethod.CuriumRatio;
-                else if (BTruncatedMultiplicity.Checked)
+                else if (BTruncatedMultiplicityRadioButton.Checked)
                     am.Backup = AnalysisMethod.TruncatedMultiplicity;
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+
+                if (ACalibrationCurveRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.CalibrationCurve;
+                else if (AKnownAlphaRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.KnownA;
+                else if (AKnownMRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.KnownM;
+                else if (AMultiplicityRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.Multiplicity;
+                else if (AAddASourceRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.AddASource;
+                else if (ACuriumRatioRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.CuriumRatio;
+                else if (ATruncatedMultiplicityRadioButton.Checked)
+                    am.Auxiliary = AnalysisMethod.TruncatedMultiplicity;
+
+            DialogResult = System.Windows.Forms.DialogResult.OK;
                 this.Close();
         }
 
