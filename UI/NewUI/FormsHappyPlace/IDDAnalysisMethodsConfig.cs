@@ -111,6 +111,7 @@ namespace NewUI
             }
             else
             {
+
                 bool anyChecked = false;
                 string CollarName = CollarCheckBox.Name;
                 foreach (Control cb in this.Controls)
@@ -127,25 +128,14 @@ namespace NewUI
                 this.CollarCheckBox.Enabled = !anyChecked;
                 if (am.AnySelected())
                 {
-                    if (!am.Has(am.Normal))
-                    {
-                        //set to first in list
-                        am.Normal = am.GetFirstSelected();
-                    }
-                    if (!am.Has(am.Backup))
-                    {
-                        //set to second in list
-                        am.Backup = am.GetSecondSelected();
-                    }
-                    if (!am.Has(am.Auxiliary))
-                    {
-                        //set to third in list
-                        am.Auxiliary = am.GetThirdSelected();
-                    }
+                    am.choices[0] = false;
+                    am.choices[10] = false;
+                    am.Normal = am.GetFirstSelected();
+                    am.Backup = am.GetSecondSelected();
+                    am.Auxiliary = am.GetThirdSelected();
                 }
             }
-            am.choices[0] = !am.AnySelected();
-            am.choices[10] = !am.AnySelected();
+
         }
         // collar disabled if any other enabled
 

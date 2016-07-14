@@ -171,7 +171,7 @@ namespace AnalysisDefs
         }
         public AnalysisMethod GetFirstSelected ()
         {
-            int i = (int) AnalysisMethod.None + 1;
+            int i = (int) AnalysisMethod.None;
             while ((choices[i]) == false && i <= (int) AnalysisMethod.TruncatedMultiplicity)
             {
                 i++;
@@ -180,9 +180,10 @@ namespace AnalysisDefs
         }
         public AnalysisMethod GetSecondSelected()
         {
-            int i = (int) (GetFirstSelected());
-            int j = i;
-            if ((AnalysisMethod)i == AnalysisMethod.None)
+            int j = (int) (GetFirstSelected());
+            int i = j + 1;
+            
+            if (!AnySelected())
                 return AnalysisMethod.None;
             else
             {
@@ -191,22 +192,29 @@ namespace AnalysisDefs
                 {
                     i++;
                 }
-                return i == (int)AnalysisMethod.TruncatedMultiplicity ? (AnalysisMethod)j : (AnalysisMethod)i;
+                if (i > (int)AnalysisMethod.TruncatedMultiplicity)
+                    return AnalysisMethod.None;
+                else
+                    return (AnalysisMethod)i;
             }
         }
         public AnalysisMethod GetThirdSelected()
         {
-            int i = (int)(GetSecondSelected());
-            int j = i;
-            if ((AnalysisMethod)i == AnalysisMethod.None)
-                return AnalysisMethod.None;
+            int j = (int)(GetSecondSelected());
+            int i = j + 1;
+            if (!AnySelected())
+                return
+                    AnalysisMethod.None;
             else
             {
                 while ((choices[i]) == false && i <= (int)AnalysisMethod.TruncatedMultiplicity)
                 {
                     i++;
                 }
-                return i == (int)AnalysisMethod.TruncatedMultiplicity ? (AnalysisMethod)j : (AnalysisMethod)i;
+                if (i > (int)AnalysisMethod.TruncatedMultiplicity)
+                    return AnalysisMethod.None;
+                else
+                    return (AnalysisMethod)i;
             }
         }
         public bool VerificationAnalysisSelected() // todo: check this definition range

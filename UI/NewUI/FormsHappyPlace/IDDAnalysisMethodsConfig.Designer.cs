@@ -180,7 +180,7 @@
             // CollarCheckBox
             // 
             this.CollarCheckBox.AutoSize = true;
-            this.CollarCheckBox.Enabled = false;
+            this.CollarCheckBox.Enabled = true;
             this.CollarCheckBox.Location = new System.Drawing.Point(221, 175);
             this.CollarCheckBox.Name = "CollarCheckBox";
             this.CollarCheckBox.Size = new System.Drawing.Size(52, 17);
