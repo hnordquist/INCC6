@@ -184,7 +184,7 @@ namespace NCCTransfer
 					DetectorMaterialMethod dmm = new DetectorMaterialMethod(se.material, se.detectorid, INCC.METHOD_NONE);
                     idcf.DetectorMaterialMethodParameters.Add(dmm, Calib5.MoveAMR(se));
 
- 					// next do each method rec
+ 					// then do each method rec
                     AnalysisMethods ams = NC.App.DB.DetectorMaterialAnalysisMethods[se];
                     IEnumerator iter = ams.GetMethodEnumerator();
                     while (iter.MoveNext())
@@ -731,8 +731,8 @@ namespace NCCTransfer
 			}
 		}
 
-		public static unsafe List<INCCTransferFile> XFerFromMeasurements(List<Measurement> meas)  // URGENT: implement binary xfer of results_rec, cycles, all method results 
-		{
+		public static unsafe List<INCCTransferFile> XFerFromMeasurements(List<Measurement> meas)  // URGENT: *xfer* implement binary xfer of cycles, all method results 
+        {
 			List<INCCTransferFile> list = new List<INCCTransferFile>();
 			foreach(Measurement m in meas)
 			{
@@ -740,13 +740,15 @@ namespace NCCTransfer
 				itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
 				list.Add(itf);
 				itf.results_rec_list.Add(Result5.MoveResultsRec(m));
-				// URGENT: method_results_list, run_rec_list, that is about it
-				/// foreach 
-				///    itf.method_results_list.Add(Result5.MoveMethodRec....)); 
-				/// foreach 
-				///    itf.run_rec_list.Add(Result5.MoveRun....)); 				
-			}
-			return list;
+				itf.results_status_list.Add(Result5.EncodeResultsStatus(m));
+
+                // URGENT: *xfer* method_results_list, run_rec_list, that is about it
+                /// foreach 
+                ///    itf.method_results_list.Add(Result5.MoveMethodRec....)); 
+                /// foreach 
+                ///    itf.run_rec_list.Add(Result5.MoveRun....)); 				
+            }
+            return list;
 		}
 
         static byte[] StringSquish(string s, int len)
@@ -979,7 +981,7 @@ namespace NCCTransfer
 					rec.primary_analysis_method = (byte)NewTypeToOldMethodId(imr.primaryMethod);
 
 				// rec.net_drum_weight =  // NEXT: no entry in INCC6 results for this result value, add it
-				// NEXT: duo of passive and active measurent results idenfier not prpely handled in INCC6 yet
+				// NEXT: duo of passive and active measurent results identifier not yet properly handled in INCC6
                 b = StringSquish(m.MeasDate.ToString("yy.MM.dd"), INCC.DATE_TIME_LENGTH);
 				TransferUtils.Copy(b, rec.passive_meas_date);
 				TransferUtils.Copy(b, rec.active_meas_date);
@@ -1004,6 +1006,91 @@ namespace NCCTransfer
 				}
 				rec.db_version = 5.0;
                 return rec;
+			}
+
+            internal static INCC.SaveResultsMask ResultsMaskMap(AnalysisMethod am)
+            {
+                INCC.SaveResultsMask r = 0;
+                switch (am)
+                {
+                    case AnalysisMethod.KnownA:
+                        r = INCC.SaveResultsMask.SAVE_KNOWN_ALPHA_RESULTS; break;
+                    case AnalysisMethod.CalibrationCurve:
+                        r = INCC.SaveResultsMask.SAVE_CAL_CURVE_RESULTS;   break;
+                    case AnalysisMethod.KnownM:
+                        r = INCC.SaveResultsMask.SAVE_KNOWN_M_RESULTS; break;
+                    case AnalysisMethod.Multiplicity:
+                        r = INCC.SaveResultsMask.SAVE_MULTIPLICITY_RESULTS; break;
+                    case AnalysisMethod.TruncatedMultiplicity:
+                        r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_RESULTS; break;
+                    case AnalysisMethod.AddASource:
+                        r = INCC.SaveResultsMask.SAVE_ADD_A_SOURCE_RESULTS; break;
+                    case AnalysisMethod.CuriumRatio:
+                        r = INCC.SaveResultsMask.SAVE_CURIUM_RATIO_RESULTS; break;
+                    case AnalysisMethod.Active:
+                        r = INCC.SaveResultsMask.SAVE_ACTIVE_RESULTS; break;
+                    case AnalysisMethod.ActivePassive:
+                        r = INCC.SaveResultsMask.SAVE_ACTIVE_PASSIVE_RESULTS; break;
+                    case AnalysisMethod.ActiveMultiplicity:
+                        r = INCC.SaveResultsMask.SAVE_ACTIVE_MULTIPLICITY_RESULTS; break;
+                    case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+                        r = INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS; break;
+                    case AnalysisMethod.Collar:
+                        r = INCC.SaveResultsMask.SAVE_COLLAR_RESULTS; break;
+                    default:
+                        break;
+                }
+
+                //r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_BKG_RESULTS; break;
+                return r;
+
+            }
+
+			internal static INCC.SaveResultsMask EncodeResultsStatus(Measurement m)
+			{
+				INCC.SaveResultsMask res = 0x0;
+				switch(m.MeasOption)
+				{
+				case AssaySelector.MeasurementOption.verification:
+				case AssaySelector.MeasurementOption.calibration:
+					{
+						IEnumerator iter = m.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
+
+						while (iter.MoveNext())
+						{
+							MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
+							INCCResult ir = m.INCCAnalysisResults[moskey];
+                            INCCMethodResults imrs;
+                            bool found = m.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
+                            if (found && imrs.Count > 0) // should be true for verification and calibration
+                            {
+                                // we've got a distinct detector id and material type on the methods, so that is the indexer here
+                                Dictionary<AnalysisMethod, INCCMethodResult> amimr = imrs[m.INCCAnalysisState.Methods.selector];
+
+                                // now get an enumerator over the map of method results
+                                Dictionary<AnalysisMethod, INCCMethodResult>.Enumerator ai = amimr.GetEnumerator();
+                                while (ai.MoveNext())
+                                {
+                                    res |= ResultsMaskMap(ai.Current.Key);
+                                }
+							}
+						}
+					}
+					break;
+				case AssaySelector.MeasurementOption.initial:
+					res |= INCC.SaveResultsMask.SAVE_INIT_SRC_RESULTS;
+					break;
+				case AssaySelector.MeasurementOption.normalization:
+					res |= INCC.SaveResultsMask.SAVE_BIAS_RESULTS;
+					break;
+				case AssaySelector.MeasurementOption.precision:
+					res |= INCC.SaveResultsMask.SAVE_PRECISION_RESULTS;
+					break;
+				default:
+					res = 0;
+					break;
+				}
+				return res;
 			}
 		}
 
@@ -1532,6 +1619,7 @@ namespace NCCTransfer
                             aas.cev.sigma_x = add_a_source.ad_sigma_x;
                             aas.cev.lower_mass_limit = add_a_source.ad_lower_mass_limit;
                             aas.cev.upper_mass_limit = add_a_source.ad_upper_mass_limit;
+                            // URGENT: *xfer* dcl_mass and doubles arrays
 
                             aas.cf.a = add_a_source.ad_cf_a; aas.cf.b = add_a_source.ad_cf_b;
                             aas.cf.c = add_a_source.ad_cf_c; aas.cf.d = add_a_source.ad_cf_d;
@@ -2631,7 +2719,29 @@ namespace NCCTransfer
                         newres.tm_doubles_bkg.err = oldres.ad_tm_doubles_bkg_err;
                         newres.tm_uncorr_doubles.err = oldres.ad_tm_uncorr_doubles_err;
                         newres.tm_corr_doubles.err = oldres.ad_corr_doubles_err;
-                        //newres.methodParams; // NEXT: unfinished
+                        newres.methodParams.cev.a = oldres.ad_a_res; newres.methodParams.cev.b = oldres.ad_b_res;
+                        newres.methodParams.cev.c = oldres.ad_c_res; newres.methodParams.cev.d = oldres.ad_d_res;
+                        newres.methodParams.cev.var_a = oldres.ad_var_a_res; newres.methodParams.cev.var_b = oldres.ad_var_b_res;
+                        newres.methodParams.cev.var_c = oldres.ad_var_c_res; newres.methodParams.cev.var_d = oldres.ad_var_d_res;
+                        newres.methodParams.cev.setcovar(Coeff.a, Coeff.b, oldres.ad_covar_ab_res);
+                        newres.methodParams.cev._covar[0, 2] = oldres.ad_covar_ac_res;
+                        newres.methodParams.cev._covar[0, 3] = oldres.ad_covar_ad_res;
+                        newres.methodParams.cev._covar[1, 2] = oldres.ad_covar_bc_res;
+                        newres.methodParams.cev._covar[1, 3] = oldres.ad_covar_bd_res;
+                        newres.methodParams.cev._covar[2, 3] = oldres.ad_covar_cd_res;
+                        newres.methodParams.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation)oldres.ad_add_a_source_equation;
+                        newres.methodParams.cev.sigma_x = oldres.ad_sigma_x_res;
+
+                        newres.methodParams.cf.a = oldres.ad_cf_a_res; newres.methodParams.cf.b = oldres.ad_cf_b_res;
+                        newres.methodParams.cf.c = oldres.ad_cf_c_res; newres.methodParams.cf.d = oldres.ad_cf_d_res;
+                        newres.methodParams.dzero_avg = oldres.ad_dzero_avg_res;
+                        newres.methodParams.num_runs = oldres.ad_num_runs_res;
+                        newres.methodParams.tm_dbls_rate_upper_limit = oldres.ad_tm_dbls_rate_upper_limit_res;
+                        newres.methodParams.tm_weighting_factor = oldres.ad_tm_weighting_factor_res;
+                        newres.methodParams.use_truncated_mult = (oldres.ad_use_truncated_mult_res == 0 ? false : true);
+                        newres.methodParams.dzero_ref_date = INCC.DateFrom(TransferUtils.str(oldres.ad_dzero_ref_date_res, INCC.DATE_TIME_LENGTH));
+                        newres.methodParams.position_dzero = TransferUtils.Copy(oldres.ad_position_dzero_res, INCC.MAX_ADDASRC_POSITIONS);
+                        // URGENT: *xfer* methodParams dcl_mass, doubles, min, max
                     }
                     else if (r is results_curium_ratio_rec)
                     {
@@ -2683,7 +2793,7 @@ namespace NCCTransfer
                         newres.methodParams.cev.sigma_x = oldres.cr_sigma_x_res;
                         newres.methodParams.curium_ratio_type = OldToNewCRVariants(oldres.curium_ratio_type_res);
                     }
-                    else if (r is results_active_passive_rec) // NEXT:confusion with combined, it's the same as Active internally? expand and study
+                    else if (r is results_active_passive_rec) // NEXT: confusion with combined, it's the same as Active internally? expand and study
                     {
                         mlogger.TraceEvent(LogLevels.Verbose, 34057, ("Transferring method results for " + r.GetType().ToString()));
                         results_active_passive_rec oldres = (results_active_passive_rec)r;
@@ -2840,7 +2950,7 @@ namespace NCCTransfer
                         cid.rod_type = newres.methodParamsC.poison_rod_type[0];
                         cid.modified = true;
 
-                        List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();  // what do we do with these, where is the collar item id list?
+                        List<CollarItemId> list = NC.App.DB.CollarItemIds.GetList();
 						bool glump = list.Exists(i => { return string.Compare(cid.item_id, i.item_id, true) == 0; });
                         if (glump && overwrite)
                         {

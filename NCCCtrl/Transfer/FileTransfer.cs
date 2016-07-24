@@ -1091,7 +1091,7 @@ namespace NCCTransfer
 
 		public string Name { set; get; }
 
-		unsafe new public bool Save(string path)  // URGENT: write the results rec, the methods result and the run rec list in that order, see Restore for the details 
+		unsafe new public bool Save(string path)  // URGENT: *xfer* write the methods results and the run rec list in that order, see Restore for the details 
 		{
 			Path = System.IO.Path.Combine(path, Name);
 			mlogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
@@ -1114,7 +1114,12 @@ namespace NCCTransfer
 			try
 			{
 				WriteResultsRec(results_rec_list[0], bw);
-				result = true;
+				WriteResultsStatus(results_status_list[0], bw);
+                foreach (iresultsbase irb in method_results_list)
+                {
+                    WriteMethodResults(irb, bw); 
+                }
+                result = true;
 				mlogger.TraceInformation("Saved transfer file " + Path);
 			} catch (Exception e)
 			{
@@ -1142,6 +1147,125 @@ namespace NCCTransfer
 			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
 			bw.Write(zb, 0, sz);
         }
+		unsafe void WriteResultsStatus(INCC.SaveResultsMask rec, BinaryWriter bw)
+		{
+			bw.Write((short)rec);
+        }
+        unsafe void WriteMethodResults(iresultsbase r, BinaryWriter bw)
+        {
+            int sz = 0;
+            byte* bytes = null;
+            byte[] zb = null;
+
+            if (r is results_init_src_rec)
+            {
+                sz = sizeof(results_init_src_rec);
+                results_init_src_rec rec = (results_init_src_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_bias_rec)
+            {
+                sz = sizeof(results_bias_rec);
+                results_bias_rec rec = (results_bias_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_precision_rec)
+            {
+                sz = sizeof(results_precision_rec);
+                results_precision_rec rec = (results_precision_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_cal_curve_rec)
+            {
+                sz = sizeof(results_cal_curve_rec);
+                results_cal_curve_rec rec = (results_cal_curve_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_known_alpha_rec)
+            {
+                sz = sizeof(results_known_alpha_rec);
+                results_known_alpha_rec rec = (results_known_alpha_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_multiplicity_rec)
+            {
+                sz = sizeof(results_multiplicity_rec);
+                results_multiplicity_rec rec = (results_multiplicity_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_truncated_mult_rec)
+            {
+                sz = sizeof(results_truncated_mult_rec);
+                results_truncated_mult_rec rec = (results_truncated_mult_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_known_m_rec)
+            {
+                sz = sizeof(results_known_m_rec);
+                results_known_m_rec rec = (results_known_m_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_add_a_source_rec)
+            {
+                sz = sizeof(results_add_a_source_rec);
+                results_add_a_source_rec rec = (results_add_a_source_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_curium_ratio_rec)
+            {
+                sz = sizeof(results_curium_ratio_rec);
+                results_curium_ratio_rec rec = (results_curium_ratio_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_active_passive_rec)
+            {
+                sz = sizeof(results_active_passive_rec);
+                results_active_passive_rec rec = (results_active_passive_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_active_mult_rec)
+            {
+                sz = sizeof(results_active_mult_rec);
+                results_active_mult_rec rec = (results_active_mult_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_collar_rec)
+            {
+                sz = sizeof(results_collar_rec);
+                results_collar_rec rec = (results_collar_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_de_mult_rec)
+            {
+                sz = sizeof(results_de_mult_rec);
+                results_de_mult_rec rec = (results_de_mult_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            else if (r is results_tm_bkg_rec)
+            {
+                sz = sizeof(results_tm_bkg_rec);
+                results_tm_bkg_rec rec = (results_tm_bkg_rec)r;
+                bytes = (byte*)&rec;
+                zb = TransferUtils.GetBytes(bytes, sz);
+            }
+            if (sz > 0 && zb != null)
+                bw.Write(zb, 0, sz);
+        }
+
         unsafe new public bool Restore(string source_path_filename)   // migrated from restore.cpp
         {
             bool result = false;
@@ -1281,6 +1405,7 @@ namespace NCCTransfer
                 restore_add_detector(results);
 
                 results_rec_list.Add(results);
+                results_status_list.Add(results_status);
 
                 #region method results
                 // here we preserve specific typed method results records, these are generally small and are indexed by the detector/material type tuple
@@ -1689,6 +1814,7 @@ namespace NCCTransfer
         }
 
         public List<results_rec> results_rec_list = new List<results_rec>();
+        public List<INCC.SaveResultsMask> results_status_list = new List<INCC.SaveResultsMask>();
         public List<iresultsbase> method_results_list = new List<iresultsbase>();
 
         // possible new fac and mba names 

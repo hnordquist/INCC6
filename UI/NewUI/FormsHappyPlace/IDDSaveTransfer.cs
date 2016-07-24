@@ -59,10 +59,20 @@ namespace NewUI
 				DialogResult r = f.ShowDialog();
 				if (r == DialogResult.OK)
 				{
-					string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+					string dest = UIIntegration.GetUsersFolder("Select Directory for Saving Measurement Data", string.Empty);
 					if (string.IsNullOrEmpty(dest))
 						return;
-					List<Measurement> mlist = NC.App.DB.MeasurementsFor(f.FilteredList, LMOnly: false, skipMethods: false);
+					IDDMeasurementList measlist = new IDDMeasurementList(); 
+					measlist.Init(f.FilteredList,
+							AssaySelector.MeasurementOption.unspecified,
+							lmonly: false, goal: IDDMeasurementList.EndGoal.Transfer, inspnum: f.inspnum, detector: f.det);
+					DialogResult dr = DialogResult.None;
+					if (measlist.bGood)
+						measlist.ShowDialog();
+					dr = measlist.DialogResult;
+					if (dr != DialogResult.OK)
+						return;
+					List<Measurement> mlist = measlist.GetSelectedMeas();
 					foreach (Measurement m in mlist)
 					{
 						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
@@ -82,13 +92,35 @@ namespace NewUI
 						itd.Save(dest);
 					}
 				}
-			} else if (AllDetectorsRadioButton.Checked)
+			}
+			else if (AllDetectorsRadioButton.Checked)
 			{
-				string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+				string dest = UIIntegration.GetUsersFolder("Select Directory for Saving Measurement Data", string.Empty);
 				if (string.IsNullOrEmpty(dest))
 					return;
 				List<Detector> l = NC.App.DB.Detectors;
-				// URGENT: Every single one in the DB .... 
+				foreach (Detector det in l)
+				{
+					List<Measurement> mlist = NC.App.DB.MeasurementsFor(det.Id.DetectorId);
+					foreach (Measurement m in mlist)
+					{
+						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
+						DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
+						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId);
+						foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
+						{
+							cycle.UpdateDataSourceId(m.AcquireState.data_src, det.Id.SRType,
+												cur.AddTicks(cycle.TS.Ticks), det.Id.FileName);
+							cur = cycle.DataSourceId.dt;
+						}
+						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
+					}
+					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
+					foreach (INCCTransferFile itd in itdl)
+					{
+						itd.Save(dest);
+					}
+				}
 			}
 		}
 
