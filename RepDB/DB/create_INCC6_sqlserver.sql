@@ -392,6 +392,7 @@ CREATE TABLE analysis_method_rec(
    [collar] int,
    [normal_method] int,
    [backup_method] int,
+   [aux_method] int,
    [curium_ratio] int,
    [truncated_mult] int,
    [spare1] int,
@@ -955,8 +956,8 @@ CREATE TABLE collar_data_entry(
 GO
 CREATE TABLE poison_rod_type_rec(
 	[id] INTEGER IDENTITY Primary Key,
-	[poison_rod_type] nvarchar,
-	[poison_absorption_fact] nvarchar
+	[poison_rod_type] nvarchar NULL,
+	[poison_absorption_fact] float NULL
 );
 GO
 CREATE INDEX  alpha_beta_recixdid on alpha_beta_rec(detector_id);
@@ -2088,7 +2089,7 @@ INSERT INTO [known_alpha_rec] VALUES(2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0,0
 GO
 INSERT INTO [multiplicity_rec] VALUES(2,1,0,473.5,2.154,3.789,5.211,3.163,8.24,17.321,1.0,0.0,0.0,0.0,1.0,NULL,NULL,1.0);
 GO
-INSERT INTO [analysis_method_rec] VALUES(2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,NULL,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES(2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL,NULL);
 GO
 INSERT INTO [cal_curve_rec] VALUES(2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
@@ -2097,4 +2098,5 @@ GO
 INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO
 INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
+GOINSERT INTO [poison_rod_type_rec] VALUES('G',0.647);
 GO

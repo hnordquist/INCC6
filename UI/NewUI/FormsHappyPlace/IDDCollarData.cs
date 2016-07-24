@@ -154,7 +154,7 @@ namespace NewUI
                         if (!double.TryParse((string)row.Cells["PoiPct"].Value, out cid.poison_percent.v))
                         {
                         }
-                        if (!double.TryParse((string)row.Cells["TPoiPctErr"].Value, out cid.poison_percent.sigma))
+                        if (!double.TryParse((string)row.Cells["PoiPctErr"].Value, out cid.poison_percent.sigma))
                         {
                         }
                         cid.modified = true;

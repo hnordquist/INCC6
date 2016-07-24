@@ -516,6 +516,7 @@ namespace DB
             foreach (string ls in a)
             {
                 s.Append('"');
+                s.Append(ls);
                 s.Append(@""",");
             }
             s.Remove(s.Length - 1, 1);
