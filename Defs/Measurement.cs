@@ -487,8 +487,8 @@ namespace AnalysisDefs
         public ushort CurrentRepetition;
         public ushort RequestedRepetitions
         {
-            get { return AcquireState.num_runs; }
-            set { AcquireState.num_runs = value; }  // questionable use to stop acquire cycles looping
+            get { return (Detector.ListMode ? (ushort) AcquireState.lm.Cycles : AcquireState.num_runs); }
+            set { if (Detector.ListMode) AcquireState.lm.Cycles = value; else AcquireState.num_runs = value; }  // questionable use to stop acquire cycles looping
         }
 
         /// <summary>

@@ -66,9 +66,8 @@ namespace NewUI
 
         public void NumCyclesTextBox_Leave(object sender, EventArgs e)
         {
-            // Try to convert the text to a positive, non-zero number            
+            // Try to convert the text to a positive, non-zero number 
             ap.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap.num_runs));
-
             // Auto-format or reset the textbox value, depending on whether the entered value was different/valid
             ((TextBox)sender).Text = Format.Rend(ap.num_runs);
         }
@@ -301,8 +300,10 @@ namespace NewUI
                     NC.App.AppContext.FileInput = null;  // reset the cmd line file input flag
                     if (det.ListMode)
                     {
-                        // patch override lm.Interval with run_count_time from dialog
+						// patch override lm.Interval with run_count_time from dialog
+						// the acquire dialogs field values, as seen and modified by the user, override the LM-only acquire settings for virtual SR measurements
                         NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time;
+                        NC.App.Opstate.Measurement.AcquireState.lm.Cycles = NC.App.Opstate.Measurement.AcquireState.num_runs;
 
                         // Check NC.App.Opstate.Measurement.AnalysisParams for at least one VSR 
                         // If not present, inform and pop up the wizard
@@ -313,8 +314,8 @@ namespace NewUI
                         }
                         else
                         {
-                            AnalysisWizard awl = new AnalysisWizard(AnalysisWizard.AWSteps.Step2B, ap, det);  // analyzers are created in here, placed on global measurement
-                            dr = awl.ShowDialog();
+                            AnalysisWizard aw2B = new AnalysisWizard(AnalysisWizard.AWSteps.Step2B, ap, det);  // analyzers are created in here, placed on global measurement
+                            dr = aw2B.ShowDialog();
                             if (dr == DialogResult.OK)
                             {
                                 NC.App.DB.UpdateAcquireParams(ap); //update it again
@@ -410,8 +411,8 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
                     {
-                        AnalysisWizard aw = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw.ShowDialog(); // show LM-relevant acquire-style settings for modification or confirmation
+                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
+                        dr = aw2A.ShowDialog(); // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -424,8 +425,8 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
                     {
-                        AnalysisWizard aw1 = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw1.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
+                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -438,8 +439,8 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
                     {
-                        AnalysisWizard aw2 = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
+                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -448,10 +449,17 @@ namespace NewUI
                     break;
                 case ConstructedSource.MCA527File:
  					Integ.BuildMeasurement(ap, det, mo);
-                   NC.App.AppContext.MCA527FileAssay = true;
+                    NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
-                    dr = UIIntegration.GetUsersFilesFolder("Select MCA files or folder", NC.App.AppContext.FileInput, "MCA527", "mca");
-                    //dr = DialogResult.Cancel;
+				    if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
+                    {
+                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
+                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                    }
+                    else
+                    {
+	                    dr = UIIntegration.GetUsersFilesFolder("Select MCA files or folder", NC.App.AppContext.FileInput, "MCA527", "mca");
+                    }
                     break;
                 default:
                     break;

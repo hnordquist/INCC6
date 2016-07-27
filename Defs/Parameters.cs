@@ -960,10 +960,10 @@ namespace AnalysisDefs
         public ReportSectional review;
         public double run_count_time;
         public AcquireConvergence acquire_type;
-        public UInt16 num_runs;
-        public UInt16 active_num_runs;
-        public UInt16 min_num_runs;
-        public UInt16 max_num_runs;
+        public ushort num_runs;
+        public ushort active_num_runs;
+        public ushort min_num_runs;
+        public ushort max_num_runs;
         public double meas_precision;
         public WellConfiguration well_config;
         public double mass;

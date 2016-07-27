@@ -153,7 +153,14 @@ namespace NewUI
             if (state == AWSteps.Step2A || state == AWSteps.Step2B)
             {
                 fromINCCAcquire = true;
-                ap.data_src = (state == AWSteps.Step2B ? ConstructedSource.Live : ConstructedSource.PTRFile);  // default file type is PTR-32, updated in UI from acquire param details
+				if (NC.App.AppContext.PTRFileAssay)
+					ap.data_src = ConstructedSource.PTRFile; 
+				else if (NC.App.AppContext.PulseFileAssay)
+					ap.data_src = ConstructedSource.SortedPulseTextFile; 
+				else if (NC.App.AppContext.NCDFileAssay)
+					ap.data_src = ConstructedSource.NCDFile; 
+				else if (NC.App.AppContext.MCA527FileAssay)
+					ap.data_src = ConstructedSource.MCA527File;
             }
             CycleIntervalPatch(); // guard for bad LM cycle and interval
             // Set the visibilities correctly for the initial state 
@@ -375,7 +382,15 @@ namespace NewUI
         private void Step1PostProcessButton_Click(object sender, EventArgs e)
         {
             state = AWSteps.Step2A;
-            ap.data_src = ConstructedSource.NCDFile;  // todo: get from AppContext State
+            ap.data_src = ConstructedSource.NCDFile; 
+			if (NC.App.AppContext.PTRFileAssay)
+				ap.data_src = ConstructedSource.PTRFile; 
+			else if (NC.App.AppContext.PulseFileAssay)
+			    ap.data_src = ConstructedSource.SortedPulseTextFile; 
+			else if (NC.App.AppContext.NCDFileAssay)
+		        ap.data_src = ConstructedSource.NCDFile; 
+			else if (NC.App.AppContext.MCA527FileAssay)
+	            ap.data_src = ConstructedSource.MCA527File;					
             UpdateUI();
         }
 
@@ -1490,9 +1505,9 @@ namespace NewUI
         {
             switch (step)
             {
-                case AnalysisWizard.AWSteps.Step1:
+                case AWSteps.Step1:
                     break;
-                case AnalysisWizard.AWSteps.Step2A:
+                case AWSteps.Step2A:
                     Step2InputDirectoryTextBox.Text = NC.App.AppContext.FileInput;
                     Step2RecurseCheckBox.CheckState = (NC.App.AppContext.Recurse ? CheckState.Checked : CheckState.Unchecked);
                     Step2AutoOpenCheckBox.CheckState = (NC.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
@@ -1523,7 +1538,7 @@ namespace NewUI
                     Step2OutputDirectoryTextBox.Text = ap.lm.Results;
                     RefreshDetectorCombo(Step2ADetCB);
                     break;
-                case AnalysisWizard.AWSteps.Step2B:
+                case AWSteps.Step2B:
                     Step2BAutoOpenCheckBox.CheckState = (NC.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
                     Step2BIncludeConfigCheckBox.CheckState = (ap.lm.IncludeConfig ? CheckState.Checked : CheckState.Unchecked);
                     Step2BSaveEarlyTermCheckBox.CheckState = (ap.lm.SaveOnTerminate ? CheckState.Checked : CheckState.Unchecked);
@@ -1541,7 +1556,7 @@ namespace NewUI
 
                     RefreshDetectorCombo(Step2BDetectorComboBox);
                     break;
-                case AnalysisWizard.AWSteps.Step3:
+                case AWSteps.Step3:
 					if (ap.data_src.Live())
 					{
 						if (string.IsNullOrEmpty(Step2BDetectorComboBox.Text))
@@ -1563,10 +1578,10 @@ namespace NewUI
                     SetCheckListBoxAnalyzers();
                     ShowCurrentAnalzyerSelection();
                     break;
-                case AnalysisWizard.AWSteps.Step4:
+                case AWSteps.Step4:
                     // step 4 next creates the selected analyzer and adds it to the ap var
                     break;
-                case AnalysisWizard.AWSteps.Step5:
+                case AWSteps.Step5:
 
                     break;
                 default:
@@ -1641,10 +1656,9 @@ namespace NewUI
 
         private void CycleNumTextBox_Leave(object sender, EventArgs e)
         {
-            // Try to convert the text to a positive, non-zero number            
-            ap.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap.num_runs));
+            // Try to convert the text to a positive, non-zero number  
+			ap.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap.num_runs));
             ((TextBox)sender).Text = Format.Rend(ap.num_runs);
-            // if (fromINCCAcquire)
             ap.lm.Cycles = ap.num_runs;
         }
         private void IntervalTextBox_Leave(object sender, EventArgs e)

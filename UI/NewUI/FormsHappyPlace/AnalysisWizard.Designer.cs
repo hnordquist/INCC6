@@ -144,9 +144,9 @@
 			this.Step4DataSourceLabel = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.Comment = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.Step1ControlsPanel.SuspendLayout();
 			this.Step2APanel.SuspendLayout();
 			this.InputFileTypeGroupBox.SuspendLayout();
@@ -1328,7 +1328,7 @@
 			this.Step4OutputDirLabel.Location = new System.Drawing.Point(37, 138);
 			this.Step4OutputDirLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.Step4OutputDirLabel.Name = "Step4OutputDirLabel";
-			this.Step4OutputDirLabel.Size = new System.Drawing.Size(110, 17);
+			this.Step4OutputDirLabel.Size = new System.Drawing.Size(91, 17);
 			this.Step4OutputDirLabel.TabIndex = 19;
 			this.Step4OutputDirLabel.Text = "Output folder";
 			// 
@@ -1539,7 +1539,6 @@
 			// Comment
 			// 
 			this.Comment.BackColor = System.Drawing.Color.White;
-			this.Comment.Enabled = true;
 			this.Comment.ForeColor = System.Drawing.Color.Black;
 			this.Comment.Location = new System.Drawing.Point(154, 296);
 			this.Comment.Margin = new System.Windows.Forms.Padding(4);
