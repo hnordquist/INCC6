@@ -731,27 +731,69 @@ namespace NCCTransfer
 			}
 		}
 
-		public static unsafe List<INCCTransferFile> XFerFromMeasurements(List<Measurement> meas)  // URGENT: *xfer* implement binary xfer of cycles, all method results 
-        {
+		public static unsafe List<INCCTransferFile> XFerFromMeasurements(List<Measurement> meas)
+		{
 			List<INCCTransferFile> list = new List<INCCTransferFile>();
-			foreach(Measurement m in meas)
+			foreach (Measurement m in meas)
 			{
-				INCCTransferFile itf = new INCCTransferFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
-				itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
-				list.Add(itf);
-				itf.results_rec_list.Add(Result5.MoveResultsRec(m));
-				itf.results_status_list.Add(Result5.EncodeResultsStatus(m));
-
-                // URGENT: *xfer* method_results_list, run_rec_list, that is about it
-                /// foreach 
-                ///    itf.method_results_list.Add(Result5.MoveMethodRec....)); 
-                /// foreach 
-                ///    itf.run_rec_list.Add(Result5.MoveRun....)); 				
-            }
-            return list;
+				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
+				while (iter.MoveNext())                     // for each mkey, a seperate xfer file should be emitted
+				{
+					INCCTransferFile itf = new INCCTransferFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+					itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
+					list.Add(itf);
+					itf.results_rec_list.Add(Result5.MoveResultsRec(m));
+					itf.results_status_list.Add(Result5.EncodeResultsStatus(m));
+					Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+					if (m.MeasOption >= AssaySelector.MeasurementOption.background && m.MeasOption <= AssaySelector.MeasurementOption.holdup)
+					{
+						MeasOptionSelector mos = new MeasOptionSelector(m.MeasOption, mkey);
+						if (m.MeasOption == AssaySelector.MeasurementOption.initial)
+							itf.method_results_list.Add(Result5.MoveInitSrc(m.INCCAnalysisResults, mos));
+						else if (m.MeasOption == AssaySelector.MeasurementOption.normalization)
+							itf.method_results_list.Add(Result5.MoveBias(m.INCCAnalysisResults, mos));
+						else if (m.MeasOption == AssaySelector.MeasurementOption.precision)
+							itf.method_results_list.Add(Result5.MovePrecision(m.INCCAnalysisResults, mos));
+						else if (m.MeasOption == AssaySelector.MeasurementOption.background)
+							itf.method_results_list.Add(Result5.MoveTruncBkg(m.INCCAnalysisState, mos)); // NEXT: tm bkg, special case, unfinished
+						else if (m.MeasOption == AssaySelector.MeasurementOption.verification || m.MeasOption == AssaySelector.MeasurementOption.calibration)
+						{
+							itf.method_results_list.Add(Result5.MoveCalCurve(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveKnownA(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveKnownM(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveMult(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveDEMult(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveActPass(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveCollar(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveActive(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveActiveMult(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveCurium(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveTruncMult(m.INCCAnalysisState, mos));
+							itf.method_results_list.Add(Result5.MoveTruncBkg(m.INCCAnalysisState, mos)); // todo: here too, or just for bkg measurement?
+							itf.method_results_list.Add(Result5.MoveAAS(m.INCCAnalysisState, mos));
+						}
+					}
+					foreach (Cycle c in m.Cycles)
+					{
+						itf.run_rec_list.Add(Result5.MoveCycleToRunRec(c, mkey));
+					}
+					if (m.MeasOption == AssaySelector.MeasurementOption.verification && m.INCCAnalysisState.Methods.HasMethod(AnalysisMethod.AddASource))
+					{
+						itf.InitCFRunLists();
+						int aasp = 0;
+						foreach (CycleList cl in m.CFCycles)
+						{
+							foreach(Cycle cfc in cl)
+								itf.CFrun_rec_list[aasp].Add(Result5.MoveCycleToRunRec(cfc, mkey));
+							aasp++;
+						}
+					}
+				}
+			}
+			return list;
 		}
 
-        static byte[] StringSquish(string s, int len)
+		static byte[] StringSquish(string s, int len)
         {
             byte[] b = new byte[len];
             if (s.Length > len)
@@ -1008,48 +1050,61 @@ namespace NCCTransfer
                 return rec;
 			}
 
-            internal static INCC.SaveResultsMask ResultsMaskMap(AnalysisMethod am)
-            {
-                INCC.SaveResultsMask r = 0;
-                switch (am)
-                {
-                    case AnalysisMethod.KnownA:
-                        r = INCC.SaveResultsMask.SAVE_KNOWN_ALPHA_RESULTS; break;
-                    case AnalysisMethod.CalibrationCurve:
-                        r = INCC.SaveResultsMask.SAVE_CAL_CURVE_RESULTS;   break;
-                    case AnalysisMethod.KnownM:
-                        r = INCC.SaveResultsMask.SAVE_KNOWN_M_RESULTS; break;
-                    case AnalysisMethod.Multiplicity:
-                        r = INCC.SaveResultsMask.SAVE_MULTIPLICITY_RESULTS; break;
-                    case AnalysisMethod.TruncatedMultiplicity:
-                        r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_RESULTS; break;
-                    case AnalysisMethod.AddASource:
-                        r = INCC.SaveResultsMask.SAVE_ADD_A_SOURCE_RESULTS; break;
-                    case AnalysisMethod.CuriumRatio:
-                        r = INCC.SaveResultsMask.SAVE_CURIUM_RATIO_RESULTS; break;
-                    case AnalysisMethod.Active:
-                        r = INCC.SaveResultsMask.SAVE_ACTIVE_RESULTS; break;
-                    case AnalysisMethod.ActivePassive:
-                        r = INCC.SaveResultsMask.SAVE_ACTIVE_PASSIVE_RESULTS; break;
-                    case AnalysisMethod.ActiveMultiplicity:
-                        r = INCC.SaveResultsMask.SAVE_ACTIVE_MULTIPLICITY_RESULTS; break;
-                    case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
-                        r = INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS; break;
-                    case AnalysisMethod.Collar:
-                        r = INCC.SaveResultsMask.SAVE_COLLAR_RESULTS; break;
-                    default:
-                        break;
-                }
+			internal static INCC.SaveResultsMask ResultsMaskMap(AnalysisMethod am)
+			{
+				INCC.SaveResultsMask r = 0;
+				switch (am)
+				{
+				case AnalysisMethod.KnownA:
+					r = INCC.SaveResultsMask.SAVE_KNOWN_ALPHA_RESULTS;
+					break;
+				case AnalysisMethod.CalibrationCurve:
+					r = INCC.SaveResultsMask.SAVE_CAL_CURVE_RESULTS;
+					break;
+				case AnalysisMethod.KnownM:
+					r = INCC.SaveResultsMask.SAVE_KNOWN_M_RESULTS;
+					break;
+				case AnalysisMethod.Multiplicity:
+					r = INCC.SaveResultsMask.SAVE_MULTIPLICITY_RESULTS;
+					break;
+				case AnalysisMethod.TruncatedMultiplicity:
+					r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_RESULTS;
+					break;
+				case AnalysisMethod.AddASource:
+					r = INCC.SaveResultsMask.SAVE_ADD_A_SOURCE_RESULTS;
+					break;
+				case AnalysisMethod.CuriumRatio:
+					r = INCC.SaveResultsMask.SAVE_CURIUM_RATIO_RESULTS;
+					break;
+				case AnalysisMethod.Active:
+					r = INCC.SaveResultsMask.SAVE_ACTIVE_RESULTS;
+					break;
+				case AnalysisMethod.ActivePassive:
+					r = INCC.SaveResultsMask.SAVE_ACTIVE_PASSIVE_RESULTS;
+					break;
+				case AnalysisMethod.ActiveMultiplicity:
+					r = INCC.SaveResultsMask.SAVE_ACTIVE_MULTIPLICITY_RESULTS;
+					break;
+				case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
+					r = INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS;
+					break;
+				case AnalysisMethod.Collar:
+					r = INCC.SaveResultsMask.SAVE_COLLAR_RESULTS;
+					break;
+				default:
+					break;
+				}
 
-                //r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_BKG_RESULTS; break;
-                return r;
+				// r = INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_BKG_RESULTS; break;  
+				// todo: ^^ tm bkg handling design incomplete
+				return r;
 
-            }
+			}
 
 			internal static INCC.SaveResultsMask EncodeResultsStatus(Measurement m)
 			{
 				INCC.SaveResultsMask res = 0x0;
-				switch(m.MeasOption)
+				switch (m.MeasOption)
 				{
 				case AssaySelector.MeasurementOption.verification:
 				case AssaySelector.MeasurementOption.calibration:
@@ -1060,19 +1115,19 @@ namespace NCCTransfer
 						{
 							MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
 							INCCResult ir = m.INCCAnalysisResults[moskey];
-                            INCCMethodResults imrs;
-                            bool found = m.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
-                            if (found && imrs.Count > 0) // should be true for verification and calibration
-                            {
-                                // we've got a distinct detector id and material type on the methods, so that is the indexer here
-                                Dictionary<AnalysisMethod, INCCMethodResult> amimr = imrs[m.INCCAnalysisState.Methods.selector];
+							INCCMethodResults imrs;
+							bool found = m.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
+							if (found && imrs.Count > 0) // should be true for verification and calibration
+							{
+								// we've got a distinct detector id and material type on the methods, so that is the indexer here
+								Dictionary<AnalysisMethod, INCCMethodResult> amimr = imrs[m.INCCAnalysisState.Methods.selector];
 
-                                // now get an enumerator over the map of method results
-                                Dictionary<AnalysisMethod, INCCMethodResult>.Enumerator ai = amimr.GetEnumerator();
-                                while (ai.MoveNext())
-                                {
-                                    res |= ResultsMaskMap(ai.Current.Key);
-                                }
+								// now get an enumerator over the map of method results
+								Dictionary<AnalysisMethod, INCCMethodResult>.Enumerator ai = amimr.GetEnumerator();
+								while (ai.MoveNext())
+								{
+									res |= ResultsMaskMap(ai.Current.Key);
+								}
 							}
 						}
 					}
@@ -1091,6 +1146,737 @@ namespace NCCTransfer
 					break;
 				}
 				return res;
+			}
+
+			internal static unsafe run_rec MoveCycleToRunRec(Cycle c, Multiplicity mkey)
+			{
+				run_rec res = new run_rec();
+				res.run_number = (ushort)c.seq;
+                byte[] b = StringSquish(c.DataSourceId.dt.ToString("yy.MM.dd"), INCC.DATE_TIME_LENGTH);
+				TransferUtils.Copy(b, res.run_date);
+                b = StringSquish(c.DataSourceId.dt.ToString("HH:mm:ss"), INCC.DATE_TIME_LENGTH);
+				TransferUtils.Copy(b, res.run_time);
+				QCStatus qc = c.QCStatus(mkey);
+				b = StringSquish(QCTestStatusExtensions.INCCString(qc), INCC.MAX_RUN_TESTS_LENGTH); 
+				TransferUtils.Copy(b, res.run_tests);
+				res.run_count_time = c.TS.TotalSeconds;
+				res.run_singles = c.Totals; // raw counts
+				MultiplicityCountingRes mcr = c.MultiplicityResults(mkey);
+				res.run_scaler1 = mcr.Scaler1.v;
+				res.run_scaler2 = mcr.Scaler2.v;
+				res.run_reals_plus_acc = mcr.RASum;
+				res.run_acc = mcr.ASum;
+				TransferUtils.CopyULongsToDbls(mcr.RAMult, res.run_mult_reals_plus_acc);
+				TransferUtils.CopyULongsToDbls(mcr.NormedAMult, res.run_mult_acc);
+				res.run_singles_rate = mcr.DeadtimeCorrectedSinglesRate.v; // correct counts or not?
+				res.run_doubles_rate = mcr.DeadtimeCorrectedDoublesRate.v;
+				res.run_triples_rate = mcr.DeadtimeCorrectedTriplesRate.v;
+				res.run_scaler1_rate = mcr.Scaler1Rate.v;
+				res.run_scaler2_rate = mcr.Scaler2Rate.v;
+				res.run_multiplicity_mult = mcr.multiplication;
+				res.run_multiplicity_alpha = mcr.multiAlpha;
+				res.run_multiplicity_efficiency = mcr.efficiency;
+				res.run_mass = mcr.Mass;
+				res.run_high_voltage = c.HighVoltage;
+				return res;
+			}
+
+			internal static unsafe iresultsbase MoveInitSrc(INCCResults ir, MeasOptionSelector mos)
+			{
+				results_init_src_rec res = new results_init_src_rec();
+				INCCResult results;
+                bool found = ir.TryGetValue(mos, out results);
+				if (found)
+				{
+					INCCResults.results_init_src_rec t = (INCCResults.results_init_src_rec)results;
+					res.init_src_mode = NewToOldBiasTestId(t.mode);
+					StatePack(t.pass, res.init_src_pass_fail);
+					StrToBytes(INCC.SOURCE_ID_LENGTH,t.init_src_id, res.init_src_id);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveBias(INCCResults ir, MeasOptionSelector mos)
+			{
+				results_bias_rec res = new results_bias_rec();
+				INCCResult results;
+                bool found = ir.TryGetValue(mos, out results);
+				if (found)
+				{
+					INCCResults.results_bias_rec t = (INCCResults.results_bias_rec)results;
+					res.results_bias_mode = NewToOldBiasTestId(t.mode);
+					StatePack(t.pass, res.bias_pass_fail);
+					StrToBytes(INCC.SOURCE_ID_LENGTH, t.sourceId, res.bias_source_id);
+					res.bias_sngls_rate_expect = t.biasSnglsRateExpect.v; 
+					res.bias_sngls_rate_expect_err = t.biasSnglsRateExpect.err; 
+					res.bias_sngls_rate_expect_meas = t.biasSnglsRateExpectMeas.v; 
+					res.bias_sngls_rate_expect_meas_err = t.biasSnglsRateExpectMeas.err; 
+					res.bias_dbls_rate_expect = t.biasDblsRateExpect.v; 
+					res.bias_dbls_rate_expect_err = t.biasDblsRateExpect.err; 
+					res.bias_dbls_rate_expect_meas = t.biasDblsRateExpectMeas.v; 
+					res.bias_dbls_rate_expect_meas_err = t.biasDblsRateExpectMeas.err; 
+					res.new_norm_constant = t.newNormConstant.v;
+					res.new_norm_constant_err = t.newNormConstant.err;
+					res.required_precision = t.requiredPrecision;
+					res.required_meas_seconds = t.requiredMeasSeconds;
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MovePrecision(INCCResults ir, MeasOptionSelector mos)
+			{
+				results_precision_rec res = new results_precision_rec();
+				INCCResult results;
+                bool found = ir.TryGetValue(mos, out results);
+				if (found)
+				{
+					INCCResults.results_precision_rec t = (INCCResults.results_precision_rec)results;
+					StatePack(t.pass, res.prec_pass_fail);
+					res.chi_sq_lower_limit = t.chiSqLowerLimit;
+					res.chi_sq_upper_limit = t.chiSqUpperLimit;
+					res.prec_chi_sq = t.precChiSq;
+					res.prec_sample_var = t.precSampleVar;
+					res.prec_theoretical_var = t.precTheoreticalVar;
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveCalCurve(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_cal_curve_rec res = new results_cal_curve_rec(); 
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.CalibrationCurve, out result);
+				if (found)
+				{
+					INCCMethodResults.results_cal_curve_rec m = (INCCMethodResults.results_cal_curve_rec)result;
+					res.cc_pu240e_mass = m.pu240e_mass.v;
+					res.cc_pu240e_mass_err = m.pu240e_mass.err;
+					res.cc_pu_mass = m.pu_mass.v;
+					res.cc_pu_mass_err = m.pu_mass.err;
+					res.cc_dcl_pu240e_mass = m.dcl_pu240e_mass;
+					res.cc_dcl_pu_mass = m.dcl_pu_mass;
+					res.cc_dcl_minus_asy_pu_mass = m.dcl_minus_asy_pu_mass.v;
+					res.cc_dcl_minus_asy_pu_mass_err = m.dcl_minus_asy_pu_mass.err;
+					res.cc_dcl_minus_asy_pu_mass_pct = m.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.pass, res.cc_pass_fail);
+					res.cc_dcl_u_mass = m.dcl_u_mass;
+					res.cc_length = m.length;
+					res.cc_heavy_metal_content = m.heavy_metal_content;
+					res.cc_heavy_metal_correction = m.heavy_metal_correction;
+					res.cc_heavy_metal_corr_singles = m.heavy_metal_corr_singles.v;
+					res.cc_heavy_metal_corr_singles_err = m.heavy_metal_corr_singles.err;
+					res.cc_heavy_metal_corr_doubles = m.heavy_metal_corr_doubles.v;
+					res.cc_heavy_metal_corr_doubles_err = m.heavy_metal_corr_doubles.err;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.cc_cal_curve_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.cc_cal_curve_item_type);
+					res.cc_a_res = m.methodParams.cev.a;
+					res.cc_b_res = m.methodParams.cev.b;
+					res.cc_c_res = m.methodParams.cev.c;
+					res.cc_d_res = m.methodParams.cev.d;
+					res.cc_cal_curve_type_res = (double)m.methodParams.CalCurveType;
+					res.cc_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.cc_covar_ac_res = m.methodParams.cev.covar(Coeff.a, Coeff.c);
+					res.cc_covar_ad_res = m.methodParams.cev.covar(Coeff.a, Coeff.d);
+					res.cc_covar_bc_res = m.methodParams.cev.covar(Coeff.b, Coeff.c);
+					res.cc_covar_bd_res = m.methodParams.cev.covar(Coeff.b, Coeff.d);
+					res.cc_covar_cd_res = m.methodParams.cev.covar(Coeff.c, Coeff.d);
+					res.cc_var_a_res = m.methodParams.cev.var_a;
+					res.cc_var_b_res = m.methodParams.cev.var_b;
+					res.cc_var_c_res = m.methodParams.cev.var_c;
+					res.cc_var_d_res = m.methodParams.cev.var_d;
+					res.cc_sigma_x_res = m.methodParams.cev.sigma_x;
+					res.cc_heavy_metal_corr_factor_res = m.methodParams.heavy_metal_corr_factor;
+					res.cc_heavy_metal_reference_res = m.methodParams.heavy_metal_reference;
+					res.cc_percent_u235_res = m.methodParams.percent_u235;
+				}
+				return res;
+			}
+			internal unsafe static iresultsbase MoveKnownA(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_known_alpha_rec res = new results_known_alpha_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.KnownA, out result);
+				if (found)
+				{
+					INCCMethodResults.results_known_alpha_rec m = (INCCMethodResults.results_known_alpha_rec)result;
+					res.ka_mult = m.mult;
+					res.ka_alpha = m.alphaK;
+					res.ka_mult_corr_doubles = m.mult_corr_doubles.v;
+					res.ka_mult_corr_doubles_err = m.mult_corr_doubles.err;
+					res.ka_pu240e_mass = m.pu240e_mass.v;
+					res.ka_pu240e_mass_err = m.pu240e_mass.err;
+					res.ka_pu_mass = m.pu_mass.v;
+					res.ka_pu_mass_err = m.pu_mass.err;
+					res.ka_dcl_pu240e_mass = m.dcl_pu240e_mass;
+					res.ka_dcl_minus_asy_pu_mass = m.dcl_minus_asy_pu_mass.v;
+					res.ka_dcl_minus_asy_pu_mass_err = m.dcl_minus_asy_pu_mass.err;
+					res.ka_dcl_minus_asy_pu_mass_pct = m.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.pass, res.ka_pass_fail);
+					res.ka_dcl_u_mass = m.dcl_u_mass;
+					res.ka_length = m.length;
+					res.ka_heavy_metal_content = m.heavy_metal_content;
+					res.ka_heavy_metal_correction = m.heavy_metal_correction;
+					res.ka_corr_singles = m.corr_singles.v;
+					res.ka_corr_singles_err = m.corr_singles.err;
+					res.ka_corr_doubles = m.corr_doubles.v;
+					res.ka_corr_doubles_err = m.corr_doubles.err;
+					res.ka_corr_factor = m.corr_factor;
+					res.ka_dry_alpha_or_mult_dbls = m.dry_alpha_or_mult_dbls;
+					res.ka_alpha_wt_res = m.methodParams.alpha_wt;
+					res.ka_rho_zero_res = m.methodParams.rho_zero;
+					res.ka_k_res = m.methodParams.k;
+					res.ka_a_res = m.methodParams.cev.a;
+					res.ka_b_res = m.methodParams.cev.b;
+					res.ka_var_a_res = m.methodParams.cev.var_a;
+					res.ka_var_b_res = m.methodParams.cev.var_b;
+					res.ka_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.ka_sigma_x_res = m.methodParams.cev.sigma_x;
+					res.ka_known_alpha_type_res = (double)m.methodParams.known_alpha_type;
+					res.ka_heavy_metal_corr_factor_res = m.methodParams.heavy_metal_corr_factor;
+					res.ka_heavy_metal_reference_res = m.methodParams.heavy_metal_reference;
+					res.ka_lower_corr_factor_limit_res = m.methodParams.lower_corr_factor_limit;
+					res.ka_upper_corr_factor_limit_res = m.methodParams.upper_corr_factor_limit;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.ka_known_alpha_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.ka_known_alpha_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveKnownM(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_known_m_rec res = new results_known_m_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.KnownM, out result);
+				if (found)
+				{
+					INCCMethodResults.results_known_m_rec m = (INCCMethodResults.results_known_m_rec)result;
+					res.km_mult = m.mult;
+					res.km_alpha = m.alpha;
+					res.km_pu239e_mass = m.pu239e_mass;
+					res.km_pu240e_mass = m.pu240e_mass.v;
+					res.km_pu240e_mass_err = m.pu240e_mass.err;
+					res.km_pu_mass = m.pu_mass.v;
+					res.km_pu_mass_err = m.pu_mass.err;
+					res.km_dcl_pu240e_mass = m.dcl_pu240e_mass;
+					res.km_dcl_minus_asy_pu_mass = m.dcl_minus_asy_pu_mass.v;
+					res.km_dcl_minus_asy_pu_mass_err = m.dcl_minus_asy_pu_mass.err;
+					res.km_dcl_minus_asy_pu_mass_pct = m.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.pass, res.km_pass_fail);
+					res.km_sf_rate_res = m.methodParams.sf_rate;
+					res.km_vs1_res = m.methodParams.vs1;
+					res.km_vs2_res = m.methodParams.vs2;
+					res.km_vi1_res = m.methodParams.vi1;
+					res.km_vi2_res = m.methodParams.vi2;
+					res.km_b_res = m.methodParams.b;
+					res.km_c_res = m.methodParams.c;
+					res.km_sigma_x_res = m.methodParams.sigma_x;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.km_known_m_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.km_known_m_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveMult(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_multiplicity_rec res = new results_multiplicity_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.Multiplicity, out result);
+				if (found)
+				{
+					INCCMethodResults.results_multiplicity_rec m = (INCCMethodResults.results_multiplicity_rec)result;
+					res.mul_mult = m.mult.v;
+					res.mul_mult_err = m.mult.err;
+					res.mul_alpha = m.alphaK.v;
+					res.mul_alpha_err = m.alphaK.err;
+					res.mul_corr_factor = m.alphaK.v;
+					res.mul_corr_factor_err = m.alphaK.err;
+					res.mul_efficiency = m.alphaK.v;
+					res.mul_efficiency_err = m.alphaK.err;
+					res.mul_pu240e_mass = m.pu240e_mass.v;
+					res.mul_pu240e_mass_err = m.pu240e_mass.err;
+					res.mul_pu_mass = m.pu_mass.v;
+					res.mul_pu_mass_err = m.pu_mass.err;
+					res.mul_dcl_pu240e_mass = m.dcl_pu240e_mass;
+					res.mul_dcl_minus_asy_pu_mass = m.dcl_minus_asy_pu_mass.v;
+					res.mul_dcl_minus_asy_pu_mass_err = m.dcl_minus_asy_pu_mass.err;
+					res.mul_dcl_minus_asy_pu_mass_pct = m.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.pass, res.mul_pass_fail);
+					res.mul_solve_efficiency_res = (byte)m.solve_efficiency_choice;
+					res.mul_sf_rate_res = m.methodParams.sf_rate;
+					res.mul_vs1_res = m.methodParams.vs1;
+					res.mul_vs2_res = m.methodParams.vs2;
+					res.mul_vs3_res = m.methodParams.vs3;
+					res.mul_vi1_res = m.methodParams.vi1;
+					res.mul_vi2_res = m.methodParams.vi2;
+					res.mul_vi3_res = m.methodParams.vi3;
+					res.mul_a_res = m.methodParams.a;
+					res.mul_b_res = m.methodParams.b;
+					res.mul_c_res = m.methodParams.c;
+					res.mul_sigma_x_res = m.methodParams.sigma_x;
+					res.mul_alpha_weight_res = m.methodParams.alpha_weight;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.mul_multiplicity_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.mul_multiplicity_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveDEMult(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_de_mult_rec res = new results_de_mult_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE, out result);
+				if (found)
+				{
+					INCCMethodResults.results_de_mult_rec m = (INCCMethodResults.results_de_mult_rec)result;
+					res.de_meas_ring_ratio = m.meas_ring_ratio;
+					res.de_interpolated_neutron_energy = m.interpolated_neutron_energy;
+					res.de_energy_corr_factor = m.energy_corr_factor;
+					TransferUtils.CopyDbls(m.methodParams.neutron_energy, res.de_neutron_energy_res);
+					TransferUtils.CopyDbls(m.methodParams.detector_efficiency, res.de_detector_efficiency_res);
+					TransferUtils.CopyDbls(m.methodParams.inner_outer_ring_ratio, res.de_inner_outer_ring_ratio_res);
+					TransferUtils.CopyDbls(m.methodParams.relative_fission, res.de_relative_fission_res);
+					res.de_inner_ring_efficiency_res = m.methodParams.inner_ring_efficiency;
+					res.de_outer_ring_efficiency_res = m.methodParams.outer_ring_efficiency;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.de_mult_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.de_mult_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveActPass(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_active_passive_rec res = new results_active_passive_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.ActivePassive, out result);
+				if (found)
+				{
+					INCCMethodResults.results_active_passive_rec m = (INCCMethodResults.results_active_passive_rec)result;
+					res.ap_delta_doubles = m.delta_doubles.v;
+					res.ap_delta_doubles_err = m.delta_doubles.err;
+					res.ap_u235_mass = m.u235_mass.v;
+					res.ap_u235_mass_err = m.u235_mass.err;
+					res.ap_k0 = m.k0.v;
+					res.ap_k1 = m.k1.v;
+					res.ap_k1_err = m.k1.err;
+					res.ap_k = m.k.v;
+					res.ap_k_err = m.k.err;
+					res.ap_dcl_u235_mass = m.dcl_u235_mass;
+					res.ap_dcl_minus_asy_u235_mass = m.dcl_minus_asy_u235_mass.v;
+					res.ap_dcl_minus_asy_u235_mass_err = m.dcl_minus_asy_u235_mass.err;
+					res.ap_dcl_minus_asy_u235_mass_pct = m.dcl_minus_asy_u235_mass_pct;
+					StatePack(m.pass, res.ap_pass_fail);
+					res.ap_active_passive_equation = (byte)m.methodParams.cev.cal_curve_equation;
+					res.ap_a_res = m.methodParams.cev.a;
+					res.ap_b_res = m.methodParams.cev.b;
+					res.ap_c_res = m.methodParams.cev.c;
+					res.ap_d_res = m.methodParams.cev.d;
+					res.ap_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.ap_covar_ac_res = m.methodParams.cev.covar(Coeff.a, Coeff.c);
+					res.ap_covar_ad_res = m.methodParams.cev.covar(Coeff.a, Coeff.d);
+					res.ap_covar_bc_res = m.methodParams.cev.covar(Coeff.b, Coeff.c);
+					res.ap_covar_bd_res = m.methodParams.cev.covar(Coeff.b, Coeff.d);
+					res.ap_covar_cd_res = m.methodParams.cev.covar(Coeff.c, Coeff.d);
+					res.ap_var_a_res = m.methodParams.cev.var_a;
+					res.ap_var_b_res = m.methodParams.cev.var_b;
+					res.ap_var_c_res = m.methodParams.cev.var_c;
+					res.ap_var_d_res = m.methodParams.cev.var_d;
+					res.ap_sigma_x_res = m.methodParams.cev.sigma_x;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.ap_active_passive_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.ap_active_passive_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveCollar(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_collar_rec res = new results_collar_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.Collar, out result);
+				if (found)
+				{
+					INCCMethodResults.results_collar_rec m = (INCCMethodResults.results_collar_rec)result;
+					res.col_u235_mass = m.u235_mass.v;
+					res.col_u235_mass_err = m.u235_mass.err;
+					res.col_percent_u235 = m.percent_u235;
+					res.col_total_u_mass = m.total_u_mass;
+					res.col_k0 = m.k0.v;
+					res.col_k0_err = m.k0.err;
+					res.col_k1 = m.k1.v;
+					res.col_k1_err = m.k1.err;
+					res.col_k2 = m.k2.v;
+					res.col_k2_err = m.k2.err;
+					res.col_k3 = m.k3.v;
+					res.col_k3_err = m.k3.err;
+					res.col_k4 = m.k4.v;
+					res.col_k4_err = m.k4.err;
+					res.col_k5 = m.k5.v;
+					res.col_k5_err = m.k5.err;
+					res.col_total_corr_fact = m.total_corr_fact.v;
+					res.col_total_corr_fact_err = m.total_corr_fact.err;
+					StrToBytes(INCC.SOURCE_ID_LENGTH, m.source_id, res.col_source_id);
+					res.col_corr_doubles = m.corr_doubles.v;
+					res.col_corr_doubles_err = m.corr_doubles.err;
+					res.col_dcl_length = m.dcl_length.v;
+					res.col_dcl_length_err = m.dcl_length.err;
+					res.col_dcl_total_u235 = m.dcl_total_u235.v;
+					res.col_dcl_total_u235_err = m.dcl_total_u235.err;
+					res.col_dcl_total_u238 = m.dcl_total_u238.v;
+					res.col_dcl_total_u238_err = m.dcl_total_u238.err;
+					res.col_dcl_total_rods = m.dcl_total_rods;
+					res.col_dcl_total_poison_rods = m.dcl_total_poison_rods;
+					res.col_dcl_poison_percent = m.dcl_poison_percent.v;
+					res.col_dcl_poison_percent_err = m.dcl_poison_percent.err;
+					res.col_dcl_minus_asy_u235_mass = m.dcl_minus_asy_u235_mass.v;
+					res.col_dcl_minus_asy_u235_mass_err = m.dcl_minus_asy_u235_mass.err;
+					res.col_dcl_minus_asy_u235_mass_pct = m.dcl_minus_asy_u235_mass_pct;
+					StatePack(m.pass, res.col_pass_fail);
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.col_collar_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.col_collar_item_type);
+					res.col_collar_mode = (byte)(m.methodParams.collar.collar_mode ? 1 : 0);
+					res.col_collar_equation = (byte)m.methodParamsC.cev.cal_curve_equation;
+					res.col_a_res = m.methodParamsC.cev.a;
+					res.col_b_res = m.methodParamsC.cev.b;
+					res.col_c_res = m.methodParamsC.cev.c;
+					res.col_d_res = m.methodParamsC.cev.d;
+					res.col_covar_ab_res = m.methodParamsC.cev.covar(Coeff.a, Coeff.b);
+					res.col_covar_ac_res = m.methodParamsC.cev.covar(Coeff.a, Coeff.c);
+					res.col_covar_ad_res = m.methodParamsC.cev.covar(Coeff.a, Coeff.d);
+					res.col_covar_bc_res = m.methodParamsC.cev.covar(Coeff.b, Coeff.c);
+					res.col_covar_bd_res = m.methodParamsC.cev.covar(Coeff.b, Coeff.d);
+					res.col_covar_cd_res = m.methodParamsC.cev.covar(Coeff.c, Coeff.d);
+					res.col_var_a_res = m.methodParamsC.cev.var_a;
+					res.col_var_b_res = m.methodParamsC.cev.var_b;
+					res.col_var_c_res = m.methodParamsC.cev.var_c;
+					res.col_var_d_res = m.methodParamsC.cev.var_d;
+					res.col_sigma_x_res = m.methodParamsC.cev.sigma_x;
+					res.col_number_calib_rods_res = m.methodParamsC.number_calib_rods;
+					StrToBytes(INCC.MAX_ROD_TYPE_LENGTH, m.methodParamsC.poison_rod_type[0], res.col_poison_rod_type_res);
+					res.col_poison_absorption_fact_res = m.methodParamsC.poison_absorption_fact[0];
+					res.col_poison_rod_a_res = m.methodParamsC.poison_rod_a[0].v;
+					res.col_poison_rod_a_err_res = m.methodParamsC.poison_rod_a[0].err;
+					res.col_poison_rod_b_res = m.methodParamsC.poison_rod_b[0].v;
+					res.col_poison_rod_b_err_res = m.methodParamsC.poison_rod_b[0].err;
+					res.col_poison_rod_c_res = m.methodParamsC.poison_rod_c[0].v;
+					res.col_poison_rod_c_err_res = m.methodParamsC.poison_rod_c[0].err;
+					res.col_u_mass_corr_fact_a_res =  m.methodParamsC.u_mass_corr_fact_a.v;
+					res.col_u_mass_corr_fact_a_err_res =  m.methodParamsC.u_mass_corr_fact_a.err;
+					res.col_u_mass_corr_fact_b_res =  m.methodParamsC.u_mass_corr_fact_b.v;
+					res.col_u_mass_corr_fact_b_err_res =  m.methodParamsC.u_mass_corr_fact_b.err;
+					res.col_sample_corr_fact_res =  m.methodParamsC.sample_corr_fact.v;
+					res.col_sample_corr_fact_err_res =  m.methodParamsC.sample_corr_fact.err;
+					byte[] b = new byte[INCC.DATE_TIME_LENGTH];
+					char[] a = m.methodParamsDetector.reference_date.ToString("yy.MM.dd").ToCharArray();
+					Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+					TransferUtils.Copy(b, res.col_reference_date_res);
+					res.col_relative_doubles_rate_res = m.methodParamsDetector.relative_doubles_rate;
+
+					byte[] bb = new byte[INCC.MAX_COLLAR_K5_PARAMETERS * INCC.MAX_K5_LABEL_LENGTH];
+					int indx = 0;
+					for (int i = 0; i < INCC.MAX_COLLAR_K5_PARAMETERS; i++)
+					{
+						char[] aa = m.methodParamsK5.k5_label[i].ToCharArray(0, Math.Min(m.methodParamsK5.k5_label[i].Length, INCC.MAX_K5_LABEL_LENGTH));
+						Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
+						indx += INCC.MAX_K5_LABEL_LENGTH;
+					}
+					TransferUtils.Copy(bb, 0, res.collar_k5_label_res, 0, INCC.MAX_COLLAR_K5_PARAMETERS * INCC.MAX_K5_LABEL_LENGTH);
+					TransferUtils.CopyBoolsToBytes(m.methodParamsK5.k5_checkbox, res.collar_k5_checkbox_res);
+					CopyTuples(m.methodParamsK5.k5, res.collar_k5_res, res.collar_k5_err_res, INCC.MAX_COLLAR_K5_PARAMETERS);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveActive(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_active_rec res = new results_active_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.Active, out result);
+				if (found)
+				{
+					INCCMethodResults.results_active_rec m = (INCCMethodResults.results_active_rec)result;
+					res.act_u235_mass = m.u235_mass.v;
+					res.act_u235_mass_err = m.u235_mass.err;
+					res.act_k0 = m.k0.v;
+					res.act_k1 = m.k1.v;
+					res.act_k1_err = m.k1.err;
+					res.act_k = m.k.v;
+					res.act_k_err = m.k.err;
+					res.act_dcl_u235_mass = m.dcl_u235_mass;
+					res.act_dcl_minus_asy_u235_mass = m.dcl_minus_asy_u235_mass.v;
+					res.act_dcl_minus_asy_u235_mass_err = m.dcl_minus_asy_u235_mass.err;
+					res.act_dcl_minus_asy_u235_mass_pct = m.dcl_minus_asy_u235_mass_pct;
+					StatePack(m.pass, res.act_pass_fail);
+					res.act_active_equation = (byte)m.methodParams.cev.cal_curve_equation;
+					res.act_a_res = m.methodParams.cev.a;
+					res.act_b_res = m.methodParams.cev.b;
+					res.act_c_res = m.methodParams.cev.c;
+					res.act_d_res = m.methodParams.cev.d;
+					res.act_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.act_covar_ac_res = m.methodParams.cev.covar(Coeff.a, Coeff.c);
+					res.act_covar_ad_res = m.methodParams.cev.covar(Coeff.a, Coeff.d);
+					res.act_covar_bc_res = m.methodParams.cev.covar(Coeff.b, Coeff.c);
+					res.act_covar_bd_res = m.methodParams.cev.covar(Coeff.b, Coeff.d);
+					res.act_covar_cd_res = m.methodParams.cev.covar(Coeff.c, Coeff.d);
+					res.act_var_a_res = m.methodParams.cev.var_a;
+					res.act_var_b_res = m.methodParams.cev.var_b;
+					res.act_var_c_res = m.methodParams.cev.var_c;
+					res.act_var_d_res = m.methodParams.cev.var_d;
+					res.act_sigma_x_res = m.methodParams.cev.sigma_x;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.act_active_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.act_active_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveActiveMult(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_active_mult_rec res = new results_active_mult_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.ActiveMultiplicity, out result);
+				if (found)
+				{
+					INCCMethodResults.results_active_mult_rec m = (INCCMethodResults.results_active_mult_rec)result;
+					res.am_mult = m.mult.v;
+					res.am_mult_err = m.mult.err;
+					res.am_vt1_res = m.methodParams.vt1;
+					res.am_vt2_res = m.methodParams.vt2;
+					res.am_vt3_res = m.methodParams.vt3;
+					res.am_vf1_res = m.methodParams.vf1;
+					res.am_vf2_res = m.methodParams.vf2;
+					res.am_vf3_res = m.methodParams.vf3;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.am_mult_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.am_mult_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveCurium(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_curium_ratio_rec res = new results_curium_ratio_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.CuriumRatio, out result);
+				if (found)
+				{
+					INCCMethodResults.results_curium_ratio_rec m = (INCCMethodResults.results_curium_ratio_rec)result;
+
+					res.cr_pu240e_mass = m.pu.pu240e_mass.v;
+					res.cr_pu240e_mass_err = m.pu.pu240e_mass.err;
+					res.cr_cm_mass = m.cm_mass.v;
+					res.cr_cm_mass_err = m.cm_mass.err;
+					res.cr_pu_mass = m.pu.mass.v;
+					res.cr_pu_mass_err = m.pu.mass.err;
+					res.cr_u_mass = m.u.mass.v;
+					res.cr_u_mass_err = m.u.mass.err;
+					res.cr_u235_mass = m.u235.mass.v;
+					res.cr_u235_mass_err = m.u235.mass.err;
+					res.cr_dcl_pu_mass = m.pu.dcl_mass;
+					res.cr_dcl_minus_asy_pu_mass = m.pu.dcl_minus_asy_mass.v;
+					res.cr_dcl_minus_asy_pu_mass_err = m.pu.dcl_minus_asy_mass.err;
+					res.cr_dcl_minus_asy_pu_mass_pct = m.pu.dcl_minus_asy_mass_pct;
+					res.cr_dcl_minus_asy_u_mass = m.u235.dcl_minus_asy_mass.v;
+					res.cr_dcl_minus_asy_u_mass_err = m.u235.dcl_minus_asy_mass.err;
+					res.cr_dcl_minus_asy_u_mass_pct = m.u235.dcl_minus_asy_mass_pct;
+					res.cr_dcl_minus_asy_u235_mass = m.u235.dcl_minus_asy_mass.v;
+					res.cr_dcl_minus_asy_u235_mass_err = m.u235.dcl_minus_asy_mass.err;
+					res.cr_dcl_minus_asy_u235_mass_pct = m.u235.dcl_minus_asy_mass_pct;
+					StatePack(m.pu.pass, res.cr_pu_pass_fail);
+					StatePack(m.u.pass, res.cr_u_pass_fail);
+
+					res.cr_cm_pu_ratio = m.methodParams2.cm_pu_ratio.v;
+					res.cr_cm_pu_ratio_err = m.methodParams2.cm_pu_ratio.err;
+					res.cr_pu_half_life = m.methodParams2.pu_half_life;
+					byte[] b = new byte[INCC.DATE_TIME_LENGTH];
+					char[] a = m.methodParams2.cm_pu_ratio_date.ToString("yy.MM.dd").ToCharArray();
+					Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+					TransferUtils.Copy(b, res.cr_cm_pu_ratio_date);
+					res.cr_cm_u_ratio = m.methodParams2.cm_u_ratio.v;
+					res.cr_cm_u_ratio = m.methodParams2.cm_u_ratio.err;
+					a = m.methodParams2.cm_u_ratio_date.ToString("yy.MM.dd").ToCharArray();
+					Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+					TransferUtils.Copy(b, res.cr_cm_u_ratio_date);
+					StrToBytes(INCC.MAX_ITEM_ID_LENGTH, m.methodParams2.cm_id_label, res.cr_cm_id_label);
+					StrToBytes(INCC.MAX_ITEM_ID_LENGTH, m.methodParams2.cm_id, res.cr_cm_id);
+					StrToBytes(INCC.MAX_ITEM_ID_LENGTH, m.methodParams2.cm_input_batch_id, res.cr_cm_input_batch_id);
+					res.cr_dcl_u_mass_res = m.methodParams2.cm_dcl_u_mass;
+					res.cr_dcl_u235_mass_res = m.methodParams2.cm_dcl_u_mass;
+
+					res.cr_cm_pu_ratio_decay_corr = m.cm_pu_ratio_decay_corr.v;
+					res.cr_cm_pu_ratio_decay_corr_err = m.cm_pu_ratio_decay_corr.err;
+					res.cr_cm_u_ratio_decay_corr = m.cm_u_ratio_decay_corr.v;
+					res.cr_cm_u_ratio_decay_corr_err = m.cm_u_ratio_decay_corr.err;
+
+					res.cr_curium_ratio_equation = (byte)m.methodParams.cev.cal_curve_equation;
+					res.cr_a_res = m.methodParams.cev.a;
+					res.cr_b_res = m.methodParams.cev.b;
+					res.cr_c_res = m.methodParams.cev.c;
+					res.cr_d_res = m.methodParams.cev.d;
+					res.cr_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.cr_covar_ac_res = m.methodParams.cev.covar(Coeff.a, Coeff.c);
+					res.cr_covar_ad_res = m.methodParams.cev.covar(Coeff.a, Coeff.d);
+					res.cr_covar_bc_res = m.methodParams.cev.covar(Coeff.b, Coeff.c);
+					res.cr_covar_bd_res = m.methodParams.cev.covar(Coeff.b, Coeff.d);
+					res.cr_covar_cd_res = m.methodParams.cev.covar(Coeff.c, Coeff.d);
+					res.cr_var_a_res = m.methodParams.cev.var_a;
+					res.cr_var_b_res = m.methodParams.cev.var_b;
+					res.cr_var_c_res = m.methodParams.cev.var_c;
+					res.cr_var_d_res = m.methodParams.cev.var_d;
+					res.cr_sigma_x_res = m.methodParams.cev.sigma_x;
+					res.curium_ratio_type_res = NewToOldCRVariants(m.methodParams.curium_ratio_type);
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.cr_curium_ratio_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.cr_curium_ratio_item_type);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveTruncMult(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_truncated_mult_rec res = new results_truncated_mult_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.TruncatedMultiplicity, out result);
+				if (found)
+				{
+					INCCMethodResults.results_truncated_mult_rec m = (INCCMethodResults.results_truncated_mult_rec)result;
+					res.tm_bkg_singles = m.bkg.Singles.v;
+					res.tm_bkg_singles_err = m.bkg.Singles.err;
+					res.tm_bkg_zeros = m.bkg.Zeros.v;
+					res.tm_bkg_zeros_err = m.bkg.Zeros.err;
+					res.tm_bkg_ones = m.bkg.Ones.v;
+					res.tm_bkg_ones_err = m.bkg.Ones.err;				
+					res.tm_bkg_twos = m.bkg.Twos.v;
+					res.tm_bkg_twos_err = m.bkg.Twos.err;
+					res.tm_net_singles = m.net.Singles.v;
+					res.tm_net_singles_err = m.net.Singles.err;
+					res.tm_net_zeros = m.net.Zeros.v;
+					res.tm_net_zeros_err = m.net.Zeros.err;
+					res.tm_net_ones = m.net.Ones.v;
+					res.tm_net_ones_err = m.net.Ones.err;				
+					res.tm_net_twos = m.net.Twos.v;
+					res.tm_net_twos_err = m.net.Twos.err;
+					res.tm_k_alpha = m.k.alpha.v;
+					res.tm_k_alpha_err = m.k.alpha.err;
+					res.tm_k_pu240e_mass = m.k.pu240e_mass.v;
+					res.tm_k_pu240e_mass_err = m.k.pu240e_mass.err;
+					res.tm_k_pu_mass = m.k.pu_mass.v;
+					res.tm_k_pu_mass_err = m.k.pu_mass.err;
+					res.tm_k_dcl_pu240e_mass = m.k.dcl_pu240e_mass;
+					res.tm_k_dcl_pu_mass = m.k.dcl_pu_mass;
+					res.tm_k_dcl_minus_asy_pu_mass = m.k.dcl_minus_asy_pu_mass.v;
+					res.tm_k_dcl_minus_asy_pu_mass_err = m.k.dcl_minus_asy_pu_mass.err;
+					res.tm_k_dcl_minus_asy_pu_mass_pct = m.k.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.k.pass, res.tm_k_pass_fail);
+					res.tm_s_eff = m.s.eff.v;
+					res.tm_s_eff_err = m.s.eff.err;
+					res.tm_s_alpha = m.s.alpha.v;
+					res.tm_s_alpha_err = m.s.alpha.err;
+					res.tm_s_pu240e_mass = m.s.pu240e_mass.v;
+					res.tm_s_pu240e_mass_err = m.s.pu240e_mass.err;
+					res.tm_s_pu_mass = m.s.pu_mass.v;
+					res.tm_s_pu_mass_err = m.s.pu_mass.err;
+					res.tm_s_dcl_pu240e_mass = m.s.dcl_pu240e_mass;
+					res.tm_s_dcl_pu_mass = m.s.dcl_pu_mass;
+					res.tm_s_dcl_minus_asy_pu_mass = m.s.dcl_minus_asy_pu_mass.v;
+					res.tm_s_dcl_minus_asy_pu_mass_err = m.s.dcl_minus_asy_pu_mass.err;
+					res.tm_s_dcl_minus_asy_pu_mass_pct = m.s.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.s.pass, res.tm_s_pass_fail);
+					res.tm_a_res = m.methodParams.a;
+					res.tm_b_res = m.methodParams.b;
+					res.tm_known_eff_res = (byte)(m.methodParams.known_eff ? 1 : 0);
+					res.tm_solve_eff_res = (byte)(m.methodParams.known_eff ? 1 : 0);
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveTruncBkg(INCCAnalysisState ias, MeasOptionSelector mos) // NEXT: confused with tm_bkg and bkg measurements
+			{
+				results_tm_bkg_rec res = new results_tm_bkg_rec();
+				INCCMethodResult result;
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.None, out result);
+				if (found)
+				{
+					INCCMethodResults.results_tm_bkg_rec m = (INCCMethodResults.results_tm_bkg_rec)result;  // todo: tm bkg handling design incomplete
+					res.results_tm_singles_bkg = m.methodParams.Singles.v;
+					res.results_tm_singles_bkg_err = m.methodParams.Singles.err;
+					res.results_tm_zeros_bkg = m.methodParams.Zeros.v;
+					res.results_tm_zeros_bkg_err = m.methodParams.Zeros.err;
+					res.results_tm_ones_bkg = m.methodParams.Ones.v;
+					res.results_tm_ones_bkg_err = m.methodParams.Ones.err;
+					res.results_tm_twos_bkg = m.methodParams.Twos.v;
+					res.results_tm_twos_bkg_err = m.methodParams.Twos.err;
+				}
+				return res;
+			}
+			internal static unsafe iresultsbase MoveAAS(INCCAnalysisState ias, MeasOptionSelector mos)
+			{
+				results_add_a_source_rec res = new results_add_a_source_rec();
+				INCCMethodResult result;
+				bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.AddASource, out result);
+				if (found)
+				{
+					INCCMethodResults.results_add_a_source_rec m = (INCCMethodResults.results_add_a_source_rec)result;
+					res.ad_dzero_cf252_doubles = m.dzero_cf252_doubles;
+					CopyTuples(m.sample_cf252_doubles, res.ad_sample_cf252_doubles, res.ad_sample_cf252_doubles_err, INCC.MAX_ADDASRC_POSITIONS);
+					TransferUtils.CopyDbls(m.sample_cf252_ratio, res.ad_sample_cf252_ratio);
+					res.ad_sample_avg_cf252_doubles = m.sample_avg_cf252_doubles.v;
+					res.ad_sample_avg_cf252_doubles_err = m.sample_avg_cf252_doubles.err;
+					res.ad_corr_doubles = m.corr_doubles.v;
+					res.ad_corr_doubles_err = m.corr_doubles.err;
+					res.ad_delta = m.delta.v;
+					res.ad_delta_err = m.delta.err;
+					res.ad_corr_factor = m.corr_factor.v;
+					res.ad_corr_factor_err = m.corr_factor.err;
+					res.ad_pu240e_mass = m.pu240e_mass.v;
+					res.ad_pu240e_mass_err = m.pu240e_mass.err;
+					res.ad_pu_mass = m.pu_mass.v;
+					res.ad_pu_mass_err = m.pu_mass.err;
+					res.ad_dcl_pu240e_mass = m.dcl_pu240e_mass;
+					res.ad_dcl_pu_mass = m.dcl_pu_mass;
+					res.ad_dcl_minus_asy_pu_mass = m.dcl_minus_asy_pu_mass.v;
+					res.ad_dcl_minus_asy_pu_mass_err = m.dcl_minus_asy_pu_mass.err;
+					res.ad_dcl_minus_asy_pu_mass_pct = m.dcl_minus_asy_pu_mass_pct;
+					StatePack(m.pass, res.ad_pass_fail);
+					res.ad_tm_corr_doubles = m.tm_corr_doubles.v;
+					res.ad_tm_corr_doubles_err = m.tm_corr_doubles.err;
+					res.ad_tm_doubles_bkg = m.tm_doubles_bkg.v;
+					res.ad_tm_doubles_bkg_err = m.tm_doubles_bkg.err;
+					res.ad_tm_uncorr_doubles = m.tm_uncorr_doubles.v;
+					res.ad_tm_uncorr_doubles_err = m.tm_uncorr_doubles.err;
+
+					res.ad_add_a_source_equation = (byte)m.methodParams.cev.cal_curve_equation;
+					res.ad_a_res = m.methodParams.cev.a;
+					res.ad_b_res = m.methodParams.cev.b;
+					res.ad_c_res = m.methodParams.cev.c;
+					res.ad_d_res = m.methodParams.cev.d;
+					res.ad_covar_ab_res = m.methodParams.cev.covar(Coeff.a, Coeff.b);
+					res.ad_covar_ac_res = m.methodParams.cev.covar(Coeff.a, Coeff.c);
+					res.ad_covar_ad_res = m.methodParams.cev.covar(Coeff.a, Coeff.d);
+					res.ad_covar_bc_res = m.methodParams.cev.covar(Coeff.b, Coeff.c);
+					res.ad_covar_bd_res = m.methodParams.cev.covar(Coeff.b, Coeff.d);
+					res.ad_covar_cd_res = m.methodParams.cev.covar(Coeff.c, Coeff.d);
+					res.ad_var_a_res = m.methodParams.cev.var_a;
+					res.ad_var_b_res = m.methodParams.cev.var_b;
+					res.ad_var_c_res = m.methodParams.cev.var_c;
+					res.ad_var_d_res = m.methodParams.cev.var_d;
+					res.ad_sigma_x_res = m.methodParams.cev.sigma_x;
+					TransferUtils.CopyDbls(m.methodParams.position_dzero, res.ad_position_dzero_res);
+					res.ad_dzero_avg_res = m.methodParams.dzero_avg;
+					byte[] b = new byte[INCC.DATE_TIME_LENGTH];
+					char[] a = m.methodParams.dzero_ref_date.ToString("yy.MM.dd").ToCharArray();
+					Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+					TransferUtils.Copy(b, res.ad_dzero_ref_date_res);
+					res.ad_num_runs_res = m.methodParams.num_runs;
+					res.ad_cf_a_res = m.methodParams.cf.a;
+					res.ad_cf_b_res = m.methodParams.cf.b;
+					res.ad_cf_c_res = m.methodParams.cf.c;
+					res.ad_cf_d_res = m.methodParams.cf.d;
+					res.ad_use_truncated_mult_res = (m.methodParams.use_truncated_mult ? 1 : 0);
+					res.ad_tm_weighting_factor_res = m.methodParams.tm_weighting_factor;
+					res.ad_tm_dbls_rate_upper_limit_res = m.methodParams.tm_dbls_rate_upper_limit;
+					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.ad_add_a_source_detector_id);
+					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.ad_add_a_source_item_type);
+				}
+				return res;
+			}
+
+			internal static unsafe void StatePack(bool state, byte* b)
+			{
+				if (state)
+					TransferUtils.PassPack(b);
+				else
+					TransferUtils.PassPack(b);
+			}
+
+			internal static unsafe void StrToBytes(int maxlen, string src, byte* tgt)
+			{
+				char[] a = src.ToCharArray(0, Math.Min(src.Length, maxlen));
+				byte[] b = new byte[maxlen];
+				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
+				TransferUtils.Copy(b, tgt);
 			}
 		}
 
@@ -1619,7 +2405,9 @@ namespace NCCTransfer
                             aas.cev.sigma_x = add_a_source.ad_sigma_x;
                             aas.cev.lower_mass_limit = add_a_source.ad_lower_mass_limit;
                             aas.cev.upper_mass_limit = add_a_source.ad_upper_mass_limit;
-                            // URGENT: *xfer* dcl_mass and doubles arrays
+
+                            aas.dcl_mass = TransferUtils.Copy(add_a_source.ad_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            aas.doubles = TransferUtils.Copy(add_a_source.ad_doubles, INCC.MAX_NUM_CALIB_PTS);
 
                             aas.cf.a = add_a_source.ad_cf_a; aas.cf.b = add_a_source.ad_cf_b;
                             aas.cf.c = add_a_source.ad_cf_c; aas.cf.d = add_a_source.ad_cf_d;
@@ -2741,7 +3529,7 @@ namespace NCCTransfer
                         newres.methodParams.use_truncated_mult = (oldres.ad_use_truncated_mult_res == 0 ? false : true);
                         newres.methodParams.dzero_ref_date = INCC.DateFrom(TransferUtils.str(oldres.ad_dzero_ref_date_res, INCC.DATE_TIME_LENGTH));
                         newres.methodParams.position_dzero = TransferUtils.Copy(oldres.ad_position_dzero_res, INCC.MAX_ADDASRC_POSITIONS);
-                        // URGENT: *xfer* methodParams dcl_mass, doubles, min, max
+                        // devnote: the original methodParams dcl_mass, doubles, min, max not preserved in INCC5 aas result rec
                     }
                     else if (r is results_curium_ratio_rec)
                     {
@@ -2750,10 +3538,13 @@ namespace NCCTransfer
                         results_curium_ratio_rec oldres = (results_curium_ratio_rec)r;
                         INCCMethodResults.results_curium_ratio_rec newres = (INCCMethodResults.results_curium_ratio_rec)
                         meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CuriumRatio, true);
+                        newres.pu.pu240e_mass = new Tuple(oldres.cr_pu240e_mass, oldres.cr_pu240e_mass_err);
                         newres.pu.mass = new Tuple(oldres.cr_pu_mass, oldres.cr_pu_mass_err);
                         newres.pu.dcl_mass = oldres.cr_dcl_pu_mass;
                         newres.pu.dcl_minus_asy_mass = new Tuple(oldres.cr_dcl_minus_asy_pu_mass, oldres.cr_dcl_minus_asy_pu_mass_err);
                         newres.pu.dcl_minus_asy_mass_pct = oldres.cr_dcl_minus_asy_pu_mass_pct;
+                        newres.pu.dcl_minus_asy_pu_mass = new Tuple(oldres.cr_dcl_minus_asy_pu_mass, oldres.cr_dcl_minus_asy_pu_mass_err);
+                        newres.pu.dcl_minus_asy_pu_mass_pct = oldres.cr_dcl_minus_asy_pu_mass_pct;
                         newres.pu.pass = TransferUtils.PassCheck(oldres.cr_pu_pass_fail);
                       
                         newres.u.mass = new Tuple(oldres.cr_u_mass, oldres.cr_u_mass_err);
@@ -2978,18 +3769,18 @@ namespace NCCTransfer
                     else if (r is results_tm_bkg_rec)
                     {
                         mlogger.TraceEvent(LogLevels.Warning, 34062, ("Transferring method results for " + r.GetType().ToString()));
-                        results_tm_bkg_rec oldres = (results_tm_bkg_rec)r;
-                        //INCCMethodResults.results_tm_bkg_rec newres =
-                        //    (INCCMethodResults.results_tm_bkg_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod., true);
-                        //newres.methodParams.Singles.v = oldres.results_tm_singles_bkg;
-                        //newres.methodParams.Singles.err = oldres.results_tm_singles_bkg_err;
-                        //newres.methodParams.Zeros.v = oldres.results_tm_zeros_bkg;
-                        //newres.methodParams.Zeros.err = oldres.results_tm_zeros_bkg_err;
-                        //newres.methodParams.Ones.v = oldres.results_tm_ones_bkg;
-                        //newres.methodParams.Ones.err = oldres.results_tm_ones_bkg_err;
-                        //newres.methodParams.Twos.v = oldres.results_tm_twos_bkg;
-                        //newres.methodParams.Twos.err = oldres.results_tm_twos_bkg_err;                        
-                    }
+                        results_tm_bkg_rec oldres = (results_tm_bkg_rec)r;  // todo: tm bkg handling design incomplete, these values are attached to bkg measurements when the truncated flag is enabled
+						INCCMethodResults.results_tm_bkg_rec newres =
+							(INCCMethodResults.results_tm_bkg_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.None, true);
+						newres.methodParams.Singles.v = oldres.results_tm_singles_bkg;
+						newres.methodParams.Singles.err = oldres.results_tm_singles_bkg_err;
+						newres.methodParams.Zeros.v = oldres.results_tm_zeros_bkg;
+						newres.methodParams.Zeros.err = oldres.results_tm_zeros_bkg_err;
+						newres.methodParams.Ones.v = oldres.results_tm_ones_bkg;
+						newres.methodParams.Ones.err = oldres.results_tm_ones_bkg_err;
+						newres.methodParams.Twos.v = oldres.results_tm_twos_bkg;
+						newres.methodParams.Twos.err = oldres.results_tm_twos_bkg_err;
+					}
 				    else 
                     {
                         mlogger.TraceEvent(LogLevels.Warning, 34040, ("todo: Transferring method results for " + r.GetType().ToString())); // todo: complete the list

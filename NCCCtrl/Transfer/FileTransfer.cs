@@ -1091,7 +1091,7 @@ namespace NCCTransfer
 
 		public string Name { set; get; }
 
-		unsafe new public bool Save(string path)  // URGENT: *xfer* write the methods results and the run rec list in that order, see Restore for the details 
+		unsafe new public bool Save(string path)  
 		{
 			Path = System.IO.Path.Combine(path, Name);
 			mlogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
@@ -1119,6 +1119,23 @@ namespace NCCTransfer
                 {
                     WriteMethodResults(irb, bw); 
                 }
+				bw.Write((ushort)run_rec_list.Count);
+				foreach(run_rec r in run_rec_list)
+				{
+					WriteRunRec(r, bw);
+				}
+				if (CFrun_rec_list != null)
+				{
+					foreach(List<run_rec> cfrrl in CFrun_rec_list)
+					{
+						bw.Write((ushort)cfrrl.Count);
+						foreach(run_rec r in cfrrl)
+						{
+							WriteRunRec(r, bw);
+						}
+					}
+				}
+				// devnote: not doing the WMV stuff at the end of the file
                 result = true;
 				mlogger.TraceInformation("Saved transfer file " + Path);
 			} catch (Exception e)
@@ -1151,6 +1168,15 @@ namespace NCCTransfer
 		{
 			bw.Write((short)rec);
         }
+
+		unsafe void WriteRunRec(run_rec rec, BinaryWriter bw)
+		{
+			int sz = sizeof(run_rec);
+			run_rec p = rec;
+			byte* bytes = (byte*)&p;
+			byte[] zb = TransferUtils.GetBytes(bytes, sz);	
+			bw.Write(zb, 0, sz);
+		}
         unsafe void WriteMethodResults(iresultsbase r, BinaryWriter bw)
         {
             int sz = 0;
@@ -1690,10 +1716,7 @@ namespace NCCTransfer
                     if (results.meas_option == INCC.OPTION_ASSAY && reader.PeekChar() != -1)
                     {
 
-                        CFrun_rec_list = new List<run_rec>[INCC.MAX_ADDASRC_POSITIONS+1];
-                        for (int jj = 0; jj <= INCC.MAX_ADDASRC_POSITIONS; jj++)       
-                            CFrun_rec_list[jj] = new List<run_rec>();
-
+						InitCFRunLists();
                         for (int j = 0; j < INCC.MAX_ADDASRC_POSITIONS; j++)
                         {
                             number_runs = TransferUtils.ReadUInt16(reader, "number of AAS CF" + (j + 1).ToString() + " runs");
@@ -1837,6 +1860,13 @@ namespace NCCTransfer
 
         // for add-a-src
         public List<run_rec>[] CFrun_rec_list;
+
+		public void InitCFRunLists()
+		{
+            CFrun_rec_list = new List<run_rec>[INCC.MAX_ADDASRC_POSITIONS+1];
+            for (int jj = 0; jj <= INCC.MAX_ADDASRC_POSITIONS; jj++)       
+                CFrun_rec_list[jj] = new List<run_rec>();
+		}
 
         unsafe void restore_add_detector(results_rec results)
         {

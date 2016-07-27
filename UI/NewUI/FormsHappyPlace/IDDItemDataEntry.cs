@@ -32,97 +32,97 @@ using AnalysisDefs;
 namespace NewUI
 {
 
-    using NC = NCC.CentralizedState;
+	using NC = NCC.CentralizedState;
 
-    public partial class IDDItemDataEntry : Form
-    {
+	public partial class IDDItemDataEntry : Form
+	{
 
-            // the stringified lists for the item combos
-        List<string> mbas, isotopics, mats, strats, iocodes, invcodes;
+		// the stringified lists for the item combos
+		List<string> mbas, isotopics, mats, strats, iocodes, invcodes;
 
-        // Flag set if user enters new data 
-        bool NewContent = false;
+		// Flag set if user enters new data 
+		bool NewContent = false;
 
-        void buildlists()
-        {
-            invcodes = new List<string>();
-            foreach (INCCDB.Descriptor desc in NC.App.DB.InvChangeCodes.GetList())
-                invcodes.Add(desc.Name);
-            iocodes = new List<string>();
-            foreach (INCCDB.Descriptor desc in NC.App.DB.IOCodes.GetList())
-                iocodes.Add(desc.Name);
-            strats = new List<string>();
-            foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
-                strats.Add(desc.Name);
-            mats = new List<string>();
-            foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
-                mats.Add(desc.Name);
-            isotopics = new List<string>();
-            foreach (Isotopics iso in NC.App.DB.Isotopics.GetList())
-                isotopics.Add(iso.id);
-            mbas = new List<string>();
-            foreach (INCCDB.Descriptor desc in NC.App.DB.MBAs.GetList())
-                mbas.Add(desc.Name);
-        }
+		void buildlists()
+		{
+			invcodes = new List<string>();
+			foreach (INCCDB.Descriptor desc in NC.App.DB.InvChangeCodes.GetList())
+				invcodes.Add(desc.Name);
+			iocodes = new List<string>();
+			foreach (INCCDB.Descriptor desc in NC.App.DB.IOCodes.GetList())
+				iocodes.Add(desc.Name);
+			strats = new List<string>();
+			foreach (INCCDB.Descriptor desc in NC.App.DB.Stratums.GetList())
+				strats.Add(desc.Name);
+			mats = new List<string>();
+			foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
+				mats.Add(desc.Name);
+			isotopics = new List<string>();
+			foreach (Isotopics iso in NC.App.DB.Isotopics.GetList())
+				isotopics.Add(iso.id);
+			mbas = new List<string>();
+			foreach (INCCDB.Descriptor desc in NC.App.DB.MBAs.GetList())
+				mbas.Add(desc.Name);
+		}
 
-        public IDDItemDataEntry()
-        {
-            InitializeComponent();
-            buildlists();
-            DataGridViewColumnCollection dgvcc =  ItemIdDataGrid.Columns;
+		public IDDItemDataEntry()
+		{
+			InitializeComponent();
+			buildlists();
+			DataGridViewColumnCollection dgvcc = ItemIdDataGrid.Columns;
 
-            DataGridViewComboBoxColumn c = (DataGridViewComboBoxColumn)dgvcc["MBA"];
-            foreach (INCCDB.Descriptor desc in NC.App.DB.MBAs.GetList())
-                c.Items.Add(desc.Name);
+			DataGridViewComboBoxColumn c = (DataGridViewComboBoxColumn)dgvcc["MBA"];
+			foreach (INCCDB.Descriptor desc in NC.App.DB.MBAs.GetList())
+				c.Items.Add(desc.Name);
 
-            c = (DataGridViewComboBoxColumn)dgvcc["IsoId"];
-            foreach (string s in isotopics)
-                c.Items.Add(s);
+			c = (DataGridViewComboBoxColumn)dgvcc["IsoId"];
+			foreach (string s in isotopics)
+				c.Items.Add(s);
 
-            c = (DataGridViewComboBoxColumn)dgvcc["MatType"];
-            foreach (string s in mats)
-                c.Items.Add(s);
+			c = (DataGridViewComboBoxColumn)dgvcc["MatType"];
+			foreach (string s in mats)
+				c.Items.Add(s);
 
-            c = (DataGridViewComboBoxColumn)dgvcc["StratId"];
-            foreach (string s in strats)
-                c.Items.Add(s);
+			c = (DataGridViewComboBoxColumn)dgvcc["StratId"];
+			foreach (string s in strats)
+				c.Items.Add(s);
 
-            c = (DataGridViewComboBoxColumn)dgvcc["IOCode"];
-            foreach (string s in iocodes)
-                c.Items.Add(s);
+			c = (DataGridViewComboBoxColumn)dgvcc["IOCode"];
+			foreach (string s in iocodes)
+				c.Items.Add(s);
 
-            c = (DataGridViewComboBoxColumn)dgvcc["InvChangeCode"];
-            foreach (string s in invcodes)
-                c.Items.Add(s);   
-            BuildRows();  
-        }
+			c = (DataGridViewComboBoxColumn)dgvcc["InvChangeCode"];
+			foreach (string s in invcodes)
+				c.Items.Add(s);
+			BuildRows();
+		}
 
-        void BuildRows()
-        {
-            DataGridViewRowCollection rows = ItemIdDataGrid.Rows;
-            foreach (ItemId ito in NC.App.DB.ItemIds.GetList())
-            {
-                string[] a = ToSimpleValueArray(ito);
-                int i = rows.Add(a);
-                rows[i].Cells[7].Tag = ito.declaredMass;
-                rows[i].Cells[8].Tag = ito.declaredUMass;
-                rows[i].Cells[9].Tag = ito.length;
-            }
+		void BuildRows()
+		{
+			DataGridViewRowCollection rows = ItemIdDataGrid.Rows;
+			foreach (ItemId ito in NC.App.DB.ItemIds.GetList())
+			{
+				string[] a = ToSimpleValueArray(ito);
+				int i = rows.Add(a);
+				rows[i].Cells[7].Tag = ito.declaredMass;
+				rows[i].Cells[8].Tag = ito.declaredUMass;
+				rows[i].Cells[9].Tag = ito.length;
+			}
 
-            // Generate a copy of the ItemId string in case the user changes it so we can tell what is a new row and what is a name change
-            for (int i = 0; i < rows.Count; i++)
-            {
-                DataGridViewRow row = rows[i];
-                if (string.IsNullOrEmpty((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value))
-                    continue;
-                else
-                    // Set the row's Tag member to a copy of the ItemId string
-                    row.Tag = string.Copy((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value);
-            }
+			// Generate a copy of the ItemId string in case the user changes it so we can tell what is a new row and what is a name change
+			for (int i = 0; i < rows.Count; i++)
+			{
+				DataGridViewRow row = rows[i];
+				if (string.IsNullOrEmpty((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value))
+					continue;
+				else
+					// Set the row's Tag member to a copy of the ItemId string
+					row.Tag = string.Copy((string)((DataGridViewTextBoxCell)row.Cells["ItemId"]).Value);
+			}
 
-        }
+		}
 
-        string[] ToSimpleValueArray(ItemId ito)
+		string[] ToSimpleValueArray(ItemId ito)
 		{
 			string[] vals = new string[10];
 			vals[0] = ito.item;
@@ -138,83 +138,85 @@ namespace NewUI
 			return vals;
 		}
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            bool newrow;
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			bool newrow;
 
-            if (NewContent)
-            {
-                // User has added to or changed content in the table; process table row-by-row back into database
-                foreach (DataGridViewRow row in ItemIdDataGrid.Rows)
-                {
-                    newrow = false;
-                    // Grab the Item ID cell value 
-                    string iname = (string)row.Cells[0].Value;
-                    if (iname != null)
-                    {
+			if (NewContent)
+			{
+				// User has added to or changed content in the table; process table row-by-row back into database
+				foreach (DataGridViewRow row in ItemIdDataGrid.Rows)
+				{
+					newrow = false;
+					// Grab the Item ID cell value 
+					string iname = (string)row.Cells[0].Value;  // or ["ItemId"]
+					if (iname != null)
+					{
 
-                        // Look for an entry in the DB for that Item ID
-                        ItemId iid = NC.App.DB.ItemIds.Get(d => string.Compare(d.item, iname, false) == 0);
-                        if (iid == null)
-                        {
-                            iid = new ItemId(iname);  // Create a new object if there is no match.
-                            newrow = true;
-                        }
+						// Look for an entry in the DB for that Item ID
+						ItemId iid = NC.App.DB.ItemIds.Get(d => string.Compare(d.item, iname, false) == 0);
+						if (iid == null)
+						{
+							iid = new ItemId(iname);  // Create a new object if there is no match.
+							iid.modified = true;
+							newrow = true;
+						}
 
-                        // Update the ItemId object with the data from the row
-                        iid.mba = (string)((DataGridViewComboBoxCell)row.Cells["MBA"]).Value;
-                        iid.material = (string)((DataGridViewComboBoxCell)row.Cells["MatType"]).Value;
-                        iid.isotopics = (string)((DataGridViewComboBoxCell)row.Cells["IsoId"]).Value;
-                        iid.stratum = (string)((DataGridViewComboBoxCell)row.Cells["StratId"]).Value;
-                        iid.inventoryChangeCode = (string)((DataGridViewComboBoxCell)row.Cells["InvChangeCode"]).Value;
-                        iid.IOCode = (string)((DataGridViewComboBoxCell)row.Cells["IOCode"]).Value;
+						// Update the ItemId object with the data from the row
+						iid.mba = (string)((DataGridViewComboBoxCell)row.Cells["MBA"]).Value;
+						iid.material = (string)((DataGridViewComboBoxCell)row.Cells["MatType"]).Value;
+						iid.isotopics = (string)((DataGridViewComboBoxCell)row.Cells["IsoId"]).Value;
+						iid.stratum = (string)((DataGridViewComboBoxCell)row.Cells["StratId"]).Value;
+						iid.inventoryChangeCode = (string)((DataGridViewComboBoxCell)row.Cells["InvChangeCode"]).Value;
+						iid.IOCode = (string)((DataGridViewComboBoxCell)row.Cells["IOCode"]).Value;
 
-                        if (!double.TryParse((string)row.Cells["Mass"].Value, out iid.declaredMass))
-                        {
-                            // Value in mass column did not parse as a number; set to default?
-                        }
+						if (!double.TryParse((string)row.Cells["Mass"].Value, out iid.declaredMass))
+						{
+							// Value in mass column did not parse as a number; set to default?
+						}
 
-                        if (!double.TryParse((string)row.Cells["HvyMetalUMass"].Value, out iid.declaredUMass))
-                        {
-                            // Value in U mass column did not parse as a number; set to default?
-                        }
+						if (!double.TryParse((string)row.Cells["HvyMetalUMass"].Value, out iid.declaredUMass))
+						{
+							// Value in U mass column did not parse as a number; set to default?
+						}
 
-                        if (!double.TryParse((string)row.Cells["HeavyMetalLen"].Value, out iid.length))
-                        {
-                            // Value in length column did not parse as a number; set to default?
-                        }
-                        iid.modified = true;
-                        if (newrow)
-                        {
-                            // This was new data, so it won't get captured unless we add it                       
-                            NC.App.DB.ItemIds.GetList().Add(iid);
-                        }
-                    }
-                }
-                // Commit the in-memory data to the database
-                NC.App.DB.ItemIds.SetList();
-            }
-            Close();
-        }
+						if (!double.TryParse((string)row.Cells["HeavyMetalLen"].Value, out iid.length))
+						{
+							// Value in length column did not parse as a number; set to default?
+						}
+						iid.modified = true;
+						if (newrow)
+						{
+							// This was new data, so it won't get captured unless we add it                       
+							NC.App.DB.ItemIds.GetList().Add(iid);
+						}
+					}
+				}
+				// Commit the in-memory data to the database
+				NC.App.DB.ItemIds.SetList();
+				NC.App.DB.ItemIds.Refresh(); // regen ItemId list from new db content
+			}
+			Close();
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void PrintBtn_Click(object sender, EventArgs e)
-        {
+		private void PrintBtn_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
 		private void ItemIdDataGrid_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
 		{
-			if (e.Column.Name == "Mass" || (e.Column.Name== "HvyMetalUMass") ||  (e.Column.Name== "HeavyMetalLen"))
+			if (e.Column.Name == "Mass" || (e.Column.Name == "HvyMetalUMass") || (e.Column.Name == "HeavyMetalLen"))
 			{
 				double d1 = (double)ItemIdDataGrid.Rows[e.RowIndex1].Cells[e.Column.Name].Tag;
 				double d2 = (double)ItemIdDataGrid.Rows[e.RowIndex2].Cells[e.Column.Name].Tag;
@@ -224,38 +226,45 @@ namespace NewUI
 		}
 
 		private void DeleteBtn_Click(object sender, EventArgs e)
-        {
-            List<ItemId> list = new List<ItemId>();
-            foreach (DataGridViewRow row in ItemIdDataGrid.SelectedRows)
-            {
-                ItemId iid = NC.App.DB.ItemIds.Get((string)row.Cells["Item"].Value);
-                if (iid != null)
-                    list.Add(iid);
-            }
-            NC.App.DB.ItemIds.Delete(list);
-            //I//temIdDataGrid.Rows.RemoveAt
-        }
+		{
+			List<ItemId> list = new List<ItemId>();
+			foreach (DataGridViewRow row in ItemIdDataGrid.SelectedRows)
+			{
+				ItemId iid = NC.App.DB.ItemIds.Get((string)row.Cells["ItemId"].Value); // or index 0
+				if (iid != null)
+					list.Add(iid);
+			}
+			if (list.Count < 1)
+				return;
+			NC.App.DB.ItemIds.Delete(list);
+			NC.App.DB.ItemIds.Refresh();
+			foreach (DataGridViewRow row in ItemIdDataGrid.SelectedRows)
+			{
+				int idx = ItemIdDataGrid.Rows.IndexOf(row);
+				ItemIdDataGrid.Rows.RemoveAt(idx);
+			}
+		}
 
-        private void ItemIdDataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
+		private void ItemIdDataGrid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
 
-        }
+		}
 
-        private void ItemIdDataGrid_UserAddedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            // new row edited; set flag
-            NewContent = true;
-        }
+		private void ItemIdDataGrid_UserAddedRow(object sender, DataGridViewRowEventArgs e)
+		{
+			// new row edited; set flag
+			NewContent = true;
+		}
 
-        private void ItemIdDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            // wheeee!
-        }
+		private void ItemIdDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+			// wheeee!
+		}
 
-        private void ItemIdDataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            // values changed; set flag
-            NewContent = true;
-        }
-    }
+		private void ItemIdDataGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+		{
+			// values changed; set flag
+			NewContent = true;
+		}
+	}
 }

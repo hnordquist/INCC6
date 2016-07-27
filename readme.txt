@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 12
-6.0.1.12 July 10, 2016 J. Longo
+6.0.1.12 July 30, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -82,7 +82,6 @@ Issues for basic INCC5/6 feature COMPLETION
 #78+	Find Deming curve fitting tool replacement
 #69+	Present the proposed List Mode Config UI from DB enhancement
 #35+	Hold-up analysis required
-#32+    Implement INCC5 File > Save As/Export > Transfer
 
 
 *HIGH Priority, +MEDIUM Priority
@@ -98,6 +97,8 @@ Issues for basic INCC5/6 feature COMPLETION
 
 Closed issues
 
+ 110 Collar Item Id needs Item Id defined at same time
+ 109 Item Id and Collar Item Id deletion
  104 HV plateau, waiting for a neutron that never arrives (MCA-527)
  103 Transfer measurement selection dlg just like INCC5
  102 NCD file processing drops input
@@ -132,7 +133,7 @@ Closed issues
   38 Acquire Verification from file -- Cancel button pushed, INCC6 ignores 
   34 Implement Composite Isotopics dlg and use
   33 Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
-  32 Implement INCC5 File > Save As/Export > Initial Data (detector + calib init data as of Jul 10, 2016)
+  32 Implement INCC5 File > Save As/Export > Transfer and Initial Data 
   31 Implement the INCC5 Reanalysis
   27 Cancel assay does not fully stop acquisition
   23 how to delete list mode detector? 

@@ -84,6 +84,8 @@ namespace NewUI
 												cur.AddTicks(cycle.TS.Ticks), f.det.Id.FileName);
 							cur = cycle.DataSourceId.dt;
 						}
+						m.Cycles.AddRange(cl);
+						// NEXT: m.CFCyles for AAS not used for INCC6 created measurements, only INCC5 transfer measurements have them m.Add(c, i);
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
 					}
 					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
