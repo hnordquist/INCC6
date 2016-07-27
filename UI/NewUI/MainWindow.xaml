@@ -19,8 +19,8 @@
                     <MenuItem Header="_Initial Data..." Click="InitialDataSelectorClick" ToolTip="Read detector or calibration parameter files in binary format into INCC." />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="_Back Up All Data..." Click="BackupAllDataClick" IsEnabled="False" />
-                <MenuItem Header="_Restore All Data..." Click="RestoreAllDataClick" IsEnabled="False"/>
+                <MenuItem Header="_Back Up All Data..." Click="BackupAllDataClick" IsEnabled="True" />
+                <MenuItem Header="_Restore All Data..." Click="RestoreAllDataClick" IsEnabled="True"/>
                 <Separator />
                 <MenuItem Header="_Batch Analysis..." Click="BatchAnalysisClick" IsEnabled="False"/>
                 <MenuItem Header="_Database..." Click="ChangeDatabaseClick"/>

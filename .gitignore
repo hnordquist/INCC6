@@ -4,3 +4,4 @@ obj
 *.pdb
 *.user
 *.VC.db
+/Help/inccuser/INCCelp.hnd
