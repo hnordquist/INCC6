@@ -235,7 +235,14 @@ namespace NCCTransfer
             b[3] = 0x53;
             b[4] = 0x00;
         }
-
+        static unsafe public void FailPack(byte* b)
+        {
+            b[0] = 0x46; // " F A I L \0"; EPIC LOL
+            b[1] = 0x41;
+            b[2] = 0x49;
+            b[3] = 0x4C;
+            b[4] = 0x00;
+        }
         static unsafe public bool PassCheck(byte* b)
         {
             bool res = (b[0] == 0x70) || (b[0] == 0x50) ? true : false; // a 'p' or a 'P' for Pass? 0x50/0x70
@@ -288,7 +295,13 @@ namespace NCCTransfer
 
             }
         }
-
+		static unsafe public void CopyBoolsToBytes(bool[] src, byte* dst)
+        {
+			byte[] x = new byte[src.Length];
+			for (int i = 0; i < src.Length; i++)
+				x[i] = (byte)(src[i] ? 1: 0);
+			Copy(x, dst);
+		}
 		static unsafe public void CopyBoolsToInts(bool[] src, int* dst)
         {
 			int[] x = new int[src.Length];

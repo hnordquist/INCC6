@@ -694,10 +694,10 @@
     <Compile Include="Unready\IDDSaveSelect.Designer.cs">
       <DependentUpon>IDDSaveSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDSaveTransfer.cs">
+    <Compile Include="FormsHappyPlace\IDDSaveTransfer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDSaveTransfer.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDSaveTransfer.Designer.cs">
       <DependentUpon>IDDSaveTransfer.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDScaling.cs">
@@ -1532,7 +1532,7 @@
     <EmbeddedResource Include="Unready\IDDSaveSelect.resx">
       <DependentUpon>IDDSaveSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDSaveTransfer.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveTransfer.resx">
       <DependentUpon>IDDSaveTransfer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDScaling.resx">

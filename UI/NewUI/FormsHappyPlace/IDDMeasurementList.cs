@@ -37,7 +37,7 @@ namespace NewUI
 	public partial class IDDMeasurementList : Form
     {
 
-		public enum EndGoal { Report, Summary, Reanalysis }
+		public enum EndGoal { Report, Summary, Reanalysis, Transfer }
 
         public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, Detector detector = null)
         {
@@ -58,7 +58,7 @@ namespace NewUI
             SummarySelections = null;
         }
 
-        public void Init(List<INCCDB.IndexedResults> ilist, 
+        public void Init(List<INCCDB.IndexedResults> ilist,
                     AssaySelector.MeasurementOption filter, 
                     EndGoal goal, bool lmonly, string inspnum = "", Detector detector = null)
         {
@@ -73,7 +73,7 @@ namespace NewUI
 				mlist = N.App.DB.MeasurementsFor(ilist, LMOnly, skipMethods: false);
 				bGood = PrepList(filter, detector);
 			} finally
-			  {
+			{
 				System.Windows.Input.Mouse.OverrideCursor = null;
 			}
 		}
@@ -101,6 +101,7 @@ namespace NewUI
             string upthehill = "Measurement Selection for Detector";
             string backwards = "Measurement Selection for All Detectors";
             string itllbe = "Select Measurement for Detector";
+            string allright = "Select Measurements to Save for Detector";
             AllMeas = alltypes;
             Goal = goal;
             string title = "";
@@ -113,6 +114,8 @@ namespace NewUI
                 title = itllbe;
 				listView1.MultiSelect = false;
 			}
+			else // if (Goal == EndGoal.Transfer)
+                title = allright;
             if (!AllMeas && Goal != EndGoal.Reanalysis)
                 title = (filter.PrintName() + " " + title);
             if (!string.IsNullOrEmpty(detector))
@@ -139,7 +142,7 @@ namespace NewUI
                 return false;
             }
             LoadList(filter);
-            if (Goal == EndGoal.Report || Goal == EndGoal.Reanalysis)   // it is for a named detector so elide the detector column
+            if (Goal == EndGoal.Report || Goal == EndGoal.Reanalysis || Goal == EndGoal.Transfer)   // it is for a named detector so elide the detector column
                 listView1.Columns[1].Width = 0;
             if (!AllMeas)
 				listView1.Columns[0].Width = 0;
@@ -234,6 +237,8 @@ namespace NewUI
             else if (Goal == EndGoal.Summary)
                 WriteSummary();
             else if (Goal == EndGoal.Reanalysis)
+                DialogResult = DialogResult.OK;
+			else if (Goal == EndGoal.Transfer)
                 DialogResult = DialogResult.OK;
 				// do something here        
             Close();
@@ -337,6 +342,20 @@ namespace NewUI
                 return (mlist[lvIndex]);
             }
             return null;
+        }
+
+		public List<Measurement> GetSelectedMeas()
+        {
+			List<Measurement> newlist = new List<Measurement>();
+            foreach (ListViewItem lvi in listView1.Items)
+            {
+                if (!lvi.Selected)
+                    continue;
+                int lvIndex = 0;
+                int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+                newlist.Add(mlist[lvIndex]);
+            }
+            return newlist;
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

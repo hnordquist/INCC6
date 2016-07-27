@@ -1371,7 +1371,7 @@ namespace AnalysisDefs
             else
             {
                 rates = new Rates(src.rates);
-                TMBkgParams = new TruncatedMultiplicityBackgroundParameters(); // todo: src.TMBkgParams);
+                TMBkgParams = new TruncatedMultiplicityBackgroundParameters(src.TMBkgParams);
                 Scaler1 = new Tuple(src.Scaler1);
                 Scaler2 = new Tuple(src.Scaler2);
                 INCCActive = new StdRates(src.INCCActive);

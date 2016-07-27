@@ -153,7 +153,7 @@ namespace NCCTransfer
 
             return result;
         }
-        public virtual bool Save() { return false; } // NEXT: implement INCC5 File > Save As/Export > Transfer and Initial Data INCC5 MEDIUM #97 
+        public virtual bool Save() { return false; } 
 
         unsafe protected eFileType DetermineFileType(string source_path_filename)
         {

@@ -141,6 +141,13 @@ namespace NewUI
         {
             IDDCollarData f = new IDDCollarData();
             f.ShowDialog();
+			if (f.DialogResult == System.Windows.Forms.DialogResult.OK && f.EditItem)
+			{
+				MessageBox.Show("The Item Id Entry dialogbox will now be displayed for you to enter\r\n" + 
+								"the item data needed for the collar data you just entered", NCC.IntegrationHelpers.GetAppTitle());
+				IDDItemDataEntry g = new IDDItemDataEntry();
+				g.ShowDialog();
+			}
         }        
 
         /////////////////////

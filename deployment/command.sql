@@ -1,1 +1,0 @@
-DELETE FROM analysis_method_rec WHERE id=3;

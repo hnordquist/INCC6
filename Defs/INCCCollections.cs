@@ -884,6 +884,12 @@ namespace AnalysisDefs
             DB.CollarItems itodb = new DB.CollarItems();
             return itodb.Update(itodb.PrimaryKey(old), NewId);
         }
+
+		public void Refresh()
+        {
+			items = null;
+			GetList();
+        }
     }
 
     public class ItemIdListImpl : IAPI<ItemId>

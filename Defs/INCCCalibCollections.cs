@@ -792,7 +792,6 @@ namespace AnalysisDefs
                         dt = ar.GetCombinedResults(mid);
                         foreach (DataRow dr in dt.Rows)
                         {
-                                   // DB.Utils.DBInt64(dr["pu_half_life"]);
                             res.cm_pu_ratio_decay_corr = VTupleHelper.Make(dr, "cm_pu_ratio_decay_corr");
                             res.cm_u_ratio_decay_corr = VTupleHelper.Make(dr, "cm_u_ratio_decay_corr");
                             res.cm_mass = VTupleHelper.Make(dr,"cm_mass");
@@ -818,17 +817,19 @@ namespace AnalysisDefs
                             res.pu.dcl_pu_mass = DB.Utils.DBDouble(dr["dcl_pu_mass"]);
                             res.pu.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
                             res.pu.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
+                            res.pu.dcl_minus_asy_mass = VTupleHelper.Make(dr, "dcl_minus_asy_pu_mass");
+                            res.pu.dcl_minus_asy_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_pu_mass_pct"]);
                             res.pu.pass = DB.Utils.DBBool(dr["pu_pass"]);
 
                             res.u.mass = VTupleHelper.Make(dr, "u_mass");
-                            res.u.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u_mass");
-                            res.u.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u_mass_pct"]);
+                            res.u.dcl_minus_asy_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u_mass");
+                            res.u.dcl_minus_asy_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u_mass_pct"]);
                             res.u.dcl_mass = v.cm_dcl_u_mass;
                             res.u.pass = DB.Utils.DBBool(dr["u_pass"]);
 
                             res.u235.mass = VTupleHelper.Make(dr, "u235_mass");
-                            res.u235.dcl_minus_asy_pu_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
-                            res.u235.dcl_minus_asy_pu_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
+                            res.u235.dcl_minus_asy_mass = VTupleHelper.Make(dr, "dcl_minus_asy_u235_mass");
+                            res.u235.dcl_minus_asy_mass_pct = DB.Utils.DBDouble(dr["dcl_minus_asy_u235_mass_pct"]);
                             res.u235.dcl_mass = v.cm_dcl_u235_mass;
                         }
                     }

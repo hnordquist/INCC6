@@ -50,6 +50,7 @@ namespace NewUI
 		public List<INCCDB.IndexedResults> FilteredList;
 		public AcquireParameters acq;
 		public Detector det;
+		public string inspnum = string.Empty;
 
 		void LoadInspNumCombo()
 		{
@@ -74,7 +75,7 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-			string inspnum = string.Copy(InspectionNumComboBox.SelectedItem.ToString());
+			inspnum = string.Copy(InspectionNumComboBox.SelectedItem.ToString());
 			if (string.Compare(inspnum, "All", true) == 0)
 			{
 				inspnum = "";
