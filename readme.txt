@@ -100,6 +100,7 @@ Closed issues
 110	Collar Item Id needs Item Id defined at same time
 75	LM wizard setting for cycle count not used in Live DAQ
 76	LM wizard gatewidth param change not used in subsequent live DAQ analysis
+73	Enhance predelay precision
 
 6.0.1.11 Jun 22, 2016
 102	NCD file processing drops input
@@ -124,6 +125,7 @@ Closed issues
 88	Show type (SR or LM) on facility setup dlg 
 94	Add a comment column to the various measurement reports dialogues
 93	File or folder query for list mode input files confusing
+90  Some facility setup dlg buttons should be disbaled and/or removed
 
 6.0.1.5 Apr 26, 2016
 40	source ID in 'initial source' does not get passed to results

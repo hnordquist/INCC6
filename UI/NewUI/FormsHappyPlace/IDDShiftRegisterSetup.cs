@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2015, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -33,13 +33,13 @@ namespace NewUI
 {
 
     using Integ = NCC.IntegrationHelpers;
-    using NC = NCC.CentralizedState;
-    
+    using NC = NCC.CentralizedState;    
 
     public partial class IDDShiftRegisterSetup : Form
     {
         Detector det;
         int[] bauds;
+		
 
 
 		public IDDShiftRegisterSetup(Detector d)
@@ -195,10 +195,41 @@ namespace NewUI
             SecondGateLengthLabel.Visible = (t == InstrType.DGSR);
             SecondGateLengthTextBox.Visible = (t == InstrType.DGSR);
             SetBaudRateSelectorVisibility(t.IsSRWithVariableBaudRate());
+			SetPredelayStepConstraint(t);
 
         }
 
-        private void ShiftRegisterSerialPortComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		private void SetPredelayStepConstraint(InstrType t)
+		{
+			if (t.IsListMode() || t == InstrType.JSR15)
+				PredelayTextBox.Steps = -1; // no check
+			else
+			{
+				PredelayTextBox.Steps = 0.25; // traditional step increment
+				if ((PredelayTextBox.Value % 0.25) != 0)
+				{
+		            PredelayTextBox.Value = Bounce25Step(PredelayTextBox.Value);
+				}
+			}
+		}
+
+		/// <summary>
+		/// returns value bounced down to the closest 0.25 increment
+		/// </summary>
+		/// <param name="x"></param>
+		/// <returns></returns>
+		private double Bounce25Step(double x) 
+		{
+			double tx = Math.Truncate(x);
+			double r = x - tx;
+			double m = r % 0.25;
+			if (m != 0.0)
+				return tx + (r - m);
+			else
+				return x;
+		} 
+
+		private void ShiftRegisterSerialPortComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
 
