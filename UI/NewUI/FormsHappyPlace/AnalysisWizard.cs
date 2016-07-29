@@ -1746,8 +1746,12 @@ namespace NewUI
 
         private void Step2NCDRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
-            if (((RadioButton)sender).Checked)
-                ap.data_src = ConstructedSource.NCDFile;  // NEXT: inconsistent logic with other 3 radios
+            if (NC.App.AppContext.NCDFileAssay != ((RadioButton)sender).Checked)
+            {
+                NC.App.AppContext.modified = true; NC.App.AppContext.NCDFileAssay = ((RadioButton)sender).Checked;
+            }
+            if (NC.App.AppContext.NCDFileAssay)
+                ap.data_src = ConstructedSource.NCDFile;
         }
 
         private void Step2SortedPulseRadioBtn_CheckedChanged(object sender, EventArgs e)

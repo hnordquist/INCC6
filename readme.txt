@@ -37,6 +37,10 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 **********************************************************************************
+Minimum requirements
+
+OS Windows 7 or above
+.NET 4.5 or higher
 
 INSTALLATION INSTRUCTIONS:
 
@@ -51,7 +55,48 @@ INSTALLATION INSTRUCTIONS:
    default SQLite database by running the "reset.bat" batch file or
    by copying Default.sqlite over INCC6.sqlite. For SQL Server run the drop_INCC6_sqlserver.sql
    script followed by create_INCC6_sqlserver.sql.
+
+**********************************************************************************
+
+These are the basic files installed with INCC6.
+
+All these files must reside in the same folder, but for the database.
+The database may be stored elsewhere, with the path and file name stored in the .Config files.  
+
+
+INCC6.exe        ; User Interface and starting point for INCC6
+INCC6.exe.Config ; .NET config file for GUI INCC6. Current database is specified here
+
+INCCCmd.exe         ; Command line entry point for INCC batch processing, also seen as INCC.exe
+INCCCmd.exe.Config  ; .NET config file for command line. Current database is specified here
+
+Defs.dll         ; Data and utility classes
+RepDB.dll        ; Database API, report generator, config file and command line processing
+NCCCtrl.dll      ; LMMM, PTR-32, MCA-527, SR instrument and file processing classes, list mode statistical counting
+
+INCC6.sqlite     ; Database for INCC6, created with reset.bat (see below), referenced in both .Config files
+
+SR32.dll         ; C++ DLL wrapper over LANL's INCC Shift Register protocol SR32.lib library (x86 only, no source code)   
+LMSR.dll         ; C# .NET wrapper over SR32.dll (no source code)
+NCCCore.dll      ; Statistical tests and Pu mass calculations (no source code)
+
+inccuser.pdf     ; INCC 5 User Guide, has algorithms, theoretical equations, and more
+
+SQLite database schema and reset files
+
+System.Data.SQLite.dll    ; SQLite .NET Interop assembly 1.0.94.0
+sqlite3.exe               ; SQLite database utility, for diagnostic use
+
+INCC6.sqlite              ; Empty database, created with reset.bat
+Default.sqlite             ; Empty database, created with reset.bat
+drop_INCC6_sqlite.sql      ; INCC6 SQLite schema DROP table statements
+create_INCC6_sqlite.sql    ; INCC6 SQLite schema CREATE and INSERT statements
+reset.bat                 ; Uses sqlite3.exe on sql schema files to recreate a new empty INCC6 database
+
+drop_INCC6_sqlserver.sql   ; INCC6 SQL Server schema DROP table statements
+create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statements
    
+**********************************************************************************
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
@@ -86,7 +131,6 @@ Issues for basic INCC6 function and performance
 #67  PTR-32 data handling question 
 #59  Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
 #45  calc_alpha_beta performance and efficiency
-#43  Performing LM as SR after doing LM Acquire craps*
 #25  List mode acquisition predelay not stored
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
@@ -101,6 +145,7 @@ Closed issues
 75	LM wizard setting for cycle count not used in Live DAQ
 76	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 73	Enhance predelay precision
+43  Performing LM as SR after doing LM Acquire craps
 
 6.0.1.11 Jun 22, 2016
 102	NCD file processing drops input
@@ -166,8 +211,6 @@ Closed issues
 
 
 
-
-
 **********************************************************************************
 
 Includes code from the NDesk.Options library.
@@ -206,5 +249,33 @@ You may copy, modify and use this code for any purpose without prior authorizati
 provided that you keep this attribution in the file, no matter what changes are made. 
 check www.fractal-landscapes.co.uk for any updates. 
 
+**********************************************************************************
+
+PTR-32 support:
+
+A USB device driver from Digilent is required for PTR-32 connectivity.
+If you have installed the PTR-32 vendor's software, then the device driver is already present.
+If not, install the PTR-32 vendors software, or obtain the drivers directly.
+
+In the absence of the PTR-32 vendor's software, this package supports the PTR-32:
+Digilent Adept 2.3, with DpcUtils 2.1
+
+http://www.digilentinc.com/Data/Products/adept/DigilentAdept_v2-3-0.exe
+
+Also available directly from the vendor, or elsewhere, is Diligent Adept 2.10.2, with DpcUtils 2.7.2.
+
+
+Packages for older Windows systems (Vista, XP) are found at these links:
+
+http://www.digilentinc.com/Products/Detail.cfm?NavPath=2,398,827&Prod=ADEPT
+
+The installer DASV1-10-0.msi is for 32-bit OS.
+http://www.digilentinc.com/Data/Products/ADEPT/DASV1-10-0.msi
+
+The installer DASV1-10-0(x64).exe is for 64-bit OS.
+http://www.digilentinc.com/Data/Products/ADEPT/DASV1-10-0(x64).exe
+
+
+See www.digilent.com and PTR-32 documentation for additional details.
 **********************************************************************************
 

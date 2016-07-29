@@ -1125,7 +1125,7 @@ namespace LMRawAnalysis
                     endOfNeutronEventList.numNeutrons = numNeutrons;
 
                     //check to see if the circular linked list would overflow
-                    if ((numEvents - which) > 1)
+                    if ((numEvents - which) > numEventsInCircularLinkedList)
 						ExtendListIfNeeded();
 
                     //move endOfNeutronEventList to the next empty struct
