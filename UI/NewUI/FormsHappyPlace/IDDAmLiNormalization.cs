@@ -90,9 +90,7 @@ namespace NewUI
                 np.acceptanceLimitPercent = AccLimitTextBox.Value;
                 np.amliRefSinglesRate = RefSinglesRateTextBox.Value;
                 np.currNormalizationConstant.v = NormConstTextBox.Value;
-                np.currNormalizationConstant.err = NormConstErrorTextBox.Value;
-
-                
+                np.currNormalizationConstant.err = NormConstErrorTextBox.Value;                
             }
             DialogResult = DialogResult.OK;
             this.Close();

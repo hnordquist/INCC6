@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IDDSetupUnattendedMeas));
             this.MaxTimeLabel = new System.Windows.Forms.Label();
             this.MaxTimeTextBox = new System.Windows.Forms.TextBox();
             this.AutoImportCheckBox = new System.Windows.Forms.CheckBox();
@@ -36,6 +38,7 @@
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // MaxTimeLabel
@@ -53,6 +56,7 @@
             this.MaxTimeTextBox.Name = "MaxTimeTextBox";
             this.MaxTimeTextBox.Size = new System.Drawing.Size(100, 20);
             this.MaxTimeTextBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.MaxTimeTextBox, resources.GetString("MaxTimeTextBox.ToolTip"));
             this.MaxTimeTextBox.Leave += new System.EventHandler(this.MaxTimeTextBox_Leave);
             // 
             // AutoImportCheckBox
@@ -64,6 +68,9 @@
             this.AutoImportCheckBox.Size = new System.Drawing.Size(322, 17);
             this.AutoImportCheckBox.TabIndex = 2;
             this.AutoImportCheckBox.Text = "Automatic import (no acquire dialog box for each measurement)";
+            this.toolTip1.SetToolTip(this.AutoImportCheckBox, "Check this box if, when importing unattended measurement data, you\r\nwant an acqui" +
+        "re dialog box to be displayed only if item data has not\r\nalready been entered fo" +
+        "r a measurement.\r\n");
             this.AutoImportCheckBox.UseVisualStyleBackColor = true;
             this.AutoImportCheckBox.CheckedChanged += new System.EventHandler(this.AutoImportCheckBox_CheckedChanged);
             // 
@@ -82,6 +89,7 @@
             this.DoublesThresholdTextBox.Name = "DoublesThresholdTextBox";
             this.DoublesThresholdTextBox.Size = new System.Drawing.Size(100, 20);
             this.DoublesThresholdTextBox.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.DoublesThresholdTextBox, resources.GetString("DoublesThresholdTextBox.ToolTip"));
             this.DoublesThresholdTextBox.Leave += new System.EventHandler(this.DoublesThresholdTextBox_Leave);
             // 
             // OKBtn
@@ -144,5 +152,6 @@
         private System.Windows.Forms.Button OKBtn;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
-    }
+		private System.Windows.Forms.ToolTip toolTip1;
+	}
 }

@@ -43,36 +43,55 @@ namespace NewUI
             InitializeComponent();
             det = d;
             up = new UnattendedParameters();
-            up.Copy(NC.App.DB.UnattendedParameters.GetMap()[det]);
+			if (det == null)
+				return;
+            if (NC.App.DB.UnattendedParameters.Map.ContainsKey(det))
+                up.Copy(NC.App.DB.UnattendedParameters.Map[det]);
             MaxTimeTextBox.Text = up.ErrorSeconds.ToString();
             AutoImportCheckBox.Checked = up.AutoImport;
-            DoublesThresholdTextBox.Text = up.AASThreshold.ToString("F4");
-            this.Text += " for detector " + det.Id.DetectorName;
+            DoublesThresholdTextBox.Text = up.AASThreshold.ToString("F1");
+            Text += " for detector " + det.Id.DetectorName;
         }
 
         private void MaxTimeTextBox_Leave(object sender, EventArgs e)
         {
-
+            uint u = up.ErrorSeconds;
+            bool b = Format.ToUInt(((TextBox)sender).Text, ref u);
+            ((TextBox)sender).Text = u.ToString();
+            up.modified |= b;
+            if (b) up.ErrorSeconds = u;
         }
 
         private void AutoImportCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-
+            up.AutoImport = AutoImportCheckBox.Checked;
         }
 
         private void DoublesThresholdTextBox_Leave(object sender, EventArgs e)
         {
-
+            double d = up.AASThreshold;
+            bool b = Format.ToNN(((TextBox)sender).Text, ref d);
+            ((TextBox)sender).Text = d.ToString("F1");
+            up.modified |= b;
+            if (b) up.AASThreshold = d;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            //NEXT: if changed update it
+            UnattendedParameters cur = NC.App.DB.UnattendedParameters.Map[det];
+            if (up.CompareTo(cur) != 0)
+			{
+				// copy changes back to original
+				NC.App.DB.UnattendedParameters.Map[det] = up;  // in the in-memory map
+                NC.App.DB.UnattendedParameters.Set(det, up);  // in the database
+			}
+			DialogResult = DialogResult.OK;
+			Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

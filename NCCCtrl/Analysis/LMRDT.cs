@@ -892,6 +892,7 @@ namespace Analysis
         public int PTRReportedCountTime = 0;
         internal PTRFileProcessingState(uint Max, LMProcessingState src)
         {
+            NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 3337, "Max is {0} in PTRFileProcessingState; allocating {1} bytes", Max, (Max * 4) + Max + (Max * 8) + (Max * 4));
             channels = new UInt32[Max];
             times = new Double[Max];
             chnInBuffer = new Byte[Max];

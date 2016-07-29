@@ -117,4 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="MaxTimeTextBox.ToolTip" xml:space="preserve">
+    <value>Enter the maximum time in seconds, plus or minus, for searching for a
+measurement that corresponds to the date and time received in a
+message from Radiation Review for INCC to display its measurement
+results</value>
+  </data>
+  <data name="DoublesThresholdTextBox.ToolTip" xml:space="preserve">
+    <value>Unattended add-a-source data begins when a cycle's doubles rate is
+greater than this threshold and ends when a cycle's doubles rate is
+lower than this threshold. Add-a-source must be selected as an analysis
+method for the material type.
+</value>
+  </data>
 </root>
