@@ -336,9 +336,9 @@ namespace DAQ
 					if (status == sr_h.SR_TIMEOUT)
 						timeouts++;
 
-					retry = ((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&  // while have not matched voltage
-						 (status == sr_h.SR_SUCCESS) && (i < 100)) // and the connection is good and we haven't yet tried 100 times 
-							|| timeouts < 100; // OR it simply timed out too many times
+					retry = !(((Math.Abs(high_voltage - previous_high_voltage) > MAX_HV_DELTA) &&  // while have not matched voltage
+						 (status == sr_h.SR_SUCCESS) && (i < 100))) // and the connection is good and we haven't yet tried 100 times 
+							|| timeouts >= 100; // OR it simply timed out too many times
 					if (retry && ((i % 2) == 0) && status == sr_h.SR_TIMEOUT)
 						log.TraceEvent(LogLevels.Warning, 0x4f332, "Set voltage attempt {0} of 100, HV {1}, SR status {2}", i+1, Math.Abs(high_voltage - previous_high_voltage), sr_h.SRFunctionReturnStatusCode(status));
 
