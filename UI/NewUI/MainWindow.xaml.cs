@@ -870,7 +870,7 @@ namespace NewUI
 
                         ZipArchiveEntry dbFile = archive.CreateEntryFromFile(Path.Combine(dest,DBFileName),DBFileName);
                         ZipArchiveEntry cfgFile = archive.CreateEntryFromFile(Path.Combine(dest, Path.GetFileName(CfgPath)), Path.GetFileName(CfgPath));
-
+                        NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 1111, String.Format("Zip file containing database and config created: {0}", Path.Combine(dest, destFileName)));
                         File.Delete(Path.Combine(dest, DBFileName));
                         File.Delete(Path.Combine(dest, Path.GetFileName(CfgPath)));
 
