@@ -1039,7 +1039,7 @@ namespace AnalysisDefs
 	/// Alpha beta depends upon
 	///    Multiplicity bin count
 	///    Phi or really the precursor Deadtime Coefficient T
-	///    The gatewidth
+	///    The gatewidth, in tics -e7
 	///    
 	/// So the cache uses a 3 element key
 	/// </summary>
@@ -1057,6 +1057,12 @@ namespace AnalysisDefs
 			gateWidthTics = mkey.gateWidthTics;
 		}
 
+		public ABKey(Multiplicity mkey, uint maxbins)
+		{
+			bins = maxbins;
+			deadTimeCoefficientTinNanoSecs = mkey.sr.deadTimeCoefficientTinNanoSecs;
+			gateWidthTics = mkey.gateWidthTics;
+		}
 		public bool Equals(ABKey other)
 		{
 			return other != null &&

@@ -2047,14 +2047,9 @@ namespace NCCTransfer
                 Multiplicity mkey = new Multiplicity(srtype.DefaultFAFor());
                 mkey.SR = new ShiftRegisterParameters(det.SRParams);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(srtype.DefaultFAFor(), 0);
-				ABKey abkey = new ABKey(mkey, mcr);
-				AnalysisDefs.AlphaBeta AB = AlphaBetaCache.GetAlphaBeta(abkey);
-				if (AB == null)
-				{
-					CycleProcessing.calc_alpha_beta(mkey, mcr);
-					AlphaBetaCache.AddAlphaBeta(abkey, mcr.AB);
-				}
-                det.AB.TransferIntermediates(mcr.AB);
+				ABKey abkey = new ABKey(mkey, 512);
+				LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);
+                mcr.AB.TransferIntermediates(det.AB);
             }
             catch (Exception e)
             {
@@ -3942,12 +3937,7 @@ namespace NCCTransfer
                 if (det.AB.Unset)
                 {
 					ABKey abkey = new ABKey(det.MultiplicityParams, mcr);
-					AnalysisDefs.AlphaBeta AB = AlphaBetaCache.GetAlphaBeta(abkey);
-					if (AB == null)
-					{
-						CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
-						AlphaBetaCache.AddAlphaBeta(abkey, mcr.AB);
-					}                  
+					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);               
                 }
                 mcr.AB.TransferIntermediates(det.AB);  // copy alpha beta onto the cycle's results 
             }

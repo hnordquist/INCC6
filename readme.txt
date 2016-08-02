@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 12
-6.0.1.12 July 30, 2016 J. Longo
+6.0.1.12 Aug 2, 2016 J. Longo
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -82,15 +82,15 @@ NCCCore.dll      ; Statistical tests and Pu mass calculations (no source code)
 
 inccuser.pdf     ; INCC 5 User Guide, has algorithms, theoretical equations, and more
 
-SQLite database schema and reset files
+SQLite/SQL Server database schema and related files
 
 System.Data.SQLite.dll    ; SQLite .NET Interop assembly 1.0.94.0
 sqlite3.exe               ; SQLite database utility, for diagnostic use
 
 INCC6.sqlite              ; Empty database, created with reset.bat
-Default.sqlite             ; Empty database, created with reset.bat
-drop_INCC6_sqlite.sql      ; INCC6 SQLite schema DROP table statements
-create_INCC6_sqlite.sql    ; INCC6 SQLite schema CREATE and INSERT statements
+Default.sqlite            ; Empty database, created with reset.bat
+drop_INCC6_sqlite.sql     ; INCC6 SQLite schema DROP table statements
+create_INCC6_sqlite.sql   ; INCC6 SQLite schema CREATE and INSERT statements
 reset.bat                 ; Uses sqlite3.exe on sql schema files to recreate a new empty INCC6 database
 
 drop_INCC6_sqlserver.sql   ; INCC6 SQL Server schema DROP table statements
@@ -137,7 +137,7 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.12 Jul 30, 2016
+6.0.1.12 Aug 2, 2016
 97	DB issues with non En language and region settings
 32	Implement INCC5 File > Save As/Export > Transfer and Initial Data 
 109	Item Id and Collar Item Id deletion
@@ -145,7 +145,8 @@ Closed issues
 75	LM wizard setting for cycle count not used in Live DAQ
 76	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 73	Enhance predelay precision
-43  Performing LM as SR after doing LM Acquire craps
+43	Performing LM as SR after doing LM Acquire craps
+113	Disk file inputs need the detector alpha-beta pre-filled
 
 6.0.1.11 Jun 22, 2016
 102	NCD file processing drops input
@@ -170,7 +171,7 @@ Closed issues
 88	Show type (SR or LM) on facility setup dlg 
 94	Add a comment column to the various measurement reports dialogues
 93	File or folder query for list mode input files confusing
-90  Some facility setup dlg buttons should be disbaled and/or removed
+90	Some facility setup dlg buttons should be disbaled and/or removed
 
 6.0.1.5 Apr 26, 2016
 40	source ID in 'initial source' does not get passed to results

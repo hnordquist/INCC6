@@ -29,14 +29,14 @@ using System;
 using System.Collections.Generic;
 using AnalysisDefs;
 using DetectorDefs;
+using Instr;
 using NCC;
 using NCCReporter;
 using NCCTransfer;
-using Instr;
 namespace NCCFile
 {
-    using NC = NCC.CentralizedState;
-    public partial class FileCtrl : ActionEvents, IActionControl
+	using NC = NCC.CentralizedState;
+	public partial class FileCtrl : ActionEvents, IActionControl
     {
         // Acquire from Database and Manual data work the same from this point 
         void DBDataAssay()
@@ -57,6 +57,12 @@ namespace NCCFile
             }
             else
             {
+				if (meas.Detector.AB.Unset)
+				{
+					ABKey abkey = new ABKey(meas.Detector.MultiplicityParams, 512); // just the first of many for VSR
+					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, meas.Detector.AB);
+				}
+
                 meas.Persist();  // preserve the basic results record
                 FireEvent(EventType.ActionInProgress, this);
                 meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
@@ -101,6 +107,12 @@ namespace NCCFile
             Detector curdet = NC.App.Opstate.Measurement.Detector;
             AssaySelector.MeasurementOption mo = NC.App.Opstate.Measurement.MeasOption;
 
+            if (curdet.AB.Unset)
+            {
+                ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // just the first of many for VSR
+				LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
+            }
+
             // Each .dat file is a separate measurement 
             foreach (TestDataFile td in files)
             {
@@ -113,7 +125,7 @@ namespace NCCFile
                         continue;
                     if (NC.App.Opstate.IsQuitRequested)
                         break;
-                    UInt32 run_seconds;
+                    uint run_seconds;
 
                     ushort number_good_runs = 0;
                     ushort total_number_runs = 0;
@@ -132,7 +144,7 @@ namespace NCCFile
                         }
                         /* run count time */
                         l = td.reader.ReadLine();
-                        Double.TryParse(l, out run_count_time);
+                        double.TryParse(l, out run_count_time);
                         if (run_count_time <= 0.0)
                         {
                             ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0.");
@@ -457,6 +469,12 @@ namespace NCCFile
                 // Find the detector named in the NCC file (existence shown in earlier processing above)
                 Detector curdet = NC.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, irf.detector, true) == 0);
 
+				if (curdet.AB.Unset)
+				{
+					ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // just the first of many for VSR
+					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
+				}
+
                 // set up acquire state based on the NCC file content
                 AcquireParameters newacq = ConfigureAcquireState(curdet, orig_acq, irf);
 
@@ -712,7 +730,8 @@ namespace NCCFile
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
                 Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
-                mcr.AB.TransferIntermediates(src: m.Detector.AB);
+
+				mcr.AB.TransferIntermediates(src: m.Detector.AB);  // redundant copy in most cases
 
                 foreach (AnalysisDefs.Cycle cycle in m.Cycles)
                 {

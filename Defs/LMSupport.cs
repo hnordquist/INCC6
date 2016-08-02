@@ -91,6 +91,7 @@ namespace LMRawAnalysis
      public class SDTMultiplicityCalculator
     {
         protected double ticSizeInSeconds;
+
 		public LMLoggers.LognLM Log {get; set; }
 
         public SDTMultiplicityCalculator(double theTicSizeInSeconds)
@@ -290,7 +291,7 @@ namespace LMRawAnalysis
                         for (int k = 0; k <= (n - 2); k++)
                         {
                             double alphaCoeff;
-                            alphaCoeff = this.binomialCoefficient((n - 1), (k + 1))
+                            alphaCoeff = binomialCoefficient((n - 1), (k + 1))
                                          * Math.Pow((double)(k + 1), (double)k)
                                          * Math.Pow(phi, (double)k)
                                          / (Math.Pow((1.0 - ((k + 1) * phi)), (double)(k + 2)));
@@ -356,7 +357,7 @@ namespace LMRawAnalysis
                         for (int k = 0; k <= (n - 3); k++)
                         {
                             double betaCoeff;
-                            betaCoeff = this.binomialCoefficient((n - 1), (k + 2))
+                            betaCoeff = binomialCoefficient((n - 1), (k + 2))
                                         * (k + 1)
                                         * Math.Pow((double)(k + 2), (double)k)
                                         * Math.Pow(phi, (double)k)
@@ -711,7 +712,7 @@ namespace LMRawAnalysis
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        private double binomialCoefficient(int a, int b)
+        private static double binomialCoefficient(int a, int b)
         {
             double answer;
             int c;
@@ -739,5 +740,97 @@ namespace LMRawAnalysis
 
             return (answer);
         }
-    }
+
+		/// <summary>
+		/// Calc alpha beta, save result in cache
+		/// NEXT: extend with Numerics.BigInteger replacing BigFloat, as per above (for when phi is non-zero)
+		/// </summary>
+		/// <param name="key">three values needed for alpha beta (max bin count, gatewidth, phi aka multiplicity T) </param>
+		/// <param name="AB">The alpha beta array as used on detectors and multiplicity counting results</param>
+		public static void SetAlphaBeta(ABKey key, AlphaBeta AB)
+		{
+			AlphaBeta _AB = AlphaBetaCache.GetAlphaBeta(key);
+            if (_AB != null)
+			{
+				AB.α = _AB.α;
+				AB.β = _AB.β;
+				return;
+            }
+
+			if (key.bins != AB.α.Length)
+				AB.Resize((int)key.bins + 1);
+
+			AB.α[0] = 0.0;
+			AB.β[0] = 0.0;
+			if (key.deadTimeCoefficientTinNanoSecs == 0.0)
+			{
+				double n = 0;
+				for (uint i = 1; i < key.bins; i++)
+				{
+					n = i;
+					AB.α[i] = n;
+					AB.β[i] = (n * (n - 1.0)) / 2.0;
+				}
+			} else if (key.gateWidthTics != 0.0)
+			{
+				uint biggestKey = key.bins - 1;
+				AB.Init((int)key.bins);
+
+				double gateInSeconds = key.gateWidthTics * 1e-7;
+				double phi = (key.deadTimeCoefficientTinNanoSecs / 1E9) / gateInSeconds;
+
+				AB.α[0] = 0.0;
+				AB.α[1] = 1.0;
+				AB.β[0] = 0.0;
+				AB.β[1] = 0.0;
+
+				if (biggestKey > 1)
+				{
+					for (int n = 2; n <= biggestKey; n++)
+					{
+						if (phi > 1e-20)
+						{
+							AB.α[n] = 1.0;
+							double alphaCoeff = 0;
+							for (int k = 0; k <= (n - 2); k++)
+							{
+								alphaCoeff = binomialCoefficient(n - 1, k + 1)
+											* Math.Pow((k + 1) * phi, k)
+											/ Math.Pow(1.0 - ((k + 1) * phi), k + 2);
+								AB.α[n] += alphaCoeff;
+							}
+						} else
+						{
+							AB.α[n] = 1.0;
+						}
+					}
+
+					AB.β[0] = 0.0;
+					AB.β[1] = 0.0;
+					AB.β[2] = AB.α[2] - 1.0;
+					for (int n = 3; n <= biggestKey; n++)
+					{
+						if (phi > 1e-20)
+						{
+							AB.β[n] = AB.α[n] - 1.0;
+							for (int k = 0; k <= (n - 3); k++)
+							{
+								double betaCoeff;
+								betaCoeff = binomialCoefficient(n - 1, k + 2)
+											* (k + 1)
+											* Math.Pow((k + 2) * phi, k)
+											/ Math.Pow(1.0 - ((k + 2) * phi), k + 3);
+								AB.β[n] += betaCoeff;
+							}
+						} else
+						{
+							AB.β[n] = 0.0;
+						}
+					}
+				}
+			}
+			AlphaBetaCache.AddAlphaBeta(key, AB);
+		}
+
+	}
 }
