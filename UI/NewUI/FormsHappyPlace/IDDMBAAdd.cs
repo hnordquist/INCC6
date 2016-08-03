@@ -42,7 +42,8 @@ namespace NewUI
             {
                 CurrentMBAComboBox.Items.Add(d.Name);
             }
-            CurrentMBAComboBox.SelectedIndex = 0;
+            if (CurrentMBAComboBox.Items.Count >=1)
+                CurrentMBAComboBox.SelectedIndex = 0;
         }
 
         public IDDMBAAdd()

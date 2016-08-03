@@ -41,7 +41,8 @@ namespace NewUI
             {
                 CurrentMaterialTypesComboBox.Items.Add(d.Name);
             }
-            CurrentMaterialTypesComboBox.SelectedIndex = 0;
+            if (CurrentMaterialTypesComboBox.Items.Count >=1)
+                CurrentMaterialTypesComboBox.SelectedIndex = 0;
         }
 
         public IDDItemTypeAdd()

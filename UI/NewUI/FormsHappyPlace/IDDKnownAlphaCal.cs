@@ -98,6 +98,7 @@ namespace NewUI
             LowerMassLimitTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             LowerMassLimitTextBox.NumberFormat = NumericTextBox.Formatter.F3;
             LowerMassLimitTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;
+            LowerMassLimitTextBox.Min = -100000000;
             UpperMassLimitTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             UpperMassLimitTextBox.NumberFormat = NumericTextBox.Formatter.F3;
             UpperMassLimitTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;

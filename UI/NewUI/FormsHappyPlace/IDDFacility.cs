@@ -190,5 +190,6 @@ namespace NewUI
                 acq.campaign_id = text; acq.modified = true;
             }
         }
+
     }
 }

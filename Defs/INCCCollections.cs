@@ -3174,11 +3174,14 @@ namespace AnalysisDefs
                 descs = new List<INCCDB.Descriptor>();
                 DataTableReader dt = NC.App.Pest.GetADataTableReader(el);
                 //TODO: This blows chunks sometimes HN
-                int name = dt.GetOrdinal("name"), descr = dt.GetOrdinal("description");
-                while (dt.Read())
+                if (dt.HasRows)
                 {
-                    INCCDB.Descriptor d = new INCCDB.Descriptor(dt.GetString(name), dt.GetString(descr));
-                    descs.Add(d);
+                    int name = dt.GetOrdinal("name"), descr = dt.GetOrdinal("description");
+                    while (dt.Read())
+                    {
+                        INCCDB.Descriptor d = new INCCDB.Descriptor(dt.GetString(name), dt.GetString(descr));
+                        descs.Add(d);
+                    }
                 }
             }
             return descs;

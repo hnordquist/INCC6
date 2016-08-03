@@ -638,6 +638,7 @@ namespace NCCConfig
             resetVal(NCCFlags.overwriteImportedDefs, false, typeof(bool));
             resetVal(NCCFlags.liveFileWrite, true, typeof(bool));
             resetVal(NCCFlags.gen5TestDataFile, false, typeof(bool));
+            //<<>>
         }
 
         private Hashtable srclevelmap = null; // for the .NET log listener filter only
