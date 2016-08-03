@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 12
-6.0.1.12 Aug 2, 2016 J. Longo
+6.0.1.12 Aug 2, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -147,6 +147,7 @@ Closed issues
 73	Enhance predelay precision
 43	Performing LM as SR after doing LM Acquire craps
 113	Disk file inputs need the detector alpha-beta pre-filled
+nnn	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.  
 
 6.0.1.11 Jun 22, 2016
 102	NCD file processing drops input
