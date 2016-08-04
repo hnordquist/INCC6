@@ -61,6 +61,7 @@
             this.MaxNumCyclesLabel = new System.Windows.Forms.Label();
             this.DataSourceLabel = new System.Windows.Forms.Label();
             this.DistanceToMoveLabel = new System.Windows.Forms.Label();
+            this.provider = new System.Windows.Forms.HelpProvider();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -467,5 +468,6 @@
         private System.Windows.Forms.Label MaxNumCyclesLabel;
         private System.Windows.Forms.Label DataSourceLabel;
         private System.Windows.Forms.Label DistanceToMoveLabel;
+        private System.Windows.Forms.HelpProvider provider;
     }
 }

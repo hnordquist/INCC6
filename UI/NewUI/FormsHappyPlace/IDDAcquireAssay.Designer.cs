@@ -75,6 +75,7 @@
             this.InventoryChangeCodeLabel = new System.Windows.Forms.Label();
             this.IOCodeLabel = new System.Windows.Forms.Label();
             this.MaterialTypeHelpBtn = new System.Windows.Forms.Button();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -628,5 +629,6 @@
         private System.Windows.Forms.Label InventoryChangeCodeLabel;
         private System.Windows.Forms.Label IOCodeLabel;
         private System.Windows.Forms.Button MaterialTypeHelpBtn;
+        private System.Windows.Forms.HelpProvider helpProvider1;
     }
 }

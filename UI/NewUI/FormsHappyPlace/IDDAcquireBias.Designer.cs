@@ -54,12 +54,13 @@
             this.DataSourceLabel = new System.Windows.Forms.Label();
             this.SourceIdLabel = new System.Windows.Forms.Label();
             this.SourceId = new System.Windows.Forms.TextBox();
+            this.provider = new System.Windows.Forms.HelpProvider();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // CommentTextBox
             // 
-            this.CommentTextBox.Location = new System.Drawing.Point(146, 12);
+            this.CommentTextBox.Location = new System.Drawing.Point(150, 12);
             this.CommentTextBox.Name = "CommentTextBox";
             this.CommentTextBox.Size = new System.Drawing.Size(215, 20);
             this.CommentTextBox.TabIndex = 0;
@@ -67,7 +68,7 @@
             // 
             // CountTimeTextBox
             // 
-            this.CountTimeTextBox.Location = new System.Drawing.Point(146, 38);
+            this.CountTimeTextBox.Location = new System.Drawing.Point(150, 38);
             this.CountTimeTextBox.Name = "CountTimeTextBox";
             this.CountTimeTextBox.Size = new System.Drawing.Size(100, 20);
             this.CountTimeTextBox.TabIndex = 1;
@@ -75,7 +76,7 @@
             // 
             // NumCyclesTextBox
             // 
-            this.NumCyclesTextBox.Location = new System.Drawing.Point(146, 165);
+            this.NumCyclesTextBox.Location = new System.Drawing.Point(150, 165);
             this.NumCyclesTextBox.Name = "NumCyclesTextBox";
             this.NumCyclesTextBox.Size = new System.Drawing.Size(100, 20);
             this.NumCyclesTextBox.TabIndex = 2;
@@ -83,7 +84,7 @@
             // 
             // MeasPrecisionTextBox
             // 
-            this.MeasPrecisionTextBox.Location = new System.Drawing.Point(146, 191);
+            this.MeasPrecisionTextBox.Location = new System.Drawing.Point(150, 191);
             this.MeasPrecisionTextBox.Name = "MeasPrecisionTextBox";
             this.MeasPrecisionTextBox.Size = new System.Drawing.Size(100, 20);
             this.MeasPrecisionTextBox.TabIndex = 3;
@@ -91,7 +92,7 @@
             // 
             // MinNumCyclesTextBox
             // 
-            this.MinNumCyclesTextBox.Location = new System.Drawing.Point(146, 217);
+            this.MinNumCyclesTextBox.Location = new System.Drawing.Point(150, 217);
             this.MinNumCyclesTextBox.Name = "MinNumCyclesTextBox";
             this.MinNumCyclesTextBox.Size = new System.Drawing.Size(100, 20);
             this.MinNumCyclesTextBox.TabIndex = 4;
@@ -99,7 +100,7 @@
             // 
             // MaxNumCyclesTextBox
             // 
-            this.MaxNumCyclesTextBox.Location = new System.Drawing.Point(146, 243);
+            this.MaxNumCyclesTextBox.Location = new System.Drawing.Point(150, 243);
             this.MaxNumCyclesTextBox.Name = "MaxNumCyclesTextBox";
             this.MaxNumCyclesTextBox.Size = new System.Drawing.Size(100, 20);
             this.MaxNumCyclesTextBox.TabIndex = 5;
@@ -140,16 +141,16 @@
             this.groupBox1.Controls.Add(this.UseTriplesRadioButton);
             this.groupBox1.Controls.Add(this.UseDoublesRadioButton);
             this.groupBox1.Controls.Add(this.UseNumCyclesRadioButton);
-            this.groupBox1.Location = new System.Drawing.Point(146, 64);
+            this.groupBox1.Location = new System.Drawing.Point(150, 64);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(215, 95);
+            this.groupBox1.Size = new System.Drawing.Size(226, 95);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             // 
             // UseTriplesRadioButton
             // 
             this.UseTriplesRadioButton.AutoSize = true;
-            this.UseTriplesRadioButton.Location = new System.Drawing.Point(9, 65);
+            this.UseTriplesRadioButton.Location = new System.Drawing.Point(13, 65);
             this.UseTriplesRadioButton.Name = "UseTriplesRadioButton";
             this.UseTriplesRadioButton.Size = new System.Drawing.Size(185, 17);
             this.UseTriplesRadioButton.TabIndex = 2;
@@ -161,7 +162,7 @@
             // UseDoublesRadioButton
             // 
             this.UseDoublesRadioButton.AutoSize = true;
-            this.UseDoublesRadioButton.Location = new System.Drawing.Point(9, 42);
+            this.UseDoublesRadioButton.Location = new System.Drawing.Point(13, 42);
             this.UseDoublesRadioButton.Name = "UseDoublesRadioButton";
             this.UseDoublesRadioButton.Size = new System.Drawing.Size(195, 17);
             this.UseDoublesRadioButton.TabIndex = 1;
@@ -173,7 +174,7 @@
             // UseNumCyclesRadioButton
             // 
             this.UseNumCyclesRadioButton.AutoSize = true;
-            this.UseNumCyclesRadioButton.Location = new System.Drawing.Point(9, 19);
+            this.UseNumCyclesRadioButton.Location = new System.Drawing.Point(13, 19);
             this.UseNumCyclesRadioButton.Name = "UseNumCyclesRadioButton";
             this.UseNumCyclesRadioButton.Size = new System.Drawing.Size(127, 17);
             this.UseNumCyclesRadioButton.TabIndex = 0;
@@ -185,7 +186,7 @@
             // QCTestsCheckBox
             // 
             this.QCTestsCheckBox.AutoSize = true;
-            this.QCTestsCheckBox.Location = new System.Drawing.Point(146, 269);
+            this.QCTestsCheckBox.Location = new System.Drawing.Point(150, 269);
             this.QCTestsCheckBox.Name = "QCTestsCheckBox";
             this.QCTestsCheckBox.Size = new System.Drawing.Size(66, 17);
             this.QCTestsCheckBox.TabIndex = 10;
@@ -196,7 +197,7 @@
             // PrintResultsCheckBox
             // 
             this.PrintResultsCheckBox.AutoSize = true;
-            this.PrintResultsCheckBox.Location = new System.Drawing.Point(146, 292);
+            this.PrintResultsCheckBox.Location = new System.Drawing.Point(150, 292);
             this.PrintResultsCheckBox.Name = "PrintResultsCheckBox";
             this.PrintResultsCheckBox.Size = new System.Drawing.Size(80, 17);
             this.PrintResultsCheckBox.TabIndex = 11;
@@ -207,7 +208,7 @@
             // CommentAtEndCheckBox
             // 
             this.CommentAtEndCheckBox.AutoSize = true;
-            this.CommentAtEndCheckBox.Location = new System.Drawing.Point(146, 315);
+            this.CommentAtEndCheckBox.Location = new System.Drawing.Point(150, 315);
             this.CommentAtEndCheckBox.Name = "CommentAtEndCheckBox";
             this.CommentAtEndCheckBox.Size = new System.Drawing.Size(181, 17);
             this.CommentAtEndCheckBox.TabIndex = 12;
@@ -218,7 +219,7 @@
             // DataSourceComboBox
             // 
             this.DataSourceComboBox.FormattingEnabled = true;
-            this.DataSourceComboBox.Location = new System.Drawing.Point(146, 379);
+            this.DataSourceComboBox.Location = new System.Drawing.Point(150, 379);
             this.DataSourceComboBox.Name = "DataSourceComboBox";
             this.DataSourceComboBox.Size = new System.Drawing.Size(121, 21);
             this.DataSourceComboBox.TabIndex = 13;
@@ -300,7 +301,7 @@
             // SourceId
             // 
             this.SourceId.Enabled = false;
-            this.SourceId.Location = new System.Drawing.Point(146, 344);
+            this.SourceId.Location = new System.Drawing.Point(150, 344);
             this.SourceId.Name = "SourceId";
             this.SourceId.Size = new System.Drawing.Size(100, 20);
             this.SourceId.TabIndex = 22;
@@ -370,5 +371,6 @@
         private System.Windows.Forms.Label DataSourceLabel;
         private System.Windows.Forms.Label SourceIdLabel;
         private System.Windows.Forms.TextBox SourceId;
+        private System.Windows.Forms.HelpProvider provider;
     }
 }

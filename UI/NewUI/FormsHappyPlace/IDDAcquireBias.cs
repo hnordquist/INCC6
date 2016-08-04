@@ -84,6 +84,80 @@ namespace NewUI
                 this.UseTriplesRadioButton.Checked = true;
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
+            SetHelp();
+
+        }
+        private void SetHelp()
+        {
+            ToolTip tip = new ToolTip();
+            String helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
+                "used are accidentals/singles test,\r\nchecksum tests on raw shift register data " +
+                "and an outlier test using the calculated mass for each cycle.";
+            tip.SetToolTip(this.QCTestsCheckBox, helpString);
+            provider.SetShowHelp(this.QCTestsCheckBox, true);
+            provider.SetHelpString(this.QCTestsCheckBox, helpString);
+
+            helpString = "You can use this field to describe this measurement.\r\n" +
+               "This comment will remain with the measurement results.";
+            tip.SetToolTip(this.CommentTextBox, helpString);
+            provider.SetShowHelp(this.CommentTextBox, true);
+            provider.SetHelpString(this.CommentTextBox, helpString);
+
+            helpString = "Check this box if you want to be able to describe the results\r\n" +
+                "of this measurement. This comment will remain with the measurement results.";
+            tip.SetToolTip(this.CommentAtEndCheckBox, helpString);
+            provider.SetShowHelp(this.CommentAtEndCheckBox, true);
+            provider.SetHelpString(this.CommentAtEndCheckBox, helpString);
+
+            helpString = "The number of cycles require for this measurement that pass all QC tests.";
+            tip.SetToolTip(this.NumCyclesTextBox, helpString);
+            provider.SetShowHelp(this.NumCyclesTextBox, true);
+            provider.SetHelpString(this.NumCyclesTextBox, helpString);
+
+            helpString = "The length of time in seconds for each cycle in this measurement.";
+            tip.SetToolTip(this.CountTimeTextBox, helpString);
+            provider.SetShowHelp(this.CountTimeTextBox, true);
+            provider.SetHelpString(this.CountTimeTextBox, helpString);
+
+            helpString = "This measurement will continue until this measurement precision is\r\n" +
+                "reached. The effective Pu240 mass is used to determine precision if\r\n" +
+                "multiplicity analysis is being used, otherwise the doubles rate is used.";
+            tip.SetToolTip(this.MeasPrecisionTextBox, helpString);
+            provider.SetShowHelp(this.MeasPrecisionTextBox, true);
+            provider.SetHelpString(this.MeasPrecisionTextBox, helpString);
+
+            helpString = "The measurement will not terminate until at least this many cycles,\r\n" +
+                "regardless of the measurement precision";
+            tip.SetToolTip(this.MinNumCyclesTextBox, helpString);
+            provider.SetShowHelp(this.MinNumCyclesTextBox, true);
+            provider.SetHelpString(this.MinNumCyclesTextBox, helpString);
+
+            helpString = "The measurement will terminate after this many cycles or when the\r\n" +
+                "requested measurement precision is reached, whichever comes comes first.";
+            tip.SetToolTip(this.MaxNumCyclesTextBox, helpString);
+            provider.SetShowHelp(this.MaxNumCyclesTextBox, true);
+            provider.SetHelpString(this.MaxNumCyclesTextBox, helpString);
+
+            helpString = "Check this box to print and display results, uncheck to only display results.";
+            tip.SetToolTip(this.PrintResultsCheckBox, helpString);
+            provider.SetShowHelp(this.PrintResultsCheckBox, true);
+            provider.SetHelpString(this.PrintResultsCheckBox, helpString);
+
+            helpString = "Check this box to print the comment entered above on the measurement results.";
+            tip.SetToolTip(this.CommentAtEndCheckBox, helpString);
+            provider.SetShowHelp(this.CommentAtEndCheckBox, true);
+            provider.SetHelpString(this.CommentAtEndCheckBox, helpString);
+
+            helpString = "Possible data sources are:\r\n" +
+                "- Acquire new data from shift register/pulse train recorder\r\n" +
+                "- Reanalyze data previously acquired\r\n" +
+                "- Read in raw data from a disk file (data must be in a specific format)\r\n" +
+                "For more information on this format see the help file topic:\r\n" +
+                "\"Radiation Review Measurement Data File Format\"";
+            tip.SetToolTip(this.DataSourceComboBox, helpString);
+            provider.SetShowHelp(this.DataSourceComboBox, true);
+            provider.SetHelpString(this.DataSourceComboBox, helpString);
+
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -105,7 +179,7 @@ namespace NewUI
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            // TODO:  Help should be on the way!
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/normalizationacquire.htm");
         }
 
         private void UseNumCyclesRadioButton_CheckedChanged(object sender, EventArgs e)
