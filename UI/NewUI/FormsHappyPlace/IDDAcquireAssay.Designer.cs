@@ -220,6 +220,7 @@
             // 
             // UsePu240eRadioButton
             // 
+            this.Pu240eCoeffBtn.Enabled = false;
             this.UsePu240eRadioButton.AutoSize = true;
             this.UsePu240eRadioButton.Location = new System.Drawing.Point(15, 88);
             this.UsePu240eRadioButton.Name = "UsePu240eRadioButton";

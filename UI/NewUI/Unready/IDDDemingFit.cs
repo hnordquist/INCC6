@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,6 +27,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
+using AnalysisDefs;
 
 namespace NewUI
 {
@@ -35,8 +36,29 @@ namespace NewUI
         public IDDDemingFit()
         {
             InitializeComponent();
+			RefreshCurveEqComboBox();
+			RefreshMethodComboBox();
             MessageBox.Show("This functionality is not complete yet.", "RESULTS UNKNOWN AT THIS TIME");
-        }
+		}
+
+		public void RefreshCurveEqComboBox()
+        {
+            MaterialTypeComboBox.Items.Clear();
+            foreach (INCCAnalysisParams.CurveEquation cs in Enum.GetValues(typeof(INCCAnalysisParams.CurveEquation)))
+            {
+                MaterialTypeComboBox.Items.Add(cs.ToDisplayString());                
+            }
+            MaterialTypeComboBox.Refresh();
+		}
+ 		 public void RefreshMethodComboBox()
+        {
+            AnalysisMethodComboBox.Items.Clear();
+                AnalysisMethodComboBox.Items.Add(AnalysisMethod.CalibrationCurve.FullName());                
+                AnalysisMethodComboBox.Items.Add(AnalysisMethod.KnownA.FullName());                
+                AnalysisMethodComboBox.Items.Add(AnalysisMethod.AddASource.FullName());                
+                AnalysisMethodComboBox.Items.Add(AnalysisMethod.Active.FullName());                
+            AnalysisMethodComboBox.Refresh();
+		}         
 
         private void VerificationCalDataRadioButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -60,6 +82,8 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+			IDDCurveType ict = new IDDCurveType();
+			ict.ShowDialog();
 
         }
 

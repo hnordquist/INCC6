@@ -71,6 +71,8 @@ namespace AnalysisDefs
                         ams.choices[(int)AnalysisMethod.TruncatedMultiplicity] = DB.Utils.DBBool(dr["truncated_mult"]);
                         ams.Normal = (AnalysisMethod)DB.Utils.DBInt32(dr["normal_method"]);
                         ams.Backup = (AnalysisMethod)DB.Utils.DBInt32(dr["backup_method"]);
+                        if (dr.Table.Columns.Contains("aux_method"))
+                            ams.Auxiliary = (AnalysisMethod)DB.Utils.DBInt32(dr["aux_method"]);
                         dmam.Add(sel, ams);
                         //if (ams.AnySelected()) ams.choices[(int)AnalysisMethod.None] = false;
                     }

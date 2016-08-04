@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -53,7 +53,11 @@ namespace NewUI
             {
                 cb.Items.Add(d.Name);
             }
-            cb.SelectedItem = acq.item_type;
+			if (N.App.DB.Materials.Has(acq.item_type))  // avoid case-insenstive mis-match by using the Name in the Materials list against that from the DB Acquire instance
+			{
+				INCCDB.Descriptor d = N.App.DB.Materials.Get(acq.item_type);
+				cb.SelectedItem = d.Name;
+			}
         }
         public void RefreshCurveEqComboBox(ComboBox cb)
         {

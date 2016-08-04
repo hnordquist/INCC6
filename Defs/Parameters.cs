@@ -954,7 +954,7 @@ namespace AnalysisDefs
         public string comment;
         public bool ending_comment;
         public string ending_comment_str;
-        public DetectorDefs.ConstructedSource data_src;
+        public ConstructedSource data_src;
         public bool qc_tests;
         public bool print;
         public ReportSectional review;
@@ -976,6 +976,8 @@ namespace AnalysisDefs
         public string meas_detector_id;
 
         public LMAcquireParams lm;
+
+		public KValsSource KValSource;
 
         public AcquireParameters()
         {
@@ -1011,6 +1013,7 @@ namespace AnalysisDefs
             lm = new LMAcquireParams(_MeasDateTime);
             lm.Cycles = num_runs;
             lm.Interval = run_count_time;
+			KValSource = KValsSource.AGTNMC;
         }
 
         public DateTimeOffset MeasDateTime
@@ -1078,6 +1081,8 @@ namespace AnalysisDefs
             _CheckDateTime = new DateTimeOffset(src._CheckDateTime.Ticks, src._CheckDateTime.Offset);
             meas_detector_id = string.Copy(src.meas_detector_id);
             lm = new LMAcquireParams(src.lm);
+			KValSource = src.KValSource;
+
         }
 
         public void ApplyItemId(ItemId id)
@@ -1133,7 +1138,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("user_id", user_id));
             this.ps.Add(new DBParamEntry("comment", comment));
             this.ps.Add(new DBParamEntry("ending_comment", ending_comment));
-            //this.ps.Add(new DBParamEntry("ending_comment_str", ending_comment_str));  // URGENT: add to table
+            //this.ps.Add(new DBParamEntry("ending_comment_str", ending_comment_str));  // URGENT: add ending_comment_str to table
 
             this.ps.Add(new DBParamEntry("data_src", (int)data_src));
             this.ps.Add(new DBParamEntry("qc_tests", qc_tests));
@@ -1158,6 +1163,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("MeasDate", _MeasDateTime));
             this.ps.Add(new DBParamEntry("CheckDate", _CheckDateTime));
             this.ps.Add(new DBParamEntry("meas_detector_id", meas_detector_id));
+            // this.ps.Add(new DBParamEntry("KValSource", (int)KValSource));
         }
 
         public List<DBParamEntry> SubsetForResults()
@@ -1184,7 +1190,7 @@ namespace AnalysisDefs
             acr.Add(Find("user_id"));
             acr.Add(Find("comment"));
             acr.Add(Find("ending_comment"));
-            // acr.Add(Find("ending_comment_str")); // URGENT: add to table and results report rendering
+            // acr.Add(Find("ending_comment_str")); // URGENT: add ending_comment_str to table and results report rendering
             acr.Add(Find("num_runs"));
             return acr;
         }

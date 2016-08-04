@@ -39,14 +39,10 @@ namespace AnalysisDefs
             K = new double[10] { 0.0, 134.0, .381, 1.41, .013, .02, 26.9, 10.2, 2.54, 1.69 };
         }
         public static readonly double[] K;
-
-        //public static readonly double GetK(int k)
-        //{
-        //    double kay = K[k];
-        //}
     }
 
-    public enum KValsSource { AGTNMC, ESARDA_64, ESARDA_128, N_HENCC }
+    public enum KValsSource { AGTNMC, // Advanced Guide to Neutron Multiplicity Counting 
+                            ESARDA_64, ESARDA_128, N_HENCC }
     public class KValsForPu240e
     {
 
@@ -432,7 +428,7 @@ namespace AnalysisDefs
             if (iso == null)
                 return;
 
-            KValsForPu240e K = new KValsForPu240e();
+            KValsForPu240e K = new KValsForPu240e(); K.source = meas.AcquireState.KValSource;
             pu240e_ptr = pu_mass * ((K[10] * iso[Isotope.pu238].v / 100.0) +
                 (iso[Isotope.pu240].v / 100.0) + (K[11] * iso[Isotope.pu242].v / 100.0));
 

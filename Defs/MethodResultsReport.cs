@@ -138,7 +138,7 @@ namespace AnalysisDefs
                     case INCCReportSection.MassResults:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                         //Results are not always passive. Boo.
-                        sec.AddHeader(String.Format("{0} Results",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
+                        sec.AddHeader(String.Format("{0} results",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
                         sec.AddNumericRow("Singles:", ir.DeadtimeCorrectedSinglesRate);
                         sec.AddNumericRow("Doubles:", ir.DeadtimeCorrectedDoublesRate);
                         sec.AddNumericRow("Triples:", ir.DeadtimeCorrectedTriplesRate);

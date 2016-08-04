@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 12
-6.0.1.12 Aug 2, 2016
+INCC6 Beta Release 13
+6.0.1.13 Aug 26, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -117,9 +117,6 @@ See https://github.com/hnordquist/INCC6/issues
 Issues for basic INCC5/6 feature COMPLETION
 
 #84  Implement Collar
-#105 Measurement, waiting for a neutron that never arrives (MCA-527)
-#101 Coincidence matrix calculation needs completion
-#99  Time interval summary incomplete
 #79  Plot Norm, Plot Ver diagnostic tools
 #78  Find Deming curve fitting tool replacement
 #69  Present the proposed List Mode Config UI from DB enhancement
@@ -131,11 +128,22 @@ Issues for basic INCC6 function and performance
 #67  PTR-32 data handling question 
 #59  Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
 #45  calc_alpha_beta performance and efficiency
-#25  List mode acquisition predelay not stored
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
+
+6.0.1.13 Aug 26, 2016
+
+nnn	Calib curve dlg crash when material type name is not compared case-insensitively 
+105	Measurement, waiting for a neutron that never arrives (MCA-527)
+101	Coincidence matrix calculation needs completion
+99	Time interval summary incomplete
+
+10	Replay v. pass-thru transfer options have summary errors
+25	List mode acquistion predelay not stored
+40	source ID in 'initial source' does not get passed to results
+41	INCC6 CANNOT be KILLED!!! :)
 
 6.0.1.12 Aug 2, 2016
 97	DB issues with non En language and region settings

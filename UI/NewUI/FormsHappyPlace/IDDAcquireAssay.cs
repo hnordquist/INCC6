@@ -155,17 +155,14 @@ namespace NewUI
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = true;
                 else
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = false;
-                if (!am.Has(AnalysisMethod.AddASource))
-                {
-                    DrumWeightLabel.Visible = DrumWeightTextBox.Visible = false;
-                    DrumWeightTextBox.Text = ah.ap.drum_empty_weight.ToString("F3");
-                }
+                DrumWeightLabel.Visible = DrumWeightTextBox.Visible = am.Has(AnalysisMethod.AddASource);
             }
 
         }
         private void Pu240eCoeffBtn_Click(object sender, EventArgs e)
         {
-			Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm");
+			new IDDKValSelector().ShowDialog();
+			//Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm");
         }
 
         private void MaterialTypeHelpBtn_Click(object sender, EventArgs e)

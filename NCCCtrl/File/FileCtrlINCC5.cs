@@ -35,7 +35,7 @@ using NCCReporter;
 using NCCTransfer;
 namespace NCCFile
 {
-	using NC = NCC.CentralizedState;
+	using NC = CentralizedState;
 	public partial class FileCtrl : ActionEvents, IActionControl
     {
         // Acquire from Database and Manual data work the same from this point 
@@ -161,8 +161,8 @@ namespace NCCFile
 
                     /* convert to total count time */
                     total_number_runs = number_good_runs;
-                    total_good_count_time = (double)number_good_runs *
-                        run_count_time;
+                    total_good_count_time = number_good_runs *
+						run_count_time;
                     meas.RequestedRepetitions = total_number_runs;
 
                     // update the acq status and do the persist
@@ -171,7 +171,7 @@ namespace NCCFile
                     for (int i = 0; i < number_good_runs; i++)
                     {
                         /* run date and time (IAEA format) */
-                        run_seconds = (UInt32)(i * (ushort)run_count_time); // from start time
+                        run_seconds = (uint)(i * (ushort)run_count_time); // from start time
                         AddTestDataCycle(i, run_seconds, run_count_time, meas, td);
                         if (i % 8 == 0)
                             FireEvent(EventType.ActionInProgress, this);
@@ -189,27 +189,27 @@ namespace NCCFile
                             string l = td.reader.ReadLine();
                             if (td.reader.EndOfStream)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. " + "AAS p" + n.ToString());
+                                ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. AAS p" + n.ToString());
                             }
                             ushort.TryParse(l, out number_good_runs);
                             if (number_good_runs == 0)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. " + "AAS p" + n.ToString());
+                                ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. AAS p" + n.ToString());
                                 continue;
                             }
                             /* run count time */
                             l = td.reader.ReadLine();
-                            Double.TryParse(l, out run_count_time);
+                            double.TryParse(l, out run_count_time);
                             if (run_count_time <= 0.0)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0. " + "AAS p" + n.ToString());
+                                ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0. AAS p" + n.ToString());
                                 continue;
                             }
                             /* read in run data */
                             for (int i = 0; i < number_good_runs; i++)
                             {
                                 /* run date and time (IAEA format) */
-                                run_seconds = (UInt32)((n + 1) * (i + 1) * (ushort)run_count_time); // from start time
+                                run_seconds = (uint)((n + 1) * (i + 1) * (ushort)run_count_time); // from start time
                                 AddTestDataCycle(i, run_seconds, run_count_time, meas, td, " AAS p" + n.ToString(), n);
                                 if (i % 8 == 0)
                                     FireEvent(EventType.ActionInProgress, this);
@@ -282,7 +282,7 @@ namespace NCCFile
                 for (int z = 0; z < 5; z++)
                 {
                     double d;
-                    bool b = Double.TryParse(zorks[z], out d);
+                    bool b = double.TryParse(zorks[z], out d);
                     if (b)
                         v[z] = d;
                 }
@@ -325,7 +325,7 @@ namespace NCCFile
                     for (int z = 0; z < 2; z++)
                     {
                         double d;
-                        bool b = Double.TryParse(blorks[z], out d);
+                        bool b = double.TryParse(blorks[z], out d);
                         if (b)
                             ve[z] = d;
                     }
@@ -515,7 +515,7 @@ namespace NCCFile
 
                     /* convert to total count time */
                     total_number_runs = irf.num_runs;
-                    total_good_count_time = (double)irf.num_runs *
+                    total_good_count_time = irf.num_runs *
                         run_count_time;
                     meas.RequestedRepetitions = total_number_runs;
 
@@ -534,7 +534,7 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. " + "AAS ");
+                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. AAS");
                         //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         //for (int n = 1; n <= aass.number_positions; n++)
                         //{
@@ -725,15 +725,14 @@ namespace NCCFile
 
             try
             {
-                // URGENT: there is more work to do for the bins and AB here, AB can be copied from the detector values
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
                 Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
 
-				mcr.AB.TransferIntermediates(src: m.Detector.AB);  // redundant copy in most cases
+				mcr.AB.TransferIntermediates(src: m.Detector.AB);  // remove, redundant copy in most cases
 
-                foreach (AnalysisDefs.Cycle cycle in m.Cycles)
+                foreach (Cycle cycle in m.Cycles)
                 {
                     if (NC.App.Opstate.IsQuitRequested)  // exit via abort or quit/save, follow-on code decides to continue with processing
                     {
@@ -775,7 +774,6 @@ namespace NCCFile
             NC.App.Opstate.ResetTokens();
             Instruments.All.Remove(PseudoInstrument);
         }
-
 
     }
 }

@@ -60,7 +60,6 @@
             this.PANDARadioButton.TabStop = true;
             this.PANDARadioButton.Text = "PANDA/App. Guide";
             this.PANDARadioButton.UseVisualStyleBackColor = true;
-            this.PANDARadioButton.CheckedChanged += new System.EventHandler(this.PANDARadioButton_CheckedChanged);
             // 
             // ESARDA64RadioButton
             // 
@@ -72,7 +71,6 @@
             this.ESARDA64RadioButton.TabStop = true;
             this.ESARDA64RadioButton.Text = "ESARDA 1999 64µs";
             this.ESARDA64RadioButton.UseVisualStyleBackColor = true;
-            this.ESARDA64RadioButton.CheckedChanged += new System.EventHandler(this.ESARDA64RadioButton_CheckedChanged);
             // 
             // ESARDA128RadioButton
             // 
@@ -84,7 +82,6 @@
             this.ESARDA128RadioButton.TabStop = true;
             this.ESARDA128RadioButton.Text = "ESARDA 1999 128µs";
             this.ESARDA128RadioButton.UseVisualStyleBackColor = true;
-            this.ESARDA128RadioButton.CheckedChanged += new System.EventHandler(this.ESARDA128RadioButton_CheckedChanged);
             // 
             // N9588RadioButton
             // 
@@ -96,7 +93,6 @@
             this.N9588RadioButton.TabStop = true;
             this.N9588RadioButton.Text = "N95 88µs";
             this.N9588RadioButton.UseVisualStyleBackColor = true;
-            this.N9588RadioButton.CheckedChanged += new System.EventHandler(this.N9588RadioButton_CheckedChanged);
             // 
             // OKBtn
             // 

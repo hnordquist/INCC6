@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,40 +27,43 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
+	using Integ = NCC.IntegrationHelpers;
+
     public partial class IDDKValSelector : Form
     {
         public IDDKValSelector()
         {
             InitializeComponent();
             MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			acq = Integ.GetCurrentAcquireParams();
+			if (acq.KValSource == KValsSource.AGTNMC)
+				PANDARadioButton.Checked = true;
+			else if (acq.KValSource == KValsSource.N_HENCC)
+				N9588RadioButton.Checked = true;
+			else if (acq.KValSource == KValsSource.ESARDA_128)
+				ESARDA128RadioButton.Checked = true;
+			else if (acq.KValSource == KValsSource.ESARDA_64)
+				ESARDA64RadioButton.Checked = true;
         }
+        AcquireParameters acq;
 
-        private void PANDARadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ESARDA64RadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ESARDA128RadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void N9588RadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
+        // the constants and the index are defined in AnalysisDefs.KValsForAlpha
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-
+                    // KValsSource   // used for Calibraton and Verification methods
+			if (PANDARadioButton.Checked)
+				acq.KValSource = KValsSource.AGTNMC;
+			if (N9588RadioButton.Checked)
+				acq.KValSource = KValsSource.N_HENCC;
+			if (ESARDA128RadioButton.Checked)
+				acq.KValSource = KValsSource.ESARDA_128;
+			if (ESARDA64RadioButton.Checked)
+				acq.KValSource = KValsSource.ESARDA_64;
+              Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
