@@ -155,8 +155,11 @@ namespace NewUI
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = true;
                 else
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = false;
-                DrumWeightLabel.Visible = DrumWeightTextBox.Visible = am.Has(AnalysisMethod.AddASource);
-            }
+                if (!am.Has(AnalysisMethod.AddASource))
+                {
+                    DrumWeightLabel.Visible = DrumWeightTextBox.Visible = false;
+                    DrumWeightTextBox.Text = ah.ap.drum_empty_weight.ToString("F3");
+                }            }
 
         }
         private void Pu240eCoeffBtn_Click(object sender, EventArgs e)
@@ -280,6 +283,9 @@ namespace NewUI
 			else
 			{
 				// save/update item id changes only when user selects OK
+                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+
 				NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
 				NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
 				bool ocntinue = GetAdditionalParameters();
@@ -297,12 +303,19 @@ namespace NewUI
 
 		private void CancelBtn_Click(object sender, EventArgs e)
         {
+            //Store any changes before exiting
+            //HN 08-04-2016
+            ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+            Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+
             Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-			Help.ShowHelp(null, ".\\inccuser.chm");
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/verificationacquire.htm");
         }
 
         private void MBAComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -430,7 +443,7 @@ namespace NewUI
             UseTriplesRadioButton.Enabled = true;
             UsePu240eRadioButton.Enabled = true;
             CommentTextBox.Enabled = true;
-
+            NumPassiveCyclesTextBox.Enabled = true;
             MeasPrecisionTextBox.Enabled = false;
             MinNumCyclesTextBox.Enabled = false;
             MaxNumCyclesTextBox.Enabled = false;
@@ -445,30 +458,11 @@ namespace NewUI
                     // every set as above
                     break;
                 case ConstructedSource.DB:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UsePu240eRadioButton.Enabled = false;
-                    break;
                 case ConstructedSource.CycleFile:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UsePu240eRadioButton.Enabled = false;
-                    CommentAtEndCheckBox.Enabled = false;
-                    break;
                 case ConstructedSource.Manual:
-                    CountTimeTextBox.Enabled = false;
-                    UseNumCyclesRadioButton.Enabled = false;
-                    UseDoublesRadioButton.Enabled = false;
-                    UseTriplesRadioButton.Enabled = false;
-                    UsePu240eRadioButton.Enabled = false;
-                    CommentAtEndCheckBox.Enabled = false;
-                    break;
                 case ConstructedSource.ReviewFile:
                 default:
+                    NumPassiveCyclesTextBox.Enabled = false;
                     CountTimeTextBox.Enabled = false;
                     UseNumCyclesRadioButton.Enabled = false;
                     UseDoublesRadioButton.Enabled = false;
@@ -560,6 +554,9 @@ namespace NewUI
                 //Add the item id if not found in DB. Use the current values on the dialog for the item id content
                 ah.ItemIdComboBox_Leave(sender, e);  // put the new id on the acq helper
                 Cur = ah.ap.ItemId;  // the dlg and acq parms are the same, use the ItemId helper to construct. Create a new object if there is no match.
+                ah.ap.mass = 0;
+                Cur.declaredMass = 0;
+                Cur.modified = true;
                 Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
                 NC.App.DB.ItemIds.GetList().Add(Cur);   // add only to in-memory, save to DB on user OK/exit
 

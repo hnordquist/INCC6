@@ -655,6 +655,9 @@ namespace AnalysisDefs
                 ps.Add(new DBParamEntry("sigma_x", cev.sigma_x));
                 ps.Add(new DBParamEntry("lower_corr_factor_limit", lower_corr_factor_limit));
                 ps.Add(new DBParamEntry("upper_corr_factor_limit", upper_corr_factor_limit));
+                //Missing lower/upper mass limits
+                ps.Add(new DBParamEntry("lower_mass_limit",cev.lower_mass_limit));
+                ps.Add(new DBParamEntry("upper_mass_limit", cev.upper_mass_limit));
                 ps.Add(new DBParamEntry("heavy_metal_reference", heavy_metal_reference));
                 ps.Add(new DBParamEntry("heavy_metal_corr_factor", heavy_metal_corr_factor));
 

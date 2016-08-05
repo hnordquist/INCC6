@@ -64,16 +64,6 @@ namespace NewUI
         //  FILE MENU  //
         ///////////////// 
 
-        /////////////////
-        //  VIEW MENU  //
-        /////////////////
-
-        private void ViewMaintainClick(object sender, RoutedEventArgs e)
-        {
-            // If Maintain menu item is visible, hide it.  If it is hidden, make it visible.
-            // If neither is true, the universe is broken; buy lottery tickets.
-        }
-
         //////////////////
         //  SETUP MENU  //
         //////////////////

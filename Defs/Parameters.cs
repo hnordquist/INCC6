@@ -1096,7 +1096,8 @@ namespace AnalysisDefs
             inventory_change_code = string.Copy(id.inventoryChangeCode);
             io_code = string.Copy(id.IOCode);
 			mass = id.declaredMass;
-			if (id.declaredUMass > 0)  // overrides default
+            //Seemed to always put the U mass in. Not desired hn 08-04-2016
+            if (mass == 0 && id.declaredUMass > 0)  // overrides default
 				mass = id.declaredUMass;
 			// length = id.length;
         }

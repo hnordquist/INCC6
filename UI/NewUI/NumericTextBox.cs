@@ -38,7 +38,7 @@ namespace NewUI
             {
                 try
                 {
-                    _Value = (ToValidate == ValidateType.Integer) ? int.Parse(s, NumStyles) : float.Parse(s, NumStyles);
+                    _Value = (ToValidate == ValidateType.Integer) ? int.Parse(s, NumStyles) : float.Parse(s);
                     //todo: There are some cases where double is not stored as exact value (try .4, .2) and results in a double value close to but not exactly the entered value.  Handle this? hn 5.5.2015
                     break;
                 }

@@ -42,7 +42,8 @@ namespace NewUI
             {
                     CurrentFacilitiesComboBox.Items.Add(d.Name);
             }
-            CurrentFacilitiesComboBox.SelectedIndex = 0;
+            if (CurrentFacilitiesComboBox.Items.Count >=1)
+                CurrentFacilitiesComboBox.SelectedIndex = 0;
         }
 
         public IDDFacilityAdd()

@@ -46,7 +46,8 @@ namespace NewUI
                 //if (!d.ListMode)
                     DetectorIdComboBox.Items.Add(d);
             }
-            DetectorIdComboBox.SelectedIndex = 0;
+            if (DetectorIdComboBox.Items.Count >=1)
+                DetectorIdComboBox.SelectedIndex = 0;
         }
 
         public IDDDetectorDelete()

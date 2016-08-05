@@ -788,6 +788,14 @@ namespace AnalysisDefs
                     {
                         meas.AddErrorMessage("Known alpha analysis error", 10199, mkey);
                     }
+                    if (!kares.pass)
+                    {
+                        meas.AddWarningMessage("Known Alpha: failed stratum rejection limits", 10198, mkey);
+                    }
+                    else
+                    {
+                        meas.AddWarningMessage("Known Alpha: passed stratum rejection limits", 10200, mkey);
+                    }
                     if (kares.pu240e_mass.v > kares.methodParams.cev.upper_mass_limit)
                     {
                         meas.AddWarningMessage("Known alpha: upper Pu240e mass limit exceeded.", 10210, mkey);

@@ -54,6 +54,7 @@
             this.OKButton = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
+            this.provider = new System.Windows.Forms.HelpProvider();
             this.GroupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -119,11 +120,11 @@
             this.GroupBox1.TabIndex = 7;
             this.GroupBox1.TabStop = false;
             // 
-            // TriplesMeasurementPrecisionRadioButton
+            // UseTriplesRadioButton
             // 
             this.UseTriplesRadioButton.AutoSize = true;
             this.UseTriplesRadioButton.Location = new System.Drawing.Point(20, 65);
-            this.UseTriplesRadioButton.Name = "TriplesMeasurementPrecisionRadioButton";
+            this.UseTriplesRadioButton.Name = "UseTriplesRadioButton";
             this.UseTriplesRadioButton.Size = new System.Drawing.Size(185, 17);
             this.UseTriplesRadioButton.TabIndex = 2;
             this.UseTriplesRadioButton.TabStop = true;
@@ -131,11 +132,11 @@
             this.UseTriplesRadioButton.UseVisualStyleBackColor = true;
             this.UseTriplesRadioButton.CheckedChanged += new System.EventHandler(this.TriplesMeasurementPrecisionRadioButton_CheckedChanged);
             // 
-            // DoublesMeasurementPrecisionRadioButton
+            // UseDoublesRadioButton
             // 
             this.UseDoublesRadioButton.AutoSize = true;
             this.UseDoublesRadioButton.Location = new System.Drawing.Point(20, 42);
-            this.UseDoublesRadioButton.Name = "DoublesMeasurementPrecisionRadioButton";
+            this.UseDoublesRadioButton.Name = "UseDoublesRadioButton";
             this.UseDoublesRadioButton.Size = new System.Drawing.Size(195, 17);
             this.UseDoublesRadioButton.TabIndex = 1;
             this.UseDoublesRadioButton.TabStop = true;
@@ -143,11 +144,11 @@
             this.UseDoublesRadioButton.UseVisualStyleBackColor = true;
             this.UseDoublesRadioButton.CheckedChanged += new System.EventHandler(this.DoublesMeasurementPrecisionRadioButton_CheckedChanged);
             // 
-            // NumberOfCyclesRadioButton
+            // UseNumCyclesRadioButton
             // 
             this.UseNumCyclesRadioButton.AutoSize = true;
             this.UseNumCyclesRadioButton.Location = new System.Drawing.Point(20, 19);
-            this.UseNumCyclesRadioButton.Name = "NumberOfCyclesRadioButton";
+            this.UseNumCyclesRadioButton.Name = "UseNumCyclesRadioButton";
             this.UseNumCyclesRadioButton.Size = new System.Drawing.Size(127, 17);
             this.UseNumCyclesRadioButton.TabIndex = 0;
             this.UseNumCyclesRadioButton.TabStop = true;
@@ -182,10 +183,10 @@
             this.MeasurementPrecisionLabel.TabIndex = 10;
             this.MeasurementPrecisionLabel.Text = "Measurement precision (%)";
             // 
-            // MeasurementPrecisionTextBox
+            // MeasPrecisionTextBox
             // 
             this.MeasPrecisionTextBox.Location = new System.Drawing.Point(118, 284);
-            this.MeasPrecisionTextBox.Name = "MeasurementPrecisionTextBox";
+            this.MeasPrecisionTextBox.Name = "MeasPrecisionTextBox";
             this.MeasPrecisionTextBox.Size = new System.Drawing.Size(100, 20);
             this.MeasPrecisionTextBox.TabIndex = 11;
             this.MeasPrecisionTextBox.Leave += new System.EventHandler(this.MeasurementPrecisionTextBox_Leave);
@@ -235,22 +236,22 @@
             this.QCTestsCheckbox.UseVisualStyleBackColor = true;
             this.QCTestsCheckbox.CheckedChanged += new System.EventHandler(this.QCTestsCheckbox_CheckedChanged);
             // 
-            // PrintResultsCheckbox
+            // PrintResultsCheckBox
             // 
             this.PrintResultsCheckBox.AutoSize = true;
             this.PrintResultsCheckBox.Location = new System.Drawing.Point(118, 425);
-            this.PrintResultsCheckBox.Name = "PrintResultsCheckbox";
+            this.PrintResultsCheckBox.Name = "PrintResultsCheckBox";
             this.PrintResultsCheckBox.Size = new System.Drawing.Size(80, 17);
             this.PrintResultsCheckBox.TabIndex = 17;
             this.PrintResultsCheckBox.Text = "Print results";
             this.PrintResultsCheckBox.UseVisualStyleBackColor = true;
             this.PrintResultsCheckBox.CheckedChanged += new System.EventHandler(this.PrintResultsCheckbox_CheckedChanged);
             // 
-            // CommentCheckbox
+            // CommentAtEndCheckBox
             // 
             this.CommentAtEndCheckBox.AutoSize = true;
             this.CommentAtEndCheckBox.Location = new System.Drawing.Point(118, 458);
-            this.CommentAtEndCheckBox.Name = "CommentCheckbox";
+            this.CommentAtEndCheckBox.Name = "CommentAtEndCheckBox";
             this.CommentAtEndCheckBox.Size = new System.Drawing.Size(181, 17);
             this.CommentAtEndCheckBox.TabIndex = 18;
             this.CommentAtEndCheckBox.Text = "Comment at end of measurement";
@@ -370,5 +371,6 @@
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
+        private System.Windows.Forms.HelpProvider provider;
     }
 }
