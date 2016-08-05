@@ -199,6 +199,7 @@
             this.Controls.Add(this.MaximumVoltageLabel);
             this.Controls.Add(this.MinimumVoltageLabel);
             this.Name = "IDDHighVoltagePlateau";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Measure High Voltage Plateau";
             this.ResumeLayout(false);
             this.PerformLayout();

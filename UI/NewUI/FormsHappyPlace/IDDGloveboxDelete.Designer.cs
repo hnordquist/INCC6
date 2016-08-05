@@ -94,6 +94,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDGloveboxDelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Glovebox to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

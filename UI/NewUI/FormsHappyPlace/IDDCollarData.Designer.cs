@@ -251,6 +251,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDCollarData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Collar Item Data";
             ((System.ComponentModel.ISupportInitialize)(this.ItemIdDataGrid)).EndInit();
             this.ResumeLayout(false);

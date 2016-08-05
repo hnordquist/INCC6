@@ -335,6 +335,7 @@
             this.Controls.Add(this.CountTimeTextBox);
             this.Controls.Add(this.CommentTextBox);
             this.Name = "IDDAcquireBias";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Normalization Measurement";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

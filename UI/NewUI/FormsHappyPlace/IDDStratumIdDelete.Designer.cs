@@ -94,6 +94,7 @@
             this.Controls.Add(this.StratumIdComboBox);
             this.Controls.Add(this.StratumIdLabel);
             this.Name = "IDDStratumIdDelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Stratum id to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

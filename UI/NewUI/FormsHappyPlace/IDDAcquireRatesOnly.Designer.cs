@@ -335,6 +335,7 @@
             this.Controls.Add(this.ItemIdTextBox);
             this.Controls.Add(this.ItemIdLabel);
             this.Name = "IDDAcquireRatesOnly";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Rates Only Measurement";
             this.GroupBox1.ResumeLayout(false);
             this.GroupBox1.PerformLayout();

@@ -103,178 +103,388 @@
             // LowerMassLimitTextBox
             // 
             this.LowerMassLimitTextBox.Location = new System.Drawing.Point(169, 29);
+            this.LowerMassLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.LowerMassLimitTextBox.Min = 0D;
             this.LowerMassLimitTextBox.Name = "LowerMassLimitTextBox";
+            this.LowerMassLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.LowerMassLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.LowerMassLimitTextBox.Size = new System.Drawing.Size(100, 20);
+            this.LowerMassLimitTextBox.Steps = -1D;
             this.LowerMassLimitTextBox.TabIndex = 1;
             this.toolTip1.SetToolTip(this.LowerMassLimitTextBox, "Enter the mass for Pu240 effective or U235 below which the calibration parameters" +
         " are invalid. A calculated mass below this value will have an out of calibration" +
         " range warning message.");
+            this.LowerMassLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.LowerMassLimitTextBox.Value = 0D;
             // 
             // UpperMassLimitTextBox
             // 
             this.UpperMassLimitTextBox.Location = new System.Drawing.Point(169, 55);
+            this.UpperMassLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.UpperMassLimitTextBox.Min = 0D;
             this.UpperMassLimitTextBox.Name = "UpperMassLimitTextBox";
+            this.UpperMassLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.UpperMassLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.UpperMassLimitTextBox.Size = new System.Drawing.Size(100, 20);
+            this.UpperMassLimitTextBox.Steps = -1D;
             this.UpperMassLimitTextBox.TabIndex = 2;
             this.toolTip1.SetToolTip(this.UpperMassLimitTextBox, "Enter the mass for Pu240 effective or U235 above which the calibration parameters" +
         " are invalid. A calculated mass above this value will have an out of calibration" +
         " range warning message.");
-
+            this.UpperMassLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.UpperMassLimitTextBox.Value = 0D;
             // 
             // AlphaWeightTextBox
             // 
             this.AlphaWeightTextBox.Location = new System.Drawing.Point(169, 81);
+            this.AlphaWeightTextBox.Max = 1.7976931348623157E+308D;
+            this.AlphaWeightTextBox.Min = 0D;
             this.AlphaWeightTextBox.Name = "AlphaWeightTextBox";
+            this.AlphaWeightTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.AlphaWeightTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.AlphaWeightTextBox.Size = new System.Drawing.Size(100, 20);
+            this.AlphaWeightTextBox.Steps = -1D;
             this.AlphaWeightTextBox.TabIndex = 3;
             this.toolTip1.SetToolTip(this.AlphaWeightTextBox, resources.GetString("AlphaWeightTextBox.ToolTip"));
-
+            this.AlphaWeightTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.AlphaWeightTextBox.Value = 0D;
             // 
             // RhoZeroTextBox
             // 
             this.RhoZeroTextBox.Location = new System.Drawing.Point(169, 107);
+            this.RhoZeroTextBox.Max = 1.7976931348623157E+308D;
+            this.RhoZeroTextBox.Min = 0D;
             this.RhoZeroTextBox.Name = "RhoZeroTextBox";
+            this.RhoZeroTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.RhoZeroTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.RhoZeroTextBox.Size = new System.Drawing.Size(100, 20);
+            this.RhoZeroTextBox.Steps = -1D;
             this.RhoZeroTextBox.TabIndex = 4;
             this.toolTip1.SetToolTip(this.RhoZeroTextBox, resources.GetString("RhoZeroTextBox.ToolTip"));
-
+            this.RhoZeroTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.RhoZeroTextBox.Value = 0D;
             // 
             // KTextBox
             // 
             this.KTextBox.Location = new System.Drawing.Point(169, 133);
+            this.KTextBox.Max = 1.7976931348623157E+308D;
+            this.KTextBox.Min = 0D;
             this.KTextBox.Name = "KTextBox";
+            this.KTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.KTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.KTextBox.Size = new System.Drawing.Size(100, 20);
+            this.KTextBox.Steps = -1D;
             this.KTextBox.TabIndex = 5;
             this.toolTip1.SetToolTip(this.KTextBox, resources.GetString("KTextBox.ToolTip"));
-
+            this.KTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.KTextBox.Value = 0D;
             // 
             // ConventionalATextBox
             // 
             this.ConventionalATextBox.Location = new System.Drawing.Point(169, 160);
+            this.ConventionalATextBox.Max = 1.7976931348623157E+308D;
+            this.ConventionalATextBox.Min = 0D;
             this.ConventionalATextBox.Name = "ConventionalATextBox";
+            this.ConventionalATextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.ConventionalATextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.ConventionalATextBox.Size = new System.Drawing.Size(100, 20);
+            this.ConventionalATextBox.Steps = -1D;
             this.ConventionalATextBox.TabIndex = 6;
             this.toolTip1.SetToolTip(this.ConventionalATextBox, resources.GetString("ConventionalATextBox.ToolTip"));
-
+            this.ConventionalATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.ConventionalATextBox.Value = 0D;
             // 
             // ConventionalBTextBox
             // 
             this.ConventionalBTextBox.Location = new System.Drawing.Point(169, 185);
+            this.ConventionalBTextBox.Max = 1.7976931348623157E+308D;
+            this.ConventionalBTextBox.Min = 0D;
             this.ConventionalBTextBox.Name = "ConventionalBTextBox";
+            this.ConventionalBTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.ConventionalBTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.ConventionalBTextBox.Size = new System.Drawing.Size(100, 20);
+            this.ConventionalBTextBox.Steps = -1D;
             this.ConventionalBTextBox.TabIndex = 7;
             this.toolTip1.SetToolTip(this.ConventionalBTextBox, resources.GetString("ConventionalBTextBox.ToolTip"));
-
+            this.ConventionalBTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.ConventionalBTextBox.Value = 0D;
             // 
             // VarianceATextBox
             // 
             this.VarianceATextBox.Location = new System.Drawing.Point(169, 211);
+            this.VarianceATextBox.Max = 1.7976931348623157E+308D;
+            this.VarianceATextBox.Min = 0D;
             this.VarianceATextBox.Name = "VarianceATextBox";
+            this.VarianceATextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.VarianceATextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.VarianceATextBox.Size = new System.Drawing.Size(100, 20);
+            this.VarianceATextBox.Steps = -1D;
             this.VarianceATextBox.TabIndex = 8;
             this.toolTip1.SetToolTip(this.VarianceATextBox, "Variance a is the variance of the calibration parameter a above. It can be entere" +
         "d manually or obtained automatically from the Deming curve fitting option.");
-
+            this.VarianceATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.VarianceATextBox.Value = 0D;
             // 
             // VarianceBTextBox
             // 
             this.VarianceBTextBox.Location = new System.Drawing.Point(169, 237);
+            this.VarianceBTextBox.Max = 1.7976931348623157E+308D;
+            this.VarianceBTextBox.Min = 0D;
             this.VarianceBTextBox.Name = "VarianceBTextBox";
+            this.VarianceBTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.VarianceBTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.VarianceBTextBox.Size = new System.Drawing.Size(100, 20);
+            this.VarianceBTextBox.Steps = -1D;
             this.VarianceBTextBox.TabIndex = 9;
             this.toolTip1.SetToolTip(this.VarianceBTextBox, "Variance b is the variance of the calibration parameter b above. It can be entere" +
         "d manually or obtained automatically from the Deming curve fitting option.");
-
+            this.VarianceBTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.VarianceBTextBox.Value = 0D;
             // 
             // CovarianceABTextBox
             // 
             this.CovarianceABTextBox.Location = new System.Drawing.Point(169, 263);
+            this.CovarianceABTextBox.Max = 1.7976931348623157E+308D;
+            this.CovarianceABTextBox.Min = 0D;
             this.CovarianceABTextBox.Name = "CovarianceABTextBox";
+            this.CovarianceABTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.CovarianceABTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.CovarianceABTextBox.Size = new System.Drawing.Size(100, 20);
+            this.CovarianceABTextBox.Steps = -1D;
             this.CovarianceABTextBox.TabIndex = 10;
             this.toolTip1.SetToolTip(this.CovarianceABTextBox, resources.GetString("CovarianceABTextBox.ToolTip"));
-
+            this.CovarianceABTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.CovarianceABTextBox.Value = 0D;
             // 
             // SigmaXTextBox
             // 
             this.SigmaXTextBox.Location = new System.Drawing.Point(169, 289);
+            this.SigmaXTextBox.Max = 1.7976931348623157E+308D;
+            this.SigmaXTextBox.Min = 0D;
             this.SigmaXTextBox.Name = "SigmaXTextBox";
+            this.SigmaXTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.SigmaXTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.SigmaXTextBox.Size = new System.Drawing.Size(100, 20);
+            this.SigmaXTextBox.Steps = -1D;
             this.SigmaXTextBox.TabIndex = 11;
             this.toolTip1.SetToolTip(this.SigmaXTextBox, resources.GetString("SigmaXTextBox.ToolTip"));
-
+            this.SigmaXTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.SigmaXTextBox.Value = 0D;
             // 
             // HvyMetalRefTextBox
             // 
             this.HvyMetalRefTextBox.Location = new System.Drawing.Point(174, 29);
+            this.HvyMetalRefTextBox.Max = 1.7976931348623157E+308D;
+            this.HvyMetalRefTextBox.Min = 0D;
             this.HvyMetalRefTextBox.Name = "HvyMetalRefTextBox";
+            this.HvyMetalRefTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.HvyMetalRefTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.HvyMetalRefTextBox.Size = new System.Drawing.Size(100, 20);
+            this.HvyMetalRefTextBox.Steps = -1D;
             this.HvyMetalRefTextBox.TabIndex = 12;
             this.toolTip1.SetToolTip(this.HvyMetalRefTextBox, resources.GetString("HvyMetalRefTextBox.ToolTip"));
-
+            this.HvyMetalRefTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.HvyMetalRefTextBox.Value = 0D;
             // 
             // HvyMetalWeightingTextBox
             // 
             this.HvyMetalWeightingTextBox.Location = new System.Drawing.Point(174, 55);
+            this.HvyMetalWeightingTextBox.Max = 1.7976931348623157E+308D;
+            this.HvyMetalWeightingTextBox.Min = 0D;
             this.HvyMetalWeightingTextBox.Name = "HvyMetalWeightingTextBox";
+            this.HvyMetalWeightingTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.HvyMetalWeightingTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.HvyMetalWeightingTextBox.Size = new System.Drawing.Size(100, 20);
+            this.HvyMetalWeightingTextBox.Steps = -1D;
             this.HvyMetalWeightingTextBox.TabIndex = 13;
             this.toolTip1.SetToolTip(this.HvyMetalWeightingTextBox, resources.GetString("HvyMetalWeightingTextBox.ToolTip"));
-
+            this.HvyMetalWeightingTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.HvyMetalWeightingTextBox.Value = 0D;
             // 
             // LowerAlphaLimitTextBox
             // 
             this.LowerAlphaLimitTextBox.Location = new System.Drawing.Point(185, 27);
+            this.LowerAlphaLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.LowerAlphaLimitTextBox.Min = 0D;
             this.LowerAlphaLimitTextBox.Name = "LowerAlphaLimitTextBox";
+            this.LowerAlphaLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.LowerAlphaLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.LowerAlphaLimitTextBox.Size = new System.Drawing.Size(100, 20);
+            this.LowerAlphaLimitTextBox.Steps = -1D;
             this.LowerAlphaLimitTextBox.TabIndex = 14;
             this.toolTip1.SetToolTip(this.LowerAlphaLimitTextBox, resources.GetString("LowerAlphaLimitTextBox.ToolTip"));
-
+            this.LowerAlphaLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.LowerAlphaLimitTextBox.Value = 0D;
             // 
             // UpperAlphaLimitTextBox
             // 
             this.UpperAlphaLimitTextBox.Location = new System.Drawing.Point(185, 53);
+            this.UpperAlphaLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.UpperAlphaLimitTextBox.Min = 0D;
             this.UpperAlphaLimitTextBox.Name = "UpperAlphaLimitTextBox";
+            this.UpperAlphaLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.UpperAlphaLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.UpperAlphaLimitTextBox.Size = new System.Drawing.Size(100, 20);
+            this.UpperAlphaLimitTextBox.Steps = -1D;
             this.UpperAlphaLimitTextBox.TabIndex = 15;
             this.toolTip1.SetToolTip(this.UpperAlphaLimitTextBox, resources.GetString("UpperAlphaLimitTextBox.ToolTip"));
-
+            this.UpperAlphaLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.UpperAlphaLimitTextBox.Value = 0D;
             // 
             // MoistureATextBox
             // 
             this.MoistureATextBox.Location = new System.Drawing.Point(185, 106);
+            this.MoistureATextBox.Max = 1.7976931348623157E+308D;
+            this.MoistureATextBox.Min = 0D;
             this.MoistureATextBox.Name = "MoistureATextBox";
+            this.MoistureATextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.MoistureATextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.MoistureATextBox.Size = new System.Drawing.Size(100, 20);
+            this.MoistureATextBox.Steps = -1D;
             this.MoistureATextBox.TabIndex = 16;
             this.toolTip1.SetToolTip(this.MoistureATextBox, resources.GetString("MoistureATextBox.ToolTip"));
-
+            this.MoistureATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.MoistureATextBox.Value = 0D;
             // 
             // MoistureBTextBox
             // 
             this.MoistureBTextBox.Location = new System.Drawing.Point(185, 132);
+            this.MoistureBTextBox.Max = 1.7976931348623157E+308D;
+            this.MoistureBTextBox.Min = 0D;
             this.MoistureBTextBox.Name = "MoistureBTextBox";
+            this.MoistureBTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.MoistureBTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.MoistureBTextBox.Size = new System.Drawing.Size(100, 20);
+            this.MoistureBTextBox.Steps = -1D;
             this.MoistureBTextBox.TabIndex = 17;
             this.toolTip1.SetToolTip(this.MoistureBTextBox, resources.GetString("MoistureBTextBox.ToolTip"));
-
+            this.MoistureBTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.MoistureBTextBox.Value = 0D;
             // 
             // MoistureCTextBox
             // 
             this.MoistureCTextBox.Location = new System.Drawing.Point(185, 158);
+            this.MoistureCTextBox.Max = 1.7976931348623157E+308D;
+            this.MoistureCTextBox.Min = 0D;
             this.MoistureCTextBox.Name = "MoistureCTextBox";
+            this.MoistureCTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.MoistureCTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.MoistureCTextBox.Size = new System.Drawing.Size(100, 20);
+            this.MoistureCTextBox.Steps = -1D;
             this.MoistureCTextBox.TabIndex = 18;
             this.toolTip1.SetToolTip(this.MoistureCTextBox, resources.GetString("MoistureCTextBox.ToolTip"));
-
+            this.MoistureCTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.MoistureCTextBox.Value = 0D;
             // 
             // MoistureDTextBox
             // 
             this.MoistureDTextBox.Location = new System.Drawing.Point(185, 184);
+            this.MoistureDTextBox.Max = 1.7976931348623157E+308D;
+            this.MoistureDTextBox.Min = 0D;
             this.MoistureDTextBox.Name = "MoistureDTextBox";
+            this.MoistureDTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.MoistureDTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.MoistureDTextBox.Size = new System.Drawing.Size(100, 20);
+            this.MoistureDTextBox.Steps = -1D;
             this.MoistureDTextBox.TabIndex = 19;
             this.toolTip1.SetToolTip(this.MoistureDTextBox, resources.GetString("MoistureDTextBox.ToolTip"));
-
+            this.MoistureDTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.MoistureDTextBox.Value = 0D;
             // 
             // CurveTypeComboBox
             // 
@@ -660,6 +870,7 @@
             this.Controls.Add(this.PrintBtn);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDKnownAlphaCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Known Alpha Calibration";
             this.KnownAlphaTypeGroupBox.ResumeLayout(false);
             this.KnownAlphaTypeGroupBox.PerformLayout();

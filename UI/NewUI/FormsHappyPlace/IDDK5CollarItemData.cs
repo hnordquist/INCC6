@@ -41,6 +41,8 @@ namespace NewUI
         INCCAnalysisParams.collar_combined_rec col;
         bool modified;
         MethodParamFormFields mp;
+        double total = 1;
+        double totalerr = 0;
 
         public IDDK5CollarItemData(INCCAnalysisParams.collar_combined_rec c, bool mod)
         {
@@ -51,7 +53,6 @@ namespace NewUI
             K5TextBox.NumberFormat = NumericTextBox.Formatter.E3;
             K5ErrorTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             K5ErrorTextBox.NumberFormat = NumericTextBox.Formatter.E3;
-            //Is this the K5 error in quadrature?
             K5TextBox.Value = col.collar.sample_corr_fact.v;
             K5ErrorTextBox.Value = col.collar.sample_corr_fact.err;
 
@@ -64,6 +65,9 @@ namespace NewUI
                     dataGridView1.Rows.Add(new object[] { col.k5.k5_checkbox[i], col.k5.k5_label[i], col.k5.k5[i].v, col.k5.k5[i].err });
                 }
             }
+            k5TotalTextBox.Value = total;
+            k5TotalErrTextBox.Value = totalerr;
+
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -155,6 +159,7 @@ namespace NewUI
                 else
                 {
                     mp.imd = new INCCAnalysisParams.collar_combined_rec(); // not mapped, so make a new one
+                    mp.imd.modified = true;
                     inDB = (INCCAnalysisParams.collar_combined_rec)mp.imd;
                     inDB.GenParamList();
                     mp.acq.item_type = col.k5.k5_item_type;
@@ -201,12 +206,6 @@ namespace NewUI
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             dataGridView1.Rows[e.RowIndex].ErrorText = String.Empty;
-        }
-
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
-            //TODO: I don't see collar help??
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm");
         }
 
         private void StoreChanges ()
@@ -294,6 +293,34 @@ namespace NewUI
         private void dataGridView1_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)
         {
             dataGridView1.EndEdit();
+        }
+
+        private void HelpBtn_Click_1(object sender, EventArgs e)
+        {
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/collar.htm");
+        }
+
+        private void dataGridView1_RowLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            total = 1;
+            totalerr = 0;
+            double temp = 0;
+            double temp1 = 0;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if ((bool)row.Cells[0].Value)
+                {
+                    Double.TryParse(row.Cells[2].Value.ToString(), out temp);
+                    total *= temp;
+                    Double.TryParse(row.Cells[3].Value.ToString(), out temp1);
+                    totalerr +=
+                        (temp1 / temp) *
+                        (temp1 / temp);
+                }
+
+            }
+            k5TotalTextBox.Value = total;
+            k5TotalErrTextBox.Value = totalerr;
         }
     }
 }

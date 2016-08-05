@@ -1448,6 +1448,7 @@
             this.Controls.Add(this.Step1ControlsPanel);
             this.Name = "AnalysisWizard";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "List Mode data collection and analysis";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.AnalysisWizard_Load);

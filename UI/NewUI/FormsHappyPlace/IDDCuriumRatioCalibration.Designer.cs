@@ -538,6 +538,7 @@
             this.Controls.Add(this.CurveTypeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDCuriumRatioCalibration";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Curium Ratio Calibration";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

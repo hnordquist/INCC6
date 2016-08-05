@@ -28,219 +28,203 @@
         /// </summary>
         private void InitializeComponent()
         {
-			this.OptionalResultsGroupBox = new System.Windows.Forms.GroupBox();
-			this.IndividualCycleMultiplicityDistributionsCheckBox = new System.Windows.Forms.CheckBox();
-			this.SummedMultiplicityDistributionsCheckBox = new System.Windows.Forms.CheckBox();
-			this.SummedRawCoincidenceDataCheckBox = new System.Windows.Forms.CheckBox();
-			this.IndividualCycleRateDataCheckBox = new System.Windows.Forms.CheckBox();
-			this.IndividualCycleRawDataCheckBox = new System.Windows.Forms.CheckBox();
-			this.DetectorParametersCheckBox = new System.Windows.Forms.CheckBox();
-			this.PrintTextCheckBox = new System.Windows.Forms.CheckBox();
-			this.GroupBox1 = new System.Windows.Forms.GroupBox();
-			this.PlotSinglesDoublesTriplesRadioButton = new System.Windows.Forms.RadioButton();
-			this.DisplayResultsInTextRadioButton = new System.Windows.Forms.RadioButton();
-			this.OKBtn = new System.Windows.Forms.Button();
-			this.CancelBtn = new System.Windows.Forms.Button();
-			this.HelpBtn = new System.Windows.Forms.Button();
-			this.OptionalResultsGroupBox.SuspendLayout();
-			this.GroupBox1.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// OptionalResultsGroupBox
-			// 
-			this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleMultiplicityDistributionsCheckBox);
-			this.OptionalResultsGroupBox.Controls.Add(this.SummedMultiplicityDistributionsCheckBox);
-			this.OptionalResultsGroupBox.Controls.Add(this.SummedRawCoincidenceDataCheckBox);
-			this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleRateDataCheckBox);
-			this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleRawDataCheckBox);
-			this.OptionalResultsGroupBox.Controls.Add(this.DetectorParametersCheckBox);
-			this.OptionalResultsGroupBox.Location = new System.Drawing.Point(16, 15);
-			this.OptionalResultsGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.OptionalResultsGroupBox.Name = "OptionalResultsGroupBox";
-			this.OptionalResultsGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.OptionalResultsGroupBox.Size = new System.Drawing.Size(317, 223);
-			this.OptionalResultsGroupBox.TabIndex = 0;
-			this.OptionalResultsGroupBox.TabStop = false;
-			this.OptionalResultsGroupBox.Text = "Optional results to display";
-			// 
-			// IndividualCycleMultiplicityDistributionsCheckBox
-			// 
-			this.IndividualCycleMultiplicityDistributionsCheckBox.AutoSize = true;
-			this.IndividualCycleMultiplicityDistributionsCheckBox.Location = new System.Drawing.Point(23, 181);
-			this.IndividualCycleMultiplicityDistributionsCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.IndividualCycleMultiplicityDistributionsCheckBox.Name = "IndividualCycleMultiplicityDistributionsCheckBox";
-			this.IndividualCycleMultiplicityDistributionsCheckBox.Size = new System.Drawing.Size(273, 21);
-			this.IndividualCycleMultiplicityDistributionsCheckBox.TabIndex = 5;
-			this.IndividualCycleMultiplicityDistributionsCheckBox.Text = "Individual cycle multiplicity distributions";
-			this.IndividualCycleMultiplicityDistributionsCheckBox.UseVisualStyleBackColor = true;
-			this.IndividualCycleMultiplicityDistributionsCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged);
-			// 
-			// SummedMultiplicityDistributionsCheckBox
-			// 
-			this.SummedMultiplicityDistributionsCheckBox.AutoSize = true;
-			this.SummedMultiplicityDistributionsCheckBox.Location = new System.Drawing.Point(23, 153);
-			this.SummedMultiplicityDistributionsCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.SummedMultiplicityDistributionsCheckBox.Name = "SummedMultiplicityDistributionsCheckBox";
-			this.SummedMultiplicityDistributionsCheckBox.Size = new System.Drawing.Size(233, 21);
-			this.SummedMultiplicityDistributionsCheckBox.TabIndex = 4;
-			this.SummedMultiplicityDistributionsCheckBox.Text = "Summed multiplicity distributions";
-			this.SummedMultiplicityDistributionsCheckBox.UseVisualStyleBackColor = true;
-			this.SummedMultiplicityDistributionsCheckBox.CheckedChanged += new System.EventHandler(this.SummedMultiplicityDistributionsCheckBox_CheckedChanged);
-			// 
-			// SummedRawCoincidenceDataCheckBox
-			// 
-			this.SummedRawCoincidenceDataCheckBox.AutoSize = true;
-			this.SummedRawCoincidenceDataCheckBox.Location = new System.Drawing.Point(23, 124);
-			this.SummedRawCoincidenceDataCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.SummedRawCoincidenceDataCheckBox.Name = "SummedRawCoincidenceDataCheckBox";
-			this.SummedRawCoincidenceDataCheckBox.Size = new System.Drawing.Size(222, 21);
-			this.SummedRawCoincidenceDataCheckBox.TabIndex = 3;
-			this.SummedRawCoincidenceDataCheckBox.Text = "Summed raw coincidence data";
-			this.SummedRawCoincidenceDataCheckBox.UseVisualStyleBackColor = true;
-			this.SummedRawCoincidenceDataCheckBox.CheckedChanged += new System.EventHandler(this.SummedRawCoincidenceDataCheckBox_CheckedChanged);
-			// 
-			// IndividualCycleRateDataCheckBox
-			// 
-			this.IndividualCycleRateDataCheckBox.AutoSize = true;
-			this.IndividualCycleRateDataCheckBox.Location = new System.Drawing.Point(23, 95);
-			this.IndividualCycleRateDataCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.IndividualCycleRateDataCheckBox.Name = "IndividualCycleRateDataCheckBox";
-			this.IndividualCycleRateDataCheckBox.Size = new System.Drawing.Size(186, 21);
-			this.IndividualCycleRateDataCheckBox.TabIndex = 2;
-			this.IndividualCycleRateDataCheckBox.Text = "Individual cycle rate data";
-			this.IndividualCycleRateDataCheckBox.UseVisualStyleBackColor = true;
-			this.IndividualCycleRateDataCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleRateDataCheckBox_CheckedChanged);
-			// 
-			// IndividualCycleRawDataCheckBox
-			// 
-			this.IndividualCycleRawDataCheckBox.AutoSize = true;
-			this.IndividualCycleRawDataCheckBox.Location = new System.Drawing.Point(23, 66);
-			this.IndividualCycleRawDataCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.IndividualCycleRawDataCheckBox.Name = "IndividualCycleRawDataCheckBox";
-			this.IndividualCycleRawDataCheckBox.Size = new System.Drawing.Size(183, 21);
-			this.IndividualCycleRawDataCheckBox.TabIndex = 1;
-			this.IndividualCycleRawDataCheckBox.Text = "Individual cycle raw data";
-			this.IndividualCycleRawDataCheckBox.UseVisualStyleBackColor = true;
-			this.IndividualCycleRawDataCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleRawDataCheckBox_CheckedChanged);
-			// 
-			// DetectorParametersCheckBox
-			// 
-			this.DetectorParametersCheckBox.AutoSize = true;
-			this.DetectorParametersCheckBox.Location = new System.Drawing.Point(23, 38);
-			this.DetectorParametersCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.DetectorParametersCheckBox.Name = "DetectorParametersCheckBox";
-			this.DetectorParametersCheckBox.Size = new System.Drawing.Size(160, 21);
-			this.DetectorParametersCheckBox.TabIndex = 0;
-			this.DetectorParametersCheckBox.Text = "Detector parameters";
-			this.DetectorParametersCheckBox.UseVisualStyleBackColor = true;
-			this.DetectorParametersCheckBox.CheckedChanged += new System.EventHandler(this.DetectorParametersCheckBox_CheckedChanged);
-			// 
-			// PrintTextCheckBox
-			// 
-			this.PrintTextCheckBox.AutoSize = true;
-			this.PrintTextCheckBox.Location = new System.Drawing.Point(39, 263);
-			this.PrintTextCheckBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.PrintTextCheckBox.Name = "PrintTextCheckBox";
-			this.PrintTextCheckBox.Size = new System.Drawing.Size(85, 21);
-			this.PrintTextCheckBox.TabIndex = 1;
-			this.PrintTextCheckBox.Text = "Print text";
-			this.PrintTextCheckBox.UseVisualStyleBackColor = true;
-			this.PrintTextCheckBox.CheckedChanged += new System.EventHandler(this.PrintTextCheckBox_CheckedChanged);
-			// 
-			// GroupBox1
-			// 
-			this.GroupBox1.Controls.Add(this.PlotSinglesDoublesTriplesRadioButton);
-			this.GroupBox1.Controls.Add(this.DisplayResultsInTextRadioButton);
-			this.GroupBox1.Location = new System.Drawing.Point(16, 303);
-			this.GroupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.GroupBox1.Name = "GroupBox1";
-			this.GroupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.GroupBox1.Size = new System.Drawing.Size(317, 91);
-			this.GroupBox1.TabIndex = 2;
-			this.GroupBox1.TabStop = false;
-			// 
-			// PlotSinglesDoublesTriplesRadioButton
-			// 
-			this.PlotSinglesDoublesTriplesRadioButton.AutoSize = true;
-			this.PlotSinglesDoublesTriplesRadioButton.Enabled = false;
-			this.PlotSinglesDoublesTriplesRadioButton.Location = new System.Drawing.Point(23, 52);
-			this.PlotSinglesDoublesTriplesRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.PlotSinglesDoublesTriplesRadioButton.Name = "PlotSinglesDoublesTriplesRadioButton";
-			this.PlotSinglesDoublesTriplesRadioButton.Size = new System.Drawing.Size(233, 21);
-			this.PlotSinglesDoublesTriplesRadioButton.TabIndex = 1;
-			this.PlotSinglesDoublesTriplesRadioButton.TabStop = true;
-			this.PlotSinglesDoublesTriplesRadioButton.Text = "Plot signles, doubles, and triples";
-			this.PlotSinglesDoublesTriplesRadioButton.UseVisualStyleBackColor = true;
-			this.PlotSinglesDoublesTriplesRadioButton.CheckedChanged += new System.EventHandler(this.PlotSinglesDoublesTriplesRadioButton_CheckedChanged);
-			// 
-			// DisplayResultsInTextRadioButton
-			// 
-			this.DisplayResultsInTextRadioButton.AutoSize = true;
-			this.DisplayResultsInTextRadioButton.Enabled = false;
-			this.DisplayResultsInTextRadioButton.Location = new System.Drawing.Point(23, 23);
-			this.DisplayResultsInTextRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.DisplayResultsInTextRadioButton.Name = "DisplayResultsInTextRadioButton";
-			this.DisplayResultsInTextRadioButton.Size = new System.Drawing.Size(162, 21);
-			this.DisplayResultsInTextRadioButton.TabIndex = 0;
-			this.DisplayResultsInTextRadioButton.TabStop = true;
-			this.DisplayResultsInTextRadioButton.Text = "Display results in text";
-			this.DisplayResultsInTextRadioButton.UseVisualStyleBackColor = true;
-			this.DisplayResultsInTextRadioButton.CheckedChanged += new System.EventHandler(this.DisplayResultsInTextRadioButton_CheckedChanged);
-			// 
-			// OKBtn
-			// 
-			this.OKBtn.Location = new System.Drawing.Point(380, 28);
-			this.OKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.OKBtn.Name = "OKBtn";
-			this.OKBtn.Size = new System.Drawing.Size(100, 28);
-			this.OKBtn.TabIndex = 3;
-			this.OKBtn.Text = "OK";
-			this.OKBtn.UseVisualStyleBackColor = true;
-			this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
-			// 
-			// CancelBtn
-			// 
-			this.CancelBtn.Location = new System.Drawing.Point(380, 64);
-			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.CancelBtn.Name = "CancelBtn";
-			this.CancelBtn.Size = new System.Drawing.Size(100, 28);
-			this.CancelBtn.TabIndex = 4;
-			this.CancelBtn.Text = "Cancel";
-			this.CancelBtn.UseVisualStyleBackColor = true;
-			this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
-			// 
-			// HelpBtn
-			// 
-			this.HelpBtn.Location = new System.Drawing.Point(380, 100);
-			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.HelpBtn.Name = "HelpBtn";
-			this.HelpBtn.Size = new System.Drawing.Size(100, 28);
-			this.HelpBtn.TabIndex = 5;
-			this.HelpBtn.Text = "Help";
-			this.HelpBtn.UseVisualStyleBackColor = true;
-			this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
-			// 
-			// IDDReviewRatesOnly
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(505, 410);
-			this.Controls.Add(this.HelpBtn);
-			this.Controls.Add(this.CancelBtn);
-			this.Controls.Add(this.OKBtn);
-			this.Controls.Add(this.GroupBox1);
-			this.Controls.Add(this.PrintTextCheckBox);
-			this.Controls.Add(this.OptionalResultsGroupBox);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-			this.Name = "IDDReviewRatesOnly";
-			this.Text = "Rates Only Measurement Report";
-			this.Load += new System.EventHandler(this.IDDReviewRatesOnly_Load);
-			this.OptionalResultsGroupBox.ResumeLayout(false);
-			this.OptionalResultsGroupBox.PerformLayout();
-			this.GroupBox1.ResumeLayout(false);
-			this.GroupBox1.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this.OptionalResultsGroupBox = new System.Windows.Forms.GroupBox();
+            this.IndividualCycleMultiplicityDistributionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.SummedMultiplicityDistributionsCheckBox = new System.Windows.Forms.CheckBox();
+            this.SummedRawCoincidenceDataCheckBox = new System.Windows.Forms.CheckBox();
+            this.IndividualCycleRateDataCheckBox = new System.Windows.Forms.CheckBox();
+            this.IndividualCycleRawDataCheckBox = new System.Windows.Forms.CheckBox();
+            this.DetectorParametersCheckBox = new System.Windows.Forms.CheckBox();
+            this.PrintTextCheckBox = new System.Windows.Forms.CheckBox();
+            this.GroupBox1 = new System.Windows.Forms.GroupBox();
+            this.PlotSinglesDoublesTriplesRadioButton = new System.Windows.Forms.RadioButton();
+            this.DisplayResultsInTextRadioButton = new System.Windows.Forms.RadioButton();
+            this.OKBtn = new System.Windows.Forms.Button();
+            this.CancelBtn = new System.Windows.Forms.Button();
+            this.HelpBtn = new System.Windows.Forms.Button();
+            this.OptionalResultsGroupBox.SuspendLayout();
+            this.GroupBox1.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // OptionalResultsGroupBox
+            // 
+            this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleMultiplicityDistributionsCheckBox);
+            this.OptionalResultsGroupBox.Controls.Add(this.SummedMultiplicityDistributionsCheckBox);
+            this.OptionalResultsGroupBox.Controls.Add(this.SummedRawCoincidenceDataCheckBox);
+            this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleRateDataCheckBox);
+            this.OptionalResultsGroupBox.Controls.Add(this.IndividualCycleRawDataCheckBox);
+            this.OptionalResultsGroupBox.Controls.Add(this.DetectorParametersCheckBox);
+            this.OptionalResultsGroupBox.Location = new System.Drawing.Point(12, 12);
+            this.OptionalResultsGroupBox.Name = "OptionalResultsGroupBox";
+            this.OptionalResultsGroupBox.Size = new System.Drawing.Size(238, 181);
+            this.OptionalResultsGroupBox.TabIndex = 0;
+            this.OptionalResultsGroupBox.TabStop = false;
+            this.OptionalResultsGroupBox.Text = "Optional results to display";
+            // 
+            // IndividualCycleMultiplicityDistributionsCheckBox
+            // 
+            this.IndividualCycleMultiplicityDistributionsCheckBox.AutoSize = true;
+            this.IndividualCycleMultiplicityDistributionsCheckBox.Location = new System.Drawing.Point(17, 147);
+            this.IndividualCycleMultiplicityDistributionsCheckBox.Name = "IndividualCycleMultiplicityDistributionsCheckBox";
+            this.IndividualCycleMultiplicityDistributionsCheckBox.Size = new System.Drawing.Size(207, 17);
+            this.IndividualCycleMultiplicityDistributionsCheckBox.TabIndex = 5;
+            this.IndividualCycleMultiplicityDistributionsCheckBox.Text = "Individual cycle multiplicity distributions";
+            this.IndividualCycleMultiplicityDistributionsCheckBox.UseVisualStyleBackColor = true;
+            this.IndividualCycleMultiplicityDistributionsCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged);
+            // 
+            // SummedMultiplicityDistributionsCheckBox
+            // 
+            this.SummedMultiplicityDistributionsCheckBox.AutoSize = true;
+            this.SummedMultiplicityDistributionsCheckBox.Location = new System.Drawing.Point(17, 124);
+            this.SummedMultiplicityDistributionsCheckBox.Name = "SummedMultiplicityDistributionsCheckBox";
+            this.SummedMultiplicityDistributionsCheckBox.Size = new System.Drawing.Size(175, 17);
+            this.SummedMultiplicityDistributionsCheckBox.TabIndex = 4;
+            this.SummedMultiplicityDistributionsCheckBox.Text = "Summed multiplicity distributions";
+            this.SummedMultiplicityDistributionsCheckBox.UseVisualStyleBackColor = true;
+            this.SummedMultiplicityDistributionsCheckBox.CheckedChanged += new System.EventHandler(this.SummedMultiplicityDistributionsCheckBox_CheckedChanged);
+            // 
+            // SummedRawCoincidenceDataCheckBox
+            // 
+            this.SummedRawCoincidenceDataCheckBox.AutoSize = true;
+            this.SummedRawCoincidenceDataCheckBox.Location = new System.Drawing.Point(17, 101);
+            this.SummedRawCoincidenceDataCheckBox.Name = "SummedRawCoincidenceDataCheckBox";
+            this.SummedRawCoincidenceDataCheckBox.Size = new System.Drawing.Size(172, 17);
+            this.SummedRawCoincidenceDataCheckBox.TabIndex = 3;
+            this.SummedRawCoincidenceDataCheckBox.Text = "Summed raw coincidence data";
+            this.SummedRawCoincidenceDataCheckBox.UseVisualStyleBackColor = true;
+            this.SummedRawCoincidenceDataCheckBox.CheckedChanged += new System.EventHandler(this.SummedRawCoincidenceDataCheckBox_CheckedChanged);
+            // 
+            // IndividualCycleRateDataCheckBox
+            // 
+            this.IndividualCycleRateDataCheckBox.AutoSize = true;
+            this.IndividualCycleRateDataCheckBox.Location = new System.Drawing.Point(17, 77);
+            this.IndividualCycleRateDataCheckBox.Name = "IndividualCycleRateDataCheckBox";
+            this.IndividualCycleRateDataCheckBox.Size = new System.Drawing.Size(144, 17);
+            this.IndividualCycleRateDataCheckBox.TabIndex = 2;
+            this.IndividualCycleRateDataCheckBox.Text = "Individual cycle rate data";
+            this.IndividualCycleRateDataCheckBox.UseVisualStyleBackColor = true;
+            this.IndividualCycleRateDataCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleRateDataCheckBox_CheckedChanged);
+            // 
+            // IndividualCycleRawDataCheckBox
+            // 
+            this.IndividualCycleRawDataCheckBox.AutoSize = true;
+            this.IndividualCycleRawDataCheckBox.Location = new System.Drawing.Point(17, 54);
+            this.IndividualCycleRawDataCheckBox.Name = "IndividualCycleRawDataCheckBox";
+            this.IndividualCycleRawDataCheckBox.Size = new System.Drawing.Size(143, 17);
+            this.IndividualCycleRawDataCheckBox.TabIndex = 1;
+            this.IndividualCycleRawDataCheckBox.Text = "Individual cycle raw data";
+            this.IndividualCycleRawDataCheckBox.UseVisualStyleBackColor = true;
+            this.IndividualCycleRawDataCheckBox.CheckedChanged += new System.EventHandler(this.IndividualCycleRawDataCheckBox_CheckedChanged);
+            // 
+            // DetectorParametersCheckBox
+            // 
+            this.DetectorParametersCheckBox.AutoSize = true;
+            this.DetectorParametersCheckBox.Location = new System.Drawing.Point(17, 31);
+            this.DetectorParametersCheckBox.Name = "DetectorParametersCheckBox";
+            this.DetectorParametersCheckBox.Size = new System.Drawing.Size(122, 17);
+            this.DetectorParametersCheckBox.TabIndex = 0;
+            this.DetectorParametersCheckBox.Text = "Detector parameters";
+            this.DetectorParametersCheckBox.UseVisualStyleBackColor = true;
+            this.DetectorParametersCheckBox.CheckedChanged += new System.EventHandler(this.DetectorParametersCheckBox_CheckedChanged);
+            // 
+            // PrintTextCheckBox
+            // 
+            this.PrintTextCheckBox.AutoSize = true;
+            this.PrintTextCheckBox.Location = new System.Drawing.Point(29, 214);
+            this.PrintTextCheckBox.Name = "PrintTextCheckBox";
+            this.PrintTextCheckBox.Size = new System.Drawing.Size(67, 17);
+            this.PrintTextCheckBox.TabIndex = 1;
+            this.PrintTextCheckBox.Text = "Print text";
+            this.PrintTextCheckBox.UseVisualStyleBackColor = true;
+            this.PrintTextCheckBox.CheckedChanged += new System.EventHandler(this.PrintTextCheckBox_CheckedChanged);
+            // 
+            // GroupBox1
+            // 
+            this.GroupBox1.Controls.Add(this.PlotSinglesDoublesTriplesRadioButton);
+            this.GroupBox1.Controls.Add(this.DisplayResultsInTextRadioButton);
+            this.GroupBox1.Location = new System.Drawing.Point(12, 246);
+            this.GroupBox1.Name = "GroupBox1";
+            this.GroupBox1.Size = new System.Drawing.Size(238, 74);
+            this.GroupBox1.TabIndex = 2;
+            this.GroupBox1.TabStop = false;
+            // 
+            // PlotSinglesDoublesTriplesRadioButton
+            // 
+            this.PlotSinglesDoublesTriplesRadioButton.AutoSize = true;
+            this.PlotSinglesDoublesTriplesRadioButton.Enabled = false;
+            this.PlotSinglesDoublesTriplesRadioButton.Location = new System.Drawing.Point(17, 42);
+            this.PlotSinglesDoublesTriplesRadioButton.Name = "PlotSinglesDoublesTriplesRadioButton";
+            this.PlotSinglesDoublesTriplesRadioButton.Size = new System.Drawing.Size(175, 17);
+            this.PlotSinglesDoublesTriplesRadioButton.TabIndex = 1;
+            this.PlotSinglesDoublesTriplesRadioButton.TabStop = true;
+            this.PlotSinglesDoublesTriplesRadioButton.Text = "Plot signles, doubles, and triples";
+            this.PlotSinglesDoublesTriplesRadioButton.UseVisualStyleBackColor = true;
+            this.PlotSinglesDoublesTriplesRadioButton.CheckedChanged += new System.EventHandler(this.PlotSinglesDoublesTriplesRadioButton_CheckedChanged);
+            // 
+            // DisplayResultsInTextRadioButton
+            // 
+            this.DisplayResultsInTextRadioButton.AutoSize = true;
+            this.DisplayResultsInTextRadioButton.Enabled = false;
+            this.DisplayResultsInTextRadioButton.Location = new System.Drawing.Point(17, 19);
+            this.DisplayResultsInTextRadioButton.Name = "DisplayResultsInTextRadioButton";
+            this.DisplayResultsInTextRadioButton.Size = new System.Drawing.Size(123, 17);
+            this.DisplayResultsInTextRadioButton.TabIndex = 0;
+            this.DisplayResultsInTextRadioButton.TabStop = true;
+            this.DisplayResultsInTextRadioButton.Text = "Display results in text";
+            this.DisplayResultsInTextRadioButton.UseVisualStyleBackColor = true;
+            this.DisplayResultsInTextRadioButton.CheckedChanged += new System.EventHandler(this.DisplayResultsInTextRadioButton_CheckedChanged);
+            // 
+            // OKBtn
+            // 
+            this.OKBtn.Location = new System.Drawing.Point(285, 23);
+            this.OKBtn.Name = "OKBtn";
+            this.OKBtn.Size = new System.Drawing.Size(75, 23);
+            this.OKBtn.TabIndex = 3;
+            this.OKBtn.Text = "OK";
+            this.OKBtn.UseVisualStyleBackColor = true;
+            this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
+            // 
+            // CancelBtn
+            // 
+            this.CancelBtn.Location = new System.Drawing.Point(285, 52);
+            this.CancelBtn.Name = "CancelBtn";
+            this.CancelBtn.Size = new System.Drawing.Size(75, 23);
+            this.CancelBtn.TabIndex = 4;
+            this.CancelBtn.Text = "Cancel";
+            this.CancelBtn.UseVisualStyleBackColor = true;
+            this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
+            // 
+            // HelpBtn
+            // 
+            this.HelpBtn.Location = new System.Drawing.Point(285, 81);
+            this.HelpBtn.Name = "HelpBtn";
+            this.HelpBtn.Size = new System.Drawing.Size(75, 23);
+            this.HelpBtn.TabIndex = 5;
+            this.HelpBtn.Text = "Help";
+            this.HelpBtn.UseVisualStyleBackColor = true;
+            this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
+            // 
+            // IDDReviewRatesOnly
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(379, 333);
+            this.Controls.Add(this.HelpBtn);
+            this.Controls.Add(this.CancelBtn);
+            this.Controls.Add(this.OKBtn);
+            this.Controls.Add(this.GroupBox1);
+            this.Controls.Add(this.PrintTextCheckBox);
+            this.Controls.Add(this.OptionalResultsGroupBox);
+            this.Name = "IDDReviewRatesOnly";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Rates Only Measurement Report";
+            this.Load += new System.EventHandler(this.IDDReviewRatesOnly_Load);
+            this.OptionalResultsGroupBox.ResumeLayout(false);
+            this.OptionalResultsGroupBox.PerformLayout();
+            this.GroupBox1.ResumeLayout(false);
+            this.GroupBox1.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

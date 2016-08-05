@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MDMGroupBox = new System.Windows.Forms.GroupBox();
             this.ModeLabel = new System.Windows.Forms.Label();
             this.DetectorLabel = new System.Windows.Forms.Label();
@@ -39,6 +39,10 @@
             this.AErrorLabel = new System.Windows.Forms.Label();
             this.BLabel = new System.Windows.Forms.Label();
             this.ALabel = new System.Windows.Forms.Label();
+            this.BErrorTextBox = new NewUI.NumericTextBox();
+            this.AErrorTextBox = new NewUI.NumericTextBox();
+            this.BTextBox = new NewUI.NumericTextBox();
+            this.ATextBox = new NewUI.NumericTextBox();
             this.NextBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -47,6 +51,13 @@
             this.BackBtn = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.AbsFactor = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.a = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.aerr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.b = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.berr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.c = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cerr = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.provider = new System.Windows.Forms.HelpProvider();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,18 +66,7 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.AbsFactor = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.a = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.aerr = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.b = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.berr = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.c = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cerr = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.NumRodsTextBox = new NewUI.NumericTextBox();
-            this.BErrorTextBox = new NewUI.NumericTextBox();
-            this.AErrorTextBox = new NewUI.NumericTextBox();
-            this.BTextBox = new NewUI.NumericTextBox();
-            this.ATextBox = new NewUI.NumericTextBox();
             this.MDMGroupBox.SuspendLayout();
             this.K4GroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -164,6 +164,86 @@
             this.ALabel.TabIndex = 5;
             this.ALabel.Text = "a";
             // 
+            // BErrorTextBox
+            // 
+            this.BErrorTextBox.Location = new System.Drawing.Point(218, 64);
+            this.BErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.BErrorTextBox.Min = 0D;
+            this.BErrorTextBox.Name = "BErrorTextBox";
+            this.BErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.BErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.BErrorTextBox.Size = new System.Drawing.Size(100, 20);
+            this.BErrorTextBox.Steps = -1D;
+            this.BErrorTextBox.TabIndex = 4;
+            this.BErrorTextBox.Text = "0.000000E+000";
+            this.BErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.BErrorTextBox.Value = 0D;
+            // 
+            // AErrorTextBox
+            // 
+            this.AErrorTextBox.Location = new System.Drawing.Point(218, 25);
+            this.AErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.AErrorTextBox.Min = 0D;
+            this.AErrorTextBox.Name = "AErrorTextBox";
+            this.AErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.AErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.AErrorTextBox.Size = new System.Drawing.Size(100, 20);
+            this.AErrorTextBox.Steps = -1D;
+            this.AErrorTextBox.TabIndex = 2;
+            this.AErrorTextBox.Text = "0.000000E+000";
+            this.AErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.AErrorTextBox.Value = 0D;
+            // 
+            // BTextBox
+            // 
+            this.BTextBox.Location = new System.Drawing.Point(32, 64);
+            this.BTextBox.Max = 1.7976931348623157E+308D;
+            this.BTextBox.Min = 0D;
+            this.BTextBox.Name = "BTextBox";
+            this.BTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.BTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.BTextBox.Size = new System.Drawing.Size(100, 20);
+            this.BTextBox.Steps = -1D;
+            this.BTextBox.TabIndex = 1;
+            this.BTextBox.Text = "0.000000E+000";
+            this.BTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.BTextBox.Value = 0D;
+            // 
+            // ATextBox
+            // 
+            this.ATextBox.Location = new System.Drawing.Point(32, 25);
+            this.ATextBox.Max = 1.7976931348623157E+308D;
+            this.ATextBox.Min = 0D;
+            this.ATextBox.Name = "ATextBox";
+            this.ATextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.ATextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.ATextBox.Size = new System.Drawing.Size(100, 20);
+            this.ATextBox.Steps = -1D;
+            this.ATextBox.TabIndex = 0;
+            this.ATextBox.Text = "0.000000E+000";
+            this.ATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.ATextBox.Value = 0D;
+            // 
             // NextBtn
             // 
             this.NextBtn.Location = new System.Drawing.Point(745, 368);
@@ -249,50 +329,6 @@
             this.Type.HeaderText = "Poison Rod Type";
             this.Type.Name = "Type";
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            dataGridViewCellStyle2.Format = "E3";
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn1.HeaderText = "Poison Rod Absorption Factor";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            this.dataGridViewTextBoxColumn1.ReadOnly = true;
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn2.HeaderText = "a";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn3.HeaderText = "a error";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn4.HeaderText = "b";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
-            // dataGridViewTextBoxColumn5
-            // 
-            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn5.HeaderText = "b error";
-            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-            // 
-            // dataGridViewTextBoxColumn6
-            // 
-            this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn6.HeaderText = "c";
-            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-            // 
-            // dataGridViewTextBoxColumn7
-            // 
-            this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTextBoxColumn7.HeaderText = "c error";
-            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            // 
             // AbsFactor
             // 
             dataGridViewCellStyle1.Format = "E3";
@@ -337,6 +373,50 @@
             this.cerr.HeaderText = "c error";
             this.cerr.Name = "cerr";
             // 
+            // dataGridViewTextBoxColumn1
+            // 
+            dataGridViewCellStyle2.Format = "E3";
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn1.HeaderText = "Poison Rod Absorption Factor";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn2.HeaderText = "a";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn3.HeaderText = "a error";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn4.HeaderText = "b";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            // 
+            // dataGridViewTextBoxColumn5
+            // 
+            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn5.HeaderText = "b error";
+            this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+            // 
+            // dataGridViewTextBoxColumn6
+            // 
+            this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn6.HeaderText = "c";
+            this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+            // 
+            // dataGridViewTextBoxColumn7
+            // 
+            this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn7.HeaderText = "c error";
+            this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+            // 
             // NumRodsTextBox
             // 
             this.NumRodsTextBox.Location = new System.Drawing.Point(160, 12);
@@ -357,86 +437,6 @@
             this.NumRodsTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NumRodsTextBox.Value = 0D;
             // 
-            // BErrorTextBox
-            // 
-            this.BErrorTextBox.Location = new System.Drawing.Point(218, 64);
-            this.BErrorTextBox.Max = 1.7976931348623157E+308D;
-            this.BErrorTextBox.Min = 0D;
-            this.BErrorTextBox.Name = "BErrorTextBox";
-            this.BErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.BErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.BErrorTextBox.Size = new System.Drawing.Size(100, 20);
-            this.BErrorTextBox.Steps = -1D;
-            this.BErrorTextBox.TabIndex = 4;
-            this.BErrorTextBox.Text = "0.000000E+000";
-            this.BErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.BErrorTextBox.Value = 0D;
-            // 
-            // AErrorTextBox
-            // 
-            this.AErrorTextBox.Location = new System.Drawing.Point(218, 25);
-            this.AErrorTextBox.Max = 1.7976931348623157E+308D;
-            this.AErrorTextBox.Min = 0D;
-            this.AErrorTextBox.Name = "AErrorTextBox";
-            this.AErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.AErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.AErrorTextBox.Size = new System.Drawing.Size(100, 20);
-            this.AErrorTextBox.Steps = -1D;
-            this.AErrorTextBox.TabIndex = 2;
-            this.AErrorTextBox.Text = "0.000000E+000";
-            this.AErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.AErrorTextBox.Value = 0D;
-            // 
-            // BTextBox
-            // 
-            this.BTextBox.Location = new System.Drawing.Point(32, 64);
-            this.BTextBox.Max = 1.7976931348623157E+308D;
-            this.BTextBox.Min = 0D;
-            this.BTextBox.Name = "BTextBox";
-            this.BTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.BTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.BTextBox.Size = new System.Drawing.Size(100, 20);
-            this.BTextBox.Steps = -1D;
-            this.BTextBox.TabIndex = 1;
-            this.BTextBox.Text = "0.000000E+000";
-            this.BTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.BTextBox.Value = 0D;
-            // 
-            // ATextBox
-            // 
-            this.ATextBox.Location = new System.Drawing.Point(32, 25);
-            this.ATextBox.Max = 1.7976931348623157E+308D;
-            this.ATextBox.Min = 0D;
-            this.ATextBox.Name = "ATextBox";
-            this.ATextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.ATextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.ATextBox.Size = new System.Drawing.Size(100, 20);
-            this.ATextBox.Steps = -1D;
-            this.ATextBox.TabIndex = 0;
-            this.ATextBox.Text = "0.000000E+000";
-            this.ATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.ATextBox.Value = 0D;
-            // 
             // IDDCorrectionFactors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -453,6 +453,7 @@
             this.Controls.Add(this.K4GroupBox);
             this.Controls.Add(this.MDMGroupBox);
             this.Name = "IDDCorrectionFactors";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Correction Factors";
             this.MDMGroupBox.ResumeLayout(false);
             this.MDMGroupBox.PerformLayout();

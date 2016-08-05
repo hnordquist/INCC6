@@ -201,6 +201,7 @@
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Controls.Add(this.MaterialTypeLabel);
             this.Name = "IDDTruncatedMultCalibration";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Truncated Multiplicity Calibration";
             this.GroupBox1.ResumeLayout(false);
             this.GroupBox1.PerformLayout();

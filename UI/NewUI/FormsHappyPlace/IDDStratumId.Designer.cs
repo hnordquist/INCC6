@@ -85,7 +85,7 @@
             this.DeleteStratumIdBtn.UseVisualStyleBackColor = true;
             this.DeleteStratumIdBtn.Click += new System.EventHandler(this.DeleteStratumIdBtn_Click);
             // 
-            // IDDAddStratumId
+            // IDDStratumId
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -95,7 +95,8 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.AddStratumIdBtn);
-            this.Name = "IDDAddStratumId";
+            this.Name = "IDDStratumId";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Stratum id Add and Delete";
             this.ResumeLayout(false);
 

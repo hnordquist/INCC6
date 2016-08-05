@@ -81,6 +81,7 @@
             // 
             // PoisonAbsorptionFactorTextBox
             // 
+            this.PoisonAbsorptionFactorTextBox.Enabled = false;
             this.PoisonAbsorptionFactorTextBox.Location = new System.Drawing.Point(466, 90);
             this.PoisonAbsorptionFactorTextBox.Max = 1.7976931348623157E+308D;
             this.PoisonAbsorptionFactorTextBox.Min = 0D;
@@ -98,7 +99,6 @@
             this.PoisonAbsorptionFactorTextBox.Text = "0.000000E+000";
             this.PoisonAbsorptionFactorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.PoisonAbsorptionFactorTextBox.Value = 0D;
-            this.PoisonAbsorptionFactorTextBox.TextChanged += new System.EventHandler(this.PoisonAbsorptionFactorTextBox_TextChanged);
             // 
             // RelativeDoublesRateTextBox
             // 
@@ -246,6 +246,7 @@
             this.Controls.Add(this.ModeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDCollarCrossRef";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Cross Reference Factors";
             this.ResumeLayout(false);
             this.PerformLayout();

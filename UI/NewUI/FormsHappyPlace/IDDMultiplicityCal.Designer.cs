@@ -496,6 +496,7 @@
             this.Controls.Add(this.SpontaneousFissionRateLabel);
             this.Controls.Add(this.MaterialTypeLabel);
             this.Name = "IDDMultiplicityCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Passive Multiplicity Calibration";
             this.MultiplicityAnalysisTypeGroupBox.ResumeLayout(false);
             this.MultiplicityAnalysisTypeGroupBox.PerformLayout();

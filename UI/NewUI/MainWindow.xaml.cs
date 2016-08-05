@@ -52,12 +52,7 @@ namespace NewUI
             InitializeComponent();
 			main = new WinPos();
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-
-            //Set defaults for window position hn 6.23.15
-            //this.MinWidth = main.width;
-            //this.MinHeight = main.height;
-            //main.SizeToFit();
-            //main.MoveIntoView();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
         }
 
         /////////////////

@@ -815,6 +815,7 @@
             this.Controls.Add(this.CurveTypeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDAddASourceCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add-a-source Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();

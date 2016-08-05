@@ -497,6 +497,7 @@
             this.Controls.Add(this.CurveTypeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDActiveCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Active Calibration Curve Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();

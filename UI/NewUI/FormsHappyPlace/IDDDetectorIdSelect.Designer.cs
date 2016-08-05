@@ -94,6 +94,7 @@
             this.Controls.Add(this.DetectorIdComboBox);
             this.Controls.Add(this.DetectorIdLabel);
             this.Name = "IDDDetectorIdSelect";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Detector for Data Matching";
             this.ResumeLayout(false);
             this.PerformLayout();

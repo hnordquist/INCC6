@@ -94,6 +94,7 @@
             this.Controls.Add(this.FacilityComboBox);
             this.Controls.Add(this.FacilityLabel);
             this.Name = "IDDFacilityDelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Facility to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

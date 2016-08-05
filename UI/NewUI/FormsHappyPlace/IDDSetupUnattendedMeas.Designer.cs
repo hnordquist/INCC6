@@ -128,6 +128,7 @@
             this.Controls.Add(this.MaxTimeTextBox);
             this.Controls.Add(this.MaxTimeLabel);
             this.Name = "IDDSetupUnattendedMeas";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Unattended Measurement Parameters";
             this.ResumeLayout(false);
             this.PerformLayout();

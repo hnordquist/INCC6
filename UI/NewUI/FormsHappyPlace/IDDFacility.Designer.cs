@@ -350,7 +350,13 @@
             this.ElectronicsIdLabel.Size = new System.Drawing.Size(70, 13);
             this.ElectronicsIdLabel.TabIndex = 19;
             this.ElectronicsIdLabel.Text = "Electronics id";
-
+            // 
+            // SRType
+            // 
+            this.SRType.Location = new System.Drawing.Point(0, 0);
+            this.SRType.Name = "SRType";
+            this.SRType.Size = new System.Drawing.Size(100, 20);
+            this.SRType.TabIndex = 0;
             // 
             // IDDFacility
             // 
@@ -378,6 +384,7 @@
             this.Controls.Add(this.MBAComboBox);
             this.Controls.Add(this.FacilityComboBox);
             this.Name = "IDDFacility";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Facility and Inspection Setup";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

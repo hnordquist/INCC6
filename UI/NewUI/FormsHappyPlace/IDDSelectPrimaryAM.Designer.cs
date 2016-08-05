@@ -176,72 +176,72 @@
             this.BackupAnalysisMethodsGroupBox.TabStop = false;
             this.BackupAnalysisMethodsGroupBox.Text = "Backup analysis method(s)";
             // 
-            // BTruncatedMultiplicity
+            // BTruncatedMultiplicityRadioButton
             // 
             this.BTruncatedMultiplicityRadioButton.AutoSize = true;
             this.BTruncatedMultiplicityRadioButton.Location = new System.Drawing.Point(15, 167);
-            this.BTruncatedMultiplicityRadioButton.Name = "BTruncatedMultiplicity";
-            this.BTruncatedMultiplicityRadioButton.Size = new System.Drawing.Size(125, 17);
+            this.BTruncatedMultiplicityRadioButton.Name = "BTruncatedMultiplicityRadioButton";
+            this.BTruncatedMultiplicityRadioButton.Size = new System.Drawing.Size(124, 17);
             this.BTruncatedMultiplicityRadioButton.TabIndex = 6;
             this.BTruncatedMultiplicityRadioButton.Text = "Truncated multiplicity";
             this.BTruncatedMultiplicityRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BCuriumRatioCheckBox
+            // BCuriumRatioRadioButton
             // 
             this.BCuriumRatioRadioButton.AutoSize = true;
             this.BCuriumRatioRadioButton.Location = new System.Drawing.Point(15, 144);
-            this.BCuriumRatioRadioButton.Name = "BCuriumRatioCheckBox";
-            this.BCuriumRatioRadioButton.Size = new System.Drawing.Size(81, 17);
+            this.BCuriumRatioRadioButton.Name = "BCuriumRatioRadioButton";
+            this.BCuriumRatioRadioButton.Size = new System.Drawing.Size(80, 17);
             this.BCuriumRatioRadioButton.TabIndex = 5;
             this.BCuriumRatioRadioButton.Text = "Curium ratio";
             this.BCuriumRatioRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BAddASourceCheckBox
+            // BAddASourceRadioButton
             // 
             this.BAddASourceRadioButton.AutoSize = true;
             this.BAddASourceRadioButton.Location = new System.Drawing.Point(15, 121);
-            this.BAddASourceRadioButton.Name = "BAddASourceCheckBox";
-            this.BAddASourceRadioButton.Size = new System.Drawing.Size(89, 17);
+            this.BAddASourceRadioButton.Name = "BAddASourceRadioButton";
+            this.BAddASourceRadioButton.Size = new System.Drawing.Size(88, 17);
             this.BAddASourceRadioButton.TabIndex = 4;
             this.BAddASourceRadioButton.Text = "Add-a-source";
             this.BAddASourceRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BMultiplicityCheckBox
+            // BMultiplicityRadioButton
             // 
             this.BMultiplicityRadioButton.AutoSize = true;
             this.BMultiplicityRadioButton.Location = new System.Drawing.Point(15, 98);
-            this.BMultiplicityRadioButton.Name = "BMultiplicityCheckBox";
-            this.BMultiplicityRadioButton.Size = new System.Drawing.Size(74, 17);
+            this.BMultiplicityRadioButton.Name = "BMultiplicityRadioButton";
+            this.BMultiplicityRadioButton.Size = new System.Drawing.Size(73, 17);
             this.BMultiplicityRadioButton.TabIndex = 3;
             this.BMultiplicityRadioButton.Text = "Multiplicity";
             this.BMultiplicityRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BKnownMCheckBox
+            // BKnownMRadioButton
             // 
             this.BKnownMRadioButton.AutoSize = true;
             this.BKnownMRadioButton.Location = new System.Drawing.Point(15, 75);
-            this.BKnownMRadioButton.Name = "BKnownMCheckBox";
-            this.BKnownMRadioButton.Size = new System.Drawing.Size(71, 17);
+            this.BKnownMRadioButton.Name = "BKnownMRadioButton";
+            this.BKnownMRadioButton.Size = new System.Drawing.Size(70, 17);
             this.BKnownMRadioButton.TabIndex = 2;
             this.BKnownMRadioButton.Text = "Known M";
             this.BKnownMRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BKnownAlphaCheckBox
+            // BKnownAlphaRadioButton
             // 
             this.BKnownAlphaRadioButton.AutoSize = true;
             this.BKnownAlphaRadioButton.Location = new System.Drawing.Point(15, 52);
-            this.BKnownAlphaRadioButton.Name = "BKnownAlphaCheckBox";
-            this.BKnownAlphaRadioButton.Size = new System.Drawing.Size(88, 17);
+            this.BKnownAlphaRadioButton.Name = "BKnownAlphaRadioButton";
+            this.BKnownAlphaRadioButton.Size = new System.Drawing.Size(87, 17);
             this.BKnownAlphaRadioButton.TabIndex = 1;
             this.BKnownAlphaRadioButton.Text = "Known alpha";
             this.BKnownAlphaRadioButton.UseVisualStyleBackColor = true;
             // 
-            // BCalibrationCurveCheckBox
+            // BCalibrationCurveRadioButton
             // 
             this.BCalibrationCurveRadioButton.AutoSize = true;
             this.BCalibrationCurveRadioButton.Location = new System.Drawing.Point(15, 29);
-            this.BCalibrationCurveRadioButton.Name = "BCalibrationCurveCheckBox";
-            this.BCalibrationCurveRadioButton.Size = new System.Drawing.Size(105, 17);
+            this.BCalibrationCurveRadioButton.Name = "BCalibrationCurveRadioButton";
+            this.BCalibrationCurveRadioButton.Size = new System.Drawing.Size(104, 17);
             this.BCalibrationCurveRadioButton.TabIndex = 0;
             this.BCalibrationCurveRadioButton.Text = "Calibration curve";
             this.BCalibrationCurveRadioButton.UseVisualStyleBackColor = true;
@@ -262,72 +262,72 @@
             this.AuxAnalysisMethodsGroupBox.TabStop = false;
             this.AuxAnalysisMethodsGroupBox.Text = "Auxilliary analysis method(s)";
             // 
-            // ATruncatedMultiplicityCheckBox
+            // ATruncatedMultiplicityRadioButton
             // 
             this.ATruncatedMultiplicityRadioButton.AutoSize = true;
             this.ATruncatedMultiplicityRadioButton.Location = new System.Drawing.Point(16, 167);
-            this.ATruncatedMultiplicityRadioButton.Name = "ATruncatedMultiplicityCheckBox";
-            this.ATruncatedMultiplicityRadioButton.Size = new System.Drawing.Size(125, 17);
+            this.ATruncatedMultiplicityRadioButton.Name = "ATruncatedMultiplicityRadioButton";
+            this.ATruncatedMultiplicityRadioButton.Size = new System.Drawing.Size(124, 17);
             this.ATruncatedMultiplicityRadioButton.TabIndex = 6;
             this.ATruncatedMultiplicityRadioButton.Text = "Truncated multiplicity";
             this.ATruncatedMultiplicityRadioButton.UseVisualStyleBackColor = true;
             // 
-            // ACuriumRatioCheckBox
+            // ACuriumRatioRadioButton
             // 
             this.ACuriumRatioRadioButton.AutoSize = true;
             this.ACuriumRatioRadioButton.Location = new System.Drawing.Point(16, 144);
-            this.ACuriumRatioRadioButton.Name = "ACuriumRatioCheckBox";
-            this.ACuriumRatioRadioButton.Size = new System.Drawing.Size(81, 17);
+            this.ACuriumRatioRadioButton.Name = "ACuriumRatioRadioButton";
+            this.ACuriumRatioRadioButton.Size = new System.Drawing.Size(80, 17);
             this.ACuriumRatioRadioButton.TabIndex = 5;
             this.ACuriumRatioRadioButton.Text = "Curium ratio";
             this.ACuriumRatioRadioButton.UseVisualStyleBackColor = true;
             // 
-            // AAddASourceCheckBox
+            // AAddASourceRadioButton
             // 
             this.AAddASourceRadioButton.AutoSize = true;
             this.AAddASourceRadioButton.Location = new System.Drawing.Point(16, 121);
-            this.AAddASourceRadioButton.Name = "AAddASourceCheckBox";
-            this.AAddASourceRadioButton.Size = new System.Drawing.Size(89, 17);
+            this.AAddASourceRadioButton.Name = "AAddASourceRadioButton";
+            this.AAddASourceRadioButton.Size = new System.Drawing.Size(88, 17);
             this.AAddASourceRadioButton.TabIndex = 4;
             this.AAddASourceRadioButton.Text = "Add-a-source";
             this.AAddASourceRadioButton.UseVisualStyleBackColor = true;
             // 
-            // AMultiplicityCheckBox
+            // AMultiplicityRadioButton
             // 
             this.AMultiplicityRadioButton.AutoSize = true;
             this.AMultiplicityRadioButton.Location = new System.Drawing.Point(16, 98);
-            this.AMultiplicityRadioButton.Name = "AMultiplicityCheckBox";
-            this.AMultiplicityRadioButton.Size = new System.Drawing.Size(74, 17);
+            this.AMultiplicityRadioButton.Name = "AMultiplicityRadioButton";
+            this.AMultiplicityRadioButton.Size = new System.Drawing.Size(73, 17);
             this.AMultiplicityRadioButton.TabIndex = 3;
             this.AMultiplicityRadioButton.Text = "Multiplicity";
             this.AMultiplicityRadioButton.UseVisualStyleBackColor = true;
             // 
-            // AKnownMCheckBox
+            // AKnownMRadioButton
             // 
             this.AKnownMRadioButton.AutoSize = true;
             this.AKnownMRadioButton.Location = new System.Drawing.Point(16, 75);
-            this.AKnownMRadioButton.Name = "AKnownMCheckBox";
-            this.AKnownMRadioButton.Size = new System.Drawing.Size(71, 17);
+            this.AKnownMRadioButton.Name = "AKnownMRadioButton";
+            this.AKnownMRadioButton.Size = new System.Drawing.Size(70, 17);
             this.AKnownMRadioButton.TabIndex = 2;
             this.AKnownMRadioButton.Text = "Known M";
             this.AKnownMRadioButton.UseVisualStyleBackColor = true;
             // 
-            // AKnownAlphaCheckBox
+            // AKnownAlphaRadioButton
             // 
             this.AKnownAlphaRadioButton.AutoSize = true;
             this.AKnownAlphaRadioButton.Location = new System.Drawing.Point(16, 52);
-            this.AKnownAlphaRadioButton.Name = "AKnownAlphaCheckBox";
-            this.AKnownAlphaRadioButton.Size = new System.Drawing.Size(88, 17);
+            this.AKnownAlphaRadioButton.Name = "AKnownAlphaRadioButton";
+            this.AKnownAlphaRadioButton.Size = new System.Drawing.Size(87, 17);
             this.AKnownAlphaRadioButton.TabIndex = 1;
             this.AKnownAlphaRadioButton.Text = "Known alpha";
             this.AKnownAlphaRadioButton.UseVisualStyleBackColor = true;
             // 
-            // ACalibrationCurveCheckBox
+            // ACalibrationCurveRadioButton
             // 
             this.ACalibrationCurveRadioButton.AutoSize = true;
             this.ACalibrationCurveRadioButton.Location = new System.Drawing.Point(16, 29);
-            this.ACalibrationCurveRadioButton.Name = "ACalibrationCurveCheckBox";
-            this.ACalibrationCurveRadioButton.Size = new System.Drawing.Size(105, 17);
+            this.ACalibrationCurveRadioButton.Name = "ACalibrationCurveRadioButton";
+            this.ACalibrationCurveRadioButton.Size = new System.Drawing.Size(104, 17);
             this.ACalibrationCurveRadioButton.TabIndex = 0;
             this.ACalibrationCurveRadioButton.Text = "Calibration curve";
             this.ACalibrationCurveRadioButton.UseVisualStyleBackColor = true;
@@ -374,6 +374,7 @@
             this.Controls.Add(this.BackupAnalysisMethodsGroupBox);
             this.Controls.Add(this.NormalAnalysisMethodGroupBox);
             this.Name = "IDDSelectPrimaryAM";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Normal and Backup Analysis Methods";
             this.NormalAnalysisMethodGroupBox.ResumeLayout(false);
             this.NormalAnalysisMethodGroupBox.PerformLayout();

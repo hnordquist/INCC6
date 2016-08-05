@@ -363,6 +363,7 @@
             this.Controls.Add(this.MBAComboBox);
             this.Controls.Add(this.GloveboxIdComboBox);
             this.Name = "IDDAcquireHoldup";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Holdup Measurement";
             this.ResumeLayout(false);
             this.PerformLayout();

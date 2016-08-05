@@ -136,6 +136,7 @@
             this.Controls.Add(this.CurrentMBAComboBox);
             this.Controls.Add(this.CurrentMBALabel);
             this.Name = "IDDMBAAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add a New Material Balance Area";
             this.ResumeLayout(false);
             this.PerformLayout();

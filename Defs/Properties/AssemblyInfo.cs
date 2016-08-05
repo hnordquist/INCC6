@@ -32,4 +32,4 @@ using NCCConfig;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("6.0.1.14")]
+[assembly: AssemblyVersion("6.0.1.15")]

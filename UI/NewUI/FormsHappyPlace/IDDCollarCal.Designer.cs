@@ -287,7 +287,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.CovarianceCDTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceCDTextBox.Steps = -1D;
-            this.CovarianceCDTextBox.TabIndex = 19;
+            this.CovarianceCDTextBox.TabIndex = 16;
             this.CovarianceCDTextBox.Text = "0.000000E+000";
             this.CovarianceCDTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.CovarianceCDTextBox.Value = 0D;
@@ -487,7 +487,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.VarianceCTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceCTextBox.Steps = -1D;
-            this.VarianceCTextBox.TabIndex = 7;
+            this.VarianceCTextBox.TabIndex = 6;
             this.VarianceCTextBox.Text = "0.000000E+000";
             this.VarianceCTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.VarianceCTextBox.Value = 0D;
@@ -507,7 +507,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.VarianceBTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceBTextBox.Steps = -1D;
-            this.VarianceBTextBox.TabIndex = 6;
+            this.VarianceBTextBox.TabIndex = 4;
             this.VarianceBTextBox.Text = "0.000000E+000";
             this.VarianceBTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.VarianceBTextBox.Value = 0D;
@@ -527,7 +527,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.VarianceATextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceATextBox.Steps = -1D;
-            this.VarianceATextBox.TabIndex = 5;
+            this.VarianceATextBox.TabIndex = 2;
             this.VarianceATextBox.Text = "0.000000E+000";
             this.VarianceATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.VarianceATextBox.Value = 0D;
@@ -547,7 +547,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.DTextBox.Size = new System.Drawing.Size(100, 20);
             this.DTextBox.Steps = -1D;
-            this.DTextBox.TabIndex = 4;
+            this.DTextBox.TabIndex = 7;
             this.DTextBox.Text = "0.000000E+000";
             this.DTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.DTextBox.Value = 0D;
@@ -567,7 +567,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.CTextBox.Size = new System.Drawing.Size(100, 20);
             this.CTextBox.Steps = -1D;
-            this.CTextBox.TabIndex = 3;
+            this.CTextBox.TabIndex = 5;
             this.CTextBox.Text = "0.000000E+000";
             this.CTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.CTextBox.Value = 0D;
@@ -587,7 +587,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.BTextBox.Size = new System.Drawing.Size(100, 20);
             this.BTextBox.Steps = -1D;
-            this.BTextBox.TabIndex = 2;
+            this.BTextBox.TabIndex = 3;
             this.BTextBox.Text = "0.000000E+000";
             this.BTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.BTextBox.Value = 0D;
@@ -668,6 +668,7 @@
             this.Controls.Add(this.ATextBox);
             this.Controls.Add(this.CurveTypeComboBox);
             this.Name = "IDDCollarCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Collar Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();

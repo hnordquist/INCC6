@@ -94,6 +94,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDItemTypeDelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Material Type to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -76,6 +76,7 @@
             this.Controls.Add(this.PrintParameters);
             this.Controls.Add(this.PrintText);
             this.Name = "PrintForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PrintForm";
             this.ResumeLayout(false);
 

@@ -383,6 +383,7 @@
             this.Controls.Add(this.TestParametersGroupBox);
             this.Controls.Add(this.QCParametersGroupBox);
             this.Name = "IDDTestParametersSetup";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "QC and Test Parameter Setup";
             this.QCParametersGroupBox.ResumeLayout(false);
             this.QCParametersGroupBox.PerformLayout();

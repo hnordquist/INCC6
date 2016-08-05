@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.TheoreticalRadioButton = new System.Windows.Forms.RadioButton();
             this.SampleRadioButton = new System.Windows.Forms.RadioButton();
+            this.TheoreticalRadioButton = new System.Windows.Forms.RadioButton();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -47,18 +47,6 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             // 
-            // TheoreticalRadioButton
-            // 
-            this.TheoreticalRadioButton.AutoSize = true;
-            this.TheoreticalRadioButton.Location = new System.Drawing.Point(15, 24);
-            this.TheoreticalRadioButton.Name = "TheoreticalRadioButton";
-            this.TheoreticalRadioButton.Size = new System.Drawing.Size(186, 17);
-            this.TheoreticalRadioButton.TabIndex = 0;
-            this.TheoreticalRadioButton.TabStop = true;
-            this.TheoreticalRadioButton.Text = "Use theoretical standard deviation";
-            this.TheoreticalRadioButton.UseVisualStyleBackColor = true;
-            this.TheoreticalRadioButton.CheckedChanged += new System.EventHandler(this.TheoreticalRadioButton_CheckedChanged);
-            // 
             // SampleRadioButton
             // 
             this.SampleRadioButton.AutoSize = true;
@@ -70,6 +58,18 @@
             this.SampleRadioButton.Text = "Use sample standard deviation";
             this.SampleRadioButton.UseVisualStyleBackColor = true;
             this.SampleRadioButton.CheckedChanged += new System.EventHandler(this.SampleRadioButton_CheckedChanged);
+            // 
+            // TheoreticalRadioButton
+            // 
+            this.TheoreticalRadioButton.AutoSize = true;
+            this.TheoreticalRadioButton.Location = new System.Drawing.Point(15, 24);
+            this.TheoreticalRadioButton.Name = "TheoreticalRadioButton";
+            this.TheoreticalRadioButton.Size = new System.Drawing.Size(186, 17);
+            this.TheoreticalRadioButton.TabIndex = 0;
+            this.TheoreticalRadioButton.TabStop = true;
+            this.TheoreticalRadioButton.Text = "Use theoretical standard deviation";
+            this.TheoreticalRadioButton.UseVisualStyleBackColor = true;
+            this.TheoreticalRadioButton.CheckedChanged += new System.EventHandler(this.TheoreticalRadioButton_CheckedChanged);
             // 
             // OKBtn
             // 
@@ -111,6 +111,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.groupBox1);
             this.Name = "IDDErrorCalcMethod";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Method of Calculating Singles, Doubles, and Triples Errors";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

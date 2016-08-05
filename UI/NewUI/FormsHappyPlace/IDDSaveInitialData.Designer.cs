@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.TypeGroupBox = new System.Windows.Forms.GroupBox();
-            this.DetectorCurrentRadioButton = new System.Windows.Forms.RadioButton();
-            this.DetectorAllRadioButton = new System.Windows.Forms.RadioButton();
-            this.CalibrationCurrentRadioButton = new System.Windows.Forms.RadioButton();
             this.CalibrationAllRadioButton = new System.Windows.Forms.RadioButton();
+            this.CalibrationCurrentRadioButton = new System.Windows.Forms.RadioButton();
+            this.DetectorAllRadioButton = new System.Windows.Forms.RadioButton();
+            this.DetectorCurrentRadioButton = new System.Windows.Forms.RadioButton();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -52,29 +52,17 @@
             this.TypeGroupBox.TabStop = false;
             this.TypeGroupBox.Text = "Type of Initial Data";
             // 
-            // DetectorCurrentRadioButton
+            // CalibrationAllRadioButton
             // 
-            this.DetectorCurrentRadioButton.AutoSize = true;
-            this.DetectorCurrentRadioButton.Location = new System.Drawing.Point(17, 19);
-            this.DetectorCurrentRadioButton.Name = "DetectorCurrentRadioButton";
-            this.DetectorCurrentRadioButton.Size = new System.Drawing.Size(258, 17);
-            this.DetectorCurrentRadioButton.TabIndex = 0;
-            this.DetectorCurrentRadioButton.TabStop = true;
-            this.DetectorCurrentRadioButton.Text = "Save detector parameters for the current detector";
-            this.DetectorCurrentRadioButton.UseVisualStyleBackColor = true;
-            this.DetectorCurrentRadioButton.CheckedChanged += new System.EventHandler(this.DetectorCurrentRadioButton_CheckedChanged);
-            // 
-            // DetectorAllRadioButton
-            // 
-            this.DetectorAllRadioButton.AutoSize = true;
-            this.DetectorAllRadioButton.Location = new System.Drawing.Point(17, 42);
-            this.DetectorAllRadioButton.Name = "DetectorAllRadioButton";
-            this.DetectorAllRadioButton.Size = new System.Drawing.Size(222, 17);
-            this.DetectorAllRadioButton.TabIndex = 1;
-            this.DetectorAllRadioButton.TabStop = true;
-            this.DetectorAllRadioButton.Text = "Save detector parameters for all detectors";
-            this.DetectorAllRadioButton.UseVisualStyleBackColor = true;
-            this.DetectorAllRadioButton.CheckedChanged += new System.EventHandler(this.DetectorAllRadioButton_CheckedChanged);
+            this.CalibrationAllRadioButton.AutoSize = true;
+            this.CalibrationAllRadioButton.Location = new System.Drawing.Point(17, 88);
+            this.CalibrationAllRadioButton.Name = "CalibrationAllRadioButton";
+            this.CalibrationAllRadioButton.Size = new System.Drawing.Size(231, 17);
+            this.CalibrationAllRadioButton.TabIndex = 3;
+            this.CalibrationAllRadioButton.TabStop = true;
+            this.CalibrationAllRadioButton.Text = "Save calibration parameters for all detectors";
+            this.CalibrationAllRadioButton.UseVisualStyleBackColor = true;
+            this.CalibrationAllRadioButton.CheckedChanged += new System.EventHandler(this.CalibrationAllRadioButton_CheckedChanged);
             // 
             // CalibrationCurrentRadioButton
             // 
@@ -88,17 +76,29 @@
             this.CalibrationCurrentRadioButton.UseVisualStyleBackColor = true;
             this.CalibrationCurrentRadioButton.CheckedChanged += new System.EventHandler(this.CalibrationCurrentRadioButton_CheckedChanged);
             // 
-            // CalibrationAllRadioButton
+            // DetectorAllRadioButton
             // 
-            this.CalibrationAllRadioButton.AutoSize = true;
-            this.CalibrationAllRadioButton.Location = new System.Drawing.Point(17, 88);
-            this.CalibrationAllRadioButton.Name = "CalibrationAllRadioButton";
-            this.CalibrationAllRadioButton.Size = new System.Drawing.Size(231, 17);
-            this.CalibrationAllRadioButton.TabIndex = 3;
-            this.CalibrationAllRadioButton.TabStop = true;
-            this.CalibrationAllRadioButton.Text = "Save calibration parameters for all detectors";
-            this.CalibrationAllRadioButton.UseVisualStyleBackColor = true;
-            this.CalibrationAllRadioButton.CheckedChanged += new System.EventHandler(this.CalibrationAllRadioButton_CheckedChanged);
+            this.DetectorAllRadioButton.AutoSize = true;
+            this.DetectorAllRadioButton.Location = new System.Drawing.Point(17, 42);
+            this.DetectorAllRadioButton.Name = "DetectorAllRadioButton";
+            this.DetectorAllRadioButton.Size = new System.Drawing.Size(222, 17);
+            this.DetectorAllRadioButton.TabIndex = 1;
+            this.DetectorAllRadioButton.TabStop = true;
+            this.DetectorAllRadioButton.Text = "Save detector parameters for all detectors";
+            this.DetectorAllRadioButton.UseVisualStyleBackColor = true;
+            this.DetectorAllRadioButton.CheckedChanged += new System.EventHandler(this.DetectorAllRadioButton_CheckedChanged);
+            // 
+            // DetectorCurrentRadioButton
+            // 
+            this.DetectorCurrentRadioButton.AutoSize = true;
+            this.DetectorCurrentRadioButton.Location = new System.Drawing.Point(17, 19);
+            this.DetectorCurrentRadioButton.Name = "DetectorCurrentRadioButton";
+            this.DetectorCurrentRadioButton.Size = new System.Drawing.Size(258, 17);
+            this.DetectorCurrentRadioButton.TabIndex = 0;
+            this.DetectorCurrentRadioButton.TabStop = true;
+            this.DetectorCurrentRadioButton.Text = "Save detector parameters for the current detector";
+            this.DetectorCurrentRadioButton.UseVisualStyleBackColor = true;
+            this.DetectorCurrentRadioButton.CheckedChanged += new System.EventHandler(this.DetectorCurrentRadioButton_CheckedChanged);
             // 
             // OKBtn
             // 
@@ -140,6 +140,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.TypeGroupBox);
             this.Name = "IDDSaveInitialData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Type of Initial Data";
             this.TypeGroupBox.ResumeLayout(false);
             this.TypeGroupBox.PerformLayout();

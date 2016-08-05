@@ -303,8 +303,8 @@ namespace NewUI
 
 		private void CancelBtn_Click(object sender, EventArgs e)
         {
-            //Store any changes before exiting
-            //HN 08-04-2016
+            //Store any changes before exiting?
+            //NEXT: Should we warn no changes stored instead? HN 08-04-2016
             ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
             Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
             NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB

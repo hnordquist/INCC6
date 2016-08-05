@@ -137,6 +137,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.MeasurementDateTimeLabel);
             this.Name = "IDDAcquireDBMeas";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Measurement for Analysis";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -489,6 +489,7 @@
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Controls.Add(this.ItemIdComboBox);
             this.Name = "IDDAcquireCalibration";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Calibration Measurement";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

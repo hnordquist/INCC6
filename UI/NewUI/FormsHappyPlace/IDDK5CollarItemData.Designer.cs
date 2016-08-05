@@ -32,10 +32,12 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.k5TotalTextBox = new NewUI.NumericTextBox();
+            this.k5TotalErrTextBox = new NewUI.NumericTextBox();
             this.K5ErrorLabel = new System.Windows.Forms.Label();
-            this.K5ErrorTextBox = new NumericTextBox();
-            this.K5TextBox = new NumericTextBox();
             this.K5Label = new System.Windows.Forms.Label();
+            this.K5ErrorTextBox = new NewUI.NumericTextBox();
+            this.K5TextBox = new NewUI.NumericTextBox();
             this.FinishBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -56,6 +58,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.k5TotalTextBox);
+            this.groupBox1.Controls.Add(this.k5TotalErrTextBox);
             this.groupBox1.Controls.Add(this.K5ErrorLabel);
             this.groupBox1.Controls.Add(this.K5Label);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
@@ -64,6 +68,44 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "K5 - Total Extra Item Correction Factor";
+            // 
+            // k5TotalTextBox
+            // 
+            this.k5TotalTextBox.Location = new System.Drawing.Point(43, 28);
+            this.k5TotalTextBox.Max = 1.7976931348623157E+308D;
+            this.k5TotalTextBox.Min = 0D;
+            this.k5TotalTextBox.Name = "k5TotalTextBox";
+            this.k5TotalTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.k5TotalTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.k5TotalTextBox.Size = new System.Drawing.Size(124, 20);
+            this.k5TotalTextBox.Steps = -1D;
+            this.k5TotalTextBox.TabIndex = 4;
+            this.k5TotalTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.k5TotalTextBox.Value = 0D;
+            // 
+            // k5TotalErrTextBox
+            // 
+            this.k5TotalErrTextBox.Location = new System.Drawing.Point(220, 27);
+            this.k5TotalErrTextBox.Max = 1.7976931348623157E+308D;
+            this.k5TotalErrTextBox.Min = 0D;
+            this.k5TotalErrTextBox.Name = "k5TotalErrTextBox";
+            this.k5TotalErrTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.k5TotalErrTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.k5TotalErrTextBox.Size = new System.Drawing.Size(112, 20);
+            this.k5TotalErrTextBox.Steps = -1D;
+            this.k5TotalErrTextBox.TabIndex = 5;
+            this.k5TotalErrTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.k5TotalErrTextBox.Value = 0D;
             // 
             // K5ErrorLabel
             // 
@@ -82,6 +124,46 @@
             this.K5Label.Size = new System.Drawing.Size(20, 13);
             this.K5Label.TabIndex = 2;
             this.K5Label.Text = "K5";
+            // 
+            // K5ErrorTextBox
+            // 
+            this.K5ErrorTextBox.Location = new System.Drawing.Point(0, 0);
+            this.K5ErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.K5ErrorTextBox.Min = 0D;
+            this.K5ErrorTextBox.Name = "K5ErrorTextBox";
+            this.K5ErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.K5ErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.K5ErrorTextBox.Size = new System.Drawing.Size(100, 20);
+            this.K5ErrorTextBox.Steps = -1D;
+            this.K5ErrorTextBox.TabIndex = 0;
+            this.K5ErrorTextBox.Text = "0.000000E+000";
+            this.K5ErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.K5ErrorTextBox.Value = 0D;
+            // 
+            // K5TextBox
+            // 
+            this.K5TextBox.Location = new System.Drawing.Point(0, 0);
+            this.K5TextBox.Max = 1.7976931348623157E+308D;
+            this.K5TextBox.Min = 0D;
+            this.K5TextBox.Name = "K5TextBox";
+            this.K5TextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.K5TextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
+            this.K5TextBox.Size = new System.Drawing.Size(100, 20);
+            this.K5TextBox.Steps = -1D;
+            this.K5TextBox.TabIndex = 0;
+            this.K5TextBox.Text = "0.000000E+000";
+            this.K5TextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.K5TextBox.Value = 0D;
             // 
             // FinishBtn
             // 
@@ -110,6 +192,7 @@
             this.HelpBtn.TabIndex = 4;
             this.HelpBtn.Text = "Help";
             this.HelpBtn.UseVisualStyleBackColor = true;
+            this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click_1);
             // 
             // BackBtn
             // 
@@ -171,7 +254,7 @@
             this.dataGridView1.TabIndex = 8;
             this.dataGridView1.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_CellMouseUp);
             this.dataGridView1.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellValueChanged);
-
+            this.dataGridView1.RowLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_RowLeave);
             // 
             // Use
             // 
@@ -221,6 +304,7 @@
             this.Controls.Add(this.FinishBtn);
             this.Controls.Add(this.groupBox1);
             this.Name = "IDDK5CollarItemData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select K5 Extra Item Correction Factors";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -250,5 +334,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private System.Windows.Forms.HelpProvider provider;
+        private NumericTextBox k5TotalTextBox;
+        private NumericTextBox k5TotalErrTextBox;
     }
 }

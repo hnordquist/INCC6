@@ -137,6 +137,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDStratumLimits";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Historical Stratum Uncertainties";
             ((System.ComponentModel.ISupportInitialize)(this.StrataView)).EndInit();
             this.ResumeLayout(false);

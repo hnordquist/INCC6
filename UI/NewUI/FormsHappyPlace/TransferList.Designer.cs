@@ -155,6 +155,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "TransferList";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Measurement Selection";
             this.ResumeLayout(false);
             this.PerformLayout();

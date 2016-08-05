@@ -1627,12 +1627,12 @@ namespace AnalysisDefs
                 poison_rod_b = new Tuple[MAX_POISON_ROD_TYPES];
                 poison_rod_c = new Tuple[MAX_POISON_ROD_TYPES];
                 poison_rod_type = new string[MAX_POISON_ROD_TYPES];
+                poison_rod_type[0] = "G";
                 for (int i = 0; i < MAX_POISON_ROD_TYPES; i++)
                 {
                     poison_rod_a[i]= new Tuple (0.0,0.0);
                     poison_rod_b[i] = new Tuple(0.0, 0.0);
                     poison_rod_c[i] = new Tuple(0.0, 0.0);
-	                poison_rod_type[i] = "G";
                 }
                 number_calib_rods = 2;
                 u_mass_corr_fact_a = new Tuple();

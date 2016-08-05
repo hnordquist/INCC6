@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.SourceIdTextBox = new System.Windows.Forms.TextBox();
-            this.NormConstTextBox = new NumericTextBox();
-            this.NormConstErrorTextBox = new NumericTextBox();
-            this.AccLimitTextBox = new NumericTextBox();
-            this.RefSinglesRateTextBox = new NumericTextBox();
+            this.NormConstTextBox = new NewUI.NumericTextBox();
+            this.NormConstErrorTextBox = new NewUI.NumericTextBox();
+            this.AccLimitTextBox = new NewUI.NumericTextBox();
+            this.RefSinglesRateTextBox = new NewUI.NumericTextBox();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -56,34 +56,78 @@
             // NormConstTextBox
             // 
             this.NormConstTextBox.Location = new System.Drawing.Point(162, 38);
+            this.NormConstTextBox.Max = 1.7976931348623157E+308D;
+            this.NormConstTextBox.Min = 0D;
             this.NormConstTextBox.Name = "NormConstTextBox";
+            this.NormConstTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.NormConstTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.NormConstTextBox.Size = new System.Drawing.Size(200, 20);
+            this.NormConstTextBox.Steps = -1D;
             this.NormConstTextBox.TabIndex = 1;
-
+            this.NormConstTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NormConstTextBox.Value = 0D;
             // 
             // NormConstErrorTextBox
             // 
             this.NormConstErrorTextBox.Location = new System.Drawing.Point(162, 64);
+            this.NormConstErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.NormConstErrorTextBox.Min = 0D;
             this.NormConstErrorTextBox.Name = "NormConstErrorTextBox";
+            this.NormConstErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.NormConstErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.NormConstErrorTextBox.Size = new System.Drawing.Size(200, 20);
+            this.NormConstErrorTextBox.Steps = -1D;
             this.NormConstErrorTextBox.TabIndex = 2;
-
+            this.NormConstErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NormConstErrorTextBox.Value = 0D;
             // 
             // AccLimitTextBox
             // 
             this.AccLimitTextBox.Location = new System.Drawing.Point(162, 142);
+            this.AccLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.AccLimitTextBox.Min = 0D;
             this.AccLimitTextBox.Name = "AccLimitTextBox";
+            this.AccLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.AccLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.AccLimitTextBox.Size = new System.Drawing.Size(200, 20);
+            this.AccLimitTextBox.Steps = -1D;
             this.AccLimitTextBox.TabIndex = 5;
-
+            this.AccLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.AccLimitTextBox.Value = 0D;
             // 
             // RefSinglesRateTextBox
             // 
             this.RefSinglesRateTextBox.Location = new System.Drawing.Point(162, 90);
+            this.RefSinglesRateTextBox.Max = 1.7976931348623157E+308D;
+            this.RefSinglesRateTextBox.Min = 0D;
             this.RefSinglesRateTextBox.Name = "RefSinglesRateTextBox";
+            this.RefSinglesRateTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.RefSinglesRateTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.RefSinglesRateTextBox.Size = new System.Drawing.Size(200, 20);
+            this.RefSinglesRateTextBox.Steps = -1D;
             this.RefSinglesRateTextBox.TabIndex = 6;
-
+            this.RefSinglesRateTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.RefSinglesRateTextBox.Value = 0D;
             // 
             // OKBtn
             // 
@@ -198,6 +242,7 @@
             this.Controls.Add(this.NormConstTextBox);
             this.Controls.Add(this.SourceIdTextBox);
             this.Name = "IDDAmLiNormalization";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AmLi Normalization Setup";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -114,6 +114,7 @@
             this.Controls.Add(this.LengthLabel);
             this.Controls.Add(this.DeclaredUMassLabel);
             this.Name = "IDDHeavyMetalItemData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Heavy Metal Item Data";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -39,12 +39,12 @@
             this.MeausurementDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.ClearBtn = new System.Windows.Forms.Button();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.UseCurrent = new System.Windows.Forms.Button();
             this.cyclesGridView = new System.Windows.Forms.DataGridView();
             this.Cycle = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.RealAcc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Accidentals = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.UseCurrent = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.cyclesGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -136,6 +136,18 @@
             this.ClearBtn.UseVisualStyleBackColor = true;
             this.ClearBtn.Click += new System.EventHandler(this.ClearBtn_Click);
             // 
+            // UseCurrent
+            // 
+            this.UseCurrent.Location = new System.Drawing.Point(410, 82);
+            this.UseCurrent.Name = "UseCurrent";
+            this.UseCurrent.Size = new System.Drawing.Size(75, 23);
+            this.UseCurrent.TabIndex = 13;
+            this.UseCurrent.Text = "Use current";
+            this.toolTip.SetToolTip(this.UseCurrent, "//todo: (since Acquire OK resets measurement) Load current cycles from current me" +
+        "asurement");
+            this.UseCurrent.UseVisualStyleBackColor = true;
+            this.UseCurrent.Click += new System.EventHandler(this.UseCurrent_Click);
+            // 
             // cyclesGridView
             // 
             this.cyclesGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -180,18 +192,6 @@
             this.Accidentals.Name = "Accidentals";
             this.Accidentals.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // UseCurrent
-            // 
-            this.UseCurrent.Location = new System.Drawing.Point(410, 82);
-            this.UseCurrent.Name = "UseCurrent";
-            this.UseCurrent.Size = new System.Drawing.Size(75, 23);
-            this.UseCurrent.TabIndex = 13;
-            this.UseCurrent.Text = "Use current";
-            this.toolTip.SetToolTip(this.UseCurrent, "//todo: (since Acquire OK resets measurement) Load current cycles from current " +
-        "measurement");
-            this.UseCurrent.UseVisualStyleBackColor = true;
-            this.UseCurrent.Click += new System.EventHandler(this.UseCurrent_Click);
-            // 
             // IDDManualDataEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -209,6 +209,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.CountTimeTextBox);
             this.Name = "IDDManualDataEntry";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Raw Data";
             ((System.ComponentModel.ISupportInitialize)(this.cyclesGridView)).EndInit();
             this.ResumeLayout(false);

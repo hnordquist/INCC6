@@ -316,6 +316,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.PrintBtn);
             this.Name = "IDDKnownMCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Known M Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();

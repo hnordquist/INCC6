@@ -196,7 +196,8 @@ namespace NewUI
             }
             acq.isotopics_id = string.Copy(m_iso.id);      // behavior follows INCC5 by making the last selection the current isotopics
             NC.App.DB.UpdateAcquireParams(acq);
-            Close();     
+            Close();
+            DialogResult = DialogResult.OK;    
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

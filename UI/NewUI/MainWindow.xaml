@@ -29,9 +29,6 @@
                 <Separator />
                 <MenuItem Header="_Exit INCC..." Click="Exit" />
             </MenuItem>
-            <!--<MenuItem Header="_View">
-                <MenuItem Header="_Maintain" Click="ViewMaintainClick" ToolTip="Switch between Inspector and Maintenance mode."/>
-            </MenuItem>    No View Maintain now HN 7/31/14-->
             <MenuItem Header="_Setup">
                 <MenuItem Header="_Facility/Inspection..." Click="SetupFacilityClick" ToolTip="Select facility, MBA, detector and inspection number." />
                 <Separator />

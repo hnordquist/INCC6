@@ -138,6 +138,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.GroupBox1);
             this.Name = "IDDNormalizationSetup";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Normalization Setup";
             this.GroupBox1.ResumeLayout(false);
             this.GroupBox1.PerformLayout();

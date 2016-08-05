@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.AmLiSourceIdTextBox = new System.Windows.Forms.TextBox();
-            this.NeutronYieldTextBox = new NumericTextBox();
-            this.NormalizationConstantTextBox = new NumericTextBox();
-            this.NormalizationConstantErrorTextBox = new NumericTextBox();
-            this.ReferenceSinglesRateTextBox = new NumericTextBox();
-            this.AcceptanceLimitTextBox = new NumericTextBox();
+            this.NeutronYieldTextBox = new NewUI.NumericTextBox();
+            this.NormalizationConstantTextBox = new NewUI.NumericTextBox();
+            this.NormalizationConstantErrorTextBox = new NewUI.NumericTextBox();
+            this.ReferenceSinglesRateTextBox = new NewUI.NumericTextBox();
+            this.AcceptanceLimitTextBox = new NewUI.NumericTextBox();
             this.AmLiSourceIdLabel = new System.Windows.Forms.Label();
             this.NeutronYieldLabel = new System.Windows.Forms.Label();
             this.NormalizationConstantLabel = new System.Windows.Forms.Label();
@@ -58,37 +58,97 @@
             // NeutronYieldTextBox
             // 
             this.NeutronYieldTextBox.Location = new System.Drawing.Point(187, 38);
+            this.NeutronYieldTextBox.Max = 1.7976931348623157E+308D;
+            this.NeutronYieldTextBox.Min = 0D;
             this.NeutronYieldTextBox.Name = "NeutronYieldTextBox";
+            this.NeutronYieldTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.NeutronYieldTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.NeutronYieldTextBox.Size = new System.Drawing.Size(199, 20);
+            this.NeutronYieldTextBox.Steps = -1D;
             this.NeutronYieldTextBox.TabIndex = 1;
+            this.NeutronYieldTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NeutronYieldTextBox.Value = 0D;
             // 
             // NormalizationConstantTextBox
             // 
             this.NormalizationConstantTextBox.Location = new System.Drawing.Point(187, 64);
+            this.NormalizationConstantTextBox.Max = 1.7976931348623157E+308D;
+            this.NormalizationConstantTextBox.Min = 0D;
             this.NormalizationConstantTextBox.Name = "NormalizationConstantTextBox";
+            this.NormalizationConstantTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.NormalizationConstantTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.NormalizationConstantTextBox.Size = new System.Drawing.Size(199, 20);
+            this.NormalizationConstantTextBox.Steps = -1D;
             this.NormalizationConstantTextBox.TabIndex = 2;
+            this.NormalizationConstantTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NormalizationConstantTextBox.Value = 0D;
             // 
             // NormalizationConstantErrorTextBox
             // 
             this.NormalizationConstantErrorTextBox.Location = new System.Drawing.Point(187, 90);
+            this.NormalizationConstantErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.NormalizationConstantErrorTextBox.Min = 0D;
             this.NormalizationConstantErrorTextBox.Name = "NormalizationConstantErrorTextBox";
+            this.NormalizationConstantErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.NormalizationConstantErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.NormalizationConstantErrorTextBox.Size = new System.Drawing.Size(199, 20);
+            this.NormalizationConstantErrorTextBox.Steps = -1D;
             this.NormalizationConstantErrorTextBox.TabIndex = 3;
+            this.NormalizationConstantErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NormalizationConstantErrorTextBox.Value = 0D;
             // 
             // ReferenceSinglesRateTextBox
             // 
             this.ReferenceSinglesRateTextBox.Location = new System.Drawing.Point(187, 116);
+            this.ReferenceSinglesRateTextBox.Max = 1.7976931348623157E+308D;
+            this.ReferenceSinglesRateTextBox.Min = 0D;
             this.ReferenceSinglesRateTextBox.Name = "ReferenceSinglesRateTextBox";
+            this.ReferenceSinglesRateTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.ReferenceSinglesRateTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.ReferenceSinglesRateTextBox.Size = new System.Drawing.Size(199, 20);
+            this.ReferenceSinglesRateTextBox.Steps = -1D;
             this.ReferenceSinglesRateTextBox.TabIndex = 4;
+            this.ReferenceSinglesRateTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.ReferenceSinglesRateTextBox.Value = 0D;
             // 
             // AcceptanceLimitTextBox
             // 
             this.AcceptanceLimitTextBox.Location = new System.Drawing.Point(187, 168);
+            this.AcceptanceLimitTextBox.Max = 1.7976931348623157E+308D;
+            this.AcceptanceLimitTextBox.Min = 0D;
             this.AcceptanceLimitTextBox.Name = "AcceptanceLimitTextBox";
+            this.AcceptanceLimitTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.AcceptanceLimitTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.AcceptanceLimitTextBox.Size = new System.Drawing.Size(199, 20);
+            this.AcceptanceLimitTextBox.Steps = -1D;
             this.AcceptanceLimitTextBox.TabIndex = 6;
+            this.AcceptanceLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.AcceptanceLimitTextBox.Value = 0D;
             // 
             // AmLiSourceIdLabel
             // 
@@ -214,6 +274,7 @@
             this.Controls.Add(this.NeutronYieldTextBox);
             this.Controls.Add(this.AmLiSourceIdTextBox);
             this.Name = "IDDCollarNormalization";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Collar Normalization Setup";
             this.ResumeLayout(false);
             this.PerformLayout();
