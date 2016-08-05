@@ -133,18 +133,31 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.13 Aug 26, 2016
+6.0.1.14 (NDATest) Aug 26, 2016
 
-nnn	Calib curve dlg crash when material type name is not compared case-insensitively 
-105	Measurement, waiting for a neutron that never arrives (MCA-527)
-101	Coincidence matrix calculation needs completion
-99	Time interval summary incomplete
+#105	Measurement, waiting for a neutron that never arrives (MCA-527)
+#101	Coincidence matrix calculation needs completion
+#99	Time interval summary incomplete
+#10	Replay v. pass-thru transfer options have summary errors
+#25	List mode acquistion predelay not stored
+#40	source ID in 'initial source' does not get passed to results
+#41	INCC6 CANNOT be KILLED!!! :)
 
-10	Replay v. pass-thru transfer options have summary errors
-25	List mode acquistion predelay not stored
-40	source ID in 'initial source' does not get passed to results
-41	INCC6 CANNOT be KILLED!!! :)
-128	Known Alpha stratum rejection limit messages added  
+***	Fix LANL's Acquire Assay Cancel crash in 382f3ff7aa018b53580f11317bbd8370b6cdc949;
+	Tool tip for Setup dialog detector type field for IAEA/Euratom;
+	Update version and config branding with branch name;
+	This is the first fork away from LANL's dev branch (aka 'master').
+
+***	Calib curve dlg crash when material type name is not compared case-insensitively 
+127	Pu mass limit in known alpha configuration did not allow negative numbers
+118	Declared UMass was always overwriting declared Pu Mass for items
+125	Known alpha acceptance limits added to measurement report
+128	Mass limits for known alpha now persistent 
+
+6.0.1.13 Aug 4, 2016
+
+mmm	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.
+
 
 6.0.1.12 Aug 2, 2016
 97	DB issues with non En language and region settings
@@ -156,7 +169,6 @@ nnn	Calib curve dlg crash when material type name is not compared case-insensiti
 73	Enhance predelay precision
 43	Performing LM as SR after doing LM Acquire craps
 113	Disk file inputs need the detector alpha-beta pre-filled
-nnn	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.
 
 
 6.0.1.11 Jun 22, 2016
