@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 12
-6.0.1.12 July 30, 2016 J. Longo
+INCC6 Beta Release 14
+6.0.1.14 August 4, 2016 H. Nordquist
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -78,11 +78,10 @@ Issues for basic INCC5/6 feature COMPLETION
 #79+	Plot Norm, Plot Ver diagnostic tools
 #76*	LM wizard gatewidth param change not used in subsequent live DAQ analysis
 #75*	LM wizard setting for cycle count not used in Live DAQ
-
 #78+	Find Deming curve fitting tool replacement
 #69+	Present the proposed List Mode Config UI from DB enhancement
 #35+	Hold-up analysis required
-
+#116+ Started to add help entries and tool tips to Acquire menu items
 
 *HIGH Priority, +MEDIUM Priority
 
@@ -96,7 +95,10 @@ Issues for basic INCC5/6 feature COMPLETION
 #13 PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
-
+ 128 Mass limits for known alpha now persistent
+ 127 Pu mass limit in known alpha configuration did not allow negative numbers
+ 118 Declared UMass was always overwriting declared Pu Mass for items
+ 125 Known alpha acceptance limits added to measurement report
  110 Collar Item Id needs Item Id defined at same time
  109 Item Id and Collar Item Id deletion
  104 HV plateau, waiting for a neutron that never arrives (MCA-527)
