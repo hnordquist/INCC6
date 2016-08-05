@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 13
-6.0.1.13 Aug 26, 2016
+INCC6 (NDATest branch) Beta Release 14
+6.0.1.14 Aug 26, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -144,6 +144,7 @@ nnn	Calib curve dlg crash when material type name is not compared case-insensiti
 25	List mode acquistion predelay not stored
 40	source ID in 'initial source' does not get passed to results
 41	INCC6 CANNOT be KILLED!!! :)
+128	Known Alpha stratum rejection limit messages added  
 
 6.0.1.12 Aug 2, 2016
 97	DB issues with non En language and region settings
@@ -155,7 +156,8 @@ nnn	Calib curve dlg crash when material type name is not compared case-insensiti
 73	Enhance predelay precision
 43	Performing LM as SR after doing LM Acquire craps
 113	Disk file inputs need the detector alpha-beta pre-filled
-nnn	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.  
+nnn	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.
+
 
 6.0.1.11 Jun 22, 2016
 102	NCD file processing drops input

@@ -55,7 +55,7 @@ namespace NewUI
             }
 
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
-            initdetname = String.Copy(det.Id.DetectorId);
+            initdetname = string.Copy(det.Id.DetectorId);
             try
             {
                 FacilityComboBox.SelectedItem = NC.App.DB.Facilities.Get(acq.facility.Name);
@@ -107,7 +107,7 @@ namespace NewUI
             acq.meas_detector_id = string.Copy(det.Id.DetectorId);
             ElectronicsIdTextBox.Text = det.Id.ElectronicsId;
             DetectorTypeTextBox.Text = det.Id.Type;
-            SRType.Text = " " + det.Id.SRType.ToString();
+            SRType.Text = " " + DetectorDefs.InstrTypeExtensions.INCC5ComboBoxString(det.Id.SRType);
             acq.modified = true;
         }
 

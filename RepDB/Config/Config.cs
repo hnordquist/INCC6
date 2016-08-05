@@ -579,8 +579,17 @@ namespace NCCConfig
             
         public static string GetVersionString()
         {
-            System.Version MyVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version;
-            return MyVersion.ToString();
+			Assembly a = Assembly.GetEntryAssembly();
+            Version MyVersion = a.GetName().Version;
+			string result = MyVersion.ToString();
+			object[] o = a.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), true);
+			if (o != null && o.Length > 0)
+			{
+				AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
+				if (!string.IsNullOrEmpty(aca.Configuration))
+					result = result + " " + aca.Configuration;
+			}
+            return result;
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }

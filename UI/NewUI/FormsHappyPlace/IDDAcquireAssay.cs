@@ -159,7 +159,8 @@ namespace NewUI
                 {
                     DrumWeightLabel.Visible = DrumWeightTextBox.Visible = false;
                     DrumWeightTextBox.Text = ah.ap.drum_empty_weight.ToString("F3");
-                }            }
+                }
+            }
 
         }
         private void Pu240eCoeffBtn_Click(object sender, EventArgs e)
@@ -282,11 +283,11 @@ namespace NewUI
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
 			else
 			{
-				// save/update item id changes only when user selects OK
+                // save/update item id changes only when user selects OK
                 ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
                 Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
 
-				NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+                NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
 				NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
 				bool ocntinue = GetAdditionalParameters();
 				if (ocntinue && (ah.OKButton_Click(sender, e) == DialogResult.OK))
@@ -305,11 +306,16 @@ namespace NewUI
         {
             //Store any changes before exiting
             //HN 08-04-2016
-            ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
-            Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
-            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
-
+			if (!string.IsNullOrEmpty(ah.ap.item_id))
+			{
+				ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+				if (Cur != null)
+				{
+					Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+				}
+				NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+				NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+			}
             Close();
         }
 

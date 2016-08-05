@@ -37,10 +37,8 @@ namespace NewUI
         {
             //Updated with BSD License...... HN 10.15.2015
             InitializeComponent();
-            System.Reflection.Assembly eax = System.Reflection.Assembly.GetExecutingAssembly();
-            Version v = eax.GetName().Version;
-            textBox1.Text = AssemblyConstants.ShortAssemblyProduct + " " + v.ToString() +", " + textBox1.Text;
-            this.Text = AssemblyConstants.ShortAssemblyProduct + " " + v.ToString() + ", " + Text;
+            textBox1.Text = AssemblyConstants.ShortAssemblyProduct + " " + AppContextConfig.GetVersionString() +", " + textBox1.Text;
+            this.Text = AssemblyConstants.ShortAssemblyProduct + " " + AppContextConfig.GetVersionString() + ", " + Text;
 
             richTextBox1.Text = @"This work was supported by the United States Member State Support Program to IAEA Safeguards; the U.S. Department of Energy, ";
             richTextBox1.Text += @"Office of Nonproliferation and National Security, International Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security." + System.Environment.NewLine + System.Environment.NewLine;

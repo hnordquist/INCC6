@@ -388,6 +388,8 @@
 			this.SRType.ReadOnly = true;
 			this.SRType.Size = new System.Drawing.Size(79, 15);
 			this.SRType.TabIndex = 20;
+			this.toolTip1.SetToolTip(this.SRType, "The Shift Register type specified for this detector on the Measurement Parameters" +
+        " Setup dialog");
 			// 
 			// IDDFacility
 			// 
