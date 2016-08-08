@@ -94,6 +94,7 @@
             this.Controls.Add(this.PoisonRodTypeComboBox);
             this.Controls.Add(this.PoisonRodTypeLabel);
             this.Name = "IDDPoisonRodTypeDelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Poison Rod Type to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

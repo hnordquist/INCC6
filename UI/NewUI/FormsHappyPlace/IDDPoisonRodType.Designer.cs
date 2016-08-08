@@ -96,6 +96,7 @@
             this.Controls.Add(this.DeletePoisonRodTypeBtn);
             this.Controls.Add(this.AddPoisonRodTypeBtn);
             this.Name = "IDDPoisonRodType";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Poison Rod Type Add and Delete";
             this.ResumeLayout(false);
 

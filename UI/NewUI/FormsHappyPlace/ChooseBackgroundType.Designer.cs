@@ -78,6 +78,7 @@
             this.OKButton.Text = "OK";
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
+            // 
             // ChooseBackgroundType
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -86,6 +87,7 @@
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.DetectorConfigurationGroupBox);
             this.Name = "ChooseBackgroundType";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "ChooseBackgroundType";
             this.DetectorConfigurationGroupBox.ResumeLayout(false);
             this.DetectorConfigurationGroupBox.PerformLayout();

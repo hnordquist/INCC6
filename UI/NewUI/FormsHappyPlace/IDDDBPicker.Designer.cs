@@ -105,6 +105,7 @@
             this.Controls.Add(this.SelectBtn);
             this.Controls.Add(this.TextBoxDatabaseFile);
             this.Name = "IDDDBPicker";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Choose a Database";
             this.ResumeLayout(false);
             this.PerformLayout();

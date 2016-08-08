@@ -94,6 +94,7 @@
             this.Controls.Add(this.MBAComboBox);
             this.Controls.Add(this.MBALabel);
             this.Name = "IDDMBADelete";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select a Material Balance Area to Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

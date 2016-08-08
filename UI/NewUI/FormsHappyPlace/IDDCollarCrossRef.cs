@@ -39,6 +39,7 @@ namespace NewUI
     {
         MethodParamFormFields mp;
         INCCAnalysisParams.collar_combined_rec col;
+        List<poison_rod_type_rec> poison;
         bool modified;
 
         public IDDCollarCrossRef(INCCAnalysisParams.collar_combined_rec c = null, bool mod = false)
@@ -82,16 +83,16 @@ namespace NewUI
             ModeComboBox.SelectedIndex = Convert.ToInt32(col.collar_det.collar_mode);
             RelativeDoublesRateTextBox.Value = col.collar_det.relative_doubles_rate;
             ReferenceDateTimePicker.Value = col.collar_det.reference_date;
-
-            for (int i = 0; i < INCCAnalysisParams.MAX_POISON_ROD_TYPES; i ++) 
+            poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
+            for (int i = 0; i < poison.Count ; i ++) 
             {
-                if (!String.IsNullOrEmpty(col.collar.poison_rod_type[i]))
-                    PoisonRodTypesComboBox.Items.Add (col.collar.poison_rod_type[i]);
+                PoisonRodTypesComboBox.Items.Add (poison[i].rod_type);
             }
             if (PoisonRodTypesComboBox.Items.Count > 0)
             {
-                PoisonRodTypesComboBox.SelectedIndex = 0;
-                PoisonAbsorptionFactorTextBox.Value = col.collar.poison_absorption_fact[0];
+                int idx = PoisonRodTypesComboBox.FindStringExact(col.collar.poison_rod_type[0]);
+                PoisonRodTypesComboBox.SelectedIndex = idx;
+                PoisonAbsorptionFactorTextBox.Value = poison[idx].absorption_factor;
             }
             else
             {
@@ -174,7 +175,7 @@ namespace NewUI
 
         private void ReferenceDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
-            if (col.collar_det.reference_date.Equals(((DateTimePicker)sender).Value.Date))
+            if (!col.collar_det.reference_date.Equals(((DateTimePicker)sender).Value.Date))
             {
                 col.collar_det.reference_date = ReferenceDateTimePicker.Value.Date;
                 modified = true;
@@ -183,14 +184,8 @@ namespace NewUI
 
         private void PoisonRodTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //TODO: Figure out multiple poison rod types later. For now, always G
-            col.collar.poison_rod_type[0] = PoisonRodTypesComboBox.Text;
-        }
-
-        private void PoisonAbsorptionFactorTextBox_TextChanged(object sender, EventArgs e)
-        {
-            //TODO: Figure out multiple poison rod types later. For now, always 0.647
-            col.collar.poison_absorption_fact[0] = PoisonAbsorptionFactorTextBox.Value;
+            //Now, switches absorbption factor value. Still confused what to do with multiple rod types. HN
+            PoisonAbsorptionFactorTextBox.Value = poison[((ComboBox)sender).SelectedIndex].absorption_factor;
         }
 
         private void RelativeDoublesRateTextBox_TextChanged(object sender, EventArgs e)
@@ -229,6 +224,7 @@ namespace NewUI
 
         private void NextBtn_Click(object sender, EventArgs e)
         {
+            //store changes?
             IDDCollarCal cal = new IDDCollarCal(col,modified);
             cal.Show();
             this.Close();
@@ -247,8 +243,7 @@ namespace NewUI
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            //TODO: I don't see collar help??
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm"); 
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/collar.htm");
         }
 
 

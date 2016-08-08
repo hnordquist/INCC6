@@ -580,7 +580,7 @@
             this.PassiveUraniumMeasLabel.AutoSize = true;
             this.PassiveUraniumMeasLabel.Location = new System.Drawing.Point(732, 292);
             this.PassiveUraniumMeasLabel.Name = "PassiveUraniumMeasLabel";
-            this.PassiveUraniumMeasLabel.Size = new System.Drawing.Size(145, 13);
+            this.PassiveUraniumMeasLabel.Size = new System.Drawing.Size(150, 13);
             this.PassiveUraniumMeasLabel.TabIndex = 48;
             this.PassiveUraniumMeasLabel.Text = "Passive uranium measurement";
             // 
@@ -669,6 +669,7 @@
             this.Controls.Add(this.CurveTypeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDCalibrationCurveCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Passive Calibration Curve Calibration";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

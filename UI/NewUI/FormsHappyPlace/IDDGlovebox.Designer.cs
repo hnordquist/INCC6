@@ -133,6 +133,7 @@
             this.Controls.Add(this.EditGloveboxBtn);
             this.Controls.Add(this.AddGloveboxBtn);
             this.Name = "IDDGlovebox";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Glovebox Add, Edit, and Delete";
             this.ResumeLayout(false);
             this.PerformLayout();

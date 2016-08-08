@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.TypeOfTransferGroupBox = new System.Windows.Forms.GroupBox();
-            this.CurrentDetectorRadioButton = new System.Windows.Forms.RadioButton();
             this.AllDetectorsRadioButton = new System.Windows.Forms.RadioButton();
+            this.CurrentDetectorRadioButton = new System.Windows.Forms.RadioButton();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
@@ -48,18 +48,6 @@
             this.TypeOfTransferGroupBox.TabStop = false;
             this.TypeOfTransferGroupBox.Text = "Type of Transfer";
             // 
-            // CurrentDetectorRadioButton
-            // 
-            this.CurrentDetectorRadioButton.AutoSize = true;
-            this.CurrentDetectorRadioButton.Location = new System.Drawing.Point(11, 19);
-            this.CurrentDetectorRadioButton.Name = "CurrentDetectorRadioButton";
-            this.CurrentDetectorRadioButton.Size = new System.Drawing.Size(251, 17);
-            this.CurrentDetectorRadioButton.TabIndex = 0;
-            this.CurrentDetectorRadioButton.TabStop = true;
-            this.CurrentDetectorRadioButton.Text = "Save measurement data for the current detector";
-            this.CurrentDetectorRadioButton.UseVisualStyleBackColor = true;
-            this.CurrentDetectorRadioButton.CheckedChanged += new System.EventHandler(this.CurrentDetectorRadioButton_CheckedChanged);
-            // 
             // AllDetectorsRadioButton
             // 
             this.AllDetectorsRadioButton.AutoSize = true;
@@ -71,6 +59,18 @@
             this.AllDetectorsRadioButton.Text = "Save measurement data for all detectors";
             this.AllDetectorsRadioButton.UseVisualStyleBackColor = true;
             this.AllDetectorsRadioButton.CheckedChanged += new System.EventHandler(this.AllDetectorsRadioButton_CheckedChanged);
+            // 
+            // CurrentDetectorRadioButton
+            // 
+            this.CurrentDetectorRadioButton.AutoSize = true;
+            this.CurrentDetectorRadioButton.Location = new System.Drawing.Point(11, 19);
+            this.CurrentDetectorRadioButton.Name = "CurrentDetectorRadioButton";
+            this.CurrentDetectorRadioButton.Size = new System.Drawing.Size(251, 17);
+            this.CurrentDetectorRadioButton.TabIndex = 0;
+            this.CurrentDetectorRadioButton.TabStop = true;
+            this.CurrentDetectorRadioButton.Text = "Save measurement data for the current detector";
+            this.CurrentDetectorRadioButton.UseVisualStyleBackColor = true;
+            this.CurrentDetectorRadioButton.CheckedChanged += new System.EventHandler(this.CurrentDetectorRadioButton_CheckedChanged);
             // 
             // OKBtn
             // 
@@ -112,6 +112,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.TypeOfTransferGroupBox);
             this.Name = "IDDSaveTransfer";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Type of Transfer";
             this.TypeOfTransferGroupBox.ResumeLayout(false);
             this.TypeOfTransferGroupBox.PerformLayout();

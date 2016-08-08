@@ -232,6 +232,7 @@
             this.Controls.Add(this.PrintBtn);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDActiveMultCal";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Active Multiplicity Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();

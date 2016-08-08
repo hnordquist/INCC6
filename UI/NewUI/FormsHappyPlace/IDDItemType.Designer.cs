@@ -96,6 +96,7 @@
             this.Controls.Add(this.DeleteMaterialTypeBtn);
             this.Controls.Add(this.AddMaterialTypeBtn);
             this.Name = "IDDItemType";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Material Type Add and Delete";
             this.ResumeLayout(false);
 

@@ -93,6 +93,7 @@
             this.Controls.Add(this.IsotopicsIdTextBox);
             this.Controls.Add(this.IsotopicsIdLabel);
             this.Name = "IDDIsotopicsAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter id for new isotopics data set";
             this.ResumeLayout(false);
             this.PerformLayout();

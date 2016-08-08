@@ -72,6 +72,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKbtn);
             this.Name = "IDDReanalyzeDBMeas";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Measurement";
             this.ResumeLayout(false);
 

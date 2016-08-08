@@ -66,6 +66,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FoldorFile";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Choose data file source";
             this.ResumeLayout(false);
 

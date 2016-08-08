@@ -313,6 +313,7 @@
             this.Controls.Add(this.CountTimeTextBox);
             this.Controls.Add(this.CommentTextBox);
             this.Name = "IDDAcquirePrecision";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Precision Measurement";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

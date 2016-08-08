@@ -57,6 +57,7 @@ namespace NewUI
         public void CalibrationFieldFiller(INCCAnalysisParams.CurveEquationVals cev)
         {
             LowerMassLimitTextBox.Text = cev.lower_mass_limit.ToString("N3");
+            LowerMassLimitTextBox.Min = -10000000.0;
             UpperMassLimitTextBox.Text = cev.upper_mass_limit.ToString("N3");
             ATextBox.Text = cev.a.ToString("E6");
             BTextBox.Text = cev.b.ToString("E6");
@@ -300,6 +301,11 @@ namespace NewUI
             {
                 col.collar.cev.setcovar(Coeff.c, Coeff.d, CovarianceCDTextBox.Value);
                 modified = true;
+            }
+
+            if (col.collar.cev.sigma_x != SigmaXTextBox.Value)
+            {
+                col.collar.cev.sigma_x = SigmaXTextBox.Value;
             }
         }
     }

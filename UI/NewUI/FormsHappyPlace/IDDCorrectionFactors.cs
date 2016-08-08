@@ -40,6 +40,7 @@ namespace NewUI
         INCCAnalysisParams.collar_combined_rec col;
         bool modified;
         List<string> list = new List<string>();
+        List<poison_rod_type_rec> poison;
 
         public IDDCorrectionFactors(INCCAnalysisParams.collar_combined_rec c, bool mod)
         {
@@ -77,11 +78,11 @@ namespace NewUI
             BErrorTextBox.Value  = col.collar.u_mass_corr_fact_b.err;
             NumRodsTextBox.Value = col.collar.number_calib_rods;
             DataGridViewRow types = new DataGridViewRow();
+            poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
 
-            for (int i = 0; i < INCCAnalysisParams.MAX_POISON_ROD_TYPES; i++)
+            for (int i = 0; i < poison.Count; i++)
             {
-                if (!String.IsNullOrEmpty(col.collar.poison_rod_type[i]))
-                    list.Add(col.collar.poison_rod_type[i]);
+                list.Add(poison[i].rod_type);
             }
 
             for (int j = 0; j < list.Count; j++)
@@ -97,7 +98,7 @@ namespace NewUI
                     cel.Items.Add(s);
                 }
                 row.Cells[0] = cel;
-                row.Cells[0].Value = list[0];
+                row.Cells[0].Value = list[j];
                 row.Cells[1].ValueType = typeof(double);
                 row.Cells[1].Value = col.collar.poison_absorption_fact[j];
                 row.Cells[2].ValueType = typeof(double);
@@ -200,7 +201,7 @@ namespace NewUI
             if (col.collar.u_mass_corr_fact_a.err != AErrorTextBox.Value)
             {
                 modified = true;
-                col.collar.u_mass_corr_fact_a.v = AErrorTextBox.Value;
+                col.collar.u_mass_corr_fact_a.err = AErrorTextBox.Value;
             }
 
             if (col.collar.u_mass_corr_fact_b.v != BTextBox.Value)
@@ -212,7 +213,7 @@ namespace NewUI
             if (col.collar.u_mass_corr_fact_b.err != BErrorTextBox.Value)
             {
                 modified = true;
-                col.collar.u_mass_corr_fact_b.v = BErrorTextBox.Value;
+                col.collar.u_mass_corr_fact_b.err = BErrorTextBox.Value;
             }
             
             if (col.collar.number_calib_rods != NumRodsTextBox.Value)

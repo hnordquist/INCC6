@@ -188,6 +188,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.groupBox1);
             this.Name = "IDDRestoreSelect";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Measurements to Restore";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

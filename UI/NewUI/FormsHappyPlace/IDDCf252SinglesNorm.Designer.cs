@@ -105,6 +105,7 @@
             this.NormConstTextBox.Size = new System.Drawing.Size(200, 20);
             this.NormConstTextBox.Steps = -1D;
             this.NormConstTextBox.TabIndex = 4;
+            this.NormConstTextBox.Text = "0.000000E+000";
             this.NormConstTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NormConstTextBox.Value = 0D;
             // 
@@ -124,6 +125,7 @@
             this.NormConstErrTextBox.Size = new System.Drawing.Size(200, 20);
             this.NormConstErrTextBox.Steps = -1D;
             this.NormConstErrTextBox.TabIndex = 5;
+            this.NormConstErrTextBox.Text = "0.000000E+000";
             this.NormConstErrTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NormConstErrTextBox.Value = 0D;
             // 
@@ -143,6 +145,7 @@
             this.RefSinglesRateTextBox.Size = new System.Drawing.Size(200, 20);
             this.RefSinglesRateTextBox.Steps = -1D;
             this.RefSinglesRateTextBox.TabIndex = 6;
+            this.RefSinglesRateTextBox.Text = "0.000000E+000";
             this.RefSinglesRateTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.RefSinglesRateTextBox.Value = 0D;
             // 
@@ -162,6 +165,7 @@
             this.RefSinglesRateErrorTextBox.Size = new System.Drawing.Size(200, 20);
             this.RefSinglesRateErrorTextBox.Steps = -1D;
             this.RefSinglesRateErrorTextBox.TabIndex = 7;
+            this.RefSinglesRateErrorTextBox.Text = "0.000000E+000";
             this.RefSinglesRateErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.RefSinglesRateErrorTextBox.Value = 0D;
             // 
@@ -181,6 +185,7 @@
             this.PrecisionLimitTextBox.Size = new System.Drawing.Size(200, 20);
             this.PrecisionLimitTextBox.Steps = -1D;
             this.PrecisionLimitTextBox.TabIndex = 9;
+            this.PrecisionLimitTextBox.Text = "0.000000E+000";
             this.PrecisionLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.PrecisionLimitTextBox.Value = 0D;
             // 
@@ -200,6 +205,7 @@
             this.AccLimitStdDevTextBox.Size = new System.Drawing.Size(200, 20);
             this.AccLimitStdDevTextBox.Steps = -1D;
             this.AccLimitStdDevTextBox.TabIndex = 10;
+            this.AccLimitStdDevTextBox.Text = "0.000000E+000";
             this.AccLimitStdDevTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.AccLimitStdDevTextBox.Value = 0D;
             // 
@@ -219,6 +225,7 @@
             this.AccLimitPercentTextBox.Size = new System.Drawing.Size(200, 20);
             this.AccLimitPercentTextBox.Steps = -1D;
             this.AccLimitPercentTextBox.TabIndex = 11;
+            this.AccLimitPercentTextBox.Text = "0.000000E+000";
             this.AccLimitPercentTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.AccLimitPercentTextBox.Value = 0D;
             // 
@@ -338,6 +345,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDCf252SinglesNorm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Cf252 Normalization Setup";
             this.ResumeLayout(false);
             this.PerformLayout();

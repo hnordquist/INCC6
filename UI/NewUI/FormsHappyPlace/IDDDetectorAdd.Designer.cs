@@ -209,6 +209,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKButton);
             this.Name = "IDDDetectorAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter New Detector";
             this.ResumeLayout(false);
             this.PerformLayout();

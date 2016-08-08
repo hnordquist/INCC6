@@ -37,10 +37,6 @@
             this.PrintBtn = new System.Windows.Forms.Button();
             this.DeleteBtn = new System.Windows.Forms.Button();
             this.ItemIdDataGrid = new System.Windows.Forms.DataGridView();
-            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ItemId = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MBA = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.MatType = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -51,6 +47,10 @@
             this.Mass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.HvyMetalUMass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.HeavyMetalLen = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.ItemIdDataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -131,26 +131,6 @@
             this.ItemIdDataGrid.SortCompare += new System.Windows.Forms.DataGridViewSortCompareEventHandler(this.ItemIdDataGrid_SortCompare);
             this.ItemIdDataGrid.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.ItemIdDataGrid_UserAddedRow);
             // 
-            // dataGridViewTextBoxColumn1
-            // 
-            this.dataGridViewTextBoxColumn1.HeaderText = "Item id";
-            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-            // 
-            // dataGridViewTextBoxColumn2
-            // 
-            this.dataGridViewTextBoxColumn2.HeaderText = "Declared Mass (g)";
-            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-            // 
-            // dataGridViewTextBoxColumn3
-            // 
-            this.dataGridViewTextBoxColumn3.HeaderText = "Heavy Metal Declared U Mass (g)";
-            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-            // 
-            // dataGridViewTextBoxColumn4
-            // 
-            this.dataGridViewTextBoxColumn4.HeaderText = "Heavy Metal Length (cm)";
-            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
             // ItemId
             // 
             this.ItemId.HeaderText = "Item id";
@@ -215,6 +195,26 @@
             this.HeavyMetalLen.Name = "HeavyMetalLen";
             this.HeavyMetalLen.Width = 90;
             // 
+            // dataGridViewTextBoxColumn1
+            // 
+            this.dataGridViewTextBoxColumn1.HeaderText = "Item id";
+            this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+            // 
+            // dataGridViewTextBoxColumn2
+            // 
+            this.dataGridViewTextBoxColumn2.HeaderText = "Declared Mass (g)";
+            this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            // 
+            // dataGridViewTextBoxColumn3
+            // 
+            this.dataGridViewTextBoxColumn3.HeaderText = "Heavy Metal Declared U Mass (g)";
+            this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+            // 
+            // dataGridViewTextBoxColumn4
+            // 
+            this.dataGridViewTextBoxColumn4.HeaderText = "Heavy Metal Length (cm)";
+            this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+            // 
             // IDDItemDataEntry
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -227,6 +227,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDItemDataEntry";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Item Data";
             ((System.ComponentModel.ISupportInitialize)(this.ItemIdDataGrid)).EndInit();
             this.ResumeLayout(false);

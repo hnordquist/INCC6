@@ -50,6 +50,7 @@ namespace NewUI
                 sr = new ShiftRegisterParameters();
             else
                 sr = new ShiftRegisterParameters(d.SRParams);
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
         }
 
         public int InitialSelection

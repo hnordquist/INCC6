@@ -72,6 +72,7 @@
             this.Controls.Add(this.CancelBut);
             this.Controls.Add(this.listBox1);
             this.Name = "FileSel";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Files Selected for Analysis";
             this.TopMost = true;
             this.ResumeLayout(false);

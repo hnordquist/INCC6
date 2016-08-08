@@ -180,7 +180,6 @@
             // CollarCheckBox
             // 
             this.CollarCheckBox.AutoSize = true;
-            this.CollarCheckBox.Enabled = true;
             this.CollarCheckBox.Location = new System.Drawing.Point(221, 175);
             this.CollarCheckBox.Name = "CollarCheckBox";
             this.CollarCheckBox.Size = new System.Drawing.Size(52, 17);
@@ -282,6 +281,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDAnalysisMethodsConfig";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Analysis Methods Configuration";
             this.ResumeLayout(false);
             this.PerformLayout();

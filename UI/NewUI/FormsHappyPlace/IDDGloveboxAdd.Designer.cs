@@ -178,6 +178,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDGloveboxAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add a New Glovebox";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -45,7 +45,7 @@
             this.AddFacilityButton.TabIndex = 0;
             this.AddFacilityButton.Text = "Add facility...";
             this.toolTip1.SetToolTip(this.AddFacilityButton, "Click here to create a new facility. You will be prompted to type in a new facili" +
-                    "ty name.");
+        "ty name.");
             this.AddFacilityButton.UseVisualStyleBackColor = true;
             this.AddFacilityButton.Click += new System.EventHandler(this.AddFacilityButton_Click);
             // 
@@ -101,6 +101,7 @@
             this.Controls.Add(this.DeleteFacilityButton);
             this.Controls.Add(this.AddFacilityButton);
             this.Name = "IDDFacilityEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Facility Add and Delete";
             this.ResumeLayout(false);
 

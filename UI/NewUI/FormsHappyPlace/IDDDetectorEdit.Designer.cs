@@ -96,6 +96,7 @@
             this.Controls.Add(this.DeleteDetectorButton);
             this.Controls.Add(this.AddDetectorButton);
             this.Name = "IDDDetectorEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add or Delete a Detector";
             this.ResumeLayout(false);
 

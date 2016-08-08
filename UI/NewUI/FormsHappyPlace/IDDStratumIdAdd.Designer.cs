@@ -200,6 +200,7 @@
             this.Controls.Add(this.CurrentStratumIdsComboBox);
             this.Controls.Add(this.CurrentStratumIdsLabel);
             this.Name = "IDDStratumIdAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add a New Stratum id";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -94,6 +94,7 @@
             this.Controls.Add(this.InspectionNumComboBox);
             this.Controls.Add(this.InspectionNumLabel);
             this.Name = "IDDSaveCampaignId";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Inspection";
             this.ResumeLayout(false);
             this.PerformLayout();

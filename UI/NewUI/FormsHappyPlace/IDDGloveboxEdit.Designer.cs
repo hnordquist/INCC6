@@ -157,6 +157,7 @@
             this.Controls.Add(this.NumRowsLabel);
             this.Controls.Add(this.GloveboxIdLabel);
             this.Name = "IDDGloveboxEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit An Existing Glovebox";
             this.ResumeLayout(false);
             this.PerformLayout();

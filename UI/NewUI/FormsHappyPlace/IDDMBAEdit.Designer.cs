@@ -45,7 +45,7 @@
             this.AddMBAButton.TabIndex = 0;
             this.AddMBAButton.Text = "Add material balance area...";
             this.toolTip1.SetToolTip(this.AddMBAButton, "Click here to create a new material balance area. You will be prompted to type in" +
-                    " a new MBA name.");
+        " a new MBA name.");
             this.AddMBAButton.UseVisualStyleBackColor = true;
             this.AddMBAButton.Click += new System.EventHandler(this.AddMBAButton_Click);
             // 
@@ -101,6 +101,7 @@
             this.Controls.Add(this.DeleteMBAButton);
             this.Controls.Add(this.AddMBAButton);
             this.Name = "IDDMBAEdit";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Material Balance Area Add and Delete";
             this.ResumeLayout(false);
 

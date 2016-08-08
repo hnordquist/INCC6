@@ -304,8 +304,8 @@ namespace NewUI
 
 		private void CancelBtn_Click(object sender, EventArgs e)
         {
-            //Store any changes before exiting
-            //HN 08-04-2016
+            //Store any changes before exiting?
+            //NEXT: Should we warn no changes stored instead? HN 08-04-2016
 			if (!string.IsNullOrEmpty(ah.ap.item_id))
 			{
 				ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);

@@ -345,6 +345,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDCmPuRatio";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Curium Ratio";
             this.ResumeLayout(false);
             this.PerformLayout();

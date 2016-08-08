@@ -96,6 +96,7 @@
             this.Controls.Add(this.CompositeIsotopicsBtn);
             this.Controls.Add(this.IsotopicsBtn);
             this.Name = "IDDEnterIsotopics";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Enter Isotopics For New Item";
             this.ResumeLayout(false);
 

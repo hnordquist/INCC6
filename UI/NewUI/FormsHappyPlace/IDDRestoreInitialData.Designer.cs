@@ -106,7 +106,6 @@
             // RestoreFileDialog
             // 
             this.RestoreFileDialog.CheckFileExists = false;
-            this.RestoreFileDialog.FileName = "";
             // 
             // IDDRestoreInitialData
             // 
@@ -118,6 +117,7 @@
             this.Controls.Add(this.OKBtn);
             this.Controls.Add(this.DataTypeGroupBox);
             this.Name = "IDDRestoreInitialData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Select Type of Initial Data";
             this.DataTypeGroupBox.ResumeLayout(false);
             this.DataTypeGroupBox.PerformLayout();

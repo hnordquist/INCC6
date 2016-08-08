@@ -1268,6 +1268,9 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDTestParametersSetup.resx">
       <DependentUpon>IDDTestParametersSetup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IsotopicsList.resx">
+      <DependentUpon>IsotopicsList.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\LMConnectionParams.resx">
       <DependentUpon>LMConnectionParams.cs</DependentUpon>
     </EmbeddedResource>

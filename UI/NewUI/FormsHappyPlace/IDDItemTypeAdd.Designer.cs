@@ -62,14 +62,14 @@
             this.CurrentMaterialTypesComboBox.Name = "CurrentMaterialTypesComboBox";
             this.CurrentMaterialTypesComboBox.Size = new System.Drawing.Size(121, 21);
             this.CurrentMaterialTypesComboBox.TabIndex = 2;
-            //
+            // 
             // MaterialTypeTextBox
             // 
             this.MaterialTypeTextBox.Location = new System.Drawing.Point(129, 70);
             this.MaterialTypeTextBox.Name = "MaterialTypeTextBox";
             this.MaterialTypeTextBox.Size = new System.Drawing.Size(121, 20);
             this.MaterialTypeTextBox.TabIndex = 3;
-            //
+            // 
             // OKBtn
             // 
             this.OKBtn.Location = new System.Drawing.Point(282, 10);
@@ -113,6 +113,7 @@
             this.Controls.Add(this.MaterialTypeLabel);
             this.Controls.Add(this.CurrentMaterialTypesLabel);
             this.Name = "IDDItemTypeAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add a New Material Type";
             this.ResumeLayout(false);
             this.PerformLayout();

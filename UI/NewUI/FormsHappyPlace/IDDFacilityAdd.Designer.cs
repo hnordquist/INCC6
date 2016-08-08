@@ -72,6 +72,7 @@
             this.FacilityTextBox.Name = "FacilityTextBox";
             this.FacilityTextBox.Size = new System.Drawing.Size(225, 20);
             this.FacilityTextBox.TabIndex = 3;
+            // 
             // FacilityDescriptionLabel
             // 
             this.FacilityDescriptionLabel.AutoSize = true;
@@ -133,6 +134,7 @@
             this.Controls.Add(this.CurrentFacilitiesComboBox);
             this.Controls.Add(this.CurrentFacilitiesLabel);
             this.Name = "IDDFacilityAdd";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add a New Facility";
             this.ResumeLayout(false);
             this.PerformLayout();

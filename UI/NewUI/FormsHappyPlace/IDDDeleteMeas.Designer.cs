@@ -147,6 +147,7 @@
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
             this.Name = "IDDDeleteMeas";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Delete Measurements From Database";
             this.Shown += new System.EventHandler(this.IDDDeleteMeas_Shown);
             this.ResumeLayout(false);

@@ -394,6 +394,7 @@
             this.Controls.Add(this.NormConstTextBox);
             this.Controls.Add(this.SourceIdTextBox);
             this.Name = "IDDCf252Normalization";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Cf252 Normalization Setup";
             this.ResumeLayout(false);
             this.PerformLayout();
