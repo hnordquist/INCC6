@@ -116,6 +116,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.button1);
             this.Name = "Splash";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "LA-CC 14-009";
             this.ResumeLayout(false);
             this.PerformLayout();

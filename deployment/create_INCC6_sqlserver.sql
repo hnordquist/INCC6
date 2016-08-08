@@ -2045,37 +2045,55 @@ INSERT INTO [detectors] VALUES('AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO
 INSERT INTO [detectors] VALUES('MCA1153',16,'MCA527','01153','1 chn');
 GO
+INSERT INTO [detectors] VALUES ('JSR-15',11,'JSR15','','JSR-15-JSR15');
+GO
 INSERT INTO [add_a_source_setup_rec] VALUES(3,'None',1,0.0,0.0,1,'0,0,0,0,0',625.0,2,1,1,0,1.0,2.0,51.0,1.0,0);
 GO
 INSERT INTO [add_a_source_setup_rec] VALUES(4,'None',1,0.0,0.0,1,'0,0,0,0,0',625.0,2,1,1,0,1.0,2.0,51.0,1.0,0);
+GO
+INSERT INTO [add_a_source_setup_rec] VALUES(5,'None',1,0.0,0.0,1,'0,0,0,0,0',625.0,2,1,1,0,1.0,2.0,51.0,1.0,0);
 GO
 INSERT INTO [alpha_beta_rec] VALUES(3,'','');
 GO
 INSERT INTO [alpha_beta_rec] VALUES(4,'','');
 GO
+INSERT INTO [alpha_beta_rec] VALUES(5,'','');
+GO
 INSERT INTO [bkg_parms_rec] VALUES(3,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 GO
 INSERT INTO [bkg_parms_rec] VALUES(4,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
+GO
+INSERT INTO [bkg_parms_rec] VALUES(5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0);
 GO
 INSERT INTO [norm_parms_rec] VALUES(3,'',1.0,0.0,1,0.0,0.0,0.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
 GO
 INSERT INTO [norm_parms_rec] VALUES(4,'',1.0,0.0,1,0.0,0.0,0.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
 GO
+INSERT INTO [norm_parms_rec] VALUES(5,'',1.0,0.0,1,0.0,0.0,200.0,0.0,0.0,'2010-01-01T00:00:00',0.3,0.3,3.0,4.0,1.0,'0',0.0);
+GO
 INSERT INTO [sr_parms_rec] VALUES(3,'AS710',15,NULL,45.0,640.0,NULL,1680.0,500.0,0.0001,0.0,0.0,0.0,0.0,0.0001,0.0001,NULL);
 GO
 INSERT INTO [sr_parms_rec] VALUES(4,'MCA1163',16,NULL,15,240.0,NULL,1680.0,500.0,0.0001,0.0,0.0,0.0,0.0,0.0001,0.0001,NULL);
+GO
+INSERT INTO [sr_parms_rec] VALUES(5,'JSR-15',11,3,45,640,NULL,1680,500,0.0001,0,0,0,0,0.0001,0.0001,9600);
 GO
 INSERT INTO [unattended_parms_rec] VALUES(3,600,1,0.0);
 GO
 INSERT INTO [unattended_parms_rec] VALUES(4,600,1,0.0);
 GO
+INSERT INTO [unattended_parms_rec] VALUES(5,600,1,0.0);
+GO
 INSERT INTO [HVCalibrationParams] VALUES(3,5,2000,10,100,2000);
 GO
 INSERT INTO [HVCalibrationParams] VALUES(4,5,2000,10,100,2000);
 GO
+INSERT INTO [HVCalibrationParams] VALUES(5,5,2000,10,100,2000);
+GO
 INSERT INTO [stratum_id_detector] VALUES(3,1);
 GO
 INSERT INTO [stratum_id_detector] VALUES(4,1);
+GO
+INSERT INTO [stratum_id_detector] VALUES(5,1);
 GO
 INSERT INTO [LMNetComm] VALUES(3,1,5011,5000,'169.254.255.255',500,8,8192,50,0,1,0);
 GO
@@ -2087,13 +2105,22 @@ INSERT INTO [LMHWParams] VALUES(4,1,1,0,1650,2,30);
 GO
 INSERT INTO [known_alpha_rec] VALUES(2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,0.0,0.0,0.0,0.0,0.0,100000000.0,NULL,NULL,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
+
 INSERT INTO [multiplicity_rec] VALUES(2,1,0,473.5,2.154,3.789,5.211,3.163,8.24,17.321,1.0,0.0,0.0,0.0,1.0,NULL,NULL,1.0);
 GO
+
 INSERT INTO [analysis_method_rec] VALUES(2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL,NULL);
 GO
+
 INSERT INTO [cal_curve_rec] VALUES(2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
 INSERT INTO [acquire_parms_rec] VALUES('XXXX','XXXX','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
+GO
+INSERT INTO [analysis_method_rec] VALUES (1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL,NULL);
+GO
+INSERT INTO [analysis_method_rec] VALUES (2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL,NULL);
+GO
+INSERT INTO [acquire_parms_rec] VALUES('XXXX','XXXX','XXXX','XXXX','JSR-15','Pu','','Default','Default','','','XXXX','XXXX','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1,0,40,2,'','',0,0,'2016-08-05T11:05:39.2729192-06:00','2016-08-05T16:28:15.4647845-06:00','JSR-15');
 GO
 INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO

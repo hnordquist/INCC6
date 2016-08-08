@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 (NDATest branch) Beta Release 14
-6.0.1.14 Aug 26, 2016
+INCC6 (NDATest branch) Beta Release 15
+6.0.1.15 Aug ??, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -133,7 +133,7 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.14 (NDATest) Aug 26, 2016
+Expected 6.0.1.15 Aug ??, 2016
 
 #105	Measurement, waiting for a neutron that never arrives (MCA-527)
 #101	Coincidence matrix calculation needs completion
@@ -142,6 +142,8 @@ Closed issues
 #25	List mode acquistion predelay not stored
 #40	source ID in 'initial source' does not get passed to results
 #41	INCC6 CANNOT be KILLED!!! :)
+
+6.0.1.14 Aug 8, 2016
 
 ***	Fix LANL's Acquire Assay Cancel crash in 382f3ff7aa018b53580f11317bbd8370b6cdc949;
 	Tool tip for Setup dialog detector type field for IAEA/Euratom;
