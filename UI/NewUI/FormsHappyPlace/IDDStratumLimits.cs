@@ -60,7 +60,12 @@ namespace NewUI
             foreach (var stratum in sl)
             {
                 if (stratum.Stratum.modified)
+                {
+                    AcquireParameters acq = NC.App.DB.LastAcquire();
+                    string curdet = acq.detector_id;
                     NC.App.DB.UpdateStratum(stratum.Desc, stratum.Stratum);
+                    NC.App.DB.AssociateStratum(NC.App.DB.Detectors.Find(d => string.Compare(d.Id.DetectorName, curdet, true) == 0), stratum.Desc, stratum.Stratum); // associates it with the detector
+                }
             }
             this.Close();
         }
@@ -82,25 +87,45 @@ namespace NewUI
 
             if (row >= 0)
             {
-                INCCDB.StratumDescriptor changed = sl.ElementAt(row);
-                double d;
-                switch (col)
+                if (row >= sl.Count) // Is a new stratum
                 {
-                    case 1:
-                        Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
-                        changed.Stratum.bias_uncertainty = d;
-                        changed.Stratum.modified = true;
-                        break;
-                    case 2:
-                        Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
-                        changed.Stratum.random_uncertainty = d;
-                        changed.Stratum.modified = true;
-                        break;
-                    case 3:
-                        Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
-                        changed.Stratum.systematic_uncertainty = d;
-                        changed.Stratum.modified = true;
-                        break;
+                    INCCDB.Descriptor candidate = new INCCDB.Descriptor(StrataView[0, row].Value.ToString(), StrataView[0, row].Value.ToString());
+                    Stratum st = new Stratum();
+                    INCCDB.StratumDescriptor newst = new INCCDB.StratumDescriptor(candidate, st);
+                    AcquireParameters acq = NC.App.DB.LastAcquire();
+                    string curdet = acq.detector_id;
+                    if (!String.IsNullOrEmpty(StrataView[0, row].Value.ToString()))
+                    {
+                        NC.App.DB.StrataList().Add(newst);
+                        NC.App.DB.AssociateStratum(NC.App.DB.Detectors.Find(di => string.Compare(di.Id.DetectorName, curdet, true) == 0), candidate, st);
+                    }
+                    sl.Add(newst);
+                }
+                else
+                {
+                    INCCDB.StratumDescriptor changed = sl.ElementAt(row);
+                    double d;
+                    switch (col)
+                    {
+                        case 1:
+                            Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
+                            changed.Stratum.bias_uncertainty = d;
+                            changed.Stratum.modified = true; 
+                            StrataView[col,row].Value = d.ToString("F2");
+                            break;
+                        case 2:
+                            Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
+                            changed.Stratum.random_uncertainty = d;
+                            changed.Stratum.modified = true;
+                            StrataView[col, row].Value = d.ToString("F2");
+                            break;
+                        case 3:
+                            Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
+                            changed.Stratum.systematic_uncertainty = d;
+                            StrataView[col, row].Value = d.ToString("F2");
+                            changed.Stratum.modified = true;
+                            break;
+                    }
                 }
             }
         }
