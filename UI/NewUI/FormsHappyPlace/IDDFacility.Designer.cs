@@ -357,6 +357,7 @@
             this.SRType.Name = "SRType";
             this.SRType.Size = new System.Drawing.Size(100, 20);
             this.SRType.TabIndex = 0;
+            this.SRType.Visible = false;
             // 
             // IDDFacility
             // 
