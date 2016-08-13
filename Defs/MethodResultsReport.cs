@@ -398,10 +398,13 @@ namespace AnalysisDefs
                         }
                         break;
                     case INCCReportSection.Reference:
-                        sec = new INCCStyleSection(null, 1);
-                        sec.AddHeader("Counting results, summaries and cycle counts file name");  // section header
-                        Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFiles.CSVResultsFileName.Path);
-                        sec.Add(resline);
+                        if (!meas.ResultsFiles.CSVResultsFileName.IsNullOrEmpty)
+                        {
+                            sec = new INCCStyleSection(null, 1);
+                            sec.AddHeader("Counting results, summaries and cycle counts file name");  // section header
+                            Row resline = new Row(); resline.Add(0, "  " + meas.ResultsFiles.CSVResultsFileName.Path);
+                            sec.Add(resline);
+                        }
                         break;
                     default:
                         break;

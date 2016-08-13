@@ -2722,6 +2722,12 @@ namespace AnalysisDefs
             get;
             set;
         }
+
+        public bool IsNullOrEmpty
+        {
+            get { return string.IsNullOrEmpty(Path); }
+        }
+
         public ResultFile()
         {
 			Path = string.Empty;
