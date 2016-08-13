@@ -45,6 +45,7 @@ namespace NewUI
         {
             ah = AH;
             InitializeComponent();
+            
             LoadMeasurementsFromDB();
         }
 
@@ -89,24 +90,28 @@ namespace NewUI
         private void LoadMeasurementsFromDB()
         {
             // get the list of measurement Ids
-            List<MeasId> list = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, ah.mo.PrintName());
-            int measurecount = list.Count;
-            foreach (MeasId m in list)
+            //List<MeasId> list = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, ah.mo.PrintName());
+            List<Measurement> mlist = NC.App.DB.MeasurementsFor(ah.det.Id.DetectorName);
+            int measurecount = mlist.Count;
+            foreach (Measurement m in mlist)
             {
-                string ItemWithNumber = string.IsNullOrEmpty(m.Item.item) ? "Empty" : m.Item.item;
-                if (Path.GetFileName(m.FileName).Contains("_"))
-                    //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
-                    ItemWithNumber += "("+Path.GetFileName(m.FileName).Substring(Path.GetFileName(m.FileName).IndexOf('_')+1, 2)+")";
+                string ItemWithNumber = string.IsNullOrEmpty(m.AcquireState.item_id) ? "Empty" : m.AcquireState.item_id;
+                if (Path.GetFileName(m.MeasurementId.FileName).Contains("_"))
+                //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
+                    ItemWithNumber += "("+Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_')+1, 2)+")";
                 ListViewItem lvi = new ListViewItem(new string[] {
-                    ItemWithNumber,
-                    string.IsNullOrEmpty(m.Item.stratum) ? "Empty" : m.Item.stratum,
-                    m.MeasDateTime.ToString("yy.MM.dd"), m.MeasDateTime.ToString("HH:mm:ss") });
+                    m.MeasOption.PrintName(),
+                    string.IsNullOrEmpty(m.AcquireState.ItemId.stratum) ? "Empty" : m.AcquireState.ItemId.stratum,
+                    m.AcquireState.item_id,
+                    m.MeasDate.ToString("yyMMdd HH:mm:ss"),
+                    Path.GetFileName(m.MeasurementId.FileName),
+                    });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
             }
 
             //Add also any rates only measurements. No reason they can't be used here.
-            list = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, "Rates");
+            /*mlist = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, "Rates");
             NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).
                 TraceEvent(NCCReporter.LogLevels.Info, 87654,
                 measurecount+list.Count + " " + ah.mo.PrintName() + " measurements available");
@@ -122,7 +127,7 @@ namespace NewUI
                     m.MeasDateTime.ToString("yy.MM.dd"), m.MeasDateTime.ToString("HH:mm:ss") });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
-            }
+            }*/
 
         }
 

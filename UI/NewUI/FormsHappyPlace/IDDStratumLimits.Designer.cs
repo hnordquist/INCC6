@@ -82,6 +82,7 @@
             this.historical_random_uncertainty,
             this.historical_sys_uncertainty});
             this.StrataView.Location = new System.Drawing.Point(10, 15);
+            this.StrataView.MultiSelect = false;
             this.StrataView.Name = "StrataView";
             this.StrataView.Size = new System.Drawing.Size(614, 238);
             this.StrataView.TabIndex = 4;
@@ -91,7 +92,6 @@
             // 
             this.Stratum_ID.HeaderText = "Stratum ID";
             this.Stratum_ID.Name = "Stratum_ID";
-            this.Stratum_ID.ReadOnly = true;
             // 
             // historical_bias
             // 

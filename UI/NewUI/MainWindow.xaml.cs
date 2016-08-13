@@ -389,11 +389,6 @@ namespace NewUI
         private void AcquireVerificationClick(object sender, RoutedEventArgs e)
         {
             IDDAcquireAssay f = new IDDAcquireAssay();
-            WinPos childPos = main.GetChildPos(f.Height,f.Width);
-            f.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            if (childPos.height < f.Height || childPos.width < f.Width) // Resize if it will go off screen.
-                f.Size = new System.Drawing.Size((int)childPos.width, (int)childPos.height);
-            f.Location = new System.Drawing.Point((int)childPos.left, (int)childPos.top);
             f.ShowDialog();
         }
 

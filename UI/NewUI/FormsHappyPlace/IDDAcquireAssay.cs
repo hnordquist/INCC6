@@ -36,7 +36,6 @@ namespace NewUI
 
 	public partial class IDDAcquireAssay : Form
     {
-        //NEXT: use NumericTextBox to validate input on this dialog.  hn 5.14.2015
         AcquireHandlers ah;
         AnalysisMethods am;
         public IDDAcquireAssay()
