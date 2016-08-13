@@ -240,7 +240,6 @@ namespace NewUI
                 DialogResult = DialogResult.OK;
 			else if (Goal == EndGoal.Transfer)
                 DialogResult = DialogResult.OK;
-				// do something here        
             Close();
         }
 

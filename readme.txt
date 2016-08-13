@@ -135,6 +135,7 @@ Closed issues
 
 Expected 6.0.1.15 Aug ??, 2016
 
+#126	Reanalyze
 #105	Measurement, waiting for a neutron that never arrives (MCA-527)
 #101	Coincidence matrix calculation needs completion
 #99	Time interval summary incomplete

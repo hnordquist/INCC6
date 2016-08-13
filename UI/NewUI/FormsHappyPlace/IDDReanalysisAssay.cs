@@ -210,7 +210,7 @@ namespace NewUI
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
 			else
 			{
-                Integ.FillInMeasurementDetails(meas);
+                Integ.FillInMeasurementDetails(meas, useCurCalibParams:UseCurrentCalibCheckBox.Checked);
                 meas.ResultsFiles.Reset(); 
                 if (normmodified)
 					meas.Norm.currNormalizationConstant = norm;
@@ -349,20 +349,6 @@ namespace NewUI
             }
         }
 
-		private void UseCurrentCalibCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void ReplaceOriginalCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-
-		}
-
-        private void calendarEditingControl1_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
 
 		private void NormConstErr_Leave(object sender, EventArgs e)
 		{

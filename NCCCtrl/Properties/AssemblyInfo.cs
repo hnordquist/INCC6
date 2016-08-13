@@ -8,7 +8,7 @@ using NCCConfig;
 // associated with an assembly.
 [assembly: AssemblyTitle("NCCCtrl")]
 [assembly: AssemblyDescription("INCC6 file and live DAQ, application logic")]
-[assembly: AssemblyConfiguration("(NDATest branch)")]
+[assembly: AssemblyConfiguration("(NDATest)")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]

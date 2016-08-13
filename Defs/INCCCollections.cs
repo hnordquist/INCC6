@@ -4066,12 +4066,11 @@ namespace AnalysisDefs
             /// <returns>true if both properties are case-insensitively equal</returns>
             public static int Compare2(Descriptor x, Descriptor y)
             {
-              System.Collections.CaseInsensitiveComparer comp =   new System.Collections.CaseInsensitiveComparer();
-              int n = comp.Compare(x.Item1, y.Item1);
-              if (n == 0)
-                  return comp.Compare(x.Item2, y.Item2);
-              else
-                  return n;
+                int n = string.Compare(x.Item1, y.Item1, true);
+                if (n == 0)
+                    return string.Compare(x.Item2, y.Item2, true);
+                else
+                    return n;
             }
 
             /// <summary>

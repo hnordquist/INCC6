@@ -657,7 +657,17 @@ namespace NCC
 
         }
 
-        public static void FillInMeasurementDetails(Measurement meas)
+		/// <summary>
+		/// Prepare measurement instance content for analysis
+		/// Populate calibration and counting parameters maps
+		/// Create general results and specif results dictionary map entries
+		/// Set up stratum details
+		/// </summary>
+		/// <param name="meas">The partially initialized measurement instance</param>
+		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
+		///                                 skipped if Reanalysis prepared the details from database measurement results
+		/// </param>
+        public static void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
         {
             if (meas.Detector.ListMode)
             {
@@ -685,30 +695,36 @@ namespace NCC
                     meas.AnalysisParams.Add(meas.Detector.MultiplicityParams);
             }
 
-            // get the INCC5 analysis methods
-            meas.INCCAnalysisState = new INCCAnalysisState();
-            INCCSelector sel = new INCCSelector(meas.AcquireState.detector_id, meas.AcquireState.item_type);
-            AnalysisMethods am;
-            bool found = CentralizedState.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
-            if (found)
-            {
-                am.selector = sel; // gotta do this so that the equality operator is not incorrect
-                meas.INCCAnalysisState.Methods = am;
-            }
-            else
-                meas.INCCAnalysisState.Methods = new AnalysisMethods(sel);
+            // get the current INCC5 analysis methods
+			if (useCurCalibParams || meas.INCCAnalysisState == null)
+			{
+				meas.INCCAnalysisState = new INCCAnalysisState();
+				INCCSelector sel = new INCCSelector(meas.AcquireState.detector_id, meas.AcquireState.item_type);
+				AnalysisMethods am;
+				bool found = CentralizedState.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
+				if (found)
+				{
+					am.selector = sel; // gotta do this so that the equality operator is not incorrect
+					meas.INCCAnalysisState.Methods = am;
+				}
+				else
+					meas.INCCAnalysisState.Methods = new AnalysisMethods(sel);
+			} // else use what was there
 
             meas.InitializeContext();
 
             meas.PrepareINCCResults();
 
-            // next: stratum not set
-            List<INCCDB.StratumDescriptor> sl = CentralizedState.App.DB.StrataList();
-            INCCDB.StratumDescriptor s = sl.Find(w => w.Desc.CompareTo(meas.AcquireState.stratum_id) == 0);
-            if (s == null)
-                meas.Stratum = new Stratum();
-            else
-                meas.Stratum = new Stratum(s.Stratum);
+            // stratum look up, finds existing stratum by name
+			if (useCurCalibParams || meas.Stratum == null)
+			{ 
+				List<INCCDB.StratumDescriptor> sl = CentralizedState.App.DB.StrataList();
+				INCCDB.StratumDescriptor s = sl.Find(w => string.Compare(w.Desc.Name, meas.AcquireState.stratum_id.Name, true) == 0);
+				if (s == null)
+					meas.Stratum = new Stratum();
+				else
+					meas.Stratum = new Stratum(s.Stratum);
+			}
 
             INCCResults.results_rec xres = new INCCResults.results_rec(meas);
             meas.INCCAnalysisResults.TradResultsRec = xres;

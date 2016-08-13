@@ -39,19 +39,19 @@ namespace NewUI
         public IDDReanalyzeDBMeas()
         {
             InitializeComponent();
-			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+            //AcquireParameters acq;
+            Detector det = Integ.GetCurrentAcquireDetector();
 			Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, "verification", "All");
         }
 
 
 		private List<INCCDB.IndexedResults> mlist;
-        AcquireParameters acq;
-		Detector det;
 
 		public void ShowOther()
 		{
-			IDDMeasurementList measlist = new IDDMeasurementList();
+            Detector det = Integ.GetCurrentAcquireDetector();
+            IDDMeasurementList measlist = new IDDMeasurementList();
 			measlist.Init(mlist,
 						AssaySelector.MeasurementOption.verification,
 						goal: IDDMeasurementList.EndGoal.Reanalysis, lmonly: false, inspnum: "All", detector: det);
@@ -65,6 +65,7 @@ namespace NewUI
                         return;
 					DateTimeOffset dto = m.MeasurementId.MeasDateTime;
                     DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
+                    det = m.Detector; // use detector as re-constructed from the original measurement
 					// get the cycles for the selected measurement from the database, and add them to the current measurement
 					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId);
 					foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance

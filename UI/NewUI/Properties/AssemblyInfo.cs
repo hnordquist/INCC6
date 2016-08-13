@@ -6,8 +6,8 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6")]
-[assembly: AssemblyDescription("Supports PTR-32, LMMM, SR DAQ, INCC5 processing, and LM data analysis")]
-[assembly: AssemblyConfiguration("(NDATest branch)")]
+[assembly: AssemblyDescription("Supports SR DAQ, INCC5 processing, PTR-32, MCA-527 and LMMM DAQ, with LM data analysis")]
+[assembly: AssemblyConfiguration("(NDATest)")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]
