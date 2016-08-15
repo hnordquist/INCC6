@@ -39,7 +39,6 @@ namespace NewUI
         public IDDReanalyzeDBMeas()
         {
             InitializeComponent();
-            //AcquireParameters acq;
             Detector det = Integ.GetCurrentAcquireDetector();
 			Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, "verification", "All");

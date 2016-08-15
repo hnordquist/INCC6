@@ -53,7 +53,7 @@ namespace NewUI
             {
                 cb.Items.Add(d.Name);
             }
-			if (N.App.DB.Materials.Has(acq.item_type))  // avoid case-insenstive mis-match by using the Name in the Materials list against that from the DB Acquire instance
+			if (N.App.DB.Materials.Has(acq.item_type))  // avoid case-insensitive mis-match by using the Name in the Materials list against that from the DB Acquire instance
 			{
 				INCCDB.Descriptor d = N.App.DB.Materials.Get(acq.item_type);
 				cb.SelectedItem = d.Name;

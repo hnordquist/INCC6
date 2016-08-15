@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 (NDATest branch) Beta Release 15
-6.0.1.15 Aug ??, 2016
+INCC6 Beta Release 15
+6.0.1.15 TBD Aug ??, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -133,16 +133,14 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-Expected 6.0.1.15 Aug ??, 2016
+6.0.1.15 TBD Aug ??, 2016
 
 #126	Reanalyze
-#105	Measurement, waiting for a neutron that never arrives (MCA-527)
-#101	Coincidence matrix calculation needs completion
-#99	Time interval summary incomplete
-#10	Replay v. pass-thru transfer options have summary errors
-#25	List mode acquistion predelay not stored
-#40	source ID in 'initial source' does not get passed to results
-#41	INCC6 CANNOT be KILLED!!! :)
+***  KVal selector for Euratom prepped for use; acquire mtl type case mismatch patch
+***  Fix stratum list to all add
+***  Create DB script includes JSR-15 entry
+***  skip empty output line in report if no virtual SR results
+
 
 6.0.1.14 Aug 8, 2016
 
