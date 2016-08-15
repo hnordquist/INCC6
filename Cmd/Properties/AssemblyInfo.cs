@@ -8,7 +8,7 @@ using NCCConfig;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6 command line")]
 [assembly: AssemblyDescription("Supports PTR-32, LMMM, SR DAQ, INCC5 processing, and LM data file analysis")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]

@@ -8,7 +8,7 @@ using NCCConfig;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6 RepDB")]
 [assembly: AssemblyDescription("INCC6 database and reporting")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]

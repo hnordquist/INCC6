@@ -7,7 +7,7 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6")]
 [assembly: AssemblyDescription("Supports SR DAQ, INCC5 processing, PTR-32, MCA-527 and LMMM DAQ, with LM data analysis")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]
