@@ -576,7 +576,7 @@ namespace NCCFile
             if (acq == null)
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = irf.dt; acq.lm.TimeStamp = irf.dt;
-            acq.num_runs = irf.num_runs; // RequestedRepetitions
+            acq.lm.Cycles = acq.num_runs = irf.num_runs; // RequestedRepetitions
             int tx = def.comment.IndexOf(" (Original file name");
             if (tx >= 0)
                 acq.comment = def.comment.Substring(0, tx);
