@@ -31,70 +31,101 @@ using AnalysisDefs;
 
 namespace NewUI
 {
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
+
     public partial class IDDDemingFit : Form
     {
+
+		private Detector det;
+		public IDDCurveType ict;
         public IDDDemingFit()
         {
             InitializeComponent();
+			det = Integ.GetCurrentAcquireDetector();
+            Text += " for detector " + det.Id.DetectorName;
+			ict = new IDDCurveType();
 			RefreshCurveEqComboBox();
 			RefreshMethodComboBox();
-            MessageBox.Show("This functionality is not complete yet.", "RESULTS UNKNOWN AT THIS TIME");
 		}
 
 		public void RefreshCurveEqComboBox()
         {
             MaterialTypeComboBox.Items.Clear();
-            foreach (INCCAnalysisParams.CurveEquation cs in Enum.GetValues(typeof(INCCAnalysisParams.CurveEquation)))
+            foreach (INCCDB.Descriptor desc in N.App.DB.Materials.GetList())
             {
-                MaterialTypeComboBox.Items.Add(cs.ToDisplayString());                
+                MaterialTypeComboBox.Items.Add(desc.Name);
             }
             MaterialTypeComboBox.Refresh();
+			if (MaterialTypeComboBox.Items.Count > 0)
+				MaterialTypeComboBox.SelectedIndex = 0;
+
 		}
  		 public void RefreshMethodComboBox()
         {
             AnalysisMethodComboBox.Items.Clear();
-                AnalysisMethodComboBox.Items.Add(AnalysisMethod.CalibrationCurve.FullName());                
-                AnalysisMethodComboBox.Items.Add(AnalysisMethod.KnownA.FullName());                
-                AnalysisMethodComboBox.Items.Add(AnalysisMethod.AddASource.FullName());                
-                AnalysisMethodComboBox.Items.Add(AnalysisMethod.Active.FullName());                
+                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.CalibrationCurve));                
+                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.KnownA)); 
+				if (VerificationCalDataRadioButton.Checked)
+				{               
+					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.AddASource));                
+					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.Active));
+				}
             AnalysisMethodComboBox.Refresh();
+			AnalysisMethodComboBox.SelectedIndex = 0;
 		}         
 
         private void VerificationCalDataRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-
+			RefreshMethodComboBox();
         }
 
-        private void HoldupDataRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+			if (MaterialTypeComboBox.SelectedItem != null)
+				ict.Material = (string)MaterialTypeComboBox.SelectedItem;
         }
 
         private void AnalysisMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+			if (AnalysisMethodComboBox.SelectedItem != null)
+			{
+				jigglypuff j = (jigglypuff)AnalysisMethodComboBox.SelectedItem;
+				ict.AnalysisMethod = j.a;
+			}
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-			IDDCurveType ict = new IDDCurveType();
-			ict.ShowDialog();
-
+			DialogResult = DialogResult.OK;
+			Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
 
         }
+
+		class jigglypuff
+		{
+			public jigglypuff(AnalysisMethod am)
+			{
+				a = am;
+				s = a.FullName();
+			}
+			public AnalysisMethod a;
+			public string s;
+			override public string ToString()
+			{
+				return s;
+			}
+
+		}
     }
 }

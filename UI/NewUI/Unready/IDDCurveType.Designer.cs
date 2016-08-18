@@ -51,7 +51,6 @@
             this.CurveTypeComboBox.Name = "CurveTypeComboBox";
             this.CurveTypeComboBox.Size = new System.Drawing.Size(238, 21);
             this.CurveTypeComboBox.TabIndex = 1;
-            this.CurveTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.CurveTypeComboBox_SelectedIndexChanged);
             // 
             // OKBtn
             // 

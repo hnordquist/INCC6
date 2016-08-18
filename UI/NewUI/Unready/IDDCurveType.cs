@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,35 +27,55 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
+using AnalysisDefs;
 
 namespace NewUI
 {
-    public partial class IDDCurveType : Form
-    {
-        public IDDCurveType()
-        {
-            InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
-        }
+	using Integ = NCC.IntegrationHelpers;
+	public partial class IDDCurveType : Form
+	{
 
-        private void CurveTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
+		public string Material;
+		public AnalysisMethod AnalysisMethod;
+		public INCCAnalysisParams.CurveEquation CurveEquation;
+		private Detector det;
+		public IDDCurveType()
+		{
+			InitializeComponent();
+			det = Integ.GetCurrentAcquireDetector();
+			Text += " for detector " + det.Id.DetectorName;
+			CurveTypeComboBox.Items.Clear();
+			foreach (INCCAnalysisParams.CurveEquation cs in Enum.GetValues(typeof(INCCAnalysisParams.CurveEquation)))
+			{
+				CurveTypeComboBox.Items.Add(cs.ToDisplayString());
+			}
+			CurveTypeComboBox.Refresh();
+            CurveTypeComboBox.SelectedIndex = 0;
+		}
 
-        }
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			CurveEquation = (INCCAnalysisParams.CurveEquation)CurveTypeComboBox.SelectedIndex;
+			Close();
+			IDDDemingFitSelect measlist = new IDDDemingFitSelect();
+			measlist.CurveEquation = CurveEquation;
+			measlist.AnalysisMethod = AnalysisMethod;
+			measlist.Material = Material;
+			measlist.Init(det.Id.DetectorId);
+            if (measlist.bGood)
+                measlist.ShowDialog();
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
+		}
 
-        }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-    }
+		}
+	}
 }
