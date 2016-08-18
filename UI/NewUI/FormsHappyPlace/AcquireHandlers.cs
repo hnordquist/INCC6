@@ -409,7 +409,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
+                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
                         dr = aw2A.ShowDialog(); // show LM-relevant acquire-style settings for modification or confirmation
@@ -423,7 +423,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PulseFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
+                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
                         dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
@@ -437,7 +437,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
+                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
                         dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
@@ -451,7 +451,7 @@ namespace NewUI
  					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
-				    if (NC.App.Opstate.Measurement.MeasOption == AssaySelector.MeasurementOption.unspecified)
+				    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
                         dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation

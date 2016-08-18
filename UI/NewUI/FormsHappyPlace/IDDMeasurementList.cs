@@ -35,35 +35,35 @@ namespace NewUI
 {
 	using N = NCC.CentralizedState;
 	public partial class IDDMeasurementList : Form
-    {
+	{
 
 		public enum EndGoal { Report, Summary, Reanalysis, Transfer }
 
-        public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, Detector detector = null)
-        {
-            InitializeComponent();
+		public IDDMeasurementList(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, Detector detector = null)
+		{
+			InitializeComponent();
 			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 			try
 			{
+				InitSort();
 				PrepNotepad();
-		        SetTitlesAndChoices(filter, alltypes, goal,
-			        detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
-				mlist = N.App.DB.MeasurementsFor(detector == null? string.Empty : detector.Id.DetectorId, filter);
+				SetTitlesAndChoices(filter, alltypes, goal,
+					detector == null ? string.Empty : detector.Id.DetectorId, string.Empty);
+				mlist = N.App.DB.MeasurementsFor(detector == null ? string.Empty : detector.Id.DetectorId, filter);
 				bGood = PrepList(filter, detector);
-			}
-			finally
+			} finally
 			{
 				System.Windows.Input.Mouse.OverrideCursor = null;
 			}
-            SummarySelections = null;
-        }
+			SummarySelections = null;
+		}
 
-        public void Init(List<INCCDB.IndexedResults> ilist,
-                    AssaySelector.MeasurementOption filter, 
-                    EndGoal goal, bool lmonly, string inspnum = "", Detector detector = null)
-        {
+		public void Init(List<INCCDB.IndexedResults> ilist,
+					AssaySelector.MeasurementOption filter,
+					EndGoal goal, bool lmonly, string inspnum = "", Detector detector = null)
+		{
 			LMOnly = lmonly;
-			bool alltypes = (AssaySelector.MeasurementOption.unspecified == filter) && !lmonly;
+			bool alltypes = filter.IsWildCard() && !lmonly;
 			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 			try
 			{
@@ -78,123 +78,128 @@ namespace NewUI
 			}
 		}
 
-        public IDDMeasurementList()
-        {
-            InitializeComponent();
-            SummarySelections = null;
-            cols = new SortOrder[listView1.Columns.Count];
-            for (int i = 0; i < cols.Length; i++) cols[i] = SortOrder.Descending;
-            cols[4] = SortOrder.Ascending;  // datetime column
-        }
+		public IDDMeasurementList()
+		{
+			InitializeComponent();
+			SummarySelections = null;
+			InitSort();
+		}
 
-        private List<Measurement> mlist;
-        protected LMLoggers.LognLM ctrllog;
-        SortOrder[] cols;
+		private List<Measurement> mlist;
+		protected LMLoggers.LognLM ctrllog;
+		SortOrder[] cols;
 
-        bool AllMeas = false; // true means all measurements, false means the specified option type
-        EndGoal Goal = EndGoal.Summary; // summary implies all detectors        
-        bool LMOnly = false;
-        public bool bGood = false;
+		bool AllMeas = false; // true means all measurements, false means the specified option type
+		EndGoal Goal = EndGoal.Summary; // summary implies all detectors        
+		bool LMOnly = false;
+		public bool bGood = false;
 
-        void SetTitlesAndChoices(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, string detector = "", string inspnum = "")
-        {
-            string upthehill = "Measurement Selection for Detector";
-            string backwards = "Measurement Selection for All Detectors";
-            string itllbe = "Select Measurement for Detector";
-            string allright = "Select Measurements to Save for Detector";
-            AllMeas = alltypes;
-            Goal = goal;
-            string title = "";
-            if (Goal == EndGoal.Report)
-                title = upthehill;
-            else if (Goal == EndGoal.Summary)
-                title = backwards;
+		void InitSort()
+		{
+			cols = new SortOrder[listView1.Columns.Count];
+			for (int i = 0; i < cols.Length; i++)
+				cols[i] = SortOrder.Descending;
+			cols[4] = SortOrder.Ascending;  // datetime column
+		}
+
+		void SetTitlesAndChoices(AssaySelector.MeasurementOption filter, bool alltypes, EndGoal goal, string detector = "", string inspnum = "")
+		{
+			string upthehill = "Measurement Selection for Detector";
+			string backwards = "Measurement Selection for All Detectors";
+			string itllbe = "Select Measurement for Detector";
+			string allright = "Select Measurements to Save for Detector";
+			AllMeas = alltypes;
+			Goal = goal;
+			string title = "";
+			if (Goal == EndGoal.Report)
+				title = upthehill;
+			else if (Goal == EndGoal.Summary)
+				title = backwards;
 			else if (Goal == EndGoal.Reanalysis)
 			{
-                title = itllbe;
+				title = itllbe;
 				listView1.MultiSelect = false;
-			}
-			else // if (Goal == EndGoal.Transfer)
-                title = allright;
-            if (!AllMeas && Goal != EndGoal.Reanalysis)
-                title = (filter.PrintName() + " " + title);
-            if (!string.IsNullOrEmpty(detector))
-                title += (" " + detector);
-            if (!string.IsNullOrEmpty(inspnum))
-                title += (", Inspection #" + inspnum);
-            this.Text = title;
-        }
+			} else // if (Goal == EndGoal.Transfer)
+				title = allright;
+			if (!AllMeas && Goal != EndGoal.Reanalysis)
+				title = (filter.PrintName() + " " + title);
+			if (!string.IsNullOrEmpty(detector))
+				title += (" " + detector);
+			if (!string.IsNullOrEmpty(inspnum))
+				title += (", Inspection #" + inspnum);
+			this.Text = title;
+		}
 
-        bool PrepList(AssaySelector.MeasurementOption filter, Detector det)
-        {
-            if (Goal == EndGoal.Report)
-            { 
-                if (LMOnly)  // LMOnly
-                    mlist.RemoveAll(EmptyCSVFile);    // cull those without LM CSV results
-                else
-                    mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
-            }
+		bool PrepList(AssaySelector.MeasurementOption filter, Detector det)
+		{
+			if (Goal == EndGoal.Report)
+			{
+				if (LMOnly)  // LMOnly
+					mlist.RemoveAll(EmptyCSVFile);    // cull those without LM CSV results
+				else
+					mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
+			}
 			ctrllog = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
-            if (mlist.Count == 0)
-            {
-                string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det == null ? "any" : det.Id.DetectorId);
-                MessageBox.Show(msg, "WARNING");
-                return false;
-            }
-            LoadList(filter);
-            if (Goal == EndGoal.Report || Goal == EndGoal.Reanalysis || Goal == EndGoal.Transfer)   // it is for a named detector so elide the detector column
-                listView1.Columns[1].Width = 0;
-            if (!AllMeas)
+			if (mlist.Count == 0)
+			{
+				string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det == null ? "any" : det.Id.DetectorId);
+				MessageBox.Show(msg, "WARNING");
+				return false;
+			}
+			LoadList(filter);
+			if (Goal == EndGoal.Report || Goal == EndGoal.Reanalysis || Goal == EndGoal.Transfer)   // it is for a named detector so elide the detector column
+				listView1.Columns[1].Width = 0;
+			if (!AllMeas)
 				listView1.Columns[0].Width = 0;
-            if (filter == AssaySelector.MeasurementOption.rates)    // show item id
-                listView1.Columns[2].Width = 0;
-            if (filter == AssaySelector.MeasurementOption.normalization)
-            {
-                listView1.Columns[2].Width = 0;
-                listView1.Columns[3].Width = 0;   
-            }
-            if (filter == AssaySelector.MeasurementOption.background)     // next: add configuration active or passive column
-            {
-                listView1.Columns[2].Width = 0;
-                listView1.Columns[3].Width = 0;
-            }
-            return true;
+			if (filter == AssaySelector.MeasurementOption.rates)    // show item id
+				listView1.Columns[2].Width = 0;
+			if (filter == AssaySelector.MeasurementOption.normalization)
+			{
+				listView1.Columns[2].Width = 0;
+				listView1.Columns[3].Width = 0;
+			}
+			if (filter == AssaySelector.MeasurementOption.background)     // next: add configuration active or passive column
+			{
+				listView1.Columns[2].Width = 0;
+				listView1.Columns[3].Width = 0;
+			}
+			return true;
 		}
 
 		void LoadList(AssaySelector.MeasurementOption filter)
 		{
- 			listView1.ShowItemToolTips = true;
+			listView1.ShowItemToolTips = true;
 			int mlistIndex = 0;
 			foreach (Measurement m in mlist)
-            {
-                string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
-                if (Path.GetFileName(m.MeasurementId.FileName).Contains("_") && (AssaySelector.MeasurementOption.verification == filter) && (filter == m.MeasOption))
-                    //scan file name to display subsequent reanalysis number...... hn 9.21.2015
-                    ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
+			{
+				string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
+				if (Path.GetFileName(m.MeasurementId.FileName).Contains("_") && (AssaySelector.MeasurementOption.verification == filter) && (filter == m.MeasOption))
+					//scan file name to display subsequent reanalysis number...... hn 9.21.2015
+					ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
 
-                ListViewItem lvi = new ListViewItem(new string[] {
-                    m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
+				ListViewItem lvi = new ListViewItem(new string[] {
+					m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
-                    m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
+					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
 					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
                         });
-                listView1.Items.Add(lvi);
-                lvi.Tag = m.MeasDate;  // for proper column sorting
-                lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
+				listView1.Items.Add(lvi);
+				lvi.Tag = m.MeasDate;  // for proper column sorting
+				lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
 				if (string.IsNullOrEmpty(lvi.ToolTipText))
 					lvi.ToolTipText = "No results file available";
 				mlistIndex++;
-            }
-            MCount.Text = listView1.Items.Count.ToString() + " measurements";
-            if (listView1.SelectedItems.Count > 0)
-                MCountSel.Text = listView1.SelectedItems.Count.ToString();
-            else
-                MCountSel.Text = string.Empty;
-        }
+			}
+			MCount.Text = listView1.Items.Count.ToString() + " measurements";
+			if (listView1.SelectedItems.Count > 0)
+				MCountSel.Text = listView1.SelectedItems.Count.ToString();
+			else
+				MCountSel.Text = string.Empty;
+		}
 
-        string TypeTextFragment(AssaySelector.MeasurementOption filter)
+		string TypeTextFragment(AssaySelector.MeasurementOption filter)
 		{
-            if (filter == AssaySelector.MeasurementOption.unspecified && LMOnly)
+			if (filter.IsListMode() && LMOnly)
 				return "List Mode ";
 			else
 			{
@@ -205,232 +210,231 @@ namespace NewUI
 			}
 		}
 
-        public static bool EmptyINCC5File(Measurement m)
-        {
-            return m.ResultsFiles.Count <= 0 || string.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
-        }
+		public static bool EmptyINCC5File(Measurement m)
+		{
+			return m.ResultsFiles.Count <= 0 || string.IsNullOrEmpty(m.ResultsFiles.PrimaryINCC5Filename.Path);
+		}
 		public static bool EmptyCSVFile(Measurement m)
-        {
-            return string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path);
-        }
-        private void PrintBtn_Click(object sender, EventArgs e)   // next: this must be customized for each list view subtype
-        {
-            string path = System.IO.Path.GetTempFileName();
-            FileStream f = new FileStream(path, FileMode.OpenOrCreate);
-            StreamWriter s = new StreamWriter(f);
-            s.AutoFlush = true;
-            s.Write (String.Format ("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n","Item id","Stratum id","Measurement Type","Measurement Date and Time",""));
-            foreach (ListViewItem lvi in listView1.Items)
-            {
-                s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[4].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text));
-            }
-            f.Close();
-            PrintForm pf = new PrintForm(path, this.Text, "Print List");
-            pf.ShowDialog();
-            File.Delete(path);
-        }
+		{
+			return string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path);
+		}
+		private void PrintBtn_Click(object sender, EventArgs e)   // next: this must be customized for each list view subtype
+		{
+			string path = System.IO.Path.GetTempFileName();
+			FileStream f = new FileStream(path, FileMode.OpenOrCreate);
+			StreamWriter s = new StreamWriter(f);
+			s.AutoFlush = true;
+			s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", "Item id", "Stratum id", "Measurement Type", "Measurement Date and Time", ""));
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[4].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text));
+			}
+			f.Close();
+			PrintForm pf = new PrintForm(path, this.Text, "Print List");
+			pf.ShowDialog();
+			File.Delete(path);
+		}
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            if (Goal == EndGoal.Report)
-                ShowResults();
-            else if (Goal == EndGoal.Summary)
-                WriteSummary();
-            else if (Goal == EndGoal.Reanalysis)
-                DialogResult = DialogResult.OK;
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			if (Goal == EndGoal.Report)
+				ShowResults();
+			else if (Goal == EndGoal.Summary)
+				WriteSummary();
+			else if (Goal == EndGoal.Reanalysis)
+				DialogResult = DialogResult.OK;
 			else if (Goal == EndGoal.Transfer)
-                DialogResult = DialogResult.OK;
-            Close();
-        }
+				DialogResult = DialogResult.OK;
+			Close();
+		}
 
-        void WriteSummary()
-        {
-            SummarySelections.ResetSummaryRows();
-            foreach (ListViewItem lvi in listView1.Items)
-            {
-                if (!lvi.Selected)
-                    continue;
+		void WriteSummary()
+		{
+			SummarySelections.ResetSummaryRows();
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				if (!lvi.Selected)
+					continue;
 				int lvIndex = 0;
 				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
-                SummarySelections.Apply(mlist[lvIndex]);
-            }
-            if (SummarySelections.HasAny)
-            {
-                SaveFileDialog dlg = new SaveFileDialog();
-                dlg.Filter = "CSV files (*.csv) | All files (*.*)";
-                dlg.DefaultExt = ".csv";
-                dlg.FileName = "summary.csv";
-                dlg.InitialDirectory = N.App.AppContext.ResultsFilePath;
+				SummarySelections.Apply(mlist[lvIndex]);
+			}
+			if (SummarySelections.HasAny)
+			{
+				SaveFileDialog dlg = new SaveFileDialog();
+				dlg.Filter = "CSV files (*.csv) | All files (*.*)";
+				dlg.DefaultExt = ".csv";
+				dlg.FileName = "summary.csv";
+				dlg.InitialDirectory = N.App.AppContext.ResultsFilePath;
 
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    string lw = SummarySelections.HeaderRow;
-                    try
-                    {
-                        StreamWriter tx = File.CreateText(dlg.FileName);
-                           tx.WriteLine(lw);
-                        System.Collections.IEnumerator iter = SummarySelections.GetEntryEnumerator();
-                        while (iter.MoveNext())
-                        {
-                           string entry = (string)iter.Current;
-                           tx.WriteLine(entry);
-                        }
-                        tx.Close();
-                    }
-                    catch (IOException ex)
-                    {
-                        MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
-                    }
-                }
-            }
-        }
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					string lw = SummarySelections.HeaderRow;
+					try
+					{
+						StreamWriter tx = File.CreateText(dlg.FileName);
+						tx.WriteLine(lw);
+						System.Collections.IEnumerator iter = SummarySelections.GetEntryEnumerator();
+						while (iter.MoveNext())
+						{
+							string entry = (string)iter.Current;
+							tx.WriteLine(entry);
+						}
+						tx.Close();
+					} catch (IOException ex)
+					{
+						MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
+					}
+				}
+			}
+		}
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
-              Help.ShowHelp (null,".\\inccuser.chm");
-        }
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
+			Help.ShowHelp(null, ".\\inccuser.chm");
+		}
 
-        private void ShowResults()
-        {
-            foreach (ListViewItem lvi in listView1.Items)
-            {
-                if (lvi.Selected)
-                {
+		private void ShowResults()
+		{
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				if (lvi.Selected)
+				{
 					int lvIndex = 0;
 					int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
 					if (bNotepadHappensToBeThere)
-                    {
+					{
 						string path = GetMainFilePath(mlist[lvIndex].ResultsFiles, mlist[lvIndex].MeasOption, false);
-                        if (File.Exists(path))
-                            System.Diagnostics.Process.Start(notepadPath, path);
-                        else if (!string.IsNullOrEmpty(path))
-                            ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
-                        else 
-                            ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
-                    }
-                    lvi.Selected = false;
-                }
-            }
-        }
+						if (File.Exists(path))
+							System.Diagnostics.Process.Start(notepadPath, path);
+						else if (!string.IsNullOrEmpty(path))
+							ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
+						else
+							ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
+					}
+					lvi.Selected = false;
+				}
+			}
+		}
 
 		private string GetMainFilePath(ResultFiles files, AssaySelector.MeasurementOption mo, bool elide)
 		{
-            string res = string.Empty;
+			string res = string.Empty;
 			switch (mo)
 			{
 			case AssaySelector.MeasurementOption.unspecified:
 				res = files.CSVResultsFileName.Path;
-                break;
+				break;
 			default:
 				res = files.PrimaryINCC5Filename.Path;
-                break;
+				break;
 			}
-            if (elide)
-                res= Path.GetFileName(res);
-            return res;
+			if (elide)
+				res = Path.GetFileName(res);
+			return res;
 		}
 
-        public Measurement GetSingleSelectedMeas()
-        {
-            foreach (ListViewItem lvi in listView1.Items)
-            {
-                if (!lvi.Selected)
-                    continue;
-                int lvIndex = 0;
-                int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
-                return (mlist[lvIndex]);
-            }
-            return null;
-        }
+		public Measurement GetSingleSelectedMeas()
+		{
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				if (!lvi.Selected)
+					continue;
+				int lvIndex = 0;
+				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+				return (mlist[lvIndex]);
+			}
+			return null;
+		}
 
 		public List<Measurement> GetSelectedMeas()
-        {
+		{
 			List<Measurement> newlist = new List<Measurement>();
-            foreach (ListViewItem lvi in listView1.Items)
-            {
-                if (!lvi.Selected)
-                    continue;
-                int lvIndex = 0;
-                int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
-                newlist.Add(mlist[lvIndex]);
-            }
-            return newlist;
-        }
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				if (!lvi.Selected)
+					continue;
+				int lvIndex = 0;
+				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+				newlist.Add(mlist[lvIndex]);
+			}
+			return newlist;
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (Goal == EndGoal.Report)
-                ShowResults();
-        }
-        public void SetSummarySelections(ResultsSummary sel)
-        {
-            int i = sel.SortStratum ? 3 : 1;  // column 3 is strata, 1 is detector, 0 is option, 2 is item id, 4 is date time
-            cols[i] = SortOrder.Ascending;
-            SummarySelections = sel;
-            ListItemSorter(listView1, new ColumnClickEventArgs(i));
-        }
-        ResultsSummary SummarySelections;
+		private void listView1_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			if (Goal == EndGoal.Report)
+				ShowResults();
+		}
+		public void SetSummarySelections(ResultsSummary sel)
+		{
+			int i = sel.SortStratum ? 3 : 1;  // column 3 is strata, 1 is detector, 0 is option, 2 is item id, 4 is date time
+			cols[i] = SortOrder.Ascending;
+			SummarySelections = sel;
+			ListItemSorter(listView1, new ColumnClickEventArgs(i));
+		}
+		ResultsSummary SummarySelections;
 
 
-        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
+		private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+		{
 			Cursor sav = listView1.Cursor;
 			listView1.Cursor = Cursors.WaitCursor;
 			ListItemSorter(sender, e);
 			listView1.Cursor = sav;
-        }
+		}
 
-        public void ListItemSorter(object sender, ColumnClickEventArgs e)
-        {
-            ListView list = (ListView)sender;
-            int total = list.Items.Count;
-            list.BeginUpdate();
-            ListViewItem[] items = new ListViewItem[total];
-            for (int i = 0; i < total; i++)
-            {
-                int count = list.Items.Count;
-                int minIdx = 0;
-                for (int j = 1; j < count; j++)
-                {
-                    bool test = MeasListColumnCompare(list.Items[j], list.Items[minIdx], e.Column);
-                    if ((cols[e.Column] == SortOrder.Ascending && test) || 
-                        (cols[e.Column] == SortOrder.Descending && !test))
-                        minIdx = j;
-                }
+		public void ListItemSorter(object sender, ColumnClickEventArgs e)
+		{
+			ListView list = (ListView)sender;
+			int total = list.Items.Count;
+			list.BeginUpdate();
+			ListViewItem[] items = new ListViewItem[total];
+			for (int i = 0; i < total; i++)
+			{
+				int count = list.Items.Count;
+				int minIdx = 0;
+				for (int j = 1; j < count; j++)
+				{
+					bool test = MeasListColumnCompare(list.Items[j], list.Items[minIdx], e.Column);
+					if ((cols[e.Column] == SortOrder.Ascending && test) ||
+						(cols[e.Column] == SortOrder.Descending && !test))
+						minIdx = j;
+				}
 
-                items[i] = list.Items[minIdx];
-                list.Items.RemoveAt(minIdx);
-            }
-            list.Items.AddRange(items);
-            list.EndUpdate();
-            if (cols[e.Column] == SortOrder.Descending)
-                cols[e.Column] = SortOrder.Ascending;
-            else if (cols[e.Column] == SortOrder.Ascending)
-                cols[e.Column] = SortOrder.Descending;
-        }
+				items[i] = list.Items[minIdx];
+				list.Items.RemoveAt(minIdx);
+			}
+			list.Items.AddRange(items);
+			list.EndUpdate();
+			if (cols[e.Column] == SortOrder.Descending)
+				cols[e.Column] = SortOrder.Ascending;
+			else if (cols[e.Column] == SortOrder.Ascending)
+				cols[e.Column] = SortOrder.Descending;
+		}
 
-        bool MeasListColumnCompare(ListViewItem a, ListViewItem b, int column)
-        {
-            bool res = false;
-            if (column != 4)
-                res = a.SubItems[column].Text.CompareTo(b.SubItems[column].Text) < 0;
-            else if (column == 4)  // 4 is the datetime column, such fragile coding ... fix by adding a type value to the column header Tag 
-                res = (((DateTimeOffset)a.Tag).CompareTo((DateTimeOffset)b.Tag)) < 0;
-            return res;
-        }
+		bool MeasListColumnCompare(ListViewItem a, ListViewItem b, int column)
+		{
+			bool res = false;
+			if (column != 4)
+				res = a.SubItems[column].Text.CompareTo(b.SubItems[column].Text) < 0;
+			else if (column == 4)  // 4 is the datetime column, such fragile coding ... fix by adding a type value to the column header Tag 
+				res = (((DateTimeOffset)a.Tag).CompareTo((DateTimeOffset)b.Tag)) < 0;
+			return res;
+		}
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count > 0)
-                MCountSel.Text = listView1.SelectedItems.Count.ToString() + " selected";
-            else
-                MCountSel.Text = string.Empty;
-        }
+		private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (listView1.SelectedItems.Count > 0)
+				MCountSel.Text = listView1.SelectedItems.Count.ToString() + " selected";
+			else
+				MCountSel.Text = string.Empty;
+		}
 
 		static string notepadPath = string.Empty;
 		static bool bNotepadHappensToBeThere = false;
@@ -439,7 +443,7 @@ namespace NewUI
 			if (string.IsNullOrEmpty(notepadPath))
 			{
 				notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
-				bNotepadHappensToBeThere =  File.Exists(notepadPath);
+				bNotepadHappensToBeThere = File.Exists(notepadPath);
 			}
 		}
 	}

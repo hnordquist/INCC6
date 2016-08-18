@@ -101,7 +101,7 @@ KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
    Holdup and glovebox features, the Plot features,
-   Deming integration, some Add-a-src processing, Collar item data entry,
+   Deming least squares fit integration, some Add-a-src processing,
    Collar acquire and Poison Rod details, integrated help.
 
 This is beta release software; issues and missing features are known to exist.
@@ -135,11 +135,12 @@ Closed issues
 
 6.0.1.15 TBD Aug ??, 2016
 
-#126	Reanalyze
+#126 Reanalyze
 ***  KVal selector for Euratom prepped for use; acquire mtl type case mismatch patch
 ***  Fix stratum list to all add
 ***  Create DB script includes JSR-15 entry
 ***  skip empty output line in report if no virtual SR results
+***  Review dialogs measurement list sorting fixed
 
 
 6.0.1.14 Aug 8, 2016

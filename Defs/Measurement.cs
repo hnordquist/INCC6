@@ -276,7 +276,15 @@ namespace AnalysisDefs
             return Suffix[src];
         }
 
+		public static bool IsWildCard(this AssaySelector.MeasurementOption src)
+		{
+			return src == AssaySelector.MeasurementOption.unspecified;
+		}
 
+		public static bool IsListMode(this AssaySelector.MeasurementOption src)
+		{
+			return src == AssaySelector.MeasurementOption.unspecified;
+		}
 
         public static AssaySelector.MeasurementOption SrcToEnum(this string src)
         {
@@ -779,7 +787,7 @@ namespace AnalysisDefs
             if (rec.det.ListMode)
             {
                 AnalysisParams =  NC.App.LMBD.CountingParameters(rec.det, applySRFromDetector:true);
-                if (meaId.MeasOption == AssaySelector.MeasurementOption.unspecified) // pure List Mode, not INCC5
+                if (meaId.MeasOption.IsListMode()) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
                     NCC.IntegrationHelpers.ApplyVSRChangesToDefaultDetector(this);

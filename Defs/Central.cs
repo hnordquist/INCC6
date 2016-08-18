@@ -675,7 +675,7 @@ namespace NCC
                 // It should be the other way around, the Mult params for each LMMultiplicity analyzer override the single entry on the sr_parms_rec when each analyis is performed. 
 
                 meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
-                if (meas.MeasOption == AssaySelector.MeasurementOption.unspecified) // pure List Mode, not INCC5
+                if (meas.MeasOption.IsListMode()) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
                     ApplyVSRChangesToDefaultDetector(meas);
