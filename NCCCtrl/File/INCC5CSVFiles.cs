@@ -468,44 +468,50 @@ namespace NCCFile
 					NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Warning, 34100, "Expecting {0} lines, found {1}, skipping {2}", lines, csv.Lines.Count, System.IO.Path.GetFileName(file));
 					return;
 				}
-				Coefficients.a = GteIt(csv.Lines[0][0]);
+				Coefficients.a = GetDouble(csv.Lines[0][0]);
 				if (coeffnum > 1)
-					Coefficients.b = GteIt(csv.Lines[0][1]);
+					Coefficients.b = GetDouble(csv.Lines[0][1]);
 				if (coeffnum > 2)
-					Coefficients.c = GteIt(csv.Lines[0][2]);
+					Coefficients.c = GetDouble(csv.Lines[0][2]);
 				if (coeffnum > 3)
-					Coefficients.d = GteIt(csv.Lines[0][3]);
+					Coefficients.d = GetDouble(csv.Lines[0][3]);
 
 				// line 2 (skipped?)
-				//Coefficients.var_a = GteIt(csv.Lines[1][0]);
+				//Coefficients.var_a = GetDouble(csv.Lines[1][0]);
 				//if (coeffnum > 1)
-				//	Coefficients.var_b = GteIt(csv.Lines[2][1]);
+				//	Coefficients.var_b = GetDouble(csv.Lines[2][1]);
 				//if (coeffnum > 2)
-				//	Coefficients.var_c = GteIt(csv.Lines[3][2]);
+				//	Coefficients.var_c = GetDouble(csv.Lines[3][2]);
 				//if (coeffnum > 3)
-				//	Coefficients.var_d = GteIt(csv.Lines[4][3]);		
+				//	Coefficients.var_d = GetDouble(csv.Lines[4][3]);		
 
 				// line 3
-				Coefficients.var_a = GteIt(csv.Lines[2][0]);
+				Coefficients.var_a = GetDouble(csv.Lines[2][0]);
 
 				// line 4
 				if (csv.Lines.Count > 3)
 				{
-					Coefficients.setcovar(Coeff.a, Coeff.b, GteIt(csv.Lines[3][0]));
-					Coefficients.var_b = GteIt(csv.Lines[3][1]);
+					if (csv.Lines[4].Length < 2)
+						throw new Exception("Not enough entries on the b coefficient line " + csv.Lines[3].Length.ToString());
+					Coefficients.setcovar(Coeff.a, Coeff.b, GetDouble(csv.Lines[3][0]));
+					Coefficients.var_b = GetDouble(csv.Lines[3][1]);
 				}
 				if (csv.Lines.Count > 4)
 				{
-					Coefficients.setcovar(Coeff.c, Coeff.a, GteIt(csv.Lines[4][0]));
-					Coefficients.setcovar(Coeff.c, Coeff.b, GteIt(csv.Lines[4][1]));
-					Coefficients.var_c = GteIt(csv.Lines[4][2]);
+					if (csv.Lines[4].Length < 3)
+						throw new Exception("Not enough entries on the c coefficient line " + csv.Lines[4].Length.ToString());
+					Coefficients.setcovar(Coeff.a, Coeff.c, GetDouble(csv.Lines[4][0]));
+					Coefficients.setcovar(Coeff.a, Coeff.c, GetDouble(csv.Lines[4][1]));
+					Coefficients.var_c = GetDouble(csv.Lines[4][2]);
 				}
 				if (csv.Lines.Count > 5)
 				{
-					Coefficients.setcovar(Coeff.b, Coeff.c, GteIt(csv.Lines[5][0]));
-					Coefficients.setcovar(Coeff.b, Coeff.d, GteIt(csv.Lines[5][1]));
-					Coefficients.setcovar(Coeff.c, Coeff.d, GteIt(csv.Lines[5][2]));
-					Coefficients.var_d = GteIt(csv.Lines[5][3]);
+					if (csv.Lines[5].Length < 4)
+						throw new Exception("Not enough entries on the d coefficient line " + csv.Lines[5].Length.ToString());
+					Coefficients.setcovar(Coeff.b, Coeff.c, GetDouble(csv.Lines[5][0]));
+					Coefficients.setcovar(Coeff.b, Coeff.d, GetDouble(csv.Lines[5][1]));
+					Coefficients.setcovar(Coeff.c, Coeff.d, GetDouble(csv.Lines[5][2]));
+					Coefficients.var_d = GetDouble(csv.Lines[5][3]);
 				}
 			} catch (MalformedLineException)  // not a CSV file
 			{
@@ -517,7 +523,7 @@ namespace NCCFile
 
 		}
 
-		double GteIt(string s)
+		double GetDouble(string s)
 		{
 			double res = 0;
 			try
@@ -534,7 +540,7 @@ namespace NCCFile
 
 		// The results of processing a dmr file
 
-		public AnalysisDefs.INCCAnalysisParams.CurveEquationVals Coefficients;
+		public INCCAnalysisParams.CurveEquationVals Coefficients;
 
 
     }

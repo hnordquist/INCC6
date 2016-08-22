@@ -115,6 +115,12 @@
     <Compile Include="FormsHappyPlace\ChooseBackgroundType.Designer.cs">
       <DependentUpon>ChooseBackgroundType.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\EqCoeffViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\EqCoeffViewer.Designer.cs">
+      <DependentUpon>EqCoeffViewer.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\FileSel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1117,6 +1123,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\ChooseBackgroundType.resx">
       <DependentUpon>ChooseBackgroundType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\EqCoeffViewer.resx">
+      <DependentUpon>EqCoeffViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\FileSel.resx">
       <DependentUpon>FileSel.cs</DependentUpon>
