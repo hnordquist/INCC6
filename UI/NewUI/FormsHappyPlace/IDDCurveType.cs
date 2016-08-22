@@ -28,104 +28,75 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Windows.Forms;
 using AnalysisDefs;
-
 namespace NewUI
 {
-	using Integ = NCC.IntegrationHelpers;
 	using N = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	public partial class IDDCurveType : Form
+	{
 
-    public partial class IDDDemingFit : Form
-    {
-
+		public string Material;
+		public AnalysisMethod AnalysisMethod;
+		public INCCAnalysisParams.CurveEquation CurveEquation;
 		private Detector det;
-		public IDDCurveType ict;
-        public IDDDemingFit()
-        {
-            InitializeComponent();
-			det = Integ.GetCurrentAcquireDetector();
-            Text += " for detector " + det.Id.DetectorName;
-			ict = new IDDCurveType();
-			RefreshCurveEqComboBox();
-			RefreshMethodComboBox();
-		}
-
-		public void RefreshCurveEqComboBox()
-        {
-            MaterialTypeComboBox.Items.Clear();
-            foreach (INCCDB.Descriptor desc in N.App.DB.Materials.GetList())
-            {
-                MaterialTypeComboBox.Items.Add(desc.Name);
-            }
-            MaterialTypeComboBox.Refresh();
-			if (MaterialTypeComboBox.Items.Count > 0)
-				MaterialTypeComboBox.SelectedIndex = 0;
-
-		}
- 		 public void RefreshMethodComboBox()
-        {
-            AnalysisMethodComboBox.Items.Clear();
-                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.CalibrationCurve));                
-                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.KnownA)); 
-				if (VerificationCalDataRadioButton.Checked)
-				{               
-					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.AddASource));                
-					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.Active));
-				}
-            AnalysisMethodComboBox.Refresh();
-			AnalysisMethodComboBox.SelectedIndex = 0;
-		}         
-
-        private void VerificationCalDataRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-			RefreshMethodComboBox();
-        }
-
-
-        private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-			if (MaterialTypeComboBox.SelectedItem != null)
-				ict.Material = (string)MaterialTypeComboBox.SelectedItem;
-        }
-
-        private void AnalysisMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-			if (AnalysisMethodComboBox.SelectedItem != null)
-			{
-				jigglypuff j = (jigglypuff)AnalysisMethodComboBox.SelectedItem;
-				ict.AnalysisMethod = j.a;
-			}
-        }
-
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-			DialogResult = DialogResult.OK;
-			Close();
-        }
-
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
-		class jigglypuff
+		public IDDCurveType()
 		{
-			public jigglypuff(AnalysisMethod am)
+			InitializeComponent();
+			det = Integ.GetCurrentAcquireDetector();
+			Text += " for detector " + det.Id.DetectorName;
+			CurveTypeComboBox.Items.Clear();
+			foreach (INCCAnalysisParams.CurveEquation cs in Enum.GetValues(typeof(INCCAnalysisParams.CurveEquation)))
 			{
-				a = am;
-				s = a.FullName();
+				CurveTypeComboBox.Items.Add(cs.ToDisplayString());
 			}
-			public AnalysisMethod a;
-			public string s;
-			override public string ToString()
-			{
-				return s;
-			}
+			CurveTypeComboBox.Refresh();
+            CurveTypeComboBox.SelectedIndex = 0;
+		}
+
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			CurveEquation = (INCCAnalysisParams.CurveEquation)CurveTypeComboBox.SelectedIndex;
+			Close();
+			IDDDemingFitSelect measlist = new IDDDemingFitSelect();
+			measlist.CurveEquation = CurveEquation;
+			measlist.AnalysisMethod = AnalysisMethod;
+			measlist.Material = Material;
+			measlist.Init(det.Id.DetectorId);
+            if (measlist.bGood)
+                measlist.ShowDialog();
+		}
+
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
+
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
 
 		}
-    }
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			// dialog that opens a DMR file, and loads the resulting values into a coeff instance
+			OpenFileDialog aDlg =  new System.Windows.Forms.OpenFileDialog();
+			aDlg.CheckFileExists = true;
+			aDlg.FileName = "Deming.dmr";
+			aDlg.Filter = "DMR files (*.dmr)|*.dmr|All files (*.*)|*.*";
+            aDlg.DefaultExt = ".dmr";
+            aDlg.InitialDirectory = N.App.AppContext.FileInput;
+            aDlg.Title = "Select a Deming results file";
+            aDlg.Multiselect = false;
+            aDlg.RestoreDirectory = true;
+			DialogResult c645 = aDlg.ShowDialog();
+            if (c645 == DialogResult.OK)
+			{
+				NCCFile.CoefficientFile onefile = new NCCFile.CoefficientFile();
+				string path = System.IO.Path.GetFullPath(aDlg.FileName);
+				onefile.Process(path);
+				// todo: now do something with the results
+			}
+		}
+	}
 }

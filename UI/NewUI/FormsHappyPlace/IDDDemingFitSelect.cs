@@ -27,18 +27,20 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using AnalysisDefs;
+using NCCReporter;
 namespace NewUI
 {
 	using N = NCC.CentralizedState;
 	public partial class IDDDemingFitSelect : Form
-    {
-        public IDDDemingFitSelect()
-        {
-            InitializeComponent();
+	{
+		public IDDDemingFitSelect()
+		{
+			InitializeComponent();
 			InitSort();
-        }
+		}
 		private List<Measurement> mlist;
 		SortOrder[] cols;
 		public bool bGood;
@@ -46,7 +48,6 @@ namespace NewUI
 		public AnalysisMethod AnalysisMethod;
 		public INCCAnalysisParams.CurveEquation CurveEquation;
 		private string DetectorId;
-
 
 		public void Init(string id)
 		{
@@ -77,7 +78,8 @@ namespace NewUI
 
 		bool MatchingSwipeLeft(Measurement m)
 		{
-			return !m.INCCAnalysisState.Methods.HasMethod(AnalysisMethod);
+			return !(m.INCCAnalysisState.Methods.HasMethod(AnalysisMethod) && 
+				     (string.Compare(m.INCCAnalysisState.Methods.selector.material, Material, true) == 0)) ;
 		}
 
 		bool PrepList(string DetectorId)
@@ -85,7 +87,8 @@ namespace NewUI
 			mlist.RemoveAll(MatchingSwipeLeft);    // cull those without matching attributes
 			if (mlist.Count == 0)
 			{
-				string msg = string.Format("No {0} calibration measurements for {1} found.", DetectorId, Material);
+				string msg = string.Format("No '{0}' {1} calibration measurements found", Material, AnalysisMethod.FullName());
+				N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 3363, msg);
 				return false;
 			}
 			LoadList();
@@ -102,6 +105,11 @@ namespace NewUI
 			{
 
 			}
+
+			public override string ToString()
+			{
+				return mass.v.ToString("E") + ", " + 0.ToString("E") + ", " + doubles.v.ToString("E") + ", " + doubles.sigma.ToString("E"); 
+			}
 		}
 
 		void LoadList()
@@ -110,18 +118,18 @@ namespace NewUI
 			int mlistIndex = 0;
 			foreach (Measurement m in mlist)
 			{
-				DataLoad dl = GetThem(m);
+				DataLoad dl = GetTheDataPoints(m);
 				string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
-				ListViewItem lvi = new ListViewItem(new string[] {					
+				ListViewItem lvi = new ListViewItem(new string[] {
 					ItemWithNumber,
 					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"),
-					dl.mass.v.ToString("F2"), // URGENT 1) lookup the result for the given material and method and get the pu240e mass from it
-					dl.doubles.v.ToString("F2"), // URGENT 2) lookup the doubles tuple
+					dl.mass.v.ToString("F2"),
+					dl.doubles.v.ToString("F2"),
 					mlistIndex.ToString(),  // subitem at index 4 has the original mlist index of this element
 					});
 				listView1.Items.Add(lvi);
 				lvi.Tag = dl;  // for proper column sorting
-				lvi.ToolTipText = "ubetcha"; //;/GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
+				lvi.ToolTipText = "Using " +  m.INCCAnalysisState.Methods.selector.ToString();
 				mlistIndex++;
 			}
 			MCount.Text = listView1.Items.Count.ToString() + " measurements";
@@ -131,11 +139,11 @@ namespace NewUI
 				MCountSel.Text = string.Empty;
 		}
 
-		DataLoad GetThem(Measurement m)
+		DataLoad GetTheDataPoints(Measurement m)
 		{
 			DataLoad dl = new DataLoad();
 			dl.dt = m.MeasDate;
-            MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];
+			MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];
 			dl.doubles = mcr.DeadtimeCorrectedDoublesRate;
 			INCCMethodResult imr = m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod, create: false);
 			switch (AnalysisMethod)
@@ -160,20 +168,59 @@ namespace NewUI
 			return dl;
 		}
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		void SaveCurveXYValues(List<DataLoad> list)
+		{
+			if (list.Count < 1)
+				return;
+			SaveFileDialog dlg = new SaveFileDialog();
+			dlg.Filter = "DMD files (*.dmd)|*.dmd|in files (*.in)|*.in|All files (*.*)|*.*";
+			dlg.DefaultExt = ".in";
+			dlg.FileName = "deming.in";
+			dlg.InitialDirectory = N.App.AppContext.ResultsFilePath;
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				try
+				{
+					StreamWriter tx = File.CreateText(dlg.FileName);
+					System.Collections.IEnumerator iter = list.GetEnumerator();
+					while (iter.MoveNext())
+					{
+						string entry = iter.Current.ToString();
+						tx.WriteLine(entry);
+					}
+					tx.Close();
+					N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceInformation("Fitting data written to " + dlg.FileName);
+				} catch (IOException ex)
+				{
+					MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
+				}
+			}
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			List<DataLoad> list = new List<DataLoad>();
+			foreach (ListViewItem lvi in listView1.Items)
+			{
+				if (lvi.Selected)
+				{
+					list.Add((DataLoad)lvi.Tag);
+					lvi.Selected = false;
+				}
+			}
+			SaveCurveXYValues(list);
+			Close();
+		}
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        }
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
+
+		}
 
 		public void ListItemSorter(object sender, ColumnClickEventArgs e)
 		{

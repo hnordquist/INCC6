@@ -148,11 +148,35 @@
     <Compile Include="FormsHappyPlace\IDDCorrectionFactors.Designer.cs">
       <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\IDDCurveType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCurveType.Designer.cs">
+      <DependentUpon>IDDCurveType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFit.Designer.cs">
+      <DependentUpon>IDDDemingFit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFitSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFitSelect.Designer.cs">
+      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\IDDK5CollarItemData.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDK5CollarItemData.Designer.cs">
       <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKValSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKValSelector.Designer.cs">
+      <DependentUpon>IDDKValSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDSaveInitialData.cs">
       <SubType>Form</SubType>
@@ -317,12 +341,6 @@
     <Compile Include="FormsHappyPlace\IDDCuriumRatioCalibration.Designer.cs">
       <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDCurveType.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDCurveType.Designer.cs">
-      <DependentUpon>IDDCurveType.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDDBPicker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -334,18 +352,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDDeleteMeas.Designer.cs">
       <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDDemingFit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDDemingFit.Designer.cs">
-      <DependentUpon>IDDDemingFit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDDemingFitSelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDDemingFitSelect.Designer.cs">
-      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDDiskAcqPathFilename.cs">
       <SubType>Form</SubType>
@@ -436,12 +442,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDKnownMCal.Designer.cs">
       <DependentUpon>IDDKnownMCal.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDKValSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDKValSelector.Designer.cs">
-      <DependentUpon>IDDKValSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDManualDataEntry.cs">
       <SubType>Form</SubType>
@@ -1175,6 +1175,15 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCorrectionFactors.resx">
       <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCurveType.resx">
+      <DependentUpon>IDDCurveType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDemingFit.resx">
+      <DependentUpon>IDDDemingFit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDemingFitSelect.resx">
+      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDetectorAdd.resx">
       <DependentUpon>IDDDetectorAdd.cs</DependentUpon>
     </EmbeddedResource>
@@ -1228,6 +1237,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDK5CollarItemData.resx">
       <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDKValSelector.resx">
+      <DependentUpon>IDDKValSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDMBAAdd.resx">
       <DependentUpon>IDDMBAAdd.cs</DependentUpon>
@@ -1347,20 +1359,11 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCuriumRatioCalibration.resx">
       <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCurveType.resx">
-      <DependentUpon>IDDCurveType.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDBPicker.resx">
       <DependentUpon>IDDDBPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDeleteMeas.resx">
       <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDDemingFit.resx">
-      <DependentUpon>IDDDemingFit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDDemingFitSelect.resx">
-      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDDiskAcqPathFilename.resx">
       <DependentUpon>IDDDiskAcqPathFilename.cs</DependentUpon>
@@ -1406,9 +1409,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDKnownMCal.resx">
       <DependentUpon>IDDKnownMCal.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDKValSelector.resx">
-      <DependentUpon>IDDKValSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDManualDataEntry.resx">
       <DependentUpon>IDDManualDataEntry.cs</DependentUpon>

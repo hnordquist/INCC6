@@ -144,7 +144,7 @@ namespace NewUI
             IDDDemingFit f = new IDDDemingFit();
             f.ShowDialog();
 			if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
-				f.ict.ShowDialog();
+				f.CurveTypeSelectionStep();
         }
 
         private void MaintainAnalysisMethodsClick(object sender, RoutedEventArgs e)
