@@ -145,11 +145,6 @@ namespace NewUI
             f.ShowDialog();
 			if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
 				f.ict.ShowDialog();
-			if (f.ict.DialogResult == System.Windows.Forms.DialogResult.OK)
-			{
-				// --> Columns: item id, date time, pu240e Mass, Dbls Rate, 
-			}
-
         }
 
         private void MaintainAnalysisMethodsClick(object sender, RoutedEventArgs e)

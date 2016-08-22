@@ -262,7 +262,7 @@ namespace NewUI
 			if (SummarySelections.HasAny)
 			{
 				SaveFileDialog dlg = new SaveFileDialog();
-				dlg.Filter = "CSV files (*.csv) | All files (*.*)";
+				dlg.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
 				dlg.DefaultExt = ".csv";
 				dlg.FileName = "summary.csv";
 				dlg.InitialDirectory = N.App.AppContext.ResultsFilePath;
@@ -281,6 +281,7 @@ namespace NewUI
 							tx.WriteLine(entry);
 						}
 						tx.Close();
+						ctrllog.TraceInformation("Summary written to " + dlg.FileName);
 					} catch (IOException ex)
 					{
 						MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
