@@ -476,7 +476,7 @@ namespace NCCFile
 				if (coeffnum > 3)
 					Coefficients.d = GetDouble(csv.Lines[0][3]);
 
-				// line 2 (skipped?)
+				// line 2 (skipped?)  // URGENT: check if this is used in INCC5
 				//Coefficients.var_a = GetDouble(csv.Lines[1][0]);
 				//if (coeffnum > 1)
 				//	Coefficients.var_b = GetDouble(csv.Lines[2][1]);

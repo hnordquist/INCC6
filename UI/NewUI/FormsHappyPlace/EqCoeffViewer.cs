@@ -87,7 +87,6 @@ namespace NewUI
 			BuildRows();
 			BuildCurveCombo();
 			_reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");  // reg ex for number test
-
 		}
 
 		public void BuildRep()
@@ -146,6 +145,8 @@ namespace NewUI
 					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[4].value; // var a
 					x = disprows[5].ToRow();
 					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[5].value; // var b 
+					x = disprows[8].ToRow();
+					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[8].value; // covar ab 
 				}
 				break;
 			}
@@ -191,9 +192,6 @@ namespace NewUI
 				if (Coefficients.covar(Coeff.a, Coeff.d) != (double)rows[i].Tag)
 					{ Coefficients.setcovar(Coeff.a, Coeff.d, (double)rows[i].Tag); change = true; }
 				i++;
-				if (Coefficients.covar(Coeff.a, Coeff.b) != (double)rows[i].Tag)
-					{ Coefficients.setcovar(Coeff.a, Coeff.b, (double)rows[i].Tag); change = true; }
-				i++;
 				if (Coefficients.covar(Coeff.b, Coeff.c) != (double)rows[i].Tag)
 					{ Coefficients.setcovar(Coeff.b, Coeff.c, (double)rows[i].Tag); change = true; }
 				i++;
@@ -219,9 +217,11 @@ namespace NewUI
 				if (Coefficients.var_b != (double)rows[i].Tag)
 					{ Coefficients.var_b = (double)rows[i].Tag; change = true; }
 				i++;
+				if (Coefficients.covar(Coeff.a, Coeff.b) != (double)rows[i].Tag)
+					{ Coefficients.setcovar(Coeff.a, Coeff.b, (double)rows[i].Tag); change = true; }
+				i++;
 				break;
 			}
-
 			return change;
 		}
 

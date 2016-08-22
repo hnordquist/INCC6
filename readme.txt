@@ -118,7 +118,6 @@ Issues for basic INCC5/6 feature COMPLETION
 
 #84  Implement Collar
 #79  Plot Norm, Plot Ver diagnostic tools
-#78  Find Deming curve fitting tool replacement
 #69  Present the proposed List Mode Config UI from DB enhancement
 #35  Hold-up analysis required
 
@@ -143,6 +142,7 @@ Closed issues
 ***  Review dialogs measurement list sorting fixed
 ***  Fix Acquire from DB crash introduced in fb24f4fcb830bb0097a9ca319cfce708f5c0a7f5
 78   Deming output to 'dmd' formatted file, 'dmr' input
+78   Deming 'dmr' file view, input and content use, in lieu of direct Deming connection
 
 
 6.0.1.14 Aug 8, 2016

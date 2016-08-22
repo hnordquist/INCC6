@@ -88,6 +88,7 @@ namespace NewUI
 			if (mlist.Count == 0)
 			{
 				string msg = string.Format("No '{0}' {1} calibration measurements found", Material, AnalysisMethod.FullName());
+				MessageBox.Show(msg, "Calibration measurements", MessageBoxButtons.OK);
 				N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 3363, msg);
 				return false;
 			}

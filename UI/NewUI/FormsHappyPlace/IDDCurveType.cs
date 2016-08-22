@@ -32,6 +32,7 @@ namespace NewUI
 {
 	using N = NCC.CentralizedState;
 	using Integ = NCC.IntegrationHelpers;
+
 	public partial class IDDCurveType : Form
 	{
 
@@ -95,13 +96,77 @@ namespace NewUI
 				NCCFile.CoefficientFile onefile = new NCCFile.CoefficientFile();
 				string path = System.IO.Path.GetFullPath(aDlg.FileName);
 				onefile.Process(path);
+				CurveEquation = (INCCAnalysisParams.CurveEquation)CurveTypeComboBox.SelectedIndex;
 				EqCoeffViewer c = new EqCoeffViewer(onefile.Coefficients, CurveEquation);
 				c.Material = Material;
 				c.AnalysisMethod = AnalysisMethod;
 				if (c.ShowDialog() == DialogResult.OK)
-					;  // apply Coefficients to the current selected analysis method
-
+					ApplyCoefficients(c.Coefficients);  // apply Coefficients to the current selected analysis method
 			}
+		}
+
+		static void CopyCoefficients(INCCAnalysisParams.CurveEquationVals src, INCCAnalysisParams.CurveEquationVals tgt)
+		{
+			tgt.a = src.a;
+			tgt.b = src.b;
+			tgt.c = src.c;
+			tgt.d = src.d;
+			tgt.var_a = src.var_a;
+			tgt.var_b = src.var_b;
+			tgt.var_c = src.var_c;
+			tgt.var_d = src.var_d;
+			tgt.setcovar(Coeff.a, Coeff.b, src.covar(Coeff.a, Coeff.b));
+			tgt.setcovar(Coeff.a, Coeff.c, src.covar(Coeff.a, Coeff.c));
+			tgt.setcovar(Coeff.a, Coeff.d, src.covar(Coeff.a, Coeff.d));
+			tgt.setcovar(Coeff.b, Coeff.c, src.covar(Coeff.b, Coeff.c));
+			tgt.setcovar(Coeff.b, Coeff.d, src.covar(Coeff.b, Coeff.d));
+			tgt.setcovar(Coeff.c, Coeff.d, src.covar(Coeff.c, Coeff.d));
+		}
+
+		void ApplyCoefficients(INCCAnalysisParams.CurveEquationVals coeff)
+		{
+			INCCSelector sel = new INCCSelector(det.Id.DetectorId, Material);
+			AnalysisMethods lam;
+			bool found = N.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out lam);
+			if (!found)
+			{
+				lam = new AnalysisMethods(sel);
+			}
+			if (!lam.HasMethod(AnalysisMethod))
+			{
+				MessageBox.Show(string.Format("{0} method not specified for detector {1} and material {2}", 
+									AnalysisMethod.FullName(), det.Id.DetectorId, Material),
+					"Coefficient File Ingester", MessageBoxButtons.OK);
+				return;
+			}
+
+			INCCAnalysisParams.INCCMethodDescriptor imd = lam.GetMethodParameters(AnalysisMethod);
+			switch (AnalysisMethod)
+			{
+			case AnalysisMethod.CalibrationCurve:
+				INCCAnalysisParams.cal_curve_rec c = (INCCAnalysisParams.cal_curve_rec)imd;
+				CopyCoefficients(coeff, c.cev);
+				c.cev.cal_curve_equation = CurveEquation;
+				break;
+			case AnalysisMethod.KnownA:
+				INCCAnalysisParams.known_alpha_rec ka = (INCCAnalysisParams.known_alpha_rec)imd;
+				CopyCoefficients(coeff, ka.cev);
+				ka.cev.cal_curve_equation = CurveEquation;
+				break;
+			case AnalysisMethod.AddASource:
+				INCCAnalysisParams.add_a_source_rec aas = (INCCAnalysisParams.add_a_source_rec)imd;
+				CopyCoefficients(coeff, aas.cev);
+				aas.cev.cal_curve_equation = CurveEquation;
+				break;
+			case AnalysisMethod.Active:
+				INCCAnalysisParams.active_rec ac = (INCCAnalysisParams.active_rec)imd;
+				CopyCoefficients(coeff, ac.cev);
+				ac.cev.cal_curve_equation = CurveEquation;
+				break;
+			}
+			imd.modified = true;
+			// ok save it now
+			N.App.DB.UpdateAnalysisMethod(sel, lam);  // flush changes on internal map to the DB
 		}
 	}
 }
