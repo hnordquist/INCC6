@@ -163,6 +163,9 @@ namespace NewUI
 				listView1.Columns[2].Width = 0;
 				listView1.Columns[3].Width = 0;
 			}
+			if (!AssaySelector.ForMass(filter) && !filter.IsWildCard())
+				listView1.Columns[7].Width = 0;				 
+
 			return true;
 		}
 
@@ -181,7 +184,8 @@ namespace NewUI
 					m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
 					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
-					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
+					m.AcquireState.item_type,
+					mlistIndex.ToString()  // subitem at index 8 has the original mlist index of this element
                         });
 				listView1.Items.Add(lvi);
 				lvi.Tag = m.MeasDate;  // for proper column sorting
@@ -256,7 +260,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
 				SummarySelections.Apply(mlist[lvIndex]);
 			}
 			if (SummarySelections.HasAny)
@@ -302,7 +306,7 @@ namespace NewUI
 				if (lvi.Selected)
 				{
 					int lvIndex = 0;
-					int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+					int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
 					if (bNotepadHappensToBeThere)
 					{
 						string path = GetMainFilePath(mlist[lvIndex].ResultsFiles, mlist[lvIndex].MeasOption, false);
@@ -342,7 +346,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
 				return (mlist[lvIndex]);
 			}
 			return null;
@@ -356,7 +360,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[7].Text, out lvIndex); // 7 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
 				newlist.Add(mlist[lvIndex]);
 			}
 			return newlist;

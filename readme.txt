@@ -141,8 +141,8 @@ Closed issues
 ***  skip empty output line in report if no virtual SR results
 ***  Review dialogs measurement list sorting fixed
 ***  Fix Acquire from DB crash introduced in fb24f4fcb830bb0097a9ca319cfce708f5c0a7f5
-78   Deming output to 'dmd' formatted file, 'dmr' input
-78   Deming 'dmr' file view, input and content use, in lieu of direct Deming connection
+78   Deming output to 'dmd' formatted file, Deming 'dmr' file view, input and content use
+     using the 'Get curve-fitting results' import feature on the Curve Selection dlg
 
 
 6.0.1.14 Aug 8, 2016

@@ -48,9 +48,9 @@
 			this.SelectTypeGroupBox.Controls.Add(this.HoldupDataRadioButton);
 			this.SelectTypeGroupBox.Controls.Add(this.VerificationCalDataRadioButton);
 			this.SelectTypeGroupBox.Location = new System.Drawing.Point(16, 15);
-			this.SelectTypeGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.SelectTypeGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this.SelectTypeGroupBox.Name = "SelectTypeGroupBox";
-			this.SelectTypeGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.SelectTypeGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this.SelectTypeGroupBox.Size = new System.Drawing.Size(405, 117);
 			this.SelectTypeGroupBox.TabIndex = 0;
 			this.SelectTypeGroupBox.TabStop = false;
@@ -60,7 +60,7 @@
 			// 
 			this.HoldupDataRadioButton.AutoSize = true;
 			this.HoldupDataRadioButton.Location = new System.Drawing.Point(28, 69);
-			this.HoldupDataRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HoldupDataRadioButton.Margin = new System.Windows.Forms.Padding(4);
 			this.HoldupDataRadioButton.Name = "HoldupDataRadioButton";
 			this.HoldupDataRadioButton.Size = new System.Drawing.Size(123, 21);
 			this.HoldupDataRadioButton.TabIndex = 1;
@@ -74,7 +74,7 @@
 			// 
 			this.VerificationCalDataRadioButton.AutoSize = true;
 			this.VerificationCalDataRadioButton.Location = new System.Drawing.Point(28, 36);
-			this.VerificationCalDataRadioButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.VerificationCalDataRadioButton.Margin = new System.Windows.Forms.Padding(4);
 			this.VerificationCalDataRadioButton.Name = "VerificationCalDataRadioButton";
 			this.VerificationCalDataRadioButton.Size = new System.Drawing.Size(217, 21);
 			this.VerificationCalDataRadioButton.TabIndex = 0;
@@ -109,26 +109,30 @@
 			// 
 			this.MaterialTypeComboBox.FormattingEnabled = true;
 			this.MaterialTypeComboBox.Location = new System.Drawing.Point(137, 155);
-			this.MaterialTypeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.MaterialTypeComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.MaterialTypeComboBox.Name = "MaterialTypeComboBox";
 			this.MaterialTypeComboBox.Size = new System.Drawing.Size(283, 24);
 			this.MaterialTypeComboBox.TabIndex = 3;
+			this.toolTip1.SetToolTip(this.MaterialTypeComboBox, "Calibration measurement data sets for the selected material type will\r\nbe exporte" +
+        "d for use in an external curve-fitting application");
 			this.MaterialTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.MaterialTypeComboBox_SelectedIndexChanged);
 			// 
 			// AnalysisMethodComboBox
 			// 
 			this.AnalysisMethodComboBox.FormattingEnabled = true;
 			this.AnalysisMethodComboBox.Location = new System.Drawing.Point(137, 203);
-			this.AnalysisMethodComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.AnalysisMethodComboBox.Margin = new System.Windows.Forms.Padding(4);
 			this.AnalysisMethodComboBox.Name = "AnalysisMethodComboBox";
 			this.AnalysisMethodComboBox.Size = new System.Drawing.Size(283, 24);
 			this.AnalysisMethodComboBox.TabIndex = 4;
+			this.toolTip1.SetToolTip(this.AnalysisMethodComboBox, "Select the analysis method for which calibration coefficients, variances\r\nand cov" +
+        "ariances are to be calculated using an external curve-fitting\r\napplication.");
 			this.AnalysisMethodComboBox.SelectedIndexChanged += new System.EventHandler(this.AnalysisMethodComboBox_SelectedIndexChanged);
 			// 
 			// OKBtn
 			// 
 			this.OKBtn.Location = new System.Drawing.Point(445, 21);
-			this.OKBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.OKBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.OKBtn.Name = "OKBtn";
 			this.OKBtn.Size = new System.Drawing.Size(100, 28);
 			this.OKBtn.TabIndex = 5;
@@ -139,7 +143,7 @@
 			// CancelBtn
 			// 
 			this.CancelBtn.Location = new System.Drawing.Point(445, 57);
-			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.CancelBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.CancelBtn.Name = "CancelBtn";
 			this.CancelBtn.Size = new System.Drawing.Size(100, 28);
 			this.CancelBtn.TabIndex = 6;
@@ -150,7 +154,7 @@
 			// HelpBtn
 			// 
 			this.HelpBtn.Location = new System.Drawing.Point(445, 92);
-			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.HelpBtn.Margin = new System.Windows.Forms.Padding(4);
 			this.HelpBtn.Name = "HelpBtn";
 			this.HelpBtn.Size = new System.Drawing.Size(100, 28);
 			this.HelpBtn.TabIndex = 7;
@@ -171,7 +175,7 @@
 			this.Controls.Add(this.AnalysisMethodLabel);
 			this.Controls.Add(this.MaterialTypeLabel);
 			this.Controls.Add(this.SelectTypeGroupBox);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "IDDDemingFit";
 			this.Text = "Deming Curve Fitting";
 			this.SelectTypeGroupBox.ResumeLayout(false);

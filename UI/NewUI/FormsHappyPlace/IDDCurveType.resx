@@ -120,4 +120,11 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="button1.ToolTip" xml:space="preserve">
+    <value>Read a Deming results file (usually .dmr) retrieving coefficients calculated
+by Deming or other external curve-fitting applications, also retrieve the
+latest data set used to fit the curve (e.g. the deming.in file created in the
+curve-fitting export step.) Then show the coefficients, mass limits, and data points.
+The user may choose to assign the values to the current Pu method.</value>
+  </data>
 </root>

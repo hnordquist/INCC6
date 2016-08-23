@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+			this.components = new System.ComponentModel.Container();
 			this.OKBtn = new System.Windows.Forms.Button();
 			this.CancelBtn = new System.Windows.Forms.Button();
 			this.HelpBtn = new System.Windows.Forms.Button();
@@ -38,6 +39,7 @@
 			this.Dawbulls = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.MCountSel = new System.Windows.Forms.TextBox();
 			this.MCount = new System.Windows.Forms.TextBox();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// OKBtn
@@ -87,6 +89,9 @@
 			this.listView1.ShowItemToolTips = true;
 			this.listView1.Size = new System.Drawing.Size(462, 384);
 			this.listView1.TabIndex = 10;
+			this.toolTip1.SetToolTip(this.listView1, "Select which calibration measurement data sets are to be used by an\r\nexternal cur" +
+        "ve-fitting application (e.g. R, Excel or Deming). Data sets may\r\nbe manually ent" +
+        "ered within the external application.\r\n");
 			this.listView1.UseCompatibleStateImageBehavior = false;
 			this.listView1.View = System.Windows.Forms.View.Details;
 			this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
@@ -167,5 +172,6 @@
 		private System.Windows.Forms.ColumnHeader Dawbulls;
 		private System.Windows.Forms.TextBox MCountSel;
 		private System.Windows.Forms.TextBox MCount;
+		private System.Windows.Forms.ToolTip toolTip1;
 	}
 }

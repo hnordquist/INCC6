@@ -34,6 +34,7 @@ using NCCReporter;
 namespace NewUI
 {
 	using N = NCC.CentralizedState;
+
 	public partial class IDDDemingFitSelect : Form
 	{
 		public IDDDemingFitSelect()
@@ -47,10 +48,13 @@ namespace NewUI
 		public string Material;
 		public AnalysisMethod AnalysisMethod;
 		public INCCAnalysisParams.CurveEquation CurveEquation;
+		public CalibrationCurveList CalcDataList;
+
 		private string DetectorId;
 
 		public void Init(string id)
 		{
+			CalcDataList = new CalibrationCurveList();
 			DetectorId = id;
 			System.Windows.Input.Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 			try
@@ -84,7 +88,8 @@ namespace NewUI
 
 		bool PrepList(string DetectorId)
 		{
-			mlist.RemoveAll(MatchingSwipeLeft);    // cull those without matching attributes
+
+            mlist.RemoveAll(MatchingSwipeLeft);    // cull those without matching attributes
 			if (mlist.Count == 0)
 			{
 				string msg = string.Format("No '{0}' {1} calibration measurements found", Material, AnalysisMethod.FullName());
@@ -96,36 +101,19 @@ namespace NewUI
 			return true;
 		}
 
-		internal class DataLoad
-		{
-			internal DateTimeOffset dt;
-			internal VTuple doubles;
-			internal VTuple mass;
-
-			internal DataLoad()
-			{
-
-			}
-
-			public override string ToString()
-			{
-				return mass.v.ToString("E") + ", " + 0.ToString("E") + ", " + doubles.v.ToString("E") + ", " + doubles.sigma.ToString("E"); 
-			}
-		}
-
 		void LoadList()
 		{
 			listView1.ShowItemToolTips = true;
 			int mlistIndex = 0;
 			foreach (Measurement m in mlist)
 			{
-				DataLoad dl = GetTheDataPoints(m);
+				DoublesDclMass dl = GetTheDataPoints(m);
 				string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
 				ListViewItem lvi = new ListViewItem(new string[] {
 					ItemWithNumber,
 					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"),
-					dl.mass.v.ToString("F2"),
-					dl.doubles.v.ToString("F2"),
+					dl.Mass.v.ToString("F2"),
+					dl.Doubles.v.ToString("F2"),
 					mlistIndex.ToString(),  // subitem at index 4 has the original mlist index of this element
 					});
 				listView1.Items.Add(lvi);
@@ -140,39 +128,50 @@ namespace NewUI
 				MCountSel.Text = string.Empty;
 		}
 
-		DataLoad GetTheDataPoints(Measurement m)
+		DoublesDclMass GetTheDataPoints(Measurement m)
 		{
-			DataLoad dl = new DataLoad();
+			DoublesDclMass dl = new DoublesDclMass();
 			dl.dt = m.MeasDate;
 			MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];
-			dl.doubles = mcr.DeadtimeCorrectedDoublesRate;
+			dl.Doubles = mcr.DeadtimeCorrectedDoublesRate;
 			INCCMethodResult imr = m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod, create: false);
 			switch (AnalysisMethod)
 			{
 			case AnalysisMethod.CalibrationCurve:
 				INCCMethodResults.results_cal_curve_rec ccres = (INCCMethodResults.results_cal_curve_rec)imr;
-				dl.mass = ccres.pu240e_mass;
+				dl.Mass = ccres.pu240e_mass;
 				break;
 			case AnalysisMethod.KnownA:
 				INCCMethodResults.results_known_alpha_rec kares = (INCCMethodResults.results_known_alpha_rec)imr;
-				dl.mass = kares.pu240e_mass;
+				dl.Mass = kares.pu240e_mass;
 				break;
 			case AnalysisMethod.AddASource:
 				INCCMethodResults.results_add_a_source_rec aares = (INCCMethodResults.results_add_a_source_rec)imr;
-				dl.mass = aares.pu240e_mass;
+				dl.Mass = aares.pu240e_mass;
 				break;
 			case AnalysisMethod.Active:
 				INCCMethodResults.results_active_rec acres = (INCCMethodResults.results_active_rec)imr;
-				dl.mass = acres.u235_mass;
+				dl.Mass = acres.u235_mass;
 				break;
 			}
 			return dl;
 		}
 
-		void SaveCurveXYValues(List<DataLoad> list)
+		void SaveCurveXYValues(CalibrationCurveList list)
 		{
+			CalcDataList = new CalibrationCurveList();
 			if (list.Count < 1)
 				return;
+
+			// save the data-points for use in the Get file op that replaces the deming
+			System.Collections.IEnumerator _iter = list.GetEnumerator();
+			while (_iter.MoveNext())
+			{
+				DoublesDclMass dl = (DoublesDclMass)_iter.Current;
+				CalcDataList.Add(dl);
+			}
+			CalcDataList.CalcLowerUpper();			// compute upper and lower mass limits from the data points,
+
 			SaveFileDialog dlg = new SaveFileDialog();
 			dlg.Filter = "DMD files (*.dmd)|*.dmd|in files (*.in)|*.in|All files (*.*)|*.*";
 			dlg.DefaultExt = ".in";
@@ -200,18 +199,19 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-			List<DataLoad> list = new List<DataLoad>();
+			CalibrationCurveList list = new CalibrationCurveList();
 			foreach (ListViewItem lvi in listView1.Items)
 			{
 				if (lvi.Selected)
 				{
-					list.Add((DataLoad)lvi.Tag);
+					list.Add((DoublesDclMass)lvi.Tag);
 					lvi.Selected = false;
 				}
 			}
 			SaveCurveXYValues(list);
 			Close();
 		}
+
 
 		private void CancelBtn_Click(object sender, EventArgs e)
 		{
@@ -258,11 +258,11 @@ namespace NewUI
 			if (column == 1) // item id
 				res = a.SubItems[column].Text.CompareTo(b.SubItems[column].Text) < 0;
 			else if (column == 2)  // 240 pu mass
-				res = (((DataLoad)a.Tag).mass.v.CompareTo(((DataLoad)b.Tag).mass.v)) < 0;
+				res = (((DoublesDclMass)a.Tag).Mass.v.CompareTo(((DoublesDclMass)b.Tag).Mass.v)) < 0;
 			else if (column == 3)  // doubles
-				res = (((DataLoad)a.Tag).doubles.v.CompareTo(((DataLoad)b.Tag).doubles.v)) < 0;
+				res = (((DoublesDclMass)a.Tag).Doubles.v.CompareTo(((DoublesDclMass)b.Tag).Doubles.v)) < 0;
 			else if (column == 4) // 4 is the datetime column, such fragile coding
-				res = (((DataLoad)a.Tag).dt.CompareTo(((DataLoad)b.Tag).dt)) < 0;
+				res = (((DoublesDclMass)a.Tag).dt.CompareTo(((DoublesDclMass)b.Tag).dt)) < 0;
 			return res;
 		}
 
@@ -282,4 +282,71 @@ namespace NewUI
 			listView1.Cursor = sav;
 		}
 	}
+
+
+	public class DoublesDclMass
+	{
+			public DateTimeOffset dt;
+			public VTuple Doubles;
+			public VTuple Mass;
+
+			internal DoublesDclMass()
+			{
+
+			}
+
+			public override string ToString()
+			{
+				return Mass.v.ToString("E") + ", " + 0.ToString("E") + ", " + Doubles.v.ToString("E") + ", " + Doubles.sigma.ToString("E"); 
+			}
+	}
+
+	public class CalibrationCurveList: List<DoublesDclMass>
+	{
+		public CalibrationCurveList()
+		{
+            LowerMassLimit = -1e8;
+            UpperMassLimit = 1e8;
+		} 
+        public double LowerMassLimit, UpperMassLimit;
+
+		public double[] DoublesAsArray { get {
+				double[] a = new double[Count];
+				System.Collections.IEnumerator iter = GetEnumerator();
+				int i = 0;
+				while (iter.MoveNext())
+				{
+					a[i] = ((DoublesDclMass)iter.Current).Doubles.v;
+					i++;
+				}
+				return a; } }
+
+		public double[] MassAsArray { get { 
+				double[] a = new double[Count];
+				System.Collections.IEnumerator iter = GetEnumerator();
+				int i = 0;
+				while (iter.MoveNext())
+				{
+					a[i] = ((DoublesDclMass)iter.Current).Mass.v;
+					i++;
+				}
+				return a; } }
+
+		public void CalcLowerUpper()
+		{
+			double lower = 0, upper = 0;
+			System.Collections.IEnumerator iter = GetEnumerator();
+			while (iter.MoveNext())
+			{
+				DoublesDclMass dl = (DoublesDclMass)iter.Current;
+				if (dl.Mass.v > upper)
+					upper = dl.Mass.v;
+				if (dl.Mass.v < lower)
+					lower = dl.Mass.v;
+			}
+			LowerMassLimit = lower * 0.9;
+			UpperMassLimit = upper * 1.1;
+		}
+	}
+
 }

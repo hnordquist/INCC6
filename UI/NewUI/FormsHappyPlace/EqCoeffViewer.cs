@@ -36,14 +36,13 @@ This source code is distributed under the New BSD license:
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-	using N = NCC.CentralizedState;
 	using Integ = NCC.IntegrationHelpers;
-	using System.Collections.Generic;
-	using System.Text.RegularExpressions;
 
 	public partial class EqCoeffViewer : Form
 	{
@@ -54,28 +53,44 @@ namespace NewUI
 		private Detector det;
 
 		public INCCAnalysisParams.CurveEquationVals Coefficients;
+		public CalibrationCurveList CalcDataList;
 
 		internal class DataLoad
 		{
 			internal string label;
-			internal double value;
+			internal double value, dcl_mass, doubles;
 
 			internal DataLoad(string s, double v)
 			{
 				label = s;
 				value = v;
+				dcl_mass = 0; doubles = 0;
+			}
+			internal DataLoad(double m, double d)
+			{
+				dcl_mass = m;
+				doubles = d;
+				label = string.Empty; value = 0;
 			}
 
-			public string[] ToRow()
+			public bool IsPoint
 			{
-				return new string[] { label, value.ToString("E")}; 
+				get {return string.IsNullOrEmpty(label) && value == 0; }
+			}
+			public string[] ToRow(int idx = -1)  // dunno
+			{
+				string sis = idx > 0 ? idx.ToString() : string.Empty;
+				if (idx < 0)
+					return new string[] { label, value.ToString("E")}; 
+				else
+					return new string[] { sis, dcl_mass.ToString("E"), doubles.ToString("E") }; 
 			}
 		}
 
 		List<DataLoad> disprows;
 		Regex _reg;
 
-		public EqCoeffViewer(INCCAnalysisParams.CurveEquationVals coeff, INCCAnalysisParams.CurveEquation eq)
+		public EqCoeffViewer(INCCAnalysisParams.CurveEquationVals coeff, INCCAnalysisParams.CurveEquation eq, CalibrationCurveList cclist)
 		{
 			InitializeComponent();
 			det = Integ.GetCurrentAcquireDetector();
@@ -83,10 +98,20 @@ namespace NewUI
 			disprows = new List<DataLoad>();
 			CurveEquation = eq;
 			Coefficients = coeff;
+			CalcDataList = cclist;
 			BuildRep();
 			BuildRows();
-			BuildCurveCombo();
+			BuildCurveCombo();  
+			LowerMassLimitTextBox.Text = CalcDataList.LowerMassLimit.ToString("N4");
+			UpperMassLimitTextBox.Text = CalcDataList.UpperMassLimit.ToString("N4");
 			_reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");  // reg ex for number test
+		}
+
+		public void SetMatAlgLabel(string mtl, AnalysisMethod am)
+		{
+			Material = mtl;
+			AnalysisMethod = am;
+			MtlAlg.Text = Material + ", " + AnalysisMethod.FullName();
 		}
 
 		public void BuildRep()
@@ -105,6 +130,12 @@ namespace NewUI
 			disprows.Add(new DataLoad("covariance bc", Coefficients.covar(Coeff.b, Coeff.c)));
 			disprows.Add(new DataLoad("covariance bd", Coefficients.covar(Coeff.b, Coeff.d)));
 			disprows.Add(new DataLoad("covariance cd", Coefficients.covar(Coeff.c, Coeff.d)));
+
+			for(int i = 0; i < CalcDataList.Count; i++)
+			{
+				DoublesDclMass ddm = CalcDataList[i];
+				disprows.Add(new DataLoad(ddm.Mass.v, ddm.Doubles.v));
+			}
 		}
 
 		void BuildCurveCombo()
@@ -117,19 +148,22 @@ namespace NewUI
 			CurveType.Refresh();
             CurveType.SelectedIndex = (int)CurveEquation;
 		}
+
 		void BuildRows()
 		{
-			DataGridViewRowCollection rows = CoeffView.Rows;
+			DataGridViewRowCollection crows = CoeffView.Rows;
 
 			switch (CurveEquation)
 			{
 			case INCCAnalysisParams.CurveEquation.CUBIC:// a b c d
 				foreach (DataLoad dl in disprows)
 				{
+					if (dl.IsPoint)
+						continue;
 					string[] a = dl.ToRow();
-					int i = rows.Add(a);
-					rows[i].Tag = dl.value; // save full double value, nor formatted string
-					rows[i].Cells[0].ReadOnly = true;
+					int i = crows.Add(a);
+					crows[i].Tag = dl.value; // save full double value, nor formatted string
+					crows[i].Cells[0].ReadOnly = true;
 				}
 				break;
 			case INCCAnalysisParams.CurveEquation.POWER: // a b
@@ -138,18 +172,38 @@ namespace NewUI
 				{
 					string[] x = disprows[0].ToRow();
 					int 
-					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[0].value; // a 
+					i = crows.Add(x); crows[i].Cells[0].ReadOnly = true; 
+					crows[i].Tag = disprows[0].value; // a 
 					x = disprows[1].ToRow();
-					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[1].value; // b  
+					i = crows.Add(x); crows[i].Cells[0].ReadOnly = true; 
+					crows[i].Tag = disprows[1].value; // b  
 					x = disprows[4].ToRow(); 
-					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[4].value; // var a
+					i = crows.Add(x); crows[i].Cells[0].ReadOnly = true;
+					crows[i].Tag = disprows[4].value; // var a
 					x = disprows[5].ToRow();
-					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[5].value; // var b 
+					i = crows.Add(x); crows[i].Cells[0].ReadOnly = true; 
+					crows[i].Tag = disprows[5].value; // var b 
 					x = disprows[8].ToRow();
-					i = rows.Add(x); rows[i].Cells[0].ReadOnly = true; rows[i].Tag = disprows[8].value; // covar ab 
+					i = crows.Add(x); crows[i].Cells[0].ReadOnly = true; 
+					crows[i].Tag = disprows[8].value; // covar ab 
 				}
 				break;
 			}
+
+			DataGridViewRowCollection drows = PointView.Rows;
+			int idx = 0;
+			foreach (DataLoad dl in disprows)
+			{
+				if (dl.IsPoint)
+				{
+					idx++;
+					string[] a = dl.ToRow(idx);
+					drows.Add(a);
+					//drows[i].Tag = dl.value; // save full double value, nor formatted string
+					//drows[i].Cells[0].ReadOnly = true;
+				}
+			}
+
 		}
 		bool DetectChangeAndCopyIt()
 		{
@@ -276,5 +330,9 @@ namespace NewUI
             CoeffView.Rows[e.RowIndex].ErrorText = string.Empty;
         }
 
+		private void CoeffView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+
+		}
 	}
 }

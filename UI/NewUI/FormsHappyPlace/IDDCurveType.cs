@@ -39,6 +39,7 @@ namespace NewUI
 		public string Material;
 		public AnalysisMethod AnalysisMethod;
 		public INCCAnalysisParams.CurveEquation CurveEquation;
+		public CalibrationCurveList CalcDataList;
 		private Detector det;
 		public IDDCurveType()
 		{
@@ -52,6 +53,7 @@ namespace NewUI
 			}
 			CurveTypeComboBox.Refresh();
             CurveTypeComboBox.SelectedIndex = 0;
+			CalcDataList = new CalibrationCurveList();
 		}
 
 		private void OKBtn_Click(object sender, EventArgs e)
@@ -66,6 +68,7 @@ namespace NewUI
 			measlist.Init(det.Id.DetectorId);
             if (measlist.bGood)
                 measlist.ShowDialog();
+			CalcDataList = measlist.CalcDataList;
 		}
 
 		private void CancelBtn_Click(object sender, EventArgs e)
@@ -77,6 +80,8 @@ namespace NewUI
 		{
 
 		}
+
+		// NEXT: create new method calib param entry if not found for curve/mtl type/det? Verify
 
 		private void button1_Click(object sender, EventArgs e)
 		{
@@ -97,15 +102,14 @@ namespace NewUI
 				string path = System.IO.Path.GetFullPath(aDlg.FileName);
 				onefile.Process(path);
 				CurveEquation = (INCCAnalysisParams.CurveEquation)CurveTypeComboBox.SelectedIndex;
-				EqCoeffViewer c = new EqCoeffViewer(onefile.Coefficients, CurveEquation);
-				c.Material = Material;
-				c.AnalysisMethod = AnalysisMethod;
+				EqCoeffViewer c = new EqCoeffViewer(onefile.Coefficients, CurveEquation, CalcDataList);
+				c.SetMatAlgLabel(Material, AnalysisMethod);
 				if (c.ShowDialog() == DialogResult.OK)
-					ApplyCoefficients(c.Coefficients);  // apply Coefficients to the current selected analysis method
+					ApplyCoefficients(c.Coefficients, c.CalcDataList);  // apply Coefficients, lower and upper limits, and data point array to the currently selected analysis method
 			}
 		}
 
-		static void CopyCoefficients(INCCAnalysisParams.CurveEquationVals src, INCCAnalysisParams.CurveEquationVals tgt)
+		void CopyCoefficients(INCCAnalysisParams.CurveEquationVals src, INCCAnalysisParams.CurveEquationVals tgt)
 		{
 			tgt.a = src.a;
 			tgt.b = src.b;
@@ -123,7 +127,7 @@ namespace NewUI
 			tgt.setcovar(Coeff.c, Coeff.d, src.covar(Coeff.c, Coeff.d));
 		}
 
-		void ApplyCoefficients(INCCAnalysisParams.CurveEquationVals coeff)
+		void ApplyCoefficients(INCCAnalysisParams.CurveEquationVals coeff, CalibrationCurveList cclist)
 		{
 			INCCSelector sel = new INCCSelector(det.Id.DetectorId, Material);
 			AnalysisMethods lam;
@@ -132,7 +136,7 @@ namespace NewUI
 			{
 				lam = new AnalysisMethods(sel);
 			}
-			if (!lam.HasMethod(AnalysisMethod))
+			if (!lam.HasMethod(AnalysisMethod))  // create it from scratch here ????
 			{
 				MessageBox.Show(string.Format("{0} method not specified for detector {1} and material {2}", 
 									AnalysisMethod.FullName(), det.Id.DetectorId, Material),
@@ -140,33 +144,52 @@ namespace NewUI
 				return;
 			}
 
-			INCCAnalysisParams.INCCMethodDescriptor imd = lam.GetMethodParameters(AnalysisMethod);
+            INCCAnalysisParams.INCCMethodDescriptor imd = lam.GetMethodParameters(AnalysisMethod);
 			switch (AnalysisMethod)
 			{
 			case AnalysisMethod.CalibrationCurve:
 				INCCAnalysisParams.cal_curve_rec c = (INCCAnalysisParams.cal_curve_rec)imd;
 				CopyCoefficients(coeff, c.cev);
 				c.cev.cal_curve_equation = CurveEquation;
+				c.cev.lower_mass_limit = cclist.LowerMassLimit;
+				c.cev.upper_mass_limit = cclist.UpperMassLimit;
+				c.dcl_mass = cclist.MassAsArray;
+				c.doubles = cclist.DoublesAsArray;
 				break;
 			case AnalysisMethod.KnownA:
 				INCCAnalysisParams.known_alpha_rec ka = (INCCAnalysisParams.known_alpha_rec)imd;
 				CopyCoefficients(coeff, ka.cev);
 				ka.cev.cal_curve_equation = CurveEquation;
+				ka.cev.lower_mass_limit = cclist.LowerMassLimit;
+				ka.cev.upper_mass_limit = cclist.UpperMassLimit;
+				ka.dcl_mass = cclist.MassAsArray;
+				ka.doubles = cclist.DoublesAsArray;
 				break;
 			case AnalysisMethod.AddASource:
 				INCCAnalysisParams.add_a_source_rec aas = (INCCAnalysisParams.add_a_source_rec)imd;
 				CopyCoefficients(coeff, aas.cev);
 				aas.cev.cal_curve_equation = CurveEquation;
+				aas.cev.lower_mass_limit = cclist.LowerMassLimit;
+				aas.cev.upper_mass_limit = cclist.UpperMassLimit;
+				aas.dcl_mass = cclist.MassAsArray;
+				aas.doubles = cclist.DoublesAsArray;
 				break;
 			case AnalysisMethod.Active:
 				INCCAnalysisParams.active_rec ac = (INCCAnalysisParams.active_rec)imd;
 				CopyCoefficients(coeff, ac.cev);
 				ac.cev.cal_curve_equation = CurveEquation;
+				ac.cev.lower_mass_limit = cclist.LowerMassLimit;
+				ac.cev.upper_mass_limit = cclist.UpperMassLimit;
+				ac.dcl_mass = cclist.MassAsArray;
+				ac.doubles = cclist.DoublesAsArray;
 				break;
 			}
 			imd.modified = true;
 			// ok save it now
 			N.App.DB.UpdateAnalysisMethod(sel, lam);  // flush changes on internal map to the DB
-		}
-	}
+			MessageBox.Show(string.Format("Calibration data for analysis method {0} and material type {1} successfully stored in the database", 
+									det.Id.DetectorId, Material),
+					"Coefficient File Ingester", MessageBoxButtons.OK);
+        }
+    }
 }
