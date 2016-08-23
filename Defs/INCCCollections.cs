@@ -4152,7 +4152,7 @@ namespace AnalysisDefs
             foreach (DataRow dr in dt.Rows)
             {
                 AssaySelector.MeasurementOption thisopt;
-                if (option != AssaySelector.MeasurementOption.unspecified)
+                if (!option.IsWildCard())
                 {
                     thisopt = AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString());
                     if (thisopt != option)
@@ -4305,7 +4305,7 @@ namespace AnalysisDefs
             foreach (DataRow dr in dt_meas.Rows)
             {
                 AssaySelector.MeasurementOption thisopt;
-                if (option != AssaySelector.MeasurementOption.unspecified)
+                if (!option.IsWildCard())
                 {
                     thisopt = AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString());
                     if (thisopt != option)
@@ -4327,7 +4327,7 @@ namespace AnalysisDefs
 					ms.Add(m);
 					if (m.ResultsFiles != null)      // it is never null
 					{
-						bool LMOnly = (option == AssaySelector.MeasurementOption.unspecified);
+						bool LMOnly = option.IsListMode();
 						if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
 							m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
 						List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);

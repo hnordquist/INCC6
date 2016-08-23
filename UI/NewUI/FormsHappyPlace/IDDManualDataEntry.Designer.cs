@@ -161,7 +161,7 @@
             this.cyclesGridView.Name = "cyclesGridView";
             this.cyclesGridView.Size = new System.Drawing.Size(401, 436);
             this.cyclesGridView.TabIndex = 12;
-            this.cyclesGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.cyclesGridView_CellEndEdit);
+            this.cyclesGridView. CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.cyclesGridView_CellEndEdit);
             this.cyclesGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.cyclesGridView_CellValidating_1);
             this.cyclesGridView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cyclesGridView_KeyPress);
             // 

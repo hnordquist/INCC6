@@ -101,7 +101,7 @@ KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
    Holdup and glovebox features, the Plot features,
-   Deming integration, some Add-a-src processing, Collar item data entry,
+   Deming least squares fit integration, some Add-a-src processing,
    Collar acquire and Poison Rod details, integrated help.
 
 This is beta release software; issues and missing features are known to exist.
@@ -118,7 +118,6 @@ Issues for basic INCC5/6 feature COMPLETION
 
 #84  Implement Collar
 #79  Plot Norm, Plot Ver diagnostic tools
-#78  Find Deming curve fitting tool replacement
 #69  Present the proposed List Mode Config UI from DB enhancement
 #35  Hold-up analysis required
 
@@ -135,11 +134,15 @@ Closed issues
 
 6.0.1.15 TBD Aug ??, 2016
 
-#126	Reanalyze
+126  Reanalyze
 ***  KVal selector for Euratom prepped for use; acquire mtl type case mismatch patch
 ***  Fix stratum list to all add
 ***  Create DB script includes JSR-15 entry
 ***  skip empty output line in report if no virtual SR results
+***  Review dialogs measurement list sorting fixed
+***  Fix Acquire from DB crash introduced in fb24f4fcb830bb0097a9ca319cfce708f5c0a7f5
+78   Deming output to 'dmd' formatted file, Deming 'dmr' file view, input and content use
+     using the 'Get curve-fitting results' import feature on the Curve Selection dlg
 
 
 6.0.1.14 Aug 8, 2016

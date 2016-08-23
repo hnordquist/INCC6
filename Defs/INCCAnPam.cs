@@ -479,7 +479,7 @@ namespace AnalysisDefs
                 //sec.AddHeader("-- curve calibration parameters");  // section header
                 // Passive calibration curve calibration parameters
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
-                sec.AddTwo("Equation:", cal_curve_equation.ToDisplayString()); // todo: if useSingles then display with S instead of D in the equation stringo
+                sec.AddTwo("Equation:", cal_curve_equation.ToDisplayString(useSingles)); // if useSingles then display with S instead of D in the equation stringo
                 sec.AddTwo("a:", a);
                 sec.AddTwo("b:", b);
                 sec.AddTwo("c:", c);
@@ -1867,22 +1867,22 @@ namespace AnalysisDefs
 
     public static class CurveEquationDisplay
     {
-        public static string ToDisplayString(this INCCAnalysisParams.CurveEquation ceq)
+        public static string ToDisplayString(this INCCAnalysisParams.CurveEquation ceq, bool useSingles = false)
         {
-            string s = "";
+            string s = (useSingles ? "S " : "D ") ;
             switch (ceq)
             {
                 case INCCAnalysisParams.CurveEquation.CUBIC:
-                    s = "D = a + bm + cm^2 + dm^3";
+                    s += "= a + bm + cm^2 + dm^3";
                     break;
                 case INCCAnalysisParams.CurveEquation.POWER:
-                    s = "D = am^b";
+                    s += "= am^b";
                     break;
                 case INCCAnalysisParams.CurveEquation.HOWARDS:
-                    s = "D = am / (1 + bm)";
+                    s += "= am / (1 + bm)";
                     break;
                 case INCCAnalysisParams.CurveEquation.EXPONENTIAL:
-                    s = "D = a (1 - exp(bm))";
+                    s += "= a (1 - exp(bm))";
                     break;
             }
             return s;

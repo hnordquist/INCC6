@@ -401,7 +401,7 @@ enditall:
                     );
 
 
-            meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
+            meas.AcquireState.lm.Cycles = meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
             NC.App.Opstate.StopTimer();
@@ -656,7 +656,7 @@ enditall:
                     );
 
 
-            meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
+            meas.AcquireState.lm.Cycles = meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
             NC.App.Opstate.StopTimer();
@@ -921,7 +921,7 @@ enditall:
                     );
 
 
-            meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
+            meas.AcquireState.lm.Cycles = meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
             NC.App.Opstate.StopTimer();
@@ -1161,7 +1161,7 @@ enditall:
                     );
 
 
-            meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
+            meas.AcquireState.lm.Cycles = meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
 
             rdt.PrepareAndStartCountingAnalyzers(meas.AnalysisParams);
             NC.App.Opstate.StopTimer();

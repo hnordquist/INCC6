@@ -25,10 +25,11 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic.FileIO;
 using AnalysisDefs;
 using NCCReporter;
 namespace NCCFile
@@ -398,6 +399,153 @@ namespace NCCFile
         private Dictionary<string, CSVFile> mPathToIsoFile;
         private Dictionary<string, CSVFile> mPathToCompFile;
     }
+
+	   
+	/// <summary>
+    /// Manager for Deming coefficient output file .dmr
+    /// See Results (.dmr) Files p. 14, Deming Curve Fitting User’s Manual, February 26, 2002, LA-UR 02-1143
+	/// 
+	/// The dmr importer populates a CurveEquationVals (from a KA, CC, AAS, ACC instance) with coefficients and equation choice, then saves new state to DB
+	///  
+	///	Results (.dmr) Files
+	///  The format of this file follows a general schema, with the details depending on the number of coefficients in
+	///  the fitting equation. The results file is a COMMA delimited text file that can be imported into commercial
+	///  spreadsheet programs.
+	///  • The first row contains the coefficients. -- a b c d
+	///  • The second row contains the absolute sigmas for the coefficients. -- sigmas for a b c d
+	///  • The third row contains the variance for the first coefficient.    -- var a
+	///  • Rows following the third (assuming there are two or more coefficients) contain
+	///  •   #4  -- covar ba, var b
+	///  •   #5  -- covar ca, covar cb, var c
+	///  •   #6  -- covar bc, covar bd, covar cd, var d
+	///     the covariances for the coefficient with the previous coefficients, and the variance for the coefficient in the last column
+	///     Row 4 is present only if there are 2 or more coefficients; it contains: covariance b with a, variance b.
+	///     Row 5 is present only if there are 3 or more coefficients; it contains: covariance c with a, covariance c with b, variance c.
+	///     Row 6 is present if 4 coefficients; this is not documented but the scan pattern is inferred.
+    /// </summary>
+    public class CoefficientFile
+    {
+
+        public CoefficientFile()
+        {
+            Init();
+        }
+
+        public void Init()
+        {
+			Coefficients = new INCCAnalysisParams.CurveEquationVals();
+        }
+
+
+		/// <summary>
+		/// Scan a dmr file.
+		/// </summary>
+		/// <param name="files">dmr file to process</param>
+		public void Process(string file)
+		{
+			if (string.IsNullOrEmpty(file))
+				return;
+			try
+			{
+				CSVFile csv = new CSVFile();
+				string name = file.Substring(file.LastIndexOf("\\") + 1); // Remove path information from string
+				csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				csv.Filename = file;
+				csv.ExtractDateFromFilename();
+				if (name.IndexOf('.') >= 0)
+					csv.ThisSuffix = name.Substring(name.IndexOf('.'));
+				csv.ProcessFile();  // split lines with scanner
+				if (csv.Lines.Count < 3)
+				{
+					NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Warning, 34100, "Skipped incomplete " + System.IO.Path.GetFileName(file));
+					return;
+				}
+				// line 1
+				int coeffnum = csv.Lines[0].Length; // 1 -> 3 lines, 2 -> 4 lines, 3 -> 5 lines, 4 -> 6 lines
+				int lines = coeffnum + 2;
+				if (csv.Lines.Count != lines)
+				{
+					NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Warning, 34100, "Expecting {0} lines, found {1}, skipping {2}", lines, csv.Lines.Count, System.IO.Path.GetFileName(file));
+					return;
+				}
+				Coefficients.a = GetDouble(csv.Lines[0][0]);
+				if (coeffnum > 1)
+					Coefficients.b = GetDouble(csv.Lines[0][1]);
+				if (coeffnum > 2)
+					Coefficients.c = GetDouble(csv.Lines[0][2]);
+				if (coeffnum > 3)
+					Coefficients.d = GetDouble(csv.Lines[0][3]);
+
+				// line 2 (skipped?)  // URGENT: check if this is used in INCC5
+				//Coefficients.var_a = GetDouble(csv.Lines[1][0]);
+				//if (coeffnum > 1)
+				//	Coefficients.var_b = GetDouble(csv.Lines[2][1]);
+				//if (coeffnum > 2)
+				//	Coefficients.var_c = GetDouble(csv.Lines[3][2]);
+				//if (coeffnum > 3)
+				//	Coefficients.var_d = GetDouble(csv.Lines[4][3]);		
+
+				// line 3
+				Coefficients.var_a = GetDouble(csv.Lines[2][0]);
+
+				// line 4
+				if (csv.Lines.Count > 3)
+				{
+					if (csv.Lines[4].Length < 2)
+						throw new Exception("Not enough entries on the b coefficient line " + csv.Lines[3].Length.ToString());
+					Coefficients.setcovar(Coeff.a, Coeff.b, GetDouble(csv.Lines[3][0]));
+					Coefficients.var_b = GetDouble(csv.Lines[3][1]);
+				}
+				if (csv.Lines.Count > 4)
+				{
+					if (csv.Lines[4].Length < 3)
+						throw new Exception("Not enough entries on the c coefficient line " + csv.Lines[4].Length.ToString());
+					Coefficients.setcovar(Coeff.a, Coeff.c, GetDouble(csv.Lines[4][0]));
+					Coefficients.setcovar(Coeff.a, Coeff.c, GetDouble(csv.Lines[4][1]));
+					Coefficients.var_c = GetDouble(csv.Lines[4][2]);
+				}
+				if (csv.Lines.Count > 5)
+				{
+					if (csv.Lines[5].Length < 4)
+						throw new Exception("Not enough entries on the d coefficient line " + csv.Lines[5].Length.ToString());
+					Coefficients.setcovar(Coeff.b, Coeff.c, GetDouble(csv.Lines[5][0]));
+					Coefficients.setcovar(Coeff.b, Coeff.d, GetDouble(csv.Lines[5][1]));
+					Coefficients.setcovar(Coeff.c, Coeff.d, GetDouble(csv.Lines[5][2]));
+					Coefficients.var_d = GetDouble(csv.Lines[5][3]);
+				}
+			} catch (MalformedLineException)  // not a CSV file
+			{
+				NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(file));
+			} catch (Exception e)  // not good
+			{
+				NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 34100, e.Message + " - Wrongness experienced " + System.IO.Path.GetFileName(file));
+			}
+
+		}
+
+		double GetDouble(string s)
+		{
+			double res = 0;
+			try
+			{
+				res = double.Parse(s, NumberStyles.Float | NumberStyles.AllowThousands);
+			}
+			catch (Exception)
+			{
+			}
+			return res;
+		}
+
+
+
+		// The results of processing a dmr file
+
+		public INCCAnalysisParams.CurveEquationVals Coefficients;
+
+
+    }
+
+
 
     /// <summary>
     /// Manager for INCC5 NCC_Dat
