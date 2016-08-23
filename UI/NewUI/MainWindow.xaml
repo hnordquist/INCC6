@@ -43,7 +43,7 @@
             </MenuItem>
             <MenuItem Header="_Maintain">
                 <MenuItem Header="_Calibration...">
-                    <MenuItem Header="_Deming Curve Fitting..." Click="MaintainDemingClick" IsEnabled="False"/>
+                    <MenuItem Header="_Deming Curve Fitting..." Click="MaintainDemingClick" IsEnabled="True"/>
                     <Separator />
                     <MenuItem Header="_Analysis Methods..." Click="MaintainAnalysisMethodsClick"  IsEnabled="True"/>
                     <Separator />

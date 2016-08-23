@@ -327,7 +327,6 @@ namespace NewUI
 
         private void Pu240eCoeffBtn_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Pu240e coefficients, sorry, bye bye, see ya later, adios");
             new IDDKValSelector().ShowDialog();
         }
 
