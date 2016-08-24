@@ -184,7 +184,7 @@ namespace NewUI
 					m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
 					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
-					m.AcquireState.item_type,
+					AssaySelector.ForMass(m.MeasOption) ? m.AcquireState.item_type : string.Empty,
 					mlistIndex.ToString()  // subitem at index 8 has the original mlist index of this element
                         });
 				listView1.Items.Add(lvi);

@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 15
-6.0.1.15 TBD Aug ??, 2016
+6.0.1.15 Aug 26, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -101,8 +101,8 @@ KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
    Holdup and glovebox features, the Plot features,
-   Deming least squares fit integration, some Add-a-src processing,
-   Collar acquire and Poison Rod details, integrated help.
+   some Add-a-src processing, Collar acquire and Poison Rod details,
+   integrated help.
 
 This is beta release software; issues and missing features are known to exist.
 
@@ -143,6 +143,7 @@ Closed issues
 ***  Fix Acquire from DB crash introduced in fb24f4fcb830bb0097a9ca319cfce708f5c0a7f5
 78   Deming output to 'dmd' formatted file, Deming 'dmr' file view, input and content use
      using the 'Get curve-fitting results' import feature on the Curve Selection dlg
+     Show material only for ver,hld,cal measurements in lists
 
 
 6.0.1.14 Aug 8, 2016
