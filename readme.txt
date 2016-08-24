@@ -132,7 +132,7 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.15 TBD Aug ??, 2016
+6.0.1.15 Aug 26, 2016
 
 126  Reanalyze
 ***  KVal selector for Euratom prepped for use; acquire mtl type case mismatch patch
@@ -143,7 +143,7 @@ Closed issues
 ***  Fix Acquire from DB crash introduced in fb24f4fcb830bb0097a9ca319cfce708f5c0a7f5
 78   Deming output to 'dmd' formatted file, Deming 'dmr' file view, input and content use
      using the 'Get curve-fitting results' import feature on the Curve Selection dlg
-     Show material only for ver,hld,cal measurements in lists
+***  Show material only for ver,hld,cal measurements in lists
 
 
 6.0.1.14 Aug 8, 2016
