@@ -419,7 +419,7 @@ namespace AnalysisDefs
                             ar.doubles = DB.Utils.ReifyDoubles((string)dr["doubles"]);
                         }
                         else
-                            lvl = LogLevels.Warning;
+                            lvl = LogLevels.Info;
                         ams.AddMethod(am, ar);
                         break;
                     case AnalysisMethod.AddASource:

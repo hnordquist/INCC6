@@ -112,17 +112,21 @@ namespace LMRawAnalysis
         #endregion
 
 
+		void InitCounters()
+		{
+			numNeutronEventsReceived = 0;
+            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
+            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
+			numCircuits = 0;
+            timeOfLastNeutronEvent = 0;
+		}
         public AnalyzerHandler(double theTicSizeInSeconds, LMLoggers.LognLM logger)
         {
 
             TickSizeInSeconds = theTicSizeInSeconds;
             log = logger;
             verboseTrace = log.ShouldTrace(LogLevels.Verbose);
-            numNeutronEventsReceived = 0;
-            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
-          numCircuits = 0;
-            timeOfLastNeutronEvent = 0;
+			InitCounters();
 
 #if USE_SPINTIME
             ResetSpinTime();
@@ -1186,7 +1190,8 @@ namespace LMRawAnalysis
                 }
                 anEvent.next = nextEvent;  //re-close the linked list, pointing the last new event back to the next event in list
                 numEventsInCircularLinkedList += num;
-
+				endOfNeutronEventList = anEvent;
+				startOfNeutronEventList = theEventCircularLinkedList;
                 log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler extending CircularArraySize by " + num + " to "
                                                                                                     + numEventsInCircularLinkedList);
         }
@@ -1520,12 +1525,7 @@ namespace LMRawAnalysis
                 eventSpacingAnalyzers[i].ResetCompletely(closeCounters);
             }
 
-            numNeutronEventsReceived = 0;
-            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0;
-            numCircuits = 0;
-
-            timeOfLastNeutronEvent = 0;
+			InitCounters();
 
 #if USE_SPINTIME
             ResetSpinTime();
@@ -1602,7 +1602,6 @@ namespace LMRawAnalysis
 			}
 			else if (numEventsInCircularLinkedList < num) // extend
 			{
-				//AHGCCollect(); 
 				ExtendListBy(num - numEventsInCircularLinkedList);
 			}
 			else if (numEventsInCircularLinkedList > num) // clear it, shrink it

@@ -144,6 +144,7 @@ Closed issues
 78   Deming output to 'dmd' formatted file, Deming 'dmr' file view, input and content use
      using the 'Get curve-fitting results' import feature on the Curve Selection dlg
 ***  Show material only for ver,hld,cal measurements in lists
+***  LM buffer extension detached circular buffer end
 
 
 6.0.1.14 Aug 8, 2016
