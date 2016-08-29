@@ -587,12 +587,25 @@ namespace NCCConfig
 			{
 				AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
 				if (!string.IsNullOrEmpty(aca.Configuration))
-					result = result + " " + aca.Configuration;
+					result = result + " " + EightCharConvert(DateTimeOffset.Now) + " " + aca.Configuration;
 			}
             return result;
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }
+
+		static public string EightCharConvert(DateTimeOffset dto)
+		{
+			Char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+			string y = dto.ToString("yy");
+			char Y = y[y.Length-1];
+			string M = string.Format("{0:X1}", dto.Month);
+			char D = table[dto.Day];
+			char H = table[dto.Hour + 10];
+			string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
+
+			return s;
+		}
 
 
         public AppContextConfig()
