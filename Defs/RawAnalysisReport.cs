@@ -854,7 +854,7 @@ namespace AnalysisDefs
         {
             OverallTime
         }
-        
+
         enum RateInterval  // as calculated in the analyzers
         {
             GateWidth, CompletedGates, OverallTime
@@ -1592,11 +1592,46 @@ namespace AnalysisDefs
             replines = t.lines;
         }
 
+        void StartReportContent(Measurement m)
+        {
+            PrepForReportGeneration(m, ' ');
+        }
+        public void GenerateInitialReportContent(Measurement m)
+        {
+            StartReportContent(m);
+            try
+            {
+                sections.Add(ConstructReportSection(ReportSections.DescriptiveSummary));
+                sections.Add(ConstructReportSection(ReportSections.MeasurementDetails));
+                sections.Add(ConstructReportSection(ReportSections.DetectorCalibration));
+
+                // --> !! trim
+                sections.RemoveAll(s => (s == null));
+
+                // copy all section rows to the report row list (t.rows)
+                int rowcount = 0;
+                foreach (Section sec in sections)
+                {
+                    rowcount += sec.Count;
+                }
+                Array.Resize(ref t.rows, rowcount);
+
+                int idx = 0;
+                foreach (Section sec in sections)
+                {
+                    Array.Copy(sec.ToArray(), 0, t.rows, idx, sec.Count); idx += sec.Count;
+                }
+            }
+            catch (Exception e)
+            {
+                ctrllog.TraceException(e);
+            }
+
+            t.CreateReport(0);
+            replines = t.lines;
+
+        }
     }
-
-
-
-
 
 }
 

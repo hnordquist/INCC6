@@ -797,6 +797,12 @@
     <Compile Include="Unready\IDDWeightedMult.Designer.cs">
       <DependentUpon>IDDWeightedMult.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\LMAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\LMAcquire.Designer.cs">
+      <DependentUpon>LMAcquire.cs</DependentUpon>
+    </Compile>
     <Compile Include="Unready\PlateauCurve.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -822,12 +828,6 @@
     </Compile>
     <Compile Include="Controller\Controller.cs" />
     <Compile Include="FormsHappyPlace\AcquireHandlers.cs" />
-    <Compile Include="FormsHappyPlace\AnalysisWizard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\AnalysisWizard.Designer.cs">
-      <DependentUpon>AnalysisWizard.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDAcquireAssay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1117,9 +1117,6 @@
     </Compile>
     <EmbeddedResource Include="FormsHappyPlace\Ack.resx">
       <DependentUpon>Ack.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\AnalysisWizard.resx">
-      <DependentUpon>AnalysisWizard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\ChooseBackgroundType.resx">
       <DependentUpon>ChooseBackgroundType.cs</DependentUpon>
@@ -1592,6 +1589,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDWeightedMult.resx">
       <DependentUpon>IDDWeightedMult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\LMAcquire.resx">
+      <DependentUpon>LMAcquire.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\PlateauCurve.resx">
       <DependentUpon>PlateauCurve.cs</DependentUpon>

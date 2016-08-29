@@ -1298,9 +1298,24 @@ namespace AnalysisDefs
 		/// </summary>
 		public static void SaveMeasurementResults(this Measurement meas)
 		{
+			IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+			while (iter.MoveNext())
+			{
+				Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+				if (meas.Detector.ListMode) // && meas.MeasOption < AssaySelector.MeasurementOption.unspecified)
+				{
+					// this is as virtual LMSR so save the mkey
+					long mid = meas.MeasurementId.UniqueId;
+                    //ElementList els = ir.ToDBElementList();
+                    //DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
+                    //long resid = ar.Create(mid, els);
+                    //mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
+				}
+			}
+
             SaveMeasurementCycles(meas);
 
-			IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+			iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
 			while (iter.MoveNext())
 			{
 				Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
@@ -1381,8 +1396,11 @@ namespace AnalysisDefs
         {
             long mid = m.MeasurementId.UniqueId;
             //Could we actually not do this when reanalyzing? hn 9.21.2015
+            // URGENT: 1) If the cycle is from a virtual SR, then save the virtual SR in LMMultiplicity_m, getting the lmid
+            // URGENT: 2) Then, save the cycle tying the cycle to the virtual SR lmid and the mid
+            // URGENT: 3) Concomittantly, the cycle lookup must account for lmid and mid 
             NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, String.Format("{0} cycles stored", m.Cycles.Count));
+            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
 
         }
 

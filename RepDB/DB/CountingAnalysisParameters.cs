@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -28,6 +28,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Data;
 using NCCReporter;
+using System.Collections;
 
 namespace DB
 {
@@ -173,6 +174,24 @@ namespace DB
             }
             else
                 return true;
+        }
+
+        public long DeleteAll(string DetectorName)
+        {
+            Detectors dets = new Detectors(db);
+            long l = dets.PrimaryKey(DetectorName);
+            if (l == -1)
+            {
+                DBMain.AltLog(LogLevels.Warning, 70137, "Missing Det key ({0}) selecting CountingParams", l);
+                return -1;
+            }
+            string table1 = "CountingParams";
+            string table2 = "LMMultiplicity";
+            ArrayList sqlList = new ArrayList();  
+            sqlList.Add("DELETE FROM " + table1 + " where detector_id=" + l.ToString());
+            sqlList.Add("DELETE FROM " + table2 + " where detector_id=" + l.ToString());
+            return db.Execute(sqlList);
+
         }
 
         public DataRow HasRow(string DetectorName, string CounterType, string table, string FA = null)

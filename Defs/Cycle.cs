@@ -423,9 +423,9 @@ namespace AnalysisDefs
         /// <param name="mkey">The multiplicity parameters used to select the specific results. There can be more than one such results set per cycle.</param>
         public void GenParamList(Multiplicity mkey)
         {
-            GenParamList(); // does the basic INCC5 and new LM cycle stuff
+            GenParamList(); // ^ does the basic INCC5 and new LM cycle stuff
 
-            //now add the mkey stuff
+            // now add the mkey stuff
             Table = "cycles";
             MultiplicityCountingRes pmcr = null;
             QCTestStatus status = QCTestStatus.None;
@@ -437,7 +437,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception) // mkey not found happens when a param is changed on a VSR that is not reflected back to the default [0] SR 
                 {
-                    logger.TraceEvent(NCCReporter.LogLevels.Warning, 7832, "Status not set due to mkey issue: " + mkey.ToString());
+                    logger.TraceEvent(LogLevels.Warning, 7832, "Cycle status not set in DB, mkey mismatch: " + mkey.ToString());
                 }
             if (pmcr == null)
                 pmcr = new MultiplicityCountingRes();  // null results 
@@ -455,7 +455,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("multiplicity_alpha", pmcr.multiAlpha));
             ps.Add(new DBParamEntry("multiplicity_efficiency", pmcr.efficiency));
             ps.Add(new DBParamEntry("mass", pmcr.mass));
-            ps.Add(new DBParamEntry("status", (Int32)status));
+            ps.Add(new DBParamEntry("status", (int)status));
             
         }
 

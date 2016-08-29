@@ -117,7 +117,7 @@ namespace ListModeDB
         
 		static private bool strvaluetest(DataRow dr, string key)
 		{
-			return dr.Table.Columns.Contains(key) && (!dr[key].Equals(System.DBNull.Value)) && (!string.IsNullOrEmpty((string)dr[key]));
+			return dr.Table.Columns.Contains(key) && (!dr[key].Equals(DBNull.Value)) && (!string.IsNullOrEmpty((string)dr[key]));
 		}
 
 		static private bool existtest(DataRow dr, string key)
@@ -134,11 +134,11 @@ namespace ListModeDB
             foreach (DataRow dr in dt.Rows)
             {
                 string type = "AnalysisDefs.";   // dev note: careful here, this is subject to bit rot
-                if (dr["counter_type"].Equals(System.DBNull.Value))
+                if (dr["counter_type"].Equals(DBNull.Value))
                     type += "BaseRate";
                 else
                     type += (string)dr["counter_type"];
-                System.Type t = System.Type.GetType(type);
+                Type t = Type.GetType(type);
                 ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
                 SpecificCountingAnalyzerParams sca = (SpecificCountingAnalyzerParams)ci.Invoke(null);
                 cp.Add(sca);
@@ -154,7 +154,7 @@ namespace ListModeDB
                 {
                     ((Coincidence)sca).AccidentalsGateDelayInTics = DB.Utils.DBUInt64(dr["accidentalsgatewidth"]);
                     ((Coincidence)sca).BackgroundGateTimeStepInTics = DB.Utils.DBUInt64(dr["backgroundgatewidth"]);
-                    //((Coincidence)sca).FA = FAType.FAOff;  // always on?? wtf?? So confuse. Much checking. TODO: check this
+                    // ((Coincidence)sca).FA = FAType.FAOff;  // always off by definition
                     ((Coincidence)sca).SR.gateLength = sca.gateWidthTics;
                 }
                 sca.Active = DB.Utils.DBBool(dr["active"]);
@@ -219,21 +219,24 @@ namespace ListModeDB
                 foreach (SpecificCountingAnalyzerParams s in cap)
                 {
                     Type t = s.GetType();
-                    if (t.Equals(typeof(AnalysisDefs.Multiplicity)))
+                    if (t.Equals(typeof(Multiplicity)))
                     {
                         Multiplicity thisone = ((Multiplicity)s);
                         ulong gw = thisone.gateWidthTics;
+                        //ulong predelay = thisone.SR.predelay;
                         thisone.SR = new ShiftRegisterParameters(m.SR);   // use the current detector's SR params, then 
                         thisone.SetGateWidthTics(gw); // override with the user's choice from the DB
+						//thisone.SR.predelay = predelay;
                     }
                     else if (t.Equals(typeof(AnalysisDefs.Coincidence)))
                     {
                         Coincidence thisone = ((Coincidence)s);
                         ulong gw = thisone.gateWidthTics;
+                        //ulong predelay = thisone.SR.predelay;
                         thisone.SR = new ShiftRegisterParameters(m.SR);   // use the current detector's SR params, then 
                         thisone.SetGateWidthTics(gw); // override with the user's choice from the DB
+						//thisone.SR.predelay = predelay;
                     }
-
                 }
             }
             return cap;
@@ -264,21 +267,8 @@ namespace ListModeDB
         public void ReplaceCounters(Detector det, CountingAnalysisParameters cap)
         {
             DB.CountingAnalysisParameters db = new DB.CountingAnalysisParameters();
-            DB.Detectors dets = new DB.Detectors(db.db);
-            long l = dets.PrimaryKey(det.Id.DetectorName);
-            if (l == -1)
-            {
-                return;
-            }
-
-            foreach (SpecificCountingAnalyzerParams s in cap)
-            {
-                DB.ElementList parms = s.ToDBElementList();
-                if (parms != null)
-                {
-                    db.Delete(l, s.GetType().Name, parms);
-                }
-            }
+            db.DeleteAll(det.Id.DetectorName);
+            UpdateCounters(det.Id.DetectorName, cap); 
         }
 
 

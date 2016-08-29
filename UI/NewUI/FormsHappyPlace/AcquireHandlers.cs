@@ -290,7 +290,7 @@ namespace NewUI
             }
 
             // The acquire is set to occur
-            AnalysisWizard.ResetMeasurement();
+            LMAcquire.ResetMeasurement();
 
             switch (ap.data_src)
             {
@@ -308,14 +308,13 @@ namespace NewUI
                         // Check NC.App.Opstate.Measurement.AnalysisParams for at least one VSR 
                         // If not present, inform and pop up the wizard
                         // If present, inform with new dialog, do not pop up the wizard
-                        if (NC.App.Opstate.Measurement.AnalysisParams.HasMultiplicity())
+                        if (NC.App.Opstate.Measurement.AnalysisParams.HasMatchingVSR(det.MultiplicityParams))
                         {
                             dr = DialogResult.OK;
                         }
                         else
                         {
-                            AnalysisWizard aw2B = new AnalysisWizard(AnalysisWizard.AWSteps.Step2B, ap, det);  // analyzers are created in here, placed on global measurement
-                            dr = aw2B.ShowDialog();
+	                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();// analyzers are created in here, placed on global measurement
                             if (dr == DialogResult.OK)
                             {
                                 NC.App.DB.UpdateAcquireParams(ap); //update it again
@@ -411,8 +410,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog(); // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
                     else
                     {
@@ -425,8 +423,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
                     else
                     {
@@ -439,8 +436,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
                     else
                     {
@@ -453,8 +449,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
 				    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
                     else
                     {

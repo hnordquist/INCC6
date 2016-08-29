@@ -111,6 +111,10 @@ DROP TABLE [results_precision_rec];
 GO
 DROP TABLE [results_tm_bkg_rec];
 GO
+DROP TABLE [LMMultiplicity_m];
+GO
+DROP TABLE [CountingParams_m];
+GO
 DROP TABLE [LMNetComm];
 GO
 DROP TABLE [LMMultiplicity];

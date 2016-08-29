@@ -667,7 +667,7 @@ namespace NCC
 		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
 		///                                 skipped if Reanalysis prepared the details from database measurement results
 		/// </param>
-        public static void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
+        static public void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
         {
             if (meas.Detector.ListMode)
             {
@@ -682,12 +682,12 @@ namespace NCC
                 }
                 else // it is an INCC5 analysis driven with LM data
                 {
-                    // check to see if detector settings are copied into an active CA entry
-                    if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(meas.Detector.MultiplicityParams) && w.Active; }))
-                        meas.AnalysisParams.Add(meas.Detector.MultiplicityParams);
+                    // prepare or identify an active CA entry with matching CA gatewidth and FA, and has the same SR params as the detector
+                    if (meas.AnalysisParams.PrepareMatchingVSR(meas.Detector.MultiplicityParams))
+                        CentralizedState.App.LMBD.UpdateCounters(meas.Detector.Id.DetectorName, meas.AnalysisParams); // added one, save it
                 }
             }
-            else
+            else // not sure this is useful
             {
                 // prepare analyzer params from detector SR params
                 meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: false);

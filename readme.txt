@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 15
-6.0.1.15 Aug 26, 2016
+INCC6 Beta Release 16
+6.0.1.16 Sep 6, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -118,7 +118,6 @@ Issues for basic INCC5/6 feature COMPLETION
 
 #84  Implement Collar
 #79  Plot Norm, Plot Ver diagnostic tools
-#69  Present the proposed List Mode Config UI from DB enhancement
 #35  Hold-up analysis required
 
 Issues for basic INCC6 function and performance
@@ -131,6 +130,9 @@ Issues for basic INCC6 function and performance
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 
 Closed issues
+
+6.0.1.16 Sep 6, 2016
+***  Rework List mode analyzer UI with tabbed dialog, WRT #69  Present the proposed List Mode Config UI from DB enhancement
 
 6.0.1.15 Aug 26, 2016
 
