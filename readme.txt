@@ -132,7 +132,7 @@ Issues for basic INCC6 function and performance
 Closed issues
 
 6.0.1.16 Sep 6, 2016
-***  Rework List mode analyzer UI with tabbed dialog, WRT #69  Present the proposed List Mode Config UI from DB enhancement
+***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
 
 6.0.1.15 Aug 26, 2016
 

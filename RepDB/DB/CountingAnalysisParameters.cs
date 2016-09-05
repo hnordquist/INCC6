@@ -41,6 +41,7 @@ namespace DB
         }
         public IDB db;
         private const int faidx = 6;
+        private const int gwidx = 0;
 
         public DataTable AnalyzerParamsForDetector(string DetName)
         {
@@ -64,9 +65,9 @@ namespace DB
             }
 
             if (table.Equals("LMMultiplicity"))
-                dr = HasRow(DetectorName, CounterType, table, sParams[faidx].Value); // the FA parameter
+                dr = HasRow(l, CounterType, table, sParams, sParams[faidx].Value); // the FA parameter
             else
-                dr = HasRow(DetectorName, CounterType, table);
+                dr = HasRow(l, CounterType, table, sParams);
             if (dr == null)
             {
                 sParams.Add(new Element("detector_id", l));
@@ -76,12 +77,45 @@ namespace DB
             }
             else
             {
-                //NEXT: not tested(?)
                 string sSQL = "UPDATE " + table + " SET ";
-                sSQL += (sParams.ColumnEqValueList + " where counter_type=" + SQLSpecific.QVal(CounterType) + " AND detector_id=" + l.ToString());
+                sSQL += (sParams.ColumnEqValueList + " where counter_type=" + SQLSpecific.QVal(CounterType) + " AND detector_id=" + l.ToString() + " AND gatewidth=" + sParams[gwidx].Value);
                 if (table.Equals("LMMultiplicity"))
                     sSQL += " AND " + sParams[faidx].Name + "=" + sParams[faidx].Value;
                 return db.Execute(sSQL);
+            }
+        }
+
+        public bool Insert(string DetectorName, string CounterType, ElementList sParams)
+        {
+            DataRow dr = null;
+
+            string table = "CountingParams";
+            if (CounterType.Equals("Multiplicity") || CounterType.Equals("Coincidence"))
+                table = "LMMultiplicity";
+
+            Detectors dets = new Detectors(db);
+            long l = dets.PrimaryKey(DetectorName);
+            if (l == -1)
+            {
+                DBMain.AltLog(LogLevels.Warning, 70137, "Missing Det key ({0}) selecting CountingParams", l);
+                return false;
+            }
+
+            if (table.Equals("LMMultiplicity"))
+                dr = HasRow(l, CounterType, table, sParams, sParams[faidx].Value); // the FA parameter
+            else
+                dr = HasRow(l, CounterType, table, sParams);
+            if (dr == null)
+            {
+                sParams.Add(new Element("detector_id", l));
+                string sSQL = "Insert into " + table;
+                sSQL += sParams.ColumnsValues;
+                return db.Execute(sSQL);
+            }
+            else
+            {
+                // identical row found, skip it
+                return false;
             }
         }
 
@@ -103,9 +137,9 @@ namespace DB
             }
 
             if (table.Equals("LMMultiplicity"))
-                dr = HasRow(DetectorName, CounterType, table, sParams[faidx].Value); // the FA parameter
+                dr = HasRow(l, CounterType, table, sParams, sParams[faidx].Value); // the FA parameter
             else
-                dr = HasRow(DetectorName, CounterType, table);
+                dr = HasRow(l, CounterType, table, sParams);
             if (dr != null)
             {
                 //NEXT: not tested(?)
@@ -127,9 +161,9 @@ namespace DB
                 table = "LMMultiplicity";
 
             if (table.Equals("LMMultiplicity"))
-                dr = HasRow(DetectorId, CounterType, table, sParams[faidx].Value); // the FA parameter
+                dr = HasRow(DetectorId, CounterType, table, sParams, sParams[faidx].Value); // the FA parameter
             else
-                dr = HasRow(DetectorId, CounterType, table);
+                dr = HasRow(DetectorId, CounterType, table, sParams);
             if (dr != null)
             {
                 //NEXT: not tested(?)
@@ -141,8 +175,6 @@ namespace DB
             else
                 return true;
         }
-
-       // fix this, need a blanket clear
 
         public bool DeleteAll(string DetectorName, string CounterType, ElementList sParams)
         {
@@ -161,12 +193,11 @@ namespace DB
             }
 
             if (table.Equals("LMMultiplicity"))
-                dr = HasRow(DetectorName, CounterType, table, sParams[faidx].Value); // the FA parameter
+                dr = HasRow(l, CounterType, table, sParams, sParams[faidx].Value); // the FA parameter
             else
-                dr = HasRow(DetectorName, CounterType, table);
+                dr = HasRow(l, CounterType, table, sParams);
             if (dr != null)
             {
-                //NEXT: not tested(?)
                 string sSQL = "DELETE FROM " + table + " where counter_type=" + SQLSpecific.QVal(CounterType) + " AND detector_id=" + l.ToString();
                 if (table.Equals("LMMultiplicity"))
                     sSQL += " AND " + sParams[faidx].Name + "=" + sParams[faidx].Value;
@@ -194,16 +225,9 @@ namespace DB
 
         }
 
-        public DataRow HasRow(string DetectorName, string CounterType, string table, string FA = null)
+        public DataRow HasRow(long DetectorId, string CounterType, string table, ElementList el, string FA = null)
         {
-            DataTable dt = BasicSelect(DetectorName, CounterType, table, FA);
-            if (dt.Rows.Count > 0) return dt.Rows[0];
-            else return null;
-        }
-
-        public DataRow HasRow(long DetectorId, string CounterType, string table, string FA = null)
-        {
-            DataTable dt = GetTable(DetectorId, CounterType, table, FA);
+            DataTable dt = GetRows(DetectorId, CounterType, table, el, FA);
             if (dt.Rows.Count > 0) return dt.Rows[0];
             else return null;
         }
@@ -232,24 +256,22 @@ namespace DB
             return dta;
         }
 
-        private DataTable GetTable(long DetectorId, string CounterType, string table, string FA)
+        private DataTable GetRows(long DetectorId, string CounterType, string table, ElementList el, string FA)
         {
             db.SetConnection();
-            string sSQL = "SELECT * FROM " + table + " where detector_id=" + DetectorId.ToString() + " AND counter_type=" + SQLSpecific.QVal(CounterType);
-            if (!String.IsNullOrEmpty(FA))
-                sSQL += ("AND FA=" + FA);
+            string sSQL = "SELECT * FROM " + table + " where detector_id=" + DetectorId.ToString() +
+                " AND counter_type=" + SQLSpecific.QVal(CounterType) + 
+                " AND gatewidth=" + SQLSpecific.QVal(el[gwidx].Value);
+            if (!string.IsNullOrEmpty(FA))
+            {
+                sSQL += " AND " + el[faidx-2].Name + "=" + el[faidx-2].Value;
+                sSQL += " AND " + el[faidx-1].Name + "=" + el[faidx-1].Value;
+                sSQL += " AND " + el[faidx].Name + "=" + FA;
+            }
             DataTable dt = db.DT(sSQL);
             return dt;
         }
 
-
-        private DataTable BasicSelect(string DetectorName, string CounterType, string table, string FA)
-        {
-            db.SetConnection();
-            Detectors dets = new Detectors(db);
-            long l = dets.PrimaryKey(DetectorName);
-            return GetTable(l, CounterType, table, FA);
-        }
         ///////////////////////
 
     }

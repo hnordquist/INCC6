@@ -587,7 +587,7 @@ namespace NCCConfig
 			{
 				AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
 				if (!string.IsNullOrEmpty(aca.Configuration))
-					result = result + " " + EightCharConvert(DateTimeOffset.Now) + " " + aca.Configuration;
+					result = result + " " + aca.Configuration;
 			}
             return result;
             // MyVersion.Build = days after 2000-01-01

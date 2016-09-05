@@ -268,10 +268,21 @@ namespace ListModeDB
         {
             DB.CountingAnalysisParameters db = new DB.CountingAnalysisParameters();
             db.DeleteAll(det.Id.DetectorName);
-            UpdateCounters(det.Id.DetectorName, cap); 
+            InsertCounters(det.Id.DetectorName, cap); 
         }
 
-
+        public void InsertCounters(string detname, CountingAnalysisParameters cap)
+        {
+            DB.CountingAnalysisParameters db = new DB.CountingAnalysisParameters(); 
+            foreach (SpecificCountingAnalyzerParams s in cap)
+            {
+                DB.ElementList parms = s.ToDBElementList();
+                if (parms != null)
+                {
+                    db.Insert(detname, s.GetType().Name, parms);
+                }
+            }
+        }
 
     }
 }

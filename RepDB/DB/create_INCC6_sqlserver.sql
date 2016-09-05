@@ -880,6 +880,7 @@ CREATE TABLE LMINCCAppContext(
 GO
 /* for Feynman, Rossi, Time, etc. */
 CREATE TABLE CountingParams(
+	[id] INTEGER IDENTITY Primary Key,
 	[detector_id] INTEGER NOT NULL,
 	[gatewidth]float NULL,
 	[counter_type] nvarchar(40) NULL,
@@ -890,6 +891,7 @@ CREATE TABLE CountingParams(
 GO
 /* mult FA on, Mult Conv, Coincidence (Mult Conv) */
 CREATE TABLE LMMultiplicity(
+	[id] INTEGER IDENTITY Primary Key,
 	[detector_id] INTEGER NOT NULL,
 	[gatewidth] float NULL,
 	[counter_type] nvarchar(40) NULL,

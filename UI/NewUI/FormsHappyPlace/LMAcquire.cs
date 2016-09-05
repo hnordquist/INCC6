@@ -35,23 +35,24 @@ This source code is distributed under the New BSD license:
    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using AnalysisDefs;
-using DetectorDefs;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using AnalysisDefs;
+using DetectorDefs;
+using NCCReporter;
 namespace NewUI
 {
-    using NCCReporter;
-    using Integ = NCC.IntegrationHelpers;
-    using N = NCC.CentralizedState;
+	using Integ = NCC.IntegrationHelpers;
+	using N = NCC.CentralizedState;
 
-    public partial class LMAcquire : Form
+	public partial class LMAcquire : Form
 	{
 		Detector det;
         AcquireParameters ap;
         CountingAnalysisParameters alt;
+		bool PreserveAnalyzerChanges;
 		bool FromINCC5Acquire { set; get; } // if called directly from INCC5 acquire, force user to select a multiplicity analyzer
 
 		public enum LMSteps { FileBased, DAQBased, AnalysisSpec, Go };
@@ -71,6 +72,7 @@ namespace NewUI
 				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 			}
 			alt = CountingAnalysisParameters.Copy(N.App.Opstate.Measurement.AnalysisParams);
+			PreserveAnalyzerChanges = false;
 			BuildAnalzyerCombo();
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
@@ -374,7 +376,13 @@ namespace NewUI
 			string s = (string)row.Cells[0].Value;
 			return !string.IsNullOrEmpty(s) && (string.Compare(s,"yes") == 0);
 		}
-
+		bool CheckedChanged(DataGridViewRow row)
+		{
+			if (row == null || row.Cells[0].Tag == null)
+				return false;
+			bool origValue = (bool)row.Cells[0].Tag;
+			return origValue != CheckedRow(row);
+		}
         string[] ToSimpleValueArray(SpecificCountingAnalyzerParams s)
 		{
 			Type t = s.GetType();
@@ -411,29 +419,16 @@ namespace NewUI
 			return vals;
 		}
 
-		void SetColumnEna(DataGridViewRow row)
+		void SetRowDetails(DataGridViewRow row, SpecificCountingAnalyzerParams s)					
 		{
-			// NEXT: change the text of the column header if FA On or FA off Mult,
-			// NEXT: ghost it out if not needed
-			Type t = row.Tag.GetType();
-			if (t.Equals(typeof(Rossi)) || t.Equals(typeof(TimeInterval)) || t.Equals(typeof(Feynman)))
-			{
-				DataGridViewColumnHeaderCell c = AnalyzerGridView.Columns[2].HeaderCell;
-			} else if (t.Equals(typeof(Multiplicity)))
-			{
-			} else if (t.Equals(typeof(Coincidence)))
-			{
-			}
-		}
-
-		void SetDetails(DataGridViewRow row, SpecificCountingAnalyzerParams s)					
-		{
+			row.Cells[0].Tag = s.Active;
 			row.Cells[2].Tag = s.gateWidthTics;
 			row.Tag = s;
 			Type t = s.GetType();
+			row.Cells[3].ReadOnly = false;
+			row.Cells[4].ReadOnly = false;
 			if (t.Equals(typeof(Rossi)) || t.Equals(typeof(TimeInterval)) || t.Equals(typeof(Feynman)))
 			{
-				row.Cells[1].ReadOnly = true;
 				row.Cells[3].ReadOnly = true;
 				row.Cells[4].ReadOnly = true;
             }
@@ -451,33 +446,28 @@ namespace NewUI
             }
             else if (t.Equals(typeof(Coincidence)))
 			{
-				row.Cells[1].ReadOnly = true;
                 row.Cells[3].Tag = ((Coincidence)s).SR.predelay;
                 row.Cells[4].Tag = ((Coincidence)s).AccidentalsGateDelayInTics;
             }
         }
 
-        void SetRODetails(DataGridViewRow row)
+        void SetRODetails(DataGridViewRow row, Type t)
         {
-            Type t; FAType FA;
-            if (row.Cells[1].Value == null)
-                t = typeof(Multiplicity);
-            else
-                TTypeMap((string)row.Cells[1].Value, out t, out FA);
             if (t.Equals(typeof(Rossi)) || t.Equals(typeof(TimeInterval)) || t.Equals(typeof(Feynman)))
             {
-                row.Cells[1].ReadOnly = true;
                 row.Cells[3].ReadOnly = true;
                 row.Cells[4].ReadOnly = true;
             }
             else if (t.Equals(typeof(Multiplicity)))
             {
-
+                row.Cells[3].ReadOnly = false;
+                row.Cells[4].ReadOnly = false;
             }
             else if (t.Equals(typeof(Coincidence)))
             {
-                row.Cells[1].ReadOnly = true;
-            }
+                row.Cells[3].ReadOnly = false;
+                row.Cells[4].ReadOnly = false;
+           }
         }
 
 
@@ -490,7 +480,7 @@ namespace NewUI
                     continue;
 				string[] a = ToSimpleValueArray(s);
 				int i = AnalyzerGridView.Rows.Add(a);
-				SetDetails(AnalyzerGridView.Rows[i], s);
+				SetRowDetails(AnalyzerGridView.Rows[i], s);
 			}
 		}
 
@@ -512,23 +502,23 @@ namespace NewUI
 			}
 		}
 
-        private void AnalyzerGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
         private void AnalyzerGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
 		{
-			DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
-			DataGridViewCell cell = row.Cells[e.ColumnIndex];
+			if (cbm != null)
+            {
+                // remove the subscription for the selected index changed event
+                cbm.SelectedIndexChanged -= new EventHandler(cbm_SelectedIndexChanged);
+            }
             if (e.ColumnIndex > 1)
             {
-                //check for non-neg unsigned long number
+				DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
+				DataGridViewCell cell = row.Cells[e.ColumnIndex];
                 ulong x = (cell.Tag == null ? 100ul : (ulong)cell.Tag);
                 bool mod = (Format.ToNN((string)cell.Value, ref x));
                 if (mod)
                 {
                     cell.Tag = x;
+					PreserveAnalyzerChanges = true;
                 }
                 else
                     cell.Value = x.ToString();
@@ -630,24 +620,171 @@ namespace NewUI
 			return pihfd;
 		}
 
-		private void PreserveNewState()
-        {
-			// 1: create the analysis param objects
-			// 2: associate the analysis params with the current detector/instrument definition (part of the contextual measurement state)
-			// NEXT: Need to support multiple analyzers of each type from the UI
-            
-			// at last, assign the analyzer(s) to the global measurement structure
-			CountingAnalysisParameters cntap = new CountingAnalysisParameters();
-			foreach(DataGridViewRow row in AnalyzerGridView.Rows)
+		void ReconstructRow(DataGridViewRow row, Type t, FAType FA)
+		{
+			SpecificCountingAnalyzerParams s = (SpecificCountingAnalyzerParams)row.Tag;
+			if (t.Equals(typeof(Multiplicity)) && typeof(Multiplicity) == s.GetType())  // keep the predelay and gw
 			{
-				SpecificCountingAnalyzerParams r = Constructed(row);
-				if (r == null) // empty row, so just skip it
-					continue;
-				cntap.Add(r);
-				r.modified = !CompareAnalyzers((SpecificCountingAnalyzerParams)row.Tag, r);
+				Multiplicity m = (Multiplicity)s;
+				if (FA != m.FA)  // set alt gate to default if FA changed
+				{
+					Multiplicity x = new Multiplicity(FA);
+					if (FA == FAType.FAOn)
+					{
+						row.Cells[4].Value = x.BackgroundGateTimeStepInTics.ToString();
+						row.Cells[4].Tag = x.BackgroundGateTimeStepInTics;
+					}
+					else
+					{
+						row.Cells[4].Value = x.AccidentalsGateDelayInTics.ToString();
+						row.Cells[4].Tag = x.AccidentalsGateDelayInTics;
+					}
+				}
+				else
+				{
+					if (FA == FAType.FAOn)
+					{
+						row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+						row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+					}
+					else
+					{
+						row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+						row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+					}
+				}
 			}
-            N.App.Opstate.Measurement.AnalysisParams = cntap;
-            N.App.LMBD.ReplaceCounters(det, cntap);
+			else if (t.Equals(s.GetType()))
+			{
+				ReconstructRow(row, s, t, FA);
+			}
+			row.Cells[2].Tag = s.gateWidthTics;
+			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			row.Tag = s;
+			SetRODetails(row, t);
+		}
+
+		void ConstructNewRow(DataGridViewRow row, Type t, FAType FA)
+		{
+			SpecificCountingAnalyzerParams s = null;
+			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			{
+				Multiplicity m = new Multiplicity(FA);
+				row.Cells[3].Value = det.SRParams.predelay.ToString();
+				row.Cells[3].Tag = det.SRParams.predelay;
+				row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+				row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+				s = m;
+			}
+			else if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
+			{
+				Multiplicity m = new Multiplicity(FA);
+				row.Cells[3].Value = det.SRParams.predelay.ToString();
+				row.Cells[3].Tag = det.SRParams.predelay;
+				row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+				s = m;
+			}
+			else if (t.Equals(typeof(Feynman)))
+			{
+				s = new Feynman();
+			}
+			else if (t.Equals(typeof(Rossi)))
+			{
+				s = new Rossi();
+			}
+			else if (t.Equals(typeof(TimeInterval)))
+			{
+				s = new TimeInterval();
+			}
+			else if (t.Equals(typeof(Coincidence)))
+			{
+				Coincidence c = new Coincidence();
+				row.Cells[3].Value = det.SRParams.predelay.ToString();
+				row.Cells[3].Tag = det.SRParams.predelay;
+				row.Cells[4].Value = c.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Tag = c.AccidentalsGateDelayInTics;
+				s = c;
+			}
+
+			row.Cells[0].Tag = s.Active;
+			row.Cells[2].Tag = s.gateWidthTics;
+			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			row.Tag = s;
+			SetRODetails(row, t);		
+		}
+		void ReconstructRow(DataGridViewRow row, SpecificCountingAnalyzerParams s, Type t, FAType FA)
+		{
+			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			{
+				Multiplicity m = (Multiplicity)s;
+				row.Cells[3].Value = m.SR.predelay.ToString();
+				row.Cells[3].Tag = m.SR.predelay;
+				row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+				row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+			}
+			else if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
+			{
+				Multiplicity m = (Multiplicity)s;
+				row.Cells[3].Value = m.SR.predelay.ToString();
+				row.Cells[3].Tag = m.SR.predelay;
+				row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+			}
+			else if (t.Equals(typeof(Feynman)))
+			{
+			}
+			else if (t.Equals(typeof(Rossi)))
+			{
+			}
+			else if (t.Equals(typeof(TimeInterval)))
+			{
+			}
+			else if (t.Equals(typeof(Coincidence)))
+			{
+				Coincidence c = (Coincidence)s;
+				row.Cells[3].Value = c.SR.predelay.ToString();
+				row.Cells[3].Tag = c.SR.predelay;
+				row.Cells[4].Value = c.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Tag = c.AccidentalsGateDelayInTics;
+			}
+
+			row.Cells[0].Tag = s.Active;
+			row.Cells[2].Tag = s.gateWidthTics;
+			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			SetRODetails(row, t);		
+		}
+
+		void CheckActiveChecks()
+		{
+				foreach(DataGridViewRow row in AnalyzerGridView.Rows)
+				{
+					if (CheckedChanged(row))
+					{
+						PreserveAnalyzerChanges = true;
+						break;
+					}
+				}
+		}
+		private void PreserveNewState()
+        {    
+			CheckActiveChecks();      
+			if (PreserveAnalyzerChanges)
+			{
+				CountingAnalysisParameters cntap = new CountingAnalysisParameters();
+				foreach(DataGridViewRow row in AnalyzerGridView.Rows)
+				{
+					SpecificCountingAnalyzerParams r = Constructed(row);
+					if (r == null) // empty row, so just skip it
+						continue;
+					row.Cells[0].Tag = r.Active;  // reset the tag for the check box, it is the only one not updated elsewhere
+					cntap.Add(r);
+					r.modified = !CompareAnalyzers((SpecificCountingAnalyzerParams)row.Tag, r);
+				}
+				N.App.Opstate.Measurement.AnalysisParams = cntap;
+				N.App.LMBD.ReplaceCounters(det, cntap);
+				PreserveAnalyzerChanges = false;
+			}
             if (N.App.AppContext.modified)
                 N.App.LMBD.UpdateLMINCCAppContext();
         }
@@ -699,6 +836,10 @@ namespace NewUI
 		}
         void SaveAcqStateChanges()
         {
+			if (!FromINCC5Acquire && ap.qc_tests)
+			{
+				ap.qc_tests = false; ap.modified = true;
+			}
             if (ap.modified || ap.lm.modified)
             {
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
@@ -855,7 +996,6 @@ namespace NewUI
         }
         private void Step2BDetectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //this.Step2BNextBtn.Enabled = true;
             det = (Detector)((ComboBox)sender).SelectedItem;
         }
         private void CycleNumTextBox_Leave(object sender, EventArgs e)
@@ -929,32 +1069,8 @@ namespace NewUI
             }
         }
 
-		//////////////////////// Utilities
-		public static void ResetMeasurement()
-        {
-
-            if (N.App.Opstate.Measurement != null)
-            {
-                N.App.Opstate.Measurement = null;
-                NCCReporter.LMLoggers.LognLM log = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
-                long mem = GC.GetTotalMemory(false);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4248, "GC now");
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4284, "GC complete");
-                mem = GC.GetTotalMemory(true);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
-            }
-        }
-
 		void Swap(bool livePage)
 		{
-			//if (livePage)
-			//	tabControl1.TabPages.Insert(0, live);
-			//else
-			//	tabControl1.TabPages.Insert(0, file);
-			//tabControl1.SelectedIndex = 0;
 			LoadParams(livePage ? LMSteps.DAQBased : LMSteps.FileBased);
 			if (livePage)
 				tabControl1.SelectedIndex = 1;
@@ -974,5 +1090,70 @@ namespace NewUI
 			tabControl1.Refresh();
 		}
 
-    }
+
+        ComboBox cbm;
+        DataGridViewCell currentCell;
+
+        void AnalyzerGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            // Here add subscription for selected index changed event
+            if (e.Control is ComboBox)
+            {
+                cbm = (ComboBox)e.Control;
+                if (cbm != null)
+                {
+                    cbm.SelectedIndexChanged += new EventHandler(cbm_SelectedIndexChanged);
+                }
+                currentCell = AnalyzerGridView.CurrentCell;
+            }
+        }
+ 
+        void cbm_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Invoke method if the selection changed event occurs
+            BeginInvoke(new MethodInvoker(EndEdit));
+        }
+ 
+        void EndEdit()
+        {
+            // Change the content of appropriate cell when selected index changes
+            if (cbm != null)
+            {
+				Type t; FAType FA;
+				if (cbm.SelectedItem == null)
+					return;
+				TTypeMap((string)cbm.SelectedItem, out t, out FA);
+				DataGridViewRow row = AnalyzerGridView.Rows[currentCell.RowIndex];
+				if (row == null) // empty row, so just skip it
+					return;
+				SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
+				if (r == null) // empty row, so fill it in with defaults
+					ConstructNewRow(row, t, FA);				
+				else
+					// Update row with field defaults
+					ReconstructRow(row, t, FA);				
+				PreserveAnalyzerChanges = true;	
+            }
+        }
+
+		//////////////////////// Utilities
+		public static void ResetMeasurement()
+        {
+
+            if (N.App.Opstate.Measurement != null)
+            {
+                N.App.Opstate.Measurement = null;
+                NCCReporter.LMLoggers.LognLM log = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+                long mem = GC.GetTotalMemory(false);
+                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4248, "GC now");
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4284, "GC complete");
+                mem = GC.GetTotalMemory(true);
+                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+            }
+        }
+
+	}
 }
