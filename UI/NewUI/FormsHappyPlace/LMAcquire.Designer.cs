@@ -85,11 +85,6 @@
 			this.DeleteBtn = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.AnalyzerGridView = new System.Windows.Forms.DataGridView();
-			this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.APCancel = new System.Windows.Forms.Button();
 			this.Step3SaveExit = new System.Windows.Forms.Button();
 			this.ReviewAndGo = new System.Windows.Forms.TabPage();
@@ -105,6 +100,11 @@
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LiveSettings.SuspendLayout();
 			this.FileSettings.SuspendLayout();
 			this.InputFileTypeGroupBox.SuspendLayout();
@@ -764,39 +764,9 @@
 			this.AnalyzerGridView.Size = new System.Drawing.Size(555, 236);
 			this.AnalyzerGridView.TabIndex = 61;
 			this.AnalyzerGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_CellEndEdit);
+			this.AnalyzerGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.AnalyzerGridView_CellFormatting);
 			this.AnalyzerGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.AnalyzerGridView_EditingControlShowing);
-			// 
-			// Active
-			// 
-			this.Active.FalseValue = "no";
-			this.Active.HeaderText = "Active";
-			this.Active.Name = "Active";
-			this.Active.TrueValue = "yes";
-			this.Active.Width = 50;
-			// 
-			// Type
-			// 
-			this.Type.HeaderText = "Type";
-			this.Type.Name = "Type";
-			this.Type.Width = 140;
-			// 
-			// Gatewidth
-			// 
-			this.Gatewidth.HeaderText = "Gate width";
-			this.Gatewidth.Name = "Gatewidth";
-			this.Gatewidth.Width = 110;
-			// 
-			// Predelay
-			// 
-			this.Predelay.HeaderText = "Predelay";
-			this.Predelay.Name = "Predelay";
-			this.Predelay.Width = 80;
-			// 
-			// Long
-			// 
-			this.Long.HeaderText = "Long delay";
-			this.Long.Name = "Long";
-			this.Long.Width = 110;
+			this.AnalyzerGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_DataGridViewCellEventHandler);
 			// 
 			// APCancel
 			// 
@@ -943,6 +913,38 @@
 			this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
 			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
 			// 
+			// Active
+			// 
+			this.Active.FalseValue = "no";
+			this.Active.HeaderText = "Active";
+			this.Active.Name = "Active";
+			this.Active.TrueValue = "yes";
+			this.Active.Width = 50;
+			// 
+			// Type
+			// 
+			this.Type.HeaderText = "Type";
+			this.Type.Name = "Type";
+			this.Type.Width = 140;
+			// 
+			// Gatewidth
+			// 
+			this.Gatewidth.HeaderText = "Gate width";
+			this.Gatewidth.Name = "Gatewidth";
+			this.Gatewidth.Width = 110;
+			// 
+			// Predelay
+			// 
+			this.Predelay.HeaderText = "-";
+			this.Predelay.Name = "Predelay";
+			this.Predelay.Width = 80;
+			// 
+			// Long
+			// 
+			this.Long.HeaderText = "-";
+			this.Long.Name = "Long";
+			this.Long.Width = 130;
+			// 
 			// LMAcquire
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -1033,11 +1035,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn Active;
-		private System.Windows.Forms.DataGridViewComboBoxColumn Type;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Gatewidth;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Long;
 		private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button DeleteBtn;
         private System.Windows.Forms.Label DataSrcLabel;
@@ -1046,5 +1043,10 @@
         private System.Windows.Forms.Button FSave;
         private System.Windows.Forms.Button DSave;
         private System.Windows.Forms.Button ASave;
-    }
+		private System.Windows.Forms.DataGridViewCheckBoxColumn Active;
+		private System.Windows.Forms.DataGridViewComboBoxColumn Type;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Gatewidth;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
+		private System.Windows.Forms.DataGridViewTextBoxColumn Long;
+	}
 }

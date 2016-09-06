@@ -275,6 +275,18 @@ namespace DetectorDefs
             return PrettyName[src];
         }
 
+		public static string ListModeLiveName =  "List mode device";
+
+		public static string NameForViewing(this ConstructedSource src, InstrType device)
+        {
+			if (device.IsListMode() && src.Live())
+			{
+				return ListModeLiveName;
+			}
+			else
+				return PrettyName[src];
+        }
+
         public static ConstructedSource SrcToEnum(this string src)
         {
             foreach (KeyValuePair<ConstructedSource, string> pair in PrettyName)
@@ -282,6 +294,10 @@ namespace DetectorDefs
                 if (pair.Value.Equals(src))
                     return pair.Key;
             }
+			if (string.Compare(ListModeLiveName, src, true) == 0)
+			{
+				return ConstructedSource.Live;
+			}
             return ConstructedSource.Unknown;
         }
 

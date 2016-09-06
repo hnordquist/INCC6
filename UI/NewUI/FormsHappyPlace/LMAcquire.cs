@@ -51,8 +51,7 @@ namespace NewUI
 	{
 		Detector det;
         AcquireParameters ap;
-        CountingAnalysisParameters alt;
-		bool PreserveAnalyzerChanges;
+		bool PreserveAnalyzerChanges, AnalyzersLoaded;
 		bool FromINCC5Acquire { set; get; } // if called directly from INCC5 acquire, force user to select a multiplicity analyzer
 
 		public enum LMSteps { FileBased, DAQBased, AnalysisSpec, Go };
@@ -71,14 +70,13 @@ namespace NewUI
 				ResetMeasurement();
 				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 			}
-			alt = CountingAnalysisParameters.Copy(N.App.Opstate.Measurement.AnalysisParams);
-			PreserveAnalyzerChanges = false;
-			BuildAnalzyerCombo();
+			PreserveAnalyzerChanges = AnalyzersLoaded = false;
+			BuildAnalyzerCombo();
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
 		}
 
-		void BuildAnalzyerCombo()
+		void BuildAnalyzerCombo()
 		{
 			DataGridViewColumnCollection dgvcc = AnalyzerGridView.Columns;
 			DataGridViewComboBoxColumn c = (DataGridViewComboBoxColumn)dgvcc["Type"];
@@ -98,7 +96,7 @@ namespace NewUI
 			else if (t.SelectedIndex == 1)
 				LoadParams(LMSteps.DAQBased);
 			else if (t.SelectedIndex == 2)
-				LoadParams(LMSteps.AnalysisSpec);
+				LoadParams(LMSteps.AnalysisSpec);  // only loads once, from the current measurement state
 			else if (t.SelectedIndex == 3)
 				LoadParams(LMSteps.Go);
 		}
@@ -311,7 +309,7 @@ namespace NewUI
 					Step2BDetectorComboBox.SelectedItem = det;
                     break;
 				case LMSteps.AnalysisSpec:
-					LoadAnalzyerRows();
+					LoadAnalyzerRows();  // loads just once
 					break;
                 case LMSteps.Go:
 					Comment.Text = ap.comment;
@@ -471,16 +469,20 @@ namespace NewUI
         }
 
 
-        void LoadAnalzyerRows()
+        void LoadAnalyzerRows()
 		{
-			AnalyzerGridView.Rows.Clear();
-			foreach (SpecificCountingAnalyzerParams s in alt)
+			if (!AnalyzersLoaded)
 			{
-                if (s.suspect)
-                    continue;
-				string[] a = ToSimpleValueArray(s);
-				int i = AnalyzerGridView.Rows.Add(a);
-				SetRowDetails(AnalyzerGridView.Rows[i], s);
+				CountingAnalysisParameters alt = CountingAnalysisParameters.Copy(N.App.Opstate.Measurement.AnalysisParams);
+				foreach (SpecificCountingAnalyzerParams s in alt)
+				{
+					if (s.suspect)
+						continue;
+					string[] a = ToSimpleValueArray(s);
+					int i = AnalyzerGridView.Rows.Add(a);
+					SetRowDetails(AnalyzerGridView.Rows[i], s);
+				}
+				AnalyzersLoaded = true;
 			}
 		}
 
@@ -522,8 +524,58 @@ namespace NewUI
                 }
                 else
                     cell.Value = x.ToString();
+				row.ErrorText = string.Empty;
             }
 		} 
+
+		private void AnalyzerGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.Value != null)
+            {
+                string display = string.Empty;
+                DataGridViewCell cell = AnalyzerGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                switch (e.ColumnIndex)
+                {
+                    case 0:
+						if (string.IsNullOrEmpty(display))
+							display = "Check this box to enable this analyzer";
+                        cell.ToolTipText = display;
+                        break;
+                    case 1:
+						if (string.IsNullOrEmpty(display))
+	                        display = "The analyzer type";
+                        cell.ToolTipText = display;
+                        break;
+                    case 2:
+						if (string.IsNullOrEmpty(display))
+	                        display = "Gate width (in 1e-7s ticks)";
+                        cell.ToolTipText = display;
+                        break;
+                    case 3:
+						if (cell.ReadOnly)
+							display = "Unused";
+						else
+							display = "Detector predelay (in 1e-7s ticks)";
+                        cell.ToolTipText = display;
+                        break;
+                    case 4:
+						if (cell.ReadOnly)
+							display = "Unused";
+						else
+						{
+							Type t; FAType FA;
+							TTypeMap((string)AnalyzerGridView.Rows[e.RowIndex].Cells[1].Value, out t, out FA);
+							if (FA == FAType.FAOn)
+								display = "Background gate width (in 1e-7s ticks)";
+							else
+								display = "Accidentals gate width (long delay, in 1e-7s ticks)";
+						}
+                        cell.ToolTipText = display;
+                        break;
+                }
+            }
+        }
+
 
         private void DeleteBtn_Click(object sender, EventArgs e)
         {
@@ -916,7 +968,9 @@ namespace NewUI
                 }
                 rep++;
             }
-            ReportView.Items.Add(new ListViewItem(new string[] { "List Mode CSV Report" }));
+            if (rep > 1)  // add blank line for readability
+				ReportView.Items.Add(new ListViewItem(new string[] { "" }));
+            ReportView.Items.Add(new ListViewItem(new string[] { "############ List Mode CSV Report" }));
             foreach (string s in rrep.replines)
             {
                 ReportView.Items.Add(new ListViewItem(new string[] { s }));
@@ -1081,13 +1135,51 @@ namespace NewUI
 
 		void SelectTheBestINCC5AcquireVSRRow()
 		{
-			int idx = alt.FindIndex(g => g.Rank == 5);
+			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == 5);
 			if (idx < 0)
 				return;
-			LoadParams(LMSteps.AnalysisSpec);
+			LoadParams(LMSteps.AnalysisSpec);  // this will be the initial load
 			tabControl1.SelectedIndex = 2;
 			SelectTheRankedRow();
 			tabControl1.Refresh();
+		}
+
+
+		void AnalyzerGridView_DataGridViewCellEventHandler(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
+			if (row == null || row.Tag == null)
+				return;
+			if (row.Cells[e.ColumnIndex].ReadOnly)  // anything readonly means not a VSR
+			{
+				AnalyzerGridView.Columns[3].HeaderText = "--";
+				AnalyzerGridView.Columns[4].HeaderText = "--";
+				return;
+			}
+			//if (row.Cells[e.ColumnIndex].ReadOnly)
+			//	AnalyzerGridView.Columns[e.ColumnIndex].HeaderText = string.Empty;
+			SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
+			if (r == null)
+				return;
+
+			if (r.GetType().Equals(typeof(Multiplicity)))
+			{
+					AnalyzerGridView.Columns[3].HeaderText = "Predelay";
+				if (((Multiplicity)r).FA == FAType.FAOn)
+					AnalyzerGridView.Columns[4].HeaderText = "Bkg clock width";
+				else
+					AnalyzerGridView.Columns[4].HeaderText = "Long delay";
+			}
+			else if (r.GetType().Equals(typeof(Coincidence)))
+			{
+					AnalyzerGridView.Columns[3].HeaderText = "Predelay";
+					AnalyzerGridView.Columns[4].HeaderText = "Long delay";
+			} else
+			{
+					AnalyzerGridView.Columns[3].HeaderText = "---";
+					AnalyzerGridView.Columns[4].HeaderText = "---";
+			}
+
 		}
 
 
@@ -1131,10 +1223,24 @@ namespace NewUI
 					ConstructNewRow(row, t, FA);				
 				else
 					// Update row with field defaults
-					ReconstructRow(row, t, FA);				
+					ReconstructRow(row, t, FA);	
 				PreserveAnalyzerChanges = true;	
             }
         }
+
+		string HeaderX(Type t, FAType FA)
+		{
+			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			{
+				return "Bkg clock width";
+			}
+			else if ((t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff) ||
+					  t.Equals(typeof(Coincidence)))
+			{
+				return "Long delay";
+			}
+			return "";
+		}
 
 		//////////////////////// Utilities
 		public static void ResetMeasurement()

@@ -115,7 +115,7 @@ namespace NewUI
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
                 {
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
                 }
             }
 
@@ -136,7 +136,7 @@ namespace NewUI
             {
                 UsePu240eRadioButton.Checked = true;
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
             MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
             StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;

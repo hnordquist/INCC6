@@ -397,9 +397,9 @@ namespace AnalysisDefs
             if (meas.AcquireState.data_src == ConstructedSource.Live)
             {
                 if (meas.Detector.ListMode)
-                    s = "Live " + meas.Detector.Id.SRType.ToString() + " List Mode";
+                    s = "Live " + meas.Detector.Id.SRType.ToString() + ConstructedSourceExtensions.ListModeLiveName;
                 else
-					s = "Live " + meas.Detector.Id.SRType.ToString() + " Shift register";
+					s = "Live " + meas.Detector.Id.SRType.ToString() + ConstructedSource.Live.HappyFunName();
             }
             Row row = new Row();
             row.Add((int)MeasurementDetails.MeasType, meas.MeasOption.PrintName());
@@ -825,7 +825,7 @@ namespace AnalysisDefs
         {
             Row row = new Row();
             row.Add(0, c.seq.ToString());
-            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.HappyFunName());
+            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.NameForViewing(c.DataSourceId.SRType));
             row.Add((int)CycleSource.Identifier + 1, c.DataSourceId.Identifier());
             row.Add((int)CycleSource.DateTime + 1, c.DataSourceId.dt.ToString("MMM dd yyy HH:mm:ss.ff K")); // my favorite format
             return row;

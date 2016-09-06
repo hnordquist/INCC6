@@ -230,6 +230,8 @@ namespace NewUI
             ap.modified = true;
             // Done but keeping the Mouser comment:  SOMETHING with data_src (which is bool!?) Urgency: unknown.  It's like one of Rumsfeld's loved "unknown unknowns."   
             ap.data_src = ConstructedSourceExtensions.SrcToEnum((string)(((ComboBox)sender).SelectedItem));
+			if (ap.data_src == ConstructedSource.Unknown) // it was blank or the LM string
+				ap.data_src = ConstructedSource.Live;
         }
 
         public void IOCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -408,7 +410,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
@@ -421,7 +423,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PulseFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
@@ -434,7 +436,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }
@@ -447,7 +449,7 @@ namespace NewUI
  					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
-				    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+				    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
                     }

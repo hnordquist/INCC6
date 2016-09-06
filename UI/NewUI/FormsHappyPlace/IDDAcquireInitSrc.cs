@@ -82,7 +82,7 @@ namespace NewUI
             foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
             }
             if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
@@ -96,7 +96,7 @@ namespace NewUI
             {
                 this.UseTriplesRadioButton.Checked = true;
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
             SetHelp();
         }
 

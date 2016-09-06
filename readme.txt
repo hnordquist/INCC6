@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 16
-6.0.1.16 Sep 6, 2016
+6.0.1.16 Sep 16, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -131,8 +131,10 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.16 Sep 6, 2016
+6.0.1.16 Sep 16, 2016
+***  Cosmetic improvement to Acquire dialog source selection for list mode devices
 ***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
+11n	 Measurement waiting for a neutron that never arrives (MCA-527)
 
 6.0.1.15 Aug 26, 2016
 

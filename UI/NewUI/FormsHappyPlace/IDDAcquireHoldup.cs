@@ -90,9 +90,9 @@ namespace NewUI
             foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
