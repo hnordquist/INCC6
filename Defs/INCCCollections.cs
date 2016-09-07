@@ -3403,7 +3403,7 @@ namespace AnalysisDefs
     /// <summary>
     /// Root of access to basic INCC persistent storage, tries to hide DB details LOL
     /// </summary>
-    public partial class INCCDB
+    public partial class   INCCDB
     {
         public INCCDB()
         {
@@ -4437,10 +4437,10 @@ namespace AnalysisDefs
             if (mid <= 0)
                 return false;
 
-            return AddCycles(cl, det.MultiplicityParams, mid, ms);
+            return AddCycles(cl, det.MultiplicityParams, mid, -1, ms);
         }
 
-        public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
+       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -4449,28 +4449,15 @@ namespace AnalysisDefs
             for (int ic = 0; ic < iCntCycles; ic++)
             {
                 Cycle c = cl[ic];
-                c.GenParamList(mkey); // URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-
-                clist.Add(c.ToDBElementList(generate: false));
+                c.GenParamList(mkey);
+				DB.ElementList els = c.ToDBElementList(generate: false);
+				if (lmid >= 0)
+					els.Add(new DB.Element("lmid", lmid));
+                clist.Add(els);
             }
             db.AddCycles(mid, clist);
             return true;
         }
-
-        /// <summary>
-        ///  short cut when DB id is known at creation time
-        /// </summary>
-        /// <param name="mid"></param>
-        /// <param name="c"></param>
-        public void AddCycle(long mid, Cycle c, Multiplicity mkey)
-        {
-            DB.Measurements ms = new DB.Measurements();
-            c.GenParamList(mkey); // URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-
-            long lid = ms.AddCycleRetId(mid, c.ToDBElementList(generate: false));
-        }
-        // URGENT: design db tables for LM-specific results and implement parameter generator here (per cycle results)
-        // invoke at the appropriate time from the single cycle with return value entry point
 
         public void AddResultsFileNames(Measurement m)
         {

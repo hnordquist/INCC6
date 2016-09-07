@@ -496,7 +496,7 @@ namespace NewUI
 				SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
 				if (r == null) // empty row, so just skip it
 					continue;
-				if (r.Rank == 5 && !r.suspect)
+				if (r.Rank == -99 && !r.suspect)
 				{
 					AnalyzerGridView.CurrentCell = row.Cells[0];
 					break;
@@ -590,6 +590,7 @@ namespace NewUI
             {
                 int idx = AnalyzerGridView.Rows.IndexOf(row);
                 AnalyzerGridView.Rows.RemoveAt(idx);
+				PreserveAnalyzerChanges = true;
             }
             AnalyzerGridView.Refresh();
         }
@@ -601,18 +602,14 @@ namespace NewUI
 			if (row.Cells[1].Value == null)
 				return null;
 			TTypeMap((string)row.Cells[1].Value, out t, out FA);
-
-			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			if (t.Equals(typeof(Multiplicity)))
 			{
 				s = new Multiplicity(FA);
 				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
-				((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
-			}
-			else if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
-			{
-				s = new Multiplicity(FA);
-				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
-				((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
+				if (FA == FAType.FAOn)
+					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
+				else
+					((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
 			}
 			else if (t.Equals(typeof(Feynman)))
 			{
@@ -632,10 +629,8 @@ namespace NewUI
 				((Coincidence)s).SR.predelay = Construct(row.Cells[3]);
 				((Coincidence)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
 			}
-
 			s.gateWidthTics = Construct(row.Cells[2]);
 			s.Active = CheckedRow(row);
-
 			return s;
 		}
 
@@ -719,22 +714,22 @@ namespace NewUI
 		void ConstructNewRow(DataGridViewRow row, Type t, FAType FA)
 		{
 			SpecificCountingAnalyzerParams s = null;
-			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			if (t.Equals(typeof(Multiplicity)))
 			{
 				Multiplicity m = new Multiplicity(FA);
 				row.Cells[3].Value = det.SRParams.predelay.ToString();
 				row.Cells[3].Tag = det.SRParams.predelay;
-				row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
-				row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
-				s = m;
-			}
-			else if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
-			{
-				Multiplicity m = new Multiplicity(FA);
-				row.Cells[3].Value = det.SRParams.predelay.ToString();
-				row.Cells[3].Tag = det.SRParams.predelay;
-				row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
-				row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+				if (FA == FAType.FAOn)
+				{
+					row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+					row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+				}
+				else
+				{
+					row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+					row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+				}
+				m.gateWidthTics = det.SRParams.gateLength;
 				s = m;
 			}
 			else if (t.Equals(typeof(Feynman)))
@@ -756,6 +751,7 @@ namespace NewUI
 				row.Cells[3].Tag = det.SRParams.predelay;
 				row.Cells[4].Value = c.AccidentalsGateDelayInTics.ToString();
 				row.Cells[4].Tag = c.AccidentalsGateDelayInTics;
+				c.gateWidthTics = det.SRParams.gateLength;
 				s = c;
 			}
 
@@ -767,21 +763,21 @@ namespace NewUI
 		}
 		void ReconstructRow(DataGridViewRow row, SpecificCountingAnalyzerParams s, Type t, FAType FA)
 		{
-			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
+			if (t.Equals(typeof(Multiplicity)))
 			{
 				Multiplicity m = (Multiplicity)s;
 				row.Cells[3].Value = m.SR.predelay.ToString();
 				row.Cells[3].Tag = m.SR.predelay;
-				row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
-				row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
-			}
-			else if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
-			{
-				Multiplicity m = (Multiplicity)s;
-				row.Cells[3].Value = m.SR.predelay.ToString();
-				row.Cells[3].Tag = m.SR.predelay;
-				row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
-				row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+				if (FA == FAType.FAOn)
+				{
+					row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+					row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+				}
+				else
+				{
+					row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+					row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+				}
 			}
 			else if (t.Equals(typeof(Feynman)))
 			{
@@ -1135,7 +1131,7 @@ namespace NewUI
 
 		void SelectTheBestINCC5AcquireVSRRow()
 		{
-			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == 5);
+			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == -99);
 			if (idx < 0)
 				return;
 			LoadParams(LMSteps.AnalysisSpec);  // this will be the initial load
@@ -1156,8 +1152,6 @@ namespace NewUI
 				AnalyzerGridView.Columns[4].HeaderText = "--";
 				return;
 			}
-			//if (row.Cells[e.ColumnIndex].ReadOnly)
-			//	AnalyzerGridView.Columns[e.ColumnIndex].HeaderText = string.Empty;
 			SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
 			if (r == null)
 				return;

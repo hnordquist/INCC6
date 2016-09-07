@@ -882,7 +882,7 @@ GO
 CREATE TABLE CountingParams(
 	[id] INTEGER Primary Key,
 	[detector_id] INTEGER NOT NULL,
-	[gatewidth]float NULL,
+	[gatewidth] float NULL,
 	[counter_type] nvarchar(40) NULL,
 	[active] int not NULL default 1,
 	[rank] int not NULL default 0,

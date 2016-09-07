@@ -69,7 +69,7 @@ namespace AnalysisDefs
         /// <summary>
         /// For ordering the priorty of multiple similar analyzers.
         /// </summary>
-        public ushort Rank
+        public long Rank
         {
             get;
             set;
@@ -714,17 +714,18 @@ namespace AnalysisDefs
 			// 2: if no fast/conv found, create by copying, add to list
 			if (matchidx < 0)
 			{
-				match = new Multiplicity(mul);
+				match = new Multiplicity(mul.FA);
+				match.CopyValues(mul);
 				Add(match);
                 anew = true;
             }
 			else 
 				match = (Multiplicity)this[matchidx];
 			// 2: If not active, activate it.
-			// urgent: deactivate all others?
+			// Q: deactivate all others?
 			match.Active = true;
 			// 3: mark for display in GUI
-			match.Rank = 5;
+			match.Rank = -99;
             return anew;
 		}
 

@@ -740,7 +740,7 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    cycle.SetQCStatus(m.Detector.MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
+                    m.SetQCStatus(cycle);  // multmult prep for analyis one by one
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());

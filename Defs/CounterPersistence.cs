@@ -283,6 +283,5 @@ namespace ListModeDB
                 }
             }
         }
-
     }
 }

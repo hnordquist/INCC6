@@ -471,17 +471,11 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("singles_rate", SinglesRate));
             ps.Add(new DBParamEntry("high_voltage", HighVoltage));
             ps.Add(new DBParamEntry("cycle_time", TS));
-            // URGENT: if list mode, gen results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-
             if (DataSourceId.SRType.IsListMode())
             {
                 ps.Add(new DBParamEntry("chnhits", HitsPerChannel));
             }
         }
-
-        // URGENT: design db tables for LM-specific results and implement parameter generator here (per cycle results)
-        // invoke at the appropriate time from the single cycle with return value entry point
-
 
         /// <summary>
         /// Sets the status of the cycle stream processing if processing ended before a fully formed status block was parsed.

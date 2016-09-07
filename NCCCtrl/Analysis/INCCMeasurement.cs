@@ -68,7 +68,7 @@ namespace AnalysisDefs
                     }
                     else
                     {
-                        // exit processing completely, do not compute  or save results
+                        // exit processing completely, do not compute or save results
                         NC.App.Opstate.Abort();
                     }
                 }
@@ -160,6 +160,18 @@ namespace AnalysisDefs
                 }
             }
         }
+
+		public static void SetQCStatus(this Measurement meas, Cycle cycle)
+		{
+             IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
+                cycle.SetQCStatus(mkey, QCTestStatus.Pass, cycle.HighVoltage);  // prep for analyis one by one
+			}
+
+		}
 
          //<summary>
          //This is a tentative summary over all cycles of the first stage counting results
@@ -1298,24 +1310,22 @@ namespace AnalysisDefs
 		/// </summary>
 		public static void SaveMeasurementResults(this Measurement meas)
 		{
-			IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
-			while (iter.MoveNext())
+			if (meas.Detector.ListMode)
 			{
-				Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-				if (meas.Detector.ListMode) // && meas.MeasOption < AssaySelector.MeasurementOption.unspecified)
+				long mid = meas.MeasurementId.UniqueId;
+				foreach(SpecificCountingAnalyzerParams s in meas.CountingAnalysisResults.Keys)
 				{
-					// this is as virtual LMSR so save the mkey
-					long mid = meas.MeasurementId.UniqueId;
-                    //ElementList els = ir.ToDBElementList();
-                    //DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
-                    //long resid = ar.Create(mid, els);
-                    //mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
+					// this is a virtual LMSR so save each mkey
+					DB.ElementList els = s.ToDBElementList();
+					DB.LMParamsRelatedBackToMeasurement counter = new DB.LMParamsRelatedBackToMeasurement(s.Table);
+					s.Rank = counter.Create(mid, els);
+					meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, string.Format("Preserving {0}_m as {1}", s.Table, s.Rank));
 				}
 			}
 
             SaveMeasurementCycles(meas);
 
-			iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+			IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
 			while (iter.MoveNext())
 			{
 				Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
@@ -1388,18 +1398,28 @@ namespace AnalysisDefs
         /// <summary>
         /// Preserve a measurement cycle list in a database
         /// Limited to INCC5 SR values
-        /// URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-        /// URGENT: status shoud be set on db acquire lists, becuse it can read in 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so we should only use the processed cycles.
+        /// URGENT: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// NEXT: status shoud be set on db acquire lists, because it can read in 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so we should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
         public static void SaveMeasurementCycles(this Measurement m)
         {
             long mid = m.MeasurementId.UniqueId;
             //Could we actually not do this when reanalyzing? hn 9.21.2015
-            // URGENT: 1) If the cycle is from a virtual SR, then save the virtual SR in LMMultiplicity_m, getting the lmid
-            // URGENT: 2) Then, save the cycle tying the cycle to the virtual SR lmid and the mid
-            // URGENT: 3) Concomittantly, the cycle lookup must account for lmid and mid 
-            NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            // URGENT: the cycle lookup on DB and Reanalysis must account for lmid and mid 
+			if (m.Detector.ListMode)
+			{
+				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
+				while (iter.MoveNext())
+				{
+					Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+					NC.App.DB.AddCycles(m.Cycles, mkey, mid, mkey.Rank);
+				}
+			}
+			else
+				NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+
+
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
 
         }

@@ -240,7 +240,50 @@ namespace DB
 			string sSQL = "SELECT * FROM "+ newtable + " where mid=" + mid.ToString() + " AND " + newtable + ".rid=" + rid.ToString();
             return db.DT(sSQL);
         }
+    }
+
+	public class LMParamsRelatedBackToMeasurement
+    {
+        public string table;
+
+        public LMParamsRelatedBackToMeasurement(string table = "", DB db = null)
+        {
+            this.table = table;
+            if (db != null)
+                this.db = db;
+            else
+                this.db = new DB(false);
+        }
+
+		public LMParamsRelatedBackToMeasurement(DB db)
+        {
+            if (db != null)
+                this.db = db;
+            else
+                this.db = new DB(false);
+        }
+        DB db;
+
+        public long Create(long mid, ElementList resParams)
+        {
+            db.SetConnection();
+            resParams.Add(new Element("mid", mid));
+            ArrayList sqlList = new ArrayList();
+            string sSQL1 = "Insert into " + table + "_m" + " ";
+            string sSQL = sSQL1 + resParams.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID(table + "_m" ));
+            return db.ExecuteTransactionID(sqlList);
+        }
+
+        public DataTable GetCounterParams(long mid)
+        {
+			db.SetConnection();
+            string sSQL = "SELECT * from " + table + "_m" + " where mid=" + mid.ToString();
+            return db.DT(sSQL);
+        }
 
     }
+
 
 }
