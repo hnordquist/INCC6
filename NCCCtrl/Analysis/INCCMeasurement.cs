@@ -1316,7 +1316,18 @@ namespace AnalysisDefs
 				foreach(SpecificCountingAnalyzerParams s in meas.CountingAnalysisResults.Keys)
 				{
 					// this is a virtual LMSR so save each mkey
+					Type t = s.GetType();
 					DB.ElementList els = s.ToDBElementList();
+					if (t.Equals(typeof(Multiplicity)))
+                    {
+                        Multiplicity thisone = ((Multiplicity)s);
+						els.Add(new DB.Element("predelay", thisone.SR.predelay));
+                    }
+                    else if (t.Equals(typeof(Coincidence)))
+                    {
+                        Coincidence thisone = ((Coincidence)s);
+						els.Add(new DB.Element("predelay", thisone.SR.predelay));
+                    }
 					DB.LMParamsRelatedBackToMeasurement counter = new DB.LMParamsRelatedBackToMeasurement(s.Table);
 					s.Rank = counter.Create(mid, els);
 					meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, string.Format("Preserving {0}_m as {1}", s.Table, s.Rank));

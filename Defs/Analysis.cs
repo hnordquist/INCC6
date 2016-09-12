@@ -67,7 +67,7 @@ namespace AnalysisDefs
         }
 
         /// <summary>
-        /// For ordering the priorty of multiple similar analyzers.
+		/// A generalized marker field and for unique ID use in maps and database
         /// </summary>
         public long Rank
         {
@@ -83,6 +83,8 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("active", Active));
             ps.Add(new DBParamEntry("rank", Rank));
         }
+
+		public const long Select = -99;  // values < 0 used for sorting and selection
     }
 
     public class SpecificCountingAnalyzerParamsEqualityComparer : IEqualityComparer<SpecificCountingAnalyzerParams>
@@ -541,8 +543,6 @@ namespace AnalysisDefs
                 return new CountingAnalysisParameters(src);
         }
 
-
-
         public bool HasMultiplicity(FAType ft, bool activeOnly = true)
         {
             SpecificCountingAnalyzerParams sap = Find(p => { return p.ActiveConstraint(activeOnly) && 
@@ -559,7 +559,7 @@ namespace AnalysisDefs
             return sap != null;
         }
 
-        public List<SpecificCountingAnalyzerParams> GetTheseParams(System.Type t, bool activeOnly = true)
+        public List<SpecificCountingAnalyzerParams> GetTheseParams(Type t, bool activeOnly = true)
         {
             return FindAll(p => { return p.ActiveConstraint(activeOnly) && (p.GetType() == t); });
         }
@@ -697,10 +697,11 @@ namespace AnalysisDefs
 
 		public int GetMatchingVSRIndex(Multiplicity mul)
 		{
-			int matchidx = FindIndex(x => ((x is Multiplicity) && 
-			(x as Multiplicity).FA == mul.FA) && // same FA
-			x.Active && // active
-			(x as Multiplicity).EqualsButForLMValues(mul)); // everything but gatewidth and predelay are the same
+			int matchidx = FindIndex(x => 
+						((x is Multiplicity) && 
+						(x as Multiplicity).FA == mul.FA) && // same FA
+								                 x.Active && // active
+						(x as Multiplicity).EqualsButForLMValues(mul)); // everything but gatewidth and predelay are the same
 			return matchidx;
 		}
 
@@ -725,11 +726,9 @@ namespace AnalysisDefs
 			// Q: deactivate all others?
 			match.Active = true;
 			// 3: mark for display in GUI
-			match.Rank = -99;
+			match.Rank = SpecificCountingAnalyzerParams.Select; // values < 0 flag uses for UI sorting and selection
             return anew;
 		}
-
-
 	}
 
 

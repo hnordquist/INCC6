@@ -128,11 +128,19 @@ namespace ListModeDB
         private CountingAnalysisParameters CountingParameters(string detname)
         {
             DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CountingAnalyzers, detname);
-            CountingAnalysisParameters cp = new AnalysisDefs.CountingAnalysisParameters();
+            CountingAnalysisParameters cp = new CountingAnalysisParameters();
 
             // 0 is mat name, 1 is det name, 2 is mat id, 3 is det id, 4 is first choice boolean
             foreach (DataRow dr in dt.Rows)
             {
+				SpecificCountingAnalyzerParams sca = ConstructCountingAnalyzerParams(dr);
+                cp.Add(sca);
+            }
+            return cp;
+        }
+
+		public SpecificCountingAnalyzerParams ConstructCountingAnalyzerParams(DataRow dr)
+		{
                 string type = "AnalysisDefs.";   // dev note: careful here, this is subject to bit rot
                 if (dr["counter_type"].Equals(DBNull.Value))
                     type += "BaseRate";
@@ -141,7 +149,6 @@ namespace ListModeDB
                 Type t = Type.GetType(type);
                 ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
                 SpecificCountingAnalyzerParams sca = (SpecificCountingAnalyzerParams)ci.Invoke(null);
-                cp.Add(sca);
                 sca.gateWidthTics = DB.Utils.DBUInt64(dr["gatewidth"]);
                 if (t == typeof(Multiplicity))
                 {
@@ -160,10 +167,9 @@ namespace ListModeDB
                 sca.Active = DB.Utils.DBBool(dr["active"]);
                 if (dr.Table.Columns.Contains("rank"))
                     sca.Rank = DB.Utils.DBUInt16(dr["rank"]);
-            }
-            return cp;
-        }
 
+				return sca;
+		}
         public bool UpdateLMINCCAppContext()
         {
             DB.AppContext db = new DB.AppContext();
@@ -228,7 +234,7 @@ namespace ListModeDB
                         thisone.SetGateWidthTics(gw); // override with the user's choice from the DB
 						//thisone.SR.predelay = predelay;
                     }
-                    else if (t.Equals(typeof(AnalysisDefs.Coincidence)))
+                    else if (t.Equals(typeof(Coincidence)))
                     {
                         Coincidence thisone = ((Coincidence)s);
                         ulong gw = thisone.gateWidthTics;

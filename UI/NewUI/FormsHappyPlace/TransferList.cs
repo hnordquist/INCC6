@@ -63,7 +63,7 @@ namespace NewUI
                  ListViewItem lvi = new ListViewItem(new string[] {
                     ts.det, ts.item,
 					string.IsNullOrEmpty(ts.stratum) ? "-" : ts.stratum,
-                    ts.dto.ToString("yy.MM.dd  HH:mm:ss"), System.IO.Path.GetFileName(ts.path),
+                    ts.dto.ToString("yy.MM.dd  HH:mm:ss"), Path.GetFileName(ts.path),
                     ts.comment, AssaySelector.ForMass(ts.meastype) ? ts.material : string.Empty,
 					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
                         });

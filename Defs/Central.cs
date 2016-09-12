@@ -671,10 +671,10 @@ namespace NCC
         {
             if (meas.Detector.ListMode)
             {
-                // dev note: design flaw exposed by this mess here, when LM has > 1 SVR, there is no way to associate > 1 SVRs with a single detector/SR/Mult/Conn pairing
-                // It should be the other way around, the Mult params for each LMMultiplicity analyzer override the single entry on the sr_parms_rec when each analyis is performed. 
-
-                meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
+				//if (a DB read then do this:)  // URGENT: multmult
+				//	object x = CentralizedState.App.DB.GetAnalyzersFromResults(meas.Detector, meas.MeasurementId);
+				//else
+					meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
                 if (meas.MeasOption.IsListMode()) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params

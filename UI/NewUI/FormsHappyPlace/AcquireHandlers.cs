@@ -341,7 +341,6 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.DB:
-					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.DBDataAssay = true;
                     UIIntegration.Controller.file = true;
                     IDDAcquireDBMeas dbdlg = new IDDAcquireDBMeas(this);
@@ -350,6 +349,7 @@ namespace NewUI
                         dr = dbdlg.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
+							Integ.BuildMeasurement(ap, det, mo); // URGENT: use the results to reconstruct it 
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                             NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).TraceEvent(NCCReporter.LogLevels.Info, 87654,
@@ -357,7 +357,7 @@ namespace NewUI
 							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId);
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // URGENT: multmult
                             foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
                             {
                                 cycle.UpdateDataSourceId(ap.data_src, det.Id.SRType, 

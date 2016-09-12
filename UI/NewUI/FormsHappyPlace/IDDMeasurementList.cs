@@ -189,9 +189,11 @@ namespace NewUI
                         });
 				listView1.Items.Add(lvi);
 				lvi.Tag = m.MeasDate;  // for proper column sorting
-				lvi.ToolTipText = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
-				if (string.IsNullOrEmpty(lvi.ToolTipText))
-					lvi.ToolTipText = "No results file available";
+				string p = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
+				if (string.IsNullOrEmpty(p))
+					lvi.ToolTipText = "(" + m.MeasurementId.UniqueId.ToString() + ") No results file available";
+				else
+					lvi.ToolTipText = "(" + m.MeasurementId.UniqueId.ToString() + ") " + p;
 				mlistIndex++;
 			}
 			MCount.Text = listView1.Items.Count.ToString() + " measurements";

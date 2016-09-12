@@ -34,7 +34,6 @@ using DetectorDefs;
 using NCCReporter;
 namespace AnalysisDefs
 {
-
 	using NC = NCC.CentralizedState;
 
 
@@ -4361,13 +4360,13 @@ namespace AnalysisDefs
 		}
 
         /// <summary>
-        /// Construct the CycleList from a stored measurement identified by the detector and the MeasId
+        /// Construct the CycleList from a stored measurement identified by the Multiplicity key and the MeasId
         /// No LM data yet
         /// </summary>
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
         /// <returns>CycleList</returns>
-        public CycleList GetCycles(Detector det, MeasId mid)
+        public CycleList GetCycles(Detector det, MeasId mid, CountingAnalysisParameters cap = null)
         {
             CycleList cl = new CycleList();
 			if (mid.UniqueId <= 0)
@@ -4381,54 +4380,111 @@ namespace AnalysisDefs
             {
                 seq++;
                 Cycle c = new Cycle(NC.App.Pest.logger);
-                cl.Add(c);
-                c.TS = DB.Utils.DBTimeSpan(dr["cycle_time"]);
-                c.Totals = DB.Utils.DBUInt64(dr["singles"]);
-                c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
-                c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
-                c.seq = seq;
-                if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(System.DBNull.Value)))
+                cl.Add(c); c.seq = seq;
+
+				long lmid = AddSummaryToCycle(dr, c);
+
+				if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
-					double[] att =  DB.Utils.ReifyDoubles((string)dr["chnhits"]);
-					if (att.Length > 0)  // there was something there, use it
-						c.HitsPerChannel = att;
-					else
-						c.HitsPerChannel[0] = c.Totals;
+					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+					AddResultToCycle(dr, det.MultiplicityParams, c);
 				}
 				else
 				{
-	                c.HitsPerChannel[0] = c.Totals;
+					foreach (Multiplicity mul in cap.GetAllMults())
+					{  
+						c.SetQCStatus(mul, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+						//if (Match(mul, lmid))
+						//AddResultToCycle(dr, mul, c);
+					}
 				}
-
-                c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(det.MultiplicityParams.FA, 0);
-                mcr.Scaler1 = VTuple.Create(DB.Utils.DBDouble(dr["scaler1"]), 0);
-                mcr.Scaler2 = VTuple.Create(DB.Utils.DBDouble(dr["scaler2"]), 0);
-                mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc"]);
-                mcr.ASum = DB.Utils.DBDouble(dr["acc"]);
-                mcr.Mass = DB.Utils.DBDouble(dr["mass"]);
-                mcr.rates[RatesAdjustments.Raw].Doubles = VTuple.Create(DB.Utils.DBDouble(dr["doubles_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Scaler1s = VTuple.Create(DB.Utils.DBDouble(dr["scaler1_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Scaler2s = VTuple.Create(DB.Utils.DBDouble(dr["scaler2_rate"]), 0);
-                mcr.multiAlpha = DB.Utils.DBDouble(dr["multiplicity_alpha"]);
-                mcr.efficiency = DB.Utils.DBDouble(dr["multiplicity_efficiency"]);
-                mcr.multiplication = DB.Utils.DBDouble(dr["multiplicity_mult"]);
-                mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc"].ToString());
-                mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc"].ToString());
-
-                mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
-                mcr.Totals = c.Totals; // ??
-                mcr.TS = new TimeSpan(c.TS.Ticks);
-                mcr.RawSinglesRate.v = c.SinglesRate;
-                // todo: this must happen eventually CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
-
-                c.CountingAnalysisResults.Add(det.MultiplicityParams, mcr);
             }
 
             return cl;
         }
+
+		SpecificCountingAnalyzerParams GetAnalyzer(DataRow dr, ShiftRegisterParameters sr)
+		{
+			SpecificCountingAnalyzerParams s  =  NC.App.LMBD.ConstructCountingAnalyzerParams(dr);
+			Multiplicity m = (Multiplicity)s;
+			m.SR.CopyValues(sr);
+			if (dr.Table.Columns.Contains("predelay") && (!dr["predelay"].Equals(DBNull.Value)))
+				m.SR.predelay = DB.Utils.DBUInt64(dr["predelay"]);
+			return s;
+
+		}
+
+		// URGENT: 1) so this code needs to be used to construct the original AnalysisParams used to generate these results, so that the results maps have the right keys
+		public List<SpecificCountingAnalyzerParams> GetAnalyzersFromResults(Detector det, MeasId mid)
+		{
+			List<SpecificCountingAnalyzerParams> tme = null;
+			if (det.ListMode) // get the lm vsr mult analyzer results records, if any
+			{
+				tme = new List<SpecificCountingAnalyzerParams>();
+				DB.LMParamsRelatedBackToMeasurement mulres = new DB.LMParamsRelatedBackToMeasurement("LMMultiplicity");
+				DataTable dt = mulres.GetCounterParams(mid.UniqueId);
+				foreach (DataRow dr in dt.Rows)
+				{
+					tme.Add(GetAnalyzer(dr, det.SRParams));
+				}
+				//ms = cap.GetAllMults();				
+				//foreach (Multiplicity mul in cap.GetAllMults())
+				//{
+				//}
+			}
+			return tme;
+		}
+
+		long AddSummaryToCycle(DataRow dr, Cycle c)
+		{
+			c.TS = DB.Utils.DBTimeSpan(dr["cycle_time"]);
+			c.Totals = DB.Utils.DBUInt64(dr["singles"]);
+			c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
+			c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
+			if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(DBNull.Value)))
+			{
+				double[] att = DB.Utils.ReifyDoubles((string)dr["chnhits"]);
+				if (att.Length > 0)  // there was something there, use it
+					c.HitsPerChannel = att;
+				else
+					c.HitsPerChannel[0] = c.Totals;
+			} else
+			{
+				c.HitsPerChannel[0] = c.Totals;
+			}
+			if (dr.Table.Columns.Contains("lmid") && (!dr["lmid"].Equals(DBNull.Value)))
+				return DB.Utils.DBInt64(dr["lmid"]);
+			else
+				return -1;
+		}
+
+		void AddResultToCycle(DataRow dr, Multiplicity mult, Cycle c)
+		{
+			MultiplicityCountingRes mcr = new MultiplicityCountingRes(mult.FA, 0);
+            mcr.Scaler1 = VTuple.Create(DB.Utils.DBDouble(dr["scaler1"]), 0);
+            mcr.Scaler2 = VTuple.Create(DB.Utils.DBDouble(dr["scaler2"]), 0);
+            mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc"]);
+            mcr.ASum = DB.Utils.DBDouble(dr["acc"]);
+            mcr.Mass = DB.Utils.DBDouble(dr["mass"]);
+            mcr.rates[RatesAdjustments.Raw].Doubles = VTuple.Create(DB.Utils.DBDouble(dr["doubles_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Scaler1s = VTuple.Create(DB.Utils.DBDouble(dr["scaler1_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Scaler2s = VTuple.Create(DB.Utils.DBDouble(dr["scaler2_rate"]), 0);
+            mcr.multiAlpha = DB.Utils.DBDouble(dr["multiplicity_alpha"]);
+            mcr.efficiency = DB.Utils.DBDouble(dr["multiplicity_efficiency"]);
+            mcr.multiplication = DB.Utils.DBDouble(dr["multiplicity_mult"]);
+            mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc"].ToString());
+            mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc"].ToString());
+
+            mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
+            mcr.Totals = c.Totals; // ??
+            mcr.TS = new TimeSpan(c.TS.Ticks);
+            mcr.RawSinglesRate.v = c.SinglesRate;
+            // todo: this must happen eventually CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
+
+            c.CountingAnalysisResults.Add(mult, mcr);
+		}
 
         public bool AddCycles(CycleList cl, Detector det, Measurement m)
         {

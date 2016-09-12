@@ -496,7 +496,7 @@ namespace NewUI
 				SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
 				if (r == null) // empty row, so just skip it
 					continue;
-				if (r.Rank == -99 && !r.suspect)
+				if (r.Rank == SpecificCountingAnalyzerParams.Select && !r.suspect)
 				{
 					AnalyzerGridView.CurrentCell = row.Cells[0];
 					break;
@@ -1131,7 +1131,7 @@ namespace NewUI
 
 		void SelectTheBestINCC5AcquireVSRRow()
 		{
-			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == -99);
+			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == SpecificCountingAnalyzerParams.Select);
 			if (idx < 0)
 				return;
 			LoadParams(LMSteps.AnalysisSpec);  // this will be the initial load
