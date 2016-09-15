@@ -4391,7 +4391,7 @@ namespace AnalysisDefs
 				}
 				else
 				{
-					foreach (Multiplicity mul in cap.GetAllMults())
+					foreach (Multiplicity mul in cap.GetAllMults())  // URGENT: multmult
 					{  
 						c.SetQCStatus(mul, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 						//if (Match(mul, lmid))
@@ -4414,7 +4414,7 @@ namespace AnalysisDefs
 
 		}
 
-		// URGENT: 1) so this code needs to be used to construct the original AnalysisParams used to generate these results, so that the results maps have the right keys
+		// URGENT: multmult so this code needs to be used to construct the original AnalysisParams used to generate these results, so that the results maps have the right keys
 		public List<SpecificCountingAnalyzerParams> GetAnalyzersFromResults(Detector det, MeasId mid)
 		{
 			List<SpecificCountingAnalyzerParams> tme = null;

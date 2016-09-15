@@ -687,7 +687,7 @@ namespace NCC
                         CentralizedState.App.LMBD.UpdateCounters(meas.Detector.Id.DetectorName, meas.AnalysisParams); // added one, save it
                 }
             }
-            else // not sure this is useful
+            else // construct param key source with the single mkey entry point
             {
                 // prepare analyzer params from detector SR params
                 meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: false);
@@ -732,6 +732,26 @@ namespace NCC
 
         }
 
+		public static void BuildMeasurementMinimal(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo)
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    CentralizedState.App.DB.TestParameters.Get(),
+                                    GetCurrentNormParams(det),
+                                    GetCurrentBackgroundParams(det),
+                                    GetAcquireIsotopics(acq),
+                                    acq,
+                                    GetCurrentHVCalibrationParams(det));
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
+
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+
+            CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
+
+        }
+
+
         /// <summary>
         /// For a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
         /// </summary>
@@ -739,7 +759,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // hack: multmult just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // URGENT: multmult, just using the first one found, lame, shoud be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

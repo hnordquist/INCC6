@@ -38,7 +38,7 @@ namespace NCCFile
 	using NC = CentralizedState;
 	public partial class FileCtrl : ActionEvents, IActionControl
     {
-        // Acquire from Database and Manual data work the same from this point 
+        // Acquire from Database, Manual data entry and Reanalysis work the same from this point 
         void DBDataAssay()
         {
             NC.App.Opstate.ResetTimer(filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);

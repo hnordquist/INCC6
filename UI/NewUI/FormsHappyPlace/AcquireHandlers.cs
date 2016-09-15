@@ -349,7 +349,7 @@ namespace NewUI
                         dr = dbdlg.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
-							Integ.BuildMeasurement(ap, det, mo); // URGENT: use the results to reconstruct it 
+							Integ.BuildMeasurement(ap, det, mo); // URGENT: study how to use the results to reconstruct it 
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                             NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).TraceEvent(NCCReporter.LogLevels.Info, 87654,
@@ -382,26 +382,22 @@ namespace NewUI
                     NC.App.AppContext.DBDataAssay = true;
                     IDDManualDataEntry mdlg = new IDDManualDataEntry();
                     mdlg.AH = this;
-                    dr = mdlg.ShowDialog();
-                    if (dr == DialogResult.OK)
-                    {
-                        // the work is done in the dialog class
-                    }
+                    dr = mdlg.ShowDialog(); // the work constructing the measurement is done in the dialog class
                     break;
-                case ConstructedSource.Æther:
+                case ConstructedSource.Reanalysis:
                     UIIntegration.Controller.file = true;
                     NC.App.AppContext.DBDataAssay = true;
                     dr = DialogResult.OK;
                     // the measurement re-creation work is done in the IDDReanalysisAssay dialog class                    
                     break;
                 case ConstructedSource.CycleFile:
- 					Integ.BuildMeasurement(ap, det, mo);
+ 					Integ.BuildMeasurementMinimal(ap, det, mo);  // the measurement is reconstructed before each test data file processing, so this is meant as a carrier for certain kick-off values
                     NC.App.AppContext.TestDataFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select a test data (disk) file", NC.App.AppContext.FileInput, "INCC5 Test data (disk)", "dat", "cnn");
                     break;
                 case ConstructedSource.ReviewFile:
-					Integ.BuildMeasurement(ap, det, mo);
+					Integ.BuildMeasurementMinimal(ap, det, mo);  // acquire type and measurement option are read from each NCC file itself, so this instance is an acquire state kick-off carrier value
                     NC.App.AppContext.ReviewFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");

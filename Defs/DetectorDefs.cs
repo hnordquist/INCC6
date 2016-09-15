@@ -172,8 +172,8 @@ namespace DetectorDefs
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
-        INCCTransferCopy, INCCTransfer, Æther
-    };  //INCC transfer and room for more
+        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
+    };  // source sof data, file, DAQ, DB
 
 
 
@@ -266,7 +266,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransfer, "Transfer");
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
-                PrettyName.Add(ConstructedSource.Æther, "Reanalysis");
+                PrettyName.Add(ConstructedSource.Reanalysis, "Reanalysis");
             }
 		}
 
@@ -550,7 +550,7 @@ namespace DetectorDefs
 			case ConstructedSource.Manual:
 				l = "Manual";
 				break;
-			case ConstructedSource.Æther:
+			case ConstructedSource.Reanalysis:
 				l += (" " + source.HappyFunName());
 				break;
 			}
@@ -589,7 +589,7 @@ namespace DetectorDefs
 				case ConstructedSource.Manual:
 					l = "Manual";
 					break;
-				case ConstructedSource.Æther:
+				case ConstructedSource.Reanalysis:
 					l += (" " + source.HappyFunName());
 					break;
 

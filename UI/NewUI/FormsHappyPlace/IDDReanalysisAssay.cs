@@ -220,7 +220,7 @@ namespace NewUI
 				bool keepgoing = GetAdditionalParameters();
                 if (keepgoing)
                 {
-                    ah.ap.data_src = DetectorDefs.ConstructedSource.Æther;
+                    ah.ap.data_src = DetectorDefs.ConstructedSource.Reanalysis;
                     if (ah.OKButton_Click(sender, e) == DialogResult.OK)
 				    {
                         N.App.Opstate.Measurement = meas;

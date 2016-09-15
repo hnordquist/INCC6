@@ -852,7 +852,7 @@ namespace AnalysisDefs
                                 imr.AddMethodResults(sel, method, multrec);
                                 break;
                             case AnalysisMethod.CalibrationCurve:
-                                INCCMethodResults.results_cal_curve_rec calrec = new INCCMethodResults.results_cal_curve_rec ();  // URGENT: blew right here
+                                INCCMethodResults.results_cal_curve_rec calrec = new INCCMethodResults.results_cal_curve_rec ();  // blew right here due to import error in initial data processing, the Has bit was set but the data record was not there
                                 am.GetMethodParameters(AnalysisMethod.CalibrationCurve).CopyTo(calrec.methodParams);
                                 imr.AddMethodResults(sel, method, calrec);
                                 break;

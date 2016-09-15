@@ -188,7 +188,7 @@ namespace DAQ
             restart_time_per_run = time_per_run; restart_sethigh_voltage = sethigh_voltage;
             const double MAX_HV_DELTA = 2.0;
 
-            LMSR.sr_h.sr_parms parms;
+            sr_h.sr_parms parms;
             double high_voltage, previous_high_voltage;
             int status;
             ushort i;

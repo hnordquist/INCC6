@@ -121,8 +121,8 @@ namespace NewUI
             PredelayTextBox.Max = 1237.75;
             PredelayTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;
             PredelayTextBox.NumberFormat = NumericTextBox.Formatter.F2;
-            PredelayTextBox.Steps = 0.25;
             PredelayTextBox.Value = det.SRParams.predelayMS;
+            SetPredelayStepConstraint(det.Id.SRType);
 
             DieAwayTimeTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             DieAwayTimeTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;
@@ -208,7 +208,7 @@ namespace NewUI
 				PredelayTextBox.Steps = 0.25; // traditional step increment
 				if ((PredelayTextBox.Value % 0.25) != 0)
 				{
-		            PredelayTextBox.Value = Bounce25Step(PredelayTextBox.Value);
+					PredelayTextBox.Value = Bounce25Step(PredelayTextBox.Value);
 				}
 			}
 		}
