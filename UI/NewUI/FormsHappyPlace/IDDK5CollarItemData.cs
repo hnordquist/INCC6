@@ -178,20 +178,19 @@ namespace NewUI
             {
                 if (string.IsNullOrEmpty(e.FormattedValue.ToString()))
                 {
-                    dataGridView1.Rows[e.RowIndex].ErrorText =
-                    "Value must not be empty.";
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "Value must not be empty.";
                     e.Cancel = true;
                 }
                 else
                 {
-                    Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");
+                    Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");  // valid for point-based (e.g 1.0, not 1,0 or 1 0) numbering systems
                     if (!reg.IsMatch(e.FormattedValue.ToString()))
                     {
                         dataGridView1.Rows[e.RowIndex].ErrorText = "Value is not a floating point number.";
                         e.Cancel = true;
                         double res = 0;
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
-                        dataGridView1.Rows[e.RowIndex].ErrorText = String.Empty;
+                        dataGridView1.Rows[e.RowIndex].ErrorText = string.Empty;
                         dataGridView1.RefreshEdit();
                     }
                     else
