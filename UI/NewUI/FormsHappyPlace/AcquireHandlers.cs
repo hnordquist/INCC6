@@ -292,7 +292,8 @@ namespace NewUI
             }
 
             // The acquire is set to occur
-            LMAcquire.ResetMeasurement();
+            if (ap.data_src != ConstructedSource.Reanalysis)  // Reanalysis is a bit backwards, the correct measurement is fully constructed before this point
+				LMAcquire.ResetMeasurement();
 
             switch (ap.data_src)
             {
@@ -388,7 +389,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     NC.App.AppContext.DBDataAssay = true;
                     dr = DialogResult.OK;
-                    // the measurement re-creation work is done in the IDDReanalysisAssay dialog class                    
+                    // the measurement re-creation work is done in the IDDReanalysisAssay dialog class prior to reaching this point                   
                     break;
                 case ConstructedSource.CycleFile:
  					Integ.BuildMeasurementMinimal(ap, det, mo);  // the measurement is reconstructed before each test data file processing, so this is meant as a carrier for certain kick-off values

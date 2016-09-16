@@ -233,7 +233,7 @@ namespace AnalysisDefs
         }
         public bool Equals(Multiplicity other)
         {
-            if (FA == other.FA & this.gateWidthTics == other.gateWidthTics & 
+            if (FA == other.FA & gateWidthTics == other.gateWidthTics & 
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&

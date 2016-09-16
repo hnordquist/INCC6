@@ -557,7 +557,7 @@ namespace AnalysisDefs
                         case AssaySelector.MeasurementOption.verification:
                             // see INCC calc_asy.cpp
                             // dev note: check for item in the item table, make sure to place this item id on the MeasurementId.item property
-                            if (!String.IsNullOrEmpty(meas.AcquireState.item_id))
+                            if (!string.IsNullOrEmpty(meas.AcquireState.item_id))
                             {
                                 meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10194, "Using item id '{0}'", meas.AcquireState.item_id);
                             }

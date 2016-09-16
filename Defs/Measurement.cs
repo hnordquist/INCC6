@@ -784,11 +784,11 @@ namespace AnalysisDefs
                 }
                 else // it is an INCC5 analysis driven with LM data
                 {
-                    // prepare or identify an active CA entry with matching CA gatewidth and FA, and has the same SR params as the detector
+                    // prepare or identify an active CA entry with matching CA gatewidth and FA, with remaining SR params as the detector
                     AnalysisParams.PrepareMatchingVSR(rec.det.MultiplicityParams);
                 }
             }
-            else // not sure this is useful
+            else
             {
                 // prepare analyzer params from detector SR params
                 AnalysisParams = NC.App.LMBD.CountingParameters(rec.det, applySRFromDetector:false);
@@ -808,9 +808,8 @@ namespace AnalysisDefs
             }
             else
                 INCCAnalysisState.Methods = new AnalysisMethods(sel);
-            InitializeContext();
+            InitializeContext(clearCounterResults: true);
             PrepareINCCResults();
-
             // a list mode measurement may not have a multiplicity analyzer at all, yet it is unclear if one needed at this point
             if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
 			{ 
@@ -940,11 +939,12 @@ namespace AnalysisDefs
                 logger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
             }
         }
-        public void InitializeContext()
+        public void InitializeContext(bool clearCounterResults = true)
         {
             try
             {
-                InitializeResultsSummarizers();
+                if (clearCounterResults)
+					InitializeResultsSummarizers();
                 MeasCycleStatus.acquire_num_runs = AcquireState.num_runs; // may need improvement when considering active/passive combined measurements (active_num_runs)
                 MeasCycleStatus.initial_num_runs = AcquireState.num_runs;
             }
@@ -1047,7 +1047,7 @@ namespace AnalysisDefs
 
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            long rid = dbres.Create(mid, this.INCCAnalysisResults.TradResultsRec.ToDBElementList());
+            long rid = dbres.Create(mid, INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 
 			long c = dbm.CountOf(name: Detector.Id.DetectorName,

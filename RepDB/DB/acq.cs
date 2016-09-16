@@ -46,7 +46,7 @@ namespace DB
         }
         public IDB db;
 
-        // NEXT: figure out difference between use of meas_detector_id and detector_id
+        // devnote: The difference between use of meas_detector_id and detector_id
         public bool Has(DateTimeOffset measDatetime, string measDetId, string item_type)
         {
             db.SetConnection();
