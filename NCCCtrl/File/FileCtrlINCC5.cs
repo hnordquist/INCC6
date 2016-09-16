@@ -38,7 +38,7 @@ namespace NCCFile
 	using NC = CentralizedState;
 	public partial class FileCtrl : ActionEvents, IActionControl
     {
-        // Acquire from Database and Manual data work the same from this point 
+        // Acquire from Database, Manual data entry and Reanalysis work the same from this point 
         void DBDataAssay()
         {
             NC.App.Opstate.ResetTimer(filegather, null, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
@@ -740,7 +740,7 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    cycle.SetQCStatus(m.Detector.MultiplicityParams, QCTestStatus.Pass, cycle.HighVoltage);  // multmult prep for analyis one by one
+                    m.SetQCStatus(cycle);  // multmult prep for analyis one by one
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());

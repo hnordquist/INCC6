@@ -533,6 +533,7 @@ GO
 CREATE TABLE cycles(
 	[id] INTEGER Primary Key,
 	[mid] INTEGER NOT NULL,
+	[lmid] INTEGER NULL,
 	[cycle_time] float NOT NULL,
 	[singles] float NULL,
 	[scaler1] float NULL,
@@ -879,8 +880,9 @@ CREATE TABLE LMINCCAppContext(
 GO
 /* for Feynman, Rossi, Time, etc. */
 CREATE TABLE CountingParams(
+	[id] INTEGER Primary Key,
 	[detector_id] INTEGER NOT NULL,
-	[gatewidth]float NULL,
+	[gatewidth] float NULL,
 	[counter_type] nvarchar(40) NULL,
 	[active] int not NULL default 1,
 	[rank] int not NULL default 0,
@@ -889,6 +891,7 @@ CREATE TABLE CountingParams(
 GO
 /* mult FA on, Mult Conv, Coincidence (Mult Conv) */
 CREATE TABLE LMMultiplicity(
+	[id] INTEGER Primary Key,
 	[detector_id] INTEGER NOT NULL,
 	[gatewidth] float NULL,
 	[counter_type] nvarchar(40) NULL,
@@ -1119,6 +1122,29 @@ CREATE TABLE results_rec(
 	[active_filename] nvarchar(1024) NULL,
 	[active_detector_id] nvarchar(256) NULL,
 	/* todo: list mode params analogized to sr parms */
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
+);
+GO
+CREATE TABLE LMMultiplicity_m(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER NOT NULL,
+	[gatewidth] float NULL,
+	[counter_type] nvarchar(40) NULL,
+	[backgroundgatewidth] float NULL,
+	[accidentalsgatewidth] float NULL,
+	[FA] int not NULL default 1,
+	[active] int not NULL default 1,
+	[rank] int not NULL default 0,
+	[predelay] float NULL,
+	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE);
+GO
+CREATE TABLE CountingParams_m(
+	[id] INTEGER Primary Key,
+	[mid] INTEGER NOT NULL,
+	[gatewidth]float NULL,
+	[counter_type] nvarchar(40) NULL,
+	[active] int not NULL default 1,
+	[rank] int not NULL default 0,
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO

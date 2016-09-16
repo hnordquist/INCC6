@@ -2837,7 +2837,8 @@ namespace NCCTransfer
 		public class TransferSummary
 		{
 			public DateTimeOffset dto;
-			public string item, stratum, path, det, comment;
+			public string item, stratum, path, det, comment, material;
+			public AssaySelector.MeasurementOption meastype;
 			public bool select; 
 			public int index;
 			public TransferSummary()
@@ -2855,6 +2856,8 @@ namespace NCCTransfer
             t.item = TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH);
 			t.dto = INCC.DateTimeFrom(TransferUtils.str(results.meas_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(results.meas_time, INCC.DATE_TIME_LENGTH));
 			t.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);
+            t.material = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+			t.meastype = (AssaySelector.MeasurementOption)results.meas_option;
 			t.select = false;
 			t.index = index;
 			return t;

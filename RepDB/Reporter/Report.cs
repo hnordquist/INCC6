@@ -170,10 +170,11 @@ namespace NCCReporter
             if (hf != null)
                 lines.Add(hf.footer);
 
-            foreach (string ls in lines)
-            {
-                f.WriteLine(ls);
-            }
+            if (f != null)
+                foreach (string ls in lines)
+                {
+                    f.WriteLine(ls);
+                }
 
             if (sendToLogFile || logToConsole)
             {

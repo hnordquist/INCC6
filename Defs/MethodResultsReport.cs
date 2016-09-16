@@ -36,7 +36,7 @@ namespace AnalysisDefs
     using N = NCC.CentralizedState;
 
 
-    // these results are 1 -1 with each srkey analyzer
+    // these results are 1 - 1 with each srkey analyzer
     public class MethodResultsReport : SimpleReport
     {
 
@@ -58,7 +58,6 @@ namespace AnalysisDefs
         }
 
         protected enum Results { Rates, Background, Initial, Precision, Verification, Calibration };
-        protected enum Methods { KnownA, Multiplicity, CalibrationCurve };
 
         enum Columns { Label, Value };
         enum ComputedValueColumns { Primary, Err };
@@ -303,6 +302,14 @@ namespace AnalysisDefs
 
         protected Section ConstructReportSection(INCCReportSection section, Detector det, MeasOptionSelector moskey = null)
         {
+            if (moskey == null)
+                return ConstructReportSectionI(section, det);
+            else
+                return ConstructReportSectionI(section, det, moskey.MultiplicityParams);
+        }
+
+        protected Section ConstructReportSectionI(INCCReportSection section, Detector det, Multiplicity mkey = null)
+        {
             INCCStyleSection sec = null;
             try
             {
@@ -343,7 +350,7 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.ShiftRegister:
                         sec = new INCCStyleSection(null, 1);
-                        ConstructSRSection(sec, moskey.MultiplicityParams, det);
+                        ConstructSRSection(sec, mkey, det);
                         break;
                     case INCCReportSection.Adjustments:
                         sec = new INCCStyleSection(null, 1);
@@ -378,13 +385,13 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.CycleSummary:
                         sec = new INCCStyleSection(null, 1);
-                        sec.AddIntegerRow(String.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(moskey.MultiplicityParams)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
+                        sec.AddIntegerRow(String.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(mkey)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
                         sec.AddNumericRow("Count time (sec):", (meas.Cycles.Count > 0 ? meas.Cycles[0].TS.TotalSeconds : 0.0));
                         break;
 
                     case INCCReportSection.Messages:
                         List<MeasurementMsg> sl = null;
-                        bool found = meas.Messages.TryGetValue(moskey.MultiplicityParams, out sl);
+                        bool found = meas.Messages.TryGetValue(mkey, out sl);
                         if (found)
                         {
                             sec = new INCCStyleSection(null, 1);
@@ -486,7 +493,7 @@ namespace AnalysisDefs
             {           /* well configuration */
                 sec.AddTwo("Detector configuration: ", meas.AcquireState.well_config.ToString());
             }
-            sec.AddTwo("Data source: ", det.Id.source.HappyFunName());
+            sec.AddTwo("Data source: ", det.Id.source.NameForViewing(det.Id.SRType));
             sec.AddTwo("QC tests: ", meas.AcquireState.qc_tests ? "On" : "Off");
             ErrorCalculationTechnique ect = meas.AcquireState.error_calc_method.Override(meas.MeasOption, det.Id.SRType);
             if (ect != ErrorCalculationTechnique.None)
@@ -583,8 +590,53 @@ namespace AnalysisDefs
             INCCResultsReports.Add(t.lines);
         }
 
-		
-		/* INCC5 file naming scheme
+        public void GenerateInitialReportContent(Measurement m)
+        {
+            foreach (Multiplicity mult in (m.AnalysisParams.GetAllMults()))
+            {
+                // create one results for each SR key
+                StartReportContent(m);
+                Detector det = meas.Detector;
+                try
+                {
+                    sections.Add(ConstructReportSection(INCCReportSection.Header, det));
+                    sections.Add(ConstructReportSection(INCCReportSection.Context, det));
+                    sections.Add(ConstructReportSection(INCCReportSection.Isotopics, det));
+                    sections.Add(ConstructReportSectionI(INCCReportSection.ShiftRegister, det, mult));
+                    sections.Add(ConstructReportSection(INCCReportSection.Adjustments, det));
+
+                    sections.RemoveAll(s => (s == null));
+
+                    // copy all section rows to the report row list (t.rows)
+                    int rowcount = 0;
+                    foreach (Section sec in sections)
+                    {
+                        rowcount += sec.Count;
+                    }
+                    Array.Resize(ref t.rows, rowcount);
+
+                    int idx = 0;
+                    foreach (Section sec in sections)
+                    {
+                        Array.Copy(sec.ToArray(), 0, t.rows, idx, sec.Count); idx += sec.Count;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ctrllog.TraceException(e);
+                }
+
+                t.CreateReport(0);
+                INCCResultsReports.Add(t.lines);
+            }
+        }
+
+        void StartReportContent(Measurement m)
+        {
+            PrepForReportGeneration(m, ' ');
+        }
+    
+        /* INCC5 file naming scheme
 			YMDHMMSS
 			Y = last digit of the year
 			M = month (0-9, A-C)
@@ -593,7 +645,7 @@ namespace AnalysisDefs
 			MM = minutes (00-59)
 			SS = seconds (00-59)
 		*/
-		static public string EightCharConvert(DateTimeOffset dto)
+        static public string EightCharConvert(DateTimeOffset dto)
 		{
 			Char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 			string y = dto.ToString("yy");

@@ -66,7 +66,7 @@ namespace NewUI
                     DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                     det = m.Detector; // use detector as re-constructed from the original measurement
 					// get the cycles for the selected measurement from the database, and add them to the current measurement
-					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId);
+					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId, m.AnalysisParams); // URGENT: multmult
 					foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
 					{
 						cycle.UpdateDataSourceId(DetectorDefs.ConstructedSource.DB, det.Id.SRType,

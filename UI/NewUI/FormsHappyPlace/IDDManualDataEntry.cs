@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -31,12 +31,10 @@ using AnalysisDefs;
 using DetectorDefs;
 using NCCReporter;
 namespace NewUI
-{
-
+{  
     
     using NC = NCC.CentralizedState;
 
-    // NEXT: make it go as in 'replay'
     public partial class IDDManualDataEntry : Form
     {
        
@@ -78,7 +76,7 @@ namespace NewUI
             ResetGrid();
             foreach (Cycle c in NC.App.Opstate.Measurement.Cycles)
             {
-                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams);
+                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams); // URGENT: multmult
                 DataGridViewRow r = cyclesGridView.Rows[c.seq - 1];
                 r.Cells[1].Value = c.Totals.ToString();
                 if (res != null)
@@ -132,7 +130,7 @@ namespace NewUI
             ClearMeasCycles();
             CycleList newCycles = new CycleList();
             // next: manual entry needs more work to get it completed
-            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);
+            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);  // URGENT: multmult
             for (int i = 0; i < MAX_MANUAL_ENTRIES; i++) // lame
             {
                 DataGridViewRow r = cyclesGridView.Rows[i];

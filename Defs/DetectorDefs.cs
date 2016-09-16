@@ -172,8 +172,8 @@ namespace DetectorDefs
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
-        INCCTransferCopy, INCCTransfer, Æther
-    };  //INCC transfer and room for more
+        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
+    };  // source sof data, file, DAQ, DB
 
 
 
@@ -266,13 +266,25 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransfer, "Transfer");
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
-                PrettyName.Add(ConstructedSource.Æther, "Reanalysis");
+                PrettyName.Add(ConstructedSource.Reanalysis, "Reanalysis");
             }
 		}
 
         public static string HappyFunName(this ConstructedSource src)
         {
             return PrettyName[src];
+        }
+
+		public static string ListModeLiveName =  "List mode device";
+
+		public static string NameForViewing(this ConstructedSource src, InstrType device)
+        {
+			if (device.IsListMode() && src.Live())
+			{
+				return ListModeLiveName;
+			}
+			else
+				return PrettyName[src];
         }
 
         public static ConstructedSource SrcToEnum(this string src)
@@ -282,6 +294,10 @@ namespace DetectorDefs
                 if (pair.Value.Equals(src))
                     return pair.Key;
             }
+			if (string.Compare(ListModeLiveName, src, true) == 0)
+			{
+				return ConstructedSource.Live;
+			}
             return ConstructedSource.Unknown;
         }
 
@@ -534,7 +550,7 @@ namespace DetectorDefs
 			case ConstructedSource.Manual:
 				l = "Manual";
 				break;
-			case ConstructedSource.Æther:
+			case ConstructedSource.Reanalysis:
 				l += (" " + source.HappyFunName());
 				break;
 			}
@@ -573,7 +589,7 @@ namespace DetectorDefs
 				case ConstructedSource.Manual:
 					l = "Manual";
 					break;
-				case ConstructedSource.Æther:
+				case ConstructedSource.Reanalysis:
 					l += (" " + source.HappyFunName());
 					break;
 

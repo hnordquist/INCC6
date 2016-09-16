@@ -82,10 +82,8 @@ namespace NCCFile
                             INCCReviewFileProcessing();
                         else if (NC.App.AppContext.DBDataAssay)
                             DBDataAssay();
-                        //else if (NC.App.AppContext.ManualDataAssay) // todo: implement flag state and internal processing from acquire dlgs
-                        //    ManualDataAssay();
                         else
-                            NCDFileAssay();
+                            PTRFilePairAssay();  // default, will fail if flags not set correctly
                         break;
                     case NCCAction.File:
                         if (NC.App.AppContext.INCCXfer)

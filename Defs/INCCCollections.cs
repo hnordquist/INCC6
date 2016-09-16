@@ -34,7 +34,6 @@ using DetectorDefs;
 using NCCReporter;
 namespace AnalysisDefs
 {
-
 	using NC = NCC.CentralizedState;
 
 
@@ -247,14 +246,14 @@ namespace AnalysisDefs
         public static Isotopics GetIsotopicsByRow(DataRow dr, bool resultsSubset = false)
         {
             Isotopics iso = new Isotopics();
-            foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+            foreach (ValueType v in Enum.GetValues(typeof(Isotope)))
             {
                 if (dr.Table.Columns.IndexOf(v.ToString()) >= 0)
                     iso.SetValueError((Isotope)v, DB.Utils.DBDouble(dr[v.ToString()]), DB.Utils.DBDouble(dr[v.ToString() + "_err"]));
             }
             iso.pu_date = DB.Utils.DBDateTime(dr["pu_date"]);
             iso.am_date = DB.Utils.DBDateTime(dr["am_date"]);
-            System.Enum.TryParse<Isotopics.SourceCode>(dr["isotopics_source_code"].ToString(), out  iso.source_code);
+            Enum.TryParse(dr["isotopics_source_code"].ToString(), out iso.source_code);
             iso.id = dr["isotopics_id"].ToString();
             return iso;
         }
@@ -506,7 +505,7 @@ namespace AnalysisDefs
 		public static CompositeIsotopics GetCompositeIsotopicsByRow(DataColumnCollection columns, DataRow dr)
         {
             CompositeIsotopics iso = new CompositeIsotopics();
-            foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+            foreach (ValueType v in Enum.GetValues(typeof(Isotope)))
             {
 				string key = "ci_" + v.ToString();
                 if (columns.IndexOf(key) >= 0)
@@ -515,7 +514,7 @@ namespace AnalysisDefs
             iso.pu_date = DB.Utils.DBDateTime(dr["ci_pu_date"]);
             iso.am_date = DB.Utils.DBDateTime(dr["ci_am_date"]);
             iso.ref_date = DB.Utils.DBDateTime(dr["ci_ref_date"]);
-            System.Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
+            Enum.TryParse(dr["ci_isotopics_source_code"].ToString(), out iso.source_code);
             iso.id = dr["ci_isotopics_id"].ToString();
             iso.pu_mass = (float)DB.Utils.DBDouble(dr["ci_pu_mass"]);
 			long cikey = DB.Utils.DBInt64(dr["id"]);
@@ -635,7 +634,7 @@ namespace AnalysisDefs
                 CompositeIsotopic c = new CompositeIsotopic();
                 cl.Add(c);
                 c.pu_mass = (float)DB.Utils.DBDouble(dr["pu_mass"]);
-				foreach (ValueType v in System.Enum.GetValues(typeof(Isotope)))
+				foreach (ValueType v in Enum.GetValues(typeof(Isotope)))
 				{
 					string key = v.ToString();
 					if (dt.Columns.IndexOf(key) >= 0)
@@ -752,26 +751,26 @@ namespace AnalysisDefs
         {
             if (items == null)
             {
-            items = new List<CollarItemId>();
-            DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CollarItems);
-            foreach (DataRow dr in dt.Rows)
-            {
-                CollarItemId ito = new CollarItemId();
-                ito.item_id = dr["item_name"].ToString();
-                ito.rod_type = dr["rod_type"].ToString();
-                ito.total_rods = DB.Utils.DBDouble(dr["total_rods"].ToString());
-                ito.total_poison_rods = DB.Utils.DBDouble(dr["total_poison_rods"].ToString());
-                ito.length = VTupleHelper.Make(dr, "length_entry");
-                ito.total_pu = VTupleHelper.Make(dr, "total_pu");
-                ito.depleted_u = VTupleHelper.Make(dr, "depleted_u");
-                ito.natural_u = VTupleHelper.Make(dr, "natural_u");
-                ito.enriched_u = VTupleHelper.Make(dr, "natural_u");
-                ito.total_u235 = VTupleHelper.Make(dr, "total_u235");
-                ito.total_u238 = VTupleHelper.Make(dr, "total_u238");
-                ito.poison_percent.v = DB.Utils.DBDouble(dr["poison_percent"]);
+				items = new List<CollarItemId>();
+				DataTable dt = NC.App.Pest.GetACollection(DB.Pieces.CollarItems);
+				foreach (DataRow dr in dt.Rows)
+				{
+					CollarItemId ito = new CollarItemId();
+					ito.item_id = dr["item_name"].ToString();
+					ito.rod_type = dr["rod_type"].ToString();
+					ito.total_rods = DB.Utils.DBDouble(dr["total_rods"].ToString());
+					ito.total_poison_rods = DB.Utils.DBDouble(dr["total_poison_rods"].ToString());
+					ito.length = VTupleHelper.Make(dr, "length_entry");
+					ito.total_pu = VTupleHelper.Make(dr, "total_pu");
+					ito.depleted_u = VTupleHelper.Make(dr, "depleted_u");
+					ito.natural_u = VTupleHelper.Make(dr, "natural_u");
+					ito.enriched_u = VTupleHelper.Make(dr, "natural_u");
+					ito.total_u235 = VTupleHelper.Make(dr, "total_u235");
+					ito.total_u238 = VTupleHelper.Make(dr, "total_u238");
+					ito.poison_percent.v = DB.Utils.DBDouble(dr["poison_percent"]);
 
-                items.Add(ito);
-            }
+					items.Add(ito);
+				}
             }
             return items;
         }
@@ -1220,7 +1219,7 @@ namespace AnalysisDefs
             tp.maxCyclesForOutlierTest = DB.Utils.DBUInt32(dr["max_runs_for_outlier_test"].ToString());
             tp.checksum = DB.Utils.DBBool(dr["checksum_test"].ToString());
 
-            System.Enum.TryParse<AccidentalsMethod>(dr["accidentals_method"].ToString(), out tp.accidentalsMethod);
+            Enum.TryParse(dr["accidentals_method"].ToString(), out tp.accidentalsMethod);
 
             return tp;
         }
@@ -1229,7 +1228,7 @@ namespace AnalysisDefs
         public List<TestParameters> GetList()
         {
             object o = GetAll();  // force load of local binding list
-            return testParameters.ToList<TestParameters>();
+            return testParameters.ToList();
         }
 
         BindingList<TestParameters> GetAll()
@@ -2298,7 +2297,7 @@ namespace AnalysisDefs
             resrec.mcr.triples_multi = DB.Utils.DBDouble(dr["triples_multi"]);
             resrec.mcr.Mass = DB.Utils.DBDouble(dr["declared_mass"]);
 
-            System.Enum.TryParse<AnalysisMethod>(dr["primary_analysis_method"].ToString(), out resrec.primary);
+            Enum.TryParse(dr["primary_analysis_method"].ToString(), out resrec.primary);
             resrec.total_number_runs = DB.Utils.DBInt32(dr["total_number_runs"]);
             resrec.total_good_count_time = DB.Utils.DBDouble(dr["total_good_count_time"]);
             resrec.net_drum_weight = DB.Utils.DBDouble(dr["net_drum_weight"]);
@@ -2330,8 +2329,8 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="dr">The DataRow from a previous DB query</param>
         /// <param name="v">The table column name</param>
-        /// <returns>A new VTUple wth teh vlaues</returns>
-        public static AnalysisDefs.VTuple Make(DataRow dr, string v)
+        /// <returns>A new VTuple wth the values</returns>
+        public static VTuple Make(DataRow dr, string v)
         {
             return VTuple.Create(DB.Utils.DBDouble(dr[v]), DB.Utils.DBDouble(dr[v + "_err"]));
         }
@@ -2820,7 +2819,7 @@ namespace AnalysisDefs
                         AddASourceSetup aas = new AddASourceSetup();
                         aas.port_number = DB.Utils.DBInt16(dr["port_number"].ToString());
                         AddASourceFlavors a;
-                        System.Enum.TryParse<AddASourceFlavors>(dr["type"].ToString(), out  a);
+                        Enum.TryParse(dr["type"].ToString(), out  a);
                         aas.type = a;
                         aas.forward_over_travel = DB.Utils.DBDouble(dr["forward_over_travel"].ToString());
                         aas.reverse_over_travel = DB.Utils.DBDouble(dr["reverse_over_travel"].ToString());
@@ -3403,7 +3402,7 @@ namespace AnalysisDefs
     /// <summary>
     /// Root of access to basic INCC persistent storage, tries to hide DB details LOL
     /// </summary>
-    public partial class INCCDB
+    public partial class   INCCDB
     {
         public INCCDB()
         {
@@ -3727,96 +3726,97 @@ namespace AnalysisDefs
 
 
         public class AcquireSelector : Tuple<Detector, string, DateTimeOffset>
-    {
-            public AcquireSelector(Detector d, string itemtype, DateTimeOffset dt)
-            : base(d, itemtype, dt) // might need a deep copy later
-        {
-        }
+		{
+				public AcquireSelector(Detector d, string itemtype, DateTimeOffset dt)
+				: base(d, itemtype, dt) // might need a deep copy later
+			{
+			}
 
-        public AcquireSelector()
-                : base(null, string.Empty, DateTimeOffset.Now)
-        {
-        }
+			public AcquireSelector()
+					: base(null, string.Empty, DateTimeOffset.Now)
+			{
+			}
 
-        public AcquireSelector(AcquireSelector src)
-            : base(src.Item1, src.Item2, src.Item3)
-        {
-        }
+			public AcquireSelector(AcquireSelector src)
+				: base(src.Item1, src.Item2, src.Item3)
+			{
+			}
 
-        int Compare(AcquireSelector x, AcquireSelector y)
-        {
-            int res = 0;
-           res = (new System.Collections.CaseInsensitiveComparer()).Compare(x.Item1, y.Item1);
-           if (res == 0)
-               res = x.Item2.CompareTo(y.Item2);
-           if (res == 0)
-               res = x.Item3.CompareTo(y.Item3);
-           return res;
-        }
+			int Compare(AcquireSelector x, AcquireSelector y)
+			{
+				int res = 0;
+			   res = (new System.Collections.CaseInsensitiveComparer()).Compare(x.Item1, y.Item1);
+			   if (res == 0)
+				   res = x.Item2.CompareTo(y.Item2);
+			   if (res == 0)
+				   res = x.Item3.CompareTo(y.Item3);
+			   return res;
+			}
 
-        public int CompareTo(object other)
-        {
-            return Compare(this, (AcquireSelector)other);
-        }
-        public override bool Equals(object obj)
-        {
-            return (CompareTo(obj) == 0);
-        }
-       public override int GetHashCode()
-        {
-            int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
-            return hCode;
-        }
-        public override string ToString()
-        {
-            return Item1          + "," + Item2 + " => " + Item3;
-        }
-        public Detector Detector 
-        {
-            get { return Item1; }
-        }
+			public int CompareTo(object other)
+			{
+				return Compare(this, (AcquireSelector)other);
+			}
+			public override bool Equals(object obj)
+			{
+				return (CompareTo(obj) == 0);
+			}
+		   public override int GetHashCode()
+			{
+				int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
+				return hCode;
+			}
+			public override string ToString()
+			{
+				return Item1          + "," + Item2 + " => " + Item3;
+			}
+			public Detector Detector 
+			{
+				get { return Item1; }
+			}
 
-        public DateTimeOffset TimeStamp
-        {
-            get { return this.Item3; }
-        }
+			public DateTimeOffset TimeStamp
+			{
+				get { return this.Item3; }
+			}
 
-        public string ItemType
-        {
-            get { return this.Item2; }
-        }
-    }
-    public AcquireParameters LastAcquire()
-    {
-         List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion key
-                    (from aq in NC.App.DB.AcquireParametersMap
-                     orderby aq.Value.CheckDateTime descending
-                     select aq).ToList();  // force eval
-        if (l.Count > 0)
-            return l.First().Value; // get the newest, it is the first on the sorted list
-        else
-            return new AcquireParameters();
-    }
+			public string ItemType
+			{
+				get { return this.Item2; }
+			}
+		}
+		public AcquireParameters LastAcquire()
+		{
+			List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion timestamp
+					   (from aq in NC.App.DB.AcquireParametersMap
+						orderby aq.Value.CheckDateTime.Ticks descending
+						select aq).ToList();  // force eval
+			if (l.Count > 0)
+				return l.First().Value; // get the newest, it is the first on the sorted list
+			else
+				return new AcquireParameters();
+		}
 
-        public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
-        {
-            List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
-                                    (from aq in NC.App.DB.AcquireParametersMap
-                                     where (string.Equals(d.Id.DetectorId, aq.Value.detector_id) && string.Equals(mtl_type, aq.Value.item_type))
-                                     orderby aq.Value.CheckDateTime descending
-                                     select aq).ToList();  // force eval
-            if (res.Count > 0)
-                return res.First().Value;  // get the newest, it is the first on the sorted list
-            else
-                return null;
-        }
+		public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
+		{
+			List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector and mtl type, then sorts the params by date
+									(from aq in NC.App.DB.AcquireParametersMap
+									 where (0 == string.Compare(d.Id.DetectorId, aq.Value.detector_id, false)) &&
+										   (0 == string.Compare(mtl_type, aq.Value.item_type, false))
+									 orderby aq.Value.CheckDateTime.Ticks descending
+									 select aq).ToList();  // force eval
+			if (res.Count > 0)
+				return res.First().Value;  // get the newest, it is the first on the sorted list
+			else
+				return null;
+		}
 
 		public AcquireParameters LastAcquireFor(Detector d)
         {
             List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector, then sorts the params by date
                                     (from aq in NC.App.DB.AcquireParametersMap
-                                     where string.Equals(d.Id.DetectorId, aq.Value.detector_id)
-                                     orderby aq.Value.CheckDateTime descending
+                                     where 0 == string.Compare(d.Id.DetectorId, aq.Value.detector_id, false)
+                                     orderby aq.Value.CheckDateTime.Ticks descending
                                      select aq).ToList();  // force eval
             if (res.Count > 0)
                 return res.First().Value;  // get the newest, it is the first on the sorted list
@@ -4361,74 +4361,134 @@ namespace AnalysisDefs
 		}
 
         /// <summary>
-        /// Construct the CycleList from a stored measurement identified by the detector and the MeasId
+        /// Construct the CycleList from a stored measurement identified by the Multiplicity key and the MeasId
         /// No LM data yet
         /// </summary>
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
         /// <returns>CycleList</returns>
-        public CycleList GetCycles(Detector det, MeasId mid)
+        public CycleList GetCycles(Detector det, MeasId mid, CountingAnalysisParameters cap = null)
         {
             CycleList cl = new CycleList();
 			if (mid.UniqueId <= 0)
 				return cl;
-
             DB.Measurements ms = new DB.Measurements();
             DataTable dt = null;
             dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
+			List<Multiplicity> tme = null;
             int seq = 0;
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
                 Cycle c = new Cycle(NC.App.Pest.logger);
-                cl.Add(c);
-                c.TS = DB.Utils.DBTimeSpan(dr["cycle_time"]);
-                c.Totals = DB.Utils.DBUInt64(dr["singles"]);
-                c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
-                c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
-                c.seq = seq;
-                if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(System.DBNull.Value)))
+                cl.Add(c); c.seq = seq;
+
+				long lmid = AddSummaryToCycle(dr, c);
+
+				if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
-					double[] att =  DB.Utils.ReifyDoubles((string)dr["chnhits"]);
-					if (att.Length > 0)  // there was something there, use it
-						c.HitsPerChannel = att;
-					else
-						c.HitsPerChannel[0] = c.Totals;
+					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+					AddResultToCycle(dr, det.MultiplicityParams, c);
 				}
 				else
 				{
-	                c.HitsPerChannel[0] = c.Totals;
+					if (tme == null)
+						tme = GetMultiplicityAnalyzersFromResults(det, mid);
+					foreach (Multiplicity mul in cap.GetAllMults())  // Each cycle should match on one and only one of the lmid instances
+					{  
+						c.SetQCStatus(mul, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+						if (tme.Exists(mult => mul.Equals(mult)))  // it lives on the original list, use it
+						{
+							AddResultToCycle(dr, mul, c);
+							break;
+						}
+					}
 				}
-
-                c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(det.MultiplicityParams.FA, 0);
-                mcr.Scaler1 = VTuple.Create(DB.Utils.DBDouble(dr["scaler1"]), 0);
-                mcr.Scaler2 = VTuple.Create(DB.Utils.DBDouble(dr["scaler2"]), 0);
-                mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc"]);
-                mcr.ASum = DB.Utils.DBDouble(dr["acc"]);
-                mcr.Mass = DB.Utils.DBDouble(dr["mass"]);
-                mcr.rates[RatesAdjustments.Raw].Doubles = VTuple.Create(DB.Utils.DBDouble(dr["doubles_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Scaler1s = VTuple.Create(DB.Utils.DBDouble(dr["scaler1_rate"]), 0);
-                mcr.rates[RatesAdjustments.Raw].Scaler2s = VTuple.Create(DB.Utils.DBDouble(dr["scaler2_rate"]), 0);
-                mcr.multiAlpha = DB.Utils.DBDouble(dr["multiplicity_alpha"]);
-                mcr.efficiency = DB.Utils.DBDouble(dr["multiplicity_efficiency"]);
-                mcr.multiplication = DB.Utils.DBDouble(dr["multiplicity_mult"]);
-                mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc"].ToString());
-                mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc"].ToString());
-
-                mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
-                mcr.Totals = c.Totals; // ??
-                mcr.TS = new TimeSpan(c.TS.Ticks);
-                mcr.RawSinglesRate.v = c.SinglesRate;
-                // todo: this must happen eventually CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
-
-                c.CountingAnalysisResults.Add(det.MultiplicityParams, mcr);
             }
-
             return cl;
         }
+
+		Multiplicity GetMultiplicityAnalyzer(DataRow dr, ShiftRegisterParameters sr)
+		{
+			SpecificCountingAnalyzerParams s = NC.App.LMBD.ConstructCountingAnalyzerParams(dr);
+			Multiplicity m = (Multiplicity)s;
+			m.SR.CopyValues(sr);
+			if (dr.Table.Columns.Contains("predelay") && (!dr["predelay"].Equals(DBNull.Value)))
+				m.SR.predelay = DB.Utils.DBUInt64(dr["predelay"]);
+			return m;
+		}
+
+		// URGENT: multmult so this code needs to be used to construct the original AnalysisParams used to generate these results, so that the results maps have the right keys
+		public List<Multiplicity> GetMultiplicityAnalyzersFromResults(Detector det, MeasId mid)
+		{
+			List<Multiplicity> tme = null;
+			if (det.ListMode) // get the lm vsr mult analyzer results records, if any
+			{
+				tme = new List<Multiplicity>();
+				DB.LMParamsRelatedBackToMeasurement mulres = new DB.LMParamsRelatedBackToMeasurement("LMMultiplicity");
+				DataTable dt = mulres.GetCounterParams(mid.UniqueId);
+				foreach (DataRow dr in dt.Rows)
+				{
+					tme.Add(GetMultiplicityAnalyzer(dr, det.SRParams));
+				}
+				//ms = cap.GetAllMults();				
+				//foreach (Multiplicity mul in cap.GetAllMults())
+				//{
+				//}
+			}
+			return tme;
+		}
+
+		long AddSummaryToCycle(DataRow dr, Cycle c)
+		{
+			c.TS = DB.Utils.DBTimeSpan(dr["cycle_time"]);
+			c.Totals = DB.Utils.DBUInt64(dr["singles"]);
+			c.HighVoltage = DB.Utils.DBDouble(dr["high_voltage"]);
+			c.SinglesRate = DB.Utils.DBDouble(dr["singles_rate"]);
+			if (dr.Table.Columns.Contains("chnhits") && (!dr["chnhits"].Equals(DBNull.Value)))
+			{
+				double[] att = DB.Utils.ReifyDoubles((string)dr["chnhits"]);
+				if (att.Length > 0)  // there was something there, use it
+					c.HitsPerChannel = att;
+				else
+					c.HitsPerChannel[0] = c.Totals;
+			} else
+			{
+				c.HitsPerChannel[0] = c.Totals;
+			}
+			if (dr.Table.Columns.Contains("lmid") && (!dr["lmid"].Equals(DBNull.Value)))
+				return DB.Utils.DBInt64(dr["lmid"]);
+			else
+				return -1;
+		}
+
+		void AddResultToCycle(DataRow dr, Multiplicity mult, Cycle c)
+		{
+			MultiplicityCountingRes mcr = new MultiplicityCountingRes(mult.FA, 0);
+            mcr.Scaler1 = VTuple.Create(DB.Utils.DBDouble(dr["scaler1"]), 0);
+            mcr.Scaler2 = VTuple.Create(DB.Utils.DBDouble(dr["scaler2"]), 0);
+            mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc"]);
+            mcr.ASum = DB.Utils.DBDouble(dr["acc"]);
+            mcr.Mass = DB.Utils.DBDouble(dr["mass"]);
+            mcr.rates[RatesAdjustments.Raw].Doubles = VTuple.Create(DB.Utils.DBDouble(dr["doubles_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Scaler1s = VTuple.Create(DB.Utils.DBDouble(dr["scaler1_rate"]), 0);
+            mcr.rates[RatesAdjustments.Raw].Scaler2s = VTuple.Create(DB.Utils.DBDouble(dr["scaler2_rate"]), 0);
+            mcr.multiAlpha = DB.Utils.DBDouble(dr["multiplicity_alpha"]);
+            mcr.efficiency = DB.Utils.DBDouble(dr["multiplicity_efficiency"]);
+            mcr.multiplication = DB.Utils.DBDouble(dr["multiplicity_mult"]);
+            mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc"].ToString());
+            mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc"].ToString());
+
+            mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
+            mcr.Totals = c.Totals; // ??
+            mcr.TS = new TimeSpan(c.TS.Ticks);
+            mcr.RawSinglesRate.v = c.SinglesRate;
+            // todo: this must happen eventually CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
+
+            c.CountingAnalysisResults.Add(mult, mcr);
+		}
 
         public bool AddCycles(CycleList cl, Detector det, Measurement m)
         {
@@ -4437,10 +4497,10 @@ namespace AnalysisDefs
             if (mid <= 0)
                 return false;
 
-            return AddCycles(cl, det.MultiplicityParams, mid, ms);
+            return AddCycles(cl, det.MultiplicityParams, mid, -1, ms);
         }
 
-        public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
+       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -4449,28 +4509,15 @@ namespace AnalysisDefs
             for (int ic = 0; ic < iCntCycles; ic++)
             {
                 Cycle c = cl[ic];
-                c.GenParamList(mkey); // URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-
-                clist.Add(c.ToDBElementList(generate: false));
+                c.GenParamList(mkey);
+				DB.ElementList els = c.ToDBElementList(generate: false);
+				if (lmid >= 0)
+					els.Add(new DB.Element("lmid", lmid));
+                clist.Add(els);
             }
             db.AddCycles(mid, clist);
             return true;
         }
-
-        /// <summary>
-        ///  short cut when DB id is known at creation time
-        /// </summary>
-        /// <param name="mid"></param>
-        /// <param name="c"></param>
-        public void AddCycle(long mid, Cycle c, Multiplicity mkey)
-        {
-            DB.Measurements ms = new DB.Measurements();
-            c.GenParamList(mkey); // URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-
-            long lid = ms.AddCycleRetId(mid, c.ToDBElementList(generate: false));
-        }
-        // URGENT: design db tables for LM-specific results and implement parameter generator here (per cycle results)
-        // invoke at the appropriate time from the single cycle with return value entry point
 
         public void AddResultsFileNames(Measurement m)
         {

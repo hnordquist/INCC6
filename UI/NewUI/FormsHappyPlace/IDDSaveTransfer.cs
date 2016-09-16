@@ -77,7 +77,7 @@ namespace NewUI
 					{
 						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
 						DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId);
+						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId); // URGENT: multmult
 						foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
 						{
 							cycle.UpdateDataSourceId(f.acq.data_src, f.det.Id.SRType,
@@ -108,7 +108,7 @@ namespace NewUI
 					{
 						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
 						DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId);
+						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId);// URGENT: multmult
 						foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
 						{
 							cycle.UpdateDataSourceId(m.AcquireState.data_src, det.Id.SRType,

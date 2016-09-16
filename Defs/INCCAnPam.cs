@@ -1735,6 +1735,7 @@ namespace AnalysisDefs
                     k5[j] = new Tuple(0, 0);
                     k5_label[j] = string.Empty;
                 }
+				k5_item_type = string.Empty;
             }
 
             public collar_k5_rec(collar_k5_rec src)
