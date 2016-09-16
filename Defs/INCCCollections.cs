@@ -3726,90 +3726,90 @@ namespace AnalysisDefs
 
 
         public class AcquireSelector : Tuple<Detector, string, DateTimeOffset>
-    {
-            public AcquireSelector(Detector d, string itemtype, DateTimeOffset dt)
-            : base(d, itemtype, dt) // might need a deep copy later
-        {
-        }
+		{
+				public AcquireSelector(Detector d, string itemtype, DateTimeOffset dt)
+				: base(d, itemtype, dt) // might need a deep copy later
+			{
+			}
 
-        public AcquireSelector()
-                : base(null, string.Empty, DateTimeOffset.Now)
-        {
-        }
+			public AcquireSelector()
+					: base(null, string.Empty, DateTimeOffset.Now)
+			{
+			}
 
-        public AcquireSelector(AcquireSelector src)
-            : base(src.Item1, src.Item2, src.Item3)
-        {
-        }
+			public AcquireSelector(AcquireSelector src)
+				: base(src.Item1, src.Item2, src.Item3)
+			{
+			}
 
-        int Compare(AcquireSelector x, AcquireSelector y)
-        {
-            int res = 0;
-           res = (new System.Collections.CaseInsensitiveComparer()).Compare(x.Item1, y.Item1);
-           if (res == 0)
-               res = x.Item2.CompareTo(y.Item2);
-           if (res == 0)
-               res = x.Item3.CompareTo(y.Item3);
-           return res;
-        }
+			int Compare(AcquireSelector x, AcquireSelector y)
+			{
+				int res = 0;
+			   res = (new System.Collections.CaseInsensitiveComparer()).Compare(x.Item1, y.Item1);
+			   if (res == 0)
+				   res = x.Item2.CompareTo(y.Item2);
+			   if (res == 0)
+				   res = x.Item3.CompareTo(y.Item3);
+			   return res;
+			}
 
-        public int CompareTo(object other)
-        {
-            return Compare(this, (AcquireSelector)other);
-        }
-        public override bool Equals(object obj)
-        {
-            return (CompareTo(obj) == 0);
-        }
-       public override int GetHashCode()
-        {
-            int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
-            return hCode;
-        }
-        public override string ToString()
-        {
-            return Item1          + "," + Item2 + " => " + Item3;
-        }
-        public Detector Detector 
-        {
-            get { return Item1; }
-        }
+			public int CompareTo(object other)
+			{
+				return Compare(this, (AcquireSelector)other);
+			}
+			public override bool Equals(object obj)
+			{
+				return (CompareTo(obj) == 0);
+			}
+		   public override int GetHashCode()
+			{
+				int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
+				return hCode;
+			}
+			public override string ToString()
+			{
+				return Item1          + "," + Item2 + " => " + Item3;
+			}
+			public Detector Detector 
+			{
+				get { return Item1; }
+			}
 
-        public DateTimeOffset TimeStamp
-        {
-            get { return this.Item3; }
-        }
+			public DateTimeOffset TimeStamp
+			{
+				get { return this.Item3; }
+			}
 
-        public string ItemType
-        {
-            get { return this.Item2; }
-        }
-    }
-    public AcquireParameters LastAcquire()
-    {
-         List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion timestamp
-                    (from aq in NC.App.DB.AcquireParametersMap
-                     orderby aq.Value.CheckDateTime.Ticks descending
-                     select aq).ToList();  // force eval
-        if (l.Count > 0)
-            return l.First().Value; // get the newest, it is the first on the sorted list
-        else
-            return new AcquireParameters();
-    }
+			public string ItemType
+			{
+				get { return this.Item2; }
+			}
+		}
+		public AcquireParameters LastAcquire()
+		{
+			List<KeyValuePair<AcquireSelector, AcquireParameters>> l =   // this finds all acquire params, then sorts the saved params by insertion timestamp
+					   (from aq in NC.App.DB.AcquireParametersMap
+						orderby aq.Value.CheckDateTime.Ticks descending
+						select aq).ToList();  // force eval
+			if (l.Count > 0)
+				return l.First().Value; // get the newest, it is the first on the sorted list
+			else
+				return new AcquireParameters();
+		}
 
-        public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
-        {
-            List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector and mtl type, then sorts the params by date
-                                    (from aq in NC.App.DB.AcquireParametersMap
-                                     where (0 == string.Compare(d.Id.DetectorId, aq.Value.detector_id, false)) &&
+		public AcquireParameters LastAcquireFor(Detector d, string mtl_type)
+		{
+			List<KeyValuePair<AcquireSelector, AcquireParameters>> res =   // this finds the acquire params for the given detector and mtl type, then sorts the params by date
+									(from aq in NC.App.DB.AcquireParametersMap
+									 where (0 == string.Compare(d.Id.DetectorId, aq.Value.detector_id, false)) &&
 										   (0 == string.Compare(mtl_type, aq.Value.item_type, false))
-                                     orderby aq.Value.CheckDateTime.Ticks descending
-                                     select aq).ToList();  // force eval
-            if (res.Count > 0)
-                return res.First().Value;  // get the newest, it is the first on the sorted list
-            else
-                return null;
-        }
+									 orderby aq.Value.CheckDateTime.Ticks descending
+									 select aq).ToList();  // force eval
+			if (res.Count > 0)
+				return res.First().Value;  // get the newest, it is the first on the sorted list
+			else
+				return null;
+		}
 
 		public AcquireParameters LastAcquireFor(Detector d)
         {

@@ -326,12 +326,16 @@ namespace AnalysisDefs
             string s = "SR";
             if (FA == FAType.FAOn)
             {
-                s += " fast acc. with internal gate ";
+                s += " fast acc.,   gate ";
+                s += SR.gateLength.ToString();
+				s += ", with internal gate ";
                 s += TimeUnitImage(backgroundGateTimeStepInTics, withunitsspace: true);
             }
             else
             {
-                s += " with acc. delay internal gate ";
+                s += " conventional, gate ";
+                s += SR.gateLength.ToString();
+                s += ", delay internal gate ";
                 s += TimeUnitImage(accidentalsGateDelayInTics, withunitsspace: true);
             }
             return s;

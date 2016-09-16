@@ -501,7 +501,7 @@ namespace AnalysisDefs
                         mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[det.MultiplicityParams];
                     }
                     catch (Exception)
-                    {  // URGENT: multmult check this logic
+                    {   // URGENT: multmult check this logic
                         // NEXT: code 'gets here' if the detector settings do not match any of the explicitly LM-defined Multiplicity analyzer(s).
                         // so for now we'll override det.MultiplicityParams with the first available LM-defined Multiplicity upstream, so the code does not 'get here'
                         if (mcr == null)
