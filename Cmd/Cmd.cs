@@ -33,53 +33,53 @@ using System.Diagnostics;
 namespace NCCCmd
 {
 	using Integ = NCC.IntegrationHelpers;
-	using NC = NCC.CentralizedState;
+	using N = NCC.CentralizedState;
 
 	class AppEntry
 	{
 
 		static void Main(string[] args)
 		{
-			new NC("INCC6 Console");
+			new N("INCC6 Console");
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
-			NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
-			c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(NC.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
+			N.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
+			c.AfterDBSetup(N.App.AppContext, args);  // apply the cmd line 
+            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
             if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths
             {
-                NC.App.AppContext.FileInput = possiblepaths[0];
+                N.App.AppContext.FileInput = possiblepaths[0];
                 if (System.IO.Directory.Exists(possiblepaths[1]))
-                    NC.App.AppContext.ResultsFilePath = possiblepaths[1];
+                    N.App.AppContext.ResultsFilePath = possiblepaths[1];
                 if (System.IO.Directory.Exists(possiblepaths[2]))
-                    NC.App.AppContext.LogFilePath = possiblepaths[2];
+                    N.App.AppContext.LogFilePath = possiblepaths[2];
             }
             // check return bool and exit here on error
-            bool initialized = NC.App.Initialize(c);
+            bool initialized = N.App.Initialize(c);
 			if (!initialized)
 				return;
 
-			if (NC.App.Config.Cmd.ShowVersion && !NC.App.Config.Cmd.Showcfg)
+			if (N.App.Config.Cmd.ShowVersion && !N.App.Config.Cmd.Showcfg)
 			{
-				NC.App.Config.Cmd.ShowVersionOnConsole(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
+				N.App.Config.Cmd.ShowVersionOnConsole(N.App.Config, N.App.Config.App.Verbose() == TraceEventType.Verbose);
 				return;
 			} 
-			else if (NC.App.Config.Cmd.Showhelp)
+			else if (N.App.Config.Cmd.Showhelp)
 			{
-				NC.App.Config.ShowHelp();
+				N.App.Config.ShowHelp();
 				return;
 			}
-			else if (NC.App.Config.Cmd.Showcfg)
+			else if (N.App.Config.Cmd.Showcfg)
 			{
-				NCCConfig.Config.ShowCfg(NC.App.Config, NC.App.Config.App.Verbose() == TraceEventType.Verbose);
+				NCCConfig.Config.ShowCfg(N.App.Config, N.App.Config.App.Verbose() == TraceEventType.Verbose);
 				return;
 			}
 
-			LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+			LMLoggers.LognLM applog = N.App.Logger(LMLoggers.AppSection.App);
 
 			try
 			{
-				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " " + NC.App.Config.VersionString);
+				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
@@ -95,43 +95,43 @@ namespace NCCCmd
                 if (!initialized)
                     goto end;
 
-				if (NC.App.Config.App.UsingFileInput || NC.App.Opstate.Action == NCC.NCCAction.File)
+				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
 				{
 	                BuildMeasurement();
-					if (NC.App.AppContext.AssayFromFiles)
-						NC.App.Opstate.Action = NCC.NCCAction.Assay;
-					else if (NC.App.AppContext.HasFileAction)
-						NC.App.Opstate.Action = NCC.NCCAction.File;
+					if (N.App.AppContext.AssayFromFiles)
+						N.App.Opstate.Action = NCC.NCCAction.Assay;
+					else if (N.App.AppContext.HasFileAction)
+						N.App.Opstate.Action = NCC.NCCAction.File;
 
 					// file processing for analysis and more
 					FileControlBind filecontrol = new FileControlBind();
 					filecontrol.SetupEventHandlers();
 					filecontrol.StartAction();  // step into the code and run
-					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+					N.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				}
 				else
 				{
 					BuildMeasurement();
 					DAQControlBind control = new DAQControlBind();
-					DAQ.DAQControl.ActivateDetector(NC.App.Opstate.Measurement.Detector);
+					DAQ.DAQControl.ActivateDetector(N.App.Opstate.Measurement.Detector);
 					control.SetupEventHandlers();
 					control.StartAction();
-					NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+					N.App.Opstate.SOH = NCC.OperatingState.Stopped;
                 }
                 end:
 				;
 			} catch (Exception e)
 			{
-				NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+				N.App.Opstate.SOH = NCC.OperatingState.Trouble;
 				applog.TraceException(e, true);
 				applog.EmitFatalErrorMsg();
 			} finally
 			{
-				NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
-				NC.App.Config.RetainChanges();
-				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + NC.App.Name + " . . .");
-				NC.App.Loggers.Flush();  
-                if (NC.App.AppContext.OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
+				N.App.Opstate.SOH = NCC.OperatingState.Stopped;
+				N.App.Config.RetainChanges();
+				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " . . .");
+				N.App.Loggers.Flush();  
+                if (N.App.AppContext.OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
             }
 		}
 
@@ -139,11 +139,11 @@ namespace NCCCmd
 		{
 			Detector det = null;
 			AcquireParameters ap = null;
-			AssaySelector.MeasurementOption mo = (AssaySelector.MeasurementOption)NC.App.Config.Cur.AssayType;
+			AssaySelector.MeasurementOption mo = (AssaySelector.MeasurementOption)N.App.Config.Cur.AssayType;
 			Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
 			INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
 
-			NC.App.DB.ReplaceAcquireParams(sel, ap); // add new or replace existing with new
+			N.App.DB.ReplaceAcquireParams(sel, ap); // add new or replace existing with new
 
 			// The acquire is set to occur, build up the measurement state 
 			Integ.BuildMeasurement(ap, det, mo);

@@ -183,7 +183,7 @@ namespace AnalysisDefs
             if (NC.App.Opstate.IsAbortRequested)
                 return;
 
-            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);
+            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // urgent: multmult, this needs to summarize across analyzers, not to the single value on the measurement
 			if (meas.Cycles.Count < 1)  // nothing can be done
 				return;
 			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
@@ -195,7 +195,7 @@ namespace AnalysisDefs
                 {
                     ulong maxbins = 0; ulong minbins = 0;
                     MultiplicityCountingRes mcr = (MultiplicityCountingRes)pair.Value;
-                    Object obj; MultiplicityCountingRes ccm;
+                    object obj; MultiplicityCountingRes ccm;
                     foreach (Cycle cc in meas.Cycles)
                     {
                         bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
@@ -256,13 +256,11 @@ namespace AnalysisDefs
                         if (!pair.Key.suspect) // accumulate the relevant counts
                         {
                             ICountingResult cr = (ICountingResult)pair.Value;
-                            Object obj;
+							object obj;
                             bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
                             if (!there)
                                 continue;
                             cr.Accumulate((ICountingResult)obj);
-
-
                         }
                     }
                 }
@@ -270,7 +268,7 @@ namespace AnalysisDefs
                 if (meas.Cycles.Count > 0)  // adjustments
                 {
                     // average the summed coincidence matrix rates
-                    System.Collections.IEnumerator iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Coincidence));
+                    IEnumerator iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Coincidence));
                     while (iter.MoveNext())
                     {
                         if (meas.CountTimeInSeconds == 0)
@@ -289,7 +287,7 @@ namespace AnalysisDefs
                     }
 
                    //  make sure total time is there for the rates
-                    uint validGeneralCyclesCount = meas.RawCycleSummary();
+                    uint validGeneralCyclesCount = meas.NumberOfRawCyclesWithCounts();
                     iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.BaseRate));
                     while (iter.MoveNext())
                     {
@@ -300,7 +298,7 @@ namespace AnalysisDefs
                     }
 
                     // do the final Feynman computation
-                    System.Collections.IEnumerator fritter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Feynman));
+                    IEnumerator fritter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Feynman));
                     while (fritter.MoveNext())
                     {
                         FeynmanResultExt fr = (FeynmanResultExt)fritter.Current;
@@ -1298,7 +1296,7 @@ namespace AnalysisDefs
                     MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
                     mcr.ComputeSums();
                     INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
-                }
+            }
             //    dtchoice++;
             //} while (dtchoice <= RatesAdjustments.DytlewskiDeadtimeCorrected);
         }
@@ -1345,7 +1343,7 @@ namespace AnalysisDefs
 
 				INCCResult results;
 				MeasOptionSelector moskey = new MeasOptionSelector(meas.MeasOption, mkey);
-				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);
+				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // urgent: when does this actually get saved?
 
 				try
 				{
@@ -1416,7 +1414,7 @@ namespace AnalysisDefs
         public static void SaveMeasurementCycles(this Measurement m)
         {
             long mid = m.MeasurementId.UniqueId;
-            //Could we actually not do this when reanalyzing? hn 9.21.2015
+            // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
             // URGENT: the cycle lookup on DB and Reanalysis must account for lmid and mid 
 			if (m.Detector.ListMode)
 			{
@@ -1429,10 +1427,7 @@ namespace AnalysisDefs
 			}
 			else
 				NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
-
-
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
-
         }
 
         /// <summary>
@@ -1464,7 +1459,7 @@ namespace AnalysisDefs
 					do
 					{
 						long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
-						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}{2})", imr.Table, resid, mresid));
+						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}, {2})", imr.Table, resid, mresid));
 					} while (imr.methodParams.Pump > 0);
                 }
             }                        
@@ -1494,7 +1489,7 @@ namespace AnalysisDefs
             long mid = m.MeasurementId.UniqueId;
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList());
+            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // urgent: results rec needs to be fully populated before here
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
 
         }

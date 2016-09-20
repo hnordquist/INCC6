@@ -893,12 +893,10 @@ namespace AnalysisDefs
         {
             if (src == null)
                 return;
-            if (src.α.Length < α.Length)  // shouldn't happen but it does,
-                // I've seen a case where a cycle has one less alpha/beta entry than previous cycles,
-                // but since ab is an identical copy each time (alpha beta does not change per cycle,
-                // (it is a constant flowing from the SR params), I can make this hack conditional guard here
-                //hn -- This does happen.  When we get > 128 bins, this needs to be resized!!!  Other consequences? 10-23-2014
-                return;
+
+			// the point of all this resizing across each cycle and during the summary steps was to avoid max bin allocations and the extra tracking of the actual indices, it's become bug spawing feature instead, jimbo.
+            //if (src.α.Length < α.Length)
+            //    new object();
 
             int amax = Math.Max(α.Length, src.α.Length);
             int amin = Math.Min(α.Length, src.α.Length);
@@ -915,11 +913,11 @@ namespace AnalysisDefs
             {
                 β[i] = src.β[i];
             }
-            for (int i = amin; i < amax; i++)
+            for (int i = amin; i < amax && i < src.α.Length; i++)
             {
                 α[i] = src.α[i];
             }
-            for (int i = bmin; i < bmax; i++)
+            for (int i = bmin; i < bmax && i < src.β.Length; i++)
             {
                 β[i] = src.β[i];
             }
