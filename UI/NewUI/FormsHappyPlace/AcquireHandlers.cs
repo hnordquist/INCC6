@@ -353,7 +353,7 @@ namespace NewUI
 							Integ.BuildMeasurement(ap, det, mo); // URGENT: study how to use the results to reconstruct it 
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-                            NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).TraceEvent(NCCReporter.LogLevels.Info, 87654,
+                            NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));
 							
 							NC.App.Opstate.Measurement.MeasDate = dto;
@@ -409,7 +409,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -422,7 +422,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -435,7 +435,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -448,7 +448,7 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
 				    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation;
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {

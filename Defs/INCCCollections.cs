@@ -3600,7 +3600,7 @@ namespace AnalysisDefs
             ap.inventory_change_code = dr["inventory_change_code"].ToString();
             ap.io_code = dr["io_code"].ToString();
             ap.well_config = (WellConfiguration)(DB.Utils.DBInt32(dr["well_config"].ToString()));
-            ap.data_src = (DetectorDefs.ConstructedSource)(DB.Utils.DBInt32(dr["data_src"]));
+            ap.data_src = (ConstructedSource)(DB.Utils.DBInt32(dr["data_src"]));
             ap.qc_tests = DB.Utils.DBBool(dr["qc_tests"]);
             ap.error_calc_method = (ErrorCalculationTechnique)(DB.Utils.DBInt32(dr["error_calc_method"].ToString()));
             ap.print = DB.Utils.DBBool(dr["acq_print"].ToString());
@@ -3608,9 +3608,15 @@ namespace AnalysisDefs
             ap.comment = dr["comment"].ToString();
             ap.num_runs = DB.Utils.DBUInt16(dr["num_runs"].ToString());
             if (resultsSubset)
+			{
                 ap.detector_id = dr["detector_name"].ToString();
+				ap.meas_detector_id = ap.detector_id;  // only one is captured in the results rec, but the other must match
+			}
             else
-                ap.detector_id = dr["meas_detector_id"].ToString();
+			{
+                ap.detector_id = dr["detector_id"].ToString();
+				ap.meas_detector_id = dr["meas_detector_id"].ToString();  // make sure both are written correctly to the DB
+			}
             det = ap.detector_id;
 
             if (resultsSubset) return ap;
@@ -3637,7 +3643,7 @@ namespace AnalysisDefs
             ap.meas_precision = DB.Utils.DBDouble(dr["meas_precision"].ToString());
 
             ap.drum_empty_weight = DB.Utils.DBDouble(dr["drum_empty_weight"].ToString());
-            ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);
+            ap.MeasDateTime = DB.Utils.DBDateTimeOffset(dr["MeasDate"]);  // also assigns lm copy
             if (dr.Table.Columns.Contains("CheckDate"))
                 ap.CheckDateTime = DB.Utils.DBDateTimeOffset(dr["CheckDate"]);
             ap.meas_detector_id = dr["meas_detector_id"].ToString();
@@ -3673,7 +3679,6 @@ namespace AnalysisDefs
                 catch (ArgumentException)
                 {
                 }
-                ap.lm.TimeStamp = ap.MeasDateTime;
              }
             return ap;
         }
@@ -3777,12 +3782,12 @@ namespace AnalysisDefs
 
 			public DateTimeOffset TimeStamp
 			{
-				get { return this.Item3; }
+				get { return Item3; }
 			}
 
 			public string ItemType
 			{
-				get { return this.Item2; }
+				get { return Item2; }
 			}
 		}
 		public AcquireParameters LastAcquire()
@@ -4609,7 +4614,7 @@ namespace AnalysisDefs
         public void UpdateAcquireParams(Detector det)
         {
             DB.AcquireParams aqdb = new DB.AcquireParams();
-            AnalysisDefs.AcquireParameters acq = null;            
+            AcquireParameters acq = null;            
             var res =   // this finds the acquire params for the given detector and acquire type
                     from aq in AcquireParametersMap
                     where aq.Value.detector_id == det.Id.DetectorId

@@ -1907,6 +1907,8 @@ namespace NCCTransfer
             //        associate a new set of SR, Bkg and Norm and AB params with the new detector 
             // todo: What are the HV Params from INCC5, and once that is known, can they be transferred to the INCC6 HV Param and results tables
             Detector det = new Detector();
+			if (srtype.IsListMode())
+				det.Id.FullConnInfo = new LMConnectionInfo();
 
             try
             {
@@ -2979,7 +2981,7 @@ namespace NCCTransfer
 
             AcquireParameters acq = meas.AcquireState;
             acq.detector_id = det.Id.DetectorId;
-            acq.meas_detector_id = string.Copy(det.Id.DetectorId);
+            acq.meas_detector_id = string.Copy(det.Id.DetectorId);  // probably incorrect usage, but differnce is ambiguous in INCC5
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
@@ -2989,7 +2991,6 @@ namespace NCCTransfer
             else
                 acq.run_count_time = results.total_good_count_time; // should be 0.0 by default for this special case
             acq.MeasDateTime = meas.MeasurementId.MeasDateTime;
-            acq.meas_detector_id = det.Id.DetectorId;
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
             acq.campaign_id = TransferUtils.str(results.results_campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
             if (string.IsNullOrEmpty(acq.campaign_id))

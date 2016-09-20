@@ -856,30 +856,35 @@ namespace NCCConfig
             set { setVal(NCCFlags.root, value); }
         }
 
-        public string RootPathOverride()
-        {
-            if (DailyRootPath)
-            {
-                string part = DateTimeOffset.Now.ToString("yyyy-MMdd");
-                if (RootPath.EndsWith(part))
-                    return RootPath;
-                else
-                {
-                    Match m = PathMatch(RootPath);
-                    if (m.Success)
-                    {
-                        // strip and replace
-                        string s = RootPath.Remove(m.Index);
-                        s = Path.Combine(s, part);
-                        return s;
-                    }
-                    return Path.Combine(RootPath, part);
-                }
+		public string RootPathOverride()
+		{
+			if (DailyRootPath)
+			{
+				string part = DateTimeOffset.Now.ToString("yyyy-MMdd");
+				if (RootPath.EndsWith(part))
+					return RootPath;
+				else
+				{
+					try
+					{
 
-            }
-            else
-                return RootPath;
-        }
+						Match m = PathMatch(RootPath);
+						if (m.Success)
+						{
+							// strip and replace
+							string s = RootPath.Remove(m.Index);
+							return Path.Combine(s, part);
+						}
+						return Path.Combine(RootPath, part);
+					} catch (ArgumentException)  // illegal characters
+					{
+						return RootPath;
+					}
+				}
+
+			} else
+				return RootPath;
+		}
 
 		Match PathMatch(string path)
 		{ 

@@ -439,7 +439,7 @@ namespace AnalysisDefs
         /// <param name="mkey"></param>
         public void Trim(Multiplicity mkey)
         {
-            int start = this.FindIndex(e => { return e.QCStatus(mkey).Unset(); });
+            int start = FindIndex(e => { return e.QCStatus(mkey).Unset(); });
             if (start < 0)
                 return;
             RemoveRange(start, this.Count - start);
@@ -919,7 +919,7 @@ namespace AnalysisDefs
                 foreach (TimeInterval ti in (ap.GetTimeIntervals()))
                 {
                     TimeIntervalResult tir = new TimeIntervalResult();
-                    tir.timeIntervalHistogram = new UInt32[RawAnalysisProperties.maxEventSpacing + 1];  // alloc the entire possible range, but use maxIndexOfNonzeroHistogramEntry upon output
+                    tir.timeIntervalHistogram = new uint[RawAnalysisProperties.maxEventSpacing + 1];  // alloc the entire possible range, but use maxIndexOfNonzeroHistogramEntry upon output
                     countresults.Add(ti, tir);
                 }
 
@@ -955,22 +955,14 @@ namespace AnalysisDefs
         }
 
         // all non-zero cycles are counted here
-        public uint RawCycleSummary()
+        public uint NumberOfRawCyclesWithCounts()
         {
-           // long t = 0;                 // the cycle average time
-           // ulong totals = 0;            // singles raw sums
             uint validCyclesCount = 0;
             foreach (Cycle cc in cycles) 
             {
-              //      t += cc.TS.Ticks;
-              //      totals += cc.Totals;
-              //      for (int i = 0; i < NC.ChannelCount; i++)
-              //          cycles.HitsPerChannel[i] += cc.HitsPerChannel[i];
                     if (cc.TS.Ticks > 0)
                         validCyclesCount++;
             }
-            //CountTimeInSeconds = new TimeSpan(t).TotalSeconds;
-            //singles = totals;
             return validCyclesCount;
         }
 
