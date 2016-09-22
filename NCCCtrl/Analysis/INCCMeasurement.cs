@@ -1491,7 +1491,6 @@ namespace AnalysisDefs
             // save results with mid as foreign key
             bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // urgent: results rec needs to be fully populated before here
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
-
         }
 
 		/// <summary>

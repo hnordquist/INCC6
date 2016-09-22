@@ -59,7 +59,7 @@ namespace NCCFile
             {
 				if (meas.Detector.AB.Unset)
 				{
-					ABKey abkey = new ABKey(meas.Detector.MultiplicityParams, 512); // just the first of many for VSR
+					ABKey abkey = new ABKey(meas.Detector.MultiplicityParams, 512); // NEXT: maxbins is arbitrary, just the first of many for VSR
 					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, meas.Detector.AB);
 				}
 
@@ -109,7 +109,7 @@ namespace NCCFile
 
             if (curdet.AB.Unset)
             {
-                ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // just the first of many for VSR
+                ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // NEXT: maxbins is arbitrary, just the first of many for VSR
 				LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
             }
 
@@ -471,7 +471,7 @@ namespace NCCFile
 
 				if (curdet.AB.Unset)
 				{
-					ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // just the first of many for VSR
+					ABKey abkey = new ABKey(curdet.MultiplicityParams, 512);  // NEXT: maxbins is arbitrary, just the first of many for VSR
 					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
 				}
 

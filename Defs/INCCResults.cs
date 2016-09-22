@@ -451,6 +451,11 @@ namespace AnalysisDefs
             public double total_good_count_time, net_drum_weight, db_version;
             public AssaySelector.MeasurementOption meas_option;
             public bool completed;
+
+			// last but not least, the extra data used for the active/passive measurement pairing
+			public DateTimeOffset original_meas_date;
+			MeasId passive, active;
+
 			public long MeasId {get; set; }
 
             public results_rec()
@@ -478,6 +483,9 @@ namespace AnalysisDefs
                 mcr = new MultiplicityCountingRes(src.mcr);
 
 				primary = src.primary;
+				original_meas_date = new DateTimeOffset(src.original_meas_date.Ticks, src.original_meas_date.Offset);
+				passive = new MeasId(src.passive);
+				active = new MeasId(src.active);
             }
 
             // this should be created at some correct moment, after analyzer and method map construction, AND THEN inserted into the meas.Result map
@@ -520,6 +528,10 @@ namespace AnalysisDefs
                 INCCMethodResults imr;
                 if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // devnote: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 
                     primary = imr.primaryMethod;
+
+				original_meas_date = new DateTimeOffset(acq.MeasDateTime.Ticks, acq.MeasDateTime.Offset);
+				passive = new MeasId(m.MeasurementId);  // next: fill it in until the distinction betwen the two separate measurements can be made
+				active = new MeasId(m.MeasurementId);  // next: fill it in until the distinction betwen the two separate measurements can be made
             }
 
 

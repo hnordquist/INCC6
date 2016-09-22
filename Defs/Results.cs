@@ -1326,6 +1326,8 @@ namespace AnalysisDefs
             Array.Resize(ref UnAMult, src.UnAMult.Length);
             Array.Resize(ref NormedAMult, src.NormedAMult.Length);
             Array.Resize(ref covariance_matrix, src.covariance_matrix.Length);
+			MinBins = src.MinBins;
+			MaxBins = src.MaxBins;
         }
         public MultiplicityCountingRes(FAType FA, int i)
         {
@@ -1392,9 +1394,9 @@ namespace AnalysisDefs
             scaler1 = new VTuple(src.scaler1);
             scaler2 = new VTuple(src.scaler2);
 
-            this.multiAlpha = src.multiAlpha;
-            this.mass = src.mass;
-            this.efficiency = src.efficiency;
+            multiAlpha = src.multiAlpha;
+            mass = src.mass;
+            efficiency = src.efficiency;
 
             TS = new TimeSpan(src.TS.Ticks);
 
@@ -1624,16 +1626,21 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("acc_sum", ASum));
             ps.Add(new DBParamEntry("mult_reals_plus_acc_sum", RAMult));
             ps.Add(new DBParamEntry("mult_acc_sum", NormedAMult));
-            ps.AddRange(DBParamList.TuplePair("singles", DeadtimeCorrectedRates.Singles));
-            ps.AddRange(DBParamList.TuplePair("doubles", DeadtimeCorrectedRates.Doubles));
-            ps.AddRange(DBParamList.TuplePair("triples", DeadtimeCorrectedRates.Triples));
-            ps.AddRange(DBParamList.TuplePair("scaler1", Scaler1));
-            ps.AddRange(DBParamList.TuplePair("scaler2", Scaler2));
-            ps.AddRange(DBParamList.TuplePair("uncorrected_doubles", RawDoublesRate));
+            ps.AddRange(TuplePair("singles", DeadtimeCorrectedRates.Singles));
+            ps.AddRange(TuplePair("doubles", DeadtimeCorrectedRates.Doubles));
+            ps.AddRange(TuplePair("triples", DeadtimeCorrectedRates.Triples));
+            ps.AddRange(TuplePair("scaler1", Scaler1));
+            ps.AddRange(TuplePair("scaler2", Scaler2));
+            ps.AddRange(TuplePair("uncorrected_doubles", RawDoublesRate));
             ps.Add(new DBParamEntry("singles_multi", singles_multi)); 
             ps.Add(new DBParamEntry("doubles_multi", doubles_multi)); 
             ps.Add(new DBParamEntry("triples_multi", triples_multi)); 
             ps.Add(new DBParamEntry("declared_mass", Mass));
+			{	// la super hack-a-whack
+				DB.DB db = new DB.DB(true);
+				if (db.TableHasColumn(Table,"mult_acc_un_sum"))
+					ps.Add(new DBParamEntry("mult_acc_un_sum", UnAMult));
+			}
         }
 
         public List<DBParamEntry> MoreForResults()

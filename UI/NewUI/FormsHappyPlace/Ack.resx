@@ -120,12 +120,15 @@
   <data name="richTextBox1.Text" xml:space="preserve">
     <value>INCC was originally developed at the Los Alamos National Laboratory
 by Merlyn Krick, PhD and Bill Harker.
-Contributors include
-D. Mayo PhD, W. Geist PhD, R. Rothrock, J. Dowell PhD, H. Nordquist,
-M. Williams PhD, K. Shaffer PhD, J. Longo (Los Alamos);
-E. Johnson (IAEA).
 
 Special thanks to the late David Beddingfield PhD, of the IAEA and Los Alamos.
+
+Contributors include W Geist PhD, D Mayo PhD,
+H Nordquist, M Williams PhD (LANL), J Longo( LANL/IAEA);
+
+For list mode: D Mayo PhD, R Rothrock, J Dowell PhD, 
+K Shaffer PhD (LANL), E Johnson (IAEA), J Longo.
+
 
 Includes code from the NDesk.Options 1.2.0.0 library.
 

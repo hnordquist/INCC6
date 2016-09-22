@@ -138,6 +138,7 @@ Closed issues
 ***  Cosmetic improvement to Acquire dialog source selection for list mode devices
 ***  DB persist for List Mode results for one or more defined analyzers
 ***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
+***  Scalar2 counts not summed when importing NCC files
 11n  Measurement waiting for a neutron that never arrives (MCA-527)
 
 6.0.1.15 Aug 26, 2016

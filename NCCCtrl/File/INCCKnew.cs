@@ -2049,7 +2049,7 @@ namespace NCCTransfer
                 Multiplicity mkey = new Multiplicity(srtype.DefaultFAFor());
                 mkey.SR = new ShiftRegisterParameters(det.SRParams);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(srtype.DefaultFAFor(), 0);
-				ABKey abkey = new ABKey(mkey, 512);
+				ABKey abkey = new ABKey(mkey, 512); // NEXT: maxbins is arbitrary
 				LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);
                 mcr.AB.TransferIntermediates(det.AB);
             }
@@ -3810,6 +3810,8 @@ namespace NCCTransfer
             xres.completed = (results.completed != 0 ? true : false);
             xres.db_version = results.db_version;
             xres.hc = hc;
+            xres.original_meas_date = INCC.DateFrom(TransferUtils.str(results.original_meas_date, INCC.DATE_TIME_LENGTH));
+			// NEXT: copy move passive and active meas id's here
 
             long mid = meas.Persist();
 
@@ -4012,7 +4014,7 @@ namespace NCCTransfer
 
             mcr.NormedAMult = new ulong[mcr.MaxBins];
             mcr.RAMult = new ulong[mcr.MaxBins];
-            mcr.UnAMult = new ulong[mcr.MaxBins];
+            mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
 
             for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
             {

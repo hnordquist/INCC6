@@ -724,7 +724,6 @@ namespace NCC
 				else
 					meas.Stratum = new Stratum(s.Stratum);
 			}
-
             INCCResults.results_rec xres = new INCCResults.results_rec(meas);
             meas.INCCAnalysisResults.TradResultsRec = xres;
             CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
@@ -759,6 +758,25 @@ namespace NCC
 
             meas.InitializeContext(clearCounterResults:false);
             meas.PrepareINCCResults();
+
+			System.Collections.IEnumerator iter = meas.CountingAnalysisResults.GetATypedParameterEnumerator(typeof(Multiplicity));
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)iter.Current;
+                try
+                {
+ 					MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
+					if (mcr.AB.Unset)
+						LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(mkey, mcr); // works only if MaxBins is set
+					MeasOptionSelector mos = new MeasOptionSelector(meas.MeasOption, mkey);
+					INCCResult result = meas.INCCAnalysisState.Lookup(mos);
+					result.CopyFrom(mcr);
+				}
+                catch (Exception ex)
+                {
+                    //logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                }
+            }
 
             // stratum look up, finds existing stratum by name
 			if (useCurCalibParams || meas.Stratum == null)

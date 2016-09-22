@@ -51,5 +51,6 @@ namespace NewUI
 		{
 			Close();
 		}
-	}
+
+    }
 }
