@@ -329,9 +329,10 @@ namespace NewUI
 					entries["Cm Ratio U Status"] = cures.u.pass ? "Pass": ""; //	"Curium ratio - U measurement status"
 				}
 				break;
-			case Selections.TruncatedMultiplicity: // NEXT: three more
+			case Selections.TruncatedMultiplicity: 
 			case Selections.ActiveCalibCurve:
 			case Selections.Collar:
+				// URGENT: three more to go LOL
 				break;
 			default:
 				break;

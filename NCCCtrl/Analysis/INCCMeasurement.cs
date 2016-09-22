@@ -183,7 +183,7 @@ namespace AnalysisDefs
             if (NC.App.Opstate.IsAbortRequested)
                 return;
 
-            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // urgent: multmult, this needs to summarize across analyzers, not to the single value on the measurement
+            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // multmult: this may need to summarize across analyzers, as well as the single value on the measurement
 			if (meas.Cycles.Count < 1)  // nothing can be done
 				return;
 			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
@@ -714,7 +714,7 @@ namespace AnalysisDefs
                     }
                     bool success = false;
                     kares.dcl_pu_mass = meas.AcquireState.mass;  // dev note: another use of acq, a requirement, here
-                    // JFL copy the input calib to the results rec
+                    // copy the input calibration params to the copy on the results rec, to be saved with the KA results
                     kares.methodParams = new INCCAnalysisParams.known_alpha_rec(ka_params);
 
                     if (ka_params.known_alpha_type == INCCAnalysisParams.KnownAlphaVariant.Conventional)
@@ -1343,7 +1343,7 @@ namespace AnalysisDefs
 
 				INCCResult results;
 				MeasOptionSelector moskey = new MeasOptionSelector(meas.MeasOption, mkey);
-				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // urgent: when does this actually get saved?
+				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // multmult: when does this actually get saved? It needs to be saved to DB after all calculations are complete
 
 				try
 				{
@@ -1406,16 +1406,15 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Preserve a measurement cycle list in a database
-        /// Limited to INCC5 SR values
-        /// URGENT: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
-        /// NEXT: status shoud be set on db acquire lists, because it can read in 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so we should only use the processed cycles.
+        /// Limited to INCC5 SR and INCC6 VSR values
+        /// TODO: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// TODO: status shoud be set on db acquire lists, because it can read in e.g. 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so the code should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
         public static void SaveMeasurementCycles(this Measurement m)
         {
             long mid = m.MeasurementId.UniqueId;
             // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
-            // URGENT: the cycle lookup on DB and Reanalysis must account for lmid and mid 
 			if (m.Detector.ListMode)
 			{
 				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
@@ -1489,7 +1488,7 @@ namespace AnalysisDefs
             long mid = m.MeasurementId.UniqueId;
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // urgent: results rec needs to be fully populated before here
+            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // multmult: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
         }
 

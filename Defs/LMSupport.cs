@@ -200,7 +200,7 @@ namespace LMRawAnalysis
                 numRealPlusAccidentalGates += pair.Value;
             }
 
-            // compute the normalization param and recompute the unnormalized array from this one (code does not seem to work JFL)
+            // if normed distro presented, compute the normalization param and recompute the unnormalized array from it (JFL but does not seem to work)
             if (normedAccidentalsHistogram != null)
             {
                 for (int i = 0; i < normedAccidentalsHistogram.Length; i++)

@@ -43,7 +43,7 @@ namespace AnalysisDefs
         Checksum2 = 0x020, 	/* test2 shift register reals + accidentals v. sum of i * multiplicity reals + accidentals */
         Checksum3 = 0x040, 	/* test3 shift register accidentals vs. sum of i * multiplicity accidentals */
         HighVoltageFail = 0x080,
-        Empty = 0x100 // Joe's "no time on cycle" "empty cycle" status
+        Empty = 0x100 // "no time on cycle" "empty cycle" status
     };
 
     public static class QCTestStatusExtensions

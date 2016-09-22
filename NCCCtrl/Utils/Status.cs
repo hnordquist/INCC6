@@ -154,7 +154,7 @@ namespace NCC
         }
 
 
-        // next: does not take the event handler itself into account, needs to be merged with the SOH logging summary status texts, the status logging and updating is incomplete
+        // NEXT: does not take the event handler itself into account, needs to be merged with the SOH logging summary status texts, the status logging and updating is incomplete
         override public string ToString()
         {
             string s;

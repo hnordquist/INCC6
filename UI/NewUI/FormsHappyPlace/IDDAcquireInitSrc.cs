@@ -331,7 +331,7 @@ namespace NewUI
 
         private void SourceIdTextBox_Leave(object sender, EventArgs e)
         {
-            ah.ItemIdTextBox_Leave(sender, e);   // next: not the same as the item id so this needs refinement
+            ah.ItemIdTextBox_Leave(sender, e);   // NEXT: not the same as the item id so this needs refinement
         }
 
         private void CommentTextBox_Leave(object sender, EventArgs e)

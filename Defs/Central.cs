@@ -772,7 +772,7 @@ namespace NCC
 					INCCResult result = meas.INCCAnalysisState.Lookup(mos);
 					result.CopyFrom(mcr);
 				}
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
                 }
@@ -821,7 +821,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // URGENT: multmult, just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // multmult: just using the first one found, lame, shoud be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

@@ -383,7 +383,7 @@ namespace Instr
             // set the voltage and check it, loop for timeout seconds waiting for it to settle at the desired value
             m_device.SetVoltage(voltage);
             Stopwatch stopwatch = Stopwatch.StartNew();
-            int lrvoltage = m_device.Voltage; // JFL: An inline eval in the inner loop below sometimes changed so fast the output had an incorrect follow-on voltage
+            int lrvoltage = m_device.Voltage; // devnote: using an inline eval in the inner loop below sometimes changed so fast that the output had an incorrect follow-on voltage
             while (Math.Abs(lrvoltage - voltage) > VoltageTolerance) {
                 if (cancellationToken.IsCancellationRequested) {
                     m_logger.TraceEvent(LogLevels.Verbose, 0, "PTR-32[{0}]: Cancellation requested while setting voltage", DeviceName);

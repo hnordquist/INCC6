@@ -273,7 +273,7 @@ namespace NCCFile
                                                                   // Joe still has force to int.  bleck!
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.None); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.None); // multmult: creates entry if not found, expand from the single mult key from detector here
                 meas.Add(cycle, cfindex);
                 /* singles, reals + accidentals, accidentals */
                 string l = td.reader.ReadLine();
@@ -287,8 +287,8 @@ namespace NCCFile
                         v[z] = d;
                 }
                 cycle.Totals = (ulong)v[0];
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr);  // multmult
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult: expand when detector has multiple analyzers
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr);  // multmult: expand when detector has multiple analyzers
                 mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
@@ -630,12 +630,12 @@ namespace NCCFile
                 cycle.TS = TimeSpan.FromSeconds(run.run_count_time);
 
                 /* init run tests */
-                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult creates entry if not found
+                cycle.SetQCStatus(meas.Detector.MultiplicityParams, QCTestStatus.Pass, run.run_high_voltage); // multmult: creates entry if not found, expand from the single mult key from detector here
                 meas.Add(cycle);
                 /* singles, reals + accidentals, accidentals */
                 cycle.Totals = (ulong)run.run_singles;
-                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult
-                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr); // multmult
+                MultiplicityCountingRes mcr = new MultiplicityCountingRes(meas.Detector.MultiplicityParams.FA, cycle.seq); // multmult: expand when detector has multiple analyzers
+                cycle.CountingAnalysisResults.Add(meas.Detector.MultiplicityParams, mcr); // multmult: expand when detector has multiple analyzers
                 mcr.AB.TransferIntermediates(meas.Detector.AB);  // copy alpha beta onto the cycle's results 
                 mcr.Totals = cycle.Totals;
                 mcr.TS = cycle.TS;
@@ -698,8 +698,7 @@ namespace NCCFile
             }
         }
 
-        // assumes initalized measurement with at least one cycle, and at least one defined counting analysis result indexed by the detector's mult params
-        // NEXT: implement for LM results 
+        // assumes initalized measurement with at least one cycle, and at least one defined counting analysis result indexed by the detector's mult params, including VSRs fror LM
         void ComputeFromINCC5SRData(Measurement m)
         {
             ctrllog.TraceEvent(LogLevels.Info, 34071, "Recomputing: '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
@@ -725,10 +724,11 @@ namespace NCCFile
 
             try
             {
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams]; // multmult: check for use of multiple analyzers
                 // start counting using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
                 Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
+                Array.Clear(mcr.UnAMult, 0, mcr.UnAMult.Length);
 
 				mcr.AB.TransferIntermediates(src: m.Detector.AB);  // remove, redundant copy in most cases
 
@@ -740,7 +740,7 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    m.SetQCStatus(cycle);  // multmult prep for analyis one by one
+                    m.SetQCStatus(cycle);  // multmult: check for use of multiple analyzers
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
@@ -749,7 +749,7 @@ namespace NCCFile
                 }
                 FireEvent(EventType.ActionInProgress, this);
                 // trim any None's that were not processed (occurs during a cancel/stop intervention)
-                m.Cycles.Trim(m.Detector.MultiplicityParams); // multmult
+                m.Cycles.Trim(m.Detector.MultiplicityParams); // multmult: expand when detector has multiple analyzers
             }
             catch (Exception e)
             {

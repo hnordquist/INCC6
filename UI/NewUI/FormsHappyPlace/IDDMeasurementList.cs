@@ -158,7 +158,7 @@ namespace NewUI
 				listView1.Columns[2].Width = 0;
 				listView1.Columns[3].Width = 0;
 			}
-			if (filter == AssaySelector.MeasurementOption.background)     // next: add configuration active or passive column
+			if (filter == AssaySelector.MeasurementOption.background)     // NEXT: add configuration active or passive column
 			{
 				listView1.Columns[2].Width = 0;
 				listView1.Columns[3].Width = 0;
@@ -224,13 +224,13 @@ namespace NewUI
 		{
 			return string.IsNullOrEmpty(m.ResultsFiles.CSVResultsFileName.Path);
 		}
-		private void PrintBtn_Click(object sender, EventArgs e)   // next: this must be customized for each list view subtype
+		private void PrintBtn_Click(object sender, EventArgs e)   // NEXT: this must be customized for each list view subtype
 		{
-			string path = System.IO.Path.GetTempFileName();
+			string path = Path.GetTempFileName();
 			FileStream f = new FileStream(path, FileMode.OpenOrCreate);
 			StreamWriter s = new StreamWriter(f);
 			s.AutoFlush = true;
-			s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", "Item id", "Stratum id", "Measurement Type", "Measurement Date and Time", ""));
+			s.Write(string.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", "Item id", "Stratum id", "Measurement Type", "Measurement Date and Time", ""));
 			foreach (ListViewItem lvi in listView1.Items)
 			{
 				s.Write(String.Format("{0,20}\t\t{1,20}\t\t{2,20}\t\t{3,20}\t\t{4,20}\r\n", lvi.SubItems[0].Text, lvi.SubItems[1].Text, lvi.SubItems[4].Text, lvi.SubItems[2].Text, lvi.SubItems[3].Text));

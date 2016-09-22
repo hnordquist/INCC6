@@ -350,7 +350,7 @@ namespace NewUI
                         dr = dbdlg.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
-							Integ.BuildMeasurement(ap, det, mo); // URGENT: study how to use the results to reconstruct it 
+							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                             NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
@@ -358,7 +358,7 @@ namespace NewUI
 							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // URGENT: multmult
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // multmult: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
                             foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
                             {
                                 cycle.UpdateDataSourceId(ap.data_src, det.Id.SRType, 

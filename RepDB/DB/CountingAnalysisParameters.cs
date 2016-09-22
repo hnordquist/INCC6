@@ -142,7 +142,6 @@ namespace DB
                 dr = HasRow(l, CounterType, table, sParams);
             if (dr != null)
             {
-                //NEXT: not tested(?)
                 string sSQL = "DELETE FROM " + table + " where counter_type=" + SQLSpecific.QVal(CounterType) + " AND detector_id=" + l.ToString();
                 if (table.Equals("LMMultiplicity"))
                     sSQL += " AND " + sParams[faidx].Name + "=" + sParams[faidx].Value;
@@ -166,7 +165,6 @@ namespace DB
                 dr = HasRow(DetectorId, CounterType, table, sParams);
             if (dr != null)
             {
-                //NEXT: not tested(?)
                 string sSQL = "DELETE FROM " + table + " where counter_type=" + SQLSpecific.QVal(CounterType) + " AND detector_id=" + DetectorId.ToString();
                 if (table.Equals("LMMultiplicity"))
                     sSQL += " AND " + sParams[faidx].Name + "=" + sParams[faidx].Value;

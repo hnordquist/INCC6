@@ -98,35 +98,7 @@ namespace DB
                     s = "Message repeated 1000 times . . .";
                 else
                     return;
-            }
-
-            /*  lock management control issues at runtime make this a possible feature for the future, if it helps to log warnings and errors to the datbase itself.
-                try
-                {
-
-                    if (Prep())
-                    {
-                        string dt = SQLSpecific.getCurrentDateTime();
-                        s = String.Format(sSQL, current.Replace('\'', '"'), dt);
-                        Console.WriteLine(s);
-                        //SQLite error (10): delayed 25ms for lock/sharing conflict
-                        //sql_cmd.CommandText = s;
-                        //try
-                        //{
-                        //    sql_cmd.ExecuteNonQuery();
-                        //}
-                        //catch (System.Data.Common.DbException dbx)
-                        //{
-                        //    bool b = DBMain.DBExceptionHandler(dbx, s);
-                        //}
-                    }
-                  }
-                catch (Exception caught)
-                {
-                    Console.WriteLine(caught.Message);
-                }
-             * */
-
+            }			
         }
         public override void WriteLine(string message)
         {

@@ -76,7 +76,7 @@ namespace NewUI
             ResetGrid();
             foreach (Cycle c in NC.App.Opstate.Measurement.Cycles)
             {
-                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams); // URGENT: multmult
+                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams); // multmult: expand in some logical fasahion 
                 DataGridViewRow r = cyclesGridView.Rows[c.seq - 1];
                 r.Cells[1].Value = c.Totals.ToString();
                 if (res != null)
@@ -129,8 +129,8 @@ namespace NewUI
 
             ClearMeasCycles();
             CycleList newCycles = new CycleList();
-            // next: manual entry needs more work to get it completed
-            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);  // URGENT: multmult
+            // NEXT: manual entry needs more work to get it completed, but you have a good start here
+            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);  // multmult: expand in some logical fashion
             for (int i = 0; i < MAX_MANUAL_ENTRIES; i++) // lame
             {
                 DataGridViewRow r = cyclesGridView.Rows[i];
