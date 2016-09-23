@@ -26,8 +26,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.IO;
 using System.Windows.Forms;
 using NCCConfig;
+using NCCReporter;
 
 namespace NewUI
 {
@@ -69,6 +71,29 @@ namespace NewUI
 		private void button2_Click(object sender, EventArgs e)
 		{
 			new Ack().ShowDialog();
+		}
+
+		static string notepadPath = string.Empty;
+		static bool bNotepadHappensToBeThere = false;
+		static void PrepNotepad()
+		{
+			if (string.IsNullOrEmpty(notepadPath))
+			{
+				notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
+				bNotepadHappensToBeThere = File.Exists(notepadPath);
+			}
+		}
+		private void readme_Click(object sender, EventArgs e)
+		{
+			PrepNotepad();
+			if (bNotepadHappensToBeThere)
+			{
+				string path = Path.GetFullPath(".\\readme.txt");
+				if (File.Exists(path))
+					System.Diagnostics.Process.Start(notepadPath, path);
+				else 
+					NCC.CentralizedState.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Error, 22222, "The file '" + path + "' cannot be accessed.");
+			}
 		}
 	}
 }

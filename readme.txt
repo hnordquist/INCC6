@@ -138,8 +138,11 @@ Closed issues
 ***  Cosmetic improvement to Acquire dialog source selection for list mode devices
 ***  DB persist for List Mode results for one or more defined analyzers
 ***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
-***  Scalar2 counts not summed when importing NCC files
-11n  Measurement waiting for a neutron that never arrives (MCA-527)
+***  Summary scaler rates not reported during some analyses 
+115  Abort Measurement and Quit FuBar
+25   List mode acquisition predelay not stored
+40   source ID in 'initial source' does not get passed to results
+105  Measurement waiting for a neutron that never arrives (MCA-527)
 
 6.0.1.15 Aug 26, 2016
 
@@ -212,7 +215,6 @@ mmm	JSR15 HV setting was wrong. Would not work. Added log entry to screen for ba
 90	Some facility setup dlg buttons should be disbaled and/or removed
 
 6.0.1.5 Apr 26, 2016
-40	source ID in 'initial source' does not get passed to results
 70	Add MCA-527 single channel list mode DAQ 
 65	Isotopics should not be stored on cancel
 

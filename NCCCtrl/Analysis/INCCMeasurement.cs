@@ -1280,25 +1280,46 @@ namespace AnalysisDefs
         /// </summary>
         public static void CalcAvgAndSums(this Measurement meas)
         {
-            AssaySelector.MeasurementOption at = meas.MeasurementId.MeasOption;
             RatesAdjustments dtchoice = RatesAdjustments.DeadtimeCorrected;
-           // do
-           // {
-                if (NC.App.Opstate.IsAbortRequested)
-                    return;
 
-                IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
-                while (iter.MoveNext())
+            if (NC.App.Opstate.IsAbortRequested)
+                return;
+
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+
+                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
+                mcr.ComputeSums();
+                INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
+			}
+
+			// patch for CalcAveragesAndSums missing scaler summary rates
+			iter = meas.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
+			while (iter.MoveNext())
+			{
+				MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
+				INCCResult ir = meas.INCCAnalysisResults[moskey];
+				uint denom = 0;
+				object obj;
+				foreach (Cycle cc in meas.Cycles)
                 {
-                    Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+					if (!cc.QCStatusValid(moskey.MultiplicityParams))
+						continue;
+                    bool there = cc.CountingAnalysisResults.TryGetValue(moskey.MultiplicityParams, out obj);
+                    if (!there)
+                        continue;
+					denom++;
+                }
+				if (denom > 0)
+				{
+					ir.Scaler1.v = ir.S1Sum / denom;
+					ir.Scaler2.v = ir.S2Sum / denom;
+				}
+			}
 
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
-                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
-                    mcr.ComputeSums();
-                    INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
-            }
-            //    dtchoice++;
-            //} while (dtchoice <= RatesAdjustments.DytlewskiDeadtimeCorrected);
         }
 
         #endregion INCC calculation control methods
