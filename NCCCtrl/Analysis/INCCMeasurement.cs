@@ -163,7 +163,7 @@ namespace AnalysisDefs
 
 		public static void SetQCStatus(this Measurement meas, Cycle cycle)
 		{
-             IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
             while (iter.MoveNext())
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
@@ -183,7 +183,7 @@ namespace AnalysisDefs
             if (NC.App.Opstate.IsAbortRequested)
                 return;
 
-            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // multmult: this may need to summarize across analyzers, as well as the single value on the measurement
+            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // APluralityOfMultiplicityAnalyzers: this may need to summarize across analyzers, as well as the single value on the measurement
 			if (meas.Cycles.Count < 1)  // nothing can be done
 				return;
 			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
@@ -757,7 +757,7 @@ namespace AnalysisDefs
                          INCCAnalysis.calc_known_alpha_moisture_corr(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* dry alpha */
@@ -775,7 +775,7 @@ namespace AnalysisDefs
                             INCCAnalysis.calc_known_alpha_moisture_corr_mult_doubles(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers 
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* moist mult_corr_doubles */
@@ -1364,7 +1364,7 @@ namespace AnalysisDefs
 
 				INCCResult results;
 				MeasOptionSelector moskey = new MeasOptionSelector(meas.MeasOption, mkey);
-				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // multmult: when does this actually get saved? It needs to be saved to DB after all calculations are complete
+				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // APluralityOfMultiplicityAnalyzers: when does this actually get saved? It needs to be saved to DB after all calculations are complete
 
 				try
 				{
@@ -1509,7 +1509,7 @@ namespace AnalysisDefs
             long mid = m.MeasurementId.UniqueId;
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // multmult: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
+            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // APluralityOfMultiplicityAnalyzers: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
         }
 

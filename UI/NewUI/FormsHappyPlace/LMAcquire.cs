@@ -51,7 +51,7 @@ namespace NewUI
 	{
 		Detector det;
         AcquireParameters ap;
-		bool PreserveAnalyzerChanges, AnalyzersLoaded;
+		bool PreserveAnalyzerChanges, AnalyzersLoaded, LMParamUpdate, AcqParamUpdate;
 		bool FromINCC5Acquire { set; get; } // if called directly from INCC5 acquire, force user to select a multiplicity analyzer
 
 		public enum LMSteps { FileBased, DAQBased, AnalysisSpec, Go };
@@ -70,7 +70,7 @@ namespace NewUI
 				ResetMeasurement();
 				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 			}
-			PreserveAnalyzerChanges = AnalyzersLoaded = false;
+			PreserveAnalyzerChanges = AnalyzersLoaded = LMParamUpdate = AcqParamUpdate = false;
 			BuildAnalyzerCombo();
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
@@ -107,6 +107,7 @@ namespace NewUI
             if (N.App.AppContext.NCDFileAssay != ((RadioButton)sender).Checked)
             {
                 N.App.AppContext.modified = true; N.App.AppContext.NCDFileAssay = ((RadioButton)sender).Checked;
+				AcqParamUpdate = true;
             }
             if (N.App.AppContext.NCDFileAssay)
                 ap.data_src = ConstructedSource.NCDFile;
@@ -117,6 +118,7 @@ namespace NewUI
             if (N.App.AppContext.PulseFileAssay != ((RadioButton)sender).Checked)
             {
                 N.App.AppContext.modified = true; N.App.AppContext.PulseFileAssay = ((RadioButton)sender).Checked;
+				AcqParamUpdate = true;
             }
             if (N.App.AppContext.PulseFileAssay)
                 ap.data_src = ConstructedSource.SortedPulseTextFile;
@@ -127,6 +129,7 @@ namespace NewUI
             if (N.App.AppContext.PTRFileAssay != ((RadioButton)sender).Checked)
             {
                 N.App.AppContext.modified = true; N.App.AppContext.PTRFileAssay = ((RadioButton)sender).Checked;
+				AcqParamUpdate = true;
             }
             if (N.App.AppContext.PTRFileAssay)
                 ap.data_src = ConstructedSource.PTRFile;
@@ -136,6 +139,7 @@ namespace NewUI
             if (N.App.AppContext.MCA527FileAssay != ((RadioButton)sender).Checked)
             {
                 N.App.AppContext.modified = true; N.App.AppContext.MCA527FileAssay = ((RadioButton)sender).Checked;
+				AcqParamUpdate = true;
             }
             if (N.App.AppContext.MCA527FileAssay)
                 ap.data_src = ConstructedSource.MCA527File;
@@ -154,7 +158,9 @@ namespace NewUI
             string s = ap.lm.Results;
             ap.lm.modified = Format.Changed(((TextBox)sender).Text, ref s);
             if (ap.lm.modified)
-                ap.lm.Results = s;
+			{
+                ap.lm.Results = s; LMParamUpdate = true;
+			}
         }
 
         private void Step2BOutputDirectoryTextBox_Leave(object sender, EventArgs e)
@@ -162,8 +168,10 @@ namespace NewUI
             string s = ap.lm.Results;
             ap.lm.modified = Format.Changed(((TextBox)sender).Text, ref s);
             if (ap.lm.modified)
-                ap.lm.Results = s;
-        }
+			{
+                ap.lm.Results = s; LMParamUpdate = true;
+			}
+		}
 
 		private void Step2FilenameTextBox_TextChanged(object sender, EventArgs e)
         {
@@ -224,6 +232,7 @@ namespace NewUI
                 ap.lm.Results = s;
                 Step2OutputDirectoryTextBox.Text = s;
                 ap.modified = true;
+				LMParamUpdate = true;
             }
             else
                 Step2OutputDirectoryTextBox.Text = ap.lm.Results;
@@ -234,7 +243,7 @@ namespace NewUI
         {
             if (ap.lm.IncludeConfig != ((CheckBox)sender).Checked)
             {
-                ap.lm.modified = true; ap.lm.IncludeConfig = ((CheckBox)sender).Checked;
+                ap.lm.modified = true; ap.lm.IncludeConfig = ((CheckBox)sender).Checked; LMParamUpdate = true;
             }
         }
 
@@ -250,7 +259,7 @@ namespace NewUI
         {
             if (ap.lm.SaveOnTerminate != ((CheckBox)sender).Checked)
             {
-                ap.lm.modified = true; ap.lm.SaveOnTerminate = ((CheckBox)sender).Checked;
+                ap.lm.modified = true; ap.lm.SaveOnTerminate = ((CheckBox)sender).Checked; LMParamUpdate = true;
             }
         }
 
@@ -890,9 +899,24 @@ namespace NewUI
 			}
             if (ap.modified || ap.lm.modified)
             {
+				Measurement meas = N.App.Opstate.Measurement;
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
-                N.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
+                N.App.DB.AddAcquireParams(sel, ap);  // update acquire and lmacquire tables with this new one
+				if (LMParamUpdate)
+				{
+					meas.AcquireState.lm.Results = ap.lm.Results;
+					meas.AcquireState.lm.IncludeConfig = ap.lm.IncludeConfig;
+					meas.AcquireState.lm.SaveOnTerminate = ap.lm.SaveOnTerminate;
+					meas.AcquireState.lm.Cycles = ap.lm.Cycles;
+					meas.AcquireState.lm.Interval = ap.lm.Interval;
+					LMParamUpdate = false;
+				}
+				if (AcqParamUpdate)
+				{
+					N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
+					AcqParamUpdate = false;
+				}
             }
         }
 		private void Cancel_Click(object sender, EventArgs e)
@@ -902,6 +926,8 @@ namespace NewUI
 
 		private void SwapInputsL_Click(object sender, EventArgs e)
 		{
+			if (ap.data_src == ConstructedSource.Live)
+				AcqParamUpdate = true;
             ap.data_src = ConstructedSource.PTRFile; 
 			if (N.App.AppContext.PTRFileAssay)
 				ap.data_src = ConstructedSource.PTRFile; 
@@ -916,6 +942,8 @@ namespace NewUI
 
 		private void SwapInputsR_Click(object sender, EventArgs e)
 		{
+			if (ap.data_src != ConstructedSource.Live)
+				AcqParamUpdate = true;
             ap.data_src = ConstructedSource.Live;
 			Swap(true);
 		}
@@ -1051,20 +1079,28 @@ namespace NewUI
         private void CycleNumTextBox_Leave(object sender, EventArgs e)
         {
             // Try to convert the text to a positive, non-zero number  
-            ap.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap.num_runs));
-            ((TextBox)sender).Text = Format.Rend(ap.num_runs);
-            ap.lm.Cycles = ap.num_runs;
+            int ap_num_runs = ap.lm.Cycles;
+            ap.lm.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap_num_runs));
+            ((TextBox)sender).Text = Format.Rend(ap_num_runs);
+            if (ap.lm.modified)
+			{
+				ap.modified = ap.lm.modified;
+				ap.lm.Cycles = ap_num_runs;
+				LMParamUpdate = true;
+			}
         }
         private void IntervalTextBox_Leave(object sender, EventArgs e)
         {
             // Try to convert the text to a positive, non-zero number
-            double ap_run_count_time = ap.run_count_time;
-            ap.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap_run_count_time));
-            ap.run_count_time = ap_run_count_time;
-            // Auto-format or reset the textbox value, depending on whether the entered value was different/valid
-            ((TextBox)sender).Text = Format.Rend(ap.run_count_time);
-            //   if (fromINCCAcquire)
-            ap.lm.Interval = ap.run_count_time;
+            double ap_run_count_time = ap.lm.Interval;
+            ap.lm.modified |= (Format.ToPNZ(((TextBox)sender).Text, ref ap_run_count_time));
+            if (ap.lm.modified)
+			{
+				ap.modified = ap.lm.modified;
+	            ap.lm.Interval = ap_run_count_time;
+				LMParamUpdate = true;
+			}
+            ((TextBox)sender).Text = Format.Rend(ap_run_count_time);
         }
 
         private void CycleIntervalPatch() // patches are nearly always a bad thing eh wot?
@@ -1088,7 +1124,7 @@ namespace NewUI
                 return;
             int idx = -1, i = 0;
             if (d != null)
-                foreach (object o in this.Step2BDetectorComboBox.Items)
+                foreach (object o in Step2BDetectorComboBox.Items)
                 {
                     if (o.ToString().CompareTo(d.ToString()) == 0)
                     {
@@ -1158,7 +1194,7 @@ namespace NewUI
 
 			if (r.GetType().Equals(typeof(Multiplicity)))
 			{
-					AnalyzerGridView.Columns[3].HeaderText = "Predelay";
+				AnalyzerGridView.Columns[3].HeaderText = "Predelay";
 				if (((Multiplicity)r).FA == FAType.FAOn)
 					AnalyzerGridView.Columns[4].HeaderText = "Bkg clock width";
 				else
@@ -1166,12 +1202,12 @@ namespace NewUI
 			}
 			else if (r.GetType().Equals(typeof(Coincidence)))
 			{
-					AnalyzerGridView.Columns[3].HeaderText = "Predelay";
-					AnalyzerGridView.Columns[4].HeaderText = "Long delay";
+				AnalyzerGridView.Columns[3].HeaderText = "Predelay";
+				AnalyzerGridView.Columns[4].HeaderText = "Long delay";
 			} else
 			{
-					AnalyzerGridView.Columns[3].HeaderText = "---";
-					AnalyzerGridView.Columns[4].HeaderText = "---";
+				AnalyzerGridView.Columns[3].HeaderText = "---";
+				AnalyzerGridView.Columns[4].HeaderText = "---";
 			}
 
 		}
@@ -1243,15 +1279,15 @@ namespace NewUI
             if (N.App.Opstate.Measurement != null)
             {
                 N.App.Opstate.Measurement = null;
-                NCCReporter.LMLoggers.LognLM log = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+                LMLoggers.LognLM log = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
                 long mem = GC.GetTotalMemory(false);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4248, "GC now");
+                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+                log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4284, "GC complete");
+                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
                 mem = GC.GetTotalMemory(true);
-                log.TraceEvent(NCCReporter.LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
             }
         }
 

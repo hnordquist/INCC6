@@ -4437,8 +4437,8 @@ namespace AnalysisDefs
 			return m;
 		}
 
-		// URGENT: so this code constructs the original AnalysisParams used to generate the results, make cure the results maps then have the right keys
-		// multmult: there may be more than one mult key when VSRs/LM data are involved
+		// URGENT: so this code constructs the original AnalysisParams used to generate the results, make sure the results maps then have the right keys
+		// APluralityOfMultiplicityAnalyzers: there may be more than one mult key when VSRs/LM data are involved
 		public List<Multiplicity> GetMultiplicityAnalyzersFromResults(Detector det, MeasId mid)
 		{
 			List<Multiplicity> tme = null;

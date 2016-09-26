@@ -660,7 +660,7 @@ namespace NCC
 		/// <summary>
 		/// Prepare measurement instance content for analysis
 		/// Populate calibration and counting parameters maps
-		/// Create general results and specif results dictionary map entries
+		/// Create general results and specific results dictionary map entries
 		/// Set up stratum details
 		/// </summary>
 		/// <param name="meas">The partially initialized measurement instance</param>
@@ -671,10 +671,11 @@ namespace NCC
         {
             if (meas.Detector.ListMode)
             {
-				//if (a DB read then do this:)  // URGENT: multmult
+				// URGENT: APluralityOfMultiplicityAnalyzers: see next line
+				//if (an INCC5 DB cycle read or DB Ver reanalysis then rebuild the analyzers from the associated saved LM results:) 
 				//	object x = CentralizedState.App.DB.GetAnalyzersFromResults(meas.Detector, meas.MeasurementId);
 				//else
-					meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
+					  meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
                 if (meas.MeasOption.IsListMode()) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
@@ -821,7 +822,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // multmult: just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, lame, shoud be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

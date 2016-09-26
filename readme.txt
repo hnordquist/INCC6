@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 16
-6.0.1.16 Sep 30, 2016 (NDATest)
+6.0.16 Sep 30, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -131,7 +131,7 @@ Issues for basic INCC6 function and performance
 
 Closed issues
 
-6.0.1.16 Sep 30, 2016
+6.0.16 (6.0.1.16) Sep 30, 2016  ************
 ***  Issue with empty mtl type on collar params seen
 ***  Reanalysis now uses stored List Mode SR params
 ***  Current detector and related acquire state sometimes not restored
@@ -142,10 +142,11 @@ Closed issues
 115  Abort Measurement and Quit FuBar
 25   List mode acquisition predelay not stored
 40   source ID in 'initial source' does not get passed to results
+10   Replay v. pass-thru transfer options have summary errors
+99   TIme interval summary incomplete
 105  Measurement waiting for a neutron that never arrives (MCA-527)
 
-6.0.1.15 Aug 26, 2016
-
+6.0.1.15 Aug 26, 2016  ************
 126  Reanalyze
 ***  KVal selector for Euratom prepped for use; acquire mtl type case mismatch patch
 ***  Fix stratum list to all add
@@ -158,97 +159,91 @@ Closed issues
 ***  Show material only for ver,hld,cal measurements in lists
 ***  LM buffer extension detached circular buffer end
 
+6.0.1.14 Aug 8, 2016   ************
+***  Fix LANL's Acquire Assay Cancel crash in 382f3ff7aa018b53580f11317bbd8370b6cdc949;
+     Tool tip for Setup dialog detector type field for IAEA/Euratom;
+     Update version and config branding with branch name;
+     This is the first fork away from LANL's dev branch (aka 'master').
+***  Calib curve dlg crash when material type name is not compared case-insensitively 
+127  Pu mass limit in known alpha configuration did not allow negative numbers
+118  Declared UMass was always overwriting declared Pu Mass for items
+125  Known alpha acceptance limits added to measurement report
+128  Mass limits for known alpha now persistent 
 
-6.0.1.14 Aug 8, 2016
+6.0.1.13 Aug 4, 2016   ************
+***  JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.
 
-***	Fix LANL's Acquire Assay Cancel crash in 382f3ff7aa018b53580f11317bbd8370b6cdc949;
-	Tool tip for Setup dialog detector type field for IAEA/Euratom;
-	Update version and config branding with branch name;
-	This is the first fork away from LANL's dev branch (aka 'master').
+6.0.1.12 Aug 2, 2016   ************
+97   DB issues with non En language and region settings
+32   Implement INCC5 File > Save As/Export > Transfer and Initial Data 
+109  Item Id and Collar Item Id deletion
+110  Collar Item Id needs Item Id defined at same time
+75   LM wizard setting for cycle count not used in Live DAQ
+76   LM wizard gatewidth param change not used in subsequent live DAQ analysis
+73   Enhance predelay precision
+43   Performing LM as SR after doing LM Acquire craps
+113  Disk file inputs need the detector alpha-beta pre-filled
 
-***	Calib curve dlg crash when material type name is not compared case-insensitively 
-127	Pu mass limit in known alpha configuration did not allow negative numbers
-118	Declared UMass was always overwriting declared Pu Mass for items
-125	Known alpha acceptance limits added to measurement report
-128	Mass limits for known alpha now persistent 
+6.0.1.11 Jun 22, 2016  ************
+102  NCD file processing drops input
+103  Transfer measurement selection dlg just like INCC5
+104  HV plateau, waiting for a neutron that never arrives (MCA-527)
 
-6.0.1.13 Aug 4, 2016
+6.0.1.10 Jun 13, 2016  ************
+98   Acquisition measurement termination conditions
+31   Implement the INCC5 Reanalysis
+81   Tools for managing large sets of isotopics and items
 
-mmm	JSR15 HV setting was wrong. Would not work. Added log entry to screen for backup.
+6.0.1.8 May 27, 2016   ************
+85   Implement full SQL database implementational implementation
+23   how to delete list mode detector? 
+66   Delete measurements crashes the code
 
+6.0.1.7 May 26, 2016   ************
+92   File locations are not fully coherent
 
-6.0.1.12 Aug 2, 2016
-97	DB issues with non En language and region settings
-32	Implement INCC5 File > Save As/Export > Transfer and Initial Data 
-109	Item Id and Collar Item Id deletion
-110	Collar Item Id needs Item Id defined at same time
-75	LM wizard setting for cycle count not used in Live DAQ
-76	LM wizard gatewidth param change not used in subsequent live DAQ analysis
-73	Enhance predelay precision
-43	Performing LM as SR after doing LM Acquire craps
-113	Disk file inputs need the detector alpha-beta pre-filled
+6.0.1.6 May 16, 2016   ************
+46   HV Plateau enhancement
+88   Show type (SR or LM) on facility setup dlg 
+94   Add a comment column to the various measurement reports dialogues
+93   File or folder query for list mode input files confusing
+90   Some facility setup dlg buttons should be disbaled and/or removed
 
+6.0.1.5 Apr 26, 2016   ************
+70   Add MCA-527 single channel list mode DAQ 
+65   Isotopics should not be stored on cancel
 
-6.0.1.11 Jun 22, 2016
-102	NCD file processing drops input
-103	Transfer measurement selection dlg just like INCC5
-104	HV plateau, waiting for a neutron that never arrives (MCA-527)
+6.0.1.4 Apr 9, 2016    ************
+67   PTR-32 data handling question - Joe, Heather
 
-6.0.1.10 Jun 13, 2016
-98	Acquisition measurement termination conditions
-31	Implement the INCC5 Reanalysis
-81	Tools for managing large sets of isotopics and items
+6.0.1.3 Apr 3, 2016    ************
+33   Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
+11   Implement progress and cancel features for lengthy operations
+80   Summary results CSV reports
+82   Implement the report subsection filter feature
 
-6.0.1.8 May 27, 2016
-85	Implement full SQL database implementational implementation
-23	how to delete list mode detector? 
-66	Delete measurements crashes the code
+6.0.1.2 Mar 13, 2016   ************
+34   Implement Composite Isotopics dlg and use
+83   Selecting isotopics for use
 
-6.0.1.7 May 26, 2016
-92	File locations are not fully coherent
+6.0.1.0 Feb 11, 2016   ************
+27  Cancel assay does not fully stop acquisition
+38  Acquire Verification from file -- Cancel button pushed, INCC6 ignores
+47  A second calib assay does not recall the previous calib assay item id
+77  Add support for INCC5 date/time encoded file names
+72  Enhance cmd line to support INCC5-style NCC processing 
 
-6.0.1.6 May 16, 2016
-46	HV Plateau enhancement
-88	Show type (SR or LM) on facility setup dlg 
-94	Add a comment column to the various measurement reports dialogues
-93	File or folder query for list mode input files confusing
-90	Some facility setup dlg buttons should be disbaled and/or removed
-
-6.0.1.5 Apr 26, 2016
-70	Add MCA-527 single channel list mode DAQ 
-65	Isotopics should not be stored on cancel
-
-6.0.1.4 Apr 9, 2016
-67	PTR-32 data handling question - Joe, Heather
-
-6.0.1.3 Apr 3, 2016
-33	Implement INCC5 File > Get External Data > Stratum Authority and Item Relevant Data Files
-11	Implement progress and cancel features for lengthy operations
-80	Summary results CSV reports
-82	Implement the report subsection filter feature
-
-6.0.1.2 Mar 13, 2016
-34	Implement Composite Isotopics dlg and use
-83	Selecting isotopics for use
-
-6.0.1.0 Feb 11, 2016
-27	Cancel assay does not fully stop acquisition
-38	Acquire Verification from file -- Cancel button pushed, INCC6 ignores
-47	A second calib assay does not recall the previous calib assay item id
-77	Add support for INCC5 date/time encoded file names
-72	Enhance cmd line to support INCC5-style NCC processing 
-
-6.0.0.1 Jan 27, 2016
-68	Limit the instrument type selections for List Mode to those actually supported now
-71	Add support for reading MCA-527 single channel list mode data files
-54	Output location should be sub-specified into four optionally distinct paths
-9	List mode analysis results reports can have empty sections        
-58	When doing an LM measurement, start at Step 3 
-50	Current acquire state retention and recall is not consistent
-62	Save measurements only if successful or completed
-74	Measurement report dialog print feature broken 
-15	Implement Reports | Verification
-51	LM input source file folder selection is too limited
+6.0.0.1 Jan 27, 2016   ************
+68  Limit the instrument type selections for List Mode to those actually supported now
+71  Add support for reading MCA-527 single channel list mode data files
+54  Output location should be sub-specified into four optionally distinct paths
+9   List mode analysis results reports can have empty sections        
+58  When doing an LM measurement, start at Step 3 
+50  Current acquire state retention and recall is not consistent
+62  Save measurements only if successful or completed
+74  Measurement report dialog print feature broken 
+15  Implement Reports | Verification
+51  LM input source file folder selection is too limited
 
 
 

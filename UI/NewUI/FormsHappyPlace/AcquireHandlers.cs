@@ -358,7 +358,7 @@ namespace NewUI
 							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // multmult: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
                             foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
                             {
                                 cycle.UpdateDataSourceId(ap.data_src, det.Id.SRType, 

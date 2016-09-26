@@ -508,7 +508,7 @@ namespace AnalysisDefs
                         mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[det.MultiplicityParams];
                     }
                     catch (Exception)
-                    {   // multmult: check this logic
+                    {   // APluralityOfMultiplicityAnalyzers: check this logic
                         // NEXT: code 'gets here' if the detector settings do not match any of the explicitly LM-defined Multiplicity analyzer(s).
                         // so for now we'll override det.MultiplicityParams with the first available LM-defined Multiplicity upstream, so the code does not 'get here'
                         if (mcr == null)
@@ -1730,7 +1730,7 @@ namespace AnalysisDefs
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];  // multmult: assuming only one detector here, doh, similarly for many other results text generators
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];  // APluralityOfMultiplicityAnalyzers: assuming only one detector here, doh, similarly for many other results text generators
 
                 sec.AddHeader(" Add-a-source results");  // section header
                 if (methodParams.use_truncated_mult) // && (m.->doubles <= methodParams.tm_dbls_rate_upper_limit)) // next: Where does double value come from? AAS results or summary results or where?

@@ -76,7 +76,7 @@ namespace NewUI
             ResetGrid();
             foreach (Cycle c in NC.App.Opstate.Measurement.Cycles)
             {
-                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams); // multmult: expand in some logical fasahion 
+                MultiplicityCountingRes res = c.MultiplicityResults(ah.det.MultiplicityParams); // APluralityOfMultiplicityAnalyzers: expand in some logical manner, e.g. enable user to select the analyzer and related results for manual entry and assignment
                 DataGridViewRow r = cyclesGridView.Rows[c.seq - 1];
                 r.Cells[1].Value = c.Totals.ToString();
                 if (res != null)
@@ -130,18 +130,18 @@ namespace NewUI
             ClearMeasCycles();
             CycleList newCycles = new CycleList();
             // NEXT: manual entry needs more work to get it completed, but you have a good start here
-            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);  // multmult: expand in some logical fashion
-            for (int i = 0; i < MAX_MANUAL_ENTRIES; i++) // lame
+            Multiplicity key = new Multiplicity(ah.det.MultiplicityParams);  // APluralityOfMultiplicityAnalyzers: expand in some logical manner, e.g. enable user to select the analyzer and related results for manual entry and assignment
+            for (int i = 0; i < MAX_MANUAL_ENTRIES; i++) // hard-coded limits are ... lame
             {
                 DataGridViewRow r = cyclesGridView.Rows[i];
                 if (r.Cells == null || (r.Cells[1].Value == null) || r.Cells[1].Value.ToString() == string.Empty)
                     break;
                 
-                Cycle cycle = new AnalysisDefs.Cycle(m_log);
+                Cycle cycle = new Cycle(m_log);
 
                 ulong tots = 0, r_acc = 0, acc = 0;
                 ulong.TryParse(r.Cells[1].Value.ToString(), out tots);
-                ulong.TryParse((string)r.Cells[2].FormattedValue, out r_acc); // FormattedValue give "" instead of the null checked for in the conditional above 
+                ulong.TryParse((string)r.Cells[2].FormattedValue, out r_acc); // FormattedValue gives "" instead of the null checked for in the conditional above 
                 ulong.TryParse((string)r.Cells[3].FormattedValue, out acc);
 
                 newCycles.Add(cycle);
