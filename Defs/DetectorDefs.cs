@@ -173,7 +173,7 @@ namespace DetectorDefs
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
         INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
-    };  // source sof data, file, DAQ, DB
+    };  // sources of data: file, DAQ, DB
 
 
 
@@ -198,6 +198,11 @@ namespace DetectorDefs
         public static bool SRDAQ(this ConstructedSource src, InstrType device)
         {
             return ((src == ConstructedSource.Live) && (device <= InstrType.UNAP)); // it is a Live SR DAQ
+        }
+		public static bool MightHaveScalerData(this ConstructedSource src, InstrType device)		
+        {
+            return (device <= InstrType.UNAP) && 
+					(src.INCC5FileData() || src.INCCTransferData() || src == ConstructedSource.Reanalysis);
         }
         /// <summary>
         ///  if this combination of data source and specific device point to a virtual SR return true o.w. false

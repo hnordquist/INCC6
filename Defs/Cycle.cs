@@ -456,7 +456,11 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("multiplicity_efficiency", pmcr.efficiency));
             ps.Add(new DBParamEntry("mass", pmcr.mass));
             ps.Add(new DBParamEntry("status", (int)status));
-            
+			{	// la super hack-a-whack
+				DB.DB db = new DB.DB(true);
+				if (db.TableHasColumn(Table,"mult_acc_un"))
+					ps.Add(new DBParamEntry("mult_acc_un", pmcr.UnAMult));
+			}          
         }
 
         /// <summary>

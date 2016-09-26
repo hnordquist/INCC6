@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -45,23 +45,22 @@ namespace NewUI
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.initial;
-            this.Text += " for detector " + ah.det.Id.DetectorName;
+            Text += " for detector " + ah.det.Id.DetectorName;
             np = Integ.GetCurrentNormParams(ah.det);  // a copy
             // Populate the UI fields with values from the local AcquireParameters object
-            this.QCTestsCheckBox.Checked = ah.ap.qc_tests;
-            this.PrintResultsCheckBox.Checked = ah.ap.print;
-            this.CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
-            this.NumCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
-            this.CommentTextBox.Text = ah.ap.comment;
-            this.CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
-            this.SourceIdTextBox.Text = ah.ap.item_id;
-            this.MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
-            this.MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
-            this.MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
+            QCTestsCheckBox.Checked = ah.ap.qc_tests;
+            PrintResultsCheckBox.Checked = ah.ap.print;
+            CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
+            NumCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
+            CommentTextBox.Text = ah.ap.comment;
+            CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
+            MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
+            MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
+            MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
             
-            this.UseAddASourceCheckBox.Checked = np.biasTestUseAddasrc;
-            this.DistanceToMoveTextBox.Text = np.biasTestAddasrcPosition.ToString("F1");
-            this.SourceIdTextBox.Text = np.sourceId;
+            UseAddASourceCheckBox.Checked = np.biasTestUseAddasrc;
+            DistanceToMoveTextBox.Text = np.biasTestAddasrcPosition.ToString("F1");
+            SourceIdTextBox.Text = np.sourceId;
             DistanceToMoveTextBox.Enabled = np.biasTestUseAddasrc;
             switch (np.biasMode)
             {
@@ -78,7 +77,7 @@ namespace NewUI
                     break;
             }
 
-            this.DataSourceComboBox.Items.Clear();
+            DataSourceComboBox.Items.Clear();
             foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
@@ -86,15 +85,15 @@ namespace NewUI
             }
             if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
-                this.UseNumCyclesRadioButton.Checked = true;
+                UseNumCyclesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.DoublesPrecision)
             {
-                this.UseDoublesRadioButton.Checked = true;
+                UseDoublesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
             {
-                this.UseTriplesRadioButton.Checked = true;
+                UseTriplesRadioButton.Checked = true;
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
             SetHelp();
@@ -106,79 +105,79 @@ namespace NewUI
             String helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
                 "used are accidentals/singles test,\r\nchecksum tests on raw shift register data " +
                 "and an outlier test using the calculated mass for each cycle.";
-            tip.SetToolTip(this.QCTestsCheckBox, helpString);
-            provider.SetShowHelp(this.QCTestsCheckBox, true);
-            provider.SetHelpString(this.QCTestsCheckBox, helpString);
+            tip.SetToolTip(QCTestsCheckBox, helpString);
+            provider.SetShowHelp(QCTestsCheckBox, true);
+            provider.SetHelpString(QCTestsCheckBox, helpString);
 
             helpString = "Type the name of the Cf252 or AmLi source to be used for\r\n." +
                 "normalization measurements";
-            tip.SetToolTip(this.SourceIdTextBox, helpString);
-            provider.SetShowHelp(this.SourceIdTextBox, true);
-            provider.SetHelpString(this.SourceIdTextBox, helpString);
+            tip.SetToolTip(SourceIdTextBox, helpString);
+            provider.SetShowHelp(SourceIdTextBox, true);
+            provider.SetHelpString(SourceIdTextBox, helpString);
 
             helpString = "You can use this field to describe this measurement.\r\n" +
                "This comment will remain with the measurement results.";
-            tip.SetToolTip(this.CommentTextBox, helpString);
-            provider.SetShowHelp(this.CommentTextBox, true);
-            provider.SetHelpString(this.CommentTextBox, helpString);
+            tip.SetToolTip(CommentTextBox, helpString);
+            provider.SetShowHelp(CommentTextBox, true);
+            provider.SetHelpString(CommentTextBox, helpString);
 
             helpString = "Check this box if you want to be able to describe the results\r\n" +
                 "of this measurement. This comment will remain with the measurement results.";
-            tip.SetToolTip(this.CommentAtEndCheckBox, helpString);
-            provider.SetShowHelp(this.CommentAtEndCheckBox, true);
-            provider.SetHelpString(this.CommentAtEndCheckBox, helpString);
+            tip.SetToolTip(CommentAtEndCheckBox, helpString);
+            provider.SetShowHelp(CommentAtEndCheckBox, true);
+            provider.SetHelpString(CommentAtEndCheckBox, helpString);
 
             helpString = "The number of cycles require for this measurement that pass all QC tests.";
-            tip.SetToolTip(this.NumCyclesTextBox, helpString);
-            provider.SetShowHelp(this.NumCyclesTextBox, true);
-            provider.SetHelpString(this.NumCyclesTextBox, helpString);
+            tip.SetToolTip(NumCyclesTextBox, helpString);
+            provider.SetShowHelp(NumCyclesTextBox, true);
+            provider.SetHelpString(NumCyclesTextBox, helpString);
 
             helpString = "The length of time in seconds for each cycle in this measurement.";
-            tip.SetToolTip(this.CountTimeTextBox, helpString);
-            provider.SetShowHelp(this.CountTimeTextBox, true);
-            provider.SetHelpString(this.CountTimeTextBox, helpString);
+            tip.SetToolTip(CountTimeTextBox, helpString);
+            provider.SetShowHelp(CountTimeTextBox, true);
+            provider.SetHelpString(CountTimeTextBox, helpString);
 
             helpString = "This measurement will continue until this measurement precision is\r\n" +
                 "reached. The effective Pu240 mass is used to determine precision if\r\n" +
                 "multiplicity analysis is being used, otherwise the doubles rate is used.";
-            tip.SetToolTip(this.MeasPrecisionTextBox, helpString);
-            provider.SetShowHelp(this.MeasPrecisionTextBox, true);
-            provider.SetHelpString(this.MeasPrecisionTextBox, helpString);
+            tip.SetToolTip(MeasPrecisionTextBox, helpString);
+            provider.SetShowHelp(MeasPrecisionTextBox, true);
+            provider.SetHelpString(MeasPrecisionTextBox, helpString);
 
             helpString = "The measurement will not terminate until at least this many cycles,\r\n" +
                 "regardless of the measurement precision";
-            tip.SetToolTip(this.MinNumCyclesTextBox, helpString);
-            provider.SetShowHelp(this.MinNumCyclesTextBox, true);
-            provider.SetHelpString(this.MinNumCyclesTextBox, helpString);
+            tip.SetToolTip(MinNumCyclesTextBox, helpString);
+            provider.SetShowHelp(MinNumCyclesTextBox, true);
+            provider.SetHelpString(MinNumCyclesTextBox, helpString);
 
             helpString = "The measurement will terminate after this many cycles or when the\r\n" +
                 "requested measurement precision is reached, whichever comes comes first.";
-            tip.SetToolTip(this.MaxNumCyclesTextBox, helpString);
-            provider.SetShowHelp(this.MaxNumCyclesTextBox, true);
-            provider.SetHelpString(this.MaxNumCyclesTextBox, helpString);
+            tip.SetToolTip(MaxNumCyclesTextBox, helpString);
+            provider.SetShowHelp(MaxNumCyclesTextBox, true);
+            provider.SetHelpString(MaxNumCyclesTextBox, helpString);
 
             helpString = "Check this box to print and display results, uncheck to only display results.";
-            tip.SetToolTip(this.PrintResultsCheckBox, helpString);
-            provider.SetShowHelp(this.PrintResultsCheckBox, true);
-            provider.SetHelpString(this.PrintResultsCheckBox, helpString);
+            tip.SetToolTip(PrintResultsCheckBox, helpString);
+            provider.SetShowHelp(PrintResultsCheckBox, true);
+            provider.SetHelpString(PrintResultsCheckBox, helpString);
 
             helpString = "Check this box to print the comment entered above on the measurement results.";
-            tip.SetToolTip(this.CommentAtEndCheckBox, helpString);
-            provider.SetShowHelp(this.CommentAtEndCheckBox, true);
-            provider.SetHelpString(this.CommentAtEndCheckBox, helpString);
+            tip.SetToolTip(CommentAtEndCheckBox, helpString);
+            provider.SetShowHelp(CommentAtEndCheckBox, true);
+            provider.SetHelpString(CommentAtEndCheckBox, helpString);
 
             helpString = "Check this box to enable the use of the add-a-source for doing\r\n" +
                 "normalization test measurements. Then enter the desired position for performing\r\n" +
                 "normalization test measurement.";
-            tip.SetToolTip(this.UseAddASourceCheckBox, helpString);
-            provider.SetShowHelp(this.UseAddASourceCheckBox, true);
-            provider.SetHelpString(this.UseAddASourceCheckBox, helpString);
+            tip.SetToolTip(UseAddASourceCheckBox, helpString);
+            provider.SetShowHelp(UseAddASourceCheckBox, true);
+            provider.SetHelpString(UseAddASourceCheckBox, helpString);
 
             helpString = "The distance in inches from home to where the add-a-source should\r\n" +
                 "be positioned for normalization measurements";
-            tip.SetToolTip(this.DistanceToMoveTextBox, helpString);
-            provider.SetShowHelp(this.DistanceToMoveTextBox, true);
-            provider.SetHelpString(this.DistanceToMoveTextBox, helpString);
+            tip.SetToolTip(DistanceToMoveTextBox, helpString);
+            provider.SetShowHelp(DistanceToMoveTextBox, true);
+            provider.SetHelpString(DistanceToMoveTextBox, helpString);
 
             helpString = "Possible data sources are:\r\n" +
                 "- Acquire new data from shift register/pulse train recorder\r\n" +
@@ -186,29 +185,30 @@ namespace NewUI
                 "- Read in raw data from a disk file (data must be in a specific format)\r\n" +
                 "For more information on this format see the help file topic:\r\n" +
                 "\"Radiation Review Measurement Data File Format\"";
-            tip.SetToolTip(this.DataSourceComboBox, helpString);
-            provider.SetShowHelp(this.DataSourceComboBox, true);
-            provider.SetHelpString(this.DataSourceComboBox, helpString);
+            tip.SetToolTip(DataSourceComboBox, helpString);
+            provider.SetShowHelp(DataSourceComboBox, true);
+            provider.SetHelpString(DataSourceComboBox, helpString);
     }
 
     private void Cf252DblsNormRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            np.biasMode = NormTest.Cf252Doubles;
+            np.modified = (np.biasMode != NormTest.Cf252Doubles); np.biasMode = NormTest.Cf252Doubles; 
         }
 
         private void Cf252SinglesNormRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            np.biasMode = NormTest.Cf252Singles;
+            np.modified = (np.biasMode != NormTest.Cf252Singles); np.biasMode = NormTest.Cf252Singles;
         }
 
         private void AmLiNormRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            np.biasMode = NormTest.AmLiSingles;
+            np.modified = (np.biasMode != NormTest.AmLiSingles); np.biasMode = NormTest.AmLiSingles;
         }
 
         private void UseAddASourceCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            np.biasTestUseAddasrc = ((CheckBox)sender).Checked;
+            np.modified = (((CheckBox)sender).Checked != np.biasTestUseAddasrc);
+			np.biasTestUseAddasrc = ((CheckBox)sender).Checked;
             DistanceToMoveTextBox.Enabled = np.biasTestUseAddasrc;
         }
 
@@ -308,30 +308,42 @@ namespace NewUI
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
+			if (string.IsNullOrEmpty(np.sourceId))
+			{
+				MessageBox.Show("You must enter a source id for this assay.", "ERROR");
+				return;
+			}
+			else if (np.modified)
+			{
+				NCC.CentralizedState.App.DB.NormParameters.Map[ah.det] = np;  // back to the map, cuz it is a copy
+                NCC.CentralizedState.App.DB.NormParameters.Set(ah.det,np);  // in the database
+			}
+            if (ah.OKButton_Click(sender, e) == DialogResult.OK)
             {
-                // todo: save off any norm params changes too
-                //user can cancel in here during LM set-up, account for it.
-                this.Visible = false;
+                Visible = false;
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-                this.Close();
+                Close();
             }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/initialsourcemeasurements.htm");
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/initialsourcemeasurements.htm");
         }
 
         private void SourceIdTextBox_Leave(object sender, EventArgs e)
         {
-            ah.ItemIdTextBox_Leave(sender, e);   // next: not the same as the item id so this needs refinement
+            if ((((TextBox)sender).Text) != np.sourceId)
+            {
+                np.modified = true;
+                np.sourceId = ((TextBox)sender).Text;
+            }
         }
 
         private void CommentTextBox_Leave(object sender, EventArgs e)

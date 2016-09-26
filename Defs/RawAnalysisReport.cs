@@ -277,10 +277,14 @@ namespace AnalysisDefs
                         sec = DoAcrossForManyMults("Cycle moments (NNV)", typeof(ComputedMultiplicityIntermediates), true);
                         break;
                     case ReportSections.RawCycles:
-                        if (cycles.Count > 0 && cycles[0].DataSourceId.source.INCCTransferData()) // todo: when SR DAQ works, need to choose INCC here too, because SR returns Scaler data
+					{
+						ConstructedSource src = cycles[0].DataSourceId.source;
+						InstrType inst = cycles[0].DataSourceId.SRType;
+                        if (cycles.Count > 0 && src.MightHaveScalerData(inst)) // anything that might have Scaler data
                             sec = DoAcrossForManyMults("Cycle raw data", typeof(INCCCycles), true);
                         else
                             sec = DoAcrossForManyMults("Cycle raw data", typeof(RawCycles), true);
+					}
                         break;
                     case ReportSections.DTCRateCycles:
                         sec = DoAcrossForManyMults("Cycle DTC rate data", typeof(DTCRateCycles), true);

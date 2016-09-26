@@ -749,7 +749,8 @@ namespace AnalysisDefs
             {
                 ConstructorInfo ci = GetOptionType(option).GetConstructor(Type.EmptyTypes);
                 newmcr = (INCCResult)ci.Invoke(null);
-                // copy the FA and idx properties since the param-less constructor creates this instance
+				// URGENT: check this works for conventional FA 
+				// copy the FA and idx properties since the param-less constructor creates this instance
                 // newmcr.FA = mcr.FA;
                 //   newmcr.idx = mcr.idx;
                 Results.Add(ar, newmcr);

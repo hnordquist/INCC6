@@ -163,7 +163,7 @@ namespace AnalysisDefs
 
 		public static void SetQCStatus(this Measurement meas, Cycle cycle)
 		{
-             IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
             while (iter.MoveNext())
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
@@ -183,7 +183,7 @@ namespace AnalysisDefs
             if (NC.App.Opstate.IsAbortRequested)
                 return;
 
-            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // urgent: multmult, this needs to summarize across analyzers, not to the single value on the measurement
+            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // APluralityOfMultiplicityAnalyzers: this may need to summarize across analyzers, as well as the single value on the measurement
 			if (meas.Cycles.Count < 1)  // nothing can be done
 				return;
 			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
@@ -714,7 +714,7 @@ namespace AnalysisDefs
                     }
                     bool success = false;
                     kares.dcl_pu_mass = meas.AcquireState.mass;  // dev note: another use of acq, a requirement, here
-                    // JFL copy the input calib to the results rec
+                    // copy the input calibration params to the copy on the results rec, to be saved with the KA results
                     kares.methodParams = new INCCAnalysisParams.known_alpha_rec(ka_params);
 
                     if (ka_params.known_alpha_type == INCCAnalysisParams.KnownAlphaVariant.Conventional)
@@ -757,7 +757,7 @@ namespace AnalysisDefs
                          INCCAnalysis.calc_known_alpha_moisture_corr(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* dry alpha */
@@ -775,7 +775,7 @@ namespace AnalysisDefs
                             INCCAnalysis.calc_known_alpha_moisture_corr_mult_doubles(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers 
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* moist mult_corr_doubles */
@@ -1280,25 +1280,46 @@ namespace AnalysisDefs
         /// </summary>
         public static void CalcAvgAndSums(this Measurement meas)
         {
-            AssaySelector.MeasurementOption at = meas.MeasurementId.MeasOption;
             RatesAdjustments dtchoice = RatesAdjustments.DeadtimeCorrected;
-           // do
-           // {
-                if (NC.App.Opstate.IsAbortRequested)
-                    return;
 
-                IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
-                while (iter.MoveNext())
+            if (NC.App.Opstate.IsAbortRequested)
+                return;
+
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+
+                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
+                mcr.ComputeSums();
+                INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
+			}
+
+			// patch for CalcAveragesAndSums missing scaler summary rates
+			iter = meas.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
+			while (iter.MoveNext())
+			{
+				MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
+				INCCResult ir = meas.INCCAnalysisResults[moskey];
+				uint denom = 0;
+				object obj;
+				foreach (Cycle cc in meas.Cycles)
                 {
-                    Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+					if (!cc.QCStatusValid(moskey.MultiplicityParams))
+						continue;
+                    bool there = cc.CountingAnalysisResults.TryGetValue(moskey.MultiplicityParams, out obj);
+                    if (!there)
+                        continue;
+					denom++;
+                }
+				if (denom > 0)
+				{
+					ir.Scaler1.v = ir.S1Sum / denom;
+					ir.Scaler2.v = ir.S2Sum / denom;
+				}
+			}
 
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
-                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
-                    mcr.ComputeSums();
-                    INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
-            }
-            //    dtchoice++;
-            //} while (dtchoice <= RatesAdjustments.DytlewskiDeadtimeCorrected);
         }
 
         #endregion INCC calculation control methods
@@ -1343,7 +1364,7 @@ namespace AnalysisDefs
 
 				INCCResult results;
 				MeasOptionSelector moskey = new MeasOptionSelector(meas.MeasOption, mkey);
-				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // urgent: when does this actually get saved?
+				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // APluralityOfMultiplicityAnalyzers: when does this actually get saved? It needs to be saved to DB after all calculations are complete
 
 				try
 				{
@@ -1406,16 +1427,15 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Preserve a measurement cycle list in a database
-        /// Limited to INCC5 SR values
-        /// URGENT: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
-        /// NEXT: status shoud be set on db acquire lists, because it can read in 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so we should only use the processed cycles.
+        /// Limited to INCC5 SR and INCC6 VSR values
+        /// TODO: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// TODO: status shoud be set on db acquire lists, because it can read in e.g. 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so the code should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
         public static void SaveMeasurementCycles(this Measurement m)
         {
             long mid = m.MeasurementId.UniqueId;
             // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
-            // URGENT: the cycle lookup on DB and Reanalysis must account for lmid and mid 
 			if (m.Detector.ListMode)
 			{
 				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
@@ -1489,9 +1509,8 @@ namespace AnalysisDefs
             long mid = m.MeasurementId.UniqueId;
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // urgent: results rec needs to be fully populated before here
+            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // APluralityOfMultiplicityAnalyzers: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
-
         }
 
 		/// <summary>

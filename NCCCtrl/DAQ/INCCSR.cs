@@ -367,7 +367,7 @@ namespace DAQ
         //*
         //* purpose: zero out the shift register counters and start a reading.
         //*
-        //* return value: SRWrapdoth.SR_SUCCESS/SR_TRY_AGAIN/FAIL
+        //* return value: SR_SUCCESS/SR_TRY_AGAIN/FAIL
         //*
         //* special notes: if there is a failure, the shift register port is closed.
         //*
@@ -482,7 +482,7 @@ namespace DAQ
         //* purpose: check for shift register stopped, and if so read the data and
         //*	    put it in the database run record.
         //*
-        //* return value: SRWrapdoth.SR_SUCCESS/SR_NOT_FINISHED/ZERO_COUNT_TIME/SR_TRY_AGAIN/FAIL
+        //* return value: SR_SUCCESS/SR_NOT_FINISHED/ZERO_COUNT_TIME/SR_TRY_AGAIN/FAIL
         //*
         //* special notes: if there is a failure, the shift register port is closed.
         //*

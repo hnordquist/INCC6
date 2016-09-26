@@ -810,10 +810,12 @@ namespace AnalysisDefs
                 INCCAnalysisState.Methods = new AnalysisMethods(sel);
             InitializeContext(clearCounterResults: true);
             PrepareINCCResults();
-            // a list mode measurement may not have a multiplicity analyzer at all, yet it is unclear if one needed at this point
+            // a list mode measurement may not have a multiplicity analyzer at all, create on results, copying the current values
             if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
 			{ 
 				MultiplicityCountingRes mcr = (MultiplicityCountingRes)CountingAnalysisResults[rec.det.MultiplicityParams];
+				if (rec.mcr.AB.Unset)
+						SDTMultiplicityCalculator.SetAlphaBeta(rec.det.MultiplicityParams, rec.mcr); // works only if MaxBins is set
 				mcr.CopyFrom(rec.mcr); // copy the mcr results onto the first moskey entry
 				// the same results are copied to the full results structure			
 				MeasOptionSelector mos = new MeasOptionSelector(MeasOption, rec.det.MultiplicityParams);

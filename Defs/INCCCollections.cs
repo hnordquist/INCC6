@@ -2285,7 +2285,13 @@ namespace AnalysisDefs
             resrec.mcr.RASum = DB.Utils.DBDouble(dr["reals_plus_acc_sum"]);
             resrec.mcr.ASum = DB.Utils.DBDouble(dr["acc_sum"]);
             resrec.mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc_sum"].ToString());
+            resrec.mcr.MaxBins = (ulong)Math.Max(resrec.mcr.RAMult.Length, resrec.mcr.NormedAMult.Length);
+            resrec.mcr.MinBins = (ulong)Math.Min(resrec.mcr.RAMult.Length, resrec.mcr.NormedAMult.Length);
             resrec.mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc_sum"].ToString());
+            if (dr.Table.Columns.Contains("mult_acc_un_sum") && (dr["mult_acc_un_sum"] != null))
+				resrec.mcr.UnAMult = DB.Utils.ReifyUInt64s(dr["mult_acc_un_sum"].ToString());
+			else
+				resrec.mcr.UnAMult = new ulong[resrec.mcr.MaxBins];
             resrec.mcr.DeadtimeCorrectedRates.Singles = VTupleHelper.Make(dr, "singles");
             resrec.mcr.DeadtimeCorrectedRates.Doubles = VTupleHelper.Make(dr, "doubles");
             resrec.mcr.DeadtimeCorrectedRates.Triples = VTupleHelper.Make(dr, "triples");
@@ -2303,6 +2309,14 @@ namespace AnalysisDefs
             resrec.net_drum_weight = DB.Utils.DBDouble(dr["net_drum_weight"]);
             resrec.db_version = DB.Utils.DBDouble(dr["db_version"]);
             resrec.completed = DB.Utils.DBBool(dr["completed"]);
+            if (dr["original_meas_date"] != null)
+				resrec.original_meas_date = DB.Utils.DBDateTimeOffset(dr["original_meas_date"]);
+			else
+				resrec.original_meas_date = new DateTimeOffset(resrec.acq.MeasDateTime.Ticks, resrec.acq.MeasDateTime.Offset);
+   //         if (dr["passive_DateTime"] != null)
+			//	resrec. = DB.Utils.DBDateTimeOffset(dr["passive_DateTime"]);
+			//else
+			//	resrec. = new DateTimeOffset(resrec.acq.MeasDateTime.Ticks, resrec.acq.MeasDateTime.Offset);
 
             resrec.MeasId = DB.Utils.DBInt32(dr["mid"]);
             DB.Measurements m = new DB.Measurements();
@@ -3463,11 +3477,11 @@ namespace AnalysisDefs
 
         public static Detector GetDetectorParmsFromDataRow(DataRow dr, bool resultsSubset = false)
         {
-            DetectorDefs.DataSourceIdentifier did = new DetectorDefs.DataSourceIdentifier();
+            DataSourceIdentifier did = new DataSourceIdentifier();
             did.DetectorName = (string)dr["detector_name"];
             did.ElectronicsId = (string)(dr["electronics_id"]);
             did.Type = (string)(dr["detector_type_freeform"]);
-            did.SRType = (DetectorDefs.InstrType)((Int32)(dr["detector_type_id"])); // todo: get AB, do a data table merge internally in the Pest Get method, like with bkg 
+            did.SRType = (InstrType)((int)(dr["detector_type_id"])); // todo: get AB, do a data table merge internally in the Pest Get method, like with bkg 
             if (!resultsSubset)
             { 
                 did.ConnInfo = dr["sr_port_number"].ToString();
@@ -4423,7 +4437,8 @@ namespace AnalysisDefs
 			return m;
 		}
 
-		// URGENT: multmult so this code needs to be used to construct the original AnalysisParams used to generate these results, so that the results maps have the right keys
+		// URGENT: so this code constructs the original AnalysisParams used to generate the results, make sure the results maps then have the right keys
+		// APluralityOfMultiplicityAnalyzers: there may be more than one mult key when VSRs/LM data are involved
 		public List<Multiplicity> GetMultiplicityAnalyzersFromResults(Detector det, MeasId mid)
 		{
 			List<Multiplicity> tme = null;
@@ -4485,13 +4500,15 @@ namespace AnalysisDefs
             mcr.multiplication = DB.Utils.DBDouble(dr["multiplicity_mult"]);
             mcr.RAMult = DB.Utils.ReifyUInt64s(dr["mult_reals_plus_acc"].ToString());
             mcr.NormedAMult = DB.Utils.ReifyUInt64s(dr["mult_acc"].ToString());
-
-            mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
-            mcr.Totals = c.Totals; // ??
+			mcr.MaxBins = (ulong)Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length);
+            mcr.MinBins = (ulong)Math.Min(mcr.RAMult.Length, mcr.NormedAMult.Length);
+			if (dr.Table.Columns.Contains("mult_acc_un") && (dr["mult_acc_un"] != null))
+				mcr.UnAMult =  DB.Utils.ReifyUInt64s(dr["mult_acc_un"].ToString());
+			else
+				mcr.UnAMult = new ulong[Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length)];
+			mcr.Totals = c.Totals; // ??
             mcr.TS = new TimeSpan(c.TS.Ticks);
             mcr.RawSinglesRate.v = c.SinglesRate;
-            // todo: this must happen eventually CycleProcessing.calc_alpha_beta(det.MultiplicityParams, mcr);
-
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
 

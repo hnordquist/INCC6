@@ -560,7 +560,7 @@ namespace NewUI
 			AcquireParameters acq = null;
             Detector det = null;
 			NC.App.DB.ResetAcquireParametersMap();  // force read from DB to get as-is default acquire state
-			// next: do a refresh of the specific acquire instance, not the entire list
+			// NEXT: do a refresh of the specific acquire instance, not the entire list
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             if (!det.ListMode)
             {
