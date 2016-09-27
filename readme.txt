@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 16
-6.0.16 Sep 30, 2016
+6.0.16 Sep 27, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -121,11 +121,11 @@ Issues for basic INCC5/6 feature COMPLETION
 #35  Hold-up analysis required
 
 Issues for basic INCC6 function and performance
+#45  calc_alpha_beta performance and efficiency
 
+List mode:
 #100 Rossi processing too slow and can sometimes hang
 #67  PTR-32 data handling question 
-#59  Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
-#45  calc_alpha_beta performance and efficiency
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 
@@ -143,7 +143,8 @@ Closed issues
 25   List mode acquisition predelay not stored
 40   source ID in 'initial source' does not get passed to results
 10   Replay v. pass-thru transfer options have summary errors
-99   TIme interval summary incomplete
+99   Time interval summary incomplete
+59   Toggle for Fast/Conventional on the Meas Params dlg for LM not working 
 105  Measurement waiting for a neutron that never arrives (MCA-527)
 
 6.0.1.15 Aug 26, 2016  ************
