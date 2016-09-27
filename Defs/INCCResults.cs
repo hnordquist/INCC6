@@ -187,9 +187,9 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="am"></param>
         /// <returns></returns>
-        private System.Type GetMethodType(AnalysisMethod am)
+        private Type GetMethodType(AnalysisMethod am)
         {
-            System.Type res = null;
+            Type res = null;
             switch (am)
             {
                 case AnalysisMethod.CalibrationCurve:

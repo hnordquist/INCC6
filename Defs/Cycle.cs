@@ -57,7 +57,7 @@ namespace AnalysisDefs
         // dev note: get per-channel HV during LMMM DAQ too, not doing that yet!
         private double highVoltage; // dev note: carried over from INCC runs, a single channel of HV values, could expand to n channels to support the channel count of the collecting instrument or the virtual detector's channel count
         private QCStatusMap qcstatus; // dev note: need one for each multiplicity result, so this really belongs on a datum attached to each analyzer result in the counting results map
-        private DetectorDefs.DataSourceIdentifier dsid;
+        private DataSourceIdentifier dsid;
         private CountingResults countresults;
         private CycleDAQStatus daqStatus;
         private LMLoggers.LognLM logger;
@@ -190,7 +190,7 @@ namespace AnalysisDefs
             get { return countresults; }
         }
 
-        public DetectorDefs.DataSourceIdentifier DataSourceId
+        public DataSourceIdentifier DataSourceId
         {
             get { return dsid; }
             set { dsid = value; }
@@ -200,7 +200,7 @@ namespace AnalysisDefs
         {
             // Raw counts aka totals
             singles = new VTuple();
-            dsid = new DetectorDefs.DataSourceIdentifier();
+            dsid = new DataSourceIdentifier();
             qcstatus = new QCStatusMap();
             countresults = new CountingResults();
             daqStatus = CycleDAQStatus.None;
@@ -208,7 +208,7 @@ namespace AnalysisDefs
             hitsPerChn = new double[NC.ChannelCount];
         }
 
-        public bool Transfer(AnalysisDefs.BaseRate ba, RateResult rates)
+        public bool Transfer(BaseRate ba, RateResult rates)
         {
             if (rates == null)
                 return true;
@@ -220,7 +220,7 @@ namespace AnalysisDefs
                 countresults.Add(ba, rrm);
                 rrm.TransferRawResult(rates);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 ba.reason = "BaseRate transfer " + e.Message;
                 res = false;
@@ -229,7 +229,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Transfer(AnalysisDefs.Multiplicity mup, MultiplicityResult mr, int idx)
+        public bool Transfer(Multiplicity mup, MultiplicityResult mr, int idx)
         {
             if (mr == null)
                 return true;
@@ -243,7 +243,7 @@ namespace AnalysisDefs
                 lmcs.TransferRawResult(mr);
                 lmcs.TS = new TimeSpan(TS.Ticks);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 mup.reason = "Multiplicity transfer " + e.Message;
                 res = false;
@@ -252,7 +252,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Transfer(AnalysisDefs.Coincidence cop, CoincidenceResult cor)
+        public bool Transfer(Coincidence cop, CoincidenceResult cor)
         {
             if (cor == null)
                 return true;
@@ -263,7 +263,7 @@ namespace AnalysisDefs
                 countresults.Add(cop, cr);
                 cr.TransferRawResult(cor);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 cop.reason = "Coincidence matrix transfer " + e.Message;
                 res = false;
@@ -272,7 +272,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Transfer(AnalysisDefs.Feynman ryp, FeynmanResult fr)
+        public bool Transfer(Feynman ryp, FeynmanResult fr)
         {
             if (fr == null)
                 return true;
@@ -283,7 +283,7 @@ namespace AnalysisDefs
                 countresults.Add(ryp, lfr);
                 lfr.TransferRawResult(fr);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 ryp.reason = "Feynman transfer " + e.Message;
                 res = false;
@@ -292,7 +292,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Transfer(AnalysisDefs.Rossi rap, RossiAlphaResult rar)
+        public bool Transfer(Rossi rap, RossiAlphaResult rar)
         {
             if (rar == null)
                 return true;
@@ -302,7 +302,7 @@ namespace AnalysisDefs
                 RossiAlphaResultExt ra = new RossiAlphaResultExt(rar.gateWidth, rar.gateData);   // deep copy via constructor menas no extra transfer function is needed
                 countresults.Add(rap, ra);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 rap.reason = "Rossi transfer " + e.Message;
                 res = false;
@@ -311,7 +311,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public bool Transfer(AnalysisDefs.TimeInterval esp, EventSpacingResult esr)
+        public bool Transfer(TimeInterval esp, EventSpacingResult esr)
         {
             if (esr == null)
                 return true;
@@ -322,7 +322,7 @@ namespace AnalysisDefs
                 countresults.Add(esp, (object)lesr);
                 lesr.TransferRawResult(esr);
             }
-            catch (System.OutOfMemoryException e)
+            catch (OutOfMemoryException e)
             {
                 esp.reason = "TimeInterval transfer " + e.Message;
                 res = false;
@@ -335,10 +335,10 @@ namespace AnalysisDefs
         {
             String s = "";
             int i = 0;
-            foreach (Double h in HitsPerChannel)
+            foreach (double h in HitsPerChannel)
             {
                 i++;
-                s += String.Format("{0}, ", h);
+                s += string.Format("{0}, ", h);
             }
             return s;
         }
@@ -352,9 +352,9 @@ namespace AnalysisDefs
                 x = new string[3];
                 if (rrm != null)
                 {
-                    x[j++] = String.Format("Channel hits (BaseA): {0}", rrm.NsChnImage());
-                    x[j++] = String.Format("Channel hits (CyclC): {0}", NsChnImage());
-                    x[j++] = String.Format("Cycle status text: " + NCCReporter.LMLoggers.LognLM.FlattenChars(Message));
+                    x[j++] = string.Format("Channel hits (BaseA): {0}", rrm.NsChnImage());
+                    x[j++] = string.Format("Channel hits (CyclC): {0}", NsChnImage());
+                    x[j++] = string.Format("Cycle status text: " + LMLoggers.LognLM.FlattenChars(Message));
                     System.Collections.IEnumerator iter = countresults.GetATypedResultEnumerator(typeof(AnalysisDefs.Multiplicity));
                     while (iter.MoveNext())
                     {
@@ -368,7 +368,7 @@ namespace AnalysisDefs
                         }
                         catch (Exception ex)
                         {
-                            logger.TraceEvent(NCCReporter.LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
+                            logger.TraceEvent(LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
                         }
                     }
                 }
@@ -382,14 +382,14 @@ namespace AnalysisDefs
             }
             catch (Exception ex2)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
+                logger.TraceEvent(LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
             }
             return x;
         }
 
-        public void SetUpdatedDataSourceId(DetectorDefs.DataSourceIdentifier dataSourceIdentifier)
+        public void SetUpdatedDataSourceId(DataSourceIdentifier dataSourceIdentifier)
         {
-            dsid = new DetectorDefs.DataSourceIdentifier(dataSourceIdentifier);
+            dsid = new DataSourceIdentifier(dataSourceIdentifier);
             dsid.dt = DateTimeOffset.Now;
         }
 
@@ -487,7 +487,7 @@ namespace AnalysisDefs
         /// </summary>
         public void SetDatastreamEndStatus()
         {
-            if (daqStatus == CycleDAQStatus.None && String.IsNullOrEmpty(Message))
+            if (daqStatus == CycleDAQStatus.None && string.IsNullOrEmpty(Message))
                 // cycle was completed abnormally due to interruption or premature end of stream
                 daqStatus = CycleDAQStatus.UnspecifiedTruncation;
             //else if (String.IsNullOrEmpty(Message))

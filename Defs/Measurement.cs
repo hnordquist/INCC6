@@ -314,7 +314,7 @@ namespace AnalysisDefs
     {
         public CycleList()
         {
-            hitsPerChn = new Double[NC.ChannelCount];
+            hitsPerChn = new double[NC.ChannelCount];
         }
 
         // hits per channel, can be huge numbers for a long cycle ;`)
@@ -326,7 +326,7 @@ namespace AnalysisDefs
 
         public IEnumerator<Cycle> GetValidCycleList()
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusStronglyValid)
                     yield return this[i];
@@ -335,7 +335,7 @@ namespace AnalysisDefs
         public uint GetValidCycleCount()
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusStronglyValid)
                     j++;
@@ -350,7 +350,7 @@ namespace AnalysisDefs
         public uint GetUseableCycleCount()
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusWeaklyValid)
                     j++;
@@ -360,7 +360,7 @@ namespace AnalysisDefs
 
         public IEnumerator<Cycle> GetValidCycleListForThisKey(Multiplicity mkey)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusValid(mkey))
                     yield return this[i];
@@ -368,7 +368,7 @@ namespace AnalysisDefs
         }
         public IEnumerator<Cycle> GetFilteredCycleListForThisKey(QCTestStatus filter, Multiplicity mkey)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusHasFlag(filter, mkey))
                     yield return this[i];
@@ -377,7 +377,7 @@ namespace AnalysisDefs
         public uint GetStatusCycleCountForThisKey(QCTestStatus filter, Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusHasFlag(filter, mkey))
                     j++;
@@ -387,7 +387,7 @@ namespace AnalysisDefs
         public uint GetValidCycleCountForThisKey(Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusValid(mkey))
                     j++;
@@ -398,7 +398,7 @@ namespace AnalysisDefs
         public uint GetTotalCycleCountForThisKey(Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].HasEntry(mkey))
                     j++;
@@ -442,7 +442,7 @@ namespace AnalysisDefs
             int start = FindIndex(e => { return e.QCStatus(mkey).Unset(); });
             if (start < 0)
                 return;
-            RemoveRange(start, this.Count - start);
+            RemoveRange(start, Count - start);
             TrimExcess();
         }
     }
@@ -998,7 +998,7 @@ namespace AnalysisDefs
         /// </summary>
         public void PrepareINCCResults()
         {
-            IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
+            IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(Multiplicity));
             while (iter.MoveNext())
             {
 				bool existed = false;
