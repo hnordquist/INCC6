@@ -749,26 +749,25 @@ namespace AnalysisDefs
             {
                 ConstructorInfo ci = GetOptionType(option).GetConstructor(Type.EmptyTypes);
                 newmcr = (INCCResult)ci.Invoke(null);
-				// URGENT: check this works for conventional FA 
-				// copy the FA and idx properties since the param-less constructor creates this instance
-                // newmcr.FA = mcr.FA;
-                //   newmcr.idx = mcr.idx;
+				// as a placeholder the FA state actually is not used, but for consistency copy it here 
+				newmcr.FA = mcr.FA;
+                newmcr.idx = mcr.idx;
                 Results.Add(ar, newmcr);
             }
 			return good;
         }
 
         // this is silly, this is why we do OO design and I havent done it here
-        private System.Type GetOptionType(AssaySelector.MeasurementOption option)
+        private Type GetOptionType(AssaySelector.MeasurementOption option)
         {
-            System.Type res = null;
+			Type res = null;
             switch (option)
             {
                 case AssaySelector.MeasurementOption.rates:
                     res = typeof(INCCResult); // nothing more to be computed 
                     break;
                 case AssaySelector.MeasurementOption.background:
-                    res = typeof(INCCResult); // NEXT: the tm bkg values are carried on  Measurement.Background, but probably need a real bkg results struct to match the pattern with the other here
+                    res = typeof(INCCResult); // NEXT: the tm bkg values are carried on Measurement.Background, but probably need a real bkg results struct to match the pattern with the other here
                     break;
                 case AssaySelector.MeasurementOption.initial:
                     res = typeof(INCCResults.results_init_src_rec);
@@ -790,7 +789,6 @@ namespace AnalysisDefs
                     break;
                 case AssaySelector.MeasurementOption.unspecified:
                     res = typeof(INCCResult);  // hope to never get here
-
                     break;
                 default:
                     break;
@@ -799,7 +797,7 @@ namespace AnalysisDefs
             return res;
         }
 
-        public INCCResult Lookup(MeasOptionSelector mos, System.Type t = null)
+        public INCCResult Lookup(MeasOptionSelector mos, Type t = null)
         {
             INCCResult m = null;
             bool got = Results.TryGetValue(mos, out m);

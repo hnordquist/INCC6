@@ -457,7 +457,7 @@ namespace Instr
 					m_cancellationTokenSource = null;
 				}
 
-				if (totalEvents != 0)  // nothing to handle if no events, close up and continue 
+				if (totalEvents == 0)  // nothing to handle if no events, close up and continue 
 				{
 					DAQControl.HandleEndOfCycleProcessing(this, new StreamStatusBlock(@"MCA527 Done"));
 					m_logger.TraceEvent(LogLevels.Verbose, 11911, "HandleEndOfCycle for {0}", seq);

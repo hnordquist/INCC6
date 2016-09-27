@@ -701,7 +701,7 @@ namespace NCCFile
         // assumes initalized measurement with at least one cycle, and at least one defined counting analysis result indexed by the detector's mult params, including VSRs fror LM
         void ComputeFromINCC5SRData(Measurement m)
         {
-			string pre = (m.AcquireState.data_src == ConstructedSource.Reanalysis ? "Re" : "C");
+			string pre = (m.AcquireState.data_src == ConstructedSource.Reanalysis ? "Rec" : "C");
             ctrllog.TraceEvent(LogLevels.Info, 34071, pre + "omputing: '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
             if (m.Cycles.Count < 1)
             {
