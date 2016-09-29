@@ -230,6 +230,8 @@ namespace NewUI
             ap.modified = true;
             // Done but keeping the Mouser comment:  SOMETHING with data_src (which is bool!?) Urgency: unknown.  It's like one of Rumsfeld's loved "unknown unknowns."   
             ap.data_src = ConstructedSourceExtensions.SrcToEnum((string)(((ComboBox)sender).SelectedItem));
+			if (ap.data_src == ConstructedSource.Unknown) // it was blank or the LM string
+				ap.data_src = ConstructedSource.Live;
         }
 
         public void IOCodeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -290,7 +292,8 @@ namespace NewUI
             }
 
             // The acquire is set to occur
-            AnalysisWizard.ResetMeasurement();
+            if (ap.data_src != ConstructedSource.Reanalysis)  // Reanalysis is a bit backwards, the correct measurement is fully constructed before this point
+				LMAcquire.ResetMeasurement();
 
             switch (ap.data_src)
             {
@@ -308,14 +311,13 @@ namespace NewUI
                         // Check NC.App.Opstate.Measurement.AnalysisParams for at least one VSR 
                         // If not present, inform and pop up the wizard
                         // If present, inform with new dialog, do not pop up the wizard
-                        if (NC.App.Opstate.Measurement.AnalysisParams.HasMultiplicity())
+                        if (NC.App.Opstate.Measurement.AnalysisParams.HasMatchingVSR(det.MultiplicityParams))
                         {
                             dr = DialogResult.OK;
                         }
                         else
                         {
-                            AnalysisWizard aw2B = new AnalysisWizard(AnalysisWizard.AWSteps.Step2B, ap, det);  // analyzers are created in here, placed on global measurement
-                            dr = aw2B.ShowDialog();
+	                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();// analyzers are created in here, placed on global measurement
                             if (dr == DialogResult.OK)
                             {
                                 NC.App.DB.UpdateAcquireParams(ap); //update it again
@@ -340,7 +342,6 @@ namespace NewUI
                     }
                     break;
                 case ConstructedSource.DB:
-					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.DBDataAssay = true;
                     UIIntegration.Controller.file = true;
                     IDDAcquireDBMeas dbdlg = new IDDAcquireDBMeas(this);
@@ -349,14 +350,15 @@ namespace NewUI
                         dr = dbdlg.ShowDialog();
                         if (dr == DialogResult.OK)
                         {
+							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
                             DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-                            NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).TraceEvent(NCCReporter.LogLevels.Info, 87654,
+                            NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));
 							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId);
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
                             foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
                             {
                                 cycle.UpdateDataSourceId(ap.data_src, det.Id.SRType, 
@@ -381,26 +383,22 @@ namespace NewUI
                     NC.App.AppContext.DBDataAssay = true;
                     IDDManualDataEntry mdlg = new IDDManualDataEntry();
                     mdlg.AH = this;
-                    dr = mdlg.ShowDialog();
-                    if (dr == DialogResult.OK)
-                    {
-                        // the work is done in the dialog class
-                    }
+                    dr = mdlg.ShowDialog(); // the work constructing the measurement is done in the dialog class
                     break;
-                case ConstructedSource.Æther:
+                case ConstructedSource.Reanalysis:
                     UIIntegration.Controller.file = true;
                     NC.App.AppContext.DBDataAssay = true;
                     dr = DialogResult.OK;
-                    // the measurement re-creation work is done in the IDDReanalysisAssay dialog class                    
+                    // the measurement re-creation work is done in the IDDReanalysisAssay dialog class prior to reaching this point                   
                     break;
                 case ConstructedSource.CycleFile:
- 					Integ.BuildMeasurement(ap, det, mo);
+ 					Integ.BuildMeasurementMinimal(ap, det, mo);  // the measurement is reconstructed before each test data file processing, so this is meant as a carrier for certain kick-off values
                     NC.App.AppContext.TestDataFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select a test data (disk) file", NC.App.AppContext.FileInput, "INCC5 Test data (disk)", "dat", "cnn");
                     break;
                 case ConstructedSource.ReviewFile:
-					Integ.BuildMeasurement(ap, det, mo);
+					Integ.BuildMeasurementMinimal(ap, det, mo);  // acquire type and measurement option are read from each NCC file itself, so this instance is an acquire state kick-off carrier value
                     NC.App.AppContext.ReviewFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");
@@ -409,10 +407,9 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog(); // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -423,10 +420,9 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PulseFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -437,10 +433,9 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {
@@ -451,10 +446,9 @@ namespace NewUI
  					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.MCA527FileAssay = true;
                     UIIntegration.Controller.file = true;
-				    if (NC.App.Opstate.Measurement.MeasOption.IsListMode())
+				    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
                     {
-                        AnalysisWizard aw2A = new AnalysisWizard(AnalysisWizard.AWSteps.Step2A, ap, det);
-                        dr = aw2A.ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
                     else
                     {

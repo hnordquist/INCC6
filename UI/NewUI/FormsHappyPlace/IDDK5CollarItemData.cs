@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -26,17 +26,16 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Windows.Forms;
-using AnalysisDefs;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-
+using System.Windows.Forms;
+using AnalysisDefs;
 namespace NewUI
 {
-    using Integ = NCC.IntegrationHelpers;
+	using Integ = NCC.IntegrationHelpers;
 
-    public partial class IDDK5CollarItemData : Form
+	public partial class IDDK5CollarItemData : Form
     {
         INCCAnalysisParams.collar_combined_rec col;
         bool modified;
@@ -74,9 +73,9 @@ namespace NewUI
         {
             if (e.Value != null)
             {
-                String display = String.Empty;
+                string display = string.Empty;
                 DataGridViewCell cell =
-                        this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
                 switch (e.ColumnIndex)
                 {
                     case 0:
@@ -126,7 +125,7 @@ namespace NewUI
         {
             StoreChanges();
             SaveParamsToDb();
-            this.Close();
+            Close();
         }
 
         private void BackBtn_Click(object sender, EventArgs e)
@@ -134,7 +133,7 @@ namespace NewUI
             StoreChanges();
             IDDCollarCal calib = new IDDCollarCal(col, modified);
             calib.Show();
-            this.Close();
+            Close();
         }
 
         private void SaveParamsToDb ()
@@ -143,7 +142,8 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             INCCAnalysisParams.collar_combined_rec inDB;
 
-            if (col.k5.k5_item_type != mp.acq.item_type)
+            if (!string.IsNullOrEmpty(col.k5.k5_item_type) &&  // not null
+				string.Compare(col.k5.k5_item_type, mp.acq.item_type, true) != 0)  // and not the same string
             {
                 modified = true;
             }
@@ -154,7 +154,8 @@ namespace NewUI
                     mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
                     inDB = (INCCAnalysisParams.collar_combined_rec)mp.imd;
                     inDB.GenParamList();
-                    mp.acq.item_type = col.k5.k5_item_type;
+					if (!string.IsNullOrEmpty(col.k5.k5_item_type))
+						mp.acq.item_type = col.k5.k5_item_type;
                 }
                 else
                 {
@@ -162,8 +163,9 @@ namespace NewUI
                     mp.imd.modified = true;
                     inDB = (INCCAnalysisParams.collar_combined_rec)mp.imd;
                     inDB.GenParamList();
-                    mp.acq.item_type = col.k5.k5_item_type;
-                }
+					if (!string.IsNullOrEmpty(col.k5.k5_item_type))
+						mp.acq.item_type = col.k5.k5_item_type;
+				}
 
                 col.k5.CopyTo(inDB.k5);
                 inDB.k5.modified = true;
@@ -174,30 +176,29 @@ namespace NewUI
         {
             if (e.ColumnIndex > 1)// Numeric column and editable
             {
-                if (String.IsNullOrEmpty(e.FormattedValue.ToString()))
+                if (string.IsNullOrEmpty(e.FormattedValue.ToString()))
                 {
-                    dataGridView1.Rows[e.RowIndex].ErrorText =
-                    "Value must not be empty.";
+                    dataGridView1.Rows[e.RowIndex].ErrorText = "Value must not be empty.";
                     e.Cancel = true;
                 }
                 else
                 {
-                    Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");
+                    Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");  // valid for point-based (e.g 1.0, not 1,0 or 1 0) numbering systems
                     if (!reg.IsMatch(e.FormattedValue.ToString()))
                     {
                         dataGridView1.Rows[e.RowIndex].ErrorText = "Value is not a floating point number.";
                         e.Cancel = true;
                         double res = 0;
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
-                        dataGridView1.Rows[e.RowIndex].ErrorText = String.Empty;
-                        this.dataGridView1.RefreshEdit();
+                        dataGridView1.Rows[e.RowIndex].ErrorText = string.Empty;
+                        dataGridView1.RefreshEdit();
                     }
                     else
                     {
                         double res = 0;
-                        Double.TryParse(e.FormattedValue.ToString(), out res);
+                        double.TryParse(e.FormattedValue.ToString(), out res);
                         dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
-                        this.dataGridView1.RefreshEdit();
+                        dataGridView1.RefreshEdit();
                     }
                 }
             }
@@ -226,14 +227,14 @@ namespace NewUI
                     col.k5.k5_label[i] = (string) dataGridView1.Rows[i].Cells[1].Value;
                 }
 
-                Double.TryParse (dataGridView1.Rows[i].Cells[2].Value.ToString(), out temp);
+                double.TryParse (dataGridView1.Rows[i].Cells[2].Value.ToString(), out temp);
                 if ( temp!= col.k5.k5[i].v)
                 {
                     modified = true;
                     col.k5.k5[i].v = temp;
                 }
 
-                Double.TryParse(dataGridView1.Rows[i].Cells[3].Value.ToString(), out temp);
+                double.TryParse(dataGridView1.Rows[i].Cells[3].Value.ToString(), out temp);
                 if (temp != col.k5.k5[i].err)
                 {
                     modified = true;
@@ -248,10 +249,10 @@ namespace NewUI
             if (modified)
             {
                 if (MessageBox.Show("Are you sure you want to abandon your changes and exit?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    this.Close();
+                    Close();
             }
             else
-                this.Close();
+                Close();
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -271,9 +272,9 @@ namespace NewUI
                     check = (bool)dataGridView1.Rows[i].Cells[0].Value;
                     if (check)
                     {
-                        Double.TryParse(dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString(), out temp);
+                        double.TryParse(dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString(), out temp);
                         col.collar.sample_corr_fact.v *= temp;
-                        Double.TryParse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString(), out temp1);
+                        double.TryParse(dataGridView1.Rows[e.RowIndex].Cells[3].Value.ToString(), out temp1);
                         col.collar.sample_corr_fact.err += (temp != 0)?(temp1 / temp) * (temp1 / temp):0;
                         numChecks++;
                     }
@@ -310,9 +311,9 @@ namespace NewUI
             {
                 if ((bool)row.Cells[0].Value)
                 {
-                    Double.TryParse(row.Cells[2].Value.ToString(), out temp);
+                    double.TryParse(row.Cells[2].Value.ToString(), out temp);
                     total *= temp;
-                    Double.TryParse(row.Cells[3].Value.ToString(), out temp1);
+                    double.TryParse(row.Cells[3].Value.ToString(), out temp1);
                     totalerr +=
                         (temp1 / temp) *
                         (temp1 / temp);

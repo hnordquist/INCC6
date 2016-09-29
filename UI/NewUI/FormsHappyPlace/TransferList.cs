@@ -63,9 +63,9 @@ namespace NewUI
                  ListViewItem lvi = new ListViewItem(new string[] {
                     ts.det, ts.item,
 					string.IsNullOrEmpty(ts.stratum) ? "-" : ts.stratum,
-                    ts.dto.ToString("yy.MM.dd  HH:mm:ss"), System.IO.Path.GetFileName(ts.path),
-                    ts.comment,
-					mlistIndex.ToString()  // subitem at index 6 has the original mlist index of this element
+                    ts.dto.ToString("yy.MM.dd  HH:mm:ss"), Path.GetFileName(ts.path),
+                    ts.comment, AssaySelector.ForMass(ts.meastype) ? ts.material : string.Empty,
+					mlistIndex.ToString()  // subitem at index 7 has the original mlist index of this element
                         });
                 listView1.Items.Add(lvi);
                 lvi.Tag = ts.dto;  // for proper column sorting
@@ -86,7 +86,7 @@ namespace NewUI
 			{
 				if (lv.Selected)
 				{
-					string s = (string)lv.SubItems[6].Text;
+					string s = (string)lv.SubItems[7].Text;
 					int i = 0;
 					int.TryParse(s, out i);
 					list[i].select = true;
@@ -107,7 +107,7 @@ namespace NewUI
             DialogResult = DialogResult.Cancel;
             foreach (ListViewItem lv in listView1.Items)
             {
-                    string s = (string)lv.SubItems[6].Text;
+                    string s = (string)lv.SubItems[7].Text;
                     int i = 0;
                     int.TryParse(s, out i);
                     list[i].select = false;

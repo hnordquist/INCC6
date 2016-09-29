@@ -179,7 +179,7 @@ namespace DB
                         dt = clsB.Get(did);
                         DataTable dt2 = clsTB.Get(did);
                         dt.Merge(dt2);
-                        break;  // next: caution, should use select/join
+                        break;  // NEXT: caution, should use a select/join in the DB layer, instead of this datatable merge
                     case Pieces.Facilities:
                         Descriptors clsF = new Descriptors("facility_names");
                         dt = clsF.getDescs();

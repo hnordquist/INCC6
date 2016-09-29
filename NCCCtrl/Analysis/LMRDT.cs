@@ -923,7 +923,7 @@ namespace Analysis
             StreamStatusBlock ssb = null;
             // NEXT: detect end of stream and build ssb
 
-            // URGENT: this rework might mess end up the stream end check, and could blow here
+            // devnote: this rework might mess end up the stream end check, and could blow here
             // The analyzer code uses the list lengths to know when to stop counting neutrons. The buffer may be n, but the last neutron is in n - k.
             if (channels.Length < neutronEventArray.Count)
                 neutronEventArray.RemoveRange(channels.Length - 1, neutronEventArray.Count - channels.Length);
@@ -1093,7 +1093,7 @@ public class MCA527FileProcessingState : LMProcessingState
             StreamStatusBlock ssb = null;
             // NEXT: detect end of stream and build ssb
 
-            // URGENT: this rework might mess end up the stream end check, and could blow here
+            // devnote: this rework might mess end up the stream end check, and could blow here
             // The analyzer code uses the list lengths to know when to stop counting neutrons. The buffer may be n, but the last neutron is in n - k.
             if (timeInBuffer.Length < neutronEventArray.Count)
                 neutronEventArray.RemoveRange(timeInBuffer.Length - 1, neutronEventArray.Count - timeInBuffer.Length);

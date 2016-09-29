@@ -67,9 +67,9 @@ namespace AnalysisDefs
         }
 
         /// <summary>
-        /// For ordering the priorty of multiple similar analyzers.
+		/// A generalized marker field and for unique ID use in maps and database
         /// </summary>
-        public ushort Rank
+        public long Rank
         {
             get;
             set;
@@ -83,6 +83,8 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("active", Active));
             ps.Add(new DBParamEntry("rank", Rank));
         }
+
+		public const long Select = -99;  // values < 0 used for sorting and selection
     }
 
     public class SpecificCountingAnalyzerParamsEqualityComparer : IEqualityComparer<SpecificCountingAnalyzerParams>
@@ -122,7 +124,7 @@ namespace AnalysisDefs
     {
         public BaseRate() : base()
         {
-            gateWidthTics = (ulong)1e7;// 1 second
+            gateWidthTics = (ulong)1e7; // 1 second, expressed in 'tics', i.e. 'ticks'
         }
         public override void GenParamList()
         {
@@ -140,20 +142,20 @@ namespace AnalysisDefs
         public FAType FA;
 
         // larger values produce more accurate results, but slow down the processing
-        public UInt64 AccidentalsGateDelayInTics
+        public ulong AccidentalsGateDelayInTics
         {
             get { return accidentalsGateDelayInTics; }
             set { accidentalsGateDelayInTics = value; }
         }
 
-        public UInt64 BackgroundGateTimeStepInTics 
+        public ulong BackgroundGateTimeStepInTics 
         {
             get { return backgroundGateTimeStepInTics; }
             set { backgroundGateTimeStepInTics = value; }
         }
 
         /// <summary>
-        /// The original exposed member for prior clients. Use SR now
+        /// The original exposed member for prior clients, e.g. Core. Use SR now
         /// </summary>
         public ShiftRegisterParameters sr; 
 
@@ -172,8 +174,8 @@ namespace AnalysisDefs
         {
             sr.gateLength = value; gateWidthTics = value;
         }
-        private UInt64 backgroundGateTimeStepInTics;
-        private UInt64 accidentalsGateDelayInTics;  // often a property of the HW
+        private ulong backgroundGateTimeStepInTics;
+        private ulong accidentalsGateDelayInTics;  // often a property of the HW
 
         public Multiplicity()
             : base()
@@ -200,7 +202,7 @@ namespace AnalysisDefs
                 backgroundGateTimeStepInTics = src.backgroundGateTimeStepInTics;
                 accidentalsGateDelayInTics = src.accidentalsGateDelayInTics;
                 SR = new ShiftRegisterParameters(src.SR);
-                reason = String.Copy(src.reason);
+                reason = string.Copy(src.reason);
             }
             else
             {
@@ -227,15 +229,15 @@ namespace AnalysisDefs
             backgroundGateTimeStepInTics = mul.backgroundGateTimeStepInTics;
             accidentalsGateDelayInTics = mul.accidentalsGateDelayInTics;
             SR = new ShiftRegisterParameters(mul.SR);
-            reason = String.Copy(mul.reason);
+            reason = string.Copy(mul.reason);
         }
         public bool Equals(Multiplicity other)
         {
-            if (this.FA == other.FA & this.gateWidthTics == other.gateWidthTics & 
-                this.suspect == other.suspect &&
-                this.accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
-                this.backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
-                this.SR.Equals(other.SR))
+            if (FA == other.FA & gateWidthTics == other.gateWidthTics & 
+                suspect == other.suspect &&
+                accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
+                backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
+                SR.Equals(other.SR))
             {
                 return true;
             }
@@ -244,6 +246,42 @@ namespace AnalysisDefs
                 return false;
             }
         }
+
+		public bool EqualsButForLMValues(Multiplicity other)
+		{
+			if (other != null &&
+				FA == other.FA && gateWidthTics == other.gateWidthTics && 
+                AccidentalsGateDelayInTics == other.AccidentalsGateDelayInTics && 
+                BackgroundGateTimeStepInTics == other.BackgroundGateTimeStepInTics &&
+                EqualsButForLMValues(other.SR))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+		}
+		public bool EqualsButForLMValues(ShiftRegisterParameters other)
+		{
+            if (other != null && 
+				SR.dieAwayTime.Equals(other.dieAwayTime) &&
+                SR.efficiency.Equals(other.efficiency) &&
+                SR.doublesGateFraction.Equals(other.doublesGateFraction) &&
+                SR.triplesGateFraction.Equals(other.triplesGateFraction) &&
+                SR.deadTimeCoefficientTinNanoSecs.Equals(other.deadTimeCoefficientTinNanoSecs) &&
+                SR.deadTimeCoefficientAinMicroSecs.Equals(other.deadTimeCoefficientAinMicroSecs) &&
+                SR.deadTimeCoefficientBinPicoSecs.Equals(other.deadTimeCoefficientBinPicoSecs) &&
+                SR.deadTimeCoefficientCinNanoSecs.Equals(other.deadTimeCoefficientCinNanoSecs) &&
+                SR.highVoltage.Equals(other.highVoltage))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+		}
 
         public override int GetHashCode()
         {
@@ -288,12 +326,16 @@ namespace AnalysisDefs
             string s = "SR";
             if (FA == FAType.FAOn)
             {
-                s += " fast acc. with internal gate ";
+                s += " fast acc.,   gate ";
+                s += SR.gateLength.ToString();
+				s += ", with internal gate ";
                 s += TimeUnitImage(backgroundGateTimeStepInTics, withunitsspace: true);
             }
             else
             {
-                s += " with acc. delay internal gate ";
+                s += " conventional, gate ";
+                s += SR.gateLength.ToString();
+                s += ", delay internal gate ";
                 s += TimeUnitImage(accidentalsGateDelayInTics, withunitsspace: true);
             }
             return s;
@@ -505,8 +547,6 @@ namespace AnalysisDefs
                 return new CountingAnalysisParameters(src);
         }
 
-
-
         public bool HasMultiplicity(FAType ft, bool activeOnly = true)
         {
             SpecificCountingAnalyzerParams sap = Find(p => { return p.ActiveConstraint(activeOnly) && 
@@ -523,15 +563,19 @@ namespace AnalysisDefs
             return sap != null;
         }
 
-        public List<SpecificCountingAnalyzerParams> GetTheseParams(System.Type t, bool activeOnly = true)
+        public List<SpecificCountingAnalyzerParams> GetTheseParams(Type t, bool activeOnly = true)
         {
-            return this.FindAll(p => { return p.ActiveConstraint(activeOnly) && (p.GetType() == t); });
+            return FindAll(p => { return p.ActiveConstraint(activeOnly) && (p.GetType() == t); });
         }
 
         // several get list<type>'s, because there may be several of each
         public List<SpecificCountingAnalyzerParams> GetMults(FAType ft, bool activeOnly = true)
         {
-            return this.FindAll(p => { return (p.ActiveConstraint(activeOnly) && p is Multiplicity && ((p as Multiplicity).FA == ft)); });
+            return FindAll(p => { return (p.ActiveConstraint(activeOnly) && p is Multiplicity && ((p as Multiplicity).FA == ft)); });
+        }
+        public List<SpecificCountingAnalyzerParams> GetAllMults(bool activeOnly = true)
+        {
+            return FindAll(p => { return (p.ActiveConstraint(activeOnly) && p is Multiplicity); });
         }
         public List<SpecificCountingAnalyzerParams> GetRossis(bool activeOnly = true)
         {
@@ -563,7 +607,7 @@ namespace AnalysisDefs
             {
               TimeInterval t = new TimeInterval();
               if (addIfNotPresent)
-                  this.Add(t);
+                  Add(t);
               return t;
             }
         }
@@ -576,7 +620,7 @@ namespace AnalysisDefs
             {
                 Rossi t = new Rossi();
                 if (addIfNotPresent)
-                    this.Add(t);
+                    Add(t);
                 return t;
             }
         }
@@ -589,7 +633,7 @@ namespace AnalysisDefs
             {
                 Coincidence t = new Coincidence();
                 if (addIfNotPresent)
-                    this.Add(t);
+                    Add(t);
                 return t;
             }
         }
@@ -602,7 +646,7 @@ namespace AnalysisDefs
              {
                  Feynman t = new Feynman();
                  if (addIfNotPresent)
-                     this.Add(t);
+                     Add(t);
                  return t;
              }
         }
@@ -616,7 +660,7 @@ namespace AnalysisDefs
             {
                 Multiplicity t = new Multiplicity(ft);
                 addedIfNotPresent = true;
-                this.Add(t);
+                Add(t);
                 return t;
             }
         }
@@ -643,12 +687,53 @@ namespace AnalysisDefs
             {
                 BaseRate t = new BaseRate();
                 if (addIfNotPresent)
-                    this.Add(t);
+                    Add(t);
                 return t;
             }
         }
 
-    }
+
+		public bool HasMatchingVSR(Multiplicity mul)
+		{
+			int matchidx = GetMatchingVSRIndex(mul);
+			return matchidx >= 0;
+		}
+
+		public int GetMatchingVSRIndex(Multiplicity mul)
+		{
+			int matchidx = FindIndex(x => 
+						((x is Multiplicity) && 
+						(x as Multiplicity).FA == mul.FA) && // same FA
+								                 x.Active && // active
+						(x as Multiplicity).EqualsButForLMValues(mul)); // everything but gatewidth and predelay are the same
+			return matchidx;
+		}
+
+		public bool PrepareMatchingVSR(Multiplicity mul)
+		{
+			Multiplicity match = null;
+            bool anew = false;
+			// Find a type match for existing SR settings
+			// 1: fast == fast, conv == conv. 
+			int matchidx = FindIndex(x => ((x is Multiplicity) && (x as Multiplicity).FA == mul.FA));
+			// 2: if no fast/conv found, create by copying, add to list
+			if (matchidx < 0)
+			{
+				match = new Multiplicity(mul.FA);
+				match.CopyValues(mul);
+				Add(match);
+                anew = true;
+            }
+			else 
+				match = (Multiplicity)this[matchidx];
+			// 2: If not active, activate it.
+			// Q: deactivate all others?
+			match.Active = true;
+			// 3: mark for display in GUI
+			match.Rank = SpecificCountingAnalyzerParams.Select; // values < 0 flag uses for UI sorting and selection
+            return anew;
+		}
+	}
 
 
     /// <summary>

@@ -94,20 +94,25 @@ namespace NewUI
             int measurecount = mlist.Count;
             foreach (Measurement m in mlist)
             {
+				string fname = Path.GetFileName(m.MeasurementId.FileName);
                 string ItemWithNumber = string.IsNullOrEmpty(m.AcquireState.item_id) ? "Empty" : m.AcquireState.item_id;
-                if (Path.GetFileName(m.MeasurementId.FileName).Contains("_"))
+                if (fname.Contains("_"))
                 //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
-                    ItemWithNumber += "("+Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_')+1, 2)+")";
+                    ItemWithNumber += "("+fname.Substring(fname.IndexOf('_')+1, 2)+")";
                 ListViewItem lvi = new ListViewItem(new string[] {
                     m.MeasOption.PrintName(),
                     string.IsNullOrEmpty(m.AcquireState.ItemId.stratum) ? "Empty" : m.AcquireState.ItemId.stratum,
                     m.AcquireState.item_id,
                     m.MeasDate.ToString("yyMMdd HH:mm:ss"),
-                    Path.GetFileName(m.MeasurementId.FileName),
+                    fname, m.AcquireState.comment
                     });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
-            }
+				if (string.IsNullOrEmpty(fname))
+					lvii.ToolTipText = "(" + m.MeasurementId.UniqueId.ToString() + ") No file name available";
+				else
+					lvii.ToolTipText = "(" + m.MeasurementId.UniqueId.ToString() + ") " + fname;
+			}
 
             //Add also any rates only measurements. No reason they can't be used here.
             /*mlist = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, "Rates");

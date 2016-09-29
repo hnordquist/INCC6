@@ -34,15 +34,14 @@ namespace AnalysisDefs
 
     using NC = NCC.CentralizedState;
 
-
     /// <summary>
     /// A Measurement is created using one or more Instruments
     /// Each Instrument has one or more detectors 
     /// A Detector has its id, SR params and alpha-beta
     /// 
     /// With LM, an instrument is discovered and created for live DAQ, an associated detector is then created for each virtual SR specified by the user for that instrument.
-    /// For SR, a detector is first created by user, with specif Parms and a type and such, at run-time, whne a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
-    /// In both cases there is an instrument to SR spec relationship that always exists. Each instrument can have one SR detector, and one or more virtual detectors in the context of a measurment. Muddy clear!
+    /// For SR, a detector is first created by user, with specific params and a type and such, at run-time, when a SR is found on the serial port, an instrument is created and placed on the global Instrument DAQ list.
+    /// In both cases there is an instrument to SR spec relationship that always exists. Each instrument can have one SR detector, and one or more virtual detectors in the context of a measurement. Muddy clear!
     /// </summary>
     public class Detector : Tuple<DataSourceIdentifier, Multiplicity, AlphaBeta>, IComparable<Detector>
     {
@@ -55,7 +54,7 @@ namespace AnalysisDefs
         //simple id only
         public override string ToString()
         {
-            return this.Item1.DetectorId;
+            return Item1.DetectorId;
         }
 
         public Detector(Detector src)
@@ -70,22 +69,22 @@ namespace AnalysisDefs
        
         public ShiftRegisterParameters SRParams
         {
-            get { return this.Item2.SR; }
+            get { return Item2.SR; }
         }
 
         public Multiplicity MultiplicityParams
         {
-            get { return this.Item2; }
+            get { return Item2; }
         }
 
         public DataSourceIdentifier Id
         {
-            get { return this.Item1; }
+            get { return Item1; }
         }
 
         public AlphaBeta AB
         {
-            get { return this.Item3; }
+            get { return Item3; }
         }
 
         public static int Compare(Detector x, Detector y)
@@ -133,14 +132,6 @@ namespace AnalysisDefs
             Add(first);
         }
 
-        //public Detector GetIt(ShiftRegisterParameters sr)
-        //{
-        //    Detector d = null;
-        //    d = Find(det => det.SRParams.Equals(sr));
-        //    if (d == null)
-        //        d = new Detector();
-        //    return d;
-        //}
         public Detector GetIt(DataSourceIdentifier dsid)
         {
             Detector d = null;
@@ -166,7 +157,6 @@ namespace AnalysisDefs
             }
 
         }
-
         public void AddOnlyIfNotThere(Detector det)
         {
             Detector d = GetItByDetectorId(det.Id.DetectorId);
@@ -218,11 +208,11 @@ namespace AnalysisDefs
         {
             MeasurementOption a = MeasurementOption.rates;
             res = 0;
-            bool ok = Int32.TryParse(v, out res); // is it a integer? If so, convert to the enum
+            bool ok = int.TryParse(v, out res); // is it a integer? If so, convert to the enum
             if (!ok)  // OMFG not an integer, look for string name and convert appropriately
             {
                 string lv = v.ToLower();
-                ok = System.Enum.TryParse<MeasurementOption>(lv, out a);
+                ok = Enum.TryParse(lv, out a);
                 res = (int)a;
             }
             return ok;
@@ -290,7 +280,7 @@ namespace AnalysisDefs
         {
             AssaySelector.MeasurementOption res = AssaySelector.MeasurementOption.unspecified;
 
-            if (String.IsNullOrEmpty(src))
+            if (string.IsNullOrEmpty(src))
                 return res;
 
             bool match = false;
@@ -324,19 +314,19 @@ namespace AnalysisDefs
     {
         public CycleList()
         {
-            hitsPerChn = new Double[NC.ChannelCount];
+            hitsPerChn = new double[NC.ChannelCount];
         }
 
         // hits per channel, can be huge numbers for a long cycle ;`)
-        public Double[] HitsPerChannel
+        public double[] HitsPerChannel
         {
             get { return hitsPerChn; }
         }
-        Double[] hitsPerChn;
+        double[] hitsPerChn;
 
-        public System.Collections.Generic.IEnumerator<Cycle> GetValidCycleList()
+        public IEnumerator<Cycle> GetValidCycleList()
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusStronglyValid)
                     yield return this[i];
@@ -345,7 +335,7 @@ namespace AnalysisDefs
         public uint GetValidCycleCount()
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusStronglyValid)
                     j++;
@@ -360,7 +350,7 @@ namespace AnalysisDefs
         public uint GetUseableCycleCount()
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusWeaklyValid)
                     j++;
@@ -368,17 +358,17 @@ namespace AnalysisDefs
             return j;
         }
 
-        public System.Collections.Generic.IEnumerator<Cycle> GetValidCycleListForThisKey(Multiplicity mkey)
+        public IEnumerator<Cycle> GetValidCycleListForThisKey(Multiplicity mkey)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusValid(mkey))
                     yield return this[i];
             }
         }
-        public System.Collections.Generic.IEnumerator<Cycle> GetFilteredCycleListForThisKey(QCTestStatus filter, Multiplicity mkey)
+        public IEnumerator<Cycle> GetFilteredCycleListForThisKey(QCTestStatus filter, Multiplicity mkey)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusHasFlag(filter, mkey))
                     yield return this[i];
@@ -387,7 +377,7 @@ namespace AnalysisDefs
         public uint GetStatusCycleCountForThisKey(QCTestStatus filter, Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusHasFlag(filter, mkey))
                     j++;
@@ -397,7 +387,7 @@ namespace AnalysisDefs
         public uint GetValidCycleCountForThisKey(Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].QCStatusValid(mkey))
                     j++;
@@ -408,7 +398,7 @@ namespace AnalysisDefs
         public uint GetTotalCycleCountForThisKey(Multiplicity mkey)
         {
             uint j = 0;
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].HasEntry(mkey))
                     j++;
@@ -449,11 +439,11 @@ namespace AnalysisDefs
         /// <param name="mkey"></param>
         public void Trim(Multiplicity mkey)
         {
-            int start = this.FindIndex(e => { return e.QCStatus(mkey).Unset(); });
+            int start = FindIndex(e => { return e.QCStatus(mkey).Unset(); });
             if (start < 0)
                 return;
-            this.RemoveRange(start, this.Count - start);
-            this.TrimExcess();
+            RemoveRange(start, Count - start);
+            TrimExcess();
         }
     }
 
@@ -602,8 +592,8 @@ namespace AnalysisDefs
         /// <summary>
         /// Logger handle
         /// </summary>
-        internal NCCReporter.LMLoggers.LognLM logger;
-        public NCCReporter.LMLoggers.LognLM Logger { get { return logger; } }
+        internal LMLoggers.LognLM logger;
+        public LMLoggers.LognLM Logger { get { return logger; } }
 
         /// <summary>
         /// INCC analyses add messages to the measurement results, on a per-SR/LM entry point basis
@@ -614,8 +604,8 @@ namespace AnalysisDefs
         internal List<MeasurementMsg> LookupMessageList(Multiplicity mul)
         {
             List<MeasurementMsg> sl = null;
-            bool beendonegot = Messages.TryGetValue(mul, out sl);
-            if (!beendonegot)
+            bool ok = Messages.TryGetValue(mul, out sl);
+            if (!ok)
             {
                 sl = new List<MeasurementMsg>();
                 Messages.Add(mul, sl);
@@ -638,17 +628,17 @@ namespace AnalysisDefs
         public void AddErrorMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Error, id, s));
-            logger.TraceEvent(NCCReporter.LogLevels.Error, id, s);
+            logger.TraceEvent(LogLevels.Error, id, s);
         }
         public void AddWarningMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Warning, id, s));
-            logger.TraceEvent(NCCReporter.LogLevels.Warning, id, s);
+            logger.TraceEvent(LogLevels.Warning, id, s);
         }
         public void AddDireMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Critical, id, s));
-            logger.TraceEvent(NCCReporter.LogLevels.Critical, id, s);
+            logger.TraceEvent(LogLevels.Critical, id, s);
         }
 
 
@@ -744,7 +734,7 @@ namespace AnalysisDefs
 		/// </summary>
 		/// <param name="at">The measurement method or goal</param>
 		/// <param name="logger">the logger handle</param>
-		public Measurement(AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
+		public Measurement(AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
         {
             mt = new MeasurementTuple();
             this.logger = logger;
@@ -752,7 +742,7 @@ namespace AnalysisDefs
             InitMisc();
         }
 
-        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, NCCReporter.LMLoggers.LognLM logger)
+        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
         {
             mt = newMT;
             this.logger = logger;
@@ -760,7 +750,7 @@ namespace AnalysisDefs
             InitMisc();
         }
 
-        public Measurement(MeasurementTuple newMT, NCCReporter.LMLoggers.LognLM logger)
+        public Measurement(MeasurementTuple newMT, LMLoggers.LognLM logger)
         {
             mt = newMT;
             this.logger = logger;
@@ -794,9 +784,8 @@ namespace AnalysisDefs
                 }
                 else // it is an INCC5 analysis driven with LM data
                 {
-                    // check to see if detector settings are copied into an active CA entry
-                    if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(rec.det.MultiplicityParams) && w.Active; }))
-                        AnalysisParams.Add(rec.det.MultiplicityParams);
+                    // prepare or identify an active CA entry with matching CA gatewidth and FA, with remaining SR params as the detector
+                    AnalysisParams.PrepareMatchingVSR(rec.det.MultiplicityParams);
                 }
             }
             else
@@ -819,13 +808,14 @@ namespace AnalysisDefs
             }
             else
                 INCCAnalysisState.Methods = new AnalysisMethods(sel);
-            InitializeContext();
+            InitializeContext(clearCounterResults: true);
             PrepareINCCResults();
-
-			// a list mode measurement may not have a multiplicity analyzer at all
-			if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
+            // a list mode measurement may not have a multiplicity analyzer at all, create on results, copying the current values
+            if (CountingAnalysisResults.ContainsKey(rec.det.MultiplicityParams))
 			{ 
 				MultiplicityCountingRes mcr = (MultiplicityCountingRes)CountingAnalysisResults[rec.det.MultiplicityParams];
+				if (rec.mcr.AB.Unset)
+						SDTMultiplicityCalculator.SetAlphaBeta(rec.det.MultiplicityParams, rec.mcr); // works only if MaxBins is set
 				mcr.CopyFrom(rec.mcr); // copy the mcr results onto the first moskey entry
 				// the same results are copied to the full results structure			
 				MeasOptionSelector mos = new MeasOptionSelector(MeasOption, rec.det.MultiplicityParams);
@@ -860,7 +850,7 @@ namespace AnalysisDefs
             {
                 if (cfcycles == null)
                 {
-                    cfcycles = new List<CycleList>(AnalysisDefs.INCCAnalysisParams.MAX_ADDASRC_POSITIONS + 1);
+                    cfcycles = new List<CycleList>(INCCAnalysisParams.MAX_ADDASRC_POSITIONS + 1);
                     for (int j = 0; j <= INCCAnalysisParams.MAX_ADDASRC_POSITIONS; j++)
                         cfcycles.Add(new CycleList());
                 }
@@ -898,7 +888,7 @@ namespace AnalysisDefs
 
         public void InitializeResultsSummarizers()
         {
-            logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
+            logger.TraceEvent(LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
             countresults.Clear();
             try
             {
@@ -931,7 +921,7 @@ namespace AnalysisDefs
                 foreach (TimeInterval ti in (ap.GetTimeIntervals()))
                 {
                     TimeIntervalResult tir = new TimeIntervalResult();
-                    tir.timeIntervalHistogram = new UInt32[RawAnalysisProperties.maxEventSpacing + 1];  // alloc the entire possible range, but use maxIndexOfNonzeroHistogramEntry upon output
+                    tir.timeIntervalHistogram = new uint[RawAnalysisProperties.maxEventSpacing + 1];  // alloc the entire possible range, but use maxIndexOfNonzeroHistogramEntry upon output
                     countresults.Add(ti, tir);
                 }
 
@@ -948,40 +938,33 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
+                logger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
             }
         }
-        public void InitializeContext()
+        public void InitializeContext(bool clearCounterResults = true)
         {
             try
             {
-                InitializeResultsSummarizers();
+                if (clearCounterResults)
+					InitializeResultsSummarizers();
                 MeasCycleStatus.acquire_num_runs = AcquireState.num_runs; // may need improvement when considering active/passive combined measurements (active_num_runs)
                 MeasCycleStatus.initial_num_runs = AcquireState.num_runs;
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Error, 4041, "Measurement context: " + ex.Message);
+                logger.TraceEvent(LogLevels.Error, 4041, "Measurement context: " + ex.Message);
             }
         }
 
         // all non-zero cycles are counted here
-        public uint RawCycleSummary()
+        public uint NumberOfRawCyclesWithCounts()
         {
-           // long t = 0;                 // the cycle average time
-           // ulong totals = 0;            // singles raw sums
             uint validCyclesCount = 0;
             foreach (Cycle cc in cycles) 
             {
-              //      t += cc.TS.Ticks;
-              //      totals += cc.Totals;
-              //      for (int i = 0; i < NC.ChannelCount; i++)
-              //          cycles.HitsPerChannel[i] += cc.HitsPerChannel[i];
                     if (cc.TS.Ticks > 0)
                         validCyclesCount++;
             }
-            //CountTimeInSeconds = new TimeSpan(t).TotalSeconds;
-            //singles = totals;
             return validCyclesCount;
         }
 
@@ -1015,7 +998,7 @@ namespace AnalysisDefs
         /// </summary>
         public void PrepareINCCResults()
         {
-            IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
+            IEnumerator iter = CountingAnalysisResults.GetATypedParameterEnumerator(typeof(Multiplicity));
             while (iter.MoveNext())
             {
 				bool existed = false;
@@ -1024,14 +1007,14 @@ namespace AnalysisDefs
                 {
                     existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
 					if (!existed) // it was created just now in PrepareINCCResults
-	                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
+	                    logger.TraceEvent(LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
                     existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
  					if (!existed) // it was created just now in PrepareINCCMethodResults
-						logger.TraceEvent(NCCReporter.LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
+						logger.TraceEvent(LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)
                 {
-                    logger.TraceEvent(NCCReporter.LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                    logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
                 }
             }
         }
@@ -1058,7 +1041,7 @@ namespace AnalysisDefs
 
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            long rid = dbres.Create(mid, this.INCCAnalysisResults.TradResultsRec.ToDBElementList());
+            long rid = dbres.Create(mid, INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 
 			long c = dbm.CountOf(name: Detector.Id.DetectorName,

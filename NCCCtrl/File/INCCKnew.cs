@@ -811,7 +811,7 @@ namespace NCCTransfer
 				results_rec rec = new results_rec();
                 byte[] b = StringSquish(m.MeasDate.ToString("yy.MM.dd"), INCC.DATE_TIME_LENGTH);
 				TransferUtils.Copy(b, rec.meas_date);
-				TransferUtils.Copy(b, rec.original_meas_date);  // NEXT: this value is not properly tracked in INCC6
+				TransferUtils.Copy(b, rec.original_meas_date);  // this value is now properly tracked in INCC6
                 b = StringSquish(m.MeasDate.ToString("HH:mm:ss"), INCC.DATE_TIME_LENGTH);
 				TransferUtils.Copy(b, rec.meas_time);
 				
@@ -1907,6 +1907,8 @@ namespace NCCTransfer
             //        associate a new set of SR, Bkg and Norm and AB params with the new detector 
             // todo: What are the HV Params from INCC5, and once that is known, can they be transferred to the INCC6 HV Param and results tables
             Detector det = new Detector();
+			if (srtype.IsListMode())
+				det.Id.FullConnInfo = new LMConnectionInfo();
 
             try
             {
@@ -2047,7 +2049,7 @@ namespace NCCTransfer
                 Multiplicity mkey = new Multiplicity(srtype.DefaultFAFor());
                 mkey.SR = new ShiftRegisterParameters(det.SRParams);
                 MultiplicityCountingRes mcr = new MultiplicityCountingRes(srtype.DefaultFAFor(), 0);
-				ABKey abkey = new ABKey(mkey, 512);
+				ABKey abkey = new ABKey(mkey, 512); // NEXT: maxbins is arbitrary
 				LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);
                 mcr.AB.TransferIntermediates(det.AB);
             }
@@ -2251,7 +2253,7 @@ namespace NCCTransfer
                             am.choices[(int)AnalysisMethod.Multiplicity] = (iamr.multiplicity == 0 ? false : true);
                             am.choices[(int)AnalysisMethod.TruncatedMultiplicity] = (iamr.truncated_mult == 0 ? false : true);
                             if (am.AnySelected())
-                                am.choices[(int)AnalysisMethod.None] = am.choices[(int)AnalysisMethod.INCCNone] = false; // JFL open questionable change
+                                am.choices[(int)AnalysisMethod.None] = am.choices[(int)AnalysisMethod.INCCNone] = false;
                             break;
                         case INCC.METHOD_CALCURVE:
                             cal_curve_rec cal_curve = (cal_curve_rec)miter2.Current;
@@ -2837,7 +2839,8 @@ namespace NCCTransfer
 		public class TransferSummary
 		{
 			public DateTimeOffset dto;
-			public string item, stratum, path, det, comment;
+			public string item, stratum, path, det, comment, material;
+			public AssaySelector.MeasurementOption meastype;
 			public bool select; 
 			public int index;
 			public TransferSummary()
@@ -2855,6 +2858,8 @@ namespace NCCTransfer
             t.item = TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH);
 			t.dto = INCC.DateTimeFrom(TransferUtils.str(results.meas_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(results.meas_time, INCC.DATE_TIME_LENGTH));
 			t.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);
+            t.material = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
+			t.meastype = (AssaySelector.MeasurementOption)results.meas_option;
 			t.select = false;
 			t.index = index;
 			return t;
@@ -2976,7 +2981,7 @@ namespace NCCTransfer
 
             AcquireParameters acq = meas.AcquireState;
             acq.detector_id = det.Id.DetectorId;
-            acq.meas_detector_id = string.Copy(det.Id.DetectorId);
+            acq.meas_detector_id = string.Copy(det.Id.DetectorId);  // probably incorrect usage, but differnce is ambiguous in INCC5
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
@@ -2986,7 +2991,6 @@ namespace NCCTransfer
             else
                 acq.run_count_time = results.total_good_count_time; // should be 0.0 by default for this special case
             acq.MeasDateTime = meas.MeasurementId.MeasDateTime;
-            acq.meas_detector_id = det.Id.DetectorId;
             acq.error_calc_method = INCCErrorCalculationTechnique(results.error_calc_method);
             acq.campaign_id = TransferUtils.str(results.results_campaign_id, INCC.MAX_CAMPAIGN_ID_LENGTH);
             if (string.IsNullOrEmpty(acq.campaign_id))
@@ -3054,7 +3058,7 @@ namespace NCCTransfer
                 }
             }
 
-            if (itf.item_id_table.Count > 0)  // todo: use an assert here, there should be only one ever
+            if (itf.item_id_table.Count > 0)  // devnote: there should be only one item entry
             {
                 ItemId item = new ItemId();
                 item.declaredMass = results.declared_mass;
@@ -3067,7 +3071,6 @@ namespace NCCTransfer
                 item.item = TransferUtils.str(results.item_id, INCC.MAX_ITEM_ID_LENGTH);
                 item.material = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
                 //copy measurement dates to item
-                // JFL this is a deep copy of the date
                 item.pu_date = new DateTime(meas.Isotopics.pu_date.Ticks);
                 item.am_date = new DateTime(meas.Isotopics.am_date.Ticks);
                 item.modified = true;
@@ -3100,7 +3103,7 @@ namespace NCCTransfer
             }
             else
             {
-                mlogger.TraceEvent(LogLevels.Error, 34063, "No analysis methods for {0}, (calibration information is missing), creating placeholders", sel.ToString()); // JFL dev note: can get missing paramters from the meas results for calib and verif below, so need to visit this condition after results processing below (newres.methodParams!) and reconstruct the calib parameters. 
+                mlogger.TraceEvent(LogLevels.Error, 34063, "No analysis methods for {0}, (calibration information is missing), creating placeholders", sel.ToString()); // devnote: can get missing paramters from the meas results for calib and verif below, so need to visit this condition after results processing below (newres.methodParams!) and reconstruct the calib parameters. 
                 meas.INCCAnalysisState.Methods = new AnalysisMethods(mlogger);
                 meas.INCCAnalysisState.Methods.selector = sel;
             }
@@ -3806,6 +3809,8 @@ namespace NCCTransfer
             xres.completed = (results.completed != 0 ? true : false);
             xres.db_version = results.db_version;
             xres.hc = hc;
+            xres.original_meas_date = INCC.DateFrom(TransferUtils.str(results.original_meas_date, INCC.DATE_TIME_LENGTH));
+			// NEXT: copy move passive and active meas id's here
 
             long mid = meas.Persist();
 
@@ -3848,7 +3853,6 @@ namespace NCCTransfer
                 INCCResult ir = meas.INCCAnalysisResults[moskey];
                 // ir contains the measurement option-specific results: empty for rates and holdup, and also empty for calib and verif, the method-focused analyses, 
                 // but values are present for initial, normalization, precision, and should be present for background for the tm bkg results 
-                // next: specific GetParams for the init, norm and prec, and all the ver and cal mass methods 
                 switch (meas.MeasOption)
                 {
                     case AssaySelector.MeasurementOption.background:
@@ -3860,7 +3864,7 @@ namespace NCCTransfer
                     case AssaySelector.MeasurementOption.precision:
                         {
                             ElementList els = ir.ToDBElementList();
-                            DB.ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
+                            ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
                             long resid = ar.Create(mid, els);
                             mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
                         }
@@ -3869,8 +3873,8 @@ namespace NCCTransfer
                     case AssaySelector.MeasurementOption.calibration:
 					{
 						INCCMethodResults imrs;
-						bool beendonegot = meas.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
-						if (beendonegot) // should be true for verification and calibration
+						bool have = meas.INCCAnalysisResults.TryGetINCCResults(moskey.MultiplicityParams, out imrs);
+						if (have) // should be true for verification and calibration
 						{
 							if (imrs.ContainsKey(meas.INCCAnalysisState.Methods.selector))
 							{
@@ -4008,7 +4012,7 @@ namespace NCCTransfer
 
             mcr.NormedAMult = new ulong[mcr.MaxBins];
             mcr.RAMult = new ulong[mcr.MaxBins];
-            mcr.UnAMult = new ulong[mcr.MaxBins];
+            mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
 
             for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
             {

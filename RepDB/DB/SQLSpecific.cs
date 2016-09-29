@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -27,8 +27,6 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Data.Common;
-using NCCReporter;
-
 namespace DB
 {
     public static class SQLSpecific
@@ -56,7 +54,7 @@ namespace DB
         {
             if (quote)
             {
-                s = System.Text.RegularExpressions.Regex.Replace(s, @"[\'""]", @"$0$0");
+                s = System.Text.RegularExpressions.Regex.Replace(s, @"[\'""]", @"$0$0");  // happy fun!
                 switch (DBMain.Provider)
                 {
                     case DBMain.DbsWeLove.SQLite:
@@ -77,7 +75,7 @@ namespace DB
         // fix this later
         public static string Value(string s, string t)
         {
-            return SQLSpecific.Value(s, !String.IsNullOrEmpty(t));
+            return Value(s, !string.IsNullOrEmpty(t));
         }
 
         // shortcut canonical date format, works with SQLite, might work with everything else
@@ -102,93 +100,6 @@ namespace DB
         }
 
 
-        public static string getDateDiff(string date1, string date2, string unit)
-        {
-            switch (DBMain.Provider)
-            {
-                case DBMain.DbsWeLove.SQLite: // JFL TODO this is imprecise
-                    if (unit.Equals("d")) unit = "";
-                    if (unit.Equals("m")) unit = "/12";
-                    if (unit.Equals("y")) unit = "/365";
-
-                    return " (julianday(" + getDate(date1) + ") - julianday(" + getDate(date2) + ")) " + unit;
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    return "datediff('" + unit + "', " + getDate(date1) + ", " + getDate(date2) + ")";
-                case DBMain.DbsWeLove.Oracle:
-                    if (unit.Equals("d")) unit = "";
-                    if (unit.Equals("m")) unit = "/12";
-                    if (unit.Equals("y")) unit = "/365";
-                    return "TRUNC(" + getDate(date1) + ") - TRUNC(" + getDate(date2) + ")" + unit;
-                case DBMain.DbsWeLove.SQLServerClient:
-                case DBMain.DbsWeLove.SQLCE4:
-                    if (unit.Equals("d")) unit = "Day";
-                    if (unit.Equals("m")) unit = "Month";
-                    if (unit.Equals("y")) unit = "Year";
-                    return "datediff(" + unit + "," + getDate(date1) + "," + getDate(date2) + ")";
-                default:
-                    return "";
-            }
-        }
-        public static string getDateCompare(string field1, string field2)
-        {
-            string sProvider = DBMain.ProviderInvariantName;
-            switch (DBMain.Provider)
-            {
-                case DBMain.DbsWeLove.SQLite:
-                    return "date(" + field1 + ") = date(" + field2 + ")";
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    return "DateValue(" + field1 + ") =DateValue(" + field2 + ")";
-                case DBMain.DbsWeLove.Oracle:
-                    return "Cast(" + field1 + "as Date) = cast(" + field2 + ")";
-                case DBMain.DbsWeLove.SQLServerClient:
-                case DBMain.DbsWeLove.SQLCE4:
-                    return "Cast(" + field1 + "as Date) = cast(" + field2 + ")";
-                default:
-                    return "";
-            }
-        }
-        public static string getConvertInt(string field)
-        {
-            string sProvider = DBMain.ProviderInvariantName;
-            switch (DBMain.Provider)
-            {
-                case DBMain.DbsWeLove.SQLite:
-                    return "Cast(" + field + "as int)";
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    return "CInt(" + field + ")";
-                case DBMain.DbsWeLove.Oracle:
-                    return "Cast(" + field + "as int)";
-                case DBMain.DbsWeLove.SQLServerClient:
-                case DBMain.DbsWeLove.SQLCE4:
-                    return "Cast(" + field + "as int)";
-                default:
-                    return "";
-            }
-        }
-        public static string getNull(string field, string sNullValue)
-        {
-            string sProvider = DBMain.ProviderInvariantName;
-            switch (DBMain.Provider)
-            {
-                case DBMain.DbsWeLove.SQLite:
-                    return "isnull(" + field + "," + sNullValue + ")";
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    return "iif(ISNULL(" + field + "), " + sNullValue + "," + field + ")";
-                case DBMain.DbsWeLove.Oracle:
-                    return "isnull(" + field + "," + sNullValue + ")";
-                case DBMain.DbsWeLove.SQLServerClient:
-                case DBMain.DbsWeLove.SQLCE4:
-                    return "isnull(" + field + "," + sNullValue + ")";
-                default:
-                    return "";
-            }
-
-        }
-
         public static string getLastID(string table)
         {
             string sProvider = DBMain.ProviderInvariantName;
@@ -207,26 +118,6 @@ namespace DB
                     return "SELECT @@IDENTITY AS " + table; //?? placeholder
                 default:
                     return "";
-            }
-        }
-
-        public static string getCurrentDateTime()
-        {
-            string sProvider = DBMain.ProviderInvariantName;
-            switch (DBMain.Provider)
-            {
-                case DBMain.DbsWeLove.SQLite:
-                    return "datetime('now')";
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    return "Now()";
-                case DBMain.DbsWeLove.Oracle:
-                    return "SYSDATE()";
-                case DBMain.DbsWeLove.SQLServerClient:
-                case DBMain.DbsWeLove.SQLCE4:
-                    return "GetDate()";
-                default:
-                    return System.DateTime.Now.ToShortDateString() + " " + System.DateTime.Now.ToShortTimeString();
             }
         }
 
@@ -272,58 +163,6 @@ namespace DB
 					break;
 			}
 		}
-
-
-
-        // todo: unused, but could be 
-        public static DbConnection createDB()
-        {
-            string sProvider = DBMain.ProviderInvariantName;
-            string sConnection = DBMain.ConnStr;
-
-            if (sProvider.Equals("")) return null;
-            DbProviderFactory fact = DbProviderFactories.GetFactory(sProvider);
-
-            using (DbConnection cnn = fact.CreateConnection())
-            {
-                cnn.ConnectionString = sConnection;
-                buildDB(cnn);
-                return cnn;
-            }
-        }
-
-
-        // devnote: is this needed. Better that all DB init, create, reset ops be performed outside the product
-        public static bool buildDB(DbConnection sql_con)
-        {
-			SQLSpecific.OpenConn(sql_con);
-            DbCommand sql_cmd = sql_con.CreateCommand();
-
-            //Build tables....
-            using (DbTransaction mytransaction = sql_con.BeginTransaction())
-            {
-                try
-                {
-                    sql_cmd.ExecuteNonQuery();
-
-                    mytransaction.Commit();
-                    return true;
-                }
-                catch (Exception caught)
-                {
-                    mytransaction.Rollback();
-                    Console.WriteLine(sql_cmd.CommandText);
-                    try
-                    {
-                        DBMain.AltLog(LogLevels.Error, 70110, caught.Message + sql_cmd.CommandText);
-
-                        sql_con.Close();
-                        return false;
-                    }
-                    catch { return false; }
-                }
-            }
-        }
-    }
+	}
 
 }

@@ -555,25 +555,21 @@ namespace NewUI
 
         }
 
-        ///////////////////
-        //  MOUSER MENU  //
-        ///////////////////
-
         private void AnalysisWizardClick(object sender, RoutedEventArgs e)
         {
-            AcquireParameters acq = null;
+			AcquireParameters acq = null;
             Detector det = null;
 			NC.App.DB.ResetAcquireParametersMap();  // force read from DB to get as-is default acquire state
-			// next: do a refresh of the specific acquire instance, not the entire list
+			// NEXT: do a refresh of the specific acquire instance, not the entire list
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             if (!det.ListMode)
             {
                 MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
                 return;
             }
-            AnalysisWizard f = new AnalysisWizard(AnalysisWizard.AWSteps.Step3, acq, det);
-            System.Windows.Forms.DialogResult dr = f.ShowDialog();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+			LMAcquire a = new LMAcquire(acq, det);
+			a.ShowDialog();
+			if (a.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
                 if (acq.modified || acq.lm.modified)
                 {
@@ -638,7 +634,7 @@ namespace NewUI
                     case ConstructedSource.ReviewFile:
                         UIIntegration.Controller.file = true;
                         string xs = UIIntegration.GetUsersFolder("Select Input Folder", NC.App.AppContext.FileInput);
-                        if (!String.IsNullOrEmpty(xs))
+                        if (!string.IsNullOrEmpty(xs))
                         {
                             NC.App.AppContext.FileInput = xs;
                             NC.App.AppContext.FileInputList = null;  // no explicit file list
@@ -672,7 +668,7 @@ namespace NewUI
                 NC.App.Opstate.Measurement.Detector.Id.source = NC.App.Opstate.Measurement.AcquireState.data_src;  // set the detector overall data source value here
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-            }
+			}
         }
 
 

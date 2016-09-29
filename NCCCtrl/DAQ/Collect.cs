@@ -63,10 +63,10 @@ namespace DAQ
             ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
             datalog = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 
-            // JFL was set on cmd line prior to exec here, and it still is, upcast to an Assay instance
+            // The state was set on cmd line prior to exec here, and it still is, so must upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
-            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton
+            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton, modern syntax just for fun
 
             CurState.SOH = NCC.OperatingState.Starting;
 
