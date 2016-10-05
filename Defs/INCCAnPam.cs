@@ -32,7 +32,7 @@ using NCCReporter;
 namespace AnalysisDefs
 {
 
-    using Tuple = AnalysisDefs.VTuple;
+    using Tuple = VTuple;
 
 
     // map from a selector pair key to a specific INCC analysis parameter instance
@@ -129,7 +129,7 @@ namespace AnalysisDefs
 
         private void init()
         {
-            choices = new bool[System.Enum.GetValues(typeof(AnalysisMethod)).Length];
+            choices = new bool[Enum.GetValues(typeof(AnalysisMethod)).Length];
             choices[(int)AnalysisMethod.None] = true;  // None
             choices[(int)AnalysisMethod.INCCNone] = true;  // INCCNone
             methods = new INCCMethods();
@@ -160,7 +160,7 @@ namespace AnalysisDefs
         }
         public bool AnySelected()
         {
-            foreach (AnalysisMethod am in System.Enum.GetValues(typeof(AnalysisMethod)))
+            foreach (AnalysisMethod am in Enum.GetValues(typeof(AnalysisMethod)))
             {
                 if (am.IsNone() || am > AnalysisMethod.TruncatedMultiplicity)
                     continue;
@@ -186,8 +186,7 @@ namespace AnalysisDefs
             if (!AnySelected())
                 return AnalysisMethod.None;
             else
-            {
-                
+            {                
                 while ((choices[i]) == false && i <= (int)AnalysisMethod.TruncatedMultiplicity)
                 {
                     i++;
@@ -219,7 +218,7 @@ namespace AnalysisDefs
         }
         public bool VerificationAnalysisSelected() // todo: check this definition range
         {
-            foreach (AnalysisMethod am in System.Enum.GetValues(typeof(AnalysisMethod)))
+            foreach (AnalysisMethod am in Enum.GetValues(typeof(AnalysisMethod)))
                 if (am > AnalysisMethod.None && am <= AnalysisMethod.TruncatedMultiplicity && (am != AnalysisMethod.INCCNone))
                     if (choices[(int)am])
                         return true;
@@ -227,14 +226,14 @@ namespace AnalysisDefs
         }
         public bool MassOutlierMethodSelected()
         {
-            foreach (AnalysisMethod am in System.Enum.GetValues(typeof(AnalysisMethod)))
+            foreach (AnalysisMethod am in Enum.GetValues(typeof(AnalysisMethod)))
                 if (massoutlier[(int)am] && choices[(int)am])
                     return true;
             return false;
         }
         public bool CalibrationAnalysisSelected()
         {
-            foreach (AnalysisMethod am in System.Enum.GetValues(typeof(AnalysisMethod)))
+            foreach (AnalysisMethod am in Enum.GetValues(typeof(AnalysisMethod)))
                 if (calib[(int)am] && choices[(int)am])
                     return true;
             return false;
@@ -280,10 +279,10 @@ namespace AnalysisDefs
 
         public System.Collections.IEnumerator GetMethodEnumerator()
         {
-            foreach (AnalysisMethod am in System.Enum.GetValues(typeof(AnalysisMethod)))
+            foreach (AnalysisMethod am in Enum.GetValues(typeof(AnalysisMethod)))
                 if (am > AnalysisMethod.None && am <= AnalysisMethod.TruncatedMultiplicity && (am != AnalysisMethod.INCCNone))
                     if (choices[(int)am])
-                        yield return new System.Tuple<AnalysisMethod,INCCAnalysisParams.INCCMethodDescriptor>(am, (methods.ContainsKey(am) ?  methods[am] : null));
+                        yield return new Tuple<AnalysisMethod,INCCAnalysisParams.INCCMethodDescriptor>(am, (methods.ContainsKey(am) ?  methods[am] : null));
         }
         public bool Equals(AnalysisMethods other)
         {
@@ -299,7 +298,7 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "analysis_method_rec";
+            Table = "analysis_method_rec";
             ps.Add(new DBParamEntry("known_alpha", choices[(int)AnalysisMethod.KnownA]));
             ps.Add(new DBParamEntry("known_m", choices[(int)AnalysisMethod.KnownM]));
             ps.Add(new DBParamEntry("multiplicity", choices[(int)AnalysisMethod.Multiplicity]));
@@ -320,14 +319,14 @@ namespace AnalysisDefs
         static bool[] calib;
         static AnalysisMethods()
         {
-            calib = new bool[System.Enum.GetValues(typeof(AnalysisMethod)).Length];
+            calib = new bool[Enum.GetValues(typeof(AnalysisMethod)).Length];
 
             calib[(int)AnalysisMethod.CalibrationCurve] = true;
             calib[(int)AnalysisMethod.KnownA] = true;
             calib[(int)AnalysisMethod.Active] = true;
             calib[(int)AnalysisMethod.AddASource] = true;
 
-            massoutlier = new bool[System.Enum.GetValues(typeof(AnalysisMethod)).Length];
+            massoutlier = new bool[Enum.GetValues(typeof(AnalysisMethod)).Length];
             massoutlier[(int)AnalysisMethod.CalibrationCurve] = true;
             massoutlier[(int)AnalysisMethod.KnownA] = true;
             massoutlier[(int)AnalysisMethod.KnownM] = true;
@@ -361,7 +360,7 @@ namespace AnalysisDefs
 
         public class CurveEquationVals : INCCMethodDescriptor
         {
-            public INCCAnalysisParams.CurveEquation cal_curve_equation;
+            public CurveEquation cal_curve_equation;
             protected double[] coeff;
             protected double[] var;
             public double[,] _covar;
@@ -422,7 +421,7 @@ namespace AnalysisDefs
 
             public CurveEquationVals()
             {
-                int coeffnum = System.Enum.GetValues(typeof(Coeff)).Length;
+                int coeffnum = Enum.GetValues(typeof(Coeff)).Length;
                 coeff = new double[coeffnum];
                 coeff[1] = 1;
                 var = new double[coeffnum];
@@ -434,7 +433,7 @@ namespace AnalysisDefs
 
             public CurveEquationVals(CurveEquationVals src)
             {
-                int coeffnum = System.Enum.GetValues(typeof(Coeff)).Length;
+                int coeffnum = Enum.GetValues(typeof(Coeff)).Length;
                 coeff = new double[coeffnum];
                 var = new double[coeffnum];
                 _covar = (double[,])Array.CreateInstance(typeof(double), coeffnum, coeffnum);
@@ -471,9 +470,9 @@ namespace AnalysisDefs
             }
 
             // new, carry analysis state with the values
-            public INCCAnalysisParams.CalCurveResult Status;
+            public CalCurveResult Status;
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 0, INCCStyleSection.ReportSection.MethodResults);
                 //sec.AddHeader("-- curve calibration parameters");  // section header
@@ -501,7 +500,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "cev";
+                Table = "cev";
                 ps.Add(new DBParamEntry("cal_curve_equation", (int)cal_curve_equation));
                 ps.Add(new DBParamEntry("a", a));
                 ps.Add(new DBParamEntry("b", b));
@@ -531,10 +530,10 @@ namespace AnalysisDefs
         {
             // holder of the shared values and methods, whatever they may be
             // the old INCC report output style label -> value(s), convert to lines by ToString() on each row entry
-            public virtual List<NCCReporter.Row> ToLines(Measurement m) { return new List<NCCReporter.Row>(); }
+            public virtual List<Row> ToLines(Measurement m) { return new List<Row>(); }
 
             // suitable for spreadsheet use, convert to lines by ToString() on each row entry
-            public virtual List<NCCReporter.Row> ToColumns(Measurement m) { return new List<NCCReporter.Row>(); }
+            public virtual List<Row> ToColumns(Measurement m) { return new List<Row>(); }
 
             // implement in subclass
             public virtual void CopyTo(INCCMethodDescriptor imd) { }
@@ -561,8 +560,8 @@ namespace AnalysisDefs
             {
                 cev = new CurveEquationVals();
                 ring_ratio = new CurveEquationVals();
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
                 alpha_wt = 1.0;
                 k = 2.166;
                 lower_corr_factor_limit = 0.0;
@@ -574,8 +573,8 @@ namespace AnalysisDefs
             {
                 cev = new CurveEquationVals(src.cev);
                 ring_ratio = new CurveEquationVals(src.ring_ratio);
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
                 Array.Copy(src.dcl_mass, dcl_mass, dcl_mass.Length);
                 Array.Copy(src.doubles, doubles, dcl_mass.Length);
                 alpha_wt = src.alpha_wt;
@@ -606,7 +605,7 @@ namespace AnalysisDefs
                 kar.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
@@ -641,7 +640,7 @@ namespace AnalysisDefs
             public override void GenParamList() 
             {
                 base.GenParamList();
-                this.Table = "known_alpha_rec";
+                Table = "known_alpha_rec";
                 ps.Add(new DBParamEntry("alpha_wt", alpha_wt));
                 ps.Add(new DBParamEntry("rho_zero", rho_zero));
                 ps.Add(new DBParamEntry("k", k));
@@ -683,7 +682,7 @@ namespace AnalysisDefs
         }
         public class multiplicity_rec : INCCMethodDescriptor
         {
-            public INCCAnalysisParams.MultChoice solve_efficiency;
+            public MultChoice solve_efficiency;
             public double sf_rate;
             public double vs1;
             public double vs2;
@@ -717,7 +716,7 @@ namespace AnalysisDefs
 
             public multiplicity_rec(multiplicity_rec src)
             {
-                this.sf_rate = src.sf_rate;
+                sf_rate = src.sf_rate;
                 vs1 = src.vs1;
                 vs2 = src.vs2;
                 vs3 = src.vs3;
@@ -790,7 +789,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "multiplicity_rec";
+                Table = "multiplicity_rec";
 
                 ps.Add(new DBParamEntry("solve_efficiency", (int)solve_efficiency));
                 ps.Add(new DBParamEntry("sf_rate", sf_rate));
@@ -837,7 +836,7 @@ namespace AnalysisDefs
                 tgt.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
@@ -852,7 +851,7 @@ namespace AnalysisDefs
              public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "truncated_mult_rec";
+                Table = "truncated_mult_rec";
                 ps.Add(new DBParamEntry("a", a));
                 ps.Add(new DBParamEntry("b", b)); ;
                 ps.Add(new DBParamEntry("known_eff", known_eff)); ;
@@ -921,7 +920,7 @@ namespace AnalysisDefs
                 tgt.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
@@ -940,7 +939,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "known_m_rec";
+                Table = "known_m_rec";
                 ps.Add(new DBParamEntry("sf_rate", sf_rate));
                 ps.Add(new DBParamEntry("b", b));
                 ps.Add(new DBParamEntry("c", c));
@@ -963,14 +962,14 @@ namespace AnalysisDefs
             public double[] dcl_mass;
             public double[] doubles;
             public CurveEquationVals cev;
-            public INCCAnalysisParams.CalCurveType CalCurveType;
+            public CalCurveType CalCurveType;
 
             public cal_curve_rec()
             {
                 CalCurveType = CalCurveType.STD;
                 cev = new CurveEquationVals();
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
             }
 
             public cal_curve_rec(cal_curve_rec src)
@@ -981,8 +980,8 @@ namespace AnalysisDefs
                 percent_u235 = src.percent_u235;
                 CalCurveType = src.CalCurveType;
                 cev = new CurveEquationVals(src.cev);
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
                 Array.Copy(src.dcl_mass, dcl_mass, dcl_mass.Length);
                 Array.Copy(src.doubles, doubles, doubles.Length);
             }
@@ -1005,7 +1004,7 @@ namespace AnalysisDefs
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Passive calibration curve calibration parameters");
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
                 if (CalCurveType == CalCurveType.HM)
                 {
@@ -1016,7 +1015,7 @@ namespace AnalysisDefs
                 {
                     sec.AddTwo("% U235:", percent_u235);
                 }
-                sec.AddTwo("", String.Format("Analysis based on {0} rates.", cev.useSingles ? "singles" : "doubles"));
+                sec.AddTwo("", string.Format("Analysis based on {0} rates.", cev.useSingles ? "singles" : "doubles"));
 
                 return sec;
             }
@@ -1025,7 +1024,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "cal_curve_rec";
+                Table = "cal_curve_rec";
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
 
@@ -1059,7 +1058,7 @@ namespace AnalysisDefs
                 cm_pu_ratio_date = new DateTime(2014, 01, 01);
                 cm_u_ratio = new Tuple(1,0);
                 cm_u_ratio_date = new DateTime(2014, 01, 01);
-                cm_id_label = String.Empty; cm_id = String.Empty; cm_input_batch_id = String.Empty;
+                cm_id_label = string.Empty; cm_id = string.Empty; cm_input_batch_id = string.Empty;
                 pu_half_life = (Isotopics.PU240HL / Isotopics.DAYS_PER_YEAR);
             }
 
@@ -1070,10 +1069,10 @@ namespace AnalysisDefs
                 cm_pu_ratio_date = new DateTime(src.cm_pu_ratio_date.Ticks);
                 cm_u_ratio = new Tuple(src.cm_u_ratio);
                 cm_u_ratio_date = new DateTime(src.cm_u_ratio_date.Ticks);
-                cm_id_label = String.Copy(src.cm_id_label);
-                cm_id = String.Copy(src.cm_id);
-                cm_input_batch_id = String.Copy(src.cm_input_batch_id);
-                cm_id_label = String.Copy(src.cm_id_label);
+                cm_id_label = string.Copy(src.cm_id_label);
+                cm_id = string.Copy(src.cm_id);
+                cm_input_batch_id = string.Copy(src.cm_input_batch_id);
+                cm_id_label = string.Copy(src.cm_id_label);
                 cm_dcl_u_mass = src.cm_dcl_u_mass;
                 cm_dcl_u235_mass = src.cm_dcl_u235_mass;
             }
@@ -1085,10 +1084,10 @@ namespace AnalysisDefs
                 tgt.cm_pu_ratio_date = new DateTime(cm_pu_ratio_date.Ticks);
                 tgt.cm_u_ratio = new Tuple(cm_u_ratio);
                 tgt.cm_u_ratio_date = new DateTime(cm_u_ratio_date.Ticks);
-                tgt.cm_id_label = String.Copy(cm_id_label);
-                tgt.cm_id = String.Copy(cm_id);
-                tgt.cm_input_batch_id = String.Copy(cm_input_batch_id);
-                tgt.cm_id_label = String.Copy(cm_id_label);
+                tgt.cm_id_label = string.Copy(cm_id_label);
+                tgt.cm_id = string.Copy(cm_id);
+                tgt.cm_input_batch_id = string.Copy(cm_input_batch_id);
+                tgt.cm_id_label = string.Copy(cm_id_label);
                 tgt.cm_dcl_u_mass = cm_dcl_u_mass;
                 tgt.cm_dcl_u235_mass = cm_dcl_u235_mass;
 
@@ -1129,11 +1128,11 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "cm_pu_ratio_rec";
-                ps.AddRange(DBParamList.TuplePair(cm_pu_ratio, "cm_pu_ratio"));
+                Table = "cm_pu_ratio_rec";
+                ps.AddRange(TuplePair(cm_pu_ratio, "cm_pu_ratio"));
                 ps.Add(new DBParamEntry("pu_half_life", pu_half_life));
                 ps.Add(new DBParamEntry("cm_pu_ratio_date", cm_pu_ratio_date));
-                ps.AddRange(DBParamList.TuplePair(cm_u_ratio, "cm_u_ratio"));
+                ps.AddRange(TuplePair(cm_u_ratio, "cm_u_ratio"));
                 ps.Add(new DBParamEntry("cm_u_ratio_date", cm_u_ratio_date));
                 ps.Add(new DBParamEntry("cm_id_label", cm_id_label));
                 ps.Add(new DBParamEntry("cm_id", cm_id));
@@ -1142,7 +1141,7 @@ namespace AnalysisDefs
                 ps.Add(new DBParamEntry("dcl_u235_mass", cm_dcl_u235_mass));
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Standard);
                 sec.AddTwo(cm_id_label, cm_id);
@@ -1182,18 +1181,18 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "curium_ratio_rec";
+                Table = "curium_ratio_rec";
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
                 ps.Add(new DBParamEntry("curium_ratio_type", (int)curium_ratio_type));
 
             }
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Curium Ratio parameters");
-                string s = String.Empty;
+                string s = string.Empty;
                 switch (curium_ratio_type)
                 {
                     case (CuriumRatioVariant.UseSingles):
@@ -1208,7 +1207,7 @@ namespace AnalysisDefs
             	}
 
                 sec.AddTwo("Curium Ratio Variant:", s); 
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
 
                 return sec;
@@ -1226,10 +1225,10 @@ namespace AnalysisDefs
 
             public de_mult_rec()
             {
-                neutron_energy = new double[INCCAnalysisParams.MAX_DUAL_ENERGY_ROWS];
-                detector_efficiency = new double[INCCAnalysisParams.MAX_DUAL_ENERGY_ROWS];
-                inner_outer_ring_ratio = new double[INCCAnalysisParams.MAX_DUAL_ENERGY_ROWS];
-                relative_fission = new double[INCCAnalysisParams.MAX_DUAL_ENERGY_ROWS];
+                neutron_energy = new double[MAX_DUAL_ENERGY_ROWS];
+                detector_efficiency = new double[MAX_DUAL_ENERGY_ROWS];
+                inner_outer_ring_ratio = new double[MAX_DUAL_ENERGY_ROWS];
+                relative_fission = new double[MAX_DUAL_ENERGY_ROWS];
             }
 
             public de_mult_rec(de_mult_rec src)
@@ -1253,7 +1252,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "de_mult_rec";
+                Table = "de_mult_rec";
                 ps.Add(new DBParamEntry("neutron_energy", neutron_energy));
                 ps.Add(new DBParamEntry("detector_efficiency", detector_efficiency));
                 ps.Add(new DBParamEntry("inner_outer_ring_ratio", inner_outer_ring_ratio));
@@ -1277,7 +1276,7 @@ namespace AnalysisDefs
         {
             public double dzero_avg;
             public double[] position_dzero;
-            public UInt16 num_runs;
+            public ushort num_runs;
             public CurveEquationVals cf; // a-d only
             public double tm_weighting_factor;
             public double tm_dbls_rate_upper_limit;
@@ -1292,18 +1291,18 @@ namespace AnalysisDefs
             {
                 cev = new CurveEquationVals();
                 cf = new CurveEquationVals();
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                position_dzero = new double[INCCAnalysisParams.MAX_ADDASRC_POSITIONS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
+                position_dzero = new double[MAX_ADDASRC_POSITIONS];
             }
 
             public add_a_source_rec(add_a_source_rec src)
             {
                 cev = new CurveEquationVals(src.cev);
                 cf = new CurveEquationVals(src.cf);
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                position_dzero = new double[INCCAnalysisParams.MAX_ADDASRC_POSITIONS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
+                position_dzero = new double[MAX_ADDASRC_POSITIONS];
                 Array.Copy(src.dcl_mass, dcl_mass, dcl_mass.Length);
                 Array.Copy(src.doubles, doubles, dcl_mass.Length);
                 Array.Copy(src.position_dzero, position_dzero, position_dzero.Length); 
@@ -1331,12 +1330,12 @@ namespace AnalysisDefs
                 imd.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Add-a-source calibration parameters");
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
                 sec.AddTwo("Number of add-a-source cycles:", this.num_runs);
                 sec.AddTwo("cf a:", cf.a);
@@ -1362,7 +1361,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "add_a_source_rec";
+                Table = "add_a_source_rec";
 
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
@@ -1410,12 +1409,12 @@ namespace AnalysisDefs
             }
 
             // todo: check for completeness with INCC5 output
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Active/Passive calibration curve calibration parameters");
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
                 return sec;
             }
@@ -1423,7 +1422,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "active_passive_rec";
+                Table = "active_passive_rec";
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
             }
@@ -1439,14 +1438,14 @@ namespace AnalysisDefs
             public active_rec()
             {
                 cev = new CurveEquationVals();
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
             }
 
             public active_rec(active_rec src)
             {
-                dcl_mass = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
-                doubles = new double[INCCAnalysisParams.MAX_NUM_CALIB_PTS];
+                dcl_mass = new double[MAX_NUM_CALIB_PTS];
+                doubles = new double[MAX_NUM_CALIB_PTS];
                 if (src == null)
                 {
                     cev = new CurveEquationVals();
@@ -1467,12 +1466,12 @@ namespace AnalysisDefs
                 imd.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Active calibration curve calibration parameters");
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
                 return sec;
             }
@@ -1480,7 +1479,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "active_rec";
+                Table = "active_rec";
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
                 ps.Add(new DBParamEntry("doubles", doubles));
@@ -1523,7 +1522,7 @@ namespace AnalysisDefs
             }
 
              // todo: check for INCC5 output completeness
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
@@ -1539,7 +1538,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "active_mult_rec";
+                Table = "active_mult_rec";
                 ps.Add(new DBParamEntry("vt1", vt1));
                 ps.Add(new DBParamEntry("vt2", vt2));
                 ps.Add(new DBParamEntry("vt3", vt3));
@@ -1580,7 +1579,7 @@ namespace AnalysisDefs
                 imd.modified = true;
             }
 
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Fixed); // uses E
@@ -1683,12 +1682,12 @@ namespace AnalysisDefs
             }
 
             // todo: implement INCC5 output
-            public override List<NCCReporter.Row> ToLines(Measurement m)
+            public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Exponent); // uses E
                 sec.AddHeader("Collar calibration curve calibration parameters");
-                List<NCCReporter.Row> cevlines = cev.ToLines(m);
+                List<Row> cevlines = cev.ToLines(m);
                 sec.AddRange(cevlines);
                 return sec;
             }
@@ -1858,7 +1857,7 @@ namespace AnalysisDefs
 				else  // can never get here lol
 				{
 					Pump = 0;
-					el = this.ToDBElementList(generate);
+					el = ToDBElementList(generate);
 				}
 				return el;
             }

@@ -1293,6 +1293,13 @@ namespace AnalysisDefs
                 meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
                 mcr.ComputeSums();
+				// APluralityOfMultiplicityAnalyzers: When a list mode sourced measurement is in use, and 
+				// cycle data comes from an prior analysis via a DB cycle source or Verification reanalysis, 
+				// doubles are computed using the LMSupport.SDTMultiplicityCalculator.
+				// Note that DAQ LM sourced INCC5 analyses will have the unnormalized Acc distro. 
+				// The method INCCAnalysis.CalcAveragesAndSums uses the unnormalized
+				// Acc distro (mcr.UnAMult), but in the two cases above there is only the normalized Acc and RealsAcc distros are present.
+				// So the *unnormalized distro* must be computed and placed on each cycle, then and only then are doubles calculated correctly.
                 INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
 			}
 

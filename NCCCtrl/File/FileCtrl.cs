@@ -139,10 +139,11 @@ namespace NCCFile
             try
             {
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults.First().Value;
-                for (int i = 0; i < mcr.RAMult.Length; i++)  // count again using the per-cycle accumulation of summary results
-                    mcr.RAMult[i] = 0;
-                for (int i = 0; i < mcr.NormedAMult.Length; i++)
-                    mcr.NormedAMult[i] = 0;
+                // count again using the per-cycle accumulation of summary results
+                Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
+                Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
+                Array.Clear(mcr.UnAMult, 0, mcr.UnAMult.Length);
+
                 m.Detector.Id.source = src;
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);

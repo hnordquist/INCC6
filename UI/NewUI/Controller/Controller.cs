@@ -296,7 +296,7 @@ namespace NewUI
 
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
-                applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
+                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
 
                 // specialized updater for UI or file
                 measFctrl.mProgressTracker.ReportProgress(100, "Completed");
@@ -340,15 +340,15 @@ namespace NewUI
 
             procFctrl.SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
+                NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
-                applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished]);
+                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished]);
 
                 // specialized updater for UI or file
                 procFctrl.mProgressTracker.ReportProgress(100, "Completed");
             });
 
-            NC.App.Opstate.SOH = NCC.OperatingState.Void;
+            NC.App.Opstate.SOH = OperatingState.Void;
             return true;
         }
 
@@ -448,7 +448,7 @@ namespace NewUI
                 {
                     s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
                 }
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
+                NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
                 applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
                 // specialized updater for UI or file
@@ -558,7 +558,7 @@ namespace NewUI
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 base.StartAction();
@@ -663,11 +663,11 @@ namespace NewUI
                 }
 
                 NC.App.Loggers.Flush();
-                NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
+                NC.App.Opstate.SOH = OperatingState.Stopped;
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
@@ -677,7 +677,7 @@ namespace NewUI
 
         void ThreadOp(object sender, DoWorkEventArgs ea)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 base.StartAction();
@@ -685,12 +685,12 @@ namespace NewUI
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }
-			base.Cleanup();
+			Cleanup();
         }
 
         void Done(object sender, RunWorkerCompletedEventArgs e)
