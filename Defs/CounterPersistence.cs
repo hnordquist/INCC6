@@ -42,12 +42,6 @@ namespace ListModeDB
             // set up the internal DB transfer state
         }        
 
-        // optionally implement an initial data load here,
-        // default is pieces are loaded as needed by calls through this class      
-        public void Populate(DB.Persistence pest)
-        {
-        }
-
         public static LMINCCAppContext AppContext
         {
             get

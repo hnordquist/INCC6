@@ -461,14 +461,30 @@ namespace NCC
             return good;
         }
 
-        public void LoadPersistenceConfig(DBConfig mynewdb)
+        public bool LoadPersistenceConfig(DBConfig mynewdb)
         {
             pest = new Persistence(Logger(LMLoggers.AppSection.DB), mynewdb);
             DB = new INCCDB();
-            DB.Populate(pest);
             lmdb = new LMDB();
-            lmdb.Populate(pest);
-            appctx = LMDB.AppContext;
+			bool there = false;
+			try
+			{
+				there = pest.IsItThere;
+				if (!there)
+				{
+					Console.WriteLine("Database using " + mynewdb.MyDBConnectionString + " unavailable");
+					Console.WriteLine(pest.IsItThereStr);					
+				}
+			}
+			catch (Exception ex)
+			{
+                Console.WriteLine("Database unavailable " + ex.Message);
+				if (!string.IsNullOrEmpty(pest.IsItThereStr))
+					Console.WriteLine(pest.IsItThereStr);					
+			}
+			if (there)
+				appctx = LMDB.AppContext;
+			return there;
         }
 
         public LMLoggers.LognLM Logger(LMLoggers.AppSection wp)
@@ -499,7 +515,7 @@ namespace NCC
         Config cfg;
         Persistence pest;
         INCCDB db;
-        ListModeDB.LMDB lmdb;
+        LMDB lmdb;
         string name;
 
         public CentralizedState(string AppName)
@@ -671,7 +687,8 @@ namespace NCC
         {
             if (meas.Detector.ListMode)
             {
-				// URGENT: APluralityOfMultiplicityAnalyzers: see next line
+				// APluralityOfMultiplicityAnalyzers: see below
+				// URGENT: see below
 				//if (an INCC5 DB cycle read or DB Ver reanalysis then rebuild the analyzers from the associated saved LM results:) 
 				//	object x = CentralizedState.App.DB.GetAnalyzersFromResults(meas.Detector, meas.MeasurementId);
 				//else

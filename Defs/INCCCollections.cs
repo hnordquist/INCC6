@@ -3416,7 +3416,7 @@ namespace AnalysisDefs
     /// <summary>
     /// Root of access to basic INCC persistent storage, tries to hide DB details LOL
     /// </summary>
-    public partial class   INCCDB
+    public partial class INCCDB
     {
         public INCCDB()
         {
@@ -3462,11 +3462,6 @@ namespace AnalysisDefs
         public static string UpdateFrag(bool good)
         {
             return good ? "Updated" : "Failed to update";
-        }
-        // optionally implement an initial data load here,
-        // default is pieces are loaded as needed by calls through this class      
-        public void Populate(DB.Persistence pest)
-        {
         }
 
         // detectors (alpha/beta should attach to these but is on MultRes for now)

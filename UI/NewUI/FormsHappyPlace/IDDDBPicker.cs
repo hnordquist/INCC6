@@ -67,23 +67,32 @@ namespace NewUI
                     bool success = false;
                     foreach (var f in files)
                     {
-                        String s = (String)f;
+                        string s = (string)f;
                         if (s.ToLower().Contains("incc6"))
                         {
                             //OK, so was failing when pointing to a dir with another file containing 'incc', just or them.
                             success = success || NC.App.Pest.SwitchDB(f);
                             if (success)
                             {
-                                NCCConfig.DBConfig dbnew = NC.App.Config.DB;
-                                NC.App.LoadPersistenceConfig(dbnew);
-                                NC.App.Config.RetainChanges();
-                                TextBoxDatabaseFile.Text = GetDBFileFromConxString (dbnew.MyDBConnectionString);
+								if (NC.App.Config == null)
+									success = false;
+								else
+								{
+									NCCConfig.DBConfig dbnew = NC.App.Config.DB;
+									if (!NC.App.LoadPersistenceConfig(dbnew))
+										success = false;
+									else
+									{
+										NC.App.Config.RetainChanges();
+										TextBoxDatabaseFile.Text = GetDBFileFromConxString (dbnew.MyDBConnectionString);
+									}
+								}
                             }
                         }
                     }
                     if (!success)
                     {
-                        MessageBox.Show("No INCC6 database was found at the selected location.  Keeping current DB connection", "WARNING");
+                        MessageBox.Show("No INCC6 database was found at the selected location. Keeping current DB connection", "WARNING");
                     }
         }
 

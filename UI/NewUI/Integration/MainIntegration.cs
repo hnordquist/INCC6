@@ -167,38 +167,47 @@ namespace NewUI
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            UIIntegration.Controller = new Controller();
-            UIIntegration.Controller.Initialize(this);
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			UIIntegration.Controller = new Controller();
+			if (UIIntegration.Controller.Initialize(this))
+			{
+				EnableLog.IsChecked = NC.App.AppContext.Logging;
+				logLevels.SelectedIndex = NC.App.AppContext.LevelAsUInt16;
+				logResults.SelectedIndex = NC.App.AppContext.LogResults;
+				((Window)sender).Title = NCC.IntegrationHelpers.GetAppTitle();
+				// Find the WPF trace listener
+				WPFTraceListener listener = null;
 
-            EnableLog.IsChecked = NC.App.AppContext.Logging;
-            logLevels.SelectedIndex = NC.App.AppContext.LevelAsUInt16;
-            logResults.SelectedIndex = NC.App.AppContext.LogResults;
+				foreach (LMLoggers.AppSection source in Enum.GetValues(typeof(LMLoggers.AppSection)))
+				{
+					foreach (TraceListener l in NC.App.Logger(source).TS.Listeners)
+					{
+						if (l is WPFTraceListener)
+						{
+							listener = (WPFTraceListener)l;
+							break;
+						}
+					}
+				}
+				if (listener != null)
+				{
+					loggingListBox.DataContext = listener;
+				}
+				Splash pauseme = new Splash();
+				pauseme.ShowDialog();
+			}
+			else
+			{
+				EnableLog.IsEnabled = false;
+				System.Windows.Controls.DockPanel d = ((System.Windows.Controls.DockPanel)Content);
+				System.Windows.Controls.Menu m = (System.Windows.Controls.Menu)d.Children[0];
+				m.IsEnabled = false;
+				System.Windows.MessageBox.Show(DateTimeOffset.Now.ToString("yyyy-MM-dd HH:mm:ss") + " App Error\r\n" + NC.App.Pest.IsItThereStr, "ERROR");
+			}
+		}
 
-            ((Window)sender).Title = NCC.IntegrationHelpers.GetAppTitle();
-            // Find the WPF trace listener
-            WPFTraceListener listener = null;
-
-            foreach (LMLoggers.AppSection source in Enum.GetValues(typeof(LMLoggers.AppSection))) {
-                foreach (TraceListener l in NC.App.Logger(source).TS.Listeners) {
-                    if (l is WPFTraceListener) {
-                        listener = (WPFTraceListener) l;
-                        break;
-                    }
-                }
-            }
-
-            if (listener != null) {
-                loggingListBox.DataContext = listener;
-            }
-
-            Splash pauseme = new NewUI.Splash();
-            pauseme.ShowDialog();
-
-        }
-
-        delegate void SetBooleanCB(bool enable);
+		delegate void SetBooleanCB(bool enable);
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -207,7 +216,7 @@ namespace NewUI
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (NC.App.AppContext.modified)
+            if (NC.App.AppContext != null && NC.App.AppContext.modified)
                 NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
             if (UIIntegration.Controller != null)
                 UIIntegration.Controller.Close();

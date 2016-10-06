@@ -437,13 +437,16 @@ namespace DB
                 sql_da.SelectCommand = sql_cmd;
                 int i = sql_da.Fill(DT);
             }
-            catch (Exception)
+            catch (Exception caught)
             {
 				DT = null;
+				DTIString = caught.Message;
+                DBMain.AltLog(LogLevels.Warning, 70193, "DTI '" + caught.Message + "'");
 			}
             if (sql_con != null) sql_con.Close();
             return (DT);
         }
+		public string DTIString;
 
         public string Scalar(string sSQL)
         {
@@ -839,7 +842,7 @@ namespace DB
             {
                 try
                 {
-                    DBMain.AltLog(LogLevels.Warning, 70103, "DT '" + caught.Message + "' " + sSQL);
+                    DBMain.AltLog(LogLevels.Warning, 78103, "DT '" + caught.Message + "' " + sSQL);
                 }
                 catch { }
             }
@@ -1092,10 +1095,6 @@ namespace DB
                 return -1;
             }
         }
-
-        //public class Enclosure : IDisposable
-        //{
-        //}
 
     }
 

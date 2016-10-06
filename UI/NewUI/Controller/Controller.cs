@@ -153,7 +153,8 @@ namespace NewUI
             Array.Copy(fullargs, 1, args, 0, args.Length);
             
             NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
-            NC.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
+            if (!NC.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
+				return false;
             c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
             bool initialized = NC.App.Initialize(c);
             if (!initialized)
@@ -183,14 +184,16 @@ namespace NewUI
         /// <summary>
         /// Load LM config state and create DAQ and FileCtrl controller instances
         /// </summary>
-        public void Initialize(Object mainWindowForm)
+        public bool Initialize(object mainWindowForm)
         {
             if (LoadConfiguration())
             {
                 InitializeFileControllers();
                 InitializeDAQController();
                 measStatus = new MeasurementStatus();
+				return true;
             }
+			return false;
         }
 
         delegate void ActionCB();
@@ -479,11 +482,13 @@ namespace NewUI
         public void Close()
         {
             NC.App.Opstate.SOH = OperatingState.Stopped;
-            NC.App.Config.RetainChanges();
-            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
-            applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
-            NC.App.Loggers.Flush();
-            //DisconnectUILogger = true;
+            if (NC.App.Config != null)
+			{
+				NC.App.Config.RetainChanges();
+		        LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+	            applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
+				NC.App.Loggers.Flush();
+			}
         }
 
     }

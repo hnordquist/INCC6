@@ -43,7 +43,8 @@ namespace NCCCmd
 			new N("INCC6 Console");
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
-			N.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
+			if (!N.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
+				return;
 			c.AfterDBSetup(N.App.AppContext, args);  // apply the cmd line 
             string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
             if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths

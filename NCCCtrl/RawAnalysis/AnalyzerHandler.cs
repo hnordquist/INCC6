@@ -1646,7 +1646,7 @@ namespace LMRawAnalysis
         /// Do a full GC.Collect, but only if the current allocated memory size exceeds a certain ceiling, 512Mb default)
         /// </summary>
         /// <param name="MbCeiling"></param>
-        void AHGCCollect(long MbCeiling = 512)
+        void AHGCCollect(long MbCeiling = 384)
         {
             long mem = GC.GetTotalMemory(false);
             log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
