@@ -1213,7 +1213,7 @@ enditall:
                         {
                             s = sortedpulse.reader.ReadLine();
                             double res = 0;
-                            if (Double.TryParse(s, out res))
+                            if (double.TryParse(s, out res))
                             {
                                 pps.timeInBuffer[rb++] = res;
                             }
@@ -1381,7 +1381,7 @@ enditall:
 						s += ";  " + cipss.iss.asy.cpss.HitsPerChnImage();
 				}
 			}
-			catch (System.ObjectDisposedException)
+			catch (ObjectDisposedException)
 			{
 			}
 			return s;
@@ -1426,7 +1426,7 @@ enditall:
                 if (channels && cipss.HasProcessingStatus)
                     s += ";  " + cipss.iss.asy.cpss.HitsPerChnImage();
             }
-            catch (System.ObjectDisposedException)
+            catch (ObjectDisposedException)
             {
             }
             return s;
@@ -1475,11 +1475,11 @@ enditall:
                 else if (o is Measurement)
                 {
                     Measurement m = (Measurement)o;
-                    ss = FileCtrl.MeasStatusString(m);
+                    ss = MeasStatusString(m);
                 }
                 s += ss;
             }
-            log.TraceEvent(lvl, FileCtrl.logid[EH], s);
+            log.TraceEvent(lvl, logid[EH], s);
             return s;  // just in case it could be of further use
         }
 
@@ -1497,7 +1497,7 @@ enditall:
                 else if (o is Measurement)
                 {
                     Measurement m = (Measurement)o;
-                    ss = FileCtrl.MeasStatusString(m);
+                    ss = MeasStatusString(m);
                 }
                 s += ss;
             }            

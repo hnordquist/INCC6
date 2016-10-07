@@ -170,14 +170,6 @@
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn
-                                        DisplayMemberBinding="{Binding DateTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
-                                        Header="Time"
-                                        Width="150"/>
-                                <GridViewColumn
-                                        DisplayMemberBinding="{Binding Source}"
-                                        Header="Source"
-                                        Width="100"/>
-                                <GridViewColumn
                                         DisplayMemberBinding="{Binding EventType}"
                                         Header="Type"
                                         Width="100"/>
@@ -185,6 +177,14 @@
                                         DisplayMemberBinding="{Binding Message}"
                                         Header="Message"
                                         Width="800"/>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding DateTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}"
+                                        Header="Time"
+                                        Width="150"/>
+                                <GridViewColumn
+                                        DisplayMemberBinding="{Binding Source}"
+                                        Header="Source"
+                                        Width="100"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

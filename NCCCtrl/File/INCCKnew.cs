@@ -3204,7 +3204,7 @@ namespace NCCTransfer
 
             #region results transfer
             INCCMethodResults imr;
-            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr);
+            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr); // only ever this single mkey for INCC5-style transfer import, (thankfully)
             if (got)
                 imr.primaryMethod = OldToNewMethodId(results.primary_analysis_method);
             // check these results against the meas.MeasOption expectation => seems to always be 1 - 1 with (opt, sr) -> results, and subresults only for verif and calib choice

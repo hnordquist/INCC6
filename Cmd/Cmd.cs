@@ -81,6 +81,7 @@ namespace NCCCmd
 			try
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
+				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)

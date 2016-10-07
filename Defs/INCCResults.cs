@@ -525,7 +525,7 @@ namespace AnalysisDefs
                 meas_option = m.MeasOption;
 
                 INCCMethodResults imr;
-                if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // devnote: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 
+                if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // APluralityOfMultiplicityAnalyzers: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 
                     primary = imr.primaryMethod;
 
 				original_meas_date = new DateTimeOffset(acq.MeasDateTime.Ticks, acq.MeasDateTime.Offset);

@@ -426,7 +426,7 @@ namespace DB
             return (DT);
         }
 
-		public DataTable DTI(string sSQL)
+		public DataTable DBProbe(string sSQL)
         {
             DataTable DT = new DataTable();
             try
@@ -436,17 +436,20 @@ namespace DB
                 sql_cmd.CommandText = sSQL;
                 sql_da.SelectCommand = sql_cmd;
                 int i = sql_da.Fill(DT);
+				string s = "Database:" + sql_con.Database + ", DataSource:" + sql_con.DataSource.ToString() + ", ServerVersion:" + sql_con.ServerVersion;
+				DBDescStr = sql_da.GetType().FullName + "; " + s + " (" + sql_con.ConnectionString + ")";
             }
             catch (Exception caught)
             {
 				DT = null;
-				DTIString = caught.Message;
-                DBMain.AltLog(LogLevels.Warning, 70193, "DTI '" + caught.Message + "'");
+				DBErrorStr = caught.Message;
+                DBMain.AltLog(LogLevels.Warning, 70193, "DBProbe '" + caught.Message + "'");
 			}
             if (sql_con != null) sql_con.Close();
             return (DT);
         }
-		public string DTIString;
+		public string DBErrorStr;
+		public string DBDescStr;
 
         public string Scalar(string sSQL)
         {
@@ -712,7 +715,7 @@ namespace DB
         /// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas, mod results_curium_ratio_rec and cm_pu_ratio_rec
         /// 6.0.1.12		new tables collar_detector_rec_m and collar_k5_rec_m (for results), type name change: ntext to nvarchar
         /// 6.0.1.12		added aux_method to analysis_method_rec table (Jul 14, 2016)
-        /// 6.0.1.16		added LMMultiplicity_m, CountingParams_m tables, keys for same orig, lmid FK field to Cycles for keeping VSR results, Unnormalized accidentals distros for VSR results 
+        /// 6.0.1.16/6.0.16 added LMMultiplicity_m, CountingParams_m tables, keys for same orig, lmid FK field to Cycles for keeping VSR results, Unnormalized accidentals distros for VSR results 
         /// </summary>
         /// <param name="table"></param>
         /// <param name="col"></param>
@@ -720,7 +723,7 @@ namespace DB
         public bool TableHasColumn(string table, string col)
 		{
 			string sql = "select " + col + " from " + table;
-			DataTable dt = DTI(sql);
+			DataTable dt = DBProbe(sql);
 			return dt != null && dt.Columns.Contains(col);
 			//return dt.Rows.Count > 0;
 		}

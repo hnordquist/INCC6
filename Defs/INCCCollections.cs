@@ -4507,16 +4507,6 @@ namespace AnalysisDefs
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
 
-        public bool AddCycles(CycleList cl, Detector det, Measurement m)
-        {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = m.MeasurementId.UniqueId;
-            if (mid <= 0)
-                return false;
-
-            return AddCycles(cl, det.MultiplicityParams, mid, -1, ms);
-        }
-
        public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
         {
             if (db == null)

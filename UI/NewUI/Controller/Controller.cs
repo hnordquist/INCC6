@@ -38,9 +38,9 @@ using NCCReporter;
 namespace NewUI
 {
 
-	using NC = NCC.CentralizedState;
+	using NC = CentralizedState;
 
-	public delegate void UILoggingFunc(String s, bool newline = false);
+	public delegate void UILoggingFunc(string s, bool newline = false);
 
 
     public partial class Controller
@@ -162,7 +162,8 @@ namespace NewUI
 
             NC.App.Logger(LMLoggers.AppSection.App).
                 TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " " + NC.App.Config.VersionString);
-            // TODO: log DB details at startup too 
+            NC.App.Logger(LMLoggers.AppSection.App).
+				TraceInformation("==== DB " + NC.App.Pest.DBDescStr);
             return true;
         }
 
@@ -260,7 +261,7 @@ namespace NewUI
                 string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
-				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
 				try
 				{
                     measFctrl.mProgressTracker.ReportProgress(per, // a % est of files
@@ -403,13 +404,13 @@ namespace NewUI
 					case NCCAction.HVCalibration:
 						if (measStatus.snaps.iss != null && measStatus.snaps.iss.hv != null)
 						{
-							per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.snaps.iss.hv.HVread - 1) / (double)measStatus.snaps.iss.hv.HVsetpt))));
+							per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.snaps.iss.hv.HVread - 1) / measStatus.snaps.iss.hv.HVsetpt))));
 							daqbind.mProgressTracker.ReportProgress(per, // a % est of steps
 								string.Format("{0} volts, with max voltage {1} {2}", measStatus.snaps.iss.hv.HVread, measStatus.snaps.iss.hv.HVsetpt, s2));
 						}
 						break;
 					default:
-						per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+						per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((double)(measStatus.CurrentRepetition - 1) / measStatus.RequestedRepetitions))));
 						daqbind.mProgressTracker.ReportProgress(per, // a % est of files
 							string.Format("{0} of {1} {2}", measStatus.CurrentRepetition, measStatus.RequestedRepetitions, s2)); // dev note: need a better focused description of the state
 						break;
@@ -453,7 +454,8 @@ namespace NewUI
                 }
                 NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
-                applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
+                daqbind.mProgressTracker.ReportProgress(100, s);
+                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
                 // specialized updater for UI or file
                 daqbind.mProgressTracker.ReportProgress(100, s);
 
@@ -571,7 +573,7 @@ namespace NewUI
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();

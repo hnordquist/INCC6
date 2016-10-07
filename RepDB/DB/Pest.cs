@@ -230,13 +230,16 @@ namespace DB
 			get
 			{
 				DB db = new DB(true);
-				DataTable dt = db.DTI("select name from facility_names");
+				DataTable dt = db.DBProbe("select name from facility_names");
 				if (dt == null)
-					IsItThereStr = db.DTIString;
+					IsItThereStr = db.DBErrorStr;
+				else
+					DBDescStr = db.DBDescStr;
 				return dt != null;
 			}
 		}
 		public string IsItThereStr;
+		public string DBDescStr;
 
 	}
 }

@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 16
-6.0.16 Sep 27, 2016 (NDATest)
+6.17 Oct 27, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -131,7 +131,9 @@ List mode:
 
 Closed issues
 
-6.0.16 (6.0.1.16) Sep 30, 2016  ************
+6.17.days since Jan 1 2000 (6.0.17) Oct 27, 2016  ************
+
+6.0.16 (6.0.1.16) Sep 27, 2016  ************
 ***  Issue with empty mtl type on collar params seen
 ***  Reanalysis now uses stored List Mode SR params
 ***  Current detector and related acquire state sometimes not restored
