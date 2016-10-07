@@ -131,7 +131,10 @@ List mode:
 
 Closed issues
 
-6.17.days since Jan 1 2000 (6.0.17) Oct 27, 2016  ************
+6.17 (6.0.17) Oct 27, 2016  ************
+***  Log database details at start up
+***  Improved missing database handling and reporting
+
 
 6.0.16 (6.0.1.16) Sep 27, 2016  ************
 ***  Issue with empty mtl type on collar params seen

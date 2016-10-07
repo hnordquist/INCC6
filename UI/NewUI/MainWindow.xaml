@@ -126,7 +126,7 @@
             <MenuItem Header="_Help" IsEnabled="True">
                 <MenuItem Header="_Topics" Click="HelpTopicsClick" IsEnabled="True"/>
                 <MenuItem Header="_Procedures" Click="HelpProceduresClick" IsEnabled="False"/>
-                <MenuItem Header="_App Info" Click="HelpAppInfoClick" IsEnabled="False"/>
+                <MenuItem Header="_App Info" Click="HelpAppInfoClick" IsEnabled="True"/>
                 <MenuItem Header="_About INCC" Click="HelpAboutINCCClick" IsEnabled="True"/>
             </MenuItem>
         </Menu>

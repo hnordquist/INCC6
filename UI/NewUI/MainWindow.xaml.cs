@@ -540,8 +540,11 @@ namespace NewUI
 
         private void HelpAppInfoClick(object sender, RoutedEventArgs e)
         {
-            IDDHelpInfoDialog f = new IDDHelpInfoDialog();
-            f.Show();
+            //IDDHelpInfoDialog f = new IDDHelpInfoDialog();
+            //f.Show();
+            string[] x = NCCConfig.Config.ShowCfgLines(NC.App.Config, true, true);
+			foreach(string s in x)			
+				NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 0, s);
         }
 
         private void HelpAboutINCCClick(object sender, RoutedEventArgs e)

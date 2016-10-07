@@ -35,7 +35,6 @@ namespace NewUI
         public IDDHelpInfoDialog()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

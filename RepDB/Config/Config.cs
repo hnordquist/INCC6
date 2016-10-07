@@ -226,7 +226,7 @@ namespace NCCConfig
 			string[] a = new string[0];
 			string[] b = new string[0];
 			bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
-			System.Configuration.Configuration config =
+			Configuration config =
 			  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			if (config.HasFile)
 			{
