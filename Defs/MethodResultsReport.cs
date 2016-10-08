@@ -63,19 +63,17 @@ namespace AnalysisDefs
         enum ComputedValueColumns { Primary, Err };
         enum ComputedIsoColumns { Declared, DecErr, Updated, UpErr };
 
-        protected Array selectedReportSections;
+        protected Array SelectedReportSections;
 
         public List<List<string>> INCCResultsReports;
 
-        public MethodResultsReport(NCCReporter.LMLoggers.LognLM ctrllog)
+        public MethodResultsReport(LMLoggers.LognLM ctrllog)
             : base(ctrllog)
         {
             INCCResultsReports = new List<List<string>>();
-			selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(INCCReportSection)).Length);
-            foreach (ValueType v in System.Enum.GetValues(typeof(INCCReportSection)))
-            {
-                selectedReportSections.SetValue(false, (int)v);
-            }
+			SelectedReportSections = Array.CreateInstance(typeof(bool), Enum.GetValues(typeof(INCCReportSection)).Length);
+            foreach (ValueType v in Enum.GetValues(typeof(INCCReportSection)))
+                SelectedReportSections.SetValue(false, (int)v);
         }
 
 		public void ApplyReportSectionSelections(bool[] sections)
@@ -83,9 +81,7 @@ namespace AnalysisDefs
             if (sections == null)
                 return;
             for (int i = 0; i < sections.Length; i++)
-			{
-                selectedReportSections.SetValue(sections[i], i);
-            }
+                SelectedReportSections.SetValue(sections[i], i);
 		}
 
 
@@ -94,9 +90,9 @@ namespace AnalysisDefs
             INCCStyleSection sec = null;
             try
             {
+                if ((bool)SelectedReportSections.GetValue((int)section))
                 switch (section)
                 {
-
                     // An identical copy of full INCC report sections
                     case INCCReportSection.SummedRawData:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Summary);
@@ -302,6 +298,8 @@ namespace AnalysisDefs
 
         protected Section ConstructReportSection(INCCReportSection section, Detector det, MeasOptionSelector moskey = null)
         {
+            if (!(bool)SelectedReportSections.GetValue((int)section))
+                return null;
             if (moskey == null)
                 return ConstructReportSectionI(section, det);
             else

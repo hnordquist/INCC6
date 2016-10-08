@@ -83,7 +83,7 @@ namespace NewUI
 			InitializeComponent();
 			SummarySelections = null;
 			InitSort();
-		}
+        }
 
 		private List<Measurement> mlist;
 		protected LMLoggers.LognLM ctrllog;
@@ -93,8 +93,9 @@ namespace NewUI
 		EndGoal Goal = EndGoal.Summary; // summary implies all detectors        
 		bool LMOnly = false;
 		public bool bGood = false;
+        public ReportSectional Sections;
 
-		void InitSort()
+        void InitSort()
 		{
 			cols = new SortOrder[listView1.Columns.Count];
 			for (int i = 0; i < cols.Length; i++)
@@ -106,7 +107,7 @@ namespace NewUI
 		{
 			string upthehill = "Measurement Selection for Detector";
 			string backwards = "Measurement Selection for All Detectors";
-			string itllbe = "Select Measurement for Detector";
+			string itwillbe = "Select Measurement for Detector";
 			string allright = "Select Measurements to Save for Detector";
 			AllMeas = alltypes;
 			Goal = goal;
@@ -117,7 +118,7 @@ namespace NewUI
 				title = backwards;
 			else if (Goal == EndGoal.Reanalysis)
 			{
-				title = itllbe;
+				title = itwillbe;
 				listView1.MultiSelect = false;
 			} else // if (Goal == EndGoal.Transfer)
 				title = allright;
@@ -244,7 +245,7 @@ namespace NewUI
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
 			if (Goal == EndGoal.Report)
-				ShowResults();
+				ShowReconstitutedResults();
 			else if (Goal == EndGoal.Summary)
 				WriteSummary();
 			else if (Goal == EndGoal.Reanalysis)
@@ -324,7 +325,39 @@ namespace NewUI
 			}
 		}
 
-		private string GetMainFilePath(ResultFiles files, AssaySelector.MeasurementOption mo, bool elide)
+        
+        private void ShowReconstitutedResults()
+        {
+            foreach (ListViewItem lvi in listView1.Items)
+            {
+                if (lvi.Selected)
+                {
+                    int lvIndex = 0;
+                    int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+                    Measurement m = mlist[lvIndex];
+                    m.AcquireState.review = Sections;
+                    if (Sections.CycleDataSelected)
+                    {
+                        CycleList cl = N.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+                        m.Add(cl);
+                    }
+                    m.ResultsFiles.Reset();
+                    new ReportMangler(ctrllog).GenerateReports(m);
+                    if (bNotepadHappensToBeThere)
+                    {
+                        string path = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
+                        if (File.Exists(path))
+                            System.Diagnostics.Process.Start(notepadPath, path);
+                        else if (!string.IsNullOrEmpty(path))
+                            ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
+                        else
+                            ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
+                    }
+                    lvi.Selected = false;
+                }
+            }
+        }
+        private string GetMainFilePath(ResultFiles files, AssaySelector.MeasurementOption mo, bool elide)
 		{
 			string res = string.Empty;
 			switch (mo)
@@ -387,8 +420,7 @@ namespace NewUI
 		}
 		ResultsSummary SummarySelections;
 
-
-		private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
 		{
 			Cursor sav = listView1.Cursor;
 			listView1.Cursor = Cursors.WaitCursor;

@@ -46,15 +46,16 @@ namespace AnalysisDefs
 		public bool [] Selections;
 		public ReportSectional()
 		{
-			Array sv = System.Enum.GetValues(typeof(RS));
+			Array sv = Enum.GetValues(typeof(RS));
 			Selections = new bool[sv.Length];
 			Selections[(int)RS.Header] = true;
 			Selections[(int)RS.Context] = true;
 			Selections[(int)RS.Adjustments] = true;
 			Selections[(int)RS.Messages] = true;
 			Selections[(int)RS.MassResults] = true;
-			Selections[(int)RS.Reference] = true;
-			DetectorParameters = true;
+            Selections[(int)RS.CycleSummary] = true;
+            Selections[(int)RS.Reference] = true;
+            DetectorParameters = true;
 			CalibrationParameters = true;
 			Isotopics = true;
 			RateCycleData = true;
@@ -106,8 +107,12 @@ namespace AnalysisDefs
 			get { return Selections[(int)RS.MultiplicityDistributions]; }
 			set { Selections[(int)RS.MultiplicityDistributions] = value; }
 		}
+        public bool CycleDataSelected
+        {
+            get { return RateCycleData || RawCycleData || MultiplicityDistributions; }
+        }
 
-		public override void GenParamList()
+        public override void GenParamList()
         {
             base.GenParamList();
             Table = "ReportSections";

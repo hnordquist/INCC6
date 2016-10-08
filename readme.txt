@@ -1,6 +1,6 @@
 **********************************************************************************
 
-INCC6 Beta Release 16
+INCC6 Beta Release 17
 6.17 Oct 27, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
@@ -132,9 +132,9 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
-***  Inccuser.pdf version is not the latest
 ***  Stratum not maintained across reanalysis boundary
-***  Report selected section regen v. straight disk retrieval (add zipped text into DB Blob?)
+***  Inccuser.pdf version is not the latest
+***  Report generation dialogs: selected section choices implemented, and retaining disk file retrieval
 96   Implement the CSV writes for the isotopics and composite isotopics dialogs
 ***  Log database details at start up
 ***  Improved missing database handling and reporting

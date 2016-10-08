@@ -4381,7 +4381,7 @@ namespace AnalysisDefs
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
         /// <returns>CycleList</returns>
-        public CycleList GetCycles(Detector det, MeasId mid, CountingAnalysisParameters cap = null)
+        public CycleList GetCycles(Detector det, MeasId mid, ConstructedSource data_src, CountingAnalysisParameters cap = null)
         {
             CycleList cl = new CycleList();
 			if (mid.UniqueId <= 0)
@@ -4391,6 +4391,7 @@ namespace AnalysisDefs
             dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
 			List<Multiplicity> tme = null;
             int seq = 0;
+            DateTimeOffset cur = new DateTimeOffset(mid.MeasDateTime.Ticks, mid.MeasDateTime.Offset);
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
@@ -4399,7 +4400,11 @@ namespace AnalysisDefs
 
 				long lmid = AddSummaryToCycle(dr, c);
 
-				if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
+                c.UpdateDataSourceId(data_src, det.Id.SRType,
+                                   cur.AddTicks(c.TS.Ticks), det.Id.FileName);
+                cur = c.DataSourceId.dt;
+
+                if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
 					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 					AddResultToCycle(dr, det.MultiplicityParams, c);

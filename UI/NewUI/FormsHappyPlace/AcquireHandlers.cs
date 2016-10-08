@@ -352,22 +352,12 @@ namespace NewUI
                         {
 							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
-                            DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                             NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
-                                    "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));
-							
+                                    "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-                            foreach(Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
-                            {
-                                cycle.UpdateDataSourceId(ap.data_src, det.Id.SRType, 
-                                                    cur.AddTicks(cycle.TS.Ticks), det.Id.FileName);
-                                cur = cycle.DataSourceId.dt;
-                            }
-
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId, ap.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
                             NC.App.Opstate.Measurement.Add(cl);
-
 							// use the cycle time interval as found in the data, taking the first entry because equal intervals are assumed 
 							if (cl.Count > 0)
 								NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time
