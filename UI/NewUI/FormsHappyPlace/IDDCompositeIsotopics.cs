@@ -163,10 +163,25 @@ namespace NewUI
 
         private void WriteBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("NYI", "Not yet implemented ....");
+            string id = "Default";
+            if (IsotopicsIdComboBox.SelectedItem != null)
+                id = IsotopicsIdComboBox.SelectedItem.ToString();
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "Isotopics files (.csv)|*.csv|                 (.txt)| *.txt";
+            dlg.DefaultExt = ".csv";
+            dlg.FileName = id + ".csv";
+            dlg.InitialDirectory = NC.App.AppContext.ResultsFilePath;
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                NCCFile.INCC5FileExportUtils x = new NCCFile.INCC5FileExportUtils();
+                x.Output.Filename = dlg.FileName;
+                x.CompIsoIsotopics = m_comp_iso;
+                x.ProcessCompositeIsotopicsToFile();
+            } 
         }
+   
 
-        private void AddBtn_Click(object sender, EventArgs e)
+    private void AddBtn_Click(object sender, EventArgs e)
         {
             IDDIsotopicsAdd ia = new IDDIsotopicsAdd();
             if (ia.ShowDialog() == DialogResult.OK)
@@ -434,7 +449,7 @@ namespace NewUI
         NCCReporter.LMLoggers.LognLM applog;
         bool modified = false, calcQ = false;
 
-		private void SelButton_Click(object sender, EventArgs e)
+        private void SelButton_Click(object sender, EventArgs e)
 		{
 			IsotopicsList il = new IsotopicsList(iso: false);
 			if (il.ShowDialog() == DialogResult.OK)

@@ -132,6 +132,10 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
+***  Inccuser.pdf version is not the latest
+***  Stratum not maintained across reanalysis boundary
+***  Report selected section regen v. straight disk retrieval (add zipped text into DB Blob?)
+96   Implement the CSV writes for the isotopics and composite isotopics dialogs
 ***  Log database details at start up
 ***  Improved missing database handling and reporting
 

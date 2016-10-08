@@ -25,18 +25,19 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using AnalysisDefs;
+using Microsoft.VisualBasic.FileIO;
+using NCCReporter;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic.FileIO;
-using AnalysisDefs;
-using NCCReporter;
 namespace NCCFile
 {
-	using NC = NCC.CentralizedState;
+    using NC = NCC.CentralizedState;
 
-	public class CSVFile : NeutronDataFile
+    public class CSVFile : NeutronDataFile
     {
 
         private List<string[]> mLines;
@@ -58,7 +59,7 @@ namespace NCCFile
 
         public void ProcessFile()
         {
-            TextFieldParser tfp = new TextFieldParser(this.Filename);
+            TextFieldParser tfp = new TextFieldParser(Filename);
             tfp.HasFieldsEnclosedInQuotes = true;
             tfp.Delimiters = new string[] { ",", "\t" };
             string[] line;
@@ -71,6 +72,20 @@ namespace NCCFile
             tfp.Close();
         }
 
+        // assumes strings that need to be quoted are quoted
+        public static string EncodeAsCSVRow(string[] sa)
+        {
+            if (sa.Length < 1)
+                return string.Empty;
+            System.Text.StringBuilder s = new System.Text.StringBuilder();
+            foreach (string str in sa)
+            {
+                s.Append(str);
+                s.Append(@",");
+            }
+            s.Remove(s.Length - 1, 1);
+            return s.ToString();
+        }
     }
 
 
@@ -89,15 +104,15 @@ namespace NCCFile
 
         public void Init()
         {
-            mPathToIsoFile = new Dictionary<string, CSVFile>();
-            mPathToCompFile = new Dictionary<string, CSVFile>();
+            //mPathToIsoFile = new Dictionary<string, CSVFile>();
+            //mPathToCompFile = new Dictionary<string, CSVFile>();
 			Results = new INCC5FileImportUtils();
         }  
 
         /// <summary>
         /// Enum of positional column ids for the INCC5 isotopics file format
         /// </summary>
-        enum IsoCol
+        public enum IsoCol
         {
 			IsoId, IsoSourceCode, Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err
         }
@@ -106,7 +121,7 @@ namespace NCCFile
         /// Enum of positional column ids for the INCC5 composite isotopics file format
 		/// CompIsoCol summary line is the entire enum, and without the first two entries is the subentry spec
         /// </summary>
-        enum CompIsCol
+        public enum CompIsCol
         {
 			IsoId, IsoSourceCode, PuMass, Pu238, Pu239, Pu240, Pu241, Pu242, PuDate, Am241, AmDate, Pu238err, Pu239err, Pu240err, Pu241err, Pu242err, Am241err
         }
@@ -396,8 +411,8 @@ namespace NCCFile
 		public INCC5FileImportUtils Results;
 
         // private vars used for processing
-        private Dictionary<string, CSVFile> mPathToIsoFile;
-        private Dictionary<string, CSVFile> mPathToCompFile;
+       // private Dictionary<string, CSVFile> mPathToIsoFile;
+       // private Dictionary<string, CSVFile> mPathToCompFile;
     }
 
 	   
@@ -1608,6 +1623,180 @@ SourceCodes
 
 	}
 
+    // NEXT: these features shoud be folded into the IsoFile class
+    public class INCC5FileExportUtils
+	{
+		public INCC5FileExportUtils()
+		{
+			Init();
+		}
+
+		public List<Isotopics> IsoIsotopics;  // for export
+		public CompositeIsotopics CompIsoIsotopics;
+        public LMLoggers.LognLM mlogger;  
+        public CSVFile Output;
+
+        void Init()
+		{
+			IsoIsotopics = new List<Isotopics>();
+            CompIsoIsotopics = null;
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+            Output = new CSVFile();
+            Output.Log = mlogger;
+        }
+
+        string Quote(string s)
+        {
+            return "\"" + s + "\"";
+        }
+
+		string[] Convert(Isotopics i)
+		{
+			Array ev = Enum.GetValues(typeof(IsoFiles.IsoCol));
+			string[] sa = new string[ev.Length];
+			sa[(int)IsoFiles.IsoCol.AmDate] = Quote(i.am_date.ToString("yyyyMMdd"));
+			sa[(int)IsoFiles.IsoCol.PuDate] = Quote(i.pu_date.ToString("yyyyMMdd"));
+			sa[(int)IsoFiles.IsoCol.IsoSourceCode] = Quote(i.source_code.ToString());
+			sa[(int)IsoFiles.IsoCol.IsoId] = Quote(i.id.ToString());
+			sa[(int)IsoFiles.IsoCol.Pu238] = i.pu238.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu238err] = i.pu238_err.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu239] = i.pu239.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu239err] = i.pu239_err.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu240] = i.pu240.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu240err] = i.pu240_err.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu241] = i.pu241.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu241err] = i.pu241_err.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu242] = i.pu242.ToString();
+			sa[(int)IsoFiles.IsoCol.Pu242err] = i.pu242_err.ToString();
+			sa[(int)IsoFiles.IsoCol.Am241] = i.am241.ToString();
+			sa[(int)IsoFiles.IsoCol.Am241err] = i.am241_err.ToString();
+			return sa;
+		}
+
+		List<string[]> Convert(CompositeIsotopics i)
+		{
+            List<string[]> b = new List<string[]>();
+            // do the header line 
+            Array ev = Enum.GetValues(typeof(IsoFiles.CompIsCol));
+			string[] sa = new string[ev.Length];
+			sa[(int)IsoFiles.CompIsCol.AmDate] = Quote(i.am_date.ToString("yyyyMMdd"));
+			sa[(int)IsoFiles.CompIsCol.PuDate] = Quote(i.pu_date.ToString("yyyyMMdd"));
+            sa[(int)IsoFiles.CompIsCol.PuMass] = i.pu_mass.ToString();
+            sa[(int)IsoFiles.CompIsCol.IsoSourceCode] = Quote(i.source_code.ToString());
+            sa[(int)IsoFiles.CompIsCol.IsoId] = Quote(i.id.ToString());
+            sa[(int)IsoFiles.CompIsCol.Pu238] = i.pu238.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu238err] = i.pu238_err.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu239] = i.pu239.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu239err] = i.pu239_err.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu240] = i.pu240.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu240err] = i.pu240_err.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu241] = i.pu241.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu241err] = i.pu241_err.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu242] = i.pu242.ToString();
+			sa[(int)IsoFiles.CompIsCol.Pu242err] = i.pu242_err.ToString();
+			sa[(int)IsoFiles.CompIsCol.Am241] = i.am241.ToString();
+			sa[(int)IsoFiles.CompIsCol.Am241err] = i.am241_err.ToString();
+            b.Add(sa);
+            // now do each compite as a line
+            foreach(CompositeIsotopic ci in i.isotopicComponents)
+                b.Add(Convert(ci));
+			return b;
+		}
+
+        string[] Convert(CompositeIsotopic i)
+        {
+            List<string[]> b = new List<string[]>();
+            // do the header line 
+            Array ev = Enum.GetValues(typeof(IsoFiles.CompIsCol));
+            string[] sa = new string[ev.Length - 2]; // not the identifier header entry so just do a - 2
+            sa[(int)IsoFiles.CompIsCol.AmDate - 2] = Quote(i.am_date.ToString("yyyyMMdd"));
+            sa[(int)IsoFiles.CompIsCol.PuDate - 2] = Quote(i.pu_date.ToString("yyyyMMdd"));
+            sa[(int)IsoFiles.CompIsCol.PuMass - 2] = i.pu_mass.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu238 - 2] = i.pu238.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu238err - 2] = i.pu238_err.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu239 - 2] = i.pu239.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu239err - 2] = i.pu239_err.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu240 - 2] = i.pu240.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu240err - 2] = i.pu240_err.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu241 - 2] = i.pu241.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu241err - 2] = i.pu241_err.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu242 - 2] = i.pu242.ToString();
+            sa[(int)IsoFiles.CompIsCol.Pu242err - 2] = i.pu242_err.ToString();
+            sa[(int)IsoFiles.CompIsCol.Am241 - 2] = i.am241.ToString();
+            sa[(int)IsoFiles.CompIsCol.Am241err - 2] = i.am241_err.ToString();
+            return sa;
+        }
+
+        public void ProcessIsotopicsToFile()
+		{
+			ProcessIsotopics();
+            if (Output.Lines.Count > 0)
+            {
+                if (!Output.CreateForWriting())
+                    return;
+                StreamWriter writer = new StreamWriter(Output.stream);
+                if (writer == null)
+                    return; 
+                WriteIsotopics(writer);
+                writer.Close();
+                Output.CloseStream();
+            }
+        }
+        public void WriteIsotopics(StreamWriter writer)
+        {
+            foreach (string[] sa in Output.Lines)
+            {
+                string s = CSVFile.EncodeAsCSVRow(sa);
+                writer.WriteLine(s);
+                mlogger.TraceInformation(sa[(int)IsoFiles.IsoCol.IsoId] + " isotopics written");
+            }
+        }  
+
+        public void ProcessIsotopics()
+		{
+            foreach (Isotopics iso in IsoIsotopics)
+			{
+				string[] a = Convert(iso);
+                // write array as line in a CSV file
+                Output.Lines.Add(a);
+            }
+		}
+
+		public void ProcessCompositeIsotopics()
+		{
+            if (CompIsoIsotopics == null) return;
+			List<string[]> a = Convert(CompIsoIsotopics);
+            foreach (string[] s in a)
+                Output.Lines.Add(s);
+        }
+
+        public void ProcessCompositeIsotopicsToFile()
+        {
+            ProcessCompositeIsotopics();
+            if (Output.Lines.Count > 0)
+            {
+                if (!Output.CreateForWriting())
+                    return;
+                StreamWriter writer = new StreamWriter(Output.stream);
+                if (writer == null)
+                    return;
+                WriteCompositeIsotopics(writer);
+                writer.Close();
+                Output.CloseStream();
+            }
+        }
+        public void WriteCompositeIsotopics(StreamWriter writer)
+        {
+            if (Output.Lines.Count < 1)
+                return;
+            foreach (string[] sa in Output.Lines)
+            {
+                string s = CSVFile.EncodeAsCSVRow(sa);
+                writer.WriteLine(s);
+            }
+            mlogger.TraceInformation(Output.Lines[0][(int)IsoFiles.CompIsCol.IsoId] + " composite isotopics written");
+        }
+    }
 
     /// <summary>
     /// Manager for INCC5 Stratum Authority files

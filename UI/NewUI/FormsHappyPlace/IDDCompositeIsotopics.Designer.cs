@@ -119,7 +119,7 @@
             // 
             // WriteBtn
             // 
-            this.WriteBtn.Enabled = false;
+            this.WriteBtn.Enabled = true;
             this.WriteBtn.Location = new System.Drawing.Point(453, 41);
             this.WriteBtn.Name = "WriteBtn";
             this.WriteBtn.Size = new System.Drawing.Size(223, 23);
@@ -127,6 +127,7 @@
             this.WriteBtn.Text = "Write composite isotopics to file...";
             this.toolTip1.SetToolTip(this.WriteBtn, resources.GetString("WriteBtn.ToolTip"));
             this.WriteBtn.UseVisualStyleBackColor = true;
+            this.WriteBtn.Click += new System.EventHandler(this.WriteBtn_Click);
             // 
             // AddBtn
             // 
@@ -408,7 +409,7 @@
             // SelButton
             // 
             this.SelButton.Location = new System.Drawing.Point(359, 73);
-            this.SelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.SelButton.Margin = new System.Windows.Forms.Padding(2);
             this.SelButton.Name = "SelButton";
             this.SelButton.Size = new System.Drawing.Size(56, 19);
             this.SelButton.TabIndex = 21;
