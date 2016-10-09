@@ -102,6 +102,11 @@ namespace NCCConfig
             get { return AppContextConfig.GetVersionString(); }
         }
 
+        public string VersionBranchString
+        {
+            get { return AppContextConfig.GetVersionBranchString(); }
+        }
+
         public string RootLoc
         {
             get { return App.RootLoc; }
@@ -147,9 +152,7 @@ namespace NCCConfig
             acq = new LMAcquireConfig(_parms);
             netcomm = new LMMMNetComm(_parms);
             lmmm = new LMMMConfig(_parms);
-
-            cmd = new CmdConfig(_parms);
-            
+            cmd = new CmdConfig(_parms);            
         }
 
 
@@ -582,19 +585,31 @@ namespace NCCConfig
 			Assembly a = Assembly.GetEntryAssembly();
             Version MyVersion = a.GetName().Version;
 			string result = MyVersion.ToString();
-			object[] o = a.GetCustomAttributes(typeof(AssemblyConfigurationAttribute), true);
-			if (o != null && o.Length > 0)
-			{
-				AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
-				if (!string.IsNullOrEmpty(aca.Configuration))
-					result = result + " " + aca.Configuration;
-			}
+            string branch = GetVersionBranchString(a);
+            if (!string.IsNullOrEmpty(branch))
+                result = result + " " + branch;
             return result;
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }
 
-		static public string EightCharConvert(DateTimeOffset dto)
+        public static string GetVersionBranchString(Assembly entry = null)
+        {
+            string result = string.Empty;
+            if (entry == null)
+                entry = Assembly.GetEntryAssembly();
+            object[] o = entry.GetCustomAttributes(typeof(AssemblyConfigurationAttribute), true);
+            if (o != null && o.Length > 0)
+            {
+                AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
+                if (!string.IsNullOrEmpty(aca.Configuration))
+                    result = aca.Configuration;
+            }
+            return result;
+
+        }
+
+        static public string EightCharConvert(DateTimeOffset dto)
 		{
 			char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 			string y = dto.ToString("yy");
@@ -1406,6 +1421,7 @@ namespace NCCConfig
             resetVal(NCCFlags.hv, 1650, typeof(int));
             resetVal(NCCFlags.LLD, 500, typeof(int));
             resetVal(NCCFlags.hvtimeout, 120, typeof(int));
+            resetVal(NCCFlags.input, 1, typeof(int));
         }
         public int LEDs
         {

@@ -45,7 +45,7 @@ namespace NewUI
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.calibration;
-            this.Text += " for detector " + ah.det.Id.DetectorName;
+            Text += " for detector " + ah.det.Id.DetectorName;
 
             NumCyclesTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
             NumCyclesTextBox.NumberFormat = NumericTextBox.Formatter.NONE;
@@ -62,6 +62,7 @@ namespace NewUI
             MinNumCyclesTextBox.NumberFormat = NumericTextBox.Formatter.NONE;
             LoadLists();
             FieldFiller();
+            Pu240eCoeffBtn.Enabled = !string.IsNullOrEmpty(NC.App.Config.VersionBranchString);
         }
 
         private void LoadLists ()

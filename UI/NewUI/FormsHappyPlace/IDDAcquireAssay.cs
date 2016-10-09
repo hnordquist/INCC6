@@ -50,6 +50,7 @@ namespace NewUI
             ToolTip mustSelect = new ToolTip();
             mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
             mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
+            Pu240eCoeffBtn.Enabled = !string.IsNullOrEmpty(NC.App.Config.VersionBranchString);
         }
 
         private void FieldFillerOnItemId()

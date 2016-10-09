@@ -338,12 +338,11 @@ namespace NewUI
                     m.AcquireState.review = Sections;
                     if (Sections.CycleDataSelected)
                     {
-                        CycleList cl = N.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-                        m.Add(cl);
+                        m.ReportRecalc();
                     }
                     m.ResultsFiles.Reset();
                     new ReportMangler(ctrllog).GenerateReports(m);
-                    if (bNotepadHappensToBeThere)
+                    if (!N.App.AppContext.OpenResults && bNotepadHappensToBeThere)  // opened in GenerateReports if true flag App.AppContext.OpenResults
                     {
                         string path = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
                         if (File.Exists(path))

@@ -212,22 +212,22 @@ namespace AnalysisDefs
                     Array.Resize(ref mcr.UnAMult, (int)mcr.MaxBins);
                     mcr.AB.Resize((int)mcr.MaxBins);
 
-					// do the scaler summaries here since they are not done in CalcAvgsAndSums
 					double denom = 0.0;
-					foreach (Cycle cc in meas.Cycles)
-                    {
-						if (!cc.QCStatusValid((Multiplicity)pair.Key))
-							continue;
-                        bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
-                        if (!there)
-                            continue;
-                        ccm = (MultiplicityCountingRes)obj;
+                    if (mcr.S1Sum == 0 && mcr.S2Sum == 0)
+					    foreach (Cycle cc in meas.Cycles)
+                        {
+						    if (!cc.QCStatusValid((Multiplicity)pair.Key))
+							    continue;
+                            bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
+                            if (!there)
+                                continue;
+                            ccm = (MultiplicityCountingRes)obj;
 
-						denom++;
-                        mcr.S1Sum += ccm.Scaler1.v;
-                        mcr.S2Sum += ccm.Scaler2.v;
-                    }
-					if (denom > 0)
+						    denom++;
+                            mcr.S1Sum += ccm.Scaler1.v;
+                            mcr.S2Sum += ccm.Scaler2.v;
+                        }
+					if (denom > 0) // error-corrected scaler rates wrongly carried in these two vars from CalcAvgAndSums after this step, should fix this someday
 					{
 						mcr.Scaler1.v = mcr.S1Sum / denom;
 						mcr.Scaler2.v = mcr.S2Sum / denom;
@@ -307,7 +307,17 @@ namespace AnalysisDefs
                         fr.cbar = nfr.cbar;
                         fr.c2bar = nfr.c2bar;
                         fr.c3bar = nfr.c3bar;
-                    }
+                    }                                  
+                }
+
+                // fill in the traditional results rec values
+                if (meas.INCCAnalysisResults.TradResultsRec != null)
+                {
+                    uint gc = meas.Cycles.GetValidCycleCount();
+                    uint tnc = meas.NumberOfRawCyclesWithCounts();
+                    meas.INCCAnalysisResults.TradResultsRec.total_number_runs = (int)tnc;
+                    if (gc > 0)
+                        meas.INCCAnalysisResults.TradResultsRec.total_good_count_time = (tnc / gc);
                 }
             }
             catch (Exception ex)
@@ -1289,44 +1299,27 @@ namespace AnalysisDefs
             while (iter.MoveNext())
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-
                 meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
-                mcr.ComputeSums();
+                mcr.ComputeHitSums();
 				// APluralityOfMultiplicityAnalyzers: When a list mode sourced measurement is in use, and 
-				// cycle data comes from an prior analysis via a DB cycle source or Verification reanalysis, 
+				// cycle data comes from a prior analysis via a DB cycle source or Verification reanalysis, 
 				// doubles are computed using the LMSupport.SDTMultiplicityCalculator.
 				// Note that DAQ LM sourced INCC5 analyses will have the unnormalized Acc distro. 
 				// The method INCCAnalysis.CalcAveragesAndSums uses the unnormalized
 				// Acc distro (mcr.UnAMult), but in the two cases above there is only the normalized Acc and RealsAcc distros are present.
 				// So the *unnormalized distro* must be computed and placed on each cycle, then and only then are doubles calculated correctly.
                 INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
-			}
-
-			// patch for CalcAveragesAndSums missing scaler summary rates
-			iter = meas.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
-			while (iter.MoveNext())
-			{
-				MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
-				INCCResult ir = meas.INCCAnalysisResults[moskey];
-				uint denom = 0;
-				object obj;
-				foreach (Cycle cc in meas.Cycles)
+                mcr.Scaler1Rate.v = mcr.Scaler1.v;
+                mcr.Scaler2Rate.v = mcr.Scaler2.v;
+                MeasOptionSelector mos = new MeasOptionSelector(meas.MeasOption, mkey);
+                INCCResult results = meas.INCCAnalysisState.Lookup(mos);
+                if (results != null)
                 {
-					if (!cc.QCStatusValid(moskey.MultiplicityParams))
-						continue;
-                    bool there = cc.CountingAnalysisResults.TryGetValue(moskey.MultiplicityParams, out obj);
-                    if (!there)
-                        continue;
-					denom++;
+                    results.Scaler1Rate.v = mcr.Scaler1.v;
+                    results.Scaler2Rate.v = mcr.Scaler2.v;
                 }
-				if (denom > 0)
-				{
-					ir.Scaler1.v = ir.S1Sum / denom;
-					ir.Scaler2.v = ir.S2Sum / denom;
-				}
-			}
-
+            }
         }
 
         #endregion INCC calculation control methods
@@ -1537,6 +1530,23 @@ namespace AnalysisDefs
 				id = m.Persist();
 			}
 		}
+
+
+        // for report recalculation
+        public static void ReportRecalc(this Measurement m)
+        {
+            NC.App.Opstate.Measurement = m;
+            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+            m.Add(cl);
+            m.CurrentRepetition = 0;
+            foreach (Cycle cycle in m.Cycles)
+            {
+                m.CurrentRepetition++;
+                CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
+                m.CycleStatusTerminationCheck(cycle);
+            }
+           m.CalculateMeasurementResults();
+        }
 	}
 
 }

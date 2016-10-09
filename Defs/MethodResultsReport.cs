@@ -141,8 +141,8 @@ namespace AnalysisDefs
                         //sec.AddNumericRow("Quads:", mcr.DeadtimeCorrectedQuadsRate); // todo: quads delayed until pents are ready per DN
                         if (!det.Id.source.UsingVirtualSRCounting(det.Id.SRType))
                         {
-                            sec.AddNumericRow("Scaler 1:", ir.Scaler1);
-                            sec.AddNumericRow("Scaler 2:", ir.Scaler2);
+                            sec.AddNumericRow("Scaler 1:", ir.Scaler1Rate);
+                            sec.AddNumericRow("Scaler 2:", ir.Scaler2Rate);
                         }
 
                         //if (det.Id.SRType >= LMDAQ.InstrType.NPOD)

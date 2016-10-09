@@ -481,8 +481,10 @@ namespace AnalysisDefs
 
                 mcr = new MultiplicityCountingRes(src.mcr);
 
-				primary = src.primary;
-				original_meas_date = new DateTimeOffset(src.original_meas_date.Ticks, src.original_meas_date.Offset);
+                primary = src.primary;
+                total_good_count_time = src.total_good_count_time;
+                total_number_runs = src.total_number_runs;
+                original_meas_date = new DateTimeOffset(src.original_meas_date.Ticks, src.original_meas_date.Offset);
 				passive = new MeasId(src.passive);  // TODO: collar with active and passive measurements not fully accounted for yet
 				active = new MeasId(src.active); // TODO: collar with active and passive measurements not fully accounted for yet
             }
@@ -523,6 +525,9 @@ namespace AnalysisDefs
                 item.pu_date = m.Isotopics.pu_date;
                 item.am_date = m.Isotopics.am_date;
                 meas_option = m.MeasOption;
+
+                primary = m.INCCAnalysisState.Methods.Normal;
+                total_number_runs = m.AcquireState.num_runs;
 
                 INCCMethodResults imr;
                 if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // APluralityOfMultiplicityAnalyzers: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 

@@ -461,12 +461,6 @@
     <Compile Include="Unready\IDDMiscPersist.Designer.cs">
       <DependentUpon>IDDMiscPersist.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDMsgBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDMsgBox.Designer.cs">
-      <DependentUpon>IDDMsgBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDMultiplicityCal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1416,9 +1410,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDMiscPersist.resx">
       <DependentUpon>IDDMiscPersist.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDMsgBox.resx">
-      <DependentUpon>IDDMsgBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDMultiplicityCal.resx">
       <DependentUpon>IDDMultiplicityCal.cs</DependentUpon>

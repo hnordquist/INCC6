@@ -2043,6 +2043,8 @@ INSERT INTO [inventory_change_code] VALUES('SF','Shipped/measured during interim
 GO
 INSERT INTO [inventory_change_code] VALUES('SN','Shipped/measured during interim inspection');
 GO
+INSERT INTO [inventory_change_code] VALUES('XX','TBD');
+GO
 INSERT INTO [io_code] VALUES('A','Received/measured during PIV and before PIV date');
 GO
 INSERT INTO [io_code] VALUES('B','Shipped/measured during PIV and before PIV date');

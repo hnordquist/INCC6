@@ -132,9 +132,13 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
+***  Transfer incorrectly managed run time, total run time, total number of good runs values
 ***  Stratum not maintained across reanalysis boundary
-***  Inccuser.pdf version is not the latest
+
+***  Cycle corrected rates counts not available in reporting operations, recalculation step missing
+***  Added common XX inventory change code 
 ***  Report generation dialogs: selected section choices implemented, and retaining disk file retrieval
+***  Inccuser.pdf version is not the latest
 96   Implement the CSV writes for the isotopics and composite isotopics dialogs
 ***  Log database details at start up
 ***  Improved missing database handling and reporting
