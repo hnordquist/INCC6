@@ -361,7 +361,11 @@ namespace AnalysisDefs
                 INCCResult results;
                 MeasOptionSelector ar = new MeasOptionSelector(meas.MeasOption, mkey);
                 bool found = meas.INCCAnalysisResults.TryGetValue(ar, out results);
-                // I do solemnly swear or affirm "assert" that found == true, or all is lost!
+				if (!found)
+				{
+					meas.AddErrorMessage("No results available", 10151, mkey);
+					return;
+				}
                 /* if using measure to precision, and max # runs reached, then add warning message indicating actual precision reached. */
                 if (meas.AcquireState.acquire_type == AcquireConvergence.DoublesPrecision)
                 {
@@ -370,7 +374,7 @@ namespace AnalysisDefs
                         double error = results.rates.DTCRates.Doubles.err / results.rates.DTCRates.DoublesRate * 100.0;
                         if (error > meas.AcquireState.meas_precision)
                         {
-                            meas.AddWarningMessage("Measurement doubles error = " + error.ToString(), 10126, mkey);
+                            meas.AddWarningMessage("Measurement doubles error = " + error.ToString("F2"), 10126, mkey);
                         }
                     }
                 }
@@ -381,7 +385,7 @@ namespace AnalysisDefs
                         double error = results.rates.DTCRates.Triples.err / results.rates.DTCRates.TriplesRate * 100.0;
                         if (error > meas.AcquireState.meas_precision)
                         {
-                            meas.AddWarningMessage("Measurement triples error = " + error.ToString(), 10127, mkey);
+                            meas.AddWarningMessage("Measurement triples error = " + error.ToString("F2"), 10127, mkey);
                         }
                     }
                 }

@@ -165,7 +165,13 @@ namespace NewUI
 				listView1.Columns[3].Width = 0;
 			}
 			if (!AssaySelector.ForMass(filter) && !filter.IsWildCard())
-				listView1.Columns[7].Width = 0;				 
+				listView1.Columns[7].Width = 0;		
+			
+			if (Goal == EndGoal.Reanalysis)
+			{
+				listView1.Columns[0].Text = "Id";
+				listView1.Columns[0].Width = 43;
+			}
 
 			return true;
 		}
@@ -180,9 +186,13 @@ namespace NewUI
 				if (Path.GetFileName(m.MeasurementId.FileName).Contains("_") && (AssaySelector.MeasurementOption.verification == filter) && (filter == m.MeasOption))
 					//scan file name to display subsequent reanalysis number...... hn 9.21.2015
 					ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
-
+				string col0;
+				if (Goal == EndGoal.Reanalysis)
+					col0 = m.MeasurementId.UniqueId.ToString();
+				else
+					col0 = m.MeasOption.PrintName();
 				ListViewItem lvi = new ListViewItem(new string[] {
-					m.MeasOption.PrintName(), m.Detector.Id.DetectorId, ItemWithNumber,
+					col0, m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
 					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
 					AssaySelector.ForMass(m.MeasOption) ? m.AcquireState.item_type : string.Empty,

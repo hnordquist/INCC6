@@ -133,8 +133,10 @@ Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
 expected to be done
-***  Stratum not maintained across reanalysis boundary
 ***  Added cmd line report section selector flags
+***  acquire_type defaults for meas options not set correctly
+***  acquire_type not retained in acquire state nor retained across transfer, reanalysis, restore
+***  scaler error not retained during recalc (?) test with reanT0 PCAS/004/03 
 
 hoping
 ***  SelSum.cs Finish results summary fields for TruncMult, ActiveCalCurve, Collar
@@ -150,6 +152,7 @@ hoping
 
 
 done Oct 11
+***  Stratum not maintained across reanalysis boundary
 ***  Transfer analysis warnings duplicated on replay (see mass tests)
 ***  Transfer incorrectly managed run time, total run time, total number of good runs values
 ***  Cycle corrected rates counts not available in reporting operations, recalculation step missing

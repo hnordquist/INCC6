@@ -35,7 +35,7 @@ using DetectorDefs;
 using NCCReporter;
 namespace NCCTransfer
 {
-	using Tuple = AnalysisDefs.VTuple;
+	using Tuple = VTuple;
 	using NC = NCC.CentralizedState;
 	public class INCCKnew
     {
