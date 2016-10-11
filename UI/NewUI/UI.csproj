@@ -814,7 +814,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controller\Controller.cs" />
+    <Compile Include="Integration\Controller.cs" />
     <Compile Include="FormsHappyPlace\AcquireHandlers.cs" />
     <Compile Include="FormsHappyPlace\IDDAcquireAssay.cs">
       <SubType>Form</SubType>

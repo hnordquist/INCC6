@@ -1315,13 +1315,17 @@ namespace AnalysisDefs
 				// So the *unnormalized distro* must be computed and placed on each cycle, then and only then are doubles calculated correctly.
                 INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
                 mcr.Scaler1Rate.v = mcr.Scaler1.v;
+                mcr.Scaler1Rate.err = mcr.Scaler1.err;
                 mcr.Scaler2Rate.v = mcr.Scaler2.v;
+                mcr.Scaler2Rate.err = mcr.Scaler2.err;
                 MeasOptionSelector mos = new MeasOptionSelector(meas.MeasOption, mkey);
                 INCCResult results = meas.INCCAnalysisState.Lookup(mos);
                 if (results != null)
                 {
                     results.Scaler1Rate.v = mcr.Scaler1.v;
+                    results.Scaler1Rate.err = mcr.Scaler1.err;
                     results.Scaler2Rate.v = mcr.Scaler2.v;
+                    results.Scaler2Rate.err = mcr.Scaler2.err;
                 }
             }
         }

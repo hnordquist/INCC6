@@ -136,7 +136,6 @@ expected to be done
 ***  Added cmd line report section selector flags
 ***  acquire_type defaults for meas options not set correctly
 ***  acquire_type not retained in acquire state nor retained across transfer, reanalysis, restore
-***  scaler error not retained during recalc (?) test with reanT0 PCAS/004/03 
 
 hoping
 ***  SelSum.cs Finish results summary fields for TruncMult, ActiveCalCurve, Collar
@@ -152,6 +151,7 @@ hoping
 
 
 done Oct 11
+***  Summary scaler rates not reported during some analyses 
 ***  Stratum not maintained across reanalysis boundary
 ***  Transfer analysis warnings duplicated on replay (see mass tests)
 ***  Transfer incorrectly managed run time, total run time, total number of good runs values
@@ -163,7 +163,6 @@ done Oct 11
 ***  Log database details at start up
 ***  Improved missing database handling and reporting
 
-
 6.0.16 (6.0.1.16) Sep 27, 2016  ************
 ***  Issue with empty mtl type on collar params seen
 ***  Reanalysis now uses stored List Mode SR params
@@ -171,7 +170,6 @@ done Oct 11
 ***  Cosmetic improvement to Acquire dialog source selection for list mode devices
 ***  DB persist for List Mode results for one or more defined analyzers
 ***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
-***  Summary scaler rates not reported during some analyses 
 115  Abort Measurement and Quit FuBar
 25   List mode acquisition predelay not stored
 40   source ID in 'initial source' does not get passed to results
