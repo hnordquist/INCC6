@@ -55,13 +55,21 @@ namespace NewUI
 
         private void FieldFillerOnItemId()
         {
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
             StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
             DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");  
         }
+
+		private void MaterialTypeComboBox_SelectedItem()
+		{
+			if (NC.App.DB.Materials.Has(ah.ap.item_type))  // avoid case-insensitive mis-match by using the Name in the Materials list against that from the DB Acquire instance
+			{
+				INCCDB.Descriptor d = NC.App.DB.Materials.Get(ah.ap.item_type);
+				MaterialTypeComboBox.SelectedItem = d.Name;
+			}
+		}
 
         private void FieldFiller()
         {
@@ -112,7 +120,7 @@ namespace NewUI
             }
 
             DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
                 {
@@ -138,8 +146,8 @@ namespace NewUI
                 UsePu240eRadioButton.Checked = true;
             }
             DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
+			MaterialTypeComboBox_SelectedItem();
+			StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -294,7 +302,6 @@ namespace NewUI
 				{
 					Visible = false;
 					// Add strata update to measurement object.    HN 9.23.2015              
-					//user can cancel in here during LM set-up, account for it.
 					UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
 					UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
 					Close();

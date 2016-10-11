@@ -82,6 +82,7 @@ namespace NCCCmd
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
 				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
+				// These affect the current acquire state, so they occur here and not earlier in the inital processing sequence
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
@@ -96,6 +97,17 @@ namespace NCCCmd
                     initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
                     goto end;
+
+				if (!N.App.AppContext.ReportSectional.Equals(NCCConfig.Config.DefaultReportSectional)) // command line set the value
+				{
+					AcquireParameters acq = null;
+					Detector det = null;
+					Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+					acq.review.Scan(N.App.AppContext.ReportSectional);
+					acq.MeasDateTime = DateTime.Now;
+	                N.App.DB.UpdateAcquireParams(acq, det.ListMode);
+					N.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
+				}
 
 				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
 				{

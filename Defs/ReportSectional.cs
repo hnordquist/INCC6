@@ -48,17 +48,7 @@ namespace AnalysisDefs
 		{
 			Array sv = Enum.GetValues(typeof(RS));
 			Selections = new bool[sv.Length];
-			Selections[(int)RS.Header] = true;
-			Selections[(int)RS.Context] = true;
-			Selections[(int)RS.Adjustments] = true;
-			Selections[(int)RS.Messages] = true;
-			Selections[(int)RS.MassResults] = true;
-            Selections[(int)RS.CycleSummary] = true;
-            Selections[(int)RS.Reference] = true;
-            DetectorParameters = true;
-			CalibrationParameters = true;
-			Isotopics = true;
-			RateCycleData = true;
+			Reset();
 		}
 
 		public ReportSectional(ReportSectional src)
@@ -124,6 +114,83 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("review_summed_raw_data", SummedRawCoincData));
 		    ps.Add(new DBParamEntry("review_summed_mult_dist", SummedMultiplicityDistributions));
 		    ps.Add(new DBParamEntry("review_run_mult_dist", MultiplicityDistributions));
+		}
+
+		public void Clear()
+		{
+			DetectorParameters = false;
+			CalibrationParameters = false;
+			Isotopics = false;
+			RawCycleData = false;
+			RateCycleData = false;
+			SummedRawCoincData = false;
+			SummedMultiplicityDistributions = false;
+			MultiplicityDistributions = false;
+		}
+
+		public void Reset()
+		{
+			Selections[(int)RS.Header] = true;
+			Selections[(int)RS.Context] = true;
+			Selections[(int)RS.Adjustments] = true;
+			Selections[(int)RS.Messages] = true;
+			Selections[(int)RS.MassResults] = true;
+            Selections[(int)RS.CycleSummary] = true;
+            Selections[(int)RS.Reference] = true;
+            DetectorParameters = true;
+			CalibrationParameters = true;
+			Isotopics = true;
+			RateCycleData = true;
+		}
+
+		/// <summary>
+		/// reportSect=
+		///            d|de|detector        (default true)
+		///            c|ca|calib           (default true)
+		///            i|is|isotopics       (default true)
+		///            r|rd|run_raw_data     (default false)
+		///		    t|rr|run_rate        (default true)
+		///		    m|rm|run_mult_dist    (default false)
+		///            s|sr|rawsum |summed_raw_data     (default false)
+		///		    e|sd|distsum|summed_mult_dist   (default false)
+		/// </summary>
+		public void Scan(string s)
+		{
+			string[] split = s.Split(new char[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+			if (split.Length < 1)
+				return;
+			Clear();
+			foreach (string a in split)
+			{
+				char flag = a.ToLower()[0];
+				switch (flag)
+				{
+				case 'd':
+					DetectorParameters = true;
+					break;
+				case 'c':
+					CalibrationParameters = true;
+					break;
+				case 'i':
+					Isotopics = true;
+					break;
+				case 'r':
+					RawCycleData = true;
+					break;
+				case 't':
+					RateCycleData = true;
+					break;
+				case 'm':
+					MultiplicityDistributions = true;
+					break;
+				case 's':
+					SummedRawCoincData = true;
+					break;
+				case 'e':
+					SummedMultiplicityDistributions = true;
+					break;
+				}
+			}
 		}
 
 	}

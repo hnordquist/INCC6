@@ -133,7 +133,6 @@ Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
 expected to be done
-***  Added cmd line report section selector flags
 ***  acquire_type defaults for meas options not set correctly
 ***  acquire_type not retained in acquire state nor retained across transfer, reanalysis, restore
 
@@ -150,6 +149,7 @@ hoping
 
 
 done Oct 11
+***  Added cmd line report section selector flags
 ***  Finish results summary fields for summary reports
 ***  Summary scaler rates not reported during some analyses 
 ***  Stratum not maintained across reanalysis boundary
