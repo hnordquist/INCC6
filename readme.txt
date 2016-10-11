@@ -138,7 +138,6 @@ expected to be done
 ***  acquire_type not retained in acquire state nor retained across transfer, reanalysis, restore
 
 hoping
-***  SelSum.cs Finish results summary fields for TruncMult, ActiveCalCurve, Collar
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  ending comment field and use and reporting
 69   APluralityOfMultiplicityAnalyzers and more
@@ -151,6 +150,7 @@ hoping
 
 
 done Oct 11
+***  Finish results summary fields for summary reports
 ***  Summary scaler rates not reported during some analyses 
 ***  Stratum not maintained across reanalysis boundary
 ***  Transfer analysis warnings duplicated on replay (see mass tests)

@@ -473,12 +473,6 @@
     <Compile Include="Unready\IDDNewWellConfig.Designer.cs">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDNotice.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDNotice.Designer.cs">
-      <DependentUpon>IDDNotice.cs</DependentUpon>
-    </Compile>
     <Compile Include="Unready\IDDOutlierWaitMsg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1416,9 +1410,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDNewWellConfig.resx">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDNotice.resx">
-      <DependentUpon>IDDNotice.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDOutlierWaitMsg.resx">
       <DependentUpon>IDDOutlierWaitMsg.cs</DependentUpon>
