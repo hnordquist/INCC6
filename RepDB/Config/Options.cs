@@ -57,11 +57,12 @@ namespace NCCConfig
         sortPulseFile, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
-        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString
-    }
-    
+        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
 
-    public partial class Config
+		reportSect
+    }
+
+	public partial class Config
     {
         public bool ParseCommandShellArgs()
         {
@@ -88,6 +89,8 @@ namespace NCCConfig
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
             { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode results scheme", b => app.Results8Char = b != null},
             { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
+            { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
+                                           s => app.ReportSectional = s},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },

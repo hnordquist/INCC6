@@ -115,10 +115,16 @@ namespace NCCConfig
         private const string _defaultpath = @"./";
         public static string DefaultPath
         {
-            get { return Config._defaultpath; }
+            get { return _defaultpath; }
         }
 
         public static bool isDefaultPath(string underconsideration) { return _defaultpath.Equals(underconsideration); }
+
+        private const string _defaultreportsectional = @"d c i t";
+        public static string DefaultReportSectional 
+        {
+            get { return _defaultreportsectional; }
+        }
 
         public struct CmdParams { public object val; public bool set; public System.Type type; public bool sticky;}
 
@@ -637,7 +643,7 @@ namespace NCCConfig
  
             resetVal(NCCFlags.logging, false, typeof(bool));
             //resetVal(LMFlags.logAutoPath, false, typeof(bool));
-            resetVal(NCCFlags.logDetails, (Int32)TraceOptions.None, typeof(Int32));
+            resetVal(NCCFlags.logDetails, (int)TraceOptions.None, typeof(int));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
             resetVal(NCCFlags.rolloverSizeMB, 50, typeof(int)); /* (1024 * 1024), */
@@ -645,6 +651,7 @@ namespace NCCConfig
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
             resetVal(NCCFlags.results8Char, true, typeof(bool));
+            resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
@@ -975,7 +982,25 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.results8Char); }
             set { setVal(NCCFlags.results8Char, value); }
-        }
+		}
+
+
+		/// <summary>
+		/// reportSect=
+		///            d|de|detector        (default true)
+		///            c|ca|calib           (default true)
+		///            i|is|isotopics       (default true)
+		///            r|rd|run_raw_data     (default false)
+		///		    t|rr|run_rate        (default true)
+		///		    m|rm|run_mult_dist    (default false)
+		///            s|sr|rawsum |summed_raw_data     (default false)
+		///		    e|sd|distsum|summed_mult_dist   (default false)
+		/// </summary>
+		public string ReportSectional
+        {
+            get { return (string)getVal(NCCFlags.reportSect); }
+            set { setVal(NCCFlags.reportSect, value); }  // parsed by caller        
+		}
 
 		/// <summary>
 		/// Rates only files have a suffix of .RTS

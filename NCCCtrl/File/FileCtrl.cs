@@ -114,7 +114,7 @@ namespace NCCFile
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
@@ -135,9 +135,10 @@ namespace NCCFile
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             m.CurrentRepetition = 0;
-            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            NC.App.Opstate.SOH = OperatingState.Living;
             try
             {
+				m.Messages.Clear();
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults.First().Value;
                 // count again using the per-cycle accumulation of summary results
                 Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
@@ -148,7 +149,7 @@ namespace NCCFile
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);
 
-                foreach (AnalysisDefs.Cycle cycle in m.Cycles)
+                foreach (Cycle cycle in m.Cycles)
                 {
                     if (NC.App.Opstate.IsCancellationRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
                         break;
@@ -159,7 +160,7 @@ namespace NCCFile
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 ctrllog.TraceException(e, true);
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
             }

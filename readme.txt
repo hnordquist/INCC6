@@ -132,9 +132,26 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
-***  Transfer incorrectly managed run time, total run time, total number of good runs values
+expected to be done
 ***  Stratum not maintained across reanalysis boundary
+***  Added cmd line report section selector flags
 
+hoping
+***  SelSum.cs Finish results summary fields for TruncMult, ActiveCalCurve, Collar
+***  SDTMultiplicityCalculator shift to BigInteger
+***  ending comment field and use and reporting
+69   APluralityOfMultiplicityAnalyzers and more
+100  Rossi processing too slow and can sometimes hang
+67   PTR-32 data handling question
+16   Accidental Singles test Failure for PTR32
+13   PTR-32 -- Results different if reading file/doing live acquisition
+79   Plot Norm, Plot Ver diagnostic tools
+86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
+
+
+done Oct 11
+***  Transfer analysis warnings duplicated on replay (see mass tests)
+***  Transfer incorrectly managed run time, total run time, total number of good runs values
 ***  Cycle corrected rates counts not available in reporting operations, recalculation step missing
 ***  Added common XX inventory change code 
 ***  Report generation dialogs: selected section choices implemented, and retaining disk file retrieval
