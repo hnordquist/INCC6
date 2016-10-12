@@ -148,7 +148,8 @@ hoping
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
 
 
-done Oct 11
+done Oct 12
+***  cmd line: show current acquire state db content with new --query flag
 ***  Added cmd line report section selector flags
 ***  Finish results summary fields for summary reports
 ***  Summary scaler rates not reported during some analyses 

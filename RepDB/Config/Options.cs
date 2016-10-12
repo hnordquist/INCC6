@@ -59,7 +59,7 @@ namespace NCCConfig
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
 
-		reportSect
+		reportSect, query
     }
 
 	public partial class Config
@@ -71,6 +71,7 @@ namespace NCCConfig
             { "V|version", "output version info and exit, use with -v=5 for full assembly list", b => cmd.ShowVersion = b != null},
 			{ "config|show",  "show the current configuration and exit, shows XML config file content",  l =>  cmd.Showcfg = true  },
   			{ "h|?|help",  "show this message and exit", v => cmd.Showhelp = v != null },
+  			{ "q|query",  "show current acquire state", v => cmd.Query = v ?? v },
             
              { "v:", "filter console output with {level}: default is 4, CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5",  
                                             v => { if (v != null) { ushort uiv = 4; if (ushort.TryParse(v, out uiv)) app.SetVerbose(uiv); } } },

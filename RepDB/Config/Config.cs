@@ -316,8 +316,8 @@ namespace NCCConfig
 
             if (full)
             {
-                System.Reflection.Assembly eas = System.Reflection.Assembly.GetEntryAssembly();
-                System.Reflection.Assembly eax = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly eas = Assembly.GetEntryAssembly();
+                Assembly eax = Assembly.GetExecutingAssembly();
                 x[ix++] = eas.FullName;
                 x[ix++] = "using";
                 string[] a = GetAssemblyVersionStrings(eas, eax);
@@ -333,13 +333,13 @@ namespace NCCConfig
             return x;
         }
 
-        static string[] GetAssemblyVersionStrings(System.Reflection.Assembly ea, System.Reflection.Assembly xa)
+        static string[] GetAssemblyVersionStrings(Assembly ea, Assembly xa)
         {
             HashSet<string> workingset = new HashSet<string>();
             HashSet<string> fullset = new HashSet<string>();
             fullset.Add(xa.FullName); // add the executing assembly, the root is shown by the caller
-            System.Reflection.AssemblyName[] ean = ea.GetReferencedAssemblies();
-            System.Reflection.AssemblyName[] xan = xa.GetReferencedAssemblies();
+            AssemblyName[] ean = ea.GetReferencedAssemblies();
+            AssemblyName[] xan = xa.GetReferencedAssemblies();
             for (int i = 0; i < ean.Length; i++)
             {
                 workingset.Add(ean[i].FullName);
@@ -1222,9 +1222,6 @@ namespace NCCConfig
 
     public class CmdConfig : ConfigHelper
     {
-        private bool showhelp = false;
-        private bool showversion = false;
-        private bool showcfg = false;
         private bool showcfgLiteral = false;
         public CmdConfig(Hashtable _parms)
         {
@@ -1233,12 +1230,12 @@ namespace NCCConfig
 
         public bool Showcfg
         {
-            get { return showcfg; }
-            set { showcfg = value; }
-        }
+            get;
+            set;
+		}
         public bool ShowLiteral
         {
-            get { return showcfgLiteral; }
+            get;
         }
         public string ShowcfgLiteral
         {
@@ -1246,14 +1243,20 @@ namespace NCCConfig
         }
         public bool Showhelp
         {
-            get { return showhelp; }
-            set { showhelp = value; }
-        }
+            get;
+            set;
+		}
 
         public bool ShowVersion
         {
-            get { return showversion; }
-            set { showversion = value; }
+            get;
+            set;
+		}
+
+		public string Query
+        {
+            get;
+            set;
         }
 
         public void ShowHelp(OptionSet _p)

@@ -77,7 +77,7 @@ namespace NCCCmd
 			}
 
 			LMLoggers.LognLM applog = N.App.Logger(LMLoggers.AppSection.App);
-
+			bool OpenResults = N.App.AppContext.OpenResults;
 			try
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
@@ -108,6 +108,17 @@ namespace NCCCmd
 	                N.App.DB.UpdateAcquireParams(acq, det.ListMode);
 					N.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
 				}
+
+				if (N.App.Config.Cmd.Query != null)
+				{
+					AcquireParameters acq = Integ.GetCurrentAcquireParams();
+					System.Collections.Generic.List<string> ls = acq.ToDBElementList(generate:true).AlignedNameValueList;
+					foreach(string s in ls)
+						Console.WriteLine(s);
+					OpenResults = false;
+					return;
+				}
+
 
 				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
 				{
@@ -145,7 +156,7 @@ namespace NCCCmd
 				N.App.Config.RetainChanges();
 				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " . . .");
 				N.App.Loggers.Flush();  
-                if (N.App.AppContext.OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
+                if (OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
             }
 		}
 

@@ -565,24 +565,6 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("yield_relative_to_mrc_95", yieldRelativeToMrc95));
             this.ps.Add(new DBParamEntry("bias_test_use_addasrc", biasTestUseAddasrc));
             this.ps.Add(new DBParamEntry("bias_test_addasrc_position", biasTestAddasrcPosition));
-
-            //    [source_id] [nvarchar(256) ] NULL,
-            //    [normalization_constant] [float] NULL,
-            //    [normalization_constant_err] [float] NULL,
-            //    [bias_mode] [int] NULL,
-            //    [meas_rate] [float] NULL,
-            //    [meas_rate_err] [float] NULL,
-            //    [amli_ref_singles_rate] [float] NULL,
-            //    [cf252_ref_doubles_rate] [float] NULL,
-            //    [cf252_ref_doubles_rate_err] [float] NULL,
-            //    [ref_date] [nvarchar(20) ] NULL,
-            //    [init_src_precision_limit] [float] NULL,
-            //    [bias_precision_limit] [float] NULL,
-            //    [acceptance_limit_std_dev] [float] NULL,
-            //    [acceptance_limit_percent] [float] NULL,
-            //    [yield_relative_to_mrc_95] [float] NULL,
-            //    [bias_test_use_addasrc] [nvarchar(256) ] NULL,
-            //    [bias_test_addasrc_position] [float] NULL
         }
 
     }
@@ -2862,6 +2844,21 @@ namespace AnalysisDefs
             foreach (DBParamEntry f in ps)
             {
                 vals[i] = f.Value;
+                i++;
+            }
+            return vals;
+        }
+
+		public string[] ToSimpleKeyArray(bool generate = true)
+        {
+            if (generate) 
+                GenParamList(); // resolved in the child class
+            string[] vals = new string[ps.Count];
+
+            int i = 0;
+            foreach (DBParamEntry f in ps)
+            {
+                vals[i] = f.Name;
                 i++;
             }
             return vals;
