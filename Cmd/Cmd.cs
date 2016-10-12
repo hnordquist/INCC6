@@ -108,6 +108,13 @@ namespace NCCCmd
 	                N.App.DB.UpdateAcquireParams(acq, det.ListMode);
 					N.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
 				}
+				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
+				{
+					if (N.App.AppContext.AssayFromFiles)
+						N.App.Opstate.Action = NCC.NCCAction.Assay;
+					else if (N.App.AppContext.HasFileAction)
+						N.App.Opstate.Action = NCC.NCCAction.File;
+				}
 
 				if (N.App.Config.Cmd.Query != null)
 				{
@@ -116,7 +123,8 @@ namespace NCCCmd
 					foreach(string s in ls)
 						Console.WriteLine(s);
 					OpenResults = false;
-					return;
+					if (N.App.Opstate.Action == NCC.NCCAction.Nothing)
+						return;
 				}
 
 
