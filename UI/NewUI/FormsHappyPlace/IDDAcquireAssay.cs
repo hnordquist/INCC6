@@ -412,24 +412,27 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
+					if (ah.det.Id.SRType.CanDoTriples())
+					{
+						UseTriplesRadioButton.Enabled = true;
+						UsePu240eRadioButton.Enabled = ((am != null) && (am.HasMethod(AnalysisMethod.Multiplicity) || am.HasMethod(AnalysisMethod.AddASource)));
+					}
+					else
+					{
+						UseTriplesRadioButton.Enabled = false;
+						UsePu240eRadioButton.Enabled = false;
+						if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision || ah.ap.acquire_type == AcquireConvergence.Pu240EffPrecision)
+						{
+							ah.ap.acquire_type = AcquireConvergence.CycleCount;
+						}
+					}
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = false;
-					UsePu240eRadioButton.Enabled = false;
 					NumPassiveCyclesTextBox.Enabled = ah.CycleCount;
+					NumActiveCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
 					MaxNumCyclesTextBox.Enabled = !ah.CycleCount;
-					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
-					if (ah.det.Id.SRType == InstrType.PSR || ah.det.Id.SRType == InstrType.AMSR || ah.det.Id.SRType == InstrType.MSR4A || ah.det.ListMode)
-					{
-						UseTriplesRadioButton.Enabled = true;
-						if ( (am != null) && am.HasMethod(AnalysisMethod.Multiplicity))
-						{
-							UsePu240eRadioButton.Enabled = true;
-						}
-					}
-
 					break;
 				default:
 					CountTimeTextBox.Enabled = false;
@@ -437,7 +440,6 @@ namespace NewUI
 					UseDoublesRadioButton.Enabled = false;
 					UseTriplesRadioButton.Enabled = false;
 					UsePu240eRadioButton.Enabled = false;
-
 					MeasPrecisionTextBox.Enabled = false;
 					MinNumCyclesTextBox.Enabled = false;
 					MaxNumCyclesTextBox.Enabled = false;

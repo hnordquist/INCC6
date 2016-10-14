@@ -133,8 +133,6 @@ Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
 expected to be done
-***  acquire_type defaults for meas options not set correctly
-***  acquire_type not retained in acquire state nor retained across transfer, reanalysis, restore
 
 hoping
 ***  SDTMultiplicityCalculator shift to BigInteger
@@ -148,6 +146,7 @@ hoping
 
 
 done Oct 14
+***  DAQ acquire type termination conditions defaults and constraints not set correctly
 ***  ending comment field and use and reporting
 ***  cmd line: show current acquire state db content with new --query flag
 ***  Added cmd line report section selector flags

@@ -87,7 +87,7 @@ namespace NewUI
             }
 
             this.DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
                     DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));

@@ -112,6 +112,11 @@ namespace DetectorDefs
             return itype < InstrType.NPOD && itype >= InstrType.JSR15;
         }
 
+		public static bool CanDoTriples(this InstrType itype)
+		{
+            return itype >= InstrType.MSR4A;
+		}
+
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
         /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15

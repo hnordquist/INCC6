@@ -59,7 +59,7 @@ namespace NewUI
             while (iter.MoveNext())
             {
                 i++;
-                string augmenter = (rep > 1 ? " " + i.ToString() : "");
+                string augmenter = (rep > 1 ? " " + i.ToString() : ""); // use mkey indicator here, not just this indexer
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
                 INCCResult r;
                 MeasOptionSelector moskey = new MeasOptionSelector(m.MeasOption, mkey);
@@ -69,7 +69,7 @@ namespace NewUI
                     case AssaySelector.MeasurementOption.rates:
                     case AssaySelector.MeasurementOption.background:
                         //if (passive)
-                        listView1.Items.Add(new ListViewItem(new string[] { "Passive rates" + augmenter }));  // use mkey indicator here, not just this indexer
+                        listView1.Items.Add(new ListViewItem(new string[] { "Passive rates" + augmenter }));  
                         listView1.Items.Add(new ListViewItem(new string[] {
                         string.Format(" Singles: {0,13:F3} +- {1,9:F3}", r.DeadtimeCorrectedSinglesRate.v, r.DeadtimeCorrectedSinglesRate.err) }));
                         listView1.Items.Add(new ListViewItem(new string[] {
@@ -116,7 +116,7 @@ namespace NewUI
                         break;
                     case AssaySelector.MeasurementOption.precision:
                         INCCResults.results_precision_rec pr = (INCCResults.results_precision_rec)r;
-                        listView1.Items.Add(new ListViewItem(new string[] { "Precision results" + augmenter }));  // use mkey indicator here, not just this indexer
+                        listView1.Items.Add(new ListViewItem(new string[] { "Precision results" + augmenter }));
                         listView1.Items.Add(new ListViewItem(new string[] {
                         string.Format("Chi-square lower limit: {0,13:F3}", pr.chiSqLowerLimit) }));
                         listView1.Items.Add(new ListViewItem(new string[] {
@@ -145,13 +145,13 @@ namespace NewUI
                                 INCCMethodResult imr = ai.Current.Value;
                                 if (imr is INCCMethodResults.results_cal_curve_rec)
                                 {
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive calibration curve results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive calibration curve results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("       Pu mass: {0,13:F3}", ((INCCMethodResults.results_cal_curve_rec)imr).pu_mass.v) }));
                                 }
                                 else if (imr is INCCMethodResults.results_known_alpha_rec)
                                 {
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Known alpha results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Known alpha results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("Multiplication: {0,13:F3}", ((INCCMethodResults.results_known_alpha_rec)imr).mult) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -161,13 +161,13 @@ namespace NewUI
                                 }
                                 else if (imr is INCCMethodResults.results_add_a_source_rec)
                                 {
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Add-a-source results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Add-a-source results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("       Pu mass: {0,13:F3}", ((INCCMethodResults.results_add_a_source_rec)imr).pu_mass.v) }));
                                 }
                                 else if (imr is INCCMethodResults.results_active_rec)
                                 {
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Active calibration curve results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Active calibration curve results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("      U235 mass: {0,13:F3}", ((INCCMethodResults.results_active_rec)imr).u235_mass.v) }));
                                 }
@@ -191,7 +191,7 @@ namespace NewUI
                                 if (imr is INCCMethodResults.results_cal_curve_rec)
                                 {
                                     INCCMethodResults.results_cal_curve_rec d = (INCCMethodResults.results_cal_curve_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive calibration curve results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive calibration curve results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("                 Pu mass: {0,13:F3} +- {1,9:F3}", d.pu_mass.v, d.pu_mass.err) }));
                                     if (d.dcl_pu_mass > 0)
@@ -206,7 +206,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_known_alpha_rec)
                                 {
                                     INCCMethodResults.results_known_alpha_rec d = (INCCMethodResults.results_known_alpha_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Known alpha results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Known alpha results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("          Multiplication: {0,13:F3}", d.mult) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -225,7 +225,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_known_m_rec)
                                 {
                                     INCCMethodResults.results_known_m_rec d = (INCCMethodResults.results_known_m_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Known M results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Known M results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("          Multiplication: {0,13:F3}", d.mult) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -244,7 +244,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_multiplicity_rec)
                                 {
                                     INCCMethodResults.results_multiplicity_rec d = (INCCMethodResults.results_multiplicity_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive multiplicity results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Passive multiplicity results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("          Multiplication: {0,13:F3} +- {1,9:F3}", d.mult.v, d.mult.err) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -265,7 +265,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_add_a_source_rec)
                                 {
                                     INCCMethodResults.results_add_a_source_rec d = (INCCMethodResults.results_add_a_source_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Add-a-source results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Add-a-source results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("                   Delta: {0,13:F3} +- {1,9:F3}", d.delta.v, d.delta.err) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -284,7 +284,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_curium_ratio_rec)
                                 {
                                     INCCMethodResults.results_curium_ratio_rec d = (INCCMethodResults.results_curium_ratio_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Curium ratio results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Curium ratio results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("                 Cm mass: {0,13:F3}  +- {1,9:F3}", d.cm_mass.v, d.cm_mass.err) }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
@@ -323,7 +323,7 @@ namespace NewUI
                                     INCCMethodResults.results_truncated_mult_rec d = (INCCMethodResults.results_truncated_mult_rec)imr;
                                     if (d.methodParams.known_eff)
                                     {
-                                        listView1.Items.Add(new ListViewItem(new string[] { "Known efficiency truncated multiplicity results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                        listView1.Items.Add(new ListViewItem(new string[] { "Known efficiency truncated multiplicity results" + augmenter }));
                                         listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("                 Pu mass: {0,13:F3} +- {1,9:F3}", d.k.pu_mass.v, d.k.pu_mass.err) }));
                                         if (d.k.dcl_pu_mass > 0)
@@ -337,7 +337,7 @@ namespace NewUI
                                     }
                                     if (d.methodParams.solve_eff)
                                     {
-                                        listView1.Items.Add(new ListViewItem(new string[] { "Solve efficiency truncated multiplicity results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                        listView1.Items.Add(new ListViewItem(new string[] { "Solve efficiency truncated multiplicity results" + augmenter }));
                                         listView1.Items.Add(new ListViewItem(new string[] {
                                         string.Format("                 Pu mass: {0,13:F3} +- {1,9:F3}", d.s.pu_mass.v, d.s.pu_mass.err) }));
                                         if (d.s.dcl_pu_mass > 0)
@@ -353,7 +353,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_active_rec)
                                 {
                                     INCCMethodResults.results_active_rec d = (INCCMethodResults.results_active_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Active calibration curve results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Active calibration curve results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("                 U235 mass: {0,13:F3} +- {1,9:F3}", d.u235_mass.v,d.u235_mass.err) }));
                                     if (d.dcl_u235_mass > 0)
@@ -368,7 +368,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_active_passive_rec)
                                 {
                                     INCCMethodResults.results_active_passive_rec d = (INCCMethodResults.results_active_passive_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Active/passive results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Active/passive results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("                 U235 mass: {0,13:F3} +- {1,9:F3}", d.u235_mass.v,d.u235_mass.err) }));
                                     if (d.dcl_u235_mass > 0)
@@ -383,7 +383,7 @@ namespace NewUI
                                 else if (imr is INCCMethodResults.results_collar_rec)
                                 {
                                     INCCMethodResults.results_collar_rec d = (INCCMethodResults.results_collar_rec)imr;
-                                    listView1.Items.Add(new ListViewItem(new string[] { "Collar results" + augmenter }));  // use mkey indicator here, not just this indexer
+                                    listView1.Items.Add(new ListViewItem(new string[] { "Collar results" + augmenter }));
                                     listView1.Items.Add(new ListViewItem(new string[] {
                                     string.Format("                 U235 mass: {0,13:F3} +- {1,9:F3}", d.u235_mass.v,d.u235_mass.err) }));
                                     if (d.dcl_total_u235.v > 0)
@@ -399,8 +399,8 @@ namespace NewUI
                         }
                         break;
                     case AssaySelector.MeasurementOption.unspecified:
-                        listView1.Items.Add(new ListViewItem(new string[] { "List mode results" + augmenter }));  // use mkey indicator here, not just this indexer
-                        listView1.Items.Add(new ListViewItem(new string[] { "TODO " }));
+                        listView1.Items.Add(new ListViewItem(new string[] { "List mode results" + augmenter }));
+                        listView1.Items.Add(new ListViewItem(new string[] { "TODO " })); // todo: fill in with something useful for LM
                         break;
                 }
             }
