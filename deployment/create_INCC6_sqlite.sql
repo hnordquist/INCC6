@@ -420,7 +420,7 @@ CREATE TABLE acquire_parms_rec(
 	[stratum_id_description] nvarchar(1024) NULL,
 	[user_id] nvarchar(256) NULL,
 	[comment] nvarchar(256) NULL,
-	[ending_comment] nvarchar(256) NULL,
+	[ending_comment] int NULL,
 	[data_src] int NULL,
 	[qc_tests] int  NULL,
 	[acq_print] int  NULL,
@@ -997,7 +997,7 @@ CREATE TABLE results_rec(
 	[ending_comment] nvarchar(256) NULL,
 	[num_runs] int NULL,
 	
-	[inspection_number] nvarchar(256) NULL,  /* todo */
+	[inspection_number] nvarchar(256) NULL,
 	
 	[detector_name] nvarchar(256)  NULL,  /* from the detector def */
 	[detector_type_id] int NULL,

@@ -138,7 +138,6 @@ expected to be done
 
 hoping
 ***  SDTMultiplicityCalculator shift to BigInteger
-***  ending comment field and use and reporting
 69   APluralityOfMultiplicityAnalyzers and more
 100  Rossi processing too slow and can sometimes hang
 67   PTR-32 data handling question
@@ -148,7 +147,8 @@ hoping
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
 
 
-done Oct 12
+done Oct 14
+***  ending comment field and use and reporting
 ***  cmd line: show current acquire state db content with new --query flag
 ***  Added cmd line report section selector flags
 ***  Finish results summary fields for summary reports

@@ -934,7 +934,7 @@ namespace AnalysisDefs
         public string user_id;
         public string comment;
         public bool ending_comment;
-        public string ending_comment_str;
+        public string ending_comment_str;  // this rides on the acq for runtime convenience, stored in the results_rec of a completed measurement
         public ConstructedSource data_src;
         public bool qc_tests;
         public bool print;
@@ -1119,8 +1119,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("stratum_id_description", stratum_id.Desc));
             this.ps.Add(new DBParamEntry("user_id", user_id));
             this.ps.Add(new DBParamEntry("comment", comment));
-            this.ps.Add(new DBParamEntry("ending_comment", ending_comment));
-            //this.ps.Add(new DBParamEntry("ending_comment_str", ending_comment_str));  // URGENT: add ending_comment_str to table
+            this.ps.Add(new DBParamEntry("ending_comment", ending_comment));  // flag only, value, if any, lives on results_rec
 
             this.ps.Add(new DBParamEntry("data_src", (int)data_src));
             this.ps.Add(new DBParamEntry("qc_tests", qc_tests));
@@ -1171,8 +1170,7 @@ namespace AnalysisDefs
             acr.Add(Find("acq_print"));
             acr.Add(Find("user_id"));
             acr.Add(Find("comment"));
-            acr.Add(Find("ending_comment"));
-            // acr.Add(Find("ending_comment_str")); // URGENT: add ending_comment_str to table and results report rendering
+			acr.Add(new DBParamEntry("ending_comment", ending_comment_str));
             acr.Add(Find("num_runs"));
             return acr;
         }

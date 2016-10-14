@@ -2903,7 +2903,7 @@ namespace NCCTransfer
 
             meas = new Measurement((AssaySelector.MeasurementOption)results.meas_option, mlogger);
    
-           // TODO: update detector details from this meas result, since there could be a difference 
+            // TODO: update detector details from this meas result, since there could be a difference 
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
   
@@ -2950,7 +2950,7 @@ namespace NCCTransfer
                 iso.id = TransferUtils.str(isotopics.isotopics_id, INCC.MAX_ISOTOPICS_ID_LENGTH);
                 AnalysisDefs.Isotopics.SourceCode checksc = AnalysisDefs.Isotopics.SourceCode.OD;
                 string check = TransferUtils.str(isotopics.isotopics_source_code, INCC.ISO_SOURCE_CODE_LENGTH);
-                bool okparse = System.Enum.TryParse(check, true, out checksc);
+                bool okparse = Enum.TryParse(check, true, out checksc);
                 iso.source_code = checksc;
                 iso.SetValueError(Isotope.am241, isotopics.am241, isotopics.am241_err);
                 iso.SetValueError(Isotope.pu238, isotopics.pu238, isotopics.pu238_err);
@@ -2996,10 +2996,10 @@ namespace NCCTransfer
             if (string.IsNullOrEmpty(acq.campaign_id))
                 acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
 			acq.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);//"Original file name " + meas.MeasurementId.FileName;
-			acq.ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
+			string ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
 			acq.ending_comment = !string.IsNullOrEmpty(acq.ending_comment_str);
 			
-			acq.data_src = (DetectorDefs.ConstructedSource)results.data_source;
+			acq.data_src = (ConstructedSource)results.data_source;
 			acq.well_config = (WellConfiguration)results.well_config;
 			acq.print = TransferUtils.ByteBool(results.results_print);
 

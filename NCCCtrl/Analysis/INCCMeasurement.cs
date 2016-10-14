@@ -411,8 +411,7 @@ namespace AnalysisDefs
                                 meas.AddWarningMessage("Background triples rate " + results.rates.DTCRates.TriplesRate + " greater than " + meas.Tests.bkgTriplesRateLimit, 10142, mkey);
 
                             // dev note: this is a background measurement per se, so we copy the results to the Background class and store the entire thing that way
-                            // Need to account for Active bkg beginning here.
-                            
+                            // NEXT: Need to account for Active bkg beginning here.                            
                             
                             if (Integ.GetCurrentAcquireParams().well_config == WellConfiguration.Active)// Is an active acquisition.
                             {

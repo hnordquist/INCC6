@@ -570,6 +570,7 @@ namespace NewUI
             {
                 base.StartAction();
                 Run();
+				EndCommentCheck();
             }
             catch (Exception e)
             {
@@ -594,6 +595,14 @@ namespace NewUI
         {
             get { return NC.App.Opstate.Action; }
         }
+		void EndCommentCheck()
+		{
+			if (NC.App.Opstate.Measurement != null)
+				if (NC.App.Opstate.Measurement.AcquireState.ending_comment &&   // ending comment flag is set
+					NC.App.Opstate.Measurement.HasReportableData &&             // has some data 
+					NC.App.Opstate.Measurement.MeasurementId.UniqueId > 0)  // meas preserved in the DB
+					new IDDEndingComment().ShowDialog();
+		}
 
 		
 		void SpecialPrepThreadOp(object sender, DoWorkEventArgs ea)
@@ -682,13 +691,23 @@ namespace NewUI
             }
         }
 
-        void ThreadOp(object sender, DoWorkEventArgs ea)
+		void EndCommentCheck()
+		{
+			if (NC.App.Opstate.Measurement != null)
+				if (NC.App.Opstate.Measurement.AcquireState.ending_comment &&   // ending comment flag is set
+					NC.App.Opstate.Measurement.HasReportableData &&             // has some data 
+					NC.App.Opstate.Measurement.MeasurementId.UniqueId > 0)  // meas preserved in the DB
+					new IDDEndingComment().ShowDialog();
+		}
+
+		void ThreadOp(object sender, DoWorkEventArgs ea)
         {
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 base.StartAction();
                 Run();
+				EndCommentCheck();
             }
             catch (Exception e)
             {

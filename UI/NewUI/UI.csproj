@@ -371,10 +371,10 @@
     <Compile Include="Unready\IDDDualEnergyMult.Designer.cs">
       <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDEndingComment.cs">
+    <Compile Include="FormsHappyPlace\IDDEndingComment.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDEndingComment.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDEndingComment.Designer.cs">
       <DependentUpon>IDDEndingComment.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDErrorCalcMethod.cs">
@@ -1360,7 +1360,7 @@
     <EmbeddedResource Include="Unready\IDDDualEnergyMult.resx">
       <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDEndingComment.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDEndingComment.resx">
       <DependentUpon>IDDEndingComment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDErrorCalcMethod.resx">

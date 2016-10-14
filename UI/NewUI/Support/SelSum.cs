@@ -214,8 +214,9 @@ namespace NewUI
 				break;
 			case Selections.Comments:
 				entries["Comment"] = m.AcquireState.comment;
-				if (m.AcquireState.ending_comment)
-					entries["End Comment"] = m.AcquireState.ending_comment_str;  // URGENT: use once field is used in the code, blank for now
+				if (m.INCCAnalysisResults.TradResultsRec.acq.ending_comment && 
+					!string.IsNullOrEmpty(m.INCCAnalysisResults.TradResultsRec.acq.ending_comment_str))
+					entries["End Comment"] = m.AcquireState.ending_comment_str;
 				break;
 			case Selections.MassAnalysisMethods:
 				break;
