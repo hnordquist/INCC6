@@ -505,7 +505,7 @@ namespace NewUI
 
 		private void ReportCascadeViewClick(object sender, RoutedEventArgs e)
 		{
-            Cascade Ⱡ = new Cascade();   // NYI
+            Overview Ⱡ = new Overview();
             Ⱡ.Show();
 		}
 

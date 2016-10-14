@@ -257,11 +257,11 @@
     <Compile Include="FormsHappyPlace\IDDAddASourceCal.Designer.cs">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\Cascade.cs">
+    <Compile Include="FormsHappyPlace\Overview.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\Cascade.Designer.cs">
-      <DependentUpon>Cascade.cs</DependentUpon>
+    <Compile Include="FormsHappyPlace\Overview.Designer.cs">
+      <DependentUpon>Overview.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDArchiveConfig.cs">
       <SubType>Form</SubType>
@@ -1300,8 +1300,8 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDAddASourceCal.resx">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\Cascade.resx">
-      <DependentUpon>Cascade.cs</DependentUpon>
+    <EmbeddedResource Include="FormsHappyPlace\Overview.resx">
+      <DependentUpon>Overview.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDArchiveConfig.resx">
       <DependentUpon>IDDArchiveConfig.cs</DependentUpon>

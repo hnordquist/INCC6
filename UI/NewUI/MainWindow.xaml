@@ -120,7 +120,7 @@
                 <MenuItem Header="_Verification Summary..." Click="ReportVerificationSummaryClick" IsEnabled="true"/>
                 <MenuItem Header="_Holdup Summary..." Click="ReportHoldupSummaryClick" IsEnabled="False"/>
                 <Separator />
-                <MenuItem Header="Cascade View..." Click="ReportCascadeViewClick" IsEnabled="True"/>
+                <MenuItem Header="_Overview..." Click="ReportCascadeViewClick" IsEnabled="True"/>
                 <Separator />
                 <MenuItem Header="Plot Normalization _History..." Click="ReportPlotNormHistoryClick" IsEnabled="False"/>
                 <MenuItem Header="Plot Calibration and Verification _Results..." Click="ReportPlotCalVerificationClick" IsEnabled="False"/>
