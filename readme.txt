@@ -135,6 +135,7 @@ Closed issues
 expected to be done
 
 hoping
+***  Tree view of detectors, associated params, and a cascade down to materials and methods
 ***  SDTMultiplicityCalculator shift to BigInteger
 69   APluralityOfMultiplicityAnalyzers and more
 100  Rossi processing too slow and can sometimes hang

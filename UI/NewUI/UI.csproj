@@ -257,6 +257,12 @@
     <Compile Include="FormsHappyPlace\IDDAddASourceCal.Designer.cs">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
     </Compile>
+    <Compile Include="Unready\Cascade.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\Cascade.Designer.cs">
+      <DependentUpon>Cascade.cs</DependentUpon>
+    </Compile>
     <Compile Include="Unready\IDDArchiveConfig.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -915,12 +921,6 @@
     <Compile Include="FormsHappyPlace\IDDDetectorIdSelect.Designer.cs">
       <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDDetectorSelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDetectorSelect.Designer.cs">
-      <DependentUpon>IDDDetectorSelect.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDEnterIsotopics.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1184,9 +1184,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDDetectorIdSelect.resx">
       <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorSelect.resx">
-      <DependentUpon>IDDDetectorSelect.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDEnterIsotopics.resx">
       <DependentUpon>IDDEnterIsotopics.cs</DependentUpon>
     </EmbeddedResource>
@@ -1302,6 +1299,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDAddASourceCal.resx">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\Cascade.resx">
+      <DependentUpon>Cascade.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDArchiveConfig.resx">
       <DependentUpon>IDDArchiveConfig.cs</DependentUpon>

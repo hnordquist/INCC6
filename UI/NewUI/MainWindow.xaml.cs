@@ -503,6 +503,12 @@ namespace NewUI
             f.Show();
         }
 
+		private void ReportCascadeViewClick(object sender, RoutedEventArgs e)
+		{
+            Cascade Ⱡ = new Cascade();   // NYI
+            Ⱡ.Show();
+		}
+
         private void ReportPlotNormHistoryClick(object sender, RoutedEventArgs e)
         {
             //TODO
