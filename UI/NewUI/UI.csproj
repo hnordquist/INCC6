@@ -449,12 +449,6 @@
     <Compile Include="Unready\IDDManualSetup.Designer.cs">
       <DependentUpon>IDDManualSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDMiscPersist.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDMiscPersist.Designer.cs">
-      <DependentUpon>IDDMiscPersist.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDMultiplicityCal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -466,12 +460,6 @@
     </Compile>
     <Compile Include="Unready\IDDNewWellConfig.Designer.cs">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDOutlierWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDOutlierWaitMsg.Designer.cs">
-      <DependentUpon>IDDOutlierWaitMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDPassword.cs">
       <SubType>Form</SubType>
@@ -719,23 +707,11 @@
     <Compile Include="Unready\IDDTakeDataWaitMsg1.Designer.cs">
       <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDTools.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDTools.Designer.cs">
-      <DependentUpon>IDDTools.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.Designer.cs">
       <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDWarningMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDWarningMsg.Designer.cs">
-      <DependentUpon>IDDWarningMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDWeightedMult.cs">
       <SubType>Form</SubType>
@@ -1348,17 +1324,11 @@
     <EmbeddedResource Include="Unready\IDDManualSetup.resx">
       <DependentUpon>IDDManualSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDMiscPersist.resx">
-      <DependentUpon>IDDMiscPersist.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDMultiplicityCal.resx">
       <DependentUpon>IDDMultiplicityCal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDNewWellConfig.resx">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDOutlierWaitMsg.resx">
-      <DependentUpon>IDDOutlierWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDPassword.resx">
       <DependentUpon>IDDPassword.cs</DependentUpon>
@@ -1483,14 +1453,8 @@
     <EmbeddedResource Include="Unready\IDDTakeDataWaitMsg1.resx">
       <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDTools.resx">
-      <DependentUpon>IDDTools.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDTruncatedMultCalibration.resx">
       <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDWarningMsg.resx">
-      <DependentUpon>IDDWarningMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDWeightedMult.resx">
       <DependentUpon>IDDWeightedMult.cs</DependentUpon>

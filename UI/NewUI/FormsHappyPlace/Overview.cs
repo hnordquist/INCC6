@@ -55,14 +55,21 @@ namespace NewUI
 		public Overview()
 		{
 			InitializeComponent();
-			TreeNode tn = treeView1.Nodes["Detectors"];
+
+            AcquireParameters acq = null;
+            Detector det = null;
+            NCC.IntegrationHelpers.GetCurrentAcquireDetectorPair(ref acq, ref det);
+
+            TreeNode tn = treeView1.Nodes["Detectors"];
 			tn.Tag = typeof(Detector);
-			foreach (Detector d in N.App.DB.Detectors)
+            foreach (Detector d in N.App.DB.Detectors)
 			{
 				TreeNode n = tn.Nodes.Add(d.Id.DetectorName, d.Id.DetectorName);
+                if (d.Id.DetectorId == det.Id.DetectorId)
+                    n.NodeFont = new Font(treeView1.Font, FontStyle.Bold);
 				n.Tag = d;
 			}
-			tn = treeView1.Nodes["Collar Items"];
+            tn = treeView1.Nodes["Collar Items"];
 			tn.Tag = typeof(CollarItemId);
 			foreach (CollarItemId d in N.App.DB.CollarItemIds.GetList())
 			{
@@ -133,6 +140,8 @@ namespace NewUI
             {
                 TreeNode n = tn.Nodes.Add(kv.Key.ToString(), kv.Key.ToString());
                 n.Tag = kv.Value;
+                if (kv.Value.MatchSelector(acq))
+                    n.NodeFont = new Font(treeView1.Font, FontStyle.Bold);
             }
             tn = treeView1.Nodes["QC and Tests"];
             tn.Tag = typeof(TestParameters);

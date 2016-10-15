@@ -1174,6 +1174,21 @@ namespace AnalysisDefs
             acr.Add(Find("num_runs"));
             return acr;
         }
+
+        public bool MatchSelector(string det, string item, DateTimeOffset dto)
+        {
+            int res = det.CompareTo(detector_id);
+            if (res == 0)
+                res = dto.CompareTo(MeasDateTime);
+            if (res == 0)
+                res = item.CompareTo(item_id);
+            return res == 0;
+        }
+
+        public bool MatchSelector(AcquireParameters acq)
+        {
+            return MatchSelector(acq.detector_id, acq.item_id, acq.MeasDateTime);
+        }
     }
 
     public enum AddASourceFlavors { None, CompuMotor_3000, CompuMotor_4000, PLC_JCC21, PLC_WM3100, Canberra_Counter, PSC_WDAS = Canberra_Counter, Manual };

@@ -519,16 +519,6 @@ namespace NewUI
             //TODO
         }
 
-        //////////////////
-        //  TOOLS MENU  //
-        //////////////////
-
-        private void ToolsReviewToolClick(object sender, RoutedEventArgs e)
-        {
-            IDDTools f = new IDDTools();
-            f.Show();
-        }
-
         /////////////////
         //  HELP MENU  //
         /////////////////
@@ -546,8 +536,6 @@ namespace NewUI
 
         private void HelpAppInfoClick(object sender, RoutedEventArgs e)
         {
-            //IDDHelpInfoDialog f = new IDDHelpInfoDialog();
-            //f.Show();
             string[] x = NCCConfig.Config.ShowCfgLines(NC.App.Config, true, true);
 			foreach(string s in x)			
 				NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 0, s);

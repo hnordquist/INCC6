@@ -3780,11 +3780,11 @@ namespace AnalysisDefs
 				int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
 				return hCode;
 			}
-			public override string ToString()
-			{
-				return Item1          + "," + Item2 + " => " + Item3;
-			}
-			public Detector Detector 
+            public override string ToString()
+            {
+                return Item1 + "," + Item2 + " => " + Item3.ToString("yyyy-MM-dd HH:mm:ss K");
+            }
+            public Detector Detector 
 			{
 				get { return Item1; }
 			}

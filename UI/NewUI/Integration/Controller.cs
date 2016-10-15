@@ -570,7 +570,7 @@ namespace NewUI
             {
                 base.StartAction();
                 Run();
-				EndCommentCheck();
+				EndCommentCheck();   // devnote: (difficult code refactoring) move report generation here to include the optional ending comment in the generated text files
             }
             catch (Exception e)
             {
