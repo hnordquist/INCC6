@@ -3416,7 +3416,7 @@ namespace AnalysisDefs
     /// <summary>
     /// Root of access to basic INCC persistent storage, tries to hide DB details LOL
     /// </summary>
-    public partial class   INCCDB
+    public partial class INCCDB
     {
         public INCCDB()
         {
@@ -3462,11 +3462,6 @@ namespace AnalysisDefs
         public static string UpdateFrag(bool good)
         {
             return good ? "Updated" : "Failed to update";
-        }
-        // optionally implement an initial data load here,
-        // default is pieces are loaded as needed by calls through this class      
-        public void Populate(DB.Persistence pest)
-        {
         }
 
         // detectors (alpha/beta should attach to these but is on MultRes for now)
@@ -3785,11 +3780,11 @@ namespace AnalysisDefs
 				int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
 				return hCode;
 			}
-			public override string ToString()
-			{
-				return Item1          + "," + Item2 + " => " + Item3;
-			}
-			public Detector Detector 
+            public override string ToString()
+            {
+                return Item1 + "," + Item2 + " => " + Item3.ToString("yyyy-MM-dd HH:mm:ss K");
+            }
+            public Detector Detector 
 			{
 				get { return Item1; }
 			}
@@ -4386,7 +4381,7 @@ namespace AnalysisDefs
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
         /// <returns>CycleList</returns>
-        public CycleList GetCycles(Detector det, MeasId mid, CountingAnalysisParameters cap = null)
+        public CycleList GetCycles(Detector det, MeasId mid, ConstructedSource data_src, CountingAnalysisParameters cap = null)
         {
             CycleList cl = new CycleList();
 			if (mid.UniqueId <= 0)
@@ -4396,6 +4391,7 @@ namespace AnalysisDefs
             dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
 			List<Multiplicity> tme = null;
             int seq = 0;
+            DateTimeOffset cur = new DateTimeOffset(mid.MeasDateTime.Ticks, mid.MeasDateTime.Offset);
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
@@ -4404,7 +4400,11 @@ namespace AnalysisDefs
 
 				long lmid = AddSummaryToCycle(dr, c);
 
-				if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
+                c.UpdateDataSourceId(data_src, det.Id.SRType,
+                                   cur.AddTicks(c.TS.Ticks), det.Id.FileName);
+                cur = c.DataSourceId.dt;
+
+                if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
 					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 					AddResultToCycle(dr, det.MultiplicityParams, c);
@@ -4511,16 +4511,6 @@ namespace AnalysisDefs
             mcr.RawSinglesRate.v = c.SinglesRate;
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
-
-        public bool AddCycles(CycleList cl, Detector det, Measurement m)
-        {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = m.MeasurementId.UniqueId;
-            if (mid <= 0)
-                return false;
-
-            return AddCycles(cl, det.MultiplicityParams, mid, -1, ms);
-        }
 
        public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
         {

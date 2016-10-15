@@ -40,7 +40,7 @@ namespace NewUI
             InitializeComponent();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
 			FieldFiller();
-			this.Text += " for Detector " + det.Id.DetectorId;
+			Text += " for Detector " + det.Id.DetectorId;
 		}
 		AcquireParameters acq;
 		Detector det;
@@ -53,7 +53,8 @@ namespace NewUI
             SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
             SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
             IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
-       }
+            DisplayResultsInTextRadioButton.Checked = true;
+        }
 		void SaveAcquireState()
 		{
 			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
@@ -68,12 +69,13 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            SaveAcquireState();
             IDDMeasurementList measlist = new IDDMeasurementList(
                 AssaySelector.MeasurementOption.background, 
                 alltypes: false, goal: IDDMeasurementList.EndGoal.Report, detector: det);
+            measlist.Sections = acq.review;
             if (measlist.bGood)
                 measlist.ShowDialog();
-			SaveAcquireState();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -119,16 +121,6 @@ namespace NewUI
         private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
         {
 			acq.print = ((CheckBox)sender).Checked;
-        }
-
-        private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PlotSinglesDoublesTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void IDDReviewBackground_Load(object sender, EventArgs e)

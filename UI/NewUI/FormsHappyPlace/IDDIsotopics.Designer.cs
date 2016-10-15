@@ -288,7 +288,7 @@
             // 
             // WriteToFileBtn
             // 
-            this.WriteToFileBtn.Enabled = false;
+            this.WriteToFileBtn.Enabled = true;
             this.WriteToFileBtn.Location = new System.Drawing.Point(416, 193);
             this.WriteToFileBtn.Name = "WriteToFileBtn";
             this.WriteToFileBtn.Size = new System.Drawing.Size(187, 23);

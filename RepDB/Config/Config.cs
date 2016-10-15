@@ -102,6 +102,11 @@ namespace NCCConfig
             get { return AppContextConfig.GetVersionString(); }
         }
 
+        public string VersionBranchString
+        {
+            get { return AppContextConfig.GetVersionBranchString(); }
+        }
+
         public string RootLoc
         {
             get { return App.RootLoc; }
@@ -110,10 +115,16 @@ namespace NCCConfig
         private const string _defaultpath = @"./";
         public static string DefaultPath
         {
-            get { return Config._defaultpath; }
+            get { return _defaultpath; }
         }
 
         public static bool isDefaultPath(string underconsideration) { return _defaultpath.Equals(underconsideration); }
+
+        private const string _defaultreportsectional = @"d c i t";
+        public static string DefaultReportSectional 
+        {
+            get { return _defaultreportsectional; }
+        }
 
         public struct CmdParams { public object val; public bool set; public System.Type type; public bool sticky;}
 
@@ -147,9 +158,7 @@ namespace NCCConfig
             acq = new LMAcquireConfig(_parms);
             netcomm = new LMMMNetComm(_parms);
             lmmm = new LMMMConfig(_parms);
-
-            cmd = new CmdConfig(_parms);
-            
+            cmd = new CmdConfig(_parms);            
         }
 
 
@@ -226,7 +235,7 @@ namespace NCCConfig
 			string[] a = new string[0];
 			string[] b = new string[0];
 			bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
-			System.Configuration.Configuration config =
+			Configuration config =
 			  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			if (config.HasFile)
 			{
@@ -307,8 +316,8 @@ namespace NCCConfig
 
             if (full)
             {
-                System.Reflection.Assembly eas = System.Reflection.Assembly.GetEntryAssembly();
-                System.Reflection.Assembly eax = System.Reflection.Assembly.GetExecutingAssembly();
+                Assembly eas = Assembly.GetEntryAssembly();
+                Assembly eax = Assembly.GetExecutingAssembly();
                 x[ix++] = eas.FullName;
                 x[ix++] = "using";
                 string[] a = GetAssemblyVersionStrings(eas, eax);
@@ -324,13 +333,13 @@ namespace NCCConfig
             return x;
         }
 
-        static string[] GetAssemblyVersionStrings(System.Reflection.Assembly ea, System.Reflection.Assembly xa)
+        static string[] GetAssemblyVersionStrings(Assembly ea, Assembly xa)
         {
             HashSet<string> workingset = new HashSet<string>();
             HashSet<string> fullset = new HashSet<string>();
             fullset.Add(xa.FullName); // add the executing assembly, the root is shown by the caller
-            System.Reflection.AssemblyName[] ean = ea.GetReferencedAssemblies();
-            System.Reflection.AssemblyName[] xan = xa.GetReferencedAssemblies();
+            AssemblyName[] ean = ea.GetReferencedAssemblies();
+            AssemblyName[] xan = xa.GetReferencedAssemblies();
             for (int i = 0; i < ean.Length; i++)
             {
                 workingset.Add(ean[i].FullName);
@@ -564,9 +573,9 @@ namespace NCCConfig
         // or "c:\\temp"
         protected string TrimCmdLineFlagpath(string raw)
         {
-            if (String.IsNullOrEmpty(raw))
+            if (string.IsNullOrEmpty(raw))
                 return "";
-            System.Char[] charsToTrim = { '\"', '\'' };
+			char[] charsToTrim = { '\"', '\'' };
             //string thawed = raw.Trim();
             string warmed = raw.Trim(charsToTrim);
             return warmed;
@@ -582,21 +591,33 @@ namespace NCCConfig
 			Assembly a = Assembly.GetEntryAssembly();
             Version MyVersion = a.GetName().Version;
 			string result = MyVersion.ToString();
-			object[] o = a.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), true);
-			if (o != null && o.Length > 0)
-			{
-				AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
-				if (!string.IsNullOrEmpty(aca.Configuration))
-					result = result + " " + aca.Configuration;
-			}
+            string branch = GetVersionBranchString(a);
+            if (!string.IsNullOrEmpty(branch))
+                result = result + " " + branch;
             return result;
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }
 
-		static public string EightCharConvert(DateTimeOffset dto)
+        public static string GetVersionBranchString(Assembly entry = null)
+        {
+            string result = string.Empty;
+            if (entry == null)
+                entry = Assembly.GetEntryAssembly();
+            object[] o = entry.GetCustomAttributes(typeof(AssemblyConfigurationAttribute), true);
+            if (o != null && o.Length > 0)
+            {
+                AssemblyConfigurationAttribute aca = (AssemblyConfigurationAttribute)o[0];
+                if (!string.IsNullOrEmpty(aca.Configuration))
+                    result = aca.Configuration;
+            }
+            return result;
+
+        }
+
+        static public string EightCharConvert(DateTimeOffset dto)
 		{
-			Char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+			char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 			string y = dto.ToString("yy");
 			char Y = y[y.Length-1];
 			string M = string.Format("{0:X1}", dto.Month);
@@ -622,7 +643,7 @@ namespace NCCConfig
  
             resetVal(NCCFlags.logging, false, typeof(bool));
             //resetVal(LMFlags.logAutoPath, false, typeof(bool));
-            resetVal(NCCFlags.logDetails, (Int32)TraceOptions.None, typeof(Int32));
+            resetVal(NCCFlags.logDetails, (int)TraceOptions.None, typeof(int));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
             resetVal(NCCFlags.rolloverSizeMB, 50, typeof(int)); /* (1024 * 1024), */
@@ -630,6 +651,7 @@ namespace NCCConfig
             resetVal(NCCFlags.fpPrec, (ushort)3, typeof(ushort));
             resetVal(NCCFlags.openResults, false, typeof(bool));
             resetVal(NCCFlags.results8Char, true, typeof(bool));
+            resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
@@ -653,14 +675,13 @@ namespace NCCConfig
             resetVal(NCCFlags.testDataFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ncdFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.reviewFileAssay, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.opStatusPktInterval, (UInt32)128, typeof(UInt32)); /* every 1Mb, or 128 8192Kb, socket packet receipts, get the status from the analyzes, */
-            resetVal(NCCFlags.opStatusTimeInterval, (UInt32)1000, typeof(UInt32)); /* status poll timer fires every 1000 milliseconds */
+            resetVal(NCCFlags.opStatusPktInterval, (uint)128, typeof(uint)); /* every 1Mb, or 128 8192Kb, socket packet receipts, get the status from the analyzes, */
+            resetVal(NCCFlags.opStatusTimeInterval, (uint)1000, typeof(uint)); /* status poll timer fires every 1000 milliseconds */
             resetVal(NCCFlags.autoCreateMissing, false, typeof(bool), retain: false);
             resetVal(NCCFlags.auxRatioReport, false, typeof(bool), retain: false);
             resetVal(NCCFlags.overwriteImportedDefs, false, typeof(bool));
             resetVal(NCCFlags.liveFileWrite, true, typeof(bool));
             resetVal(NCCFlags.gen5TestDataFile, false, typeof(bool));
-            //<<>>
         }
 
         private Hashtable srclevelmap = null; // for the .NET log listener filter only
@@ -722,7 +743,7 @@ namespace NCCConfig
             set
             {
                 string warmed = TrimCmdLineFlagpath(value);
-                if (!String.IsNullOrEmpty(warmed))
+                if (!string.IsNullOrEmpty(warmed))
                     setVal(NCCFlags.fileinput, warmed);
             }
         }
@@ -960,7 +981,25 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.results8Char); }
             set { setVal(NCCFlags.results8Char, value); }
-        }
+		}
+
+
+		/// <summary>
+		/// reportSect=
+		///            d|de|detector        (default true)
+		///            c|ca|calib           (default true)
+		///            i|is|isotopics       (default true)
+		///            r|rd|run_raw_data     (default false)
+		///		    t|rr|run_rate        (default true)
+		///		    m|rm|run_mult_dist    (default false)
+		///            s|sr|rawsum |summed_raw_data     (default false)
+		///		    e|sd|distsum|summed_mult_dist   (default false)
+		/// </summary>
+		public string ReportSectional
+        {
+            get { return (string)getVal(NCCFlags.reportSect); }
+            set { setVal(NCCFlags.reportSect, value); }  // parsed by caller        
+		}
 
 		/// <summary>
 		/// Rates only files have a suffix of .RTS
@@ -995,7 +1034,7 @@ namespace NCCConfig
         }
         public TraceEventType Verbose()  // LMLoggers.LogLevels
         {
-            UInt16 l = System.Convert.ToUInt16(getVal(NCCFlags.verbose));
+			ushort l = Convert.ToUInt16(getVal(NCCFlags.verbose));
             if (l < tracelevelmap.Count)
                 return (/*LogLevels*/TraceEventType)tracelevelmap[l];
             else
@@ -1012,15 +1051,15 @@ namespace NCCConfig
 
         public SourceLevels Level()
         {
-            UInt16 l = System.Convert.ToUInt16(getVal(NCCFlags.level));
+            ushort l = System.Convert.ToUInt16(getVal(NCCFlags.level));
             if (l < srclevelmap.Count)
                 return (SourceLevels)srclevelmap[l];
             else
                 return SourceLevels.Error;
         }
-        public UInt16 LevelAsUInt16
+        public ushort LevelAsUInt16
         {
-            get {return System.Convert.ToUInt16(getVal(NCCFlags.level)); }
+            get {return Convert.ToUInt16(getVal(NCCFlags.level)); }
 
         }
         public void SetLevel(ushort l)
@@ -1032,26 +1071,26 @@ namespace NCCConfig
             return isSet(NCCFlags.level);
         }
 
-        public Int32 RolloverSizeMB
+        public int RolloverSizeMB
         {
-            get { return (Int32)getVal(NCCFlags.rolloverSizeMB); }
+            get { return (int)getVal(NCCFlags.rolloverSizeMB); }
             set { setVal(NCCFlags.rolloverSizeMB, value); }
         }
-        public Int32 RolloverIntervalMin
+        public int RolloverIntervalMin
         {
-            get { return (Int32)getVal(NCCFlags.rolloverIntervalMin); }
+            get { return (int)getVal(NCCFlags.rolloverIntervalMin); }
             set { setVal(NCCFlags.rolloverIntervalMin, value); }
         }
 
-        public UInt32 StatusTimerMilliseconds
+        public uint StatusTimerMilliseconds
         {
-            get { return (UInt32)getVal(NCCFlags.opStatusTimeInterval); }
+            get { return (uint)getVal(NCCFlags.opStatusTimeInterval); }
             set { setVal(NCCFlags.opStatusTimeInterval, value); }
         }
 
-        public UInt32 StatusPacketCount
+        public uint StatusPacketCount
         {
-            get { return (UInt32)getVal(NCCFlags.opStatusPktInterval); }
+            get { return (uint)getVal(NCCFlags.opStatusPktInterval); }
             set { setVal(NCCFlags.opStatusPktInterval, value); }
         }
 
@@ -1183,9 +1222,6 @@ namespace NCCConfig
 
     public class CmdConfig : ConfigHelper
     {
-        private bool showhelp = false;
-        private bool showversion = false;
-        private bool showcfg = false;
         private bool showcfgLiteral = false;
         public CmdConfig(Hashtable _parms)
         {
@@ -1194,12 +1230,12 @@ namespace NCCConfig
 
         public bool Showcfg
         {
-            get { return showcfg; }
-            set { showcfg = value; }
-        }
+            get;
+            set;
+		}
         public bool ShowLiteral
         {
-            get { return showcfgLiteral; }
+            get;
         }
         public string ShowcfgLiteral
         {
@@ -1207,14 +1243,20 @@ namespace NCCConfig
         }
         public bool Showhelp
         {
-            get { return showhelp; }
-            set { showhelp = value; }
-        }
+            get;
+            set;
+		}
 
         public bool ShowVersion
         {
-            get { return showversion; }
-            set { showversion = value; }
+            get;
+            set;
+		}
+
+		public string Query
+        {
+            get;
+            set;
         }
 
         public void ShowHelp(OptionSet _p)
@@ -1254,9 +1296,9 @@ namespace NCCConfig
         public LMMMNetComm(Hashtable _parms)
         {
             this._parms = _parms;
-            resetVal(NCCFlags.numConnections, (Int32)8, typeof(int));
-            resetVal(NCCFlags.receiveBufferSize, (Int32)8192, typeof(int));
-            resetVal(NCCFlags.parseBufferSize, (UInt32)50, typeof(uint)); // 50 MB
+            resetVal(NCCFlags.numConnections, 8, typeof(int));
+            resetVal(NCCFlags.receiveBufferSize, 8192, typeof(int));
+            resetVal(NCCFlags.parseBufferSize, (uint)50, typeof(uint)); // 50 MB
             resetVal(NCCFlags.useAsyncFileIO, false, typeof(bool));
             resetVal(NCCFlags.useAsyncAnalysis, false, typeof(bool));
             resetVal(NCCFlags.streamRawAnalysis, true, typeof(bool));
@@ -1277,19 +1319,19 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.useAsyncFileIO); }
             set { setVal(NCCFlags.useAsyncFileIO, value); }
         }
-        public Int32 NumConnections
+        public int NumConnections
         {
-            get { return (Int32)getVal(NCCFlags.numConnections); }
+            get { return (int)getVal(NCCFlags.numConnections); }
             set { setVal(NCCFlags.numConnections, value); }
         }
-        public Int32 ReceiveBufferSize
+        public int ReceiveBufferSize
         {
-            get { return (Int32)getVal(NCCFlags.receiveBufferSize); }
+            get { return (int)getVal(NCCFlags.receiveBufferSize); }
             set { setVal(NCCFlags.receiveBufferSize, value); }
         }
-        public UInt32 ParseBufferSize
+        public uint ParseBufferSize
         {
-            get { return (UInt32)getVal(NCCFlags.parseBufferSize); }
+            get { return (uint)getVal(NCCFlags.parseBufferSize); }
             set
             {
                 if (value > 1024) value = 512;  // let's not go overboard LOL
@@ -1303,17 +1345,17 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.streamRawAnalysis); }
             set { setVal(NCCFlags.streamRawAnalysis, value); }
         }
-        public UInt32 StreamEventCount
+        public uint StreamEventCount
         {
             get
             {
-                uint v = (UInt32)getVal(NCCFlags.parseBufferSize);
+                uint v = (uint)getVal(NCCFlags.parseBufferSize);
                 return (v * 1024 * 1024) / 8;
             }
         }
-        public Int32 LMListeningPort
+        public int LMListeningPort
         {
-            get { return (Int32)(getVal(NCCFlags.broadcastport)); }
+            get { return (int)(getVal(NCCFlags.broadcastport)); }
             set
             {
                 setVal(NCCFlags.broadcastport, value);
@@ -1326,14 +1368,14 @@ namespace NCCConfig
             set { setVal(NCCFlags.broadcast, value); }
         }
 
-        public Int32 Port
+        public int Port
         {
-            get { return (Int32)(getVal(NCCFlags.port)); }
+            get { return (int)(getVal(NCCFlags.port)); }
             set { setVal(NCCFlags.port, value); }
         }
-        public Int32 Wait
+        public int Wait
         {
-            get { return (Int32)(getVal(NCCFlags.wait)); }
+            get { return (int)(getVal(NCCFlags.wait)); }
             set { setVal(NCCFlags.wait, value); }
         }
         public string Subnet
@@ -1401,46 +1443,46 @@ namespace NCCConfig
         public LMMMConfig(Hashtable _parms)
         {
             this._parms = _parms;
-            resetVal(NCCFlags.leds, (Int32)0, typeof(int));
-            resetVal(NCCFlags.input, (Int32)1, typeof(int));
-            resetVal(NCCFlags.debug, (Int32)0, typeof(int));
-            resetVal(NCCFlags.hv, (Int32)1650, typeof(int));
-            resetVal(NCCFlags.LLD, (Int32)500, typeof(int));
-            resetVal(NCCFlags.hvtimeout, (Int32)120, typeof(int));
+            resetVal(NCCFlags.leds, 1, typeof(int));
+            resetVal(NCCFlags.debug, 0, typeof(int));
+            resetVal(NCCFlags.hv, 1650, typeof(int));
+            resetVal(NCCFlags.LLD, 500, typeof(int));
+            resetVal(NCCFlags.hvtimeout, 120, typeof(int));
+            resetVal(NCCFlags.input, 1, typeof(int));
         }
-        public Int32 LEDs
+        public int LEDs
         {
-            get { return (Int32)getVal(NCCFlags.leds); }
+            get { return (int)getVal(NCCFlags.leds); }
             set { setVal(NCCFlags.leds, value); }
         }
-        public Int32 Input
+        public int Input
         {
-            get { return (Int32)getVal(NCCFlags.input); }
+            get { return (int)getVal(NCCFlags.input); }
             set { setVal(NCCFlags.input, value); }
         }
-        public Int32 Debug
+        public int Debug
         {
-            get { return (Int32)getVal(NCCFlags.debug); }
+            get { return (int)getVal(NCCFlags.debug); }
             set { setVal(NCCFlags.debug, value); }
         }
-        public Int32 HV
+        public int HV
         {
-            get { return (Int32)getVal(NCCFlags.hv); }
+            get { return (int)getVal(NCCFlags.hv); }
             set { setVal(NCCFlags.hv, value); }
         }
-        public Int32 LLD
+        public int LLD
         {
-            get { return (Int32)getVal(NCCFlags.LLD); }
+            get { return (int)getVal(NCCFlags.LLD); }
             set { setVal(NCCFlags.LLD, value); }
         }
-		public Int32 VoltageTolerance
+		public int VoltageTolerance
         {
-            get { return (Int32)getVal(NCCFlags.LLD); }
+            get { return (int)getVal(NCCFlags.LLD); }
             set { setVal(NCCFlags.LLD, value); }
         }
-        public Int32 HVTimeout
+        public int HVTimeout
         {
-            get { Int32 v = (Int32)getVal(NCCFlags.hvtimeout); if (v < 5) v = 30; return v; }
+            get { int v = (int)getVal(NCCFlags.hvtimeout); if (v < 5) v = 30; return v; }
             set { setVal(NCCFlags.hvtimeout, value); }
         }
     }
@@ -1830,6 +1872,8 @@ namespace NCCConfig
             }
             return s;
         }
+
+
     }
 
 	public class WPFEventArgs: EventArgs

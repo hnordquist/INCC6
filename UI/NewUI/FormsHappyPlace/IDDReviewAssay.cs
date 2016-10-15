@@ -42,7 +42,7 @@ namespace NewUI
             InitializeComponent();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
 			FieldFiller();
-			this.Text += " for Detector " + det.Id.DetectorId;
+			Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, "verification", "All");
 			LoadInspNumCombo();
 		}
@@ -74,9 +74,10 @@ namespace NewUI
             IndividualCycleRateDataCheckBox.Checked = acq.review.RateCycleData;
             SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
             SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
-            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;			
+            IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
+            DisplayResultsInTextRadioButton.Checked = true;
         }
-		private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void DetectorParametersCheckBox_CheckedChanged(object sender, EventArgs e)
         {
 			acq.review.DetectorParameters = ((CheckBox)sender).Checked;
         }
@@ -137,13 +138,14 @@ namespace NewUI
 				list = mlist;
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
+            SaveAcquireState();
             IDDMeasurementList measlist = new IDDMeasurementList();
             measlist.Init(list, 
                         AssaySelector.MeasurementOption.verification,
                         goal: IDDMeasurementList.EndGoal.Report, lmonly:false, inspnum:inspnum, detector:det);
+            measlist.Sections = acq.review;
             if (measlist.bGood)
                 measlist.ShowDialog();
-			SaveAcquireState();
         }
 		void SaveAcquireState()
 		{
@@ -160,7 +162,7 @@ namespace NewUI
 		}
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -170,16 +172,7 @@ namespace NewUI
 
         private void IDDReviewAssay_Load(object sender, EventArgs e)
         {
+
         }
     }
-
-
-	/*
-	define class with db key and campaign string, query results rec based on detector, type
-	construct list of results rec db key and campaign entries,
-	on user selection, 
-		1) use db key and campaign id, to get each related meas id for the 2nd selection list
-		2) no campaign ids, just do what we do now. 
-
-	*/
 }

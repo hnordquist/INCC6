@@ -1445,10 +1445,9 @@ namespace AnalysisDefs
             }
 
             maxBins = Math.Max(mr.maxRABin + 1, mr.maxABin + 1);
-            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);
+            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);  
 
-
-            ComputeSums();
+            ComputeHitSums();
 
             αβ = new AlphaBeta(mr.alpha, mr.beta);
 
@@ -1463,7 +1462,7 @@ namespace AnalysisDefs
 
         }
 
-        public void ComputeSums()
+        public void ComputeHitSums()
         {
             double res = 0;
             //According to Martyn, these are "hits", not sums.  hn 5.13.2015

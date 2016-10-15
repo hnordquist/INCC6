@@ -53,9 +53,9 @@ namespace NewUI
             bGood = true;
             FieldFiller();
             if (LMOnly)
-                this.Text = "List Mode Measurements for Detector " + det.Id.DetectorId;
+                Text = "List Mode Measurements for Detector " + det.Id.DetectorId;
             else
-                this.Text += " for Detector " + det.Id.DetectorId;
+                Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
 			LoadInspNumCombo();
 		}
@@ -79,7 +79,6 @@ namespace NewUI
 		}
 		public void FieldFiller()
         {
-			PrintTextCheckBox.Checked = acq.print;
  			DetectorParametersCheckBox.Checked = acq.review.DetectorParameters;
             CalibrationParametersCheckBox.Checked = acq.review.CalibrationParameters;
             IsotopicsCheckBox.Checked = acq.review.Isotopics;
@@ -88,6 +87,7 @@ namespace NewUI
             SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
             SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
             IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
+            DisplayResultsInTextRadioButton.Checked = true;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -101,13 +101,14 @@ namespace NewUI
 			}
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
+            SaveAcquireState();
             IDDMeasurementList measlist = new IDDMeasurementList(); 
             measlist.Init(list,
                     AssaySelector.MeasurementOption.unspecified,
                     lmonly: bLMOnly, goal: IDDMeasurementList.EndGoal.Report, inspnum: inspnum, detector: det);
+            measlist.Sections = acq.review;
             if (measlist.bGood)
                 measlist.ShowDialog();
-			SaveAcquireState();
         }
 
 		void SaveAcquireState()
@@ -184,20 +185,6 @@ namespace NewUI
         private void IndividualCycleMultiplicityDistributionsCheckBox_CheckedChanged(object sender, EventArgs e)
         {
 			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
-        }
-
-        private void PrintTextCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-			acq.print = ((CheckBox)sender).Checked;
-        }
-        private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void PlotSinglesDoublesTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
 
     }

@@ -114,7 +114,7 @@ namespace NCCFile
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
@@ -135,19 +135,21 @@ namespace NCCFile
                 Instruments.Active.Add(PseudoInstrument); // add to global runtime list
 
             m.CurrentRepetition = 0;
-            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            NC.App.Opstate.SOH = OperatingState.Living;
             try
             {
+				m.Messages.Clear();
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults.First().Value;
-                for (int i = 0; i < mcr.RAMult.Length; i++)  // count again using the per-cycle accumulation of summary results
-                    mcr.RAMult[i] = 0;
-                for (int i = 0; i < mcr.NormedAMult.Length; i++)
-                    mcr.NormedAMult[i] = 0;
+                // count again using the per-cycle accumulation of summary results
+                Array.Clear(mcr.RAMult, 0, mcr.RAMult.Length);
+                Array.Clear(mcr.NormedAMult, 0, mcr.NormedAMult.Length);
+                Array.Clear(mcr.UnAMult, 0, mcr.UnAMult.Length);
+
                 m.Detector.Id.source = src;
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);
 
-                foreach (AnalysisDefs.Cycle cycle in m.Cycles)
+                foreach (Cycle cycle in m.Cycles)
                 {
                     if (NC.App.Opstate.IsCancellationRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
                         break;
@@ -158,7 +160,7 @@ namespace NCCFile
             }
             catch (Exception e)
             {
-                NC.App.Opstate.SOH = NCC.OperatingState.Trouble;
+                NC.App.Opstate.SOH = OperatingState.Trouble;
                 ctrllog.TraceException(e, true);
 				ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
             }
@@ -1212,7 +1214,7 @@ enditall:
                         {
                             s = sortedpulse.reader.ReadLine();
                             double res = 0;
-                            if (Double.TryParse(s, out res))
+                            if (double.TryParse(s, out res))
                             {
                                 pps.timeInBuffer[rb++] = res;
                             }
@@ -1380,7 +1382,7 @@ enditall:
 						s += ";  " + cipss.iss.asy.cpss.HitsPerChnImage();
 				}
 			}
-			catch (System.ObjectDisposedException)
+			catch (ObjectDisposedException)
 			{
 			}
 			return s;
@@ -1425,7 +1427,7 @@ enditall:
                 if (channels && cipss.HasProcessingStatus)
                     s += ";  " + cipss.iss.asy.cpss.HitsPerChnImage();
             }
-            catch (System.ObjectDisposedException)
+            catch (ObjectDisposedException)
             {
             }
             return s;
@@ -1474,11 +1476,11 @@ enditall:
                 else if (o is Measurement)
                 {
                     Measurement m = (Measurement)o;
-                    ss = FileCtrl.MeasStatusString(m);
+                    ss = MeasStatusString(m);
                 }
                 s += ss;
             }
-            log.TraceEvent(lvl, FileCtrl.logid[EH], s);
+            log.TraceEvent(lvl, logid[EH], s);
             return s;  // just in case it could be of further use
         }
 
@@ -1496,7 +1498,7 @@ enditall:
                 else if (o is Measurement)
                 {
                     Measurement m = (Measurement)o;
-                    ss = FileCtrl.MeasStatusString(m);
+                    ss = MeasStatusString(m);
                 }
                 s += ss;
             }            

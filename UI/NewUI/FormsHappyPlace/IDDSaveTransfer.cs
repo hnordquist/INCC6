@@ -75,15 +75,7 @@ namespace NewUI
 					List<Measurement> mlist = measlist.GetSelectedMeas();
 					foreach (Measurement m in mlist)
 					{
-						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
-						DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-						foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
-						{
-							cycle.UpdateDataSourceId(f.acq.data_src, f.det.Id.SRType,
-												cur.AddTicks(cycle.TS.Ticks), f.det.Id.FileName);
-							cur = cycle.DataSourceId.dt;
-						}
+						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
 						m.Cycles.AddRange(cl);
 						// NEXT: m.CFCyles for AAS not used for INCC6 created measurements, only INCC5 transfer measurements have them m.Add(c, i);
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
@@ -106,16 +98,9 @@ namespace NewUI
 					List<Measurement> mlist = NC.App.DB.MeasurementsFor(det.Id.DetectorId);
 					foreach (Measurement m in mlist)
 					{
-						DateTimeOffset dto = m.MeasurementId.MeasDateTime;
-						DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
-						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-						foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
-						{
-							cycle.UpdateDataSourceId(m.AcquireState.data_src, det.Id.SRType,
-												cur.AddTicks(cycle.TS.Ticks), det.Id.FileName);
-							cur = cycle.DataSourceId.dt;
-						}
-						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
+						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+                        m.Add(cl);
+                        m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
 					}
 					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
 					foreach (INCCTransferFile itd in itdl)

@@ -65,7 +65,7 @@ namespace NCCFile
 
                 meas.Persist();  // preserve the basic results record
                 FireEvent(EventType.ActionInProgress, this);
-                meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // set to None, CycleConditioning sets each cycle anew
+                meas.Cycles.ResetStatus(meas.Detector.MultiplicityParams);  // APluralityOfMultiplicityAnalyzers: set to None, CycleConditioning sets each cycle anew
                 ComputeFromINCC5SRData(meas);
                 FireEvent(EventType.ActionInProgress, this);
             }

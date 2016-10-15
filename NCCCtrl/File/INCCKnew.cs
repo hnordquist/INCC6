@@ -35,7 +35,7 @@ using DetectorDefs;
 using NCCReporter;
 namespace NCCTransfer
 {
-	using Tuple = AnalysisDefs.VTuple;
+	using Tuple = VTuple;
 	using NC = NCC.CentralizedState;
 	public class INCCKnew
     {
@@ -2903,7 +2903,7 @@ namespace NCCTransfer
 
             meas = new Measurement((AssaySelector.MeasurementOption)results.meas_option, mlogger);
    
-           // TODO: update detector details from this meas result, since there could be a difference 
+            // TODO: update detector details from this meas result, since there could be a difference 
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
   
@@ -2950,7 +2950,7 @@ namespace NCCTransfer
                 iso.id = TransferUtils.str(isotopics.isotopics_id, INCC.MAX_ISOTOPICS_ID_LENGTH);
                 AnalysisDefs.Isotopics.SourceCode checksc = AnalysisDefs.Isotopics.SourceCode.OD;
                 string check = TransferUtils.str(isotopics.isotopics_source_code, INCC.ISO_SOURCE_CODE_LENGTH);
-                bool okparse = System.Enum.TryParse(check, true, out checksc);
+                bool okparse = Enum.TryParse(check, true, out checksc);
                 iso.source_code = checksc;
                 iso.SetValueError(Isotope.am241, isotopics.am241, isotopics.am241_err);
                 iso.SetValueError(Isotope.pu238, isotopics.pu238, isotopics.pu238_err);
@@ -2985,9 +2985,9 @@ namespace NCCTransfer
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
-            acq.num_runs = results.number_good_runs;
-            if (results.total_number_runs > 0)
-                acq.run_count_time = results.total_good_count_time / results.total_number_runs;
+            acq.num_runs = results.total_number_runs;
+            if (results.number_good_runs > 0)
+                acq.run_count_time = results.total_good_count_time / results.number_good_runs;
             else
                 acq.run_count_time = results.total_good_count_time; // should be 0.0 by default for this special case
             acq.MeasDateTime = meas.MeasurementId.MeasDateTime;
@@ -2996,10 +2996,10 @@ namespace NCCTransfer
             if (string.IsNullOrEmpty(acq.campaign_id))
                 acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
 			acq.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);//"Original file name " + meas.MeasurementId.FileName;
-			acq.ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
+			string ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
 			acq.ending_comment = !string.IsNullOrEmpty(acq.ending_comment_str);
 			
-			acq.data_src = (DetectorDefs.ConstructedSource)results.data_source;
+			acq.data_src = (ConstructedSource)results.data_source;
 			acq.well_config = (WellConfiguration)results.well_config;
 			acq.print = TransferUtils.ByteBool(results.results_print);
 
@@ -3136,6 +3136,10 @@ namespace NCCTransfer
             mcr.DeadtimeCorrectedRates.Singles.v = results.singles;
             mcr.DeadtimeCorrectedRates.Doubles.v = results.doubles;
             mcr.DeadtimeCorrectedRates.Triples.v = results.triples;
+            mcr.Scaler1Rate.v = results.scaler1;
+            mcr.Scaler2Rate.v = results.scaler2;
+            mcr.Scaler1Rate.err = results.scaler1_err;
+            mcr.Scaler2Rate.err = results.scaler2_err;
             mcr.Scaler1.v = results.scaler1;
             mcr.Scaler2.v = results.scaler2;
             mcr.Scaler1.err = results.scaler1_err;
@@ -3165,10 +3169,10 @@ namespace NCCTransfer
             result.DeadtimeCorrectedRates.Singles.v = results.singles;
             result.DeadtimeCorrectedRates.Doubles.v = results.doubles;
             result.DeadtimeCorrectedRates.Triples.v = results.triples;
-            result.Scaler1.v = results.scaler1;
-            result.Scaler2.v = results.scaler2;
-            result.Scaler1.err = results.scaler1_err;
-            result.Scaler2.err = results.scaler2_err;
+            result.rates.RawRates.Scaler1s.v = results.scaler1;
+            result.rates.RawRates.Scaler2s.v = results.scaler2;
+            result.rates.RawRates.Scaler1s.err = results.scaler1_err;
+            result.rates.RawRates.Scaler2s.err = results.scaler2_err;
             result.S1Sum = results.scaler1_sum;
             result.S2Sum = results.scaler2_sum;
             result.ASum = results.acc_sum;
@@ -3204,7 +3208,7 @@ namespace NCCTransfer
 
             #region results transfer
             INCCMethodResults imr;
-            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr);
+            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr); // only ever this single mkey for INCC5-style transfer import, (thankfully)
             if (got)
                 imr.primaryMethod = OldToNewMethodId(results.primary_analysis_method);
             // check these results against the meas.MeasOption expectation => seems to always be 1 - 1 with (opt, sr) -> results, and subresults only for verif and calib choice

@@ -43,7 +43,8 @@ namespace NCCCmd
 			new N("INCC6 Console");
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 			NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
-			N.App.LoadPersistenceConfig(c.DB); // loads up DB, sets global AppContext
+			if (!N.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
+				return;
 			c.AfterDBSetup(N.App.AppContext, args);  // apply the cmd line 
             string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
             if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths
@@ -76,10 +77,12 @@ namespace NCCCmd
 			}
 
 			LMLoggers.LognLM applog = N.App.Logger(LMLoggers.AppSection.App);
-
+			bool OpenResults = N.App.AppContext.OpenResults;
 			try
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
+				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
+				// These affect the current acquire state, so they occur here and not earlier in the inital processing sequence
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
@@ -94,6 +97,36 @@ namespace NCCCmd
                     initialized = Integ.SetNewCurrentMaterial(c.Cur.Material, true);
                 if (!initialized)
                     goto end;
+
+				if (!N.App.AppContext.ReportSectional.Equals(NCCConfig.Config.DefaultReportSectional)) // command line set the value
+				{
+					AcquireParameters acq = null;
+					Detector det = null;
+					Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+					acq.review.Scan(N.App.AppContext.ReportSectional);
+					acq.MeasDateTime = DateTime.Now;
+	                N.App.DB.UpdateAcquireParams(acq, det.ListMode);
+					N.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
+				}
+				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
+				{
+					if (N.App.AppContext.AssayFromFiles)
+						N.App.Opstate.Action = NCC.NCCAction.Assay;
+					else if (N.App.AppContext.HasFileAction)
+						N.App.Opstate.Action = NCC.NCCAction.File;
+				}
+
+				if (N.App.Config.Cmd.Query != null)
+				{
+					AcquireParameters acq = Integ.GetCurrentAcquireParams();
+					System.Collections.Generic.List<string> ls = acq.ToDBElementList(generate:true).AlignedNameValueList;
+					foreach(string s in ls)
+						Console.WriteLine(s);
+					OpenResults = false;
+					if (N.App.Opstate.Action == NCC.NCCAction.Nothing)
+						return;
+				}
+
 
 				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
 				{
@@ -131,7 +164,7 @@ namespace NCCCmd
 				N.App.Config.RetainChanges();
 				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " . . .");
 				N.App.Loggers.Flush();  
-                if (N.App.AppContext.OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
+                if (OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
             }
 		}
 

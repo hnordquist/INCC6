@@ -257,6 +257,12 @@
     <Compile Include="FormsHappyPlace\IDDAddASourceCal.Designer.cs">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\Overview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Overview.Designer.cs">
+      <DependentUpon>Overview.cs</DependentUpon>
+    </Compile>
     <Compile Include="Unready\IDDArchiveConfig.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -268,12 +274,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDAssaySummary.Designer.cs">
       <DependentUpon>IDDAssaySummary.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDBatchDataWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDBatchDataWaitMsg.Designer.cs">
-      <DependentUpon>IDDBatchDataWaitMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCalibrationCurveCal.cs">
       <SubType>Form</SubType>
@@ -371,10 +371,10 @@
     <Compile Include="Unready\IDDDualEnergyMult.Designer.cs">
       <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDEndingComment.cs">
+    <Compile Include="FormsHappyPlace\IDDEndingComment.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDEndingComment.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDEndingComment.Designer.cs">
       <DependentUpon>IDDEndingComment.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDErrorCalcMethod.cs">
@@ -413,12 +413,6 @@
     <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.Designer.cs">
       <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDHelpInfoDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDHelpInfoDialog.Designer.cs">
-      <DependentUpon>IDDHelpInfoDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDHighVoltagePlateau.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -430,12 +424,6 @@
     </Compile>
     <Compile Include="Unready\IDDHoldupSelect.Designer.cs">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDINCCWarningMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDINCCWarningMsg.Designer.cs">
-      <DependentUpon>IDDINCCWarningMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDKnownAlphaCal.cs">
       <SubType>Form</SubType>
@@ -461,18 +449,6 @@
     <Compile Include="Unready\IDDManualSetup.Designer.cs">
       <DependentUpon>IDDManualSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDMiscPersist.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDMiscPersist.Designer.cs">
-      <DependentUpon>IDDMiscPersist.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDMsgBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDMsgBox.Designer.cs">
-      <DependentUpon>IDDMsgBox.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDMultiplicityCal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -484,18 +460,6 @@
     </Compile>
     <Compile Include="Unready\IDDNewWellConfig.Designer.cs">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDNotice.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDNotice.Designer.cs">
-      <DependentUpon>IDDNotice.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDOutlierWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDOutlierWaitMsg.Designer.cs">
-      <DependentUpon>IDDOutlierWaitMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDPassword.cs">
       <SubType>Form</SubType>
@@ -575,12 +539,6 @@
     <Compile Include="FormsHappyPlace\IDDPoisonRodTypeDelete.Designer.cs">
       <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDReadRadRevFileWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDReadRadRevFileWaitMsg.Designer.cs">
-      <DependentUpon>IDDReadRadRevFileWaitMsg.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDReanalysisAssay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -604,12 +562,6 @@
     </Compile>
     <Compile Include="Unready\IDDReimportMsg.Designer.cs">
       <DependentUpon>IDDReimportMsg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDRestoreDataWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDRestoreDataWaitMsg.Designer.cs">
-      <DependentUpon>IDDRestoreDataWaitMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDReviewAll.cs">
       <SubType>Form</SubType>
@@ -689,18 +641,6 @@
     <Compile Include="FormsHappyPlace\IDDSaveCampaignId.Designer.cs">
       <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDsaveDataWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDsaveDataWaitMsg.Designer.cs">
-      <DependentUpon>IDDsaveDataWaitMsg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDSaveSelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDSaveSelect.Designer.cs">
-      <DependentUpon>IDDSaveSelect.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDSaveTransfer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -743,12 +683,6 @@
     <Compile Include="Unready\IDDSRREVBias.Designer.cs">
       <DependentUpon>IDDSRREVBias.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDSRWaitMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDSRWaitMsg.Designer.cs">
-      <DependentUpon>IDDSRWaitMsg.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDStratumLimits.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -773,23 +707,11 @@
     <Compile Include="Unready\IDDTakeDataWaitMsg1.Designer.cs">
       <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDTools.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDTools.Designer.cs">
-      <DependentUpon>IDDTools.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.Designer.cs">
       <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDWarningMsg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDWarningMsg.Designer.cs">
-      <DependentUpon>IDDWarningMsg.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDWeightedMult.cs">
       <SubType>Form</SubType>
@@ -802,12 +724,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\LMAcquire.Designer.cs">
       <DependentUpon>LMAcquire.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\PlateauCurve.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\PlateauCurve.Designer.cs">
-      <DependentUpon>PlateauCurve.cs</DependentUpon>
     </Compile>
     <Compile Include="WinPos.cs" />
     <Page Include="FormsHappyPlace\MeasSetup.xaml">
@@ -826,7 +742,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controller\Controller.cs" />
+    <Compile Include="Integration\Controller.cs" />
     <Compile Include="FormsHappyPlace\AcquireHandlers.cs" />
     <Compile Include="FormsHappyPlace\IDDAcquireAssay.cs">
       <SubType>Form</SubType>
@@ -932,12 +848,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDDetectorIdSelect.Designer.cs">
       <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDetectorSelect.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDetectorSelect.Designer.cs">
-      <DependentUpon>IDDDetectorSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDEnterIsotopics.cs">
       <SubType>Form</SubType>
@@ -1202,9 +1112,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDDetectorIdSelect.resx">
       <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorSelect.resx">
-      <DependentUpon>IDDDetectorSelect.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDEnterIsotopics.resx">
       <DependentUpon>IDDEnterIsotopics.cs</DependentUpon>
     </EmbeddedResource>
@@ -1222,6 +1129,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDIsotopics.resx">
       <DependentUpon>IDDIsotopics.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDIsotopicsAdd.resx">
       <DependentUpon>IDDIsotopicsAdd.cs</DependentUpon>
@@ -1320,14 +1228,14 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDAddASourceCal.resx">
       <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\Overview.resx">
+      <DependentUpon>Overview.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDArchiveConfig.resx">
       <DependentUpon>IDDArchiveConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDAssaySummary.resx">
       <DependentUpon>IDDAssaySummary.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDBatchDataWaitMsg.resx">
-      <DependentUpon>IDDBatchDataWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCalibrationCurveCal.resx">
       <DependentUpon>IDDCalibrationCurveCal.cs</DependentUpon>
@@ -1377,7 +1285,7 @@
     <EmbeddedResource Include="Unready\IDDDualEnergyMult.resx">
       <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDEndingComment.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDEndingComment.resx">
       <DependentUpon>IDDEndingComment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDErrorCalcMethod.resx">
@@ -1398,17 +1306,11 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDHeavyMetalItemData.resx">
       <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDHelpInfoDialog.resx">
-      <DependentUpon>IDDHelpInfoDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDHighVoltagePlateau.resx">
       <DependentUpon>IDDHighVoltagePlateau.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDHoldupSelect.resx">
       <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDINCCWarningMsg.resx">
-      <DependentUpon>IDDINCCWarningMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDKnownAlphaCal.resx">
       <DependentUpon>IDDKnownAlphaCal.cs</DependentUpon>
@@ -1422,23 +1324,11 @@
     <EmbeddedResource Include="Unready\IDDManualSetup.resx">
       <DependentUpon>IDDManualSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDMiscPersist.resx">
-      <DependentUpon>IDDMiscPersist.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDMsgBox.resx">
-      <DependentUpon>IDDMsgBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDMultiplicityCal.resx">
       <DependentUpon>IDDMultiplicityCal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDNewWellConfig.resx">
       <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDNotice.resx">
-      <DependentUpon>IDDNotice.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDOutlierWaitMsg.resx">
-      <DependentUpon>IDDOutlierWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDPassword.resx">
       <DependentUpon>IDDPassword.cs</DependentUpon>
@@ -1479,9 +1369,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodTypeDelete.resx">
       <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDReadRadRevFileWaitMsg.resx">
-      <DependentUpon>IDDReadRadRevFileWaitMsg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReanalysisAssay.resx">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
     </EmbeddedResource>
@@ -1493,9 +1380,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReimportMsg.resx">
       <DependentUpon>IDDReimportMsg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDRestoreDataWaitMsg.resx">
-      <DependentUpon>IDDRestoreDataWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReviewAll.resx">
       <DependentUpon>IDDReviewAll.cs</DependentUpon>
@@ -1536,12 +1420,6 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDSaveCampaignId.resx">
       <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDsaveDataWaitMsg.resx">
-      <DependentUpon>IDDsaveDataWaitMsg.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDSaveSelect.resx">
-      <DependentUpon>IDDSaveSelect.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDSaveTransfer.resx">
       <DependentUpon>IDDSaveTransfer.cs</DependentUpon>
     </EmbeddedResource>
@@ -1563,9 +1441,6 @@
     <EmbeddedResource Include="Unready\IDDSRREVBias.resx">
       <DependentUpon>IDDSRREVBias.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDSRWaitMsg.resx">
-      <DependentUpon>IDDSRWaitMsg.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDStratumLimits.resx">
       <DependentUpon>IDDStratumLimits.cs</DependentUpon>
     </EmbeddedResource>
@@ -1578,23 +1453,14 @@
     <EmbeddedResource Include="Unready\IDDTakeDataWaitMsg1.resx">
       <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDTools.resx">
-      <DependentUpon>IDDTools.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDTruncatedMultCalibration.resx">
       <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDWarningMsg.resx">
-      <DependentUpon>IDDWarningMsg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDWeightedMult.resx">
       <DependentUpon>IDDWeightedMult.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\LMAcquire.resx">
       <DependentUpon>LMAcquire.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\PlateauCurve.resx">
-      <DependentUpon>PlateauCurve.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="Properties\Settings.settings">

@@ -31,7 +31,7 @@ using System.Windows.Forms;
 using AnalysisDefs;
 namespace NewUI
 {
-	using NC = NCC.CentralizedState;
+    using NC = NCC.CentralizedState;
     using Integ = NCC.IntegrationHelpers;
 
     public partial class IDDIsotopics : Form
@@ -409,7 +409,21 @@ namespace NewUI
 
         private void WriteToFileBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("NYI", "Not yet implemented ....");
+            string id = "Default";
+            if (IsotopicsIdComboBox.SelectedItem != null)
+                id = IsotopicsIdComboBox.SelectedItem.ToString();
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "Isotopics files (.csv)|*.csv|                 (.txt)| *.txt";
+            dlg.DefaultExt = ".csv";
+            dlg.FileName = id + ".csv";
+            dlg.InitialDirectory = NC.App.AppContext.ResultsFilePath;
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                NCCFile.INCC5FileExportUtils x = new NCCFile.INCC5FileExportUtils();
+                x.Output.Filename = dlg.FileName;
+                x.IsoIsotopics.Add(m_iso);
+                x.ProcessIsotopicsToFile();
+            }
         }
 
         private void AddNewSetBtn_Click(object sender, EventArgs e)

@@ -140,7 +140,7 @@ namespace NewUI
         }
         public void ResetSummaryRows()
         {
-            foreach (Selections s in System.Enum.GetValues(typeof(Selections)))
+            foreach (Selections s in Enum.GetValues(typeof(Selections)))
             {
                 string key = s.ToString();
                 Root[key].Entries = new List<Dictionary<string, string>>();
@@ -214,8 +214,9 @@ namespace NewUI
 				break;
 			case Selections.Comments:
 				entries["Comment"] = m.AcquireState.comment;
-				if (m.AcquireState.ending_comment)
-					entries["End Comment"] = m.AcquireState.ending_comment_str;  // URGENT: use once field is used in the code, blank for now
+				if (m.INCCAnalysisResults.TradResultsRec.acq.ending_comment && 
+					!string.IsNullOrEmpty(m.INCCAnalysisResults.TradResultsRec.acq.ending_comment_str))
+					entries["End Comment"] = m.AcquireState.ending_comment_str;
 				break;
 			case Selections.MassAnalysisMethods:
 				break;
@@ -315,7 +316,7 @@ namespace NewUI
 					entries["Cm Ratio Pu Mass Err"] = cures.pu.pu_mass.err.ToString("F3"); //	"Curium ratio - mass error"
 					entries["Cm Ratio Pu Dcl-Asy"] = cures.pu.dcl_minus_asy_pu_mass.v.ToString("F2"); //	"Curium ratio - declared minus assay"
 					entries["Cm Ratio Pu Dcl-Asy %"] = cures.pu.dcl_minus_asy_pu_mass_pct.ToString("F2"); //	"Curium ratio - declared minus assay %"
-					entries["Cm Ratio U Dcl Mass"] = cures.u.dcl_mass.ToString("F2"); // Curium ratio - U declared mass"
+					entries["Cm Ratio U Dcl Mass"] = cures.u.dcl_mass.ToString("F2"); // "Curium ratio - U declared mass"
 					entries["Cm Ratio U Mass"] = cures.u.mass.v.ToString("F2");	//	"Curium ratio - U mass"
 					entries["Cm Ratio U Mass Err"] = cures.u.mass.err.ToString("F3"); //	"Curium ratio - U mass error"
 					entries["Cm Ratio U Dcl-Asy"] = cures.u.dcl_minus_asy_mass.v.ToString("F2"); //	"Curium ratio - U declared minus assay"
@@ -330,9 +331,45 @@ namespace NewUI
 				}
 				break;
 			case Selections.TruncatedMultiplicity: 
+               INCCMethodResults.results_truncated_mult_rec tmres = (INCCMethodResults.results_truncated_mult_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.TruncatedMultiplicity, false);
+				if (tmres != null)
+				{
+					entries["Trunc Mult Dcl Mass"] = tmres.k.dcl_mass.ToString("F2"); // "Truncated multiplicity - declared mass"
+					entries["Trunc Mult Mass"] = tmres.k.pu_mass.v.ToString("F2"); // "Truncated multiplicity - mass"
+					entries["Trunc Mult Mass Err"] = tmres.k.pu_mass.err.ToString("F3"); // "Truncated multiplicity - mass error"
+					entries["Trunc Mult Dcl-Asy"] = tmres.k.dcl_minus_asy_mass.v.ToString("F2"); // "Truncated multiplicity - declared minus assay"
+					entries["Trunc Dcl-Asy %"] = tmres.k.dcl_minus_asy_mass_pct.ToString("F2"); //"Truncated multiplicity - declared minus assay %"
+					entries["Trunc Mult Status"] = tmres.k.pass ? "Pass": ""; // "Truncated multiplicity - measurement status"  // todo: what about 's'?
+				}
+				break;
 			case Selections.ActiveCalibCurve:
+               INCCMethodResults.results_active_rec acres = (INCCMethodResults.results_active_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.Active, false);
+				if (acres != null)
+				{
+					entries["Active Dcl Mass"] = acres.dcl_u235_mass.ToString("F2"); //	Active calibration curve - declared mass"
+					entries["Active Mass"] = acres.u235_mass.v.ToString("F2");	//	"Active calibration curve - mass"
+					entries["Active Mass Err"] = acres.u235_mass.err.ToString("F3"); //	"Active calibration curve - mass error"
+					entries["Active Dcl-Asy"] = acres.dcl_minus_asy_u235_mass.v.ToString("F2"); //	"Active calibration curve - declared minus assay"
+					entries["Active Dcl-Asy %"] = acres.dcl_minus_asy_u235_mass_pct.ToString("F2"); //	"Active calibration curve - declared minus assay %"
+					entries["Active Status"] = acres.pass ? "Pass": ""; //	"Active calibration curve - measurement status"
+				}
+				break;
 			case Selections.Collar:
-				// URGENT: three more to go LOL
+               INCCMethodResults.results_collar_rec rcres = (INCCMethodResults.results_collar_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.Collar, false);
+				if (rcres != null)
+				{
+					entries["Collar Dbls Rate"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar - corrected doubles rate"
+					entries["Collar Dbls Rate Err"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar -- corrected doubles rate error"
+					entries["Collar Dcl Mass"] = rcres.dcl_total_u235.v.ToString("F2"); //	Collar - declared mass"
+					entries["Collar Mass"] = rcres.u235_mass.v.ToString("F2");	//	"Collar - mass"
+					entries["Collar Mass Err"] = rcres.u235_mass.err.ToString("F3"); //	"Collar - mass error"
+					entries["Collar Dcl-Asy"] = rcres.dcl_minus_asy_u235_mass.v.ToString("F2"); //	"Collar - declared minus assay"
+					entries["Collar Dcl-Asy %"] = rcres.dcl_minus_asy_u235_mass_pct.ToString("F2"); //	"Collar - declared minus assay %"
+					entries["Collar Status"] = rcres.pass ? "Pass": ""; //	"Collar - measurement status"
+				}
 				break;
 			default:
 				break;
