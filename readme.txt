@@ -128,14 +128,14 @@ List mode:
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
+#86  List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
 
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
-expected to be done
+
 
 hoping
-***  Tree view of detectors, associated params, and a cascade down to materials and methods
 ***  SDTMultiplicityCalculator shift to BigInteger
 69   APluralityOfMultiplicityAnalyzers and more
 100  Rossi processing too slow and can sometimes hang
@@ -145,8 +145,8 @@ hoping
 79   Plot Norm, Plot Ver diagnostic tools
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
 
-
-done Oct 14
+done Oct 15
+***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
 ***  DAQ acquire type termination conditions defaults and constraints not set correctly
 ***  ending comment field and use and reporting
 ***  cmd line: show current acquire state db content with new --query flag
