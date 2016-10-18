@@ -55,7 +55,7 @@ namespace DetectorDefs
 
         public static FAType DefaultFAFor(this InstrType itype)
         {
-            return itype >= InstrType.AMSR ? AnalysisDefs.FAType.FAOn : AnalysisDefs.FAType.FAOff;
+            return itype >= InstrType.AMSR ? FAType.FAOn : FAType.FAOff;
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace DetectorDefs
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
         public static string INCC5ComboBoxString(this InstrType itype)
         {
-            string s = String.Empty;
+            string s = string.Empty;
             switch (itype)
             {
                 case InstrType.MSR4A:

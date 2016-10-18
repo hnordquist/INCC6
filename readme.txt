@@ -124,11 +124,10 @@ Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
 
 List mode:
-#100 Rossi processing too slow and can sometimes hang
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
-#86  List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
+#86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
 
 Closed issues
 
@@ -138,7 +137,6 @@ Closed issues
 hoping
 ***  SDTMultiplicityCalculator shift to BigInteger
 69   APluralityOfMultiplicityAnalyzers and more
-100  Rossi processing too slow and can sometimes hang
 67   PTR-32 data handling question
 16   Accidental Singles test Failure for PTR32
 13   PTR-32 -- Results different if reading file/doing live acquisition
@@ -146,6 +144,7 @@ hoping
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
 
 done Oct 15
+100  Rossi processing too slow and can sometimes hang
 ***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
 ***  DAQ acquire type termination conditions defaults and constraints not set correctly
 ***  ending comment field and use and reporting

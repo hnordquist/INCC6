@@ -259,7 +259,7 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.MultiplicityDistributions:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MultiColumn);
-                        sec.AddHeader(String.Format("{0} multiplicity distributions for each cycle",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
+                        sec.AddHeader(string.Format("{0} multiplicity distributions for each cycle",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
                         int[] csrawidths = new int[] { 6, 12, 12 };
                         foreach (Cycle cyc in meas.Cycles)
                         {
@@ -383,7 +383,7 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.CycleSummary:
                         sec = new INCCStyleSection(null, 1);
-                        sec.AddIntegerRow(String.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(mkey)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
+                        sec.AddIntegerRow(string.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(mkey)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
                         sec.AddNumericRow("Count time (sec):", (meas.Cycles.Count > 0 ? meas.Cycles[0].TS.TotalSeconds : 0.0));
                         break;
 
@@ -393,7 +393,7 @@ namespace AnalysisDefs
                         if (found)
                         {
                             sec = new INCCStyleSection(null, 1);
-                            sec.AddHeader(String.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));  /// todo: is there an active messages section header analog?
+                            sec.AddHeader(string.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));  /// todo: is there an active messages section header analog?
                             foreach (MeasurementMsg m in sl)
                             {
                                 Row r = new Row();
@@ -454,7 +454,7 @@ namespace AnalysisDefs
             sec.AddTwo("Inventory change code: ", meas.AcquireState.inventory_change_code);
             sec.AddTwo("I/O code: ", meas.AcquireState.io_code);
             sec.AddTwo("Measurement date: ", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-			string name = System.IO.Path.GetFileName( meas.ResultsFiles.PrimaryINCC5Filename.Path);
+			string name = System.IO.Path.GetFileName(meas.ResultsFiles.PrimaryINCC5Filename.Path);
             sec.AddTwo("Results file name: ", name);
             sec.AddTwo("Inspection number: ", meas.AcquireState.campaign_id);
 
@@ -505,7 +505,7 @@ namespace AnalysisDefs
 		{
 			string path;
 			if (N.App.AppContext.Results8Char)
-				path =  MethodResultsReport.EightCharConvert(meas.MeasDate);
+				path =  EightCharConvert(meas.MeasDate);
 			else
 				path = base.GenBaseFileName(pretext);
 			return path;
