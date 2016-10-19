@@ -35,7 +35,6 @@
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
-            this.PrintCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // MaterialTypeLabel
@@ -104,22 +103,11 @@
             this.HelpBtn.UseVisualStyleBackColor = true;
             this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
             // 
-            // PrintCheckBox
-            // 
-            this.PrintCheckBox.AutoSize = true;
-            this.PrintCheckBox.Location = new System.Drawing.Point(99, 122);
-            this.PrintCheckBox.Name = "PrintCheckBox";
-            this.PrintCheckBox.Size = new System.Drawing.Size(238, 17);
-            this.PrintCheckBox.TabIndex = 7;
-            this.PrintCheckBox.Text = "Print plot of calibration and verification results";
-            this.PrintCheckBox.UseVisualStyleBackColor = true;
-            // 
             // IDDPlotAssayResults
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(394, 151);
-            this.Controls.Add(this.PrintCheckBox);
+            this.ClientSize = new System.Drawing.Size(394, 112);
             this.Controls.Add(this.HelpBtn);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKBtn);
@@ -143,6 +131,5 @@
         private System.Windows.Forms.Button OKBtn;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
-        private System.Windows.Forms.CheckBox PrintCheckBox;
     }
 }

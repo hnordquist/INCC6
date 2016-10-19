@@ -31,26 +31,25 @@ using AnalysisDefs;
 
 namespace NewUI
 {
-	using Integ = NCC.IntegrationHelpers;
-	using N = NCC.CentralizedState;
+    using Integ = NCC.IntegrationHelpers;
+    using N = NCC.CentralizedState;
 
-    public partial class IDDDemingFit : Form
+    public partial class IDDPlotAssayResults : Form
     {
-
-		private Detector det;
+        private Detector det;
         private AcquireParameters ap;
-		private IDDCurveType ict;
-        public IDDDemingFit()
+        string Material;
+        AnalysisMethod AnalysisMethod;
+        public IDDPlotAssayResults()
         {
             InitializeComponent();
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
             Text += " for detector " + det.Id.DetectorName;
-			ict = new IDDCurveType();
             RefreshMaterialComboBox();
-			RefreshMethodComboBox();
-		}
+            RefreshMethodComboBox();
+        }
 
-		public void RefreshMaterialComboBox()
+        public void RefreshMaterialComboBox()
         {
             MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in N.App.DB.Materials.GetList())
@@ -58,65 +57,56 @@ namespace NewUI
                 MaterialTypeComboBox.Items.Add(desc.Name);
             }
             MaterialTypeComboBox.Refresh();
-			if (MaterialTypeComboBox.Items.Count > 0)
-				MaterialTypeComboBox.SelectedItem = ap.item_type;
-		}
- 		 public void RefreshMethodComboBox()
+            if (MaterialTypeComboBox.Items.Count > 0)
+                MaterialTypeComboBox.SelectedItem = ap.item_type;
+        }
+        public void RefreshMethodComboBox()
         {
             AnalysisMethodComboBox.Items.Clear();
-                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.CalibrationCurve));                
-                AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.KnownA)); 
-				if (VerificationCalDataRadioButton.Checked)
-				{               
-					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.AddASource));                
-					AnalysisMethodComboBox.Items.Add(new jigglypuff(AnalysisMethod.Active));
-				}
+            AnalysisMethodComboBox.Items.Add(new IDDDemingFit.jigglypuff(AnalysisMethod.CalibrationCurve));
+            AnalysisMethodComboBox.Items.Add(new IDDDemingFit.jigglypuff(AnalysisMethod.KnownA));
+            AnalysisMethodComboBox.Items.Add(new IDDDemingFit.jigglypuff(AnalysisMethod.AddASource));
+            AnalysisMethodComboBox.Items.Add(new IDDDemingFit.jigglypuff(AnalysisMethod.Active));
             AnalysisMethodComboBox.Refresh();
-			AnalysisMethodComboBox.SelectedIndex = 0;
-		}         
-
-        private void VerificationCalDataRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-			RefreshMethodComboBox();
+            AnalysisMethodComboBox.SelectedIndex = 0;
         }
-
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-			if (MaterialTypeComboBox.SelectedItem != null)
-				ict.Material = (string)MaterialTypeComboBox.SelectedItem;
+            if (MaterialTypeComboBox.SelectedItem != null)
+                Material = (string)MaterialTypeComboBox.SelectedItem;
         }
 
         private void AnalysisMethodComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-			if (AnalysisMethodComboBox.SelectedItem != null)
-			{
-				jigglypuff j = (jigglypuff)AnalysisMethodComboBox.SelectedItem;
-				ict.AnalysisMethod = j.a;
-			}
+            if (AnalysisMethodComboBox.SelectedItem != null)
+            {
+                IDDDemingFit.jigglypuff j = (IDDDemingFit.jigglypuff)AnalysisMethodComboBox.SelectedItem;
+                AnalysisMethod = j.a;
+            }
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-			DialogResult = DialogResult.OK;
-			if (string.Compare(ap.item_type, (string)MaterialTypeComboBox.SelectedItem, true) != 0)  // mtl type changed on the way out
+            DialogResult = DialogResult.OK;
+            if (string.Compare(ap.item_type, (string)MaterialTypeComboBox.SelectedItem, true) != 0)  // mtl type changed on the way out
             {
-				ap.item_type = (string)MaterialTypeComboBox.SelectedItem;
+                ap.item_type = (string)MaterialTypeComboBox.SelectedItem;
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
                 N.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
             }
-			Close();
+            Close();
+            IDDPlotAssaySelect measlist = new IDDPlotAssaySelect();
+            measlist.AnalysisMethod = AnalysisMethod;
+            measlist.Material = Material;
+            measlist.Init(det.Id.DetectorId, AssaySelector.MeasurementOption.verification);
+            if (measlist.bGood)
+                measlist.ShowDialog();
+
+            // URGENT: implement plot window for this value here: measlist.CalcDataList
         }
 
-		public void CurveTypeSelectionStep()
-		{
-			if (CalcDataList == null)
-				CalcDataList = new CalibrationCurveList();  // one-time init upon first use.
-			ict.CalcDataList = CalcDataList;// pre-load last best result, not maybe the best approach ...
-			ict.ShowDialog();
-			CalcDataList = ict.CalcDataList; // preserve the last list generated by any processing
-		}
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
@@ -126,24 +116,5 @@ namespace NewUI
         {
 
         }
-
-		public class jigglypuff
-		{
-			public jigglypuff(AnalysisMethod am)
-			{
-				a = am;
-				s = a.FullName();
-			}
-			public AnalysisMethod a;
-			public string s;
-			override public string ToString()
-			{
-				return s;
-			}
-
-		}
-
-		static public CalibrationCurveList CalcDataList;
-
     }
 }

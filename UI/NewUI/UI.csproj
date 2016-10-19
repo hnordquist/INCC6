@@ -503,16 +503,16 @@
     <Compile Include="Unready\IDDPLCWaitMsg.Designer.cs">
       <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssayResults.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssayResults.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.Designer.cs">
       <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssaySelect.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssaySelect.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.Designer.cs">
       <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDPlotBiasMeasHistory.cs">
@@ -1351,10 +1351,10 @@
     <EmbeddedResource Include="Unready\IDDPLCWaitMsg.resx">
       <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPlotAssayResults.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssayResults.resx">
       <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPlotAssaySelect.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssaySelect.resx">
       <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDPlotBiasMeasHistory.resx">

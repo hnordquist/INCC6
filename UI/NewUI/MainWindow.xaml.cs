@@ -511,12 +511,14 @@ namespace NewUI
 
         private void ReportPlotNormHistoryClick(object sender, RoutedEventArgs e)
         {
-            //TODO
+            IDDPlotBiasMeasHistory h = new IDDPlotBiasMeasHistory();
+            h.ShowDialog();
         }
 
         private void ReportPlotCalVerificationClick(object sender, RoutedEventArgs e)
         {
-            //TODO
+            IDDPlotAssayResults h = new IDDPlotAssayResults();
+            h.ShowDialog();
         }
 
         /////////////////

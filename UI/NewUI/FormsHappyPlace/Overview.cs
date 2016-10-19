@@ -542,9 +542,9 @@ namespace NewUI
 				//ls.Add(string.Format("{0,10}: {1}", "Port", dsid.FullConnInfo.Port));
 			}
 			if (!string.IsNullOrEmpty(dsid.FullConnInfo.Port))
-				ls.Add(string.Format("{0,10}: {1}", "Port", dsid.FullConnInfo.Port));
+				ls.Add(string.Format("{0,10}: {1}", "COM port", dsid.FullConnInfo.Port));
 			if (dsid.FullConnInfo.Wait != 0)
-				ls.Add(string.Format("{0,10}: {1}", "Wait", dsid.FullConnInfo.Wait));
+				ls.Add(string.Format("{0,10}: {1}", "Wait", dsid.FullConnInfo.Wait) + " mSec");
 
 			return ls;
 		}

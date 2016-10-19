@@ -132,18 +132,18 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
-
-
 hoping
+***  Acquire params and items build up on the in-memory maps during mass transfers
+     DB state is good though, as seen upon close and reopen
 ***  SDTMultiplicityCalculator shift to BigInteger
 69   APluralityOfMultiplicityAnalyzers and more
 67   PTR-32 data handling question
 16   Accidental Singles test Failure for PTR32
 13   PTR-32 -- Results different if reading file/doing live acquisition
 79   Plot Norm, Plot Ver diagnostic tools
-86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence as Mult done
+86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence
 
-done Oct 15
+done Oct 17
 100  Rossi processing too slow and can sometimes hang
 ***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
 ***  DAQ acquire type termination conditions defaults and constraints not set correctly
