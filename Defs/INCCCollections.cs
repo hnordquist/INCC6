@@ -2214,6 +2214,12 @@ namespace AnalysisDefs
             return rec;
         }
 
+		public INCCResults.results_rec GetResultsFor(long mid)
+        {
+			INCCResults.results_rec rec = Get(mid); 
+            return rec;
+        }
+
         public List<INCCResults.results_rec> GetResultsFor(string detname)
         {
             DB.Results r = new DB.Results();
@@ -4200,12 +4206,15 @@ namespace AnalysisDefs
 
 		public INCCResults.results_rec ResultsRecFor(MeasId id)
 		{
+			return ResultsRecFor(id.UniqueId);
+		}
+		public INCCResults.results_rec ResultsRecFor(long mid)
+		{
 			ResultsRecs recs = new ResultsRecs();
             // get the traditional results rec that matches the measurement id 
-			INCCResults.results_rec rec = recs.Get(id.UniqueId); 
+			INCCResults.results_rec rec = recs.Get(mid); 
 			return rec;
 		}
-
 
 
 		public class IndexedResults
