@@ -149,7 +149,7 @@ namespace NewUI
                     break;
                 case AnalysisMethod.KnownA:
                     INCCMethodResults.results_known_alpha_rec kares = (INCCMethodResults.results_known_alpha_rec)imr;
-                    dl.Doubles.v = kares.corr_doubles.v;
+                    dl.Doubles.v = (kares.corr_doubles.v == 0 ? mcr.DeadtimeCorrectedDoublesRate.v : kares.corr_doubles.v);
                     dl.Mass.v = kares.dcl_pu240e_mass;
                     break;
                 case AnalysisMethod.AddASource:
@@ -249,7 +249,7 @@ namespace NewUI
             return res;
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void listView1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count > 0)
                 MCountSel.Text = listView1.SelectedItems.Count.ToString() + " selected";
@@ -257,12 +257,12 @@ namespace NewUI
                 MCountSel.Text = string.Empty;
         }
 
-        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
+		private void listView1_ColumnClick_1(object sender, ColumnClickEventArgs e)
+		{
             Cursor sav = listView1.Cursor;
             listView1.Cursor = Cursors.WaitCursor;
             ListItemSorter(sender, e);
             listView1.Cursor = sav;
-        }
-    }
+		}
+	}
 }

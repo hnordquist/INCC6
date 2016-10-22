@@ -546,6 +546,12 @@
     <Compile Include="FormsHappyPlace\IDDReanalysisAssay.Designer.cs">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.Designer.cs">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="Unready\IDDReanalysisHoldup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1372,6 +1378,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReanalysisAssay.resx">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotAssayChart.resx">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReanalysisHoldup.resx">
       <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>

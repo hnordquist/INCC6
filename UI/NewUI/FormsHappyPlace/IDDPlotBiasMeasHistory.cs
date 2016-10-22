@@ -28,11 +28,10 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using AnalysisDefs;
-
 namespace NewUI
 {
-	using System.Windows.Forms.DataVisualization.Charting;
 	using Integ = NCC.IntegrationHelpers;
 	using N = NCC.CentralizedState;
 	public partial class IDDPlotBiasMeasHistory : Form
@@ -109,22 +108,35 @@ namespace NewUI
 			}
 			normlist.CalcLowerUpper();
 
+			Series s = chart1.Series["Vals"];
+
 			// Set error bar upper & lower error style
-			chart1.Series["Vals"]["ErrorBarStyle"] = "Both";
+			s["ErrorBarStyle"] = "Both";
+			s["ErrorBarCenterMarkerStyle"] = "Circle";
 
 			// Set error bar center marker style
-				chart1.Series["Vals"]["PointWidth"] = "7.5";
-			//	chart1.Series["Vals"].MarkerStyle = MarkerStyle.Cross;
-			//// Set error bar marker style
-			//chart1.Series["Errors"].MarkerStyle = MarkerStyle.Circle;
-			//chart1.Series["Vals"].MarkerStyle = MarkerStyle.Circle;
-			Series s = chart1.Series["Vals"];
+			s.MarkerStyle = MarkerStyle.None;
+			s.MarkerColor = System.Drawing.Color.DarkViolet;
+
+            int imax = 0;
+            ArrowAnnotation maxpt = new ArrowAnnotation();
+            maxpt.Name = "max";
+            maxpt.Height = -5;
+            maxpt.Width = 0;
+            maxpt.AnchorOffsetY = -2.5;
 			foreach(NormDoubles n in normlist)
 			{
 				int i = s.Points.AddXY(n.number, n.Doubles, n.DoublesMinusErr, n.DoublesPlusErr);
-				s.Points[i].ToolTip = n.ToString();
-			}
-        }
+                if (n.DoublesPlusErr == normlist.MaxDoubles)   
+                {
+                    imax = i;
+                    maxpt.ToolTip = "Max " + n.ToString();
+                }
+                s.Points[i].ToolTip = n.ToString();
+			}      
+            chart1.Annotations.Add(maxpt);
+ 			maxpt.AnchorDataPoint = s.Points[imax];
+       }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
@@ -147,7 +159,7 @@ namespace NewUI
 
         public override string ToString()
         {
-            return string.Format("Doubles: {0:F5} -{1:F5} +{2:F5} {3}", Doubles, Doubles - DoublesMinusErr, DoublesPlusErr - Doubles, dto.ToString("yyyy-MM-dd HH:mm:ss")); 
+            return string.Format("Doubles: {0:F5} -{1:F5} +{2:F5},   {3}", Doubles, Doubles - DoublesMinusErr, DoublesPlusErr - Doubles, dto.ToString("yyyy-MM-dd HH:mm:ss")); 
         }
     }
 

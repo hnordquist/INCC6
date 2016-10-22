@@ -117,7 +117,6 @@ See https://github.com/hnordquist/INCC6/issues
 Issues for basic INCC5/6 feature COMPLETION
 
 #84  Implement Collar
-#79  Plot Norm, Plot Ver diagnostic tools
 #35  Hold-up analysis required
 
 Issues for basic INCC6 function and performance
@@ -140,10 +139,10 @@ hoping
 67   PTR-32 data handling question
 16   Accidental Singles test Failure for PTR32
 13   PTR-32 -- Results different if reading file/doing live acquisition
-79   Plot Norm, Plot Ver diagnostic tools
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence
 
-done Oct 17
+done Oct 21
+79   Plot Norm, Plot Ver diagnostic tools
 100  Rossi processing too slow and can sometimes hang
 ***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
 ***  DAQ acquire type termination conditions defaults and constraints not set correctly

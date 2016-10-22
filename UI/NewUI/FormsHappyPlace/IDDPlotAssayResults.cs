@@ -102,9 +102,11 @@ namespace NewUI
             measlist.Material = Material;
             measlist.Init(det.Id.DetectorId, AssaySelector.MeasurementOption.verification);
             if (measlist.bGood)
+			{
                 measlist.ShowDialog();
-
-            // URGENT: implement plot window for this value here: measlist.CalcDataList
+                PlotAssayChart chart = new PlotAssayChart(measlist.CalcDataList);
+					chart.ShowDialog();
+			}
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
