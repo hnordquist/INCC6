@@ -201,6 +201,12 @@
       <DependentUpon>MeasSetup.xaml</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\MethodParam.cs" />
+    <Compile Include="FormsHappyPlace\PlotSDTChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotSDTChart.Designer.cs">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\PrintForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1206,6 +1212,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\LMConnectionParams.resx">
       <DependentUpon>LMConnectionParams.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotSDTChart.resx">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>

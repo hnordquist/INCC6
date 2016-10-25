@@ -46,11 +46,6 @@ namespace NewUI
 		public PlotAssayChart(MeasPointList MeasPoints, CalibList CalibPoints)
 		{
 			InitializeComponent();
-			/// build the 3 series chart
-			/// cal curve mass and doubles are CYAN (CalibList)
-			/// cal points doubles are CYAN (CalibList)
-			/// cal points mass are YELLOW (CalibList)
-			/// meas data points are YELLOW (MeasPointList), mass is X doubles is Y
 			chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
 			chart1.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
 			PlotVerificationPoints(MeasPoints);

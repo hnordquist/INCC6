@@ -160,9 +160,10 @@
             this.PlotSinglesDoublesTriplesRadioButton.TabIndex = 1;
             this.PlotSinglesDoublesTriplesRadioButton.TabStop = true;
             this.PlotSinglesDoublesTriplesRadioButton.Text = "Plot singles, doubles, and triples";
-            this.toolTip1.SetToolTip(this.PlotSinglesDoublesTriplesRadioButton, "NYI: Select this radio button if you want a graphical display of a measurement\'s " +
-        "singles, doubles and triples.");
+            this.toolTip1.SetToolTip(this.PlotSinglesDoublesTriplesRadioButton, "Select this radio button if you want a graphical display of a measurement\'s singl" +
+        "es, doubles and triples.");
             this.PlotSinglesDoublesTriplesRadioButton.UseVisualStyleBackColor = true;
+            this.PlotSinglesDoublesTriplesRadioButton.CheckedChanged += new System.EventHandler(this.PlotSinglesDoublesTriplesRadioButton_CheckedChanged);
             // 
             // DisplayResultsInTextRadioButton
             // 
@@ -176,6 +177,7 @@
             this.toolTip1.SetToolTip(this.DisplayResultsInTextRadioButton, "Select this radio button if you want a text display of measurements. Use the chec" +
         "k boxes to select which results are displayed.");
             this.DisplayResultsInTextRadioButton.UseVisualStyleBackColor = true;
+            this.DisplayResultsInTextRadioButton.CheckedChanged += new System.EventHandler(this.DisplayResultsInTextRadioButton_CheckedChanged);
             // 
             // PrintTextCheckBox
             // 

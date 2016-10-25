@@ -131,8 +131,7 @@ List mode:
 Closed issues
 
 6.17 (6.0.17) Oct 27, 2016  ************
-hoping
-***  The SDT stripchart feature on the report dialogs
+wanting
 ***  Acquire params and items build up on the in-memory maps during mass transfers
      DB state is good though, as seen upon close and reopen
 ***  SDTMultiplicityCalculator shift to BigInteger
@@ -142,7 +141,8 @@ hoping
 13   PTR-32 -- Results different if reading file/doing live acquisition
 86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence
 
-done Oct 21
+done Oct 25
+***  The SDT stripchart feature on the report dialogs
 79   Plot Norm, Plot Ver diagnostic tools
 100  Rossi processing too slow and can sometimes hang
 ***  Overview of detectors, associated params, materials and methods, items, isotopics, etc

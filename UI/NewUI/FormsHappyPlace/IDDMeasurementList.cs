@@ -92,6 +92,7 @@ namespace NewUI
 		bool AllMeas = false; // true means all measurements, false means the specified option type
 		EndGoal Goal = EndGoal.Summary; // summary implies all detectors        
 		bool LMOnly = false;
+		public bool TextReport = true;
 		public bool bGood = false;
         public ReportSectional Sections;
 
@@ -254,7 +255,7 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-			if (Goal == EndGoal.Report)
+			if (Goal == EndGoal.Report && TextReport)
 				ShowReconstitutedResults();
 			else if (Goal == EndGoal.Summary)
 				WriteSummary();
