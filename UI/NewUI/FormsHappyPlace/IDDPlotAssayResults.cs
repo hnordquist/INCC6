@@ -86,30 +86,31 @@ namespace NewUI
             }
         }
 
-        private void OKBtn_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            if (string.Compare(ap.item_type, (string)MaterialTypeComboBox.SelectedItem, true) != 0)  // mtl type changed on the way out
-            {
-                ap.item_type = (string)MaterialTypeComboBox.SelectedItem;
-                INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
-                ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
-                N.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
-            }
-            Close();
-            IDDPlotAssaySelect measlist = new IDDPlotAssaySelect();
-            measlist.AnalysisMethod = AnalysisMethod;
-            measlist.Material = Material;
-            measlist.Init(det.Id.DetectorId, AssaySelector.MeasurementOption.verification);
-            if (measlist.bGood)
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			DialogResult = DialogResult.OK;
+			if (string.Compare(ap.item_type, (string)MaterialTypeComboBox.SelectedItem, true) != 0)  // mtl type changed on the way out
 			{
-                measlist.ShowDialog();
-                PlotAssayChart chart = new PlotAssayChart(measlist.CalcDataList);
-					chart.ShowDialog();
+				ap.item_type = (string)MaterialTypeComboBox.SelectedItem;
+				INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
+				ap.MeasDateTime = sel.TimeStamp;
+				ap.lm.TimeStamp = sel.TimeStamp;
+				N.App.DB.AddAcquireParams(sel, ap);  // it's a new one, not the existing one modified
 			}
-        }
+			Close();
+			IDDPlotAssaySelect measlist = new IDDPlotAssaySelect();
+			measlist.AnalysisMethod = AnalysisMethod;
+			measlist.Material = Material;
+			measlist.Init(det.Id.DetectorId, AssaySelector.MeasurementOption.verification);
+			if (measlist.bGood)
+			{
+				measlist.ShowDialog();
+				PlotAssayChart chart = new PlotAssayChart(measlist.MeasDataList, measlist.CalibDataList);
+				chart.ShowDialog();
+			}
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
+		private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();
         }

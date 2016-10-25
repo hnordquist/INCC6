@@ -36,42 +36,115 @@ This source code is distributed under the New BSD license:
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
-using AnalysisDefs;
-using NCCReporter;
+using System.Windows.Forms.DataVisualization.Charting;
 namespace NewUI
 {
-    using N = NCC.CentralizedState;
-	using Integ = NCC.IntegrationHelpers;
+	public partial class PlotAssayChart : Form
+	{
 
-    public partial class PlotAssayChart : Form
-    {
-        public PlotAssayChart(CalibrationCurveList ccl)
-        {
-            InitializeComponent();
-            Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
-        }
+		public PlotAssayChart(MeasPointList MeasPoints, CalibList CalibPoints)
+		{
+			InitializeComponent();
+			/// build the 3 series chart
+			/// cal curve mass and doubles are CYAN (CalibList)
+			/// cal points doubles are CYAN (CalibList)
+			/// cal points mass are YELLOW (CalibList)
+			/// meas data points are YELLOW (MeasPointList), mass is X doubles is Y
+			chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+			chart1.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+			PlotVerificationPoints(MeasPoints);
+			PlotCalibCurveLine(CalibPoints);
+		}
 
-		private Detector det;
-        private AcquireParameters ap;
+		void PlotCalibCurveLine(CalibList CalibPoints)
+		{
+			Series s = chart1.Series["Curve"];
+			//s.MarkerStyle = MarkerStyle.Square;
+			s.MarkerColor = System.Drawing.Color.NavajoWhite;
+			s.MarkerBorderColor = System.Drawing.Color.DarkCyan;
+			s.Color = System.Drawing.Color.Cyan;
+			int imax = 0;
+			foreach (CalibData p in CalibPoints)
+			{
+				if (p.CalCurvDoubles == 0)
+					continue;
+				int i = s.Points.AddXY(p.CalCurvMass, p.CalCurvDoubles);
+				if (p.CalCurvMass == CalibPoints.MaxCalCurvMass)
+				{
+					imax = i;
+					//maxpt.ToolTip = "Max " + p.ToString();
+				}
+				s.Points[i].ToolTip = p.CurveRep;
+			}
+			//        chart1.Annotations.Add(maxpt);
+			//maxpt.AnchorDataPoint = s.Points[imax];
+
+			s = chart1.Series["Calib"];
+			s.MarkerStyle = MarkerStyle.Triangle;
+			s.MarkerColor = System.Drawing.Color.DarkCyan;
+			s.MarkerSize = 10;
+			foreach (CalibData p in CalibPoints)
+			{
+				int i = s.Points.AddXY(p.CalPtsMass, p.CalPtsDoubles);
+				if (p.CalPtsMass == CalibPoints.MaxCalPtsDoubles)
+				{
+					imax = i;
+					//maxpt.ToolTip = "Max " + p.ToString();
+				}
+				s.Points[i].ToolTip = p.PointRep;
+			}
+			//        chart1.Annotations.Add(maxpt);
+			//maxpt.AnchorDataPoint = s.Points[imax]
+		}
 
 
-         private void OKBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+		void PlotVerificationPoints(MeasPointList MeasPoints)
+		{
+			Series s = chart1.Series["Verif"];
+			s.MarkerStyle = MarkerStyle.Square;
+			// Set error bar center marker style
+			s.MarkerStyle = MarkerStyle.None;
+			s.MarkerColor = System.Drawing.Color.Fuchsia;
+			chart1.ChartAreas[0].AxisX.Minimum = MeasPoints.LowerMass * 0.9;
+			chart1.ChartAreas[0].AxisX.Maximum = MeasPoints.UpperMass * 1.1;
+			int imax = 0;
+			ArrowAnnotation maxpt = new ArrowAnnotation();
+			maxpt.Name = "max";
+			maxpt.Height = -4;
+			maxpt.Width = 0;
+			maxpt.AnchorOffsetY = -2.5;
+			maxpt.ResizeToContent();
+			foreach (MeasPointData p in MeasPoints)
+			{
+				int i = s.Points.AddXY(p.Mass, p.Doubles);
+				if (p.Mass == MeasPoints.UpperMass)
+				{
+					imax = i;
+					maxpt.ToolTip = "Max " + p.ToString();
+				}
+				s.Points[i].ToolTip = p.ToString();
+			}
+			chart1.Annotations.Add(maxpt);
+			maxpt.AnchorDataPoint = s.Points[imax];
+		}
 
-        private void CancelBtn_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
 
-        private void HelpBtn_Click(object sender, EventArgs e)
-        {
+		private void OKBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-        }
+		private void CancelBtn_Click(object sender, EventArgs e)
+		{
+			Close();
+		}
 
-  
+		private void HelpBtn_Click(object sender, EventArgs e)
+		{
+
+		}
+
+
 	}
 }

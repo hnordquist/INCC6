@@ -2263,8 +2263,8 @@ namespace NCCTransfer
                             cc.cev.lower_mass_limit = cal_curve.cc_lower_mass_limit;
                             cc.cev.upper_mass_limit = cal_curve.cc_upper_mass_limit;
                             cc.percent_u235 = cal_curve.cc_percent_u235;
-                            cc.dcl_mass = TransferUtils.Copy(cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            cc.doubles = TransferUtils.Copy(cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref cc.dcl_mass, cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref cc.doubles, cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
   
                             cc.cev.a = cal_curve.cc_a; cc.cev.b = cal_curve.cc_b;
                             cc.cev.c = cal_curve.cc_c; cc.cev.d = cal_curve.cc_d;
@@ -2286,8 +2286,8 @@ namespace NCCTransfer
                             INCCAnalysisParams.known_alpha_rec ka = new INCCAnalysisParams.known_alpha_rec();
 
                             ka.alpha_wt = known_alpha.ka_alpha_wt;
-                            ka.dcl_mass = TransferUtils.Copy(known_alpha.ka_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            ka.doubles = TransferUtils.Copy(known_alpha.ka_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ka.dcl_mass, known_alpha.ka_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ka.doubles, known_alpha.ka_doubles, INCC.MAX_NUM_CALIB_PTS);
                             ka.heavy_metal_corr_factor = known_alpha.ka_heavy_metal_corr_factor;
                             ka.heavy_metal_reference = known_alpha.ka_heavy_metal_reference;
                             ka.k = known_alpha.ka_k;
@@ -2347,10 +2347,10 @@ namespace NCCTransfer
                         case INCC.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             de_mult_rec de_mult = (de_mult_rec)miter2.Current;
                             INCCAnalysisParams.de_mult_rec de = new INCCAnalysisParams.de_mult_rec();
-                            de.detector_efficiency = TransferUtils.Copy(de_mult.de_detector_efficiency, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.inner_outer_ring_ratio = TransferUtils.Copy(de_mult.de_inner_outer_ring_ratio, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.neutron_energy = TransferUtils.Copy(de_mult.de_neutron_energy, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.relative_fission = TransferUtils.Copy(de_mult.de_relative_fission, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.detector_efficiency, de_mult.de_detector_efficiency, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.inner_outer_ring_ratio, de_mult.de_inner_outer_ring_ratio, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.neutron_energy, de_mult.de_neutron_energy, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.relative_fission, de_mult.de_relative_fission, INCC.MAX_DUAL_ENERGY_ROWS);
                             de.inner_ring_efficiency = de_mult.de_inner_ring_efficiency;
                             de.outer_ring_efficiency = de_mult.de_outer_ring_efficiency;
                             am.AddMethod(AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE, de);
@@ -2403,8 +2403,8 @@ namespace NCCTransfer
                             aas.cev.lower_mass_limit = add_a_source.ad_lower_mass_limit;
                             aas.cev.upper_mass_limit = add_a_source.ad_upper_mass_limit;
 
-                            aas.dcl_mass = TransferUtils.Copy(add_a_source.ad_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            aas.doubles = TransferUtils.Copy(add_a_source.ad_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref aas.dcl_mass, add_a_source.ad_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref aas.doubles, add_a_source.ad_doubles, INCC.MAX_NUM_CALIB_PTS);
 
                             aas.cf.a = add_a_source.ad_cf_a; aas.cf.b = add_a_source.ad_cf_b;
                             aas.cf.c = add_a_source.ad_cf_c; aas.cf.d = add_a_source.ad_cf_d;
@@ -2423,8 +2423,8 @@ namespace NCCTransfer
 
                             ar.cev.lower_mass_limit = active.act_lower_mass_limit;
                             ar.cev.upper_mass_limit = active.act_upper_mass_limit;
-                            ar.dcl_mass = TransferUtils.Copy(active.act_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            ar.doubles = TransferUtils.Copy(active.act_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ar.dcl_mass, active.act_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ar.doubles, active.act_doubles, INCC.MAX_NUM_CALIB_PTS);
 
                             ar.cev.a = active.act_a; ar.cev.b = active.act_b;
                             ar.cev.c = active.act_c; ar.cev.d = active.act_d;
