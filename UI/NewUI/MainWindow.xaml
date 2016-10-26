@@ -122,8 +122,8 @@
                 <Separator />
                 <MenuItem Header="_Overview..." Click="ReportCascadeViewClick" IsEnabled="True"/>
                 <Separator />
-                <MenuItem Header="Plot Normalization _History..." Click="ReportPlotNormHistoryClick" IsEnabled="False"/>
-                <MenuItem Header="Plot Calibration and Verification _Results..." Click="ReportPlotCalVerificationClick" IsEnabled="False"/>
+                <MenuItem Header="Plot Normalization _History..." Click="ReportPlotNormHistoryClick" IsEnabled="True"/>
+                <MenuItem Header="Plot Calibration and Verification _Results..." Click="ReportPlotCalVerificationClick" IsEnabled="True"/>
             </MenuItem>
             <MenuItem Header="_Help" IsEnabled="True">
                 <MenuItem Header="_Topics" Click="HelpTopicsClick" IsEnabled="True"/>

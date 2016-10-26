@@ -58,7 +58,8 @@ namespace NewUI
                 Text += " for Detector " + det.Id.DetectorId;
 			mlist = N.App.DB.IndexedResultsFor(det.Id.DetectorId, string.Empty, "All");
 			LoadInspNumCombo();
-		}
+            DisplayResultsInTextRadioButton.Checked = true;
+        }
         private List<INCCDB.IndexedResults> mlist;
         AcquireParameters acq;
 		Detector det;
@@ -87,9 +88,19 @@ namespace NewUI
             SummedRawCoincidenceDataCheckBox.Checked = acq.review.SummedRawCoincData;
             SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
             IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
-            DisplayResultsInTextRadioButton.Checked = true;
         }
-
+        void FieldEnabler()
+        {
+            bool enable = DisplayResultsInTextRadioButton.Checked;
+            DetectorParametersCheckBox.Enabled = enable;
+            CalibrationParametersCheckBox.Enabled = enable;
+            IsotopicsCheckBox.Enabled = enable;
+            IndividualCycleRawDataCheckBox.Enabled = enable;
+            IndividualCycleRateDateCheckBox.Enabled = enable;
+            SummedRawCoincidenceDataCheckBox.Enabled = enable;
+            SummedMultiplicityDistributionsCheckBox.Enabled = enable;
+            IndividualCycleMultiplicityDistributionsCheckBox.Enabled = enable;
+        }
         private void OKBtn_Click(object sender, EventArgs e)
         {
 			List<INCCDB.IndexedResults> list = null;
@@ -102,13 +113,22 @@ namespace NewUI
 			else
 				list = mlist.FindAll(ir => (string.Compare(inspnum,ir.Campaign, true) == 0));
             SaveAcquireState();
-            IDDMeasurementList measlist = new IDDMeasurementList(); 
+            IDDMeasurementList measlist = new IDDMeasurementList();
+			measlist.TextReport = DisplayResultsInTextRadioButton.Checked; 
             measlist.Init(list,
                     AssaySelector.MeasurementOption.unspecified,
                     lmonly: bLMOnly, goal: IDDMeasurementList.EndGoal.Report, inspnum: inspnum, detector: det);
             measlist.Sections = acq.review;
             if (measlist.bGood)
                 measlist.ShowDialog();
+			if (!DisplayResultsInTextRadioButton.Checked)
+			{
+				List<Measurement> mlist = measlist.GetSelectedMeas();
+				foreach (Measurement m in mlist)
+				{
+					new PlotSDTChart(m).Show();
+				}
+			}
         }
 
 		void SaveAcquireState()
@@ -127,7 +147,7 @@ namespace NewUI
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -187,5 +207,14 @@ namespace NewUI
 			acq.review.MultiplicityDistributions = ((CheckBox)sender).Checked;
         }
 
+        private void PlotSinglesDoublesTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            FieldEnabler();
+        }
+
+        private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            FieldEnabler();
+        }
     }
 }

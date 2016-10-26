@@ -858,6 +858,8 @@ namespace NewUI
             // 2: associate the analysis params with the current detector/instrument definition (part of the contextual measurement state)
             // 3: assuming the measurement state is ready, start the live performance or the file-based IO
             PreserveNewState();
+            SaveAcqStateChanges();   // for comment field use
+
             ///
             /// Because the FAOn, FAOff or coin settings may have changed, the CountingAnalysisResults and INCCMethodResults maps must be reconstructed
             ///
@@ -919,7 +921,16 @@ namespace NewUI
 				}
             }
         }
-		private void Cancel_Click(object sender, EventArgs e)
+
+        private void Comment_Leave(object sender, EventArgs e)
+        {
+            if ((((TextBox)sender).Text) != ap.comment)
+            {
+                ap.modified = true;
+                ap.comment = ((TextBox)sender).Text;
+            }
+        }
+        private void Cancel_Click(object sender, EventArgs e)
 		{
             Close();
 		}
@@ -1235,7 +1246,7 @@ namespace NewUI
             // Invoke method if the selection changed event occurs
             BeginInvoke(new MethodInvoker(EndEdit));
         }
- 
+
         void EndEdit()
         {
             // Change the content of appropriate cell when selected index changes

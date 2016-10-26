@@ -1,4 +1,4 @@
-﻿using NCCConfig;
+using NCCConfig;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -48,4 +48,4 @@ using System.Windows;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("6.17.*")]
+[assembly: AssemblyVersion("6.17.29.12071")]

@@ -1543,7 +1543,7 @@ namespace AnalysisDefs
         public static void ReportRecalc(this Measurement m)
         {
             NC.App.Opstate.Measurement = m;
-            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
             m.Add(cl);
             m.CurrentRepetition = 0;
             foreach (Cycle cycle in m.Cycles)

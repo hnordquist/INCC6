@@ -117,7 +117,7 @@ namespace AnalysisDefs
                 case DetectorCalibration.GateLength:
                 case DetectorCalibration.DieAwayTime:
                 case DetectorCalibration.DTCoeffA:
-                    s += " uSec";
+                    s += " µSec";
                     break;
                 case DetectorCalibration.DTCoeffT:
                 case DetectorCalibration.DTCoeffC:

@@ -511,12 +511,17 @@ namespace NewUI
 
         private void ReportPlotNormHistoryClick(object sender, RoutedEventArgs e)
         {
-            //TODO
+            IDDPlotBiasMeasHistory h = new IDDPlotBiasMeasHistory();
+            if (h.irlist.Count < 1)
+                MessageBox.Show("No normalization data to plot.", "WARNING");
+            else
+               h.ShowDialog();
         }
 
         private void ReportPlotCalVerificationClick(object sender, RoutedEventArgs e)
         {
-            //TODO
+            IDDPlotAssayResults h = new IDDPlotAssayResults();
+            h.ShowDialog();
         }
 
         /////////////////

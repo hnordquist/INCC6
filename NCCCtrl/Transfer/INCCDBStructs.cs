@@ -178,6 +178,11 @@ namespace NCCTransfer
             return doubles;
         }
 
+		static unsafe public void Copy(ref double[] doubles, double* ptr, int len)
+        {
+            Marshal.Copy(new IntPtr(ptr), doubles, 0, len);
+        }
+
         static unsafe public bool[] Copy(int* ptr, int len)
         {
 

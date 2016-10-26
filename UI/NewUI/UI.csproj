@@ -84,6 +84,7 @@
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.IO.Compression.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -200,6 +201,12 @@
       <DependentUpon>MeasSetup.xaml</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\MethodParam.cs" />
+    <Compile Include="FormsHappyPlace\PlotSDTChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotSDTChart.Designer.cs">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\PrintForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -503,22 +510,22 @@
     <Compile Include="Unready\IDDPLCWaitMsg.Designer.cs">
       <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssayResults.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssayResults.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.Designer.cs">
       <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssaySelect.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPlotAssaySelect.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.Designer.cs">
       <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDPlotBiasMeasHistory.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotBiasMeasHistory.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDPlotBiasMeasHistory.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDPlotBiasMeasHistory.Designer.cs">
       <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDPoisonRodType.cs">
@@ -544,6 +551,12 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDReanalysisAssay.Designer.cs">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.Designer.cs">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDReanalysisHoldup.cs">
       <SubType>Form</SubType>
@@ -1200,6 +1213,9 @@
     <EmbeddedResource Include="FormsHappyPlace\LMConnectionParams.resx">
       <DependentUpon>LMConnectionParams.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotSDTChart.resx">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>
     </EmbeddedResource>
@@ -1351,13 +1367,13 @@
     <EmbeddedResource Include="Unready\IDDPLCWaitMsg.resx">
       <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPlotAssayResults.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssayResults.resx">
       <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPlotAssaySelect.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssaySelect.resx">
       <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDPlotBiasMeasHistory.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotBiasMeasHistory.resx">
       <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodType.resx">
@@ -1371,6 +1387,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDReanalysisAssay.resx">
       <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotAssayChart.resx">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDReanalysisHoldup.resx">
       <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>
