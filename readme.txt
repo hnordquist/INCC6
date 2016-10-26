@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 17
-6.17 Oct 27, 2016 (NDATest)
+6.17 Oct 31, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -127,23 +127,13 @@ List mode:
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 #86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
+***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
+***  SDTMultiplicityCalculator shift to BigInteger
 
 Closed issues
 
-6.17 (6.0.17) Oct 27, 2016  ************
-wanting
-***  Acquire params and items build up on the in-memory maps during mass transfers
-     DB state is good though, as seen upon close and reopen
-***  SDTMultiplicityCalculator shift to BigInteger
-69   APluralityOfMultiplicityAnalyzers and more
-67   PTR-32 data handling question
-16   Accidental Singles test Failure for PTR32
-13   PTR-32 -- Results different if reading file/doing live acquisition
-86   List mode results database persistence, need db table save for Feynman, Rossis, Event, Coincidence
-
-done Oct 25
-***  The SDT stripchart feature on the report dialogs
-79   Plot Norm, Plot Ver diagnostic tools
+6.17 (6.0.17) Oct 31, 2016  ************
+79   Plot Norm, Plot Ver, Plot SDT diagnostic tools
 100  Rossi processing too slow and can sometimes hang
 ***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
 ***  DAQ acquire type termination conditions defaults and constraints not set correctly

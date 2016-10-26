@@ -55,53 +55,54 @@ namespace NewUI
 				id = id + "  File: " + System.IO.Path.GetFileName(m.ResultsFiles.PrimaryINCC5Filename.Path);
 			Triples.Titles[1].Text = id;
 
-			// get the cycles for the selected measurement from the database, and add them to the current measurement
-			CycleList cl = N.App.DB.GetCycles(m.Detector, m.MeasurementId, DetectorDefs.ConstructedSource.DB, m.AnalysisParams); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-			PlotSingles(cl, m.Detector.MultiplicityParams);
+			// get the cycles for the selected measurement from the database, add them to the measurement, then recalculate the cycle SDTs
+            m.ReportRecalc();
+            PlotThePlots(m.Cycles, m.Detector.MultiplicityParams);
 		}
 
-		void PlotSingles(CycleList cl, Multiplicity mkey)
-		{
-			
+		void PlotThePlots(CycleList cl, Multiplicity mkey)
+		{			
 			Series s1 = Singles.Series["Vals"];
 			s1.MarkerStyle = MarkerStyle.Circle;
 			s1.MarkerColor = System.Drawing.Color.SkyBlue;
 			s1.MarkerSize = 5;
 			s1.MarkerBorderColor = System.Drawing.Color.DarkCyan;
 			s1.Color = System.Drawing.Color.MediumPurple;
-			Singles.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Singles.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Singles.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Singles.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
+
 			Series s2 = Doubles.Series["Vals"];
 			s2.MarkerStyle = MarkerStyle.Circle;
 			s2.MarkerColor = System.Drawing.Color.SkyBlue;
 			s2.MarkerSize = 5;
 			s2.MarkerBorderColor = System.Drawing.Color.DarkCyan;
 			s2.Color = System.Drawing.Color.MediumPurple;
-			Doubles.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Doubles.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Doubles.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Doubles.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
+
 			Series s3 = Triples.Series["Vals"];
 			s3.MarkerStyle = MarkerStyle.Circle;
 			s3.MarkerColor = System.Drawing.Color.SkyBlue;
 			s3.MarkerSize = 5;
 			s3.MarkerBorderColor = System.Drawing.Color.DarkCyan;
 			s3.Color = System.Drawing.Color.MediumPurple;
-			Triples.ChartAreas[0].AxisX.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Triples.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Triples.ChartAreas[0].AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
-			Triples.ChartAreas[0].AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dot;
+
 			int i = 0;
 			foreach (Cycle c in cl)
 			{
 				i++;
 				MultiplicityCountingRes mcr = c.MultiplicityResults(mkey);
-				s1.Points.AddXY(i, mcr.RawSinglesRate.v);
-				s2.Points.AddXY(i, mcr.RawDoublesRate.v);
-				s3.Points.AddXY(i, mcr.RawTriplesRate.v);
-			}
+                bool somtingfunnyhere = (c.QCStatus(mkey).status != QCTestStatus.Pass);
+
+                int idx = s1.Points.AddXY(i, mcr.DeadtimeCorrectedSinglesRate.v);  // next: vary color and shape based on cycle status/outlier status
+				s2.Points.AddXY(i, mcr.DeadtimeCorrectedDoublesRate.v);
+				s3.Points.AddXY(i, mcr.DeadtimeCorrectedTriplesRate.v);
+                if (somtingfunnyhere)
+                {
+                    s1.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
+                    s2.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
+                    s3.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
+                    s1.Points[idx].ToolTip = c.QCStatus(mkey).INCCString();
+                    s3.Points[idx].ToolTip = s2.Points[idx].ToolTip = s1.Points[idx].ToolTip;
+                }
+
+            }
 		}
 
 
