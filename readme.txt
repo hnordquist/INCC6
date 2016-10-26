@@ -100,8 +100,8 @@ create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statement
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Holdup and glovebox features, the Plot features,
-   some Add-a-src processing, Collar acquire and Poison Rod details,
+   Collar acquire and Poison Rod details, Holdup and glovebox features,
+   Active/Passive paired measurements, some Add-a-src processing, 
    integrated help.
 
 This is beta release software; issues and missing features are known to exist.
