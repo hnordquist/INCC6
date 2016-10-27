@@ -129,7 +129,7 @@ namespace NewUI
 				title += (" " + detector);
 			if (!string.IsNullOrEmpty(inspnum))
 				title += (", Inspection #" + inspnum);
-			this.Text = title;
+			Text = title;
 		}
 
 		bool PrepList(AssaySelector.MeasurementOption filter, Detector det)
@@ -166,7 +166,7 @@ namespace NewUI
 				listView1.Columns[3].Width = 0;
 			}
 			if (!AssaySelector.ForMass(filter) && !filter.IsWildCard())
-				listView1.Columns[7].Width = 0;		
+				listView1.Columns[7].Width = 0;		  // material column
 			
 			if (Goal == EndGoal.Reanalysis)
 			{
@@ -183,7 +183,9 @@ namespace NewUI
 			int mlistIndex = 0;
 			foreach (Measurement m in mlist)
 			{
-				string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
+                int CycleCount = N.App.DB.GetCycleCount(m.MeasurementId);
+
+                string ItemWithNumber = string.IsNullOrEmpty(m.MeasurementId.Item.item) ? "-" : m.AcquireState.ItemId.item;
 				if (Path.GetFileName(m.MeasurementId.FileName).Contains("_") && (AssaySelector.MeasurementOption.verification == filter) && (filter == m.MeasOption))
 					//scan file name to display subsequent reanalysis number...... hn 9.21.2015
 					ItemWithNumber += "(" + Path.GetFileName(m.MeasurementId.FileName).Substring(Path.GetFileName(m.MeasurementId.FileName).IndexOf('_') + 1, 2) + ")";
@@ -195,9 +197,11 @@ namespace NewUI
 				ListViewItem lvi = new ListViewItem(new string[] {
 					col0, m.Detector.Id.DetectorId, ItemWithNumber,
 					string.IsNullOrEmpty(m.AcquireState.stratum_id.Name) ? "-" : m.AcquireState.stratum_id.Name,
-					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true), m.AcquireState.comment,
-					AssaySelector.ForMass(m.MeasOption) ? m.AcquireState.item_type : string.Empty,
-					mlistIndex.ToString()  // subitem at index 8 has the original mlist index of this element
+					m.MeasDate.DateTime.ToString("yy.MM.dd  HH:mm:ss"), GetMainFilePath(m.ResultsFiles, m.MeasOption, true),
+                    CycleCount.ToString(),
+                    AssaySelector.ForMass(m.MeasOption) ? m.AcquireState.item_type : string.Empty,
+                    m.AcquireState.comment,
+                    mlistIndex.ToString()  // subitem at index 9 has the original mlist index of this element
                         });
 				listView1.Items.Add(lvi);
 				lvi.Tag = m.MeasDate;  // for proper column sorting
@@ -274,7 +278,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[9].Text, out lvIndex); // 9 has the original mlist index of this sorted row element
 				SummarySelections.Apply(mlist[lvIndex]);
 			}
 			if (SummarySelections.HasAny)
@@ -320,7 +324,7 @@ namespace NewUI
 				if (lvi.Selected)
 				{
 					int lvIndex = 0;
-					int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+					int.TryParse(lvi.SubItems[9].Text, out lvIndex); // 9 has the original mlist index of this sorted row element
 					if (bNotepadHappensToBeThere)
 					{
 						string path = GetMainFilePath(mlist[lvIndex].ResultsFiles, mlist[lvIndex].MeasOption, false);
@@ -344,7 +348,7 @@ namespace NewUI
                 if (lvi.Selected)
                 {
                     int lvIndex = 0;
-                    int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+                    int.TryParse(lvi.SubItems[9].Text, out lvIndex); // 9 has the original mlist index of this sorted row element
                     Measurement m = mlist[lvIndex];
                     m.AcquireState.review = Sections;
                     if (Sections.CycleDataSelected)
@@ -391,7 +395,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[9].Text, out lvIndex); // 9 has the original mlist index of this sorted row element
 				return (mlist[lvIndex]);
 			}
 			return null;
@@ -405,7 +409,7 @@ namespace NewUI
 				if (!lvi.Selected)
 					continue;
 				int lvIndex = 0;
-				int.TryParse(lvi.SubItems[8].Text, out lvIndex); // 8 has the original mlist index of this sorted row element
+				int.TryParse(lvi.SubItems[9].Text, out lvIndex); // 9 has the original mlist index of this sorted row element
 				newlist.Add(mlist[lvIndex]);
 			}
 			return newlist;
@@ -470,11 +474,18 @@ namespace NewUI
 		bool MeasListColumnCompare(ListViewItem a, ListViewItem b, int column)
 		{
 			bool res = false;
-			if (column != 4)
+			if (column != 4 && column != 6)
 				res = a.SubItems[column].Text.CompareTo(b.SubItems[column].Text) < 0;
 			else if (column == 4)  // 4 is the datetime column, such fragile coding ... fix by adding a type value to the column header Tag 
 				res = (((DateTimeOffset)a.Tag).CompareTo((DateTimeOffset)b.Tag)) < 0;
-			return res;
+            else if (column == 6)    // 6 is the integer cycle count
+            {
+				int la = 0, rb = 0;
+                int.TryParse(a.SubItems[column].Text, out la);
+                int.TryParse(b.SubItems[column].Text, out rb);
+                res = (la < rb);
+            }
+            return res;
 		}
 
 		private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -495,5 +506,6 @@ namespace NewUI
 				bNotepadHappensToBeThere = File.Exists(notepadPath);
 			}
 		}
-	}
+
+    }
 }

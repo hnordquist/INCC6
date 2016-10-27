@@ -3114,9 +3114,12 @@ namespace NCCTransfer
             mlogger.TraceEvent(LogLevels.Verbose, 34030, "Transferring the {0} cycles", itf.run_rec_list.Count);
             meas.InitializeContext();
             meas.PrepareINCCResults(); // prepares INCCResults objects
+            ulong MaxBins = 0;
             foreach (run_rec r in itf.run_rec_list)
             {
-                AddToCycleList(r, det);  
+                ulong x= AddToCycleList(r, det);
+                if (x > MaxBins)
+                    MaxBins = x;
             }
             for (int cf = 1; (itf.CFrun_rec_list != null) && (cf < itf.CFrun_rec_list.Length); cf++)
             {
@@ -3186,6 +3189,9 @@ namespace NCCTransfer
 			result.singles_multi = results.singles_multi;
             result.doubles_multi = results.doubles_multi;
             result.triples_multi = results.triples_multi;
+
+            ExpandMaxBins(MaxBins, meas.Cycles, det.MultiplicityParams);
+            Bloat(MaxBins, mcr);
 
             List<MeasurementMsg> msgs = meas.GetMessageList(det.MultiplicityParams);
 
@@ -3929,9 +3935,32 @@ namespace NCCTransfer
             return true;
         }
 
-        unsafe void AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
+        void ExpandMaxBins(ulong MaxBins, CycleList cl, Multiplicity key)
+        {
+            foreach(Cycle c in cl)
+            {
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)c.CountingAnalysisResults[key];
+                if (MaxBins > mcr.MaxBins)
+                    Bloat(MaxBins, mcr);
+            } 
+        }
+
+        void Bloat(ulong MaxBins, MultiplicityCountingRes mcr)
+        {
+            ulong[] RA = new ulong[MaxBins];
+            ulong[] NA = new ulong[MaxBins];
+            mcr.MaxBins = MaxBins;
+            Array.Copy(mcr.RAMult, RA, mcr.RAMult.Length); // adds trailing 0s by leaving them untouched
+            Array.Copy(mcr.NormedAMult, NA, mcr.NormedAMult.Length); // adds trailing 0s
+            Array.Copy(mcr.UnAMult, NA, mcr.UnAMult.Length); // adds trailing 0s
+            mcr.RAMult = RA;
+            mcr.NormedAMult = NA;
+        }
+
+        unsafe ulong AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
         {
             Cycle cycle = new Cycle(mlogger);
+            ulong MaxBins = 0;
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.INCCTransferCopy, // becomes transfer if reanalysis occurs
@@ -3948,11 +3977,13 @@ namespace NCCTransfer
 					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);               
                 }
                 mcr.AB.TransferIntermediates(det.AB);  // copy alpha beta onto the cycle's results 
+                MaxBins = mcr.MaxBins;
             }
             catch (Exception e)
             {
                 mlogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run.run_number, e.Message);
             }
+            return MaxBins;
         }
 
         /// <summary>

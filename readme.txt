@@ -100,9 +100,11 @@ create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statement
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Holdup and glovebox features, the Plot features,
-   some Add-a-src processing, Collar acquire and Poison Rod details,
-   integrated help.
+   Collar acquire and Poison Rod details, Holdup and glovebox features,
+   Active/Passive paired measurements, Rad Review controlled import,
+   truncated multiplicity and some standard multiplicity analsyes are incomplete,
+   some Add-a-src processing, miscellaneous little-used features,
+   and integrated help.
 
 This is beta release software; issues and missing features are known to exist.
 
@@ -122,7 +124,7 @@ Issues for basic INCC5/6 feature COMPLETION
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
 
-List mode:
+List mode
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition

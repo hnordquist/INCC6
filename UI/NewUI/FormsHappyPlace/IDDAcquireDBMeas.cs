@@ -43,8 +43,7 @@ namespace NewUI
         public IDDAcquireDBMeas(AcquireHandlers AH)
         {
             ah = AH;
-            InitializeComponent();
-            
+            InitializeComponent();            
             LoadMeasurementsFromDB();
         }
 
@@ -74,7 +73,7 @@ namespace NewUI
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -82,19 +81,16 @@ namespace NewUI
 
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
         private void LoadMeasurementsFromDB()
         {
-            // get the list of measurement Ids
+            // get the list of measurement Ids (I did this two-step ingets to reduce memory use prior to an analysis: only the selected measurements are fully restored from the DB)
             //List<MeasId> list = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, ah.mo.PrintName());
             List<Measurement> mlist = NC.App.DB.MeasurementsFor(ah.det.Id.DetectorName);
             int measurecount = mlist.Count;
             foreach (Measurement m in mlist)
             {
-				string fname = Path.GetFileName(m.MeasurementId.FileName);
+                int CycleCount = NC.App.DB.GetCycleCount(m.MeasurementId);
+                string fname = Path.GetFileName(m.MeasurementId.FileName);
                 string ItemWithNumber = string.IsNullOrEmpty(m.AcquireState.item_id) ? "Empty" : m.AcquireState.item_id;
                 if (fname.Contains("_"))
                 //Lameness alert to display subsequent reanalysis number...... hn 9.21.2015
@@ -104,7 +100,7 @@ namespace NewUI
                     string.IsNullOrEmpty(m.AcquireState.ItemId.stratum) ? "Empty" : m.AcquireState.ItemId.stratum,
                     m.AcquireState.item_id,
                     m.MeasDate.ToString("yyMMdd HH:mm:ss"),
-                    fname, m.AcquireState.comment
+                    fname, CycleCount.ToString(), m.AcquireState.comment
                     });
                 ListViewItem lvii = listView1.Items.Add(lvi);
                 lvii.Tag = m;
