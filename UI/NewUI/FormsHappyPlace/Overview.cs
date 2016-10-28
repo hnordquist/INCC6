@@ -367,13 +367,7 @@ namespace NewUI
 					}
                     else if(t == typeof(INCCDB.IndexedResults))
                     {
-                        INCCDB.IndexedResults ir = (INCCDB.IndexedResults)e.Node.Tag;
-                        List<string> _ls = new List<string>();
-                        string l = ir.Rid.ToString() + " cycles";
-                        if (!string.IsNullOrEmpty(ir.Campaign))
-                            l = l + ", campaign: " + ir.Campaign;
-                        _ls.Add(l);
-                        ls = _ls;
+                        ls = GenMeasStr((INCCDB.IndexedResults)e.Node.Tag);;
                     }
                 }
 
@@ -610,6 +604,16 @@ namespace NewUI
 
 			return ls;
 		}
+
+        List<string> GenMeasStr(INCCDB.IndexedResults ir)
+        {
+            List<string> _ls = new List<string>();
+            string l = ir.Rid.ToString() + " cycles";
+            //if (!string.IsNullOrEmpty(ir.Campaign))
+            //    l = l + ", campaign: " + ir.Campaign;
+            _ls.Add(l);
+            return _ls;
+        }
 
 	}
 }

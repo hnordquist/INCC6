@@ -39,11 +39,8 @@ using System;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using AnalysisDefs;
-
 namespace NewUI
 {
-	using N = NCC.CentralizedState;
-
 	public partial class PlotSDTChart : Form
 	{
 		public PlotSDTChart(Measurement m)
