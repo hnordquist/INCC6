@@ -4436,7 +4436,45 @@ namespace AnalysisDefs
             return cl;
         }
 
-		Multiplicity GetMultiplicityAnalyzer(DataRow dr, ShiftRegisterParameters sr)
+        public int GetCycleCount(MeasId mid)
+        {
+            return GetCycleCount(mid.UniqueId);  // this specific measurement id's cycles
+        }
+
+        public int GetCycleCount(long uid)
+        {
+            if (uid <= 0)
+                return 0;
+            DB.Measurements ms = new DB.Measurements();
+            return ms.GetCycleCount(uid);  // this specific measurement id's cycles
+        }
+
+		public long GetMeasurementCount(string det, AssaySelector.MeasurementOption mo)
+		{
+            DB.Measurements ms = new DB.Measurements();
+			long n = ms.CountOf(det, mo.PrintName());
+            return n;
+		}
+
+		public Dictionary<AssaySelector.MeasurementOption, long> GetMeasurementCounts(string det)
+		{
+            DB.Measurements ms = new DB.Measurements();
+			Dictionary<AssaySelector.MeasurementOption, long> l = new Dictionary<AssaySelector.MeasurementOption, long>();
+			foreach (AssaySelector.MeasurementOption m in Enum.GetValues(typeof(AssaySelector.MeasurementOption)))
+			{
+				long n = ms.CountOf(det, m.PrintName());
+				if (n > 0)
+					l.Add(m, n);
+			}
+            return l;
+		}
+
+		public long GetMeasurementCount(string det)
+		{
+            DB.Measurements ms = new DB.Measurements();
+            return ms.CountOf(det);
+		}
+        Multiplicity GetMultiplicityAnalyzer(DataRow dr, ShiftRegisterParameters sr)
 		{
 			SpecificCountingAnalyzerParams s = NC.App.LMBD.ConstructCountingAnalyzerParams(dr);
 			Multiplicity m = (Multiplicity)s;

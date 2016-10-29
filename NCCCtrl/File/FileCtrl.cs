@@ -148,12 +148,15 @@ namespace NCCFile
                 m.Detector.Id.source = src;
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);
-
-                foreach (Cycle cycle in m.Cycles)
+                CycleList cl = m.Cycles;
+                m.Cycles = new CycleList();
+                foreach (Cycle cycle in cl) // process incrementally to match expected outlier processing behavior from INCC
                 {
                     if (NC.App.Opstate.IsCancellationRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
                         break;
                     m.CurrentRepetition++;
+                    m.Cycles.Add(cycle);
+                    m.SetQCStatus(cycle);  // correctly handles status for multiple LM analyzers
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                 }
@@ -168,15 +171,16 @@ namespace NCCFile
             {
                 NC.App.Loggers.Flush();
             }
-            if (m.HasReportableData)  // todo: test replay 
+            if (m.HasReportableData) 
 			{
 				m.CalculateMeasurementResults();
-
 				ReportMangler rm = new ReportMangler(ctrllog);
 				rm.GenerateReports(m);
-
 				m.SaveMeasurementResults();
 			}
+            else                                                                           
+                ctrllog.TraceEvent(LogLevels.Warning, 430, "No useful cycles identified ({0}) " + m.Cycles.GetUseableCycleCount());
+
 
             Instruments.All.Remove(PseudoInstrument);
         }

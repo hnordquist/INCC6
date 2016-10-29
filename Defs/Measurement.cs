@@ -687,6 +687,7 @@ namespace AnalysisDefs
         public CycleList Cycles
         {
             get { return cycles; }
+            set { cycles = value; }
         }
         /// <summary>
         /// List of all AAS pos cycles for this measurement

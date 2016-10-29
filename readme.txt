@@ -101,8 +101,10 @@ KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
    Collar acquire and Poison Rod details, Holdup and glovebox features,
-   Active/Passive paired measurements, some Add-a-src processing, 
-   integrated help.
+   Active/Passive paired measurements, Rad Review controlled import,
+   truncated multiplicity and some multiplicity analyses are incomplete,
+   some Add-a-src processing, miscellaneous little-used features
+   and integrated help.
 
 This is beta release software; issues and missing features are known to exist.
 
@@ -115,20 +117,25 @@ See https://github.com/hnordquist/INCC6/issues
 
 
 Issues for basic INCC5/6 feature COMPLETION
-
 #84  Implement Collar
 #35  Hold-up analysis required
+***  Active/Passive paired measurements
+***  Truncated multiplicity and some multiplicity analyses are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
 
-List mode:
+Issues for basic INCC6 List mode
+#86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
-#86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
 ***  SDTMultiplicityCalculator shift to BigInteger
+
+Issues for production
+#95  Just say yes to updated and complete documentation
+#116 Help entries everywhere
 
 Closed issues
 

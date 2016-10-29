@@ -210,11 +210,11 @@ namespace NCCTransfer
             }
             // i is new len
 
-            ulong[] longs = new ulong[i + 1];
+            ulong[] ulongs = new ulong[i + 1];
             for (int j = 0; j <= i; j++)
-                longs[j] = (ulong)ptr[j];
+                ulongs[j] = (ulong)ptr[j];
 
-            return longs;
+            return ulongs;
         }
 
         static unsafe public string str(byte* ptr, int len)

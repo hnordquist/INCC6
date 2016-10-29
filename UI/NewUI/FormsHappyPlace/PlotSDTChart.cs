@@ -39,11 +39,8 @@ using System;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using AnalysisDefs;
-
 namespace NewUI
 {
-	using N = NCC.CentralizedState;
-
 	public partial class PlotSDTChart : Form
 	{
 		public PlotSDTChart(Measurement m)
@@ -98,7 +95,7 @@ namespace NewUI
                     s1.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
                     s2.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
                     s3.Points[idx].MarkerColor = System.Drawing.Color.Orchid;
-                    s1.Points[idx].ToolTip = c.QCStatus(mkey).INCCString();
+                    s1.Points[idx].ToolTip = string.Format("#{0} {1}", c.seq, c.QCStatus(mkey).INCCString());
                     s3.Points[idx].ToolTip = s2.Points[idx].ToolTip = s1.Points[idx].ToolTip;
                 }
 

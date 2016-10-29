@@ -3114,9 +3114,12 @@ namespace NCCTransfer
             mlogger.TraceEvent(LogLevels.Verbose, 34030, "Transferring the {0} cycles", itf.run_rec_list.Count);
             meas.InitializeContext();
             meas.PrepareINCCResults(); // prepares INCCResults objects
+            ulong MaxBins = 0;
             foreach (run_rec r in itf.run_rec_list)
             {
-                AddToCycleList(r, det);  
+                ulong x= AddToCycleList(r, det);
+                if (x > MaxBins)
+                    MaxBins = x;
             }
             for (int cf = 1; (itf.CFrun_rec_list != null) && (cf < itf.CFrun_rec_list.Length); cf++)
             {
@@ -3186,6 +3189,11 @@ namespace NCCTransfer
 			result.singles_multi = results.singles_multi;
             result.doubles_multi = results.doubles_multi;
             result.triples_multi = results.triples_multi;
+
+
+			// hack expansion of Normed mult array to same length as Acc mult array on each cycle to accomodate TheoreticalOutlier calc array length bug
+            ExpandMaxBins(MaxBins, meas.Cycles, det.MultiplicityParams);
+            Bloat(MaxBins, mcr);
 
             List<MeasurementMsg> msgs = meas.GetMessageList(det.MultiplicityParams);
 
@@ -3816,7 +3824,7 @@ namespace NCCTransfer
             xres.original_meas_date = INCC.DateFrom(TransferUtils.str(results.original_meas_date, INCC.DATE_TIME_LENGTH));
 			// NEXT: copy move passive and active meas id's here
 
-            long mid = meas.Persist();
+             long mid = meas.Persist();
 
             // save the warning and error messages from the results here, these rode on the results rec in INCC5
             NC.App.DB.AddAnalysisMessages(msgs, mid);
@@ -3929,9 +3937,34 @@ namespace NCCTransfer
             return true;
         }
 
-        unsafe void AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
+        void ExpandMaxBins(ulong _MaxBins, CycleList cl, Multiplicity key)
+        {
+            foreach(Cycle c in cl)
+            {
+                MultiplicityCountingRes cmcr = (MultiplicityCountingRes)c.CountingAnalysisResults[key];
+                if (_MaxBins > (ulong)cmcr.RAMult.Length || _MaxBins > (ulong)cmcr.NormedAMult.Length)
+                    Bloat(_MaxBins, cmcr);
+            } 
+        }
+
+        void Bloat(ulong _MaxBins, MultiplicityCountingRes amcr)
+        {
+            ulong[] RA = new ulong[_MaxBins];
+            ulong[] NA = new ulong[_MaxBins];
+            ulong[] UNA = new ulong[_MaxBins];
+            amcr.MaxBins = _MaxBins;
+            Array.Copy(amcr.RAMult, RA, amcr.RAMult.Length); // adds trailing 0s by leaving them untouched
+            Array.Copy(amcr.NormedAMult, NA, amcr.NormedAMult.Length); // adds trailing 0s
+            Array.Copy(amcr.UnAMult, UNA, amcr.UnAMult.Length); // adds trailing 0s
+            amcr.RAMult = RA;
+            amcr.NormedAMult = NA;
+            amcr.UnAMult = UNA;
+        }
+
+        unsafe ulong AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
         {
             Cycle cycle = new Cycle(mlogger);
+            ulong MaxBins = 0;
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.INCCTransferCopy, // becomes transfer if reanalysis occurs
@@ -3948,11 +3981,13 @@ namespace NCCTransfer
 					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);               
                 }
                 mcr.AB.TransferIntermediates(det.AB);  // copy alpha beta onto the cycle's results 
+                MaxBins = mcr.MaxBins;
             }
             catch (Exception e)
             {
                 mlogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run.run_number, e.Message);
             }
+            return MaxBins;
         }
 
         /// <summary>
@@ -4002,28 +4037,11 @@ namespace NCCTransfer
             mcr.Scaler1Rate.v = run.run_scaler1_rate;
             mcr.Scaler2Rate.v = run.run_scaler2_rate;
 
-            long indexmax = 0;
-            for (ulong i = 0; i < INCC.MULTI_ARRAY_SIZE; i++)
-            {
-                if (run.run_mult_acc[i] > 0 || run.run_mult_reals_plus_acc[i] > 0)
-                {
-                    indexmax = (long)i;
-                }
-            }
-
-            mcr.MaxBins = (ulong)indexmax + 1;  // this is the index, not the count
-            mcr.MinBins = (ulong)indexmax + 1;
-
-            mcr.NormedAMult = new ulong[mcr.MaxBins];
-            mcr.RAMult = new ulong[mcr.MaxBins];
+            mcr.RAMult = TransferUtils.multarrayxfer(run.run_mult_reals_plus_acc, INCC.MULTI_ARRAY_SIZE);
+            mcr.NormedAMult = TransferUtils.multarrayxfer(run.run_mult_acc, INCC.MULTI_ARRAY_SIZE);
+            mcr.MaxBins = (ulong)Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length);
+            mcr.MinBins = (ulong)Math.Min(mcr.RAMult.Length, mcr.NormedAMult.Length);
             mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
-
-            for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
-            {
-                mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
-                mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i];
-            }
-
             return mcr;
         }
 

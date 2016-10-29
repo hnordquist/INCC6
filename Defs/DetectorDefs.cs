@@ -59,7 +59,7 @@ namespace DetectorDefs
         }
 
         /// <summary>
-        /// orignally matched only on DGSR and AMSR, added HHMR/JSR15 and UNAP
+        /// originally matched only on DGSR and AMSR, added HHMR/JSR15 and UNAP (potentially an issue if JSR15 is not using fast acc)
         /// </summary>
         /// <param name="itype"></param>
         /// <returns></returns>

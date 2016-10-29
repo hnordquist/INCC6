@@ -48,7 +48,7 @@ namespace NewUI
 
 	public partial class Overview : Form
 	{
-		void LazyChild(TreeNode tn, int count)
+		void LazyChild(TreeNode tn, long count)
 		{
 			if (count > 0)
 			{
@@ -87,6 +87,11 @@ namespace NewUI
 				n = tn.Nodes.Add("counters", "TBD");
 				n.Tag = d.Item3;
 			}
+			long count = N.App.DB.GetMeasurementCount(d.Id.DetectorId);
+			// string s = string.Format("{0} measurements", count);
+			n = tn.Nodes.Add("Measurements ", GenDetMeasLabelStr(count));
+			n.Tag = true;
+			LazyChild(n, count);
 		}
 
 		void LoadCollarItems(bool uneval = false)
@@ -232,6 +237,32 @@ namespace NewUI
             tn.Tag = typeof(TestParameters);			
 		}
 
+		void LoadMeasurements(TreeNode tn)
+		{
+			Detector d = (Detector)tn.Parent.Tag;
+			Dictionary<AssaySelector.MeasurementOption, long> l =  N.App.DB.GetMeasurementCounts(d.Id.DetectorId);
+			Dictionary<AssaySelector.MeasurementOption, long>.Enumerator li = l.GetEnumerator();
+			while (li.MoveNext())
+			{
+				string s = li.Current.Key.PrintName();
+				TreeNode nn = tn.Nodes.Add(s, s + " " + li.Current.Value.ToString());
+				nn.Tag = (int)li.Current.Key;
+				LazyChild(nn, li.Current.Value);
+			}
+		}
+
+		void LoadMeasurementDetails(TreeNode tn, string d, AssaySelector.MeasurementOption mo)
+		{
+			List<INCCDB.IndexedResults> ilist = N.App.DB.IndexedResultsFor(d, mo.ToString(), "All");
+			foreach(INCCDB.IndexedResults ir in ilist)
+			{
+				ir.Rid = N.App.DB.GetCycleCount(ir.Mid);
+                string l = ir.DateTime.ToString("yy.MM.dd HH:mm:ss");
+				TreeNode nn = tn.Nodes.Add(l);
+				nn.Tag = ir;
+			}
+		}
+
         AcquireParameters curacq = null;
         Detector curdet = null;
 		const string Mat = @"Materials", MBAs = @"MBAs", Fac = @"Facilities";
@@ -277,7 +308,7 @@ namespace NewUI
                 object o = e.Node.Parent.Tag;
                 if (o == null)
                     return;
-                else
+                else  // display content in the right-hand pane
                 {
                     Type t = e.Node.Tag.GetType();
                     if (t == typeof(ItemId))
@@ -334,7 +365,11 @@ namespace NewUI
 						DataSourceIdentifier d = (DataSourceIdentifier)e.Node.Tag;
 						ls = GenDetIdStr(d);
 					}
-				}
+                    else if(t == typeof(INCCDB.IndexedResults))
+                    {
+                        ls = GenMeasStr((INCCDB.IndexedResults)e.Node.Tag);;
+                    }
+                }
 
 			}
             StringBuilder sb = new StringBuilder(100);
@@ -362,7 +397,24 @@ namespace NewUI
 					e.Node.Nodes.Clear();
 					LoadDetector(e.Node);
 					return;
-				} // else it is a 1st level tag with a type ensconced.
+				} else if (o.GetType() == typeof(bool) &&
+						  child.Text.Contains("Measurement"))  // expand this Detector//Measurement node
+				{
+					e.Node.Nodes.Clear();
+					LoadMeasurements(e.Node);
+					e.Node.Tag = false;
+					return;
+				} else if (o.GetType() == typeof(int))  // expand this Detector//Measurement//Type node
+				{
+					e.Node.Nodes.Clear();
+					object d = e.Node.Parent.Parent.Tag;
+					e.Node.Tag = false;
+					LoadMeasurementDetails(e.Node, ((Detector)d).Id.DetectorId, (AssaySelector.MeasurementOption)o);
+					return;
+				}				
+				
+				// else it is a 1st level tag with a type ensconced.
+				
 				Type t = (Type)o;
 				if (t == typeof(Detector))
 				{
@@ -427,6 +479,10 @@ namespace NewUI
 		{
 			string s = mult.ToString();
 			return s;
+		}
+		string GenDetMeasLabelStr(long n)
+		{
+			return string.Format("{0} measurements", n);
 		}
 		string GenDetABLabelStr(AlphaBeta AB)
 		{
@@ -548,6 +604,16 @@ namespace NewUI
 
 			return ls;
 		}
+
+        List<string> GenMeasStr(INCCDB.IndexedResults ir)
+        {
+            List<string> _ls = new List<string>();
+            string l = ir.Rid.ToString() + " cycles";
+            //if (!string.IsNullOrEmpty(ir.Campaign))
+            //    l = l + ", campaign: " + ir.Campaign;
+            _ls.Add(l);
+            return _ls;
+        }
 
 	}
 }
