@@ -1544,11 +1544,12 @@ namespace AnalysisDefs
         {
             NC.App.Opstate.Measurement = m;
             CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
-            m.Add(cl);
+            m.Cycles = new CycleList();
             m.CurrentRepetition = 0;
-            foreach (Cycle cycle in m.Cycles)
+            foreach (Cycle cycle in cl)
             {
                 m.CurrentRepetition++;
+                m.Add(cycle);
                 CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                 m.CycleStatusTerminationCheck(cycle);
             }

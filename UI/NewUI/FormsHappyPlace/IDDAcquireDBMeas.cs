@@ -83,7 +83,7 @@ namespace NewUI
 
         private void LoadMeasurementsFromDB()
         {
-            // get the list of measurement Ids (I did this two-step ingets to reduce memory use prior to an analysis: only the selected measurements are fully restored from the DB)
+            // get the list of measurement Ids (I did this two-step ingest to reduce memory use prior to an analysis: only the selected measurements are fully restored from the DB)
             //List<MeasId> list = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, ah.mo.PrintName());
             List<Measurement> mlist = NC.App.DB.MeasurementsFor(ah.det.Id.DetectorName);
             int measurecount = mlist.Count;

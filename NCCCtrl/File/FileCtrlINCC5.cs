@@ -732,8 +732,9 @@ namespace NCCFile
                 Array.Clear(mcr.UnAMult, 0, mcr.UnAMult.Length);
 
 				mcr.AB.TransferIntermediates(src: m.Detector.AB);  // remove, redundant copy in most cases
-
-                foreach (Cycle cycle in m.Cycles)
+                CycleList cl = m.Cycles;
+                m.Cycles = new CycleList();
+                foreach (Cycle cycle in cl) // process incrementally to match expected outlier processing behavior from INCC
                 {
                     if (NC.App.Opstate.IsQuitRequested)  // exit via abort or quit/save, follow-on code decides to continue with processing
                     {
@@ -741,7 +742,8 @@ namespace NCCFile
                         break;
                     }
                     m.CurrentRepetition++;
-                    m.SetQCStatus(cycle);  // correctly handles status for multiple LM analyzers
+                    m.Cycles.Add(cycle);
+                    m.SetQCStatus(cycle);
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
                     ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
