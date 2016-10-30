@@ -1443,17 +1443,10 @@ namespace AnalysisDefs
         {
             long mid = m.MeasurementId.UniqueId;
             // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
-			if (m.Detector.ListMode)
-			{
-				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
-				while (iter.MoveNext())
-				{
-					Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-					NC.App.DB.AddCycles(m.Cycles, mkey, mid, mkey.Rank);
-				}
-			}
-			else
-				NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            if (!m.Detector.ListMode)
+                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            else
+                NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
         }
 

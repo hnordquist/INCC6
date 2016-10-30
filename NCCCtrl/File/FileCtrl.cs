@@ -173,10 +173,9 @@ namespace NCCFile
             }
             if (m.HasReportableData) 
 			{
-				m.CalculateMeasurementResults();
-				ReportMangler rm = new ReportMangler(ctrllog);
-				rm.GenerateReports(m);
-				m.SaveMeasurementResults();
+				m.CalculateMeasurementResults();  
+                new ReportMangler(ctrllog).GenerateReports(m);                 
+                m.SaveMeasurementResults();
 			}
             else                                                                           
                 ctrllog.TraceEvent(LogLevels.Warning, 430, "No useful cycles identified ({0}) " + m.Cycles.GetUseableCycleCount());
@@ -521,9 +520,7 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
+					new ReportMangler(ctrllog).GenerateReports(meas);
 					meas.SaveMeasurementResults();
                 }
             }
@@ -843,10 +840,8 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
-					meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas);
+                    meas.SaveMeasurementResults();
 				}
             }
 
@@ -1055,10 +1050,8 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
-					meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas); 
+                    meas.SaveMeasurementResults();
 				}
             }
 
@@ -1294,8 +1287,7 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
+					new ReportMangler(ctrllog).GenerateReports(meas);
 					meas.SaveMeasurementResults();
                 }
             }
