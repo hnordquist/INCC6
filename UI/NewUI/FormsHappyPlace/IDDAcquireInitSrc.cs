@@ -78,7 +78,7 @@ namespace NewUI
             }
 
             DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
                     DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
@@ -102,7 +102,7 @@ namespace NewUI
         private void SetHelp()
         {
             ToolTip tip = new ToolTip();
-            String helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
+            string helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
                 "used are accidentals/singles test,\r\nchecksum tests on raw shift register data " +
                 "and an outlier test using the calculated mass for each cycle.";
             tip.SetToolTip(QCTestsCheckBox, helpString);
@@ -259,10 +259,21 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
-					CountTimeTextBox.Enabled = true;
+					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
+					if (ah.det.Id.SRType.CanDoTriples())
+					{
+						UseTriplesRadioButton.Enabled = true;
+					}
+					else
+					{
+						UseTriplesRadioButton.Enabled = false;
+						if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
+						{
+							ah.ap.acquire_type = AcquireConvergence.CycleCount;
+						}
+					}
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = true;
 					NumCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;

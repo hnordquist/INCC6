@@ -48,11 +48,12 @@ namespace NewUI
 		public string Material;
 		public AnalysisMethod AnalysisMethod;
 		public INCCAnalysisParams.CurveEquation CurveEquation;
-		public CalibrationCurveList CalcDataList;
+        public CalibrationCurveList CalcDataList;
+        public AssaySelector.MeasurementOption mopt;
 
-		private string DetectorId;
+        private string DetectorId;
 
-		public void Init(string id)
+		public void Init(string id, AssaySelector.MeasurementOption mo = AssaySelector.MeasurementOption.calibration)
 		{
 			CalcDataList = new CalibrationCurveList();
 			DetectorId = id;
@@ -60,7 +61,8 @@ namespace NewUI
 			try
 			{
 				InitSort();
-				mlist = N.App.DB.MeasurementsFor(DetectorId, AssaySelector.MeasurementOption.calibration);
+                mopt = mo;
+                mlist = N.App.DB.MeasurementsFor(DetectorId, mopt);
 				bGood = PrepList(DetectorId);
 			} finally
 			{
@@ -92,7 +94,7 @@ namespace NewUI
             mlist.RemoveAll(MatchingSwipeLeft);    // cull those without matching attributes
 			if (mlist.Count == 0)
 			{
-				string msg = string.Format("No '{0}' {1} calibration measurements found", Material, AnalysisMethod.FullName());
+				string msg = string.Format("No '{0}' {1} {2} measurements found", Material, AnalysisMethod.FullName(), mopt.PrintName());
 				MessageBox.Show(msg, "Calibration measurements", MessageBoxButtons.OK);
 				N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 3363, msg);
 				return false;
@@ -128,7 +130,7 @@ namespace NewUI
 				MCountSel.Text = string.Empty;
 		}
 
-		DoublesDclMass GetTheDataPoints(Measurement m)
+		public DoublesDclMass GetTheDataPoints(Measurement m)
 		{
 			DoublesDclMass dl = new DoublesDclMass();
 			dl.dt = m.MeasDate;
@@ -294,11 +296,16 @@ namespace NewUI
 			{
 
 			}
-
-			public override string ToString()
-			{
-				return Mass.v.ToString("E") + ", " + 0.ToString("E") + ", " + Doubles.v.ToString("E") + ", " + Doubles.sigma.ToString("E"); 
-			}
+        internal DoublesDclMass(DateTimeOffset _dt)
+        {
+            dt = _dt;
+            Doubles = new VTuple();
+            Mass = new VTuple();
+        }
+        public override string ToString()
+		{
+			return Mass.v.ToString("E") + ", " + 0.ToString("E") + ", " + Doubles.v.ToString("E") + ", " + Doubles.sigma.ToString("E"); 
+		}
 	}
 
 	public class CalibrationCurveList: List<DoublesDclMass>

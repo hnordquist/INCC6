@@ -2214,6 +2214,12 @@ namespace AnalysisDefs
             return rec;
         }
 
+		public INCCResults.results_rec GetResultsFor(long mid)
+        {
+			INCCResults.results_rec rec = Get(mid); 
+            return rec;
+        }
+
         public List<INCCResults.results_rec> GetResultsFor(string detname)
         {
             DB.Results r = new DB.Results();
@@ -3416,7 +3422,7 @@ namespace AnalysisDefs
     /// <summary>
     /// Root of access to basic INCC persistent storage, tries to hide DB details LOL
     /// </summary>
-    public partial class   INCCDB
+    public partial class INCCDB
     {
         public INCCDB()
         {
@@ -3462,11 +3468,6 @@ namespace AnalysisDefs
         public static string UpdateFrag(bool good)
         {
             return good ? "Updated" : "Failed to update";
-        }
-        // optionally implement an initial data load here,
-        // default is pieces are loaded as needed by calls through this class      
-        public void Populate(DB.Persistence pest)
-        {
         }
 
         // detectors (alpha/beta should attach to these but is on MultRes for now)
@@ -3785,11 +3786,11 @@ namespace AnalysisDefs
 				int hCode = Item1.GetHashCode() ^ Item2.GetHashCode();
 				return hCode;
 			}
-			public override string ToString()
-			{
-				return Item1          + "," + Item2 + " => " + Item3;
-			}
-			public Detector Detector 
+            public override string ToString()
+            {
+                return Item1 + "," + Item2 + " => " + Item3.ToString("yyyy-MM-dd HH:mm:ss K");
+            }
+            public Detector Detector 
 			{
 				get { return Item1; }
 			}
@@ -4205,12 +4206,15 @@ namespace AnalysisDefs
 
 		public INCCResults.results_rec ResultsRecFor(MeasId id)
 		{
+			return ResultsRecFor(id.UniqueId);
+		}
+		public INCCResults.results_rec ResultsRecFor(long mid)
+		{
 			ResultsRecs recs = new ResultsRecs();
             // get the traditional results rec that matches the measurement id 
-			INCCResults.results_rec rec = recs.Get(id.UniqueId); 
+			INCCResults.results_rec rec = recs.Get(mid); 
 			return rec;
 		}
-
 
 
 		public class IndexedResults
@@ -4386,7 +4390,7 @@ namespace AnalysisDefs
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
         /// <returns>CycleList</returns>
-        public CycleList GetCycles(Detector det, MeasId mid, CountingAnalysisParameters cap = null)
+        public CycleList GetCycles(Detector det, MeasId mid, ConstructedSource data_src, CountingAnalysisParameters cap = null)
         {
             CycleList cl = new CycleList();
 			if (mid.UniqueId <= 0)
@@ -4396,6 +4400,7 @@ namespace AnalysisDefs
             dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
 			List<Multiplicity> tme = null;
             int seq = 0;
+            DateTimeOffset cur = new DateTimeOffset(mid.MeasDateTime.Ticks, mid.MeasDateTime.Offset);
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
@@ -4404,7 +4409,11 @@ namespace AnalysisDefs
 
 				long lmid = AddSummaryToCycle(dr, c);
 
-				if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
+                c.UpdateDataSourceId(data_src, det.Id.SRType,
+                                   cur.AddTicks(c.TS.Ticks), det.Id.FileName);
+                cur = c.DataSourceId.dt;
+
+                if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
 					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 					AddResultToCycle(dr, det.MultiplicityParams, c);
@@ -4427,7 +4436,45 @@ namespace AnalysisDefs
             return cl;
         }
 
-		Multiplicity GetMultiplicityAnalyzer(DataRow dr, ShiftRegisterParameters sr)
+        public int GetCycleCount(MeasId mid)
+        {
+            return GetCycleCount(mid.UniqueId);  // this specific measurement id's cycles
+        }
+
+        public int GetCycleCount(long uid)
+        {
+            if (uid <= 0)
+                return 0;
+            DB.Measurements ms = new DB.Measurements();
+            return ms.GetCycleCount(uid);  // this specific measurement id's cycles
+        }
+
+		public long GetMeasurementCount(string det, AssaySelector.MeasurementOption mo)
+		{
+            DB.Measurements ms = new DB.Measurements();
+			long n = ms.CountOf(det, mo.PrintName());
+            return n;
+		}
+
+		public Dictionary<AssaySelector.MeasurementOption, long> GetMeasurementCounts(string det)
+		{
+            DB.Measurements ms = new DB.Measurements();
+			Dictionary<AssaySelector.MeasurementOption, long> l = new Dictionary<AssaySelector.MeasurementOption, long>();
+			foreach (AssaySelector.MeasurementOption m in Enum.GetValues(typeof(AssaySelector.MeasurementOption)))
+			{
+				long n = ms.CountOf(det, m.PrintName());
+				if (n > 0)
+					l.Add(m, n);
+			}
+            return l;
+		}
+
+		public long GetMeasurementCount(string det)
+		{
+            DB.Measurements ms = new DB.Measurements();
+            return ms.CountOf(det);
+		}
+        Multiplicity GetMultiplicityAnalyzer(DataRow dr, ShiftRegisterParameters sr)
 		{
 			SpecificCountingAnalyzerParams s = NC.App.LMBD.ConstructCountingAnalyzerParams(dr);
 			Multiplicity m = (Multiplicity)s;
@@ -4512,17 +4559,7 @@ namespace AnalysisDefs
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
 
-        public bool AddCycles(CycleList cl, Detector det, Measurement m)
-        {
-            DB.Measurements ms = new DB.Measurements();
-            long mid = m.MeasurementId.UniqueId;
-            if (mid <= 0)
-                return false;
-
-            return AddCycles(cl, det.MultiplicityParams, mid, -1, ms);
-        }
-
-       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
+       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -4532,16 +4569,71 @@ namespace AnalysisDefs
             {
                 Cycle c = cl[ic];
                 c.GenParamList(mkey);
-				DB.ElementList els = c.ToDBElementList(generate: false);
-				if (lmid >= 0)
-					els.Add(new DB.Element("lmid", lmid));
+                DB.ElementList els = c.ToDBElementList(generate: false);
                 clist.Add(els);
             }
             db.AddCycles(mid, clist);
             return true;
         }
 
-        public void AddResultsFileNames(Measurement m)
+        public bool AddCycles(CycleList cl, CountingResults cr, long mid, DB.Measurements db = null)
+        {
+            SpecificCountingAnalyzerParams key = cr.GetFirstMultiplicityOrFirstLMKey;
+            if (key == null)
+                return false;
+            if (db == null)
+                db = new DB.Measurements();
+            int iCntCycles = cl.Count;
+            long lmid = key.Rank;
+            List<DB.ElementList> clist = new List<DB.ElementList>();
+            for (int ic = 0; ic < iCntCycles; ic++)
+            {
+                Cycle c = cl[ic];
+                if (key is Multiplicity)
+                    c.GenParamList((Multiplicity)key);
+                else
+                    c.GenParamList(key);
+                DB.ElementList els = c.ToDBElementList(generate: false);
+                if (lmid >= 0)
+                    els.Add(new DB.Element("lmid", lmid));
+                clist.Add(els);
+            }
+            db.AddCycles(mid, clist);
+            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30008, "Inserted basis for {0} cycles, {1}", cl.Count, key.ToString());
+
+            key.reason = "x";
+            System.Collections.IEnumerator ie = cr.GetEnumerator();
+            while (ie.MoveNext())
+            {
+                KeyValuePair<SpecificCountingAnalyzerParams, object> cur = (KeyValuePair<SpecificCountingAnalyzerParams, object>)ie.Current;
+                if (cur.Key.reason == "x")     // skip
+                {
+                    cur.Key.reason = string.Empty;
+                }
+                else
+                {
+                    // URGENT: add lmcycle row and relate it to containing summary cycle
+                    // URGENT: design detailed lmcycle content for each analysis type
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
+                }
+            }
+            return true;
+        }
+
+       public bool DeleteCycles(long mid)
+		{
+            if (mid <= 0)
+                return false;
+            DB.Measurements ms = new DB.Measurements();
+            int count = ms.GetCycleCount(mid);  // this specific measurement id's cycles
+			NC.App.Pest.logger.TraceEvent(LogLevels.Info, 30006, "Deleting {0} cycles", count);
+			return ms.DeleteCycles(mid);
+
+		}
+
+
+
+    public void AddResultsFileNames(Measurement m)
         {
             string primaryFilename = string.Empty; 
 			bool skipTheFirstINCC5File = false;

@@ -46,11 +46,11 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
             Text += " for detector " + det.Id.DetectorName;
 			ict = new IDDCurveType();
-			RefreshCurveEqComboBox();
+            RefreshMaterialComboBox();
 			RefreshMethodComboBox();
 		}
 
-		public void RefreshCurveEqComboBox()
+		public void RefreshMaterialComboBox()
         {
             MaterialTypeComboBox.Items.Clear();
             foreach (INCCDB.Descriptor desc in N.App.DB.Materials.GetList())
@@ -127,7 +127,7 @@ namespace NewUI
 
         }
 
-		class jigglypuff
+		public class jigglypuff
 		{
 			public jigglypuff(AnalysisMethod am)
 			{

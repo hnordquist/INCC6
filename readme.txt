@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 16
-6.0.16 Sep 27, 2016
+INCC6 Beta Release 17
+6.17 Oct 31, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -100,9 +100,11 @@ create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statement
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Holdup and glovebox features, the Plot features,
-   some Add-a-src processing, Collar acquire and Poison Rod details,
-   integrated help.
+   Collar acquire and Poison Rod details, Holdup and glovebox features,
+   Active/Passive paired measurements, Rad Review controlled import,
+   truncated multiplicity and some multiplicity analyses are incomplete,
+   some Add-a-src processing, miscellaneous little-used features
+   and integrated help.
 
 This is beta release software; issues and missing features are known to exist.
 
@@ -115,30 +117,57 @@ See https://github.com/hnordquist/INCC6/issues
 
 
 Issues for basic INCC5/6 feature COMPLETION
-
 #84  Implement Collar
-#79  Plot Norm, Plot Ver diagnostic tools
 #35  Hold-up analysis required
+***  Active/Passive paired measurements
+***  Truncated multiplicity and some multiplicity analyses are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
 
-List mode:
-#100 Rossi processing too slow and can sometimes hang
+Issues for basic INCC6 List mode
+#86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
+***  SDTMultiplicityCalculator shift to BigInteger
+***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
+***  Retain name of each input file used for file-based LM analysis
+
+Issues for production
+#95  Just say yes to updated and complete documentation
+#116 Help entries everywhere
 
 Closed issues
 
-6.0.16 (6.0.1.16) Sep 30, 2016  ************
+6.17 (6.0.17) Oct 31, 2016  ************
+79   Plot Norm, Plot Ver, Plot SDT diagnostic tools
+100  Rossi processing too slow and can sometimes hang
+***  Overview of detectors, associated params, materials and methods, items, isotopics, etc
+***  DAQ acquire type termination conditions defaults and constraints not set correctly
+***  ending comment field and use and reporting
+***  cmd line: show current acquire state db content with new --query flag
+***  Added cmd line report section selector flags
+***  Finish results summary fields for summary reports
+***  Summary scaler rates not reported during some analyses 
+***  Stratum not maintained across reanalysis boundary
+***  Transfer analysis warnings duplicated on replay (see mass tests)
+***  Transfer incorrectly managed run time, total run time, total number of good runs values
+***  Cycle corrected rates counts not available in reporting operations, recalculation step missing
+***  Added common XX inventory change code 
+***  Report generation dialogs: selected section choices implemented, and retaining disk file retrieval
+***  Inccuser.pdf version is not the latest
+96   Implement the CSV writes for the isotopics and composite isotopics dialogs
+***  Log database details at start up
+***  Improved missing database handling and reporting
+
+6.0.16 (6.0.1.16) Sep 27, 2016  ************
 ***  Issue with empty mtl type on collar params seen
 ***  Reanalysis now uses stored List Mode SR params
 ***  Current detector and related acquire state sometimes not restored
 ***  Cosmetic improvement to Acquire dialog source selection for list mode devices
 ***  DB persist for List Mode results for one or more defined analyzers
 ***  Rework List mode analyzer UI with tabbed dialog, WRT #69 Present the proposed List Mode Config UI ...
-***  Summary scaler rates not reported during some analyses 
 115  Abort Measurement and Quit FuBar
 25   List mode acquisition predelay not stored
 40   source ID in 'initial source' does not get passed to results

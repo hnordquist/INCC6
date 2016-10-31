@@ -565,24 +565,6 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("yield_relative_to_mrc_95", yieldRelativeToMrc95));
             this.ps.Add(new DBParamEntry("bias_test_use_addasrc", biasTestUseAddasrc));
             this.ps.Add(new DBParamEntry("bias_test_addasrc_position", biasTestAddasrcPosition));
-
-            //    [source_id] [nvarchar(256) ] NULL,
-            //    [normalization_constant] [float] NULL,
-            //    [normalization_constant_err] [float] NULL,
-            //    [bias_mode] [int] NULL,
-            //    [meas_rate] [float] NULL,
-            //    [meas_rate_err] [float] NULL,
-            //    [amli_ref_singles_rate] [float] NULL,
-            //    [cf252_ref_doubles_rate] [float] NULL,
-            //    [cf252_ref_doubles_rate_err] [float] NULL,
-            //    [ref_date] [nvarchar(20) ] NULL,
-            //    [init_src_precision_limit] [float] NULL,
-            //    [bias_precision_limit] [float] NULL,
-            //    [acceptance_limit_std_dev] [float] NULL,
-            //    [acceptance_limit_percent] [float] NULL,
-            //    [yield_relative_to_mrc_95] [float] NULL,
-            //    [bias_test_use_addasrc] [nvarchar(256) ] NULL,
-            //    [bias_test_addasrc_position] [float] NULL
         }
 
     }
@@ -952,7 +934,7 @@ namespace AnalysisDefs
         public string user_id;
         public string comment;
         public bool ending_comment;
-        public string ending_comment_str;
+        public string ending_comment_str;  // this rides on the acq for runtime convenience, stored in the results_rec of a completed measurement
         public ConstructedSource data_src;
         public bool qc_tests;
         public bool print;
@@ -1137,8 +1119,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("stratum_id_description", stratum_id.Desc));
             this.ps.Add(new DBParamEntry("user_id", user_id));
             this.ps.Add(new DBParamEntry("comment", comment));
-            this.ps.Add(new DBParamEntry("ending_comment", ending_comment));
-            //this.ps.Add(new DBParamEntry("ending_comment_str", ending_comment_str));  // URGENT: add ending_comment_str to table
+            this.ps.Add(new DBParamEntry("ending_comment", ending_comment));  // flag only, value, if any, lives on results_rec
 
             this.ps.Add(new DBParamEntry("data_src", (int)data_src));
             this.ps.Add(new DBParamEntry("qc_tests", qc_tests));
@@ -1189,10 +1170,24 @@ namespace AnalysisDefs
             acr.Add(Find("acq_print"));
             acr.Add(Find("user_id"));
             acr.Add(Find("comment"));
-            acr.Add(Find("ending_comment"));
-            // acr.Add(Find("ending_comment_str")); // URGENT: add ending_comment_str to table and results report rendering
+			acr.Add(new DBParamEntry("ending_comment", ending_comment_str));
             acr.Add(Find("num_runs"));
             return acr;
+        }
+
+        public bool MatchSelector(string det, string item, DateTimeOffset dto)
+        {
+            int res = det.CompareTo(detector_id);
+            if (res == 0)
+                res = dto.CompareTo(MeasDateTime);
+            if (res == 0)
+                res = item.CompareTo(item_id);
+            return res == 0;
+        }
+
+        public bool MatchSelector(AcquireParameters acq)
+        {
+            return MatchSelector(acq.detector_id, acq.item_id, acq.MeasDateTime);
         }
     }
 
@@ -2474,8 +2469,8 @@ namespace AnalysisDefs
         }
         public bool Equals(INCCSelector other)
         {
-            if (this.detectorid.Equals(other.detectorid, StringComparison.OrdinalIgnoreCase) & this.material.Equals(other.material, StringComparison.OrdinalIgnoreCase)
-                & this.otheruniquelyidentifyinginformation.Equals(other.otheruniquelyidentifyinginformation))
+            if (detectorid.Equals(other.detectorid, StringComparison.OrdinalIgnoreCase) & material.Equals(other.material, StringComparison.OrdinalIgnoreCase)
+                & otheruniquelyidentifyinginformation.Equals(other.otheruniquelyidentifyinginformation))
             {
                 return true;
             }
@@ -2499,7 +2494,7 @@ namespace AnalysisDefs
             }
             public override bool Equals(INCCSelector b1, INCCSelector b2)
             {
-                return EqualityComparer<INCCSelector>.Default.Equals(b1, b2);
+                return Default.Equals(b1, b2);
             }
         }
     }
@@ -2508,7 +2503,7 @@ namespace AnalysisDefs
     public class MeasurementMsg: ParameterBase
     {
         NCCReporter.LogLevels lvl;
-        Int32 id;
+        int id;
 
         public DateTimeOffset dt { get; set; }
 
@@ -2518,17 +2513,17 @@ namespace AnalysisDefs
         {
         }
 
-        public MeasurementMsg(NCCReporter.LogLevels level, Int32 mid, string mtext)
+        public MeasurementMsg(NCCReporter.LogLevels level, int mid, string mtext)
         {
-            this.text = string.Copy(mtext);
+            text = string.Copy(mtext);
             lvl = level;
             id = mid;
             dt = DateTime.Now;
         }
 
-        public MeasurementMsg(NCCReporter.LogLevels level, Int32 mid, string mtext, DateTimeOffset _dt)
+        public MeasurementMsg(NCCReporter.LogLevels level, int mid, string mtext, DateTimeOffset _dt)
         {
-            this.text = string.Copy(mtext);
+            text = string.Copy(mtext);
             lvl = level;
             id = mid;
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
@@ -2547,9 +2542,9 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "analysis_messages";
+            Table = "analysis_messages";
             ps.Add(new DBParamEntry("msgid", id));
-            ps.Add(new DBParamEntry("level", (Int32)lvl));
+            ps.Add(new DBParamEntry("level", (int)lvl));
             ps.Add(new DBParamEntry("text", text));
             ps.Add(new DBParamEntry("ts", dt));
         } 
@@ -2574,7 +2569,7 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "HVStatus";
+            Table = "HVStatus";
             ps.Add(new DBParamEntry("setpt", HVsetpt));
             ps.Add(new DBParamEntry("read", HVread));
             ps.Add(new DBParamEntry("HVPDateTime", Time));
@@ -2705,7 +2700,7 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "HVCalibrationParams";
+            Table = "HVCalibrationParams";
             ps.Add(new DBParamEntry("minv", MinHV));
             ps.Add(new DBParamEntry("maxv", MaxHV));
             ps.Add(new DBParamEntry("stepv", Step));
@@ -2768,8 +2763,8 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "results_filenames";
-            this.ps.Add(new DBParamEntry("FileName", Path));
+            Table = "results_filenames";
+            ps.Add(new DBParamEntry("FileName", Path));
         }
 
     }
@@ -2867,6 +2862,21 @@ namespace AnalysisDefs
             return vals;
         }
 
+		public string[] ToSimpleKeyArray(bool generate = true)
+        {
+            if (generate) 
+                GenParamList(); // resolved in the child class
+            string[] vals = new string[ps.Count];
+
+            int i = 0;
+            foreach (DBParamEntry f in ps)
+            {
+                vals[i] = f.Name;
+                i++;
+            }
+            return vals;
+        }
+
         public static List<DBParamEntry> TuplePair(string id, Tuple tup)
         {
             List<DBParamEntry> l = new List<DBParamEntry>();
@@ -2947,9 +2957,9 @@ namespace AnalysisDefs
         // dev note: could use Double.Epsilon as a signal value for this condition, then NaN can be written to DB and restored on read
         public static string NaNFilter(double d)
         {
-            if (Double.IsNaN(d))
+            if (double.IsNaN(d))
             {
-                return Double.Epsilon.ToString();
+                return double.Epsilon.ToString();
             }
             else
             {
@@ -3018,19 +3028,19 @@ namespace AnalysisDefs
 
         public string Name
         {
-            get { return this.Item1; }
+            get { return Item1; }
         }
         public string Value
         {
-            get { return this.Item2; }
+            get { return Item2; }
         }
         public DBParamType Type
         {
-            get { return this.Item3; }
+            get { return Item3; }
         }
         public bool Quote
         {
-            get { return this.Item4; }
+            get { return Item4; }
         }
 
         public DB.Element AsElement
@@ -3133,11 +3143,11 @@ namespace AnalysisDefs
         }
         public string Name
         {
-            get { return this.Item1; }
+            get { return Item1; }
         }
         public string Value
         {
-            get { return this.Item2.ToString(); }
+            get { return Item2.ToString(); }
         }
         public override string ToString()
         {

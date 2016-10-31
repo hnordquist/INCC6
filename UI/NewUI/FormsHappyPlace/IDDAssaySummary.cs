@@ -54,7 +54,7 @@ namespace NewUI
                 option = AssaySelector.MeasurementOption.unspecified;
                 l = "Measurement";
             }
-            this.Text = l + " " + this.Text; 
+            Text = l + " " + Text; 
         }           
 
         private List<INCCDB.IndexedResults> mlist;
@@ -106,7 +106,7 @@ namespace NewUI
         }
 
         static bool CheckForMeasIDMatch(INCCDB.IndexedResults ir)
-            {
+        {
             if (sel.Start <= ir.DateTime && sel.End >= ir.DateTime)
             {
                 return (string.Compare(sel.InspectionNumber, "All", true) == 0) ||

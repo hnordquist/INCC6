@@ -498,18 +498,18 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "isotopics";
+            Table = "isotopics";
 
-            ps.AddRange(DBParamList.TuplePair("pu238", this[Isotope.pu238]));
-            ps.AddRange(DBParamList.TuplePair("pu239", this[Isotope.pu239]));
-            ps.AddRange(DBParamList.TuplePair("pu240", this[Isotope.pu240]));
-            ps.AddRange(DBParamList.TuplePair("pu241", this[Isotope.pu241]));
-            ps.AddRange(DBParamList.TuplePair("pu242", this[Isotope.pu242]));
-            ps.AddRange(DBParamList.TuplePair("am241", this[Isotope.am241]));
-            this.ps.Add(new DBParamEntry("pu_date", pu_date.ToString("yyyy-MM-dd")));
-            this.ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
-            this.ps.Add(new DBParamEntry("isotopics_id", id));
-            this.ps.Add(new DBParamEntry("isotopics_source_code", source_code.ToString()));
+            ps.AddRange(TuplePair("pu238", this[Isotope.pu238]));
+            ps.AddRange(TuplePair("pu239", this[Isotope.pu239]));
+            ps.AddRange(TuplePair("pu240", this[Isotope.pu240]));
+            ps.AddRange(TuplePair("pu241", this[Isotope.pu241]));
+            ps.AddRange(TuplePair("pu242", this[Isotope.pu242]));
+            ps.AddRange(TuplePair("am241", this[Isotope.am241]));
+            ps.Add(new DBParamEntry("pu_date", pu_date.ToString("yyyy-MM-dd")));
+            ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
+            ps.Add(new DBParamEntry("isotopics_id", id));
+            ps.Add(new DBParamEntry("isotopics_source_code", source_code.ToString()));
 
         }
     }
@@ -523,6 +523,12 @@ namespace AnalysisDefs
         public double pu241 { get { return this[Isotope.pu241].v; } }
         public double pu242 { get { return this[Isotope.pu242].v; } }
         public double am241 { get { return this[Isotope.am241].v; } }
+		public double pu238_err { get { return this[Isotope.pu238].err; } }
+        public double pu239_err { get { return this[Isotope.pu239].err; } }
+        public double pu240_err { get { return this[Isotope.pu240].err; } }
+        public double pu241_err { get { return this[Isotope.pu241].err; } }
+        public double pu242_err { get { return this[Isotope.pu242].err; } }
+        public double am241_err { get { return this[Isotope.am241].err; } }
 		public double Summed   { get { return pu238 + pu239 + pu240 + pu241 + pu242; } }
 
 		public void InitVals()
@@ -765,6 +771,12 @@ namespace AnalysisDefs
         public double pu241 { get { return this[Isotope.pu241].v; } }
         public double pu242 { get { return this[Isotope.pu242].v; } }
         public double am241 { get { return this[Isotope.am241].v; } }
+        public double pu238_err { get { return this[Isotope.pu238].err; } }
+        public double pu239_err { get { return this[Isotope.pu239].err; } }
+        public double pu240_err { get { return this[Isotope.pu240].err; } }
+        public double pu241_err { get { return this[Isotope.pu241].err; } }
+        public double pu242_err { get { return this[Isotope.pu242].err; } }
+        public double am241_err { get { return this[Isotope.am241].err; } }
 
 		public double Summed   { get { return pu238 + pu239 + pu240 + pu241 + pu242; } }
 

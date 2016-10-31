@@ -428,7 +428,7 @@ namespace DAQ
 			}
             NCCAction x = NC.App.Opstate.Action;
             NC.App.Opstate.Action = NCCAction.Assay;
-            NC.App.Opstate.SOH = NCC.OperatingState.Living;
+            NC.App.Opstate.SOH = OperatingState.Living;
             bool ok = false;// AssayInception();
             if (ok)
             {

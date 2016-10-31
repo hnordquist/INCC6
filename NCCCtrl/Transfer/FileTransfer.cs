@@ -368,7 +368,7 @@ namespace NCCTransfer
 				detector_rec det = Detector[i];
 				string detname =TransferUtils.str(det.detector_id, INCC.MAX_DETECTOR_ID_LENGTH);
 				string s = CleansePotentialFilename(detname);
-				Path = System.IO.Path.Combine(path, s + ".dat");
+				Path = System.IO.Path.Combine(path, s + ".det");
 				FileStream stream = File.Create(Path);
 				BinaryWriter bw = new BinaryWriter(stream);
 				bw.Write(Encoding.ASCII.GetBytes(INCCFileInfo.DETECTOR_SAVE_RESTORE));
@@ -1308,7 +1308,7 @@ namespace NCCTransfer
             meas_id id = new meas_id();
             try
             {
-				fi = new System.IO.FileInfo(source_path_filename);
+				fi = new FileInfo(source_path_filename);
                 stream = fi.OpenRead();
                 reader = new BinaryReader(stream);
             }
@@ -1711,34 +1711,34 @@ namespace NCCTransfer
                     }
                 }
 
-                    int WMVcheck = 0;
-                    if (results.meas_option == INCC.OPTION_ASSAY && reader.PeekChar() != -1)
-                    {
+                int WMVcheck = 0;
+                if (results.meas_option == INCC.OPTION_ASSAY && reader.PeekChar() != -1)
+                {
 
-						InitCFRunLists();
-                        for (int j = 0; j < INCC.MAX_ADDASRC_POSITIONS; j++)
+					InitCFRunLists();
+                    for (int j = 0; j < INCC.MAX_ADDASRC_POSITIONS; j++)
+                    {
+                        number_runs = TransferUtils.ReadUInt16(reader, "number of AAS CF" + (j + 1).ToString() + " runs");
+                        mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
+                        run_rec run = new run_rec();
+                        for (n = 0; n < number_runs; n++)
                         {
-                            number_runs = TransferUtils.ReadUInt16(reader, "number of AAS CF" + (j + 1).ToString() + " runs");
-                            mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
-                            run_rec run = new run_rec();
-                            for (n = 0; n < number_runs; n++)
-                            {
-                                sz = Marshal.SizeOf(run);
-                                los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                                if (los_bytos != null)
-                                    fixed (byte* pData = los_bytos)
-                                    {
-                                        run = *(run_rec*)pData;
-                                    }
-                                else
+                            sz = Marshal.SizeOf(run);
+                            los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                            if (los_bytos != null)
+                                fixed (byte* pData = los_bytos)
                                 {
-                                    throw new TransferUtils.TransferParsingException("run_rec " + (n + 1).ToString() + " read failed");
+                                    run = *(run_rec*)pData;
                                 }
-                                CFrun_rec_list[j + 1].Add(run);
-                                WMVcheck += number_runs;
+                            else
+                            {
+                                throw new TransferUtils.TransferParsingException("run_rec " + (n + 1).ToString() + " read failed");
                             }
+                            CFrun_rec_list[j + 1].Add(run);
+                            WMVcheck += number_runs;
                         }
                     }
+                }
                 #region dev note: maybe can skip this WMV and HOLDUP for now
                 //    if (results.meas_option == OPTION_HOLDUP)
                 //    {

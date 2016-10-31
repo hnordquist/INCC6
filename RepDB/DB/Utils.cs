@@ -222,6 +222,26 @@ namespace DB
                 return cv.ToString();
             }
         }
+
+		public List<string> AlignedNameValueList
+		{
+            get
+            {
+				List<string> r = new List<string>();
+				int maxlabel = 0, maxvalue = 0;
+				foreach (Element e in this)
+                {
+					maxlabel = (!string.IsNullOrEmpty(e.Name) && e.Name.Length > maxlabel ? e.Name.Length: maxlabel);
+					maxvalue = (!string.IsNullOrEmpty(e.Value) && e.Value.Length > maxvalue ? e.Value.Length: maxvalue);
+				}
+				string f = "{0,-" + maxlabel.ToString() + "}: {1, -" + maxvalue.ToString() + "}";
+                foreach (Element e in this)
+                {
+					r.Add(string.Format(f, e.Name, e.Value));
+				}
+                return r;
+            }
+        }
     }
  
 

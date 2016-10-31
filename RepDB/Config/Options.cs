@@ -57,11 +57,12 @@ namespace NCCConfig
         sortPulseFile, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
-        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString
-    }
-    
+        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
 
-    public partial class Config
+		reportSect, query
+    }
+
+	public partial class Config
     {
         public bool ParseCommandShellArgs()
         {
@@ -70,6 +71,7 @@ namespace NCCConfig
             { "V|version", "output version info and exit, use with -v=5 for full assembly list", b => cmd.ShowVersion = b != null},
 			{ "config|show",  "show the current configuration and exit, shows XML config file content",  l =>  cmd.Showcfg = true  },
   			{ "h|?|help",  "show this message and exit", v => cmd.Showhelp = v != null },
+  			{ "q|query",  "show current acquire state", v => cmd.Query = v ?? v },
             
              { "v:", "filter console output with {level}: default is 4, CRITICAL=1, ERROR=2, WARNING=3, INFO=4, DEBUG=5",  
                                             v => { if (v != null) { ushort uiv = 4; if (ushort.TryParse(v, out uiv)) app.SetVerbose(uiv); } } },
@@ -88,6 +90,8 @@ namespace NCCConfig
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
             { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode results scheme", b => app.Results8Char = b != null},
             { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
+            { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
+                                           s => app.ReportSectional = s},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },

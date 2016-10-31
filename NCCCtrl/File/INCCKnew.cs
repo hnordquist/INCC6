@@ -35,7 +35,7 @@ using DetectorDefs;
 using NCCReporter;
 namespace NCCTransfer
 {
-	using Tuple = AnalysisDefs.VTuple;
+	using Tuple = VTuple;
 	using NC = NCC.CentralizedState;
 	public class INCCKnew
     {
@@ -2263,8 +2263,8 @@ namespace NCCTransfer
                             cc.cev.lower_mass_limit = cal_curve.cc_lower_mass_limit;
                             cc.cev.upper_mass_limit = cal_curve.cc_upper_mass_limit;
                             cc.percent_u235 = cal_curve.cc_percent_u235;
-                            cc.dcl_mass = TransferUtils.Copy(cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            cc.doubles = TransferUtils.Copy(cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref cc.dcl_mass, cal_curve.cc_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref cc.doubles, cal_curve.cc_doubles, INCC.MAX_NUM_CALIB_PTS);
   
                             cc.cev.a = cal_curve.cc_a; cc.cev.b = cal_curve.cc_b;
                             cc.cev.c = cal_curve.cc_c; cc.cev.d = cal_curve.cc_d;
@@ -2286,8 +2286,8 @@ namespace NCCTransfer
                             INCCAnalysisParams.known_alpha_rec ka = new INCCAnalysisParams.known_alpha_rec();
 
                             ka.alpha_wt = known_alpha.ka_alpha_wt;
-                            ka.dcl_mass = TransferUtils.Copy(known_alpha.ka_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            ka.doubles = TransferUtils.Copy(known_alpha.ka_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ka.dcl_mass, known_alpha.ka_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ka.doubles, known_alpha.ka_doubles, INCC.MAX_NUM_CALIB_PTS);
                             ka.heavy_metal_corr_factor = known_alpha.ka_heavy_metal_corr_factor;
                             ka.heavy_metal_reference = known_alpha.ka_heavy_metal_reference;
                             ka.k = known_alpha.ka_k;
@@ -2347,10 +2347,10 @@ namespace NCCTransfer
                         case INCC.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             de_mult_rec de_mult = (de_mult_rec)miter2.Current;
                             INCCAnalysisParams.de_mult_rec de = new INCCAnalysisParams.de_mult_rec();
-                            de.detector_efficiency = TransferUtils.Copy(de_mult.de_detector_efficiency, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.inner_outer_ring_ratio = TransferUtils.Copy(de_mult.de_inner_outer_ring_ratio, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.neutron_energy = TransferUtils.Copy(de_mult.de_neutron_energy, INCC.MAX_DUAL_ENERGY_ROWS);
-                            de.relative_fission = TransferUtils.Copy(de_mult.de_relative_fission, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.detector_efficiency, de_mult.de_detector_efficiency, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.inner_outer_ring_ratio, de_mult.de_inner_outer_ring_ratio, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.neutron_energy, de_mult.de_neutron_energy, INCC.MAX_DUAL_ENERGY_ROWS);
+                            TransferUtils.Copy(ref de.relative_fission, de_mult.de_relative_fission, INCC.MAX_DUAL_ENERGY_ROWS);
                             de.inner_ring_efficiency = de_mult.de_inner_ring_efficiency;
                             de.outer_ring_efficiency = de_mult.de_outer_ring_efficiency;
                             am.AddMethod(AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE, de);
@@ -2403,8 +2403,8 @@ namespace NCCTransfer
                             aas.cev.lower_mass_limit = add_a_source.ad_lower_mass_limit;
                             aas.cev.upper_mass_limit = add_a_source.ad_upper_mass_limit;
 
-                            aas.dcl_mass = TransferUtils.Copy(add_a_source.ad_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            aas.doubles = TransferUtils.Copy(add_a_source.ad_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref aas.dcl_mass, add_a_source.ad_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref aas.doubles, add_a_source.ad_doubles, INCC.MAX_NUM_CALIB_PTS);
 
                             aas.cf.a = add_a_source.ad_cf_a; aas.cf.b = add_a_source.ad_cf_b;
                             aas.cf.c = add_a_source.ad_cf_c; aas.cf.d = add_a_source.ad_cf_d;
@@ -2423,8 +2423,8 @@ namespace NCCTransfer
 
                             ar.cev.lower_mass_limit = active.act_lower_mass_limit;
                             ar.cev.upper_mass_limit = active.act_upper_mass_limit;
-                            ar.dcl_mass = TransferUtils.Copy(active.act_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
-                            ar.doubles = TransferUtils.Copy(active.act_doubles, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ar.dcl_mass, active.act_dcl_mass, INCC.MAX_NUM_CALIB_PTS);
+                            TransferUtils.Copy(ref ar.doubles, active.act_doubles, INCC.MAX_NUM_CALIB_PTS);
 
                             ar.cev.a = active.act_a; ar.cev.b = active.act_b;
                             ar.cev.c = active.act_c; ar.cev.d = active.act_d;
@@ -2903,7 +2903,7 @@ namespace NCCTransfer
 
             meas = new Measurement((AssaySelector.MeasurementOption)results.meas_option, mlogger);
    
-           // TODO: update detector details from this meas result, since there could be a difference 
+            // TODO: update detector details from this meas result, since there could be a difference 
             meas.MeasurementId.MeasDateTime = dt;
             meas.MeasurementId.FileName = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
   
@@ -2950,7 +2950,7 @@ namespace NCCTransfer
                 iso.id = TransferUtils.str(isotopics.isotopics_id, INCC.MAX_ISOTOPICS_ID_LENGTH);
                 AnalysisDefs.Isotopics.SourceCode checksc = AnalysisDefs.Isotopics.SourceCode.OD;
                 string check = TransferUtils.str(isotopics.isotopics_source_code, INCC.ISO_SOURCE_CODE_LENGTH);
-                bool okparse = System.Enum.TryParse(check, true, out checksc);
+                bool okparse = Enum.TryParse(check, true, out checksc);
                 iso.source_code = checksc;
                 iso.SetValueError(Isotope.am241, isotopics.am241, isotopics.am241_err);
                 iso.SetValueError(Isotope.pu238, isotopics.pu238, isotopics.pu238_err);
@@ -2985,9 +2985,9 @@ namespace NCCTransfer
             acq.item_type = TransferUtils.str(results.results_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
             acq.qc_tests = TransferUtils.ByteBool(results.results_qc_tests);
             acq.user_id = TransferUtils.str(results.user_id, INCC.CHAR_FIELD_LENGTH);
-            acq.num_runs = results.number_good_runs;
-            if (results.total_number_runs > 0)
-                acq.run_count_time = results.total_good_count_time / results.total_number_runs;
+            acq.num_runs = results.total_number_runs;
+            if (results.number_good_runs > 0)
+                acq.run_count_time = results.total_good_count_time / results.number_good_runs;
             else
                 acq.run_count_time = results.total_good_count_time; // should be 0.0 by default for this special case
             acq.MeasDateTime = meas.MeasurementId.MeasDateTime;
@@ -2996,10 +2996,10 @@ namespace NCCTransfer
             if (string.IsNullOrEmpty(acq.campaign_id))
                 acq.campaign_id = TransferUtils.str(results.results_inspection_number, INCC.MAX_CAMPAIGN_ID_LENGTH);
 			acq.comment = TransferUtils.str(results.comment, INCC.MAX_COMMENT_LENGTH);//"Original file name " + meas.MeasurementId.FileName;
-			acq.ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
+			string ending_comment_str = TransferUtils.str(results.ending_comment, INCC.MAX_COMMENT_LENGTH);
 			acq.ending_comment = !string.IsNullOrEmpty(acq.ending_comment_str);
 			
-			acq.data_src = (DetectorDefs.ConstructedSource)results.data_source;
+			acq.data_src = (ConstructedSource)results.data_source;
 			acq.well_config = (WellConfiguration)results.well_config;
 			acq.print = TransferUtils.ByteBool(results.results_print);
 
@@ -3114,9 +3114,12 @@ namespace NCCTransfer
             mlogger.TraceEvent(LogLevels.Verbose, 34030, "Transferring the {0} cycles", itf.run_rec_list.Count);
             meas.InitializeContext();
             meas.PrepareINCCResults(); // prepares INCCResults objects
+            ulong MaxBins = 0;
             foreach (run_rec r in itf.run_rec_list)
             {
-                AddToCycleList(r, det);  
+                ulong x= AddToCycleList(r, det);
+                if (x > MaxBins)
+                    MaxBins = x;
             }
             for (int cf = 1; (itf.CFrun_rec_list != null) && (cf < itf.CFrun_rec_list.Length); cf++)
             {
@@ -3136,6 +3139,10 @@ namespace NCCTransfer
             mcr.DeadtimeCorrectedRates.Singles.v = results.singles;
             mcr.DeadtimeCorrectedRates.Doubles.v = results.doubles;
             mcr.DeadtimeCorrectedRates.Triples.v = results.triples;
+            mcr.Scaler1Rate.v = results.scaler1;
+            mcr.Scaler2Rate.v = results.scaler2;
+            mcr.Scaler1Rate.err = results.scaler1_err;
+            mcr.Scaler2Rate.err = results.scaler2_err;
             mcr.Scaler1.v = results.scaler1;
             mcr.Scaler2.v = results.scaler2;
             mcr.Scaler1.err = results.scaler1_err;
@@ -3165,10 +3172,10 @@ namespace NCCTransfer
             result.DeadtimeCorrectedRates.Singles.v = results.singles;
             result.DeadtimeCorrectedRates.Doubles.v = results.doubles;
             result.DeadtimeCorrectedRates.Triples.v = results.triples;
-            result.Scaler1.v = results.scaler1;
-            result.Scaler2.v = results.scaler2;
-            result.Scaler1.err = results.scaler1_err;
-            result.Scaler2.err = results.scaler2_err;
+            result.rates.RawRates.Scaler1s.v = results.scaler1;
+            result.rates.RawRates.Scaler2s.v = results.scaler2;
+            result.rates.RawRates.Scaler1s.err = results.scaler1_err;
+            result.rates.RawRates.Scaler2s.err = results.scaler2_err;
             result.S1Sum = results.scaler1_sum;
             result.S2Sum = results.scaler2_sum;
             result.ASum = results.acc_sum;
@@ -3182,6 +3189,11 @@ namespace NCCTransfer
 			result.singles_multi = results.singles_multi;
             result.doubles_multi = results.doubles_multi;
             result.triples_multi = results.triples_multi;
+
+
+			// hack expansion of Normed mult array to same length as Acc mult array on each cycle to accomodate TheoreticalOutlier calc array length bug
+            ExpandMaxBins(MaxBins, meas.Cycles, det.MultiplicityParams);
+            Bloat(MaxBins, mcr);
 
             List<MeasurementMsg> msgs = meas.GetMessageList(det.MultiplicityParams);
 
@@ -3204,7 +3216,7 @@ namespace NCCTransfer
 
             #region results transfer
             INCCMethodResults imr;
-            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr);
+            bool got = meas.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr); // only ever this single mkey for INCC5-style transfer import, (thankfully)
             if (got)
                 imr.primaryMethod = OldToNewMethodId(results.primary_analysis_method);
             // check these results against the meas.MeasOption expectation => seems to always be 1 - 1 with (opt, sr) -> results, and subresults only for verif and calib choice
@@ -3812,7 +3824,7 @@ namespace NCCTransfer
             xres.original_meas_date = INCC.DateFrom(TransferUtils.str(results.original_meas_date, INCC.DATE_TIME_LENGTH));
 			// NEXT: copy move passive and active meas id's here
 
-            long mid = meas.Persist();
+             long mid = meas.Persist();
 
             // save the warning and error messages from the results here, these rode on the results rec in INCC5
             NC.App.DB.AddAnalysisMessages(msgs, mid);
@@ -3925,9 +3937,34 @@ namespace NCCTransfer
             return true;
         }
 
-        unsafe void AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
+        void ExpandMaxBins(ulong _MaxBins, CycleList cl, Multiplicity key)
+        {
+            foreach(Cycle c in cl)
+            {
+                MultiplicityCountingRes cmcr = (MultiplicityCountingRes)c.CountingAnalysisResults[key];
+                if (_MaxBins > (ulong)cmcr.RAMult.Length || _MaxBins > (ulong)cmcr.NormedAMult.Length)
+                    Bloat(_MaxBins, cmcr);
+            } 
+        }
+
+        void Bloat(ulong _MaxBins, MultiplicityCountingRes amcr)
+        {
+            ulong[] RA = new ulong[_MaxBins];
+            ulong[] NA = new ulong[_MaxBins];
+            ulong[] UNA = new ulong[_MaxBins];
+            amcr.MaxBins = _MaxBins;
+            Array.Copy(amcr.RAMult, RA, amcr.RAMult.Length); // adds trailing 0s by leaving them untouched
+            Array.Copy(amcr.NormedAMult, NA, amcr.NormedAMult.Length); // adds trailing 0s
+            Array.Copy(amcr.UnAMult, UNA, amcr.UnAMult.Length); // adds trailing 0s
+            amcr.RAMult = RA;
+            amcr.NormedAMult = NA;
+            amcr.UnAMult = UNA;
+        }
+
+        unsafe ulong AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
         {
             Cycle cycle = new Cycle(mlogger);
+            ulong MaxBins = 0;
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.INCCTransferCopy, // becomes transfer if reanalysis occurs
@@ -3944,11 +3981,13 @@ namespace NCCTransfer
 					LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, det.AB);               
                 }
                 mcr.AB.TransferIntermediates(det.AB);  // copy alpha beta onto the cycle's results 
+                MaxBins = mcr.MaxBins;
             }
             catch (Exception e)
             {
                 mlogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run.run_number, e.Message);
             }
+            return MaxBins;
         }
 
         /// <summary>
@@ -3998,28 +4037,11 @@ namespace NCCTransfer
             mcr.Scaler1Rate.v = run.run_scaler1_rate;
             mcr.Scaler2Rate.v = run.run_scaler2_rate;
 
-            long indexmax = 0;
-            for (ulong i = 0; i < INCC.MULTI_ARRAY_SIZE; i++)
-            {
-                if (run.run_mult_acc[i] > 0 || run.run_mult_reals_plus_acc[i] > 0)
-                {
-                    indexmax = (long)i;
-                }
-            }
-
-            mcr.MaxBins = (ulong)indexmax + 1;  // this is the index, not the count
-            mcr.MinBins = (ulong)indexmax + 1;
-
-            mcr.NormedAMult = new ulong[mcr.MaxBins];
-            mcr.RAMult = new ulong[mcr.MaxBins];
+            mcr.RAMult = TransferUtils.multarrayxfer(run.run_mult_reals_plus_acc, INCC.MULTI_ARRAY_SIZE);
+            mcr.NormedAMult = TransferUtils.multarrayxfer(run.run_mult_acc, INCC.MULTI_ARRAY_SIZE);
+            mcr.MaxBins = (ulong)Math.Max(mcr.RAMult.Length, mcr.NormedAMult.Length);
+            mcr.MinBins = (ulong)Math.Min(mcr.RAMult.Length, mcr.NormedAMult.Length);
             mcr.UnAMult = new ulong[mcr.MaxBins]; // todo: compute this
-
-            for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
-            {
-                mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
-                mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i];
-            }
-
             return mcr;
         }
 

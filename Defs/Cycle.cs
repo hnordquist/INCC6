@@ -463,6 +463,15 @@ namespace AnalysisDefs
 			}          
         }
 
+        public void GenParamList(SpecificCountingAnalyzerParams skey)
+        {
+            GenParamList(); // ^ does the basic INCC5 and new LM cycle stuff
+
+            // now add the skey stuff
+            Table = "cycles";
+        }
+
+
         /// <summary>
         /// Create parameter list and add the essential data values of a cycle
         /// results are handled elsewhere on a per mkey basis (see GenParamList(Multiplicity pk) infra)

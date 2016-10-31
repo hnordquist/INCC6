@@ -34,14 +34,14 @@ namespace AnalysisDefs
 
     public class ReportMangler
     {
-        public ReportMangler(NCCReporter.LMLoggers.LognLM ctrllog)
+        public ReportMangler(LMLoggers.LognLM ctrllog)
         {
             this.ctrllog = ctrllog;
             INCCResultsReports = new List<List<string>>();
             TestDataFiles = new List<List<string>>();
         }
 
-        NCCReporter.LMLoggers.LognLM ctrllog;
+        LMLoggers.LognLM ctrllog;
 
         // list of reports preserved for use by UI
         public List<List<string>> INCCResultsReports;
@@ -56,11 +56,11 @@ namespace AnalysisDefs
         {
             if (m.Detector.ListMode) // generate list mode report if it is list mode, hey!
 			{
-				RawAnalysisReport rep = new AnalysisDefs.RawAnalysisReport(ctrllog);
+				RawAnalysisReport rep = new RawAnalysisReport(ctrllog);
 				rep.GenerateReport(m);
 				ResultsReport = rep.replines;
 			}
-            MethodResultsReport mrep = new AnalysisDefs.MethodResultsReport(ctrllog);
+            MethodResultsReport mrep = new MethodResultsReport(ctrllog);
 			mrep.ApplyReportSectionSelections(m.AcquireState.review.Selections);
             mrep.GenerateReport(m);
             foreach (List<string> r in mrep.INCCResultsReports)
@@ -69,7 +69,7 @@ namespace AnalysisDefs
             }
             if (NC.App.AppContext.CreateINCC5TestDataFile)
             { 
-                TestDataFile mdat = new AnalysisDefs.TestDataFile(ctrllog);
+                TestDataFile mdat = new TestDataFile(ctrllog);
                 mdat.GenerateReport(m);
                 foreach (List<string> r in mdat.INCCTestDataFiles)
                 {
@@ -125,7 +125,7 @@ namespace AnalysisDefs
 
         public void PrepForReportGeneration(Measurement m, char separator)
         {
-            this.meas = m;
+            meas = m;
             t = new TabularReport(NC.App.Loggers);
             t.Separator = separator;
             sections = new List<Section>(200);
@@ -133,7 +133,7 @@ namespace AnalysisDefs
 
         private static string CleansePotentialFilename(string s)
         {
-            if (String.IsNullOrEmpty(s))  // null to empty string, callers may now relax
+            if (string.IsNullOrEmpty(s))  // null to empty string, callers may now relax
                 return "";
             char[] ca = s.ToCharArray();
             int i;
@@ -160,7 +160,7 @@ namespace AnalysisDefs
         {
             // create a unique file name for the output results 
             string name = pretext + meas.MeasDate.ToString("yyyyMMddHHmmss");
-            if (!String.IsNullOrEmpty(meas.Detector.Id.DetectorId))
+            if (!string.IsNullOrEmpty(meas.Detector.Id.DetectorId))
                 name = meas.Detector.Id.DetectorId + " " + name;
             name = CleansePotentialFilename(name);
             return name;

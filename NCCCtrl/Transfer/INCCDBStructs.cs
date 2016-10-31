@@ -178,6 +178,11 @@ namespace NCCTransfer
             return doubles;
         }
 
+		static unsafe public void Copy(ref double[] doubles, double* ptr, int len)
+        {
+            Marshal.Copy(new IntPtr(ptr), doubles, 0, len);
+        }
+
         static unsafe public bool[] Copy(int* ptr, int len)
         {
 
@@ -205,11 +210,11 @@ namespace NCCTransfer
             }
             // i is new len
 
-            ulong[] longs = new ulong[i + 1];
+            ulong[] ulongs = new ulong[i + 1];
             for (int j = 0; j <= i; j++)
-                longs[j] = (ulong)ptr[j];
+                ulongs[j] = (ulong)ptr[j];
 
-            return longs;
+            return ulongs;
         }
 
         static unsafe public string str(byte* ptr, int len)

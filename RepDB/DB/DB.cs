@@ -73,7 +73,7 @@ namespace DB
             if (Logger != null)
                 Logger.TraceEvent(eventType, id, format, args);
             else
-                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(String.Format(format, args)));
+                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
       }
 
         public enum DbsWeLove { 
@@ -187,7 +187,7 @@ namespace DB
         public static bool SwitchDB(string dbfile)
         {
             DbsWeLove newDB = DbsWeLove.SQLite;
-            string provider = String.Empty;
+            string provider = string.Empty;
 
             switch (Path.GetExtension(dbfile))
             {
@@ -267,9 +267,9 @@ namespace DB
         public static bool DBExceptionHandler(DbException dbx, string sql)
         {
             bool neednew = false;
-            if (dbx is System.Data.SQLite.SQLiteException)  // SQLite3 -- specific test against various SQL errors v. the no database found error
+            if (dbx is SQLiteException)  // SQLite3 -- specific test against various SQL errors v. the no database found error
             {
-                System.Data.SQLite.SQLiteException x = (System.Data.SQLite.SQLiteException)dbx;
+				SQLiteException x = (SQLiteException)dbx;
                 if (x.ResultCode == SQLiteErrorCode.Error) // SQL error or missing database
                 {
                     neednew = !(dbx.Message.EndsWith("syntax error") || // not an SQL syntax error 
@@ -277,22 +277,22 @@ namespace DB
                                 dbx.Message.Contains("has no column named")); // nor mismatched column, but likely a missing DB
                     if (!neednew)
                     {
-                        DBMain.AltLog(LogLevels.Warning, 70136, DBExceptionString(dbx, sql), true);
+						AltLog(LogLevels.Warning, 70136, DBExceptionString(dbx, sql), true);
                     }
                 }
                 else
                 {
-                    DBMain.AltLog(LogLevels.Warning, 70137, DBExceptionString(dbx, sql));
+					AltLog(LogLevels.Warning, 70137, DBExceptionString(dbx, sql));
                 }
             }
             else if (dbx is System.Data.OleDb.OleDbException)  // Access
             {
-                DBMain.AltLog(LogLevels.Warning, 70140, DBExceptionString(dbx, sql));
+				AltLog(LogLevels.Warning, 70140, DBExceptionString(dbx, sql));
                 // todo: expand when the "no DB present" code is known
             }
-            else if (dbx is System.Data.Common.DbException)  // anything else
+            else if (dbx is DbException)  // anything else
             {
-                DBMain.AltLog(LogLevels.Warning, 70139, DBExceptionString(dbx, sql));
+				AltLog(LogLevels.Warning, 70139, DBExceptionString(dbx, sql));
                 // todo: expand when the "no DB present" code is known
             }
             else
@@ -426,7 +426,7 @@ namespace DB
             return (DT);
         }
 
-		public DataTable DTI(string sSQL)
+		public DataTable DBProbe(string sSQL)
         {
             DataTable DT = new DataTable();
             try
@@ -436,14 +436,20 @@ namespace DB
                 sql_cmd.CommandText = sSQL;
                 sql_da.SelectCommand = sql_cmd;
                 int i = sql_da.Fill(DT);
+				string s = "Database:" + sql_con.Database + ", DataSource:" + sql_con.DataSource.ToString() + ", ServerVersion:" + sql_con.ServerVersion;
+				DBDescStr = sql_da.GetType().FullName + "; " + s + " (" + sql_con.ConnectionString + ")";
             }
-            catch (Exception)
+            catch (Exception caught)
             {
 				DT = null;
+				DBErrorStr = caught.Message;
+                DBMain.AltLog(LogLevels.Warning, 70193, "DBProbe '" + caught.Message + "'");
 			}
             if (sql_con != null) sql_con.Close();
             return (DT);
         }
+		public string DBErrorStr;
+		public string DBDescStr;
 
         public string Scalar(string sSQL)
         {
@@ -709,7 +715,7 @@ namespace DB
         /// 6.0.1.3			normalizing SQLite 3 and SQL Server 2012 schemas, mod results_curium_ratio_rec and cm_pu_ratio_rec
         /// 6.0.1.12		new tables collar_detector_rec_m and collar_k5_rec_m (for results), type name change: ntext to nvarchar
         /// 6.0.1.12		added aux_method to analysis_method_rec table (Jul 14, 2016)
-        /// 6.0.1.16		added LMMultiplicity_m, CountingParams_m tables, keys for same orig, lmid FK field to Cycles for keeping VSR results, Unnormalized accidentals distros for VSR results 
+        /// 6.0.1.16/6.0.16 added LMMultiplicity_m, CountingParams_m tables, keys for same orig, lmid FK field to Cycles for keeping VSR results, Unnormalized accidentals distros for VSR results 
         /// </summary>
         /// <param name="table"></param>
         /// <param name="col"></param>
@@ -717,7 +723,7 @@ namespace DB
         public bool TableHasColumn(string table, string col)
 		{
 			string sql = "select " + col + " from " + table;
-			DataTable dt = DTI(sql);
+			DataTable dt = DBProbe(sql);
 			return dt != null && dt.Columns.Contains(col);
 			//return dt.Rows.Count > 0;
 		}
@@ -839,7 +845,7 @@ namespace DB
             {
                 try
                 {
-                    DBMain.AltLog(LogLevels.Warning, 70103, "DT '" + caught.Message + "' " + sSQL);
+                    DBMain.AltLog(LogLevels.Warning, 78103, "DT '" + caught.Message + "' " + sSQL);
                 }
                 catch { }
             }
@@ -1092,10 +1098,6 @@ namespace DB
                 return -1;
             }
         }
-
-        //public class Enclosure : IDisposable
-        //{
-        //}
 
     }
 

@@ -63,19 +63,17 @@ namespace AnalysisDefs
         enum ComputedValueColumns { Primary, Err };
         enum ComputedIsoColumns { Declared, DecErr, Updated, UpErr };
 
-        protected Array selectedReportSections;
+        protected Array SelectedReportSections;
 
         public List<List<string>> INCCResultsReports;
 
-        public MethodResultsReport(NCCReporter.LMLoggers.LognLM ctrllog)
+        public MethodResultsReport(LMLoggers.LognLM ctrllog)
             : base(ctrllog)
         {
             INCCResultsReports = new List<List<string>>();
-			selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(INCCReportSection)).Length);
-            foreach (ValueType v in System.Enum.GetValues(typeof(INCCReportSection)))
-            {
-                selectedReportSections.SetValue(false, (int)v);
-            }
+			SelectedReportSections = Array.CreateInstance(typeof(bool), Enum.GetValues(typeof(INCCReportSection)).Length);
+            foreach (ValueType v in Enum.GetValues(typeof(INCCReportSection)))
+                SelectedReportSections.SetValue(false, (int)v);
         }
 
 		public void ApplyReportSectionSelections(bool[] sections)
@@ -83,9 +81,7 @@ namespace AnalysisDefs
             if (sections == null)
                 return;
             for (int i = 0; i < sections.Length; i++)
-			{
-                selectedReportSections.SetValue(sections[i], i);
-            }
+                SelectedReportSections.SetValue(sections[i], i);
 		}
 
 
@@ -94,9 +90,9 @@ namespace AnalysisDefs
             INCCStyleSection sec = null;
             try
             {
+                if ((bool)SelectedReportSections.GetValue((int)section))
                 switch (section)
                 {
-
                     // An identical copy of full INCC report sections
                     case INCCReportSection.SummedRawData:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Summary);
@@ -145,8 +141,8 @@ namespace AnalysisDefs
                         //sec.AddNumericRow("Quads:", mcr.DeadtimeCorrectedQuadsRate); // todo: quads delayed until pents are ready per DN
                         if (!det.Id.source.UsingVirtualSRCounting(det.Id.SRType))
                         {
-                            sec.AddNumericRow("Scaler 1:", ir.Scaler1);
-                            sec.AddNumericRow("Scaler 2:", ir.Scaler2);
+                            sec.AddNumericRow("Scaler 1:", ir.Scaler1Rate);
+                            sec.AddNumericRow("Scaler 2:", ir.Scaler2Rate);
                         }
 
                         //if (det.Id.SRType >= LMDAQ.InstrType.NPOD)
@@ -263,7 +259,7 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.MultiplicityDistributions:
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MultiColumn);
-                        sec.AddHeader(String.Format("{0} multiplicity distributions for each cycle",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
+                        sec.AddHeader(string.Format("{0} multiplicity distributions for each cycle",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"));  // section header
                         int[] csrawidths = new int[] { 6, 12, 12 };
                         foreach (Cycle cyc in meas.Cycles)
                         {
@@ -302,6 +298,8 @@ namespace AnalysisDefs
 
         protected Section ConstructReportSection(INCCReportSection section, Detector det, MeasOptionSelector moskey = null)
         {
+            if (!(bool)SelectedReportSections.GetValue((int)section))
+                return null;
             if (moskey == null)
                 return ConstructReportSectionI(section, det);
             else
@@ -385,7 +383,7 @@ namespace AnalysisDefs
                         break;
                     case INCCReportSection.CycleSummary:
                         sec = new INCCStyleSection(null, 1);
-                        sec.AddIntegerRow(String.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(mkey)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
+                        sec.AddIntegerRow(string.Format("Number {0} cycles:",meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected()?"Active":"Passive"), (int)meas.Cycles.GetValidCycleCountForThisKey(mkey)); //det.MultiplicityParams)); // could also use CycleList length but CycleList can be longer when a reanalysis occurs and the analysis processing stops short of the end of the list due to modified termination conditions
                         sec.AddNumericRow("Count time (sec):", (meas.Cycles.Count > 0 ? meas.Cycles[0].TS.TotalSeconds : 0.0));
                         break;
 
@@ -395,7 +393,7 @@ namespace AnalysisDefs
                         if (found)
                         {
                             sec = new INCCStyleSection(null, 1);
-                            sec.AddHeader(String.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));  /// todo: is there an active messages section header analog?
+                            sec.AddHeader(string.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));  /// todo: is there an active messages section header analog?
                             foreach (MeasurementMsg m in sl)
                             {
                                 Row r = new Row();
@@ -456,7 +454,7 @@ namespace AnalysisDefs
             sec.AddTwo("Inventory change code: ", meas.AcquireState.inventory_change_code);
             sec.AddTwo("I/O code: ", meas.AcquireState.io_code);
             sec.AddTwo("Measurement date: ", meas.MeasDate.ToString("yy.MM.dd     HH:mm:ss"));
-			string name = System.IO.Path.GetFileName( meas.ResultsFiles.PrimaryINCC5Filename.Path);
+			string name = System.IO.Path.GetFileName(meas.ResultsFiles.PrimaryINCC5Filename.Path);
             sec.AddTwo("Results file name: ", name);
             sec.AddTwo("Inspection number: ", meas.AcquireState.campaign_id);
 
@@ -507,7 +505,7 @@ namespace AnalysisDefs
 		{
 			string path;
 			if (N.App.AppContext.Results8Char)
-				path =  MethodResultsReport.EightCharConvert(meas.MeasDate);
+				path =  EightCharConvert(meas.MeasDate);
 			else
 				path = base.GenBaseFileName(pretext);
 			return path;

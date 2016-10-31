@@ -10,3 +10,4 @@ del INCCCmd.exe
 del NCCCtrl.dll
 del Defs.dll
 del RepDB.dll
+cd ..

@@ -781,8 +781,10 @@ namespace LMRawAnalysis
 			{
 				uint biggestKey = key.bins - 1;
 				AB.Init((int)key.bins);
+                if (biggestKey <= 1)
+                    goto cache;
 
-				double gateInSeconds = key.gateWidthTics * 1e-7;
+                double gateInSeconds = key.gateWidthTics * 1e-7;
 				double phi = (key.deadTimeCoefficientTinNanoSecs / 1E9) / gateInSeconds;
 
 				AB.α[0] = 0.0;
@@ -835,7 +837,7 @@ namespace LMRawAnalysis
 					}
 				}
 			}
-			AlphaBetaCache.AddAlphaBeta(key, AB);
+cache:		AlphaBetaCache.AddAlphaBeta(key, AB);
 		}
 
 	}
