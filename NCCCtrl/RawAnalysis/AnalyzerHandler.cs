@@ -1581,9 +1581,9 @@ namespace LMRawAnalysis
         ///
         void InitializeEventList(int num)
         {
-			if (numEventsInCircularLinkedList == 0 || theEventCircularLinkedList == null)
+            AHGCCollect();
+            if (numEventsInCircularLinkedList == 0 || theEventCircularLinkedList == null)
 			{
-				//AHGCCollect(); 
 				//create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
 				theEventCircularLinkedList = new NeutronEvent(0);  //make the first event in the list
 				startOfNeutronEventList = theEventCircularLinkedList;     //set pointer to start of list to this first event
@@ -1625,7 +1625,6 @@ namespace LMRawAnalysis
                                                              + numEventsInCircularLinkedList + " (remove " + (numEventsInCircularLinkedList - num) + ")");
 
 				numEventsInCircularLinkedList = num;
-				//AHGCCollect(); 
 			} 
 			else // same size just clear it
 			{
@@ -1636,17 +1635,16 @@ namespace LMRawAnalysis
 					ende.Set(i);
 					ende = ende.next;
 				}
-
 				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear same size " + numEventsInCircularLinkedList);
 			}
-
+            AHGCCollect();
         }
 
         /// <summary>
         /// Do a full GC.Collect, but only if the current allocated memory size exceeds a certain ceiling, 512Mb default)
         /// </summary>
         /// <param name="MbCeiling"></param>
-        void AHGCCollect(long MbCeiling = 384)
+        void AHGCCollect(long MbCeiling = 257)
         {
             long mem = GC.GetTotalMemory(false);
             log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);

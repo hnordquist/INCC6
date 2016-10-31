@@ -1037,7 +1037,11 @@ namespace AnalysisDefs
                                 mtype: MeasOption.PrintName(),
                                 filename: MeasurementId.FileName,  // the file names are generated at the end of the process, in GenerateReports, subsequently the database entry is updated with the new file names
                                 notes: "2016");
-
+            if (mid < 0)
+            {
+                logger.TraceEvent(LogLevels.Warning, 34001, "Measurement not saved");
+                return mid;
+            }
             logger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
 
             DB.Results dbres = new DB.Results();

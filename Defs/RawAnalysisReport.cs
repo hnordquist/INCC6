@@ -278,8 +278,13 @@ namespace AnalysisDefs
                         break;
                     case ReportSections.RawCycles:
 					{
-						ConstructedSource src = cycles[0].DataSourceId.source;
-						InstrType inst = cycles[0].DataSourceId.SRType;
+                        ConstructedSource src = ConstructedSource.Unknown;
+                        InstrType inst = InstrType.Unknown;
+                        if (cycles.Count > 0)
+                        {
+                            src = cycles[0].DataSourceId.source;
+                            inst = cycles[0].DataSourceId.SRType;
+                        }
                         if (cycles.Count > 0 && src.MightHaveScalerData(inst)) // anything that might have Scaler data
                             sec = DoAcrossForManyMults("Cycle raw data", typeof(INCCCycles), true);
                         else

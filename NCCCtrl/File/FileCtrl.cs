@@ -149,7 +149,8 @@ namespace NCCFile
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);
                 CycleList cl = m.Cycles;
-                m.Cycles = new CycleList();
+				NC.App.DB.DeleteCycles(m.MeasurementId.UniqueId); // clear the DB of the original cycles, from the transfer import
+				m.Cycles = new CycleList();
                 foreach (Cycle cycle in cl) // process incrementally to match expected outlier processing behavior from INCC
                 {
                     if (NC.App.Opstate.IsCancellationRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
@@ -173,10 +174,9 @@ namespace NCCFile
             }
             if (m.HasReportableData) 
 			{
-				m.CalculateMeasurementResults();
-				ReportMangler rm = new ReportMangler(ctrllog);
-				rm.GenerateReports(m);
-				m.SaveMeasurementResults();
+				m.CalculateMeasurementResults();  
+                new ReportMangler(ctrllog).GenerateReports(m);                 
+                m.SaveMeasurementResults();
 			}
             else                                                                           
                 ctrllog.TraceEvent(LogLevels.Warning, 430, "No useful cycles identified ({0}) " + m.Cycles.GetUseableCycleCount());
@@ -521,9 +521,7 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
+					new ReportMangler(ctrllog).GenerateReports(meas);
 					meas.SaveMeasurementResults();
                 }
             }
@@ -843,10 +841,8 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
-					meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas);
+                    meas.SaveMeasurementResults();
 				}
             }
 
@@ -1055,10 +1051,8 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
-
-					meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas); 
+                    meas.SaveMeasurementResults();
 				}
             }
 
@@ -1294,8 +1288,7 @@ enditall:
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
 
-					ReportMangler rm = new ReportMangler(ctrllog);
-					rm.GenerateReports(meas);
+					new ReportMangler(ctrllog).GenerateReports(meas);
 					meas.SaveMeasurementResults();
                 }
             }

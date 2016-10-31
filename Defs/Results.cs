@@ -1789,6 +1789,34 @@ namespace AnalysisDefs
             }
         }
 
+        public SpecificCountingAnalyzerParams GetFirstMultiplicityOrFirstLMKey
+        {
+            get
+            {
+                if (HasMultiplicity)
+                {
+                    object pdair;
+                    System.Collections.IEnumerator ide = GetMultiplicityEnumerator();
+                    if (ide.MoveNext())
+                    {
+                        pdair = ide.Current;
+                        return (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)pdair).Key;
+                    }
+                }
+                else
+                {
+                    object pair;
+                    System.Collections.IEnumerator ie = GetEnumerator();
+                    if (ie.MoveNext())
+                    {
+                        pair = ie.Current;
+                        return ((KeyValuePair < SpecificCountingAnalyzerParams, object> )pair).Key;
+                    }
+                }
+                return null;
+            }
+        }
+
         // dev note: should be a way to rewrite this or redefine the containing class so the two kinds of iterators can be 2 generic templates, but I didn't do it.
         public System.Collections.IEnumerator GetATypedParameterEnumerator(System.Type t, bool includeSuspectEntries = false)
         {

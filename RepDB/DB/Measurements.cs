@@ -124,13 +124,6 @@ namespace DB
             return db.Execute(s);
         }
 
-        //public bool Delete(string name, DateTimeOffset dt, string type)
-        //{
-        //    db.SetConnection();
-        //    long id = Lookup(name, dt, type);
-        //    string s = "DELETE FROM measurements where id=" + id.ToString();
-        //    return db.Execute(s);
-        //}
         /// <summary>
         /// Look up the measurement identified by name, measurement type and timestamp
         /// </summary>
@@ -299,6 +292,14 @@ namespace DB
             db.CreateCommand(sSQL);
             db.SetConnection();
             return db.ScalarIntx();
+        }
+
+
+		public bool DeleteCycles(long mid)
+        {
+            db.SetConnection();
+            string sSQL = "DELETE FROM cycles Where mid=" + mid;
+            return db.Execute(sSQL);
         }
     }
 

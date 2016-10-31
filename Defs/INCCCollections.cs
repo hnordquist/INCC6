@@ -4559,7 +4559,7 @@ namespace AnalysisDefs
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
 
-       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, long lmid = -1, DB.Measurements db = null)
+       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
         {
             if (db == null)
                 db = new DB.Measurements();
@@ -4569,16 +4569,71 @@ namespace AnalysisDefs
             {
                 Cycle c = cl[ic];
                 c.GenParamList(mkey);
-				DB.ElementList els = c.ToDBElementList(generate: false);
-				if (lmid >= 0)
-					els.Add(new DB.Element("lmid", lmid));
+                DB.ElementList els = c.ToDBElementList(generate: false);
                 clist.Add(els);
             }
             db.AddCycles(mid, clist);
             return true;
         }
 
-        public void AddResultsFileNames(Measurement m)
+        public bool AddCycles(CycleList cl, CountingResults cr, long mid, DB.Measurements db = null)
+        {
+            SpecificCountingAnalyzerParams key = cr.GetFirstMultiplicityOrFirstLMKey;
+            if (key == null)
+                return false;
+            if (db == null)
+                db = new DB.Measurements();
+            int iCntCycles = cl.Count;
+            long lmid = key.Rank;
+            List<DB.ElementList> clist = new List<DB.ElementList>();
+            for (int ic = 0; ic < iCntCycles; ic++)
+            {
+                Cycle c = cl[ic];
+                if (key is Multiplicity)
+                    c.GenParamList((Multiplicity)key);
+                else
+                    c.GenParamList(key);
+                DB.ElementList els = c.ToDBElementList(generate: false);
+                if (lmid >= 0)
+                    els.Add(new DB.Element("lmid", lmid));
+                clist.Add(els);
+            }
+            db.AddCycles(mid, clist);
+            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30008, "Inserted basis for {0} cycles, {1}", cl.Count, key.ToString());
+
+            key.reason = "x";
+            System.Collections.IEnumerator ie = cr.GetEnumerator();
+            while (ie.MoveNext())
+            {
+                KeyValuePair<SpecificCountingAnalyzerParams, object> cur = (KeyValuePair<SpecificCountingAnalyzerParams, object>)ie.Current;
+                if (cur.Key.reason == "x")     // skip
+                {
+                    cur.Key.reason = string.Empty;
+                }
+                else
+                {
+                    // URGENT: add lmcycle row and relate it to containing summary cycle
+                    // URGENT: design detailed lmcycle content for each analysis type
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
+                }
+            }
+            return true;
+        }
+
+       public bool DeleteCycles(long mid)
+		{
+            if (mid <= 0)
+                return false;
+            DB.Measurements ms = new DB.Measurements();
+            int count = ms.GetCycleCount(mid);  // this specific measurement id's cycles
+			NC.App.Pest.logger.TraceEvent(LogLevels.Info, 30006, "Deleting {0} cycles", count);
+			return ms.DeleteCycles(mid);
+
+		}
+
+
+
+    public void AddResultsFileNames(Measurement m)
         {
             string primaryFilename = string.Empty; 
 			bool skipTheFirstINCC5File = false;
