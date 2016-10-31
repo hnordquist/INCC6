@@ -130,8 +130,9 @@ Issues for basic INCC6 List mode
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
-***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
 ***  SDTMultiplicityCalculator shift to BigInteger
+***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
+***  Retain name of each input file used for file-based LM analysis
 
 Issues for production
 #95  Just say yes to updated and complete documentation

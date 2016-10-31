@@ -4620,6 +4620,17 @@ namespace AnalysisDefs
             return true;
         }
 
+       public bool DeleteCycles(long mid)
+		{
+            if (mid <= 0)
+                return false;
+            DB.Measurements ms = new DB.Measurements();
+            int count = ms.GetCycleCount(mid);  // this specific measurement id's cycles
+			NC.App.Pest.logger.TraceEvent(LogLevels.Info, 30006, "Deleting {0} cycles", count);
+			return ms.DeleteCycles(mid);
+
+		}
+
 
 
     public void AddResultsFileNames(Measurement m)

@@ -149,7 +149,8 @@ namespace NCCFile
                 // need to get alpha beta onto the summary too.
                 mcr.AB.TransferIntermediates(m.Detector.AB);
                 CycleList cl = m.Cycles;
-                m.Cycles = new CycleList();
+				NC.App.DB.DeleteCycles(m.MeasurementId.UniqueId); // clear the DB of the original cycles, from the transfer import
+				m.Cycles = new CycleList();
                 foreach (Cycle cycle in cl) // process incrementally to match expected outlier processing behavior from INCC
                 {
                     if (NC.App.Opstate.IsCancellationRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
