@@ -4385,7 +4385,7 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Construct the CycleList from a stored measurement identified by the Multiplicity key and the MeasId
-        /// No LM data yet
+        /// URGENT: No LM data yet
         /// </summary>
         /// <param name="det">Detector</param>
         /// <param name="id">Measurement Id</param>
@@ -4398,6 +4398,9 @@ namespace AnalysisDefs
             DB.Measurements ms = new DB.Measurements();
             DataTable dt = null;
             dt = ms.GetCycles(mid.UniqueId);  // this specific measurement id's cycles
+			//DataTable lmdt = ms.GetLMCycles(mid.UniqueId);
+			//CycleList lmcl = GetLMCycles(lmdt, mid, cap);
+
 			List<Multiplicity> tme = null;
             int seq = 0;
             DateTimeOffset cur = new DateTimeOffset(mid.MeasDateTime.Ticks, mid.MeasDateTime.Offset);
@@ -4409,16 +4412,16 @@ namespace AnalysisDefs
 
 				long lmid = AddSummaryToCycle(dr, c);
 
-                c.UpdateDataSourceId(data_src, det.Id.SRType,
-                                   cur.AddTicks(c.TS.Ticks), det.Id.FileName);
+                c.UpdateDataSourceId(data_src, det.Id.SRType, cur.AddTicks(c.TS.Ticks), 
+					string.IsNullOrEmpty(c.DataSourceId.FileName) ? det.Id.FileName : string.Empty);  // do not set the file name if it was retrieved from the table for an LM cycle source
                 cur = c.DataSourceId.dt;
 
                 if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
 				{
 					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
-					AddResultToCycle(dr, det.MultiplicityParams, c);
+					AddMultResultToCycle(dr, det.MultiplicityParams, c);
 				}
-				else
+				else  // URGENT: can now restore every LM-related cycle result entry
 				{
 					if (tme == null)
 						tme = GetMultiplicityAnalyzersFromResults(det, mid);
@@ -4427,11 +4430,62 @@ namespace AnalysisDefs
 						c.SetQCStatus(mul, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 						if (tme.Exists(mult => mul.Equals(mult)))  // it lives on the original list, use it
 						{
-							AddResultToCycle(dr, mul, c);
+							AddMultResultToCycle(dr, mul, c);
 							break;
 						}
 					}
+					long cid = DB.Utils.DBInt64(dr["id"]);
+					foreach (SpecificCountingAnalyzerParams sca in cap.GetAllNotMults()) 
+					{  
+						AddLMResultToCycle(dr, cid, sca, c);
+					}
 				}
+            }
+            return cl;
+        }
+
+        public List<ICountingResult> GetLMCycles(long mid, long cid, DB.Measurements db = null)
+        {
+            List<ICountingResult>  cl = new List<ICountingResult> ();
+			if (mid <= 0)
+				return cl;
+            DB.Measurements ms = db;
+			DataTable lmdt = ms.GetLMCycles("CyclesFeyn", mid, cid);
+            foreach (DataRow dr in lmdt.Rows)
+            {
+    //            seq++;
+    //            Cycle c = new Cycle(NC.App.Pest.logger);
+    //            cl.Add(c); c.seq = seq;
+
+				//long lmid = AddSummaryToCycle(dr, c);
+
+    //            c.UpdateDataSourceId(data_src, det.Id.SRType, cur.AddTicks(c.TS.Ticks), 
+				//	string.IsNullOrEmpty(c.DataSourceId.FileName) ? det.Id.FileName : string.Empty);  // do not set the file name if it was retrieved from the table for an LM cycle source
+    //            cur = c.DataSourceId.dt;
+
+    //            if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
+				//{
+				//	c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+				//	AddMultResultToCycle(dr, det.MultiplicityParams, c);
+				//}
+				//else  // URGENT: can now restore every LM-related cycle result entry
+				//{
+				//	if (tme == null)
+				//		tme = GetMultiplicityAnalyzersFromResults(det, mid);
+				//	foreach (Multiplicity mul in cap.GetAllMults())  // Each cycle should match on one and only one of the lmid instances
+				//	{  
+				//		c.SetQCStatus(mul, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
+				//		if (tme.Exists(mult => mul.Equals(mult)))  // it lives on the original list, use it
+				//		{
+				//			AddMultResultToCycle(dr, mul, c);
+				//			break;
+				//		}
+				//	}
+				//	foreach (SpecificCountingAnalyzerParams sca in cap.GetAllNotMults()) 
+				//	{  
+				//		AddLMResultToCycle(dr, sca, c);
+				//	}
+				//}
             }
             return cl;
         }
@@ -4523,13 +4577,62 @@ namespace AnalysisDefs
 			{
 				c.HitsPerChannel[0] = c.Totals;
 			}
+			if (dr.Table.Columns.Contains("lmfilename") && (!dr["lmfilename"].Equals(DBNull.Value)))
+				c.DataSourceId.FileName = (string)dr["lmfilename"];	
 			if (dr.Table.Columns.Contains("lmid") && (!dr["lmid"].Equals(DBNull.Value)))
 				return DB.Utils.DBInt64(dr["lmid"]);
 			else
 				return -1;
 		}
 
-		void AddResultToCycle(DataRow dr, Multiplicity mult, Cycle c)
+
+		void AddLMResultToCycle(DataRow dr, long cid, SpecificCountingAnalyzerParams key, Cycle c)
+		{
+                string type = "AnalysisDefs.";   // dev note: careful here, this is subject to bit rot
+                if (dr["counter_type"].Equals(DBNull.Value))
+                   return;
+				type += (string)dr["counter_type"];
+                Type t = Type.GetType(type);
+				System.Reflection.ConstructorInfo ci = t.GetConstructor(Type.EmptyTypes);
+                object o = ci.Invoke(null);
+                if (t == typeof(RossiAlphaResultExt))
+                {
+					RossiAlphaResultExt rare = (RossiAlphaResultExt)o;
+					rare.gateWidth = DB.Utils.DBUInt64(dr["gateWidth"]);
+					rare.gateData = DB.Utils.ReifyUInt32s((string)dr["gateData"]);
+                }
+                else if (t == typeof(FeynmanResultExt))
+                {
+ 					FeynmanResultExt fre = (FeynmanResultExt)o;
+					fre.gateWidth = DB.Utils.DBUInt64(dr["gateWidth"]);
+					fre.cbar = DB.Utils.DBDouble((string)dr["cbar"]);
+					fre.c2bar = DB.Utils.DBDouble((string)dr["c2bar"]);
+					fre.c3bar = DB.Utils.DBDouble((string)dr["c3bar"]);
+					fre.C = DB.Utils.DBDouble((string)dr["C"]);
+                }
+			    else if (t == typeof(TimeIntervalResult))
+				{
+ 					TimeIntervalResult tir = (TimeIntervalResult)o;
+					tir.gateWidthInTics = DB.Utils.DBUInt64(dr["gateWidth"]);
+				    tir.timeIntervalHistogram = DB.Utils.ReifyUInt32s((string)dr["gateData"]);
+					int i = tir.timeIntervalHistogram.Length;
+					while (i > 0)
+					{ 
+						i--;
+						if (tir.timeIntervalHistogram[i] > 0)
+						{
+							tir.maxIndexOfNonzeroHistogramEntry = i;
+							break;
+						}
+					}
+				}
+				else
+					return;
+                
+            c.CountingAnalysisResults.Add(key, o);
+		}
+
+		void AddMultResultToCycle(DataRow dr, Multiplicity mult, Cycle c)
 		{
 			MultiplicityCountingRes mcr = new MultiplicityCountingRes(mult.FA, 0);
             mcr.Scaler1 = VTuple.Create(DB.Utils.DBDouble(dr["scaler1"]), 0);
@@ -4559,68 +4662,113 @@ namespace AnalysisDefs
             c.CountingAnalysisResults.Add(mult, mcr);
 		}
 
-       public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
-        {
-            if (db == null)
-                db = new DB.Measurements();
-            int iCntCycles = cl.Count;
-            List<DB.ElementList> clist = new List<DB.ElementList>();
+		public bool AddCycles(CycleList cl, Multiplicity mkey, long mid, DB.Measurements db = null)
+		{
+			if (db == null)
+				db = new DB.Measurements();
+			int iCntCycles = cl.Count;
+			List<DB.ElementList> clist = new List<DB.ElementList>();
+			long lmid = mkey.Rank;
+			for (int ic = 0; ic < iCntCycles; ic++)
+			{
+				Cycle c = cl[ic];
+				c.GenParamList(mkey);
+				DB.ElementList els = c.ToDBElementList(generate: false);
+				if (lmid >= 0)
+					els.Add(new DB.Element("lmid", lmid));
+				clist.Add(els);
+			}
+			db.AddCycles(mid, clist);
+			return true;
+		}
+
+		public bool AddCycles(CycleList cl, CountingResults cr, long mid, DB.Measurements db = null)
+		{
+			SpecificCountingAnalyzerParams key = cr.GetFirstMultiplicityOrFirstLMKey;
+			if (key == null)
+				return false;
+			if (db == null)
+				db = new DB.Measurements();
+			int iCntCycles = cl.Count;
+			long lmid = key.Rank;
+            bool primary = false;
+            if (key is Multiplicity)  // this will be the primary key
+                primary = true;
             for (int ic = 0; ic < iCntCycles; ic++)
+			{
+				Cycle c = cl[ic];
+				if (key is Multiplicity)
+					c.GenParamList((Multiplicity)key);
+				else
+					c.GenParamList(key);
+				DB.ElementList els = c.ToDBElementList(generate: false);
+				if (lmid >= 0)
+					els.Add(new DB.Element("lmid", lmid));
+				long cid = db.AddCycleRetId(mid, els);
+				AddLMCycleResults(mid, cid, c, primary ? key: null, db);
+			}
+			NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30008, "Inserted {0} LM cycles, {1}", cl.Count, key.ToString());
+
+			return true;
+		}
+
+		void AddLMCycleResults(long mid, long cid, Cycle c, SpecificCountingAnalyzerParams skipthisone, DB.Measurements db = null)
+		{
+            System.Collections.IEnumerator ie = c.CountingAnalysisResults.GetEnumerator();
+			while (ie.MoveNext())
+			{
+				KeyValuePair<SpecificCountingAnalyzerParams, object> cur = (KeyValuePair<SpecificCountingAnalyzerParams, object>)ie.Current;
+				if (SpecificCountingAnalyzerParamsEqualityComparer.IsEqual(cur.Key, skipthisone))     // skip, already saved completely
+					continue;
+				else // add cycle id, meas id 
+				{
+                    DB.ElementList els = null;
+                    string _table = null;
+                    if (cur.Value is MultiplicityCountingRes)
+                    {
+                        _table = "CyclesMult";
+                        els = ClumsyHack(c, (Multiplicity)cur.Key, (MultiplicityCountingRes)cur.Value);
+                    }
+                    else
+                    {
+                        ((ICountingResult)cur.Value).GenParamList();
+                        _table = ((ParameterBase)cur.Value).Table;
+                        els = ((ICountingResult)cur.Value).ToDBElementList(generate: false);
+                    }
+                    els.Add(new DB.Element("mid", mid));
+					els.Add(new DB.Element("cid", cid));
+					db.AddOneCycle(_table, els);
+					//NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
+				}
+			}
+		}
+
+        private static DB.ElementList ClumsyHack(Cycle c, Multiplicity mkey, MultiplicityCountingRes mcr)
+        {
+            List<DBParamEntry> ps = new List<DBParamEntry>();
+            ps.Add(new DBParamEntry("gateWidth", mkey.gateWidthTics));
+            ps.Add(new DBParamEntry("reals_plus_acc", mcr.RASum));
+            ps.Add(new DBParamEntry("acc", mcr.ASum));
+            ps.Add(new DBParamEntry("mult_reals_plus_acc", mcr.RAMult));
+            ps.Add(new DBParamEntry("mult_acc", mcr.NormedAMult));
+            ps.Add(new DBParamEntry("mult_acc_un", mcr.UnAMult));
+            ps.Add(new DBParamEntry("singles", c.Totals));
+            ps.Add(new DBParamEntry("singles_rate", mcr.RawSinglesRate.v));
+            ps.Add(new DBParamEntry("doubles_rate", mcr.RawDoublesRate.v));
+            ps.Add(new DBParamEntry("triples_rate", mcr.RawTriplesRate.v));
+            ps.Add(new DBParamEntry("status", (int)c.QCStatus(mkey).status));
+
+            DB.ElementList theParams = new DB.ElementList();
+            int i = 0;
+            foreach (DBParamEntry f in ps)
             {
-                Cycle c = cl[ic];
-                c.GenParamList(mkey);
-                DB.ElementList els = c.ToDBElementList(generate: false);
-                clist.Add(els);
+                theParams.Add(f.AsElement);
+                i++;
             }
-            db.AddCycles(mid, clist);
-            return true;
+            return theParams;
         }
 
-        public bool AddCycles(CycleList cl, CountingResults cr, long mid, DB.Measurements db = null)
-        {
-            SpecificCountingAnalyzerParams key = cr.GetFirstMultiplicityOrFirstLMKey;
-            if (key == null)
-                return false;
-            if (db == null)
-                db = new DB.Measurements();
-            int iCntCycles = cl.Count;
-            long lmid = key.Rank;
-            List<DB.ElementList> clist = new List<DB.ElementList>();
-            for (int ic = 0; ic < iCntCycles; ic++)
-            {
-                Cycle c = cl[ic];
-                if (key is Multiplicity)
-                    c.GenParamList((Multiplicity)key);
-                else
-                    c.GenParamList(key);
-                DB.ElementList els = c.ToDBElementList(generate: false);
-                if (lmid >= 0)
-                    els.Add(new DB.Element("lmid", lmid));
-                clist.Add(els);
-            }
-            db.AddCycles(mid, clist);
-            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30008, "Inserted basis for {0} cycles, {1}", cl.Count, key.ToString());
-
-            key.reason = "x";
-            System.Collections.IEnumerator ie = cr.GetEnumerator();
-            while (ie.MoveNext())
-            {
-                KeyValuePair<SpecificCountingAnalyzerParams, object> cur = (KeyValuePair<SpecificCountingAnalyzerParams, object>)ie.Current;
-                if (cur.Key.reason == "x")     // skip
-                {
-                    cur.Key.reason = string.Empty;
-                }
-                else
-                {
-                    // URGENT: add lmcycle row and relate it to containing summary cycle
-                    // URGENT: design detailed lmcycle content for each analysis type
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
-                }
-            }
-            return true;
-        }
-
-       public bool DeleteCycles(long mid)
+        public bool DeleteCycles(long mid)
 		{
             if (mid <= 0)
                 return false;

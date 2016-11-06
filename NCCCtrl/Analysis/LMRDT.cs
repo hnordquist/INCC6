@@ -473,9 +473,10 @@ namespace Analysis
                     EndAnalysisImmediately();
                     throw new FatalNeutronCountingException(s);  // emergency exit, caught and noted in buffer handler PassToAnalysis
                 },
-                 theTicSizeInSeconds: tickSizeInSeconds); // starts the threads, so watch out!
+                 theTicSizeInSeconds: tickSizeInSeconds,
+                 csa: NC.App.Opstate.CancelStopAbort); // starts the threads, so watch out!
             else
-                State.Sup.Construct(f, f2, f3, theTicSizeInSeconds: tickSizeInSeconds); // ditto
+                State.Sup.Construct(f, f2, f3, theTicSizeInSeconds: tickSizeInSeconds, csa: NC.App.Opstate.CancelStopAbort); // ditto
 
             logger.TraceEvent(LogLevels.Verbose, 146, "Neutron counting task running, {0} time base", tickSizeInSeconds);
         }

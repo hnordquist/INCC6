@@ -3014,6 +3014,11 @@ namespace AnalysisDefs
         {
             ByteType = DBParamType.String;
         }
+        public DBParamEntry(string name, uint[] value) :
+            base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.UInt32, true)
+        {
+            ByteType = DBParamType.String;
+        }
         public DBParamEntry(string name, int[] value) :
             base(string.Copy(name), DB.Utils.Stringify(value), DBParamType.Int32, true)
         {

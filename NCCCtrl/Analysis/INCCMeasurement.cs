@@ -1434,8 +1434,7 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Preserve a measurement cycle list in a database
-        /// Limited to INCC5 SR and INCC6 VSR values
-        /// TODO: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// TODO: Need db table save for for LM-specific results (Coincidence) (Mult, Feynman, Rossi, Event working now)
         /// TODO: status shoud be set on db acquire lists, because it can read in e.g. 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so the code should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
@@ -1443,10 +1442,15 @@ namespace AnalysisDefs
         {
             long mid = m.MeasurementId.UniqueId;
             // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
-            if (!m.Detector.ListMode)
-                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            if (m.Detector.ListMode)
+			{
+				if (m.CountingAnalysisResults.SingleMultiplicityAnalyzer)
+					NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults.SingleMultiplicityAnalyzerKey, mid);   // treat this as an SR cycle, fast operation, no extra tables involved
+				else
+					NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);  // > 1 Mult and >= 0 non-mults 
+			}
             else
-                NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);
+                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);  // traditional single SR with multiplicity key to a single cycle result
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
         }
 
@@ -1536,7 +1540,11 @@ namespace AnalysisDefs
         public static void ReportRecalc(this Measurement m)
         {
             NC.App.Opstate.Measurement = m;
-            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+            CycleList cl;
+			if (m.Detector.ListMode)
+				cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src, m.AnalysisParams);  // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+			else
+				cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src);
             m.Cycles = new CycleList();
             m.CurrentRepetition = 0;
             foreach (Cycle cycle in cl)

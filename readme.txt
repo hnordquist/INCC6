@@ -1,7 +1,7 @@
 **********************************************************************************
 
-INCC6 Beta Release 17
-6.17 Oct 31, 2016 (NDATest)
+INCC6 Beta Release 18
+6.18 Nov 26, 2016 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -126,13 +126,11 @@ Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
 
 Issues for basic INCC6 List mode
-#86  List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
 #67  PTR-32 data handling question 
 #16  Accidental Singles test Failure for PTR32
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
-***  Retain name of each input file used for file-based LM analysis
 
 Issues for production
 #95  Just say yes to updated and complete documentation
@@ -140,6 +138,10 @@ Issues for production
 
 Closed issues
 
+6.18 Nov 24, 2016  ************
+***  Retain name of each input file used for file-based LM analysis
+86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
+     (! still working on restore) 
 6.17 (6.0.17) Oct 31, 2016  ************
 79   Plot Norm, Plot Ver, Plot SDT diagnostic tools
 100  Rossi processing too slow and can sometimes hang
