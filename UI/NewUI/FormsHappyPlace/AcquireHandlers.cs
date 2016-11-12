@@ -356,7 +356,7 @@ namespace NewUI
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
-                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId, ap.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+                            CycleList cl = NC.App.DB.GetCycles(det, dbdlg.measurementId, ap.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
                             NC.App.Opstate.Measurement.Add(cl);
 							// use the cycle time interval as found in the data, taking the first entry because equal intervals are assumed 
 							if (cl.Count > 0)

@@ -64,8 +64,8 @@ namespace NewUI
                         return;
                     det = m.Detector; // use detector as re-constructed from the original measurement
 					// get the cycles for the selected measurement from the database, and add them to the current measurement
-					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId, DetectorDefs.ConstructedSource.DB, m.AnalysisParams); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-					m.Add(cl);
+					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId, DetectorDefs.ConstructedSource.DB, m.AnalysisParams); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+                    m.Add(cl);
 					new IDDReanalysisAssay(m, det).ShowDialog();
                 }
             }

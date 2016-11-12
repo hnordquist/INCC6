@@ -453,7 +453,7 @@ namespace AnalysisDefs
 
             if (AssaySelector.ForMass(meas.MeasOption) || meas.MeasOption == AssaySelector.MeasurementOption.rates)
                 /* item id only if an assay, calibration, holdup or rates only */
-                //todo: need to check why item_id not stored in Measurement object directly....hn 5.14.2015
+                // need to check why item_id not stored in Measurement object directly....hn 5.14.2015
                 // it is located on the AcquireParameters 
                 sec.AddTwo("Item id: ", meas.AcquireState.item_id); // or       sec.AddTwo("Item id:",m.AcquireState.item);
             if (AssaySelector.HasStratum(meas.MeasOption))

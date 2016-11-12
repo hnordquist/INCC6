@@ -131,6 +131,7 @@ Issues for basic INCC6 List mode
 #13  PTR-32 -- Results different if reading file/doing live acquisition
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
+100  Rossi processing too slow on "big" data files
 
 Issues for production
 #95  Just say yes to updated and complete documentation

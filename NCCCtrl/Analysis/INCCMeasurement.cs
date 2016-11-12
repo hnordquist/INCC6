@@ -1544,7 +1544,7 @@ namespace AnalysisDefs
             if (m.Detector.ListMode)
             {
                 cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src, m.AnalysisParams);  // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
-                foreach (Cycle c in cl)  // restore Alpha Beta coefficents on each mcr on each cycle for later per-cycle DTC rate recalculation
+                foreach (Cycle c in cl)  // restore Alpha Beta coefficients on each mcr on each cycle for later per-cycle DTC rate recalculation
                 {
                     IEnumerator iter = c.CountingAnalysisResults.GetMultiplicityEnumerator();
                     while (iter.MoveNext())
@@ -1570,7 +1570,7 @@ namespace AnalysisDefs
                     LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(akey, m.Detector.AB);
                 }
                 ABKey abkey = new ABKey(m.Detector.MultiplicityParams, m.Detector.AB.MaxBins);
-                foreach (Cycle c in cl) // restore Alpha Beta coefficents on each cycle
+                foreach (Cycle c in cl) // restore Alpha Beta coefficients on each cycle
                     LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, c.MultiplicityResults(m.Detector.MultiplicityParams).AB);
             }
             m.Cycles = new CycleList();
