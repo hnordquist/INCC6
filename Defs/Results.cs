@@ -1049,9 +1049,15 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "alpha_beta_rec";
-            ps.Add(new DBParamEntry("alpha_array", this.α));
-            ps.Add(new DBParamEntry("beta_array", this.β));
+            Table = "alpha_beta_rec";
+            ps.Add(new DBParamEntry("alpha_array", α));
+            ps.Add(new DBParamEntry("beta_array", β));
+        }
+
+        public uint MaxBins
+        {
+           get { if (Unset) return 0;
+                 else return (uint)(Math.Max(α.Length, β.Length) + 1); }
         }
 
 
@@ -1707,6 +1713,19 @@ namespace AnalysisDefs
             s.Add(new DBParamEntry("covariance_matrix", covariance_matrix));
             return s;
         }
+
+		public bool RawButNoDTCRates
+		// For when DTC rates are not calculated, for whatever reason 
+		{
+			get
+			{
+				bool res = false;
+				bool raw = (RawSinglesRate.v != 0 || RawDoublesRate.v != 0 || RawTriplesRate.v != 0);
+				bool dtc = (DeadtimeCorrectedSinglesRate.v != 0 || DeadtimeCorrectedDoublesRate.v != 0 || DeadtimeCorrectedTriplesRate.v != 0);
+				res = raw && !dtc;
+				return res;
+			}
+		}
 
     }
 

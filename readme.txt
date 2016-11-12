@@ -140,8 +140,11 @@ Closed issues
 
 6.18 Nov 24, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis
+***  Multiplicity analyzer cycle DTC rates recalculation on report operation
 86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
      (! still working on restore) 
+
+
 6.17 (6.0.17) Oct 31, 2016  ************
 79   Plot Norm, Plot Ver, Plot SDT diagnostic tools
 100  Rossi processing too slow and can sometimes hang

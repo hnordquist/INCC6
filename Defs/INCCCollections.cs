@@ -4642,7 +4642,6 @@ namespace AnalysisDefs
             mcr.Mass = DB.Utils.DBDouble(dr["mass"]);
             mcr.rates[RatesAdjustments.Raw].Doubles = VTuple.Create(DB.Utils.DBDouble(dr["doubles_rate"]), 0);
             mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
-            mcr.rates[RatesAdjustments.Raw].Triples = VTuple.Create(DB.Utils.DBDouble(dr["triples_rate"]), 0);
             mcr.rates[RatesAdjustments.Raw].Scaler1s = VTuple.Create(DB.Utils.DBDouble(dr["scaler1_rate"]), 0);
             mcr.rates[RatesAdjustments.Raw].Scaler2s = VTuple.Create(DB.Utils.DBDouble(dr["scaler2_rate"]), 0);
             mcr.multiAlpha = DB.Utils.DBDouble(dr["multiplicity_alpha"]);

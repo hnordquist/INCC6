@@ -243,13 +243,6 @@ namespace AnalysisDefs
                             if (cyc.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity)) > 0)                            // if no results on the cycle, these map indexers throw
                             {
                                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)cyc.CountingAnalysisResults[moskey.MultiplicityParams];
-                                //These debug rows show raw rates for comparison hn 10.30
-                                //sec.AddCycleColumnRow(cyc.seq,
-                                    //Again, could be wrong.
-                                //    new double[] { mcr.RawSinglesRate.v, mcr.RawDoublesRate.v, -1, -1 },
-                                //     cyc.QCStatus(moskey.MultiplicityParams).INCCString(), crawidths); 
-                                    //Again, could be wrong.
-                               // TODO: Am actually printing out the DTC rates per cycle.  This seems to work in all cases EXCEPT "precision" hn 11.5
                                 sec.AddCycleColumnRow(cyc.seq,
                                      // Using the corrected rates!
                                      new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v, mcr.mass/*Mass*/ },

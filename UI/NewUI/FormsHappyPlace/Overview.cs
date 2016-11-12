@@ -44,6 +44,7 @@ using AnalysisDefs;
 using DetectorDefs;
 namespace NewUI
 {
+	using Integ = NCC.IntegrationHelpers;
 	using N = NCC.CentralizedState;
 
 	public partial class Overview : Form
@@ -576,6 +577,88 @@ namespace NewUI
 			return ls;
 		}
 
+
+		private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			if (e.Button == MouseButtons.Right && e.Node.Tag != null)
+			{
+				if (e.Node.Tag is Type &&  (Type)(e.Node.Tag) == typeof(Detector))
+					detCtx.Show((Control)sender, e.X, e.Y);
+				else if (e.Node.Tag.GetType() == typeof(Detector))
+					DetsCtx.Show((Control)sender, e.X, e.Y);
+			}
+		}
+
+		private void toolStripMenuItem2_Click(object sender, EventArgs e)
+		{
+            new IDDShiftRegisterSetup(Integ.GetCurrentAcquireDetector()).ShowDialog();
+		}
+
+		private void toolStripMenuItem3_Click(object sender, EventArgs e)
+		{
+            Detector det =null;
+            AcquireParameters acq = null;
+            Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+            if (det.ListMode)
+            {
+                LMConnectionParams f = new LMConnectionParams(det, acq, false);
+                f.StartWithLMDetail();
+                f.ShowDialog();
+            }
+            else
+            {
+                toolStripMenuItem2_Click(sender, e);
+            }
+		}
+
+		private void toolStripMenuItem1_Click(object sender, EventArgs e)
+		{
+            new IDDFacility().ShowDialog();
+		}
+
+		private void SetDet_Click(object sender, EventArgs e)
+		{
+			TreeNode node = treeView1.SelectedNode;
+			if (node.Tag != null && node.Tag.GetType() == typeof(Detector))
+			{
+				Detector det = (Detector)node.Tag;
+				INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, curacq.item_type, DateTime.Now);
+				curacq.detector_id = string.Copy(det.Id.DetectorId);
+				curacq.meas_detector_id = string.Copy(det.Id.DetectorId);
+				curacq.MeasDateTime = sel.TimeStamp; 
+				N.App.DB.AddAcquireParams(sel, curacq);  // same material type but new detecror name
+
+				// now gotta unbold the previous node bold this node font, 
+			}
+		}
+
+		private void dFac_Click(object sender, EventArgs e)
+		{
+            new IDDFacility().ShowDialog();
+		}
+
+		private void DetsCtx_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			TreeNode node = treeView1.SelectedNode;
+			if (node.Tag != null && node.Tag.GetType() == typeof(Detector))
+			{
+				ToolStripItem tsi = DetsCtx.Items["setAsCurrentDetectorToolStripMenuItem"];
+				if (tsi != null)
+				{
+					Detector d = (Detector)node.Tag;
+					if (d.Id.DetectorId != curdet.Id.DetectorId)
+					{
+						tsi.Enabled = true;
+					}
+					else
+					{
+						tsi.Enabled = false;
+					}
+				}
+			}
+			e.Cancel = false;
+		}
+
 		List<string> GenDetIdStr(DataSourceIdentifier dsid)
 		{
 			List<string> ls = new List<string>();
@@ -591,7 +674,7 @@ namespace NewUI
 			ls.Add(string.Format("{0,10}: {1}", "Data src", dsid.source.HappyFunName()));
 			if (dsid.SRType.IsListMode())
 			{
-				LMConnectionInfo lm = (LMConnectionInfo)dsid.FullConnInfo;
+				LMConnectionInfo lm = (LMConnectionInfo)dsid.FullConnInfo; // todo: finish this
 				//lm.NetComm and 
 				//lm.DeviceConfig
 				//ls.Add(string.Format("{0,10}: {1}", "Port", lm.NetComm.));
