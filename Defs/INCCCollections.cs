@@ -4416,7 +4416,7 @@ namespace AnalysisDefs
 					string.IsNullOrEmpty(c.DataSourceId.FileName) ? det.Id.FileName : string.Empty);  // do not set the file name if it was retrieved from the table for an LM cycle source
                 cur = c.DataSourceId.dt;
 
-                if (cap == null || lmid < 0)  // single SR <-> detector traditional arrangement
+                if (cap == null || lmid <= 0)  // single SR <-> detector traditional arrangement
 				{
 					c.SetQCStatus(det.MultiplicityParams, (QCTestStatus)DB.Utils.DBInt32(dr["status"]), c.HighVoltage);
 					AddMultResultToCycle(dr, det.MultiplicityParams, c);
