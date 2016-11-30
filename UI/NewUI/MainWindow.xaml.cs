@@ -593,7 +593,9 @@ namespace NewUI
                                 Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
                                 instrument.DAQState = DAQInstrState.Offline;
                                 instrument.selected = true;
-                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));  // todo: is this reduntant?
+                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));  // redundant now
+								instrument.RDT.ResetRawDataBuffer();
+								instrument.RDT.SetLMStateFlags(((LMConnectionInfo)(instrument.id.FullConnInfo)).NetComm);
                                 if (!Instruments.Active.Contains(instrument))
                                     Instruments.Active.Add(instrument);
                             }
@@ -602,7 +604,7 @@ namespace NewUI
                                 MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
                                 mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                                 mca.selected = true;
-								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis)); // redundant now?
                                 if (!Instruments.Active.Contains(mca))
                                     Instruments.Active.Add(mca);                                
                             } 

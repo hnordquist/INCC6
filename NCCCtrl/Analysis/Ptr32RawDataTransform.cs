@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -30,17 +30,22 @@ using AnalysisDefs;
 namespace Analysis
 {
     /// <summary>
-    /// Converts raw data a PTR-32.
+    /// Converts raw data from a PTR-32.
     /// </summary>
-    public class Ptr32RawDataTransform : Analysis.LMRawDataTransform
-    {
+    public class Ptr32RawDataTransform : LMRawDataTransform
+	{
         /// <summary>
         /// Initializes a new instance of the <see cref="Ptr32RawDataTransform"/> class.
         /// </summary>
         public Ptr32RawDataTransform()
         {
-            state = new Analysis.Ptr32ProcessingState();
+            state = new Ptr32ProcessingState();
         }
+
+		public void ResetRawDataBuffer()
+		{
+			((Ptr32ProcessingState)state).ResetRawDataBuffer();
+		}
 
         /// <summary>
         /// Performs end of cycle processing.
@@ -49,7 +54,7 @@ namespace Analysis
         /// <returns><c>true</c> if successful; otherwise, <c>false</c>.</returns>
         public override bool EndOfCycleProcessing(Measurement measurement, bool last = false)
         {
-            ((Analysis.Ptr32ProcessingState) state).EndOfCycleProcessing();
+            ((Ptr32ProcessingState)state).EndOfCycleProcessing();
             return base.EndOfCycleProcessing(measurement,last);
         }
     }

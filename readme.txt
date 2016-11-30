@@ -132,6 +132,7 @@ Issues for basic INCC6 List mode
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
 100  Rossi processing too slow on "big" data files
+133  List Mode not working in newer version of INCC6
 
 Issues for production
 #95  Just say yes to updated and complete documentation

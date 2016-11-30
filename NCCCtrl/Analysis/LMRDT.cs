@@ -79,8 +79,8 @@ namespace Analysis
 			if (neutronEventArray == null)
 				neutronEventArray = new List<uint>(new uint[maxValuesInBuffer]);
 			sup = new Supporter();
-
 		}
+
 		internal static void GCCollect()
 		{
 			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
@@ -510,13 +510,21 @@ namespace Analysis
             base.Init(datalogger, alogger);
         }
 
-        public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
+        // used by file ops only
+		public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
         {
             State.useAsynch = config.UseAsynchAnalysis;
             State.includingGen2 = NC.App.AppContext.ParseGen2;
             State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
             statusCheckCount = NC.App.AppContext.StatusPacketCount;
             State.InitParseBuffers(config.ParseBufferSize, unitbytes, useRawBuff);
+        }
+
+		public void SetLMStateFlags(NCCConfig.LMMMNetComm config)
+        {
+            State.useAsynch = config.UseAsynchAnalysis;
+            State.includingGen2 = NC.App.AppContext.ParseGen2;
+            State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
         }
 
 
