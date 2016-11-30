@@ -158,7 +158,7 @@ namespace Instr
         /// <exception cref="Ptr32Exception">An error occurred communicating with the device.</exception>
         protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
             {
                 m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Started assay", DeviceName);

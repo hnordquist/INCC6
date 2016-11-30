@@ -75,8 +75,8 @@ namespace NewUI
 					List<Measurement> mlist = measlist.GetSelectedMeas();
 					foreach (Measurement m in mlist)
 					{
-						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
-						m.Cycles.AddRange(cl);
+						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+                        m.Cycles.AddRange(cl);
 						// NEXT: m.CFCyles for AAS not used for INCC6 created measurements, only INCC5 transfer measurements have them m.Add(c, i);
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
 					}
@@ -98,7 +98,7 @@ namespace NewUI
 					List<Measurement> mlist = NC.App.DB.MeasurementsFor(det.Id.DetectorId);
 					foreach (Measurement m in mlist)
 					{
-						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
+						CycleList cl = NC.App.DB.GetCycles(det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
                         m.Add(cl);
                         m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
 					}

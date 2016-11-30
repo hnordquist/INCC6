@@ -674,7 +674,7 @@ namespace AnalysisDefs
         {
             Row[] rows = new Row[1];
             rows[0] = new Row(); // reimplemented using  meas.Cycles.HitsPerChannel
-            //RatesResultEnhanced rrm = meas.CountingAnalysisResults.GetFirstRatesResultMod(); // todo: only the first is used here, still need multiple rate analzyer output
+            //RatesResultEnhanced rrm = meas.CountingAnalysisResults.GetFirstRatesResultMod(); // todo: only the first is used here, still need multiple rate analyzer output
             //// could be null due to lack of check for suspect status here, so account for it
             //if (rrm == null)
             //{

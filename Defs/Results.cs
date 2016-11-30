@@ -517,9 +517,13 @@ namespace AnalysisDefs
     public interface ICountingResult
     {
         void Accumulate(ICountingResult from);
+
+		void GenParamList();
+
+		DB.ElementList ToDBElementList(bool generate = true);
     }
 
-    public class HauckResult : ICountingResult
+    public class HauckResult : ParameterBase, ICountingResult
     {
         public int numInitialRossiAlphaGatesIgnored;
         public double[] rossiAlphaResiduals;
@@ -541,15 +545,15 @@ namespace AnalysisDefs
 
     }
 
-    public class TimeIntervalResult : ICountingResult
+    public class TimeIntervalResult : ParameterBase, ICountingResult
     {
-        public UInt64 gateWidthInTics;
-        public UInt32[] timeIntervalHistogram;
+        public ulong gateWidthInTics;
+        public uint[] timeIntervalHistogram;
         public int maxIndexOfNonzeroHistogramEntry;  //the biggest index for which eventSpacingHistogram is nonzero
 
         public TimeIntervalResult()
         {
-            this.timeIntervalHistogram = new UInt32[RawAnalysisProperties.maxEventSpacing + 1];
+            timeIntervalHistogram = new uint[RawAnalysisProperties.maxEventSpacing + 1];
         }
 
 
@@ -567,33 +571,47 @@ namespace AnalysisDefs
             if (esr == null)
                 return;
             gateWidthInTics = esr.gateWidthInTics;
-            timeIntervalHistogram = new UInt32[esr.maxIndexOfNonzeroHistogramEntry + 1];
+            timeIntervalHistogram = new uint[esr.maxIndexOfNonzeroHistogramEntry + 1];
             maxIndexOfNonzeroHistogramEntry = esr.maxIndexOfNonzeroHistogramEntry;
             for (int i = 0; i <= esr.maxIndexOfNonzeroHistogramEntry; i++)
             {
                 timeIntervalHistogram[i] = esr.eventSpacingHistogram[i];
             }
         }
-
+		public override void GenParamList()
+        {
+            base.GenParamList();
+            Table = "CyclesTIR";
+            ps.Add(new DBParamEntry("counter_type", GetType().Name));  // "TimeInterval" not good to hard code the typename here
+            ps.Add(new DBParamEntry("gateWidth", gateWidthInTics));
+            ps.Add(new DBParamEntry("gateData", timeIntervalHistogram));
+            ps.Add(new DBParamEntry("length", timeIntervalHistogram.Length));
+        }
     }
 
-    public class RossiAlphaResultExt : ICountingResult
+    public class RossiAlphaResultExt : ParameterBase, ICountingResult
     {
-        public UInt64 gateWidth;
-        public UInt32[] gateData;
+        public ulong gateWidth;
+        public uint[] gateData;
 
-        public RossiAlphaResultExt(UInt64 gatewidth, UInt32[] gatedata)
+        public RossiAlphaResultExt(ulong gatewidth, uint[] gatedata)
         {
             int i;
 
-            this.gateWidth = gatewidth;
+            gateWidth = gatewidth;
 
-            this.gateData = new UInt32[RawAnalysisProperties.numRAGatesPerWindow];
+            gateData = new uint[RawAnalysisProperties.numRAGatesPerWindow];
             for (i = 0; i < RawAnalysisProperties.numRAGatesPerWindow; i++)
             {
-                this.gateData[i] = gatedata[i];
+                gateData[i] = gatedata[i];
             }
         }
+
+        public RossiAlphaResultExt()
+        {
+
+        }
+
 
         public void Accumulate(ICountingResult fromthis)
         {
@@ -607,37 +625,51 @@ namespace AnalysisDefs
         {
             if (rar == null)
                 return;
-            this.gateWidth = rar.gateWidth;
+            gateWidth = rar.gateWidth;
 
-            this.gateData = new UInt32[rar.gateData.Length];
+            gateData = new uint[rar.gateData.Length];
             for (int i = 0; i < rar.gateData.Length; i++)
             {
-                this.gateData[i] = rar.gateData[i];
+                gateData[i] = rar.gateData[i];
             }
+        }
 
+		public override void GenParamList()
+        {
+            base.GenParamList();
+            Table = "CyclesTIR";
+            ps.Add(new DBParamEntry("counter_type", GetType().Name));  // "Rossi" not good to hard code the typename here
+            ps.Add(new DBParamEntry("gateWidth", gateWidth));
+            ps.Add(new DBParamEntry("gateData", gateData));
+            ps.Add(new DBParamEntry("length", gateData.Length));
         }
     }
 
-    public class FeynmanResultExt : ICountingResult
+    public class FeynmanResultExt : ParameterBase, ICountingResult
     {
-        public UInt64 gateWidth;
-        public Dictionary<UInt32, UInt32> numGatesHavingNumNeutrons = new Dictionary<UInt32, UInt32>();
-        public UInt32 maxDictionaryKey;
+        public ulong gateWidth;
+        public Dictionary<uint, uint> numGatesHavingNumNeutrons = new Dictionary<uint, uint>();
+        public uint maxDictionaryKey;
         public double cbar;
         public double c2bar;
         public double c3bar;
         public double C;  //the denominator used during calculations of cbar, c2bar, and c3bar;
+
+		public FeynmanResultExt()
+		{
+
+		}
 
         public void Accumulate(ICountingResult fromthis)
         {
             FeynmanResultExt from = (FeynmanResultExt)fromthis;
             gateWidth = from.gateWidth; // assuming these are identical across the cycles
             // use gates, not the test param cgates
-            foreach (KeyValuePair<UInt32, UInt32> frpair in from.numGatesHavingNumNeutrons)
+            foreach (KeyValuePair<uint, uint> frpair in from.numGatesHavingNumNeutrons)
             {
                 uint numNeuts = frpair.Key;
                 uint cgates = 0;
-                UInt32 gates = frpair.Value; // the number of gates having that numNeutrons
+                uint gates = frpair.Value; // the number of gates having that numNeutrons
                 if (numGatesHavingNumNeutrons.TryGetValue(numNeuts, out cgates))
                     numGatesHavingNumNeutrons[numNeuts] += gates;
                 else
@@ -657,15 +689,26 @@ namespace AnalysisDefs
             gateWidth = fr.gateWidth;
             numGatesHavingNumNeutrons = new Dictionary<uint, uint>(fr.numGatesHavingNumNeutrons);
         }
+
+		public override void GenParamList()
+        {
+            base.GenParamList();
+            Table = "CyclesFeyn";
+            ps.Add(new DBParamEntry("gateWidth", gateWidth));
+            ps.Add(new DBParamEntry("cbar", cbar));
+            ps.Add(new DBParamEntry("c2bar", c2bar));
+            ps.Add(new DBParamEntry("c3bar", c3bar));
+            ps.Add(new DBParamEntry("C", C));
+        }
     }
 
-    public class CoincidenceMatrixResult : ICountingResult
+    public class CoincidenceMatrixResult : ParameterBase, ICountingResult
     {
-        public UInt64 coincidenceGateWidth;
-        public UInt64 coincidenceDeadDelay;
+        public ulong coincidenceGateWidth;
+        public ulong coincidenceDeadDelay;    // SR predelay
 
-        public bool isSlowBackground;
-        public UInt64 accidentalsDelay;  //nonzero iff isSlowBackground is true
+        public bool isSlowBackground;    // !FA always true for now
+        public ulong accidentalsDelay;  //nonzero iff isSlowBackground is true
 
         public double[][] RACoincidenceRate;
         public double[][] ACoincidenceRate;
@@ -674,12 +717,12 @@ namespace AnalysisDefs
         {
             int i;
 
-            this.RACoincidenceRate = new double[numChannels][];
-            this.ACoincidenceRate = new double[numChannels][];
+            RACoincidenceRate = new double[numChannels][];
+            ACoincidenceRate = new double[numChannels][];
             for (i = 0; i < numChannels; i++)
             {
-                this.RACoincidenceRate[i] = new double[numChannels];
-                this.ACoincidenceRate[i] = new double[numChannels];
+                RACoincidenceRate[i] = new double[numChannels];
+                ACoincidenceRate[i] = new double[numChannels];
             }
         }
 
@@ -698,8 +741,8 @@ namespace AnalysisDefs
 
             for (int i = 0; i < numChannels; i++)
             {
-                this.RACoincidenceRate[i] = new double[numChannels];
-                this.ACoincidenceRate[i] = new double[numChannels];
+                RACoincidenceRate[i] = new double[numChannels];
+                ACoincidenceRate[i] = new double[numChannels];
                 Array.Copy(cor.RACoincidenceRate[i], RACoincidenceRate[i], numChannels);
                 Array.Copy(cor.ACoincidenceRate[i], ACoincidenceRate[i], numChannels);
             }
@@ -723,12 +766,26 @@ namespace AnalysisDefs
                 }
             }
         }
+
+        public override void GenParamList()
+        {
+            base.GenParamList();
+            Table = "CyclesCoin";
+            ps.Add(new DBParamEntry("backgroundgatewidth", accidentalsDelay)); // !FA so not used
+            ps.Add(new DBParamEntry("accidentalsgatewidth", accidentalsDelay));
+            ps.Add(new DBParamEntry("FA", !isSlowBackground));
+            ps.Add(new DBParamEntry("counter_type", GetType().Name));  // not good to hard code the typename here
+            ps.Add(new DBParamEntry("gateWidth", coincidenceGateWidth));
+            ps.Add(new DBParamEntry("predelay", coincidenceDeadDelay));
+            ps.Add(new DBParamEntry("numchn", RACoincidenceRate.Length));
+            // todo: sparse rep of each numchn array
+        }
     }
 
-    public class RatesResultEnhanced : ICountingResult
+    public class RatesResultEnhanced : ParameterBase, ICountingResult
     {
-        //public UInt32 aggregateRate;  //summed over all channels, in events per gate
-        //public UInt32[] channelRate;  //rate for each channel
+        //public uint aggregateRate;  //summed over all channels, in events per gate
+        //public uint[] channelRate;  //rate for each channel
 
 
         public TimeSpan totaltime;
@@ -992,9 +1049,15 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "alpha_beta_rec";
-            ps.Add(new DBParamEntry("alpha_array", this.α));
-            ps.Add(new DBParamEntry("beta_array", this.β));
+            Table = "alpha_beta_rec";
+            ps.Add(new DBParamEntry("alpha_array", α));
+            ps.Add(new DBParamEntry("beta_array", β));
+        }
+
+        public uint MaxBins
+        {
+           get { if (Unset) return 0;
+                 else return (uint)(Math.Max(α.Length, β.Length) + 1); }
         }
 
 
@@ -1134,8 +1197,8 @@ namespace AnalysisDefs
         public double mass; // computed in outlier passes when qc_test is true, and further computed in verification pass, error is not computed so no VTuple
         public double efficiency, multiplication, multiAlpha; // computed in the same manner as mass but only in multiplicity analysis
 
-        public UInt64 accidentalsDelay;
-        public UInt64[] RAMult, UnAMult, NormedAMult;
+        public ulong accidentalsDelay;
+        public ulong[] RAMult, UnAMult, NormedAMult;
         ulong maxBins, minBins;
         AlphaBeta αβ;
 
@@ -1429,17 +1492,17 @@ namespace AnalysisDefs
             RAMult = new ulong[mr.maxRABin + 1];  // dev note: hope it's not too large o.w. must code for compressed intervals (sans 0 entries) instead of assuming iso bin intervals (includes 0 entries)
 
             // todo: check this: these copies are wrong! because non-zero entries are skipped in the dictionary
-            foreach (KeyValuePair<UInt64, UInt64> pair in mr.realPlusAccidentalDistribution)
+            foreach (KeyValuePair<ulong, ulong> pair in mr.realPlusAccidentalDistribution)
             {
                 RAMult[pair.Key] = pair.Value;
             }
             UnAMult = new ulong[mr.maxABin + 1];
-            foreach (KeyValuePair<UInt64, UInt64> pair in mr.accidentalDistribution)
+            foreach (KeyValuePair<ulong, ulong> pair in mr.accidentalDistribution)
             {
                 UnAMult[pair.Key] = pair.Value;
             }
             NormedAMult = new ulong[mr.maxABin + 1];
-            foreach (KeyValuePair<UInt64, UInt64> pair in mr.normalizedAccidentalDistribution)
+            foreach (KeyValuePair<ulong, ulong> pair in mr.normalizedAccidentalDistribution)
             {
                 NormedAMult[pair.Key] = pair.Value;
             }
@@ -1616,10 +1679,10 @@ namespace AnalysisDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "results_rec"; // or something else
+            Table = "results_rec"; // or something else
 
-            ps.Add(new DBParamEntry("singles_sum", this.Totals));
-            ps.Add(new DBParamEntry("scaler1_sum", this.S1Sum));
+            ps.Add(new DBParamEntry("singles_sum", Totals));
+            ps.Add(new DBParamEntry("scaler1_sum", S1Sum));
             ps.Add(new DBParamEntry("scaler2_sum", S2Sum));
             ps.Add(new DBParamEntry("reals_plus_acc_sum", RASum));
             ps.Add(new DBParamEntry("acc_sum", ASum));
@@ -1644,12 +1707,25 @@ namespace AnalysisDefs
 
         public List<DBParamEntry> MoreForResults()
         {
-            this.Table = "results_rec";
+            Table = "results_rec";
 
             List<DBParamEntry> s = new List<DBParamEntry>();
             s.Add(new DBParamEntry("covariance_matrix", covariance_matrix));
             return s;
         }
+
+		public bool RawButNoDTCRates
+		// For when DTC rates are not calculated, for whatever reason 
+		{
+			get
+			{
+				bool res = false;
+				bool raw = (RawSinglesRate.v != 0 || RawDoublesRate.v != 0 || RawTriplesRate.v != 0);
+				bool dtc = (DeadtimeCorrectedSinglesRate.v != 0 || DeadtimeCorrectedDoublesRate.v != 0 || DeadtimeCorrectedTriplesRate.v != 0);
+				res = raw && !dtc;
+				return res;
+			}
+		}
 
     }
 
@@ -1789,6 +1865,28 @@ namespace AnalysisDefs
             }
         }
 
+		public bool SingleMultiplicityAnalyzer
+		{
+			get {
+				int mcount = 0;
+				foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in this)
+					if (pair.Key is Multiplicity)
+						mcount++;
+				return (mcount == 1) && (Count == 1);
+			}
+		}
+
+		public Multiplicity SingleMultiplicityAnalyzerKey
+		{
+			get {
+				Multiplicity key = null;
+				foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in this)
+					if (pair.Key is Multiplicity)
+						key = (Multiplicity)pair.Key;
+				return key;
+			}
+		}
+
         public SpecificCountingAnalyzerParams GetFirstMultiplicityOrFirstLMKey
         {
             get
@@ -1818,7 +1916,7 @@ namespace AnalysisDefs
         }
 
         // dev note: should be a way to rewrite this or redefine the containing class so the two kinds of iterators can be 2 generic templates, but I didn't do it.
-        public System.Collections.IEnumerator GetATypedParameterEnumerator(System.Type t, bool includeSuspectEntries = false)
+        public System.Collections.IEnumerator GetATypedParameterEnumerator(Type t, bool includeSuspectEntries = false)
         {
             foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in this)
             {
@@ -1827,7 +1925,7 @@ namespace AnalysisDefs
             }
         }
 
-        public System.Collections.IEnumerator GetATypedResultEnumerator(System.Type t, bool includeSuspectEntries = false)
+        public System.Collections.IEnumerator GetATypedResultEnumerator(Type t, bool includeSuspectEntries = false)
         {
             foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in this)
             {
@@ -1844,7 +1942,7 @@ namespace AnalysisDefs
                     yield return pair;
             }
         }
-        public int GetResultsCount(System.Type t, bool includeSuspectEntries = false)
+        public int GetResultsCount(Type t, bool includeSuspectEntries = false)
         {
             int count = 0;
             foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in this)
@@ -1893,7 +1991,7 @@ namespace AnalysisDefs
         }
 
         public AnalysisMessages(AnalysisMessages am)
-            : base((Dictionary<Multiplicity, List<MeasurementMsg>>)am)
+            : base(am)
         {
         }
     }

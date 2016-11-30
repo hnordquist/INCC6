@@ -90,13 +90,16 @@ namespace AnalysisDefs
     public class SpecificCountingAnalyzerParamsEqualityComparer : IEqualityComparer<SpecificCountingAnalyzerParams>
     {
 
-        public bool Equals(SpecificCountingAnalyzerParams scap1, SpecificCountingAnalyzerParams scap2)
+        static public bool IsEqual(SpecificCountingAnalyzerParams scap1, SpecificCountingAnalyzerParams scap2)
         {
-           
+            if (scap1 == null && scap2 == null)
+                return true;
+            else if (scap1 == null || scap2 == null)
+                return false;
             if (scap1.gateWidthTics == scap2.gateWidthTics && scap1.reason.Equals(scap2.reason) && scap1.suspect == scap2.suspect)
             {
-                System.Type t1 = scap1.GetType();
-                System.Type t2 = scap2.GetType();
+                Type t1 = scap1.GetType();
+                Type t2 = scap2.GetType();
                 if (t1.Equals(t2))
                 {
                     if (t1.Equals(typeof(Multiplicity)))
@@ -104,13 +107,17 @@ namespace AnalysisDefs
                     else if (t1.Equals(typeof(Coincidence)))
                         return ((Coincidence)scap1).Equals((Coincidence)scap2);
                 }
-
                 return t1.Equals(t2);
             }
             else
             {
                 return false;
             }
+        }
+
+        public bool Equals(SpecificCountingAnalyzerParams scap1, SpecificCountingAnalyzerParams scap2)
+        {
+            return IsEqual(scap1, scap2);
         }
 
         public int GetHashCode(SpecificCountingAnalyzerParams scap)
@@ -576,6 +583,11 @@ namespace AnalysisDefs
         public List<SpecificCountingAnalyzerParams> GetAllMults(bool activeOnly = true)
         {
             return FindAll(p => { return (p.ActiveConstraint(activeOnly) && p is Multiplicity); });
+        }
+
+		public List<SpecificCountingAnalyzerParams> GetAllNotMults(bool activeOnly = true)
+        {
+            return FindAll(p => { return (p.ActiveConstraint(activeOnly) && !(p is Multiplicity)); });
         }
         public List<SpecificCountingAnalyzerParams> GetRossis(bool activeOnly = true)
         {

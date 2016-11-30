@@ -131,7 +131,13 @@ DROP TABLE [detector_types];
 GO
 DROP TABLE [de_mult_rec];
 GO
-DROP TABLE [cycleslm];
+DROP TABLE [CyclesFeyn]
+GO
+DROP TABLE [CyclesTIR];
+GO
+DROP TABLE [CyclesMult];
+GO
+DROP TABLE [CyclesCoin];
 GO
 DROP TABLE [cycles];
 GO

@@ -79,8 +79,8 @@ namespace Analysis
 			if (neutronEventArray == null)
 				neutronEventArray = new List<uint>(new uint[maxValuesInBuffer]);
 			sup = new Supporter();
-
 		}
+
 		internal static void GCCollect()
 		{
 			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
@@ -473,9 +473,10 @@ namespace Analysis
                     EndAnalysisImmediately();
                     throw new FatalNeutronCountingException(s);  // emergency exit, caught and noted in buffer handler PassToAnalysis
                 },
-                 theTicSizeInSeconds: tickSizeInSeconds); // starts the threads, so watch out!
+                 theTicSizeInSeconds: tickSizeInSeconds,
+                 csa: NC.App.Opstate.CancelStopAbort); // starts the threads, so watch out!
             else
-                State.Sup.Construct(f, f2, f3, theTicSizeInSeconds: tickSizeInSeconds); // ditto
+                State.Sup.Construct(f, f2, f3, theTicSizeInSeconds: tickSizeInSeconds, csa: NC.App.Opstate.CancelStopAbort); // ditto
 
             logger.TraceEvent(LogLevels.Verbose, 146, "Neutron counting task running, {0} time base", tickSizeInSeconds);
         }
@@ -509,13 +510,21 @@ namespace Analysis
             base.Init(datalogger, alogger);
         }
 
-        public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
+        // used by file ops only
+		public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
         {
             State.useAsynch = config.UseAsynchAnalysis;
             State.includingGen2 = NC.App.AppContext.ParseGen2;
             State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
             statusCheckCount = NC.App.AppContext.StatusPacketCount;
             State.InitParseBuffers(config.ParseBufferSize, unitbytes, useRawBuff);
+        }
+
+		public void SetLMStateFlags(NCCConfig.LMMMNetComm config)
+        {
+            State.useAsynch = config.UseAsynchAnalysis;
+            State.includingGen2 = NC.App.AppContext.ParseGen2;
+            State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
         }
 
 

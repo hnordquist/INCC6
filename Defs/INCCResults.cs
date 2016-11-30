@@ -563,7 +563,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_rec";
+                Table = "results_rec";
                 det.Id.GenParamList(); ps.AddRange(det.Id.ps);
                 ps.AddRange(acq.SubsetForResults());
                 ps.AddRange(st.SubsetForResults());

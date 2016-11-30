@@ -405,7 +405,8 @@ namespace AnalysisDefs
         {
             dsid.source = data_src;
             dsid.SRType = SRType;
-            dsid.FileName = path;                              
+            if (!string.IsNullOrEmpty(path))
+				dsid.FileName = path;                              
             dsid.dt = dto;
         }
 
@@ -487,6 +488,7 @@ namespace AnalysisDefs
             if (DataSourceId.SRType.IsListMode())
             {
                 ps.Add(new DBParamEntry("chnhits", HitsPerChannel));
+				ps.Add(new DBParamEntry("lmfilename", dsid.FileName));
             }
         }
 

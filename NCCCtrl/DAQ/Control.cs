@@ -493,7 +493,7 @@ namespace DAQ
             Thread.Sleep(250); // LMMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
             // PTR-32/MCA-527
-            // This loop works for PTR-32 and MCA-527) instruments, based on an improved instrument and control design
+            // This loop works for PTR-32 and MCA-527 instruments, based on an improved instrument and control design
 
             // devnote: rewrite SR and LMMM sections below to use the StartAssay virtual method abstraction for measurement control
             foreach (Instrument instrument in Instruments.Active) {
