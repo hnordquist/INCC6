@@ -47,9 +47,7 @@ namespace NewUI
             InitializeComponent();
             mp = new MethodParamFormFields(AnalysisMethod.Collar);
 
-            PoisonAbsorptionFactorTextBox.ToValidate = NumericTextBox.ValidateType.Float;
-            PoisonAbsorptionFactorTextBox.NumberFormat = NumericTextBox.Formatter.F3;
-             RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
+            RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             RelativeDoublesRateTextBox.NumberFormat = NumericTextBox.Formatter.F3;
 
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
@@ -84,21 +82,6 @@ namespace NewUI
             RelativeDoublesRateTextBox.Value = col.collar_det.relative_doubles_rate;
             ReferenceDateTimePicker.Value = col.collar_det.reference_date;
             poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
-            for (int i = 0; i < poison.Count ; i ++) 
-            {
-                PoisonRodTypesComboBox.Items.Add (poison[i].rod_type);
-            }
-            if (PoisonRodTypesComboBox.Items.Count > 0)
-            {
-                int idx = PoisonRodTypesComboBox.FindStringExact(col.collar.poison_rod_type[0]);
-                PoisonRodTypesComboBox.SelectedIndex = idx;
-                PoisonAbsorptionFactorTextBox.Value = poison[idx].absorption_factor;
-            }
-            else
-            {
-                PoisonRodTypesComboBox.Items.Add("No types defined");
-                PoisonAbsorptionFactorTextBox.Value = 0;
-            }
             SetHelp();
         }
 
@@ -135,13 +118,6 @@ namespace NewUI
                          "is October 17, 1989 for all the collars in LA-11965-MS.";
             provider.SetHelpString (this.ReferenceDateTimePicker, s1);
             t3.SetToolTip(ReferenceDateTimePicker, s1);
-
-            provider.SetShowHelp (this.PoisonAbsorptionFactorTextBox, true);
-            s1 =        "Enter the poison rod absorption factor. This is lambda in the poison correction factor \r\n" +
-                        "K3 = 1 + a * n * N0 / N [1 - exp (-lambda * Gd)] * (b - c * E);see LA-11965-MS, pp 25-30.\r\n" +
-                        "Override the default value for the current poison rod type here.";
-            provider.SetHelpString (this.PoisonAbsorptionFactorTextBox,s1);
-            t4.SetToolTip(PoisonAbsorptionFactorTextBox, s1);
 
             provider.SetShowHelp (this.RelativeDoublesRateTextBox, true);
             s1 =        "Enter the doubles rate for this collar relative to that for the LANL reference\r\n" +
@@ -180,12 +156,6 @@ namespace NewUI
                 col.collar_det.reference_date = ReferenceDateTimePicker.Value.Date;
                 modified = true;
             }
-        }
-
-        private void PoisonRodTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //Now, switches absorbption factor value. Still confused what to do with multiple rod types. HN
-            PoisonAbsorptionFactorTextBox.Value = poison[((ComboBox)sender).SelectedIndex].absorption_factor;
         }
 
         private void RelativeDoublesRateTextBox_TextChanged(object sender, EventArgs e)
