@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Nov 30, 2016
+6.18 Dec 1, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -140,11 +140,12 @@ Issues for production
 
 Closed issues
 
-6.18 Nov 30, 2016  ************
+6.18 Dec 1, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis
 ***  Multiplicity analyzer cycle DTC rates recalculation on report operation
 86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
      (! still working on restore) 
+***  List Mode Acquire DAQ settings not preserved
 
 
 6.17 (6.0.17) Oct 31, 2016  ************

@@ -247,6 +247,11 @@ namespace NewUI
             }
         }
 
+		private void Step2BIncludeConfigCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			Step2IncludeConfigCheckBox_CheckedChanged(sender, e);
+		}
+
         private void Step2AutoOpenCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (N.App.AppContext.OpenResults != ((CheckBox)sender).Checked)
@@ -255,6 +260,12 @@ namespace NewUI
             }
         }
 
+		private void Step2BAutoOpenCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			Step2AutoOpenCheckBox_CheckedChanged(sender, e);
+		}
+
+
         private void Step2SaveEarlyTermCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (ap.lm.SaveOnTerminate != ((CheckBox)sender).Checked)
@@ -262,6 +273,19 @@ namespace NewUI
                 ap.lm.modified = true; ap.lm.SaveOnTerminate = ((CheckBox)sender).Checked; LMParamUpdate = true;
             }
         }
+		
+		private void Step2BSaveEarlyTermCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			Step2SaveEarlyTermCheckBox_CheckedChanged(sender, e);
+		}
+
+		private void Step2BWriteDataFiles_CheckedChanged(object sender, EventArgs e)
+		{
+            if (N.App.AppContext.LiveFileWrite != ((CheckBox)sender).Checked)
+            {
+                N.App.AppContext.modified = true; N.App.AppContext.LiveFileWrite = ((CheckBox)sender).Checked;
+            }
+		}
 
         void LoadParams(LMSteps step)
         {
@@ -814,14 +838,14 @@ namespace NewUI
 
 		void CheckActiveChecks()
 		{
-				foreach(DataGridViewRow row in AnalyzerGridView.Rows)
+			foreach(DataGridViewRow row in AnalyzerGridView.Rows)
+			{
+				if (CheckedChanged(row))
 				{
-					if (CheckedChanged(row))
-					{
-						PreserveAnalyzerChanges = true;
-						break;
-					}
+					PreserveAnalyzerChanges = true;
+					break;
 				}
+			}
 		}
 		private void PreserveNewState()
         {    
@@ -880,6 +904,7 @@ namespace NewUI
 
 		private void Step2BSaveExit_Click(object sender, EventArgs e)
 		{
+            PreserveNewState();
             SaveAcqStateChanges();
             DialogResult = DialogResult.Yes;
             Close();
@@ -1247,7 +1272,7 @@ namespace NewUI
             BeginInvoke(new MethodInvoker(EndEdit));
         }
 
-        void EndEdit()
+		void EndEdit()
         {
             // Change the content of appropriate cell when selected index changes
             if (cbm != null)
