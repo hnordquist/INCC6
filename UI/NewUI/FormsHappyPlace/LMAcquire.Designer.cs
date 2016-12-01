@@ -85,6 +85,11 @@
 			this.DeleteBtn = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.AnalyzerGridView = new System.Windows.Forms.DataGridView();
+			this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.APCancel = new System.Windows.Forms.Button();
 			this.Step3SaveExit = new System.Windows.Forms.Button();
 			this.ReviewAndGo = new System.Windows.Forms.TabPage();
@@ -100,11 +105,6 @@
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LiveSettings.SuspendLayout();
 			this.FileSettings.SuspendLayout();
 			this.InputFileTypeGroupBox.SuspendLayout();
@@ -212,6 +212,7 @@
 			this.Step2BWriteDataFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.toolTip1.SetToolTip(this.Step2BWriteDataFiles, "Save data files in the format native to the instrument (MCA-527, PTR-32, LMMM)");
 			this.Step2BWriteDataFiles.UseVisualStyleBackColor = true;
+			this.Step2BWriteDataFiles.CheckedChanged += new System.EventHandler(this.Step2BWriteDataFiles_CheckedChanged);
 			// 
 			// IntervalTextBox
 			// 
@@ -382,6 +383,7 @@
 			this.Step2BSaveEarlyTermCheckBox.TabIndex = 30;
 			this.Step2BSaveEarlyTermCheckBox.Text = "Save results in the event of early termination";
 			this.Step2BSaveEarlyTermCheckBox.UseVisualStyleBackColor = true;
+			this.Step2BSaveEarlyTermCheckBox.CheckedChanged += new System.EventHandler(this.Step2BSaveEarlyTermCheckBox_CheckedChanged);
 			// 
 			// Step2BAutoOpenCheckBox
 			// 
@@ -393,6 +395,7 @@
 			this.Step2BAutoOpenCheckBox.TabIndex = 29;
 			this.Step2BAutoOpenCheckBox.Text = "Automatically open INCC measurement results when finished";
 			this.Step2BAutoOpenCheckBox.UseVisualStyleBackColor = true;
+			this.Step2BAutoOpenCheckBox.CheckedChanged += new System.EventHandler(this.Step2BAutoOpenCheckBox_CheckedChanged);
 			// 
 			// Step2BIncludeConfigCheckBox
 			// 
@@ -404,6 +407,7 @@
 			this.Step2BIncludeConfigCheckBox.TabIndex = 28;
 			this.Step2BIncludeConfigCheckBox.Text = "Append a copy of measurement configuration information to output";
 			this.Step2BIncludeConfigCheckBox.UseVisualStyleBackColor = true;
+			this.Step2BIncludeConfigCheckBox.CheckedChanged += new System.EventHandler(this.Step2BIncludeConfigCheckBox_CheckedChanged);
 			// 
 			// FilePicker5
 			// 
@@ -768,6 +772,38 @@
 			this.AnalyzerGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.AnalyzerGridView_EditingControlShowing);
 			this.AnalyzerGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_DataGridViewCellEventHandler);
 			// 
+			// Active
+			// 
+			this.Active.FalseValue = "no";
+			this.Active.HeaderText = "Active";
+			this.Active.Name = "Active";
+			this.Active.TrueValue = "yes";
+			this.Active.Width = 50;
+			// 
+			// Type
+			// 
+			this.Type.HeaderText = "Type";
+			this.Type.Name = "Type";
+			this.Type.Width = 140;
+			// 
+			// Gatewidth
+			// 
+			this.Gatewidth.HeaderText = "Gate width";
+			this.Gatewidth.Name = "Gatewidth";
+			this.Gatewidth.Width = 110;
+			// 
+			// Predelay
+			// 
+			this.Predelay.HeaderText = "-";
+			this.Predelay.Name = "Predelay";
+			this.Predelay.Width = 80;
+			// 
+			// Long
+			// 
+			this.Long.HeaderText = "-";
+			this.Long.Name = "Long";
+			this.Long.Width = 130;
+			// 
 			// APCancel
 			// 
 			this.APCancel.Location = new System.Drawing.Point(405, 347);
@@ -912,38 +948,6 @@
 			// 
 			this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
 			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-			// 
-			// Active
-			// 
-			this.Active.FalseValue = "no";
-			this.Active.HeaderText = "Active";
-			this.Active.Name = "Active";
-			this.Active.TrueValue = "yes";
-			this.Active.Width = 50;
-			// 
-			// Type
-			// 
-			this.Type.HeaderText = "Type";
-			this.Type.Name = "Type";
-			this.Type.Width = 140;
-			// 
-			// Gatewidth
-			// 
-			this.Gatewidth.HeaderText = "Gate width";
-			this.Gatewidth.Name = "Gatewidth";
-			this.Gatewidth.Width = 110;
-			// 
-			// Predelay
-			// 
-			this.Predelay.HeaderText = "-";
-			this.Predelay.Name = "Predelay";
-			this.Predelay.Width = 80;
-			// 
-			// Long
-			// 
-			this.Long.HeaderText = "-";
-			this.Long.Name = "Long";
-			this.Long.Width = 130;
 			// 
 			// LMAcquire
 			// 
