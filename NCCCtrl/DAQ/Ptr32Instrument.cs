@@ -39,7 +39,7 @@ using DAQ;
 namespace Instr
 {
 
-    using NC = NCC.CentralizedState;
+    using NC = CentralizedState;
 
     /// <summary>
     /// Represents a 32-channel Pulse Train Recorder (PTR-32).
@@ -167,7 +167,10 @@ namespace Instr
                 if (m_setvoltage)
                     SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
             
-                Stopwatch stopwatch = new Stopwatch();
+				if (RDT.State.rawDataBuff == null)
+					throw new Exception("Runtime buffer initialization error");
+
+				Stopwatch stopwatch = new Stopwatch();
                 TimeSpan duration = TimeSpan.FromSeconds(measurement.AcquireState.lm.Interval);
                 byte[] buffer = new byte[1024 * 1024];
                 long total = 0;
@@ -175,6 +178,7 @@ namespace Instr
                 m_device.Reset();
                 stopwatch.Start();
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+
                 while (stopwatch.Elapsed < duration) {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -418,7 +422,7 @@ namespace Instr
 			string dllpath = System.IO.Path.Combine(Environment.SystemDirectory, "dpcutil.dll");
 			if (System.IO.File.Exists(dllpath)) 
 			{ 
-				System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(dllpath);
+				FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(dllpath);
 				 return fvi.FileVersion;
 			}
 			else
@@ -432,7 +436,7 @@ namespace Instr
         /// <returns><c>true</c> if the current object is equal to <paramref name="other"/>; otherwise, <c>false</c>.</returns>
         public bool Equals(Ptr32Instrument other)
         {
-            return base.Equals((LMInstrument) other);
+            return base.Equals(other);
         }
 
         /// <summary>
@@ -519,7 +523,7 @@ namespace Instr
 
         private CancellationTokenSource m_cancellationTokenSource;
         private Ptr32 m_device;
-        private LMLoggers.LognLM m_logger = CentralizedState.App.Logger(LMLoggers.AppSection.Collect);
+        private LMLoggers.LognLM m_logger = NC.App.Logger(LMLoggers.AppSection.Collect);
         private object m_monitor = new object();
         private int m_voltage;
         private bool m_setvoltage;

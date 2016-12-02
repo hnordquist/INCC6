@@ -37,7 +37,7 @@ using Instr;
 namespace DAQ
 {
 
-	using NC = NCC.CentralizedState;
+	using NC = CentralizedState;
 
 	public partial class DAQControl : ActionEvents//, IActionStatus
     {
@@ -143,7 +143,10 @@ namespace DAQ
             else if (det.Id.SRType.IsUSBBasedLM())
             {
                 Ptr32Instrument ptr = new Ptr32Instrument(det);
-                ptr.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
+				ptr.RDT.ResetRawDataBuffer();  // poor design recovery patch
+				ptr.RDT.SetLMStateFlags(((LMConnectionInfo)(ptr.id.FullConnInfo)).NetComm);
+
+                ptr.DAQState = DAQInstrState.Offline; // USB-based devices are manually initiated as opposed to auto-pickup
                 if (!Instruments.All.Contains(ptr))
                     Instruments.All.Add(ptr); // add to global runtime list
             }
@@ -174,7 +177,7 @@ namespace DAQ
         private Server _SL;
 
         //  why are these static? because of the coding style with the socket callbacks, static could be removed at any time with a bit of reorg
-        private static Int32 connections = 0;
+        private static int connections = 0;
         private static long packets = 0;
 
         private static ulong numTotalBytes;
