@@ -62,17 +62,9 @@ namespace NewUI
                     Measurement m = measlist.GetSingleSelectedMeas();
                     if (m == null)
                         return;
-					DateTimeOffset dto = m.MeasurementId.MeasDateTime;
-                    DateTimeOffset cur = new DateTimeOffset(dto.Ticks, dto.Offset);
                     det = m.Detector; // use detector as re-constructed from the original measurement
 					// get the cycles for the selected measurement from the database, and add them to the current measurement
-					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId);
-					foreach (Cycle cycle in cl)  // add the necessary meta-data to the cycle identifier instance
-					{
-						cycle.UpdateDataSourceId(DetectorDefs.ConstructedSource.DB, det.Id.SRType,
-							cur.AddTicks(cycle.TS.Ticks), det.Id.FileName);
-						cur = cycle.DataSourceId.dt;
-					}
+					CycleList cl = N.App.DB.GetCycles(det, m.MeasurementId, DetectorDefs.ConstructedSource.DB, m.AnalysisParams); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analzyer, restoring into the correct key->result pair
 					m.Add(cl);
 					new IDDReanalysisAssay(m, det).ShowDialog();
                 }

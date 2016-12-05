@@ -2870,7 +2870,7 @@ namespace NCCFile
         }
         private static void ArrayToFile(double[] data, byte[] byteOutput, int len, string fileName)
         {
-            using (FileStream fs = File.Open(fileName, FileMode.Create)) //todo: change to .CreateNew
+            using (FileStream fs = File.Open(fileName, FileMode.Create)) //devnote: maybe change to .Create
             {
                 ByteArray.FromDouble(data, len, byteOutput);  // TEMPLATE: data type
                 fs.Write(byteOutput, 0, sizeof(double) * len);

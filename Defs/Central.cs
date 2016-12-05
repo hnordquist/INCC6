@@ -461,14 +461,30 @@ namespace NCC
             return good;
         }
 
-        public void LoadPersistenceConfig(DBConfig mynewdb)
+        public bool LoadPersistenceConfig(DBConfig mynewdb)
         {
             pest = new Persistence(Logger(LMLoggers.AppSection.DB), mynewdb);
             DB = new INCCDB();
-            DB.Populate(pest);
             lmdb = new LMDB();
-            lmdb.Populate(pest);
-            appctx = LMDB.AppContext;
+			bool there = false;
+			try
+			{
+				there = pest.IsItThere;
+				if (!there)
+				{
+					Console.WriteLine("Database using " + mynewdb.MyDBConnectionString + " unavailable");
+					Console.WriteLine(pest.IsItThereStr);					
+				}
+			}
+			catch (Exception ex)
+			{
+                Console.WriteLine("Database unavailable " + ex.Message);
+				if (!string.IsNullOrEmpty(pest.IsItThereStr))
+					Console.WriteLine(pest.IsItThereStr);					
+			}
+			if (there)
+				appctx = LMDB.AppContext;
+			return there;
         }
 
         public LMLoggers.LognLM Logger(LMLoggers.AppSection wp)
@@ -499,7 +515,7 @@ namespace NCC
         Config cfg;
         Persistence pest;
         INCCDB db;
-        ListModeDB.LMDB lmdb;
+        LMDB lmdb;
         string name;
 
         public CentralizedState(string AppName)
@@ -660,21 +676,23 @@ namespace NCC
 		/// <summary>
 		/// Prepare measurement instance content for analysis
 		/// Populate calibration and counting parameters maps
-		/// Create general results and specif results dictionary map entries
+		/// Create general results and specific results dictionary map entries
 		/// Set up stratum details
 		/// </summary>
 		/// <param name="meas">The partially initialized measurement instance</param>
 		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
 		///                                 skipped if Reanalysis prepared the details from database measurement results
 		/// </param>
-        public static void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
+        static public void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
         {
             if (meas.Detector.ListMode)
             {
-                // dev note: design flaw exposed by this mess here, when LM has > 1 SVR, there is no way to associate > 1 SVRs with a single detector/SR/Mult/Conn pairing
-                // It should be the other way around, the Mult params for each LMMultiplicity analyzer override the single entry on the sr_parms_rec when each analyis is performed. 
-
-                meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
+				// APluralityOfMultiplicityAnalyzers: see below
+				// URGENT: see below
+				//if (an INCC5 DB cycle read or DB Ver reanalysis then rebuild the analyzers from the associated saved LM results:) 
+				//	object x = CentralizedState.App.DB.GetAnalyzersFromResults(meas.Detector, meas.MeasurementId);
+				//else
+					  meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: true);
                 if (meas.MeasOption.IsListMode()) // pure List Mode, not INCC5
                 {
                     // for a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
@@ -682,12 +700,12 @@ namespace NCC
                 }
                 else // it is an INCC5 analysis driven with LM data
                 {
-                    // check to see if detector settings are copied into an active CA entry
-                    if (!meas.AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(meas.Detector.MultiplicityParams) && w.Active; }))
-                        meas.AnalysisParams.Add(meas.Detector.MultiplicityParams);
+                    // prepare or identify an active CA entry with matching CA gatewidth and FA, and has the same SR params as the detector
+                    if (meas.AnalysisParams.PrepareMatchingVSR(meas.Detector.MultiplicityParams))
+                        CentralizedState.App.LMBD.UpdateCounters(meas.Detector.Id.DetectorName, meas.AnalysisParams); // added one, save it
                 }
             }
-            else
+            else // construct param key source with the single mkey entry point
             {
                 // prepare analyzer params from detector SR params
                 meas.AnalysisParams = CentralizedState.App.LMBD.CountingParameters(meas.Detector, applySRFromDetector: false);
@@ -711,8 +729,7 @@ namespace NCC
 					meas.INCCAnalysisState.Methods = new AnalysisMethods(sel);
 			} // else use what was there
 
-            meas.InitializeContext();
-
+            meas.InitializeContext(clearCounterResults:true);
             meas.PrepareINCCResults();
 
             // stratum look up, finds existing stratum by name
@@ -725,12 +742,95 @@ namespace NCC
 				else
 					meas.Stratum = new Stratum(s.Stratum);
 			}
-
             INCCResults.results_rec xres = new INCCResults.results_rec(meas);
             meas.INCCAnalysisResults.TradResultsRec = xres;
             CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
 
         }
+
+		/// <summary>
+		/// Finalize measurement instance content for analysis
+		/// Populate calibration parameters maps
+		/// </summary>
+		/// <param name="meas">The partially initialized measurement instance</param>
+		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
+		///                                 skipped if Reanalysis prepared the details from database measurement results
+		/// </param>
+        static public void FillInReanalysisRemainingDetails(Measurement meas, bool useCurCalibParams = true)
+        {
+            // get the current INCC5 analysis methods
+			if (useCurCalibParams || meas.INCCAnalysisState == null)
+			{
+				meas.INCCAnalysisState = new INCCAnalysisState();
+				INCCSelector sel = new INCCSelector(meas.AcquireState.detector_id, meas.AcquireState.item_type);
+				AnalysisMethods am;
+				bool found = CentralizedState.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
+				if (found)
+				{
+					am.selector = sel; // gotta do this so that the equality operator is not incorrect
+					meas.INCCAnalysisState.Methods = am;
+				}
+				else
+					meas.INCCAnalysisState.Methods = new AnalysisMethods(sel);
+			} // else use what was there
+
+            meas.InitializeContext(clearCounterResults:false);
+            meas.PrepareINCCResults();
+
+			System.Collections.IEnumerator iter = meas.CountingAnalysisResults.GetATypedParameterEnumerator(typeof(Multiplicity));
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)iter.Current;
+                try
+                {
+ 					MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
+					if (mcr.AB.Unset)
+						LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(mkey, mcr); // works only if MaxBins is set
+					MeasOptionSelector mos = new MeasOptionSelector(meas.MeasOption, mkey);
+					INCCResult result = meas.INCCAnalysisState.Lookup(mos);
+					result.CopyFrom(mcr);
+				}
+                catch (Exception)
+                {
+                    //logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                }
+            }
+
+            // stratum look up, finds existing stratum by name
+			if (useCurCalibParams || meas.Stratum == null)
+			{ 
+				List<INCCDB.StratumDescriptor> sl = CentralizedState.App.DB.StrataList();
+				INCCDB.StratumDescriptor s = sl.Find(w => string.Compare(w.Desc.Name, meas.AcquireState.stratum_id.Name, true) == 0);
+				if (s == null)
+					meas.Stratum = new Stratum();
+				else
+					meas.Stratum = new Stratum(s.Stratum);
+			}
+            INCCResults.results_rec xres = new INCCResults.results_rec(meas);
+            meas.INCCAnalysisResults.TradResultsRec = xres;
+            CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
+
+        }
+
+		public static void BuildMeasurementMinimal(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo)
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    CentralizedState.App.DB.TestParameters.Get(),
+                                    GetCurrentNormParams(det),
+                                    GetCurrentBackgroundParams(det),
+                                    GetAcquireIsotopics(acq),
+                                    acq,
+                                    GetCurrentHVCalibrationParams(det));
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
+
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+
+            CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
+
+        }
+
 
         /// <summary>
         /// For a list-mode-only measurement with a multiplicity analyzer the detector SR params must match at least one of the multiplicity analyzer SR params
@@ -739,7 +839,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // hack: multmult just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, lame, shoud be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

@@ -1,7 +1,7 @@
 ﻿/*
-Copyright (c) 2014, Los Alamos National Security, LLC
+Copyright (c) 2016, Los Alamos National Security, LLC
 All rights reserved.
-Copyright 2014. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
+Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
 LLC for the U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this software.  
 NEITHER THE GOVERNMENT NOR LOS ALAMOS NATIONAL SECURITY, LLC MAKES ANY WARRANTY, EXPRESS OR IMPLIED, 
@@ -49,48 +49,48 @@ namespace NewUI
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.normalization;
-            this.Text += " for detector " + ah.det.Id.DetectorName;
+            Text += " for detector " + ah.det.Id.DetectorName;
             np = Integ.GetCurrentNormParams(ah.det);  // a copy
             // Populate the UI fields with values from the local AcquireParameters object
-            this.QCTestsCheckBox.Checked = ah.ap.qc_tests;
-            this.PrintResultsCheckBox.Checked = ah.ap.print;
-            this.CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
-            this.NumCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
-            this.CommentTextBox.Text = ah.ap.comment;
-            this.CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
-            this.MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
-            this.MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
-            this.MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
+            QCTestsCheckBox.Checked = ah.ap.qc_tests;
+            PrintResultsCheckBox.Checked = ah.ap.print;
+            CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
+            NumCyclesTextBox.Text = Format.Rend(ah.ap.num_runs);
+            CommentTextBox.Text = ah.ap.comment;
+            CountTimeTextBox.Text = Format.Rend(ah.ap.run_count_time);
+            MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
+            MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
+            MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
 
-            this.SourceId.Text = np.sourceId;
+            SourceId.Text = np.sourceId;
 
-            this.DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            DataSourceComboBox.Items.Clear();
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
             }
 
-            if (ah.ap.acquire_type == AnalysisDefs.AcquireConvergence.CycleCount)
+            if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
-                this.UseNumCyclesRadioButton.Checked = true;
+                UseNumCyclesRadioButton.Checked = true;
             }
-            else if (ah.ap.acquire_type == AnalysisDefs.AcquireConvergence.DoublesPrecision)
+            else if (ah.ap.acquire_type == AcquireConvergence.DoublesPrecision)
             {
-                this.UseDoublesRadioButton.Checked = true;
+                UseDoublesRadioButton.Checked = true;
             }
-            else if (ah.ap.acquire_type == AnalysisDefs.AcquireConvergence.TriplesPrecision)
+            else if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
             {
-                this.UseTriplesRadioButton.Checked = true;
+                UseTriplesRadioButton.Checked = true;
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
             SetHelp();
 
         }
         private void SetHelp()
         {
             ToolTip tip = new ToolTip();
-            String helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
+            string helpString = "Check to enable quality assurance tests. The QC tests\r\n" +
                 "used are accidentals/singles test,\r\nchecksum tests on raw shift register data " +
                 "and an outlier test using the calculated mass for each cycle.";
             tip.SetToolTip(this.QCTestsCheckBox, helpString);
@@ -162,19 +162,19 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
-            if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
+            if (ah.OKButton_Click(sender, e) == DialogResult.OK)
             {
                 //user can cancel in here during LM set-up, account for it.
-                this.Visible = false;
+                Visible = false;
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-                this.Close();
+                Close();
             }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
@@ -218,7 +218,7 @@ namespace NewUI
         private void SourceIdValueLabel_Click(object sender, EventArgs e)
         {
             // TODO:  WTF is this?   There's no widget in the UI, just a clickable label. 
-            // S'ok, just needed to be hiden and disabled
+            // S'ok, just needed to be hidden and disabled
         }
 
 		void EnableTermControls()
@@ -226,10 +226,21 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
-					CountTimeTextBox.Enabled = true;
+					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
+					if (ah.det.Id.SRType.CanDoTriples())
+					{
+						UseTriplesRadioButton.Enabled = true;
+					}
+					else
+					{
+						UseTriplesRadioButton.Enabled = false;
+						if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
+						{
+							ah.ap.acquire_type = AcquireConvergence.CycleCount;
+						}
+					}
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = true;
 					NumCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;

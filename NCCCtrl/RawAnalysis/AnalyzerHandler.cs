@@ -112,17 +112,21 @@ namespace LMRawAnalysis
         #endregion
 
 
+		void InitCounters()
+		{
+			numNeutronEventsReceived = 0;
+            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
+            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
+			numCircuits = 0;
+            timeOfLastNeutronEvent = 0;
+		}
         public AnalyzerHandler(double theTicSizeInSeconds, LMLoggers.LognLM logger)
         {
 
             TickSizeInSeconds = theTicSizeInSeconds;
             log = logger;
             verboseTrace = log.ShouldTrace(LogLevels.Verbose);
-            numNeutronEventsReceived = 0;
-            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0; accumuNumNeutronEventsCompleted = 0;
-          numCircuits = 0;
-            timeOfLastNeutronEvent = 0;
+			InitCounters();
 
 #if USE_SPINTIME
             ResetSpinTime();
@@ -1186,7 +1190,8 @@ namespace LMRawAnalysis
                 }
                 anEvent.next = nextEvent;  //re-close the linked list, pointing the last new event back to the next event in list
                 numEventsInCircularLinkedList += num;
-
+				endOfNeutronEventList = anEvent;
+				startOfNeutronEventList = theEventCircularLinkedList;
                 log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler extending CircularArraySize by " + num + " to "
                                                                                                     + numEventsInCircularLinkedList);
         }
@@ -1520,12 +1525,7 @@ namespace LMRawAnalysis
                 eventSpacingAnalyzers[i].ResetCompletely(closeCounters);
             }
 
-            numNeutronEventsReceived = 0;
-            numNeutronEventsReceivedWhetherProcessedOrNot = 0;
-            numNeutronEventsCompleted = 0;
-            numCircuits = 0;
-
-            timeOfLastNeutronEvent = 0;
+			InitCounters();
 
 #if USE_SPINTIME
             ResetSpinTime();
@@ -1581,9 +1581,9 @@ namespace LMRawAnalysis
         ///
         void InitializeEventList(int num)
         {
-			if (numEventsInCircularLinkedList == 0 || theEventCircularLinkedList == null)
+            AHGCCollect();
+            if (numEventsInCircularLinkedList == 0 || theEventCircularLinkedList == null)
 			{
-				//AHGCCollect(); 
 				//create stack of RawAnalysisProperties.circularListBlockIncrement neutron events, as a starting point
 				theEventCircularLinkedList = new NeutronEvent(0);  //make the first event in the list
 				startOfNeutronEventList = theEventCircularLinkedList;     //set pointer to start of list to this first event
@@ -1602,7 +1602,6 @@ namespace LMRawAnalysis
 			}
 			else if (numEventsInCircularLinkedList < num) // extend
 			{
-				//AHGCCollect(); 
 				ExtendListBy(num - numEventsInCircularLinkedList);
 			}
 			else if (numEventsInCircularLinkedList > num) // clear it, shrink it
@@ -1626,7 +1625,6 @@ namespace LMRawAnalysis
                                                              + numEventsInCircularLinkedList + " (remove " + (numEventsInCircularLinkedList - num) + ")");
 
 				numEventsInCircularLinkedList = num;
-				//AHGCCollect(); 
 			} 
 			else // same size just clear it
 			{
@@ -1637,17 +1635,16 @@ namespace LMRawAnalysis
 					ende.Set(i);
 					ende = ende.next;
 				}
-
 				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear same size " + numEventsInCircularLinkedList);
 			}
-
+            AHGCCollect();
         }
 
         /// <summary>
         /// Do a full GC.Collect, but only if the current allocated memory size exceeds a certain ceiling, 512Mb default)
         /// </summary>
         /// <param name="MbCeiling"></param>
-        void AHGCCollect(long MbCeiling = 512)
+        void AHGCCollect(long MbCeiling = 257)
         {
             long mem = GC.GetTotalMemory(false);
             log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);

@@ -124,13 +124,6 @@ namespace DB
             return db.Execute(s);
         }
 
-        //public bool Delete(string name, DateTimeOffset dt, string type)
-        //{
-        //    db.SetConnection();
-        //    long id = Lookup(name, dt, type);
-        //    string s = "DELETE FROM measurements where id=" + id.ToString();
-        //    return db.Execute(s);
-        //}
         /// <summary>
         /// Look up the measurement identified by name, measurement type and timestamp
         /// </summary>
@@ -164,6 +157,21 @@ namespace DB
             if (!string.IsNullOrEmpty(type))
                 s += " AND Type=" + SQLSpecific.QVal(type);
 
+            string r = db.Scalar(s);
+            long lr = -1;
+            if (!long.TryParse(r, out lr))
+                lr = -1;
+            return lr;
+        }
+
+		public long CountOf(string name, string type = "")
+        {
+            if (string.IsNullOrEmpty(name))
+                return 0;
+            db.SetConnection();
+            string s = "SELECT COUNT(*) FROM measurements WHERE detector_id=" + SQLSpecific.QVal(name);
+            if (!string.IsNullOrEmpty(type))
+                s += " AND Type=" + SQLSpecific.QVal(type);
             string r = db.Scalar(s);
             long lr = -1;
             if (!long.TryParse(r, out lr))
@@ -276,6 +284,22 @@ namespace DB
             db.SetConnection();
             string sSQL = "SELECT * FROM cycles Where mid=" + mid;
             return db.DT(sSQL);
+        }
+
+        public int GetCycleCount(long mid)
+        {
+            string sSQL = "SELECT COUNT(id) FROM cycles Where mid=" + mid;
+            db.CreateCommand(sSQL);
+            db.SetConnection();
+            return db.ScalarIntx();
+        }
+
+
+		public bool DeleteCycles(long mid)
+        {
+            db.SetConnection();
+            string sSQL = "DELETE FROM cycles Where mid=" + mid;
+            return db.Execute(sSQL);
         }
     }
 

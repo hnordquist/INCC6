@@ -117,7 +117,7 @@ namespace AnalysisDefs
                 case DetectorCalibration.GateLength:
                 case DetectorCalibration.DieAwayTime:
                 case DetectorCalibration.DTCoeffA:
-                    s += " uSec";
+                    s += " µSec";
                     break;
                 case DetectorCalibration.DTCoeffT:
                 case DetectorCalibration.DTCoeffC:
@@ -277,10 +277,19 @@ namespace AnalysisDefs
                         sec = DoAcrossForManyMults("Cycle moments (NNV)", typeof(ComputedMultiplicityIntermediates), true);
                         break;
                     case ReportSections.RawCycles:
-                        if (cycles.Count > 0 && cycles[0].DataSourceId.source.INCCTransferData()) // todo: when SR DAQ works, need to choose INCC here too, because SR returns Scaler data
+					{
+                        ConstructedSource src = ConstructedSource.Unknown;
+                        InstrType inst = InstrType.Unknown;
+                        if (cycles.Count > 0)
+                        {
+                            src = cycles[0].DataSourceId.source;
+                            inst = cycles[0].DataSourceId.SRType;
+                        }
+                        if (cycles.Count > 0 && src.MightHaveScalerData(inst)) // anything that might have Scaler data
                             sec = DoAcrossForManyMults("Cycle raw data", typeof(INCCCycles), true);
                         else
                             sec = DoAcrossForManyMults("Cycle raw data", typeof(RawCycles), true);
+					}
                         break;
                     case ReportSections.DTCRateCycles:
                         sec = DoAcrossForManyMults("Cycle DTC rate data", typeof(DTCRateCycles), true);
@@ -397,9 +406,9 @@ namespace AnalysisDefs
             if (meas.AcquireState.data_src == ConstructedSource.Live)
             {
                 if (meas.Detector.ListMode)
-                    s = "Live " + meas.Detector.Id.SRType.ToString() + " List Mode";
+                    s = "Live " + meas.Detector.Id.SRType.ToString() + ConstructedSourceExtensions.ListModeLiveName;
                 else
-					s = "Live " + meas.Detector.Id.SRType.ToString() + " Shift register";
+					s = "Live " + meas.Detector.Id.SRType.ToString() + ConstructedSource.Live.HappyFunName();
             }
             Row row = new Row();
             row.Add((int)MeasurementDetails.MeasType, meas.MeasOption.PrintName());
@@ -825,7 +834,7 @@ namespace AnalysisDefs
         {
             Row row = new Row();
             row.Add(0, c.seq.ToString());
-            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.HappyFunName());
+            row.Add((int)CycleSource.Source + 1, c.DataSourceId.source.NameForViewing(c.DataSourceId.SRType));
             row.Add((int)CycleSource.Identifier + 1, c.DataSourceId.Identifier());
             row.Add((int)CycleSource.DateTime + 1, c.DataSourceId.dt.ToString("MMM dd yyy HH:mm:ss.ff K")); // my favorite format
             return row;
@@ -854,7 +863,7 @@ namespace AnalysisDefs
         {
             OverallTime
         }
-        
+
         enum RateInterval  // as calculated in the analyzers
         {
             GateWidth, CompletedGates, OverallTime
@@ -1592,11 +1601,46 @@ namespace AnalysisDefs
             replines = t.lines;
         }
 
+        void StartReportContent(Measurement m)
+        {
+            PrepForReportGeneration(m, ' ');
+        }
+        public void GenerateInitialReportContent(Measurement m)
+        {
+            StartReportContent(m);
+            try
+            {
+                sections.Add(ConstructReportSection(ReportSections.DescriptiveSummary));
+                sections.Add(ConstructReportSection(ReportSections.MeasurementDetails));
+                sections.Add(ConstructReportSection(ReportSections.DetectorCalibration));
+
+                // --> !! trim
+                sections.RemoveAll(s => (s == null));
+
+                // copy all section rows to the report row list (t.rows)
+                int rowcount = 0;
+                foreach (Section sec in sections)
+                {
+                    rowcount += sec.Count;
+                }
+                Array.Resize(ref t.rows, rowcount);
+
+                int idx = 0;
+                foreach (Section sec in sections)
+                {
+                    Array.Copy(sec.ToArray(), 0, t.rows, idx, sec.Count); idx += sec.Count;
+                }
+            }
+            catch (Exception e)
+            {
+                ctrllog.TraceException(e);
+            }
+
+            t.CreateReport(0);
+            replines = t.lines;
+
+        }
     }
-
-
-
-
 
 }
 

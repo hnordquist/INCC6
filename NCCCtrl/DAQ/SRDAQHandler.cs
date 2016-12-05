@@ -428,7 +428,7 @@ namespace DAQ
                     }
                     catch (OperationCanceledException)
                     {
-                        //next: Should this do something.  It is being thrown, but no action hn 9/23/2014
+                        //NEXT: Should this do something.  It is being thrown, but no action hn 9/23/2014
                     }
                     if (CancellationRequested(srct))
                     {
@@ -797,7 +797,7 @@ namespace DAQ
                 (double)tds.acquire_num_runs;
 
             /* setup COM timeout equal to count time (if JSR-11 use 1 second) */
-            if (detector.Id.SRType != InstrType.JSR11) // URGENT: verify the recent logic switch made to match the commment
+            if (detector.Id.SRType != InstrType.JSR11)
                 SRLib.Set_timeout(ref tds.timeout, meas.AcquireState.run_count_time);  
             else
                 SRLib.Set_timeout(ref tds.timeout, 1.0);
@@ -983,9 +983,9 @@ namespace DAQ
                 mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i]; 
                 mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
             }
-            mcr.RASum = run.run_reals_plus_acc; // JFL the cycle summary processing accumulates these sums later in the pipline
+            mcr.RASum = run.run_reals_plus_acc;
             mcr.ASum = run.run_acc;
-            mcr.AB.Resize((int)mcr.MaxBins); // JFL also happens during transferintermediates
+            mcr.AB.Resize((int)mcr.MaxBins);
         }
 
 
@@ -1056,10 +1056,10 @@ namespace DAQ
     }
 
 
-    /// <summary>
-    /// the take_data state, all in one place
-    /// </summary>
-    public class TDState
+	/// <summary>
+	/// the take_data state, all in one place
+	/// </summary>
+	public class TDState
     {
         public TDState(UInt16 acquire_num_runs)
         {

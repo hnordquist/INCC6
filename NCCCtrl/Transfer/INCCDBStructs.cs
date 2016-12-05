@@ -178,6 +178,11 @@ namespace NCCTransfer
             return doubles;
         }
 
+		static unsafe public void Copy(ref double[] doubles, double* ptr, int len)
+        {
+            Marshal.Copy(new IntPtr(ptr), doubles, 0, len);
+        }
+
         static unsafe public bool[] Copy(int* ptr, int len)
         {
 
@@ -205,11 +210,11 @@ namespace NCCTransfer
             }
             // i is new len
 
-            ulong[] longs = new ulong[i + 1];
+            ulong[] ulongs = new ulong[i + 1];
             for (int j = 0; j <= i; j++)
-                longs[j] = (ulong)ptr[j];
+                ulongs[j] = (ulong)ptr[j];
 
-            return longs;
+            return ulongs;
         }
 
         static unsafe public string str(byte* ptr, int len)
@@ -1116,10 +1121,10 @@ namespace NCCTransfer
         public const int IDC_BIAS_COLLAR = 1688; // Collar normalization test
         public const int IDC_BIAS_CF252_SINGLES = 1690; //"Use Cf252 source singles rate for normalization test",
 
-        // Joe added this yet another multi array size (see also SRWrapdoth)
+        // added this yet another multi array size
         /* SR Limits */
         public const int SR_MAX_MULT = 256;	/* Maximum number of multiplicity channels */
-        public const int SR_EX_MAX_MULT = SR_MAX_MULT * 2; /*size of multiplicity arrays for the JSR-15 and 16(?) */
+        public const int SR_EX_MAX_MULT = SR_MAX_MULT * 2; /*size of multiplicity arrays for the JSR-15 and future LANL products */
 
         /* ASS stuff */
         public const int IDC_NONE = 1471;

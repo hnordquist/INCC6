@@ -25,21 +25,23 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Windows.Forms;
 using AnalysisDefs;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 namespace NewUI
 {
     using Integ = NCC.IntegrationHelpers;
- 	using N = NCC.CentralizedState;
-   public partial class IDDReviewPrecision : Form
+    using N = NCC.CentralizedState;
+    public partial class IDDReviewPrecision : Form
     {
         public IDDReviewPrecision()
         {
             InitializeComponent();
 			Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
 			FieldFiller();
-			this.Text += " for Detector " + det.Id.DetectorId;
+			Text += " for Detector " + det.Id.DetectorId;
+            DisplayResultsInTextRadioButton.Checked = true;
 		}
         AcquireParameters acq;
 		Detector det;
@@ -53,7 +55,18 @@ namespace NewUI
             SummedMultiplicityDistributionsCheckBox.Checked = acq.review.SummedMultiplicityDistributions;
             IndividualCycleMultiplicityDistributionsCheckBox.Checked = acq.review.MultiplicityDistributions;
         }
-		void SaveAcquireState()
+        void FieldEnabler()
+        {
+            bool enable = DisplayResultsInTextRadioButton.Checked;
+            PrintTextCheckBox.Enabled = enable;
+            DetectorParametersCheckBox.Enabled = enable;
+            IndividualCycleRawDataCheckBox.Enabled = enable;
+            IndividualCycleRateDataCheckBox.Enabled = enable;
+            SummedRawCoincidenceDataCheckBox.Enabled = enable;
+            SummedMultiplicityDistributionsCheckBox.Enabled = enable;
+            IndividualCycleMultiplicityDistributionsCheckBox.Enabled = enable;
+        }
+        void SaveAcquireState()
 		{
 			acq.review.DetectorParameters = DetectorParametersCheckBox.Checked;
 			acq.review.RawCycleData = IndividualCycleRawDataCheckBox.Checked;
@@ -66,22 +79,32 @@ namespace NewUI
 		}
 		private void OKBtn_Click(object sender, EventArgs e)
         {
+            SaveAcquireState();
             IDDMeasurementList measlist = new IDDMeasurementList(
                 AssaySelector.MeasurementOption.precision,
                 alltypes: false, goal: IDDMeasurementList.EndGoal.Report, detector: det);
+            measlist.TextReport = DisplayResultsInTextRadioButton.Checked;
+            measlist.Sections = acq.review;
             if (measlist.bGood)
                 measlist.ShowDialog();
-			SaveAcquireState();
+            if (!DisplayResultsInTextRadioButton.Checked)
+            {
+                List<Measurement> mlist = measlist.GetSelectedMeas();
+                foreach (Measurement m in mlist)
+                {
+                    new PlotSDTChart(m).Show();
+                }
+            }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
+            Help.ShowHelp(null, ".\\inccuser.chm"/*, HelpNavigator.Topic, "/WordDocuments/selectpu240ecoefficients.htm"*/);
         }
 
         private void IDDReviewPrecision_Load(object sender, EventArgs e)
@@ -130,16 +153,15 @@ namespace NewUI
         {
 			acq.print = ((CheckBox)sender).Checked;
         }
-        private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void PlotSinglesDoublesTriplesRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-
+            FieldEnabler();
         }
 
-
+        private void DisplayResultsInTextRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            FieldEnabler();
+        }
     }
 }

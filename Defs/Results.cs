@@ -43,7 +43,7 @@ namespace AnalysisDefs
         Checksum2 = 0x020, 	/* test2 shift register reals + accidentals v. sum of i * multiplicity reals + accidentals */
         Checksum3 = 0x040, 	/* test3 shift register accidentals vs. sum of i * multiplicity accidentals */
         HighVoltageFail = 0x080,
-        Empty = 0x100 // Joe's "no time on cycle" "empty cycle" status
+        Empty = 0x100 // "no time on cycle" "empty cycle" status
     };
 
     public static class QCTestStatusExtensions
@@ -893,12 +893,10 @@ namespace AnalysisDefs
         {
             if (src == null)
                 return;
-            if (src.α.Length < α.Length)  // shouldn't happen but it does,
-                // I've seen a case where a cycle has one less alpha/beta entry than previous cycles,
-                // but since ab is an identical copy each time (alpha beta does not change per cycle,
-                // (it is a constant flowing from the SR params), I can make this hack conditional guard here
-                //hn -- This does happen.  When we get > 128 bins, this needs to be resized!!!  Other consequences? 10-23-2014
-                return;
+
+			// the point of all this resizing across each cycle and during the summary steps was to avoid max bin allocations and the extra tracking of the actual indices, it's become bug spawing feature instead, jimbo.
+            //if (src.α.Length < α.Length)
+            //    new object();
 
             int amax = Math.Max(α.Length, src.α.Length);
             int amin = Math.Min(α.Length, src.α.Length);
@@ -915,11 +913,11 @@ namespace AnalysisDefs
             {
                 β[i] = src.β[i];
             }
-            for (int i = amin; i < amax; i++)
+            for (int i = amin; i < amax && i < src.α.Length; i++)
             {
                 α[i] = src.α[i];
             }
-            for (int i = bmin; i < bmax; i++)
+            for (int i = bmin; i < bmax && i < src.β.Length; i++)
             {
                 β[i] = src.β[i];
             }
@@ -1328,6 +1326,8 @@ namespace AnalysisDefs
             Array.Resize(ref UnAMult, src.UnAMult.Length);
             Array.Resize(ref NormedAMult, src.NormedAMult.Length);
             Array.Resize(ref covariance_matrix, src.covariance_matrix.Length);
+			MinBins = src.MinBins;
+			MaxBins = src.MaxBins;
         }
         public MultiplicityCountingRes(FAType FA, int i)
         {
@@ -1394,9 +1394,9 @@ namespace AnalysisDefs
             scaler1 = new VTuple(src.scaler1);
             scaler2 = new VTuple(src.scaler2);
 
-            this.multiAlpha = src.multiAlpha;
-            this.mass = src.mass;
-            this.efficiency = src.efficiency;
+            multiAlpha = src.multiAlpha;
+            mass = src.mass;
+            efficiency = src.efficiency;
 
             TS = new TimeSpan(src.TS.Ticks);
 
@@ -1445,10 +1445,9 @@ namespace AnalysisDefs
             }
 
             maxBins = Math.Max(mr.maxRABin + 1, mr.maxABin + 1);
-            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);
+            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);  
 
-
-            ComputeSums();
+            ComputeHitSums();
 
             αβ = new AlphaBeta(mr.alpha, mr.beta);
 
@@ -1463,7 +1462,7 @@ namespace AnalysisDefs
 
         }
 
-        public void ComputeSums()
+        public void ComputeHitSums()
         {
             double res = 0;
             //According to Martyn, these are "hits", not sums.  hn 5.13.2015
@@ -1626,16 +1625,21 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("acc_sum", ASum));
             ps.Add(new DBParamEntry("mult_reals_plus_acc_sum", RAMult));
             ps.Add(new DBParamEntry("mult_acc_sum", NormedAMult));
-            ps.AddRange(DBParamList.TuplePair("singles", DeadtimeCorrectedRates.Singles));
-            ps.AddRange(DBParamList.TuplePair("doubles", DeadtimeCorrectedRates.Doubles));
-            ps.AddRange(DBParamList.TuplePair("triples", DeadtimeCorrectedRates.Triples));
-            ps.AddRange(DBParamList.TuplePair("scaler1", Scaler1));
-            ps.AddRange(DBParamList.TuplePair("scaler2", Scaler2));
-            ps.AddRange(DBParamList.TuplePair("uncorrected_doubles", RawDoublesRate));
+            ps.AddRange(TuplePair("singles", DeadtimeCorrectedRates.Singles));
+            ps.AddRange(TuplePair("doubles", DeadtimeCorrectedRates.Doubles));
+            ps.AddRange(TuplePair("triples", DeadtimeCorrectedRates.Triples));
+            ps.AddRange(TuplePair("scaler1", Scaler1));
+            ps.AddRange(TuplePair("scaler2", Scaler2));
+            ps.AddRange(TuplePair("uncorrected_doubles", RawDoublesRate));
             ps.Add(new DBParamEntry("singles_multi", singles_multi)); 
             ps.Add(new DBParamEntry("doubles_multi", doubles_multi)); 
             ps.Add(new DBParamEntry("triples_multi", triples_multi)); 
             ps.Add(new DBParamEntry("declared_mass", Mass));
+			{	// la super hack-a-whack
+				DB.DB db = new DB.DB(true);
+				if (db.TableHasColumn(Table,"mult_acc_un_sum"))
+					ps.Add(new DBParamEntry("mult_acc_un_sum", UnAMult));
+			}
         }
 
         public List<DBParamEntry> MoreForResults()
@@ -1782,6 +1786,34 @@ namespace AnalysisDefs
                 }
                 else
                     return null;
+            }
+        }
+
+        public SpecificCountingAnalyzerParams GetFirstMultiplicityOrFirstLMKey
+        {
+            get
+            {
+                if (HasMultiplicity)
+                {
+                    object pdair;
+                    System.Collections.IEnumerator ide = GetMultiplicityEnumerator();
+                    if (ide.MoveNext())
+                    {
+                        pdair = ide.Current;
+                        return (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)pdair).Key;
+                    }
+                }
+                else
+                {
+                    object pair;
+                    System.Collections.IEnumerator ie = GetEnumerator();
+                    if (ie.MoveNext())
+                    {
+                        pair = ie.Current;
+                        return ((KeyValuePair < SpecificCountingAnalyzerParams, object> )pair).Key;
+                    }
+                }
+                return null;
             }
         }
 

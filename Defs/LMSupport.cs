@@ -200,7 +200,7 @@ namespace LMRawAnalysis
                 numRealPlusAccidentalGates += pair.Value;
             }
 
-            // compute the normalization param and recompute the unnormalizaed array from this one (code does not seem to work JFL)
+            // if normed distro presented, compute the normalization param and recompute the unnormalized array from it (JFL but does not seem to work)
             if (normedAccidentalsHistogram != null)
             {
                 for (int i = 0; i < normedAccidentalsHistogram.Length; i++)
@@ -741,6 +741,12 @@ namespace LMRawAnalysis
             return (answer);
         }
 
+		public static void SetAlphaBeta(Multiplicity mkey, MultiplicityCountingRes mcr)
+		{
+			ABKey abkey = new ABKey(mkey, mcr);
+			SetAlphaBeta(abkey, mcr.AB);
+		}
+
 		/// <summary>
 		/// Calc alpha beta, save result in cache
 		/// NEXT: extend with Numerics.BigInteger replacing BigFloat, as per above (for when phi is non-zero)
@@ -775,8 +781,10 @@ namespace LMRawAnalysis
 			{
 				uint biggestKey = key.bins - 1;
 				AB.Init((int)key.bins);
+                if (biggestKey <= 1)
+                    goto cache;
 
-				double gateInSeconds = key.gateWidthTics * 1e-7;
+                double gateInSeconds = key.gateWidthTics * 1e-7;
 				double phi = (key.deadTimeCoefficientTinNanoSecs / 1E9) / gateInSeconds;
 
 				AB.α[0] = 0.0;
@@ -829,7 +837,7 @@ namespace LMRawAnalysis
 					}
 				}
 			}
-			AlphaBetaCache.AddAlphaBeta(key, AB);
+cache:		AlphaBetaCache.AddAlphaBeta(key, AB);
 		}
 
 	}

@@ -50,17 +50,26 @@ namespace NewUI
             ToolTip mustSelect = new ToolTip();
             mustSelect.SetToolTip(StratumIdComboBox, "You must select an existing stratum.");
             mustSelect.SetToolTip(MaterialTypeComboBox, "You must select an existing material type.");
+            Pu240eCoeffBtn.Enabled = !string.IsNullOrEmpty(NC.App.Config.VersionBranchString);
         }
 
         private void FieldFillerOnItemId()
         {
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
             StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
             DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");  
         }
+
+		private void MaterialTypeComboBox_SelectedItem()
+		{
+			if (NC.App.DB.Materials.Has(ah.ap.item_type))  // avoid case-insensitive mis-match by using the Name in the Materials list against that from the DB Acquire instance
+			{
+				INCCDB.Descriptor d = NC.App.DB.Materials.Get(ah.ap.item_type);
+				MaterialTypeComboBox.SelectedItem = d.Name;
+			}
+		}
 
         private void FieldFiller()
         {
@@ -111,11 +120,11 @@ namespace NewUI
             }
 
             DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
                 {
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
                 }
             }
 
@@ -136,9 +145,9 @@ namespace NewUI
             {
                 UsePu240eRadioButton.Checked = true;
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
+			MaterialTypeComboBox_SelectedItem();
+			StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
             MBAComboBox.SelectedItem = ah.ap.mba;
             InventoryChangeCodeComboBox.SelectedItem = ah.ap.inventory_change_code;
             IOCodeComboBox.SelectedItem = ah.ap.io_code;
@@ -293,7 +302,6 @@ namespace NewUI
 				{
 					Visible = false;
 					// Add strata update to measurement object.    HN 9.23.2015              
-					//user can cancel in here during LM set-up, account for it.
 					UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
 					UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
 					Close();
@@ -404,24 +412,27 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
+					if (ah.det.Id.SRType.CanDoTriples())
+					{
+						UseTriplesRadioButton.Enabled = true;
+						UsePu240eRadioButton.Enabled = ((am != null) && (am.HasMethod(AnalysisMethod.Multiplicity) || am.HasMethod(AnalysisMethod.AddASource)));
+					}
+					else
+					{
+						UseTriplesRadioButton.Enabled = false;
+						UsePu240eRadioButton.Enabled = false;
+						if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision || ah.ap.acquire_type == AcquireConvergence.Pu240EffPrecision)
+						{
+							ah.ap.acquire_type = AcquireConvergence.CycleCount;
+						}
+					}
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = false;
-					UsePu240eRadioButton.Enabled = false;
 					NumPassiveCyclesTextBox.Enabled = ah.CycleCount;
+					NumActiveCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
 					MaxNumCyclesTextBox.Enabled = !ah.CycleCount;
-					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
-					if (ah.det.Id.SRType == InstrType.PSR || ah.det.Id.SRType == InstrType.AMSR || ah.det.Id.SRType == InstrType.MSR4A || ah.det.ListMode)
-					{
-						UseTriplesRadioButton.Enabled = true;
-						if ( (am != null) && am.HasMethod(AnalysisMethod.Multiplicity))
-						{
-							UsePu240eRadioButton.Enabled = true;
-						}
-					}
-
 					break;
 				default:
 					CountTimeTextBox.Enabled = false;
@@ -429,7 +440,6 @@ namespace NewUI
 					UseDoublesRadioButton.Enabled = false;
 					UseTriplesRadioButton.Enabled = false;
 					UsePu240eRadioButton.Enabled = false;
-
 					MeasPrecisionTextBox.Enabled = false;
 					MinNumCyclesTextBox.Enabled = false;
 					MaxNumCyclesTextBox.Enabled = false;

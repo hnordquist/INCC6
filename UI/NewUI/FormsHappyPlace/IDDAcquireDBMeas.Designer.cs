@@ -34,12 +34,13 @@
             this.HelpBtn = new System.Windows.Forms.Button();
             this.MeasurementDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.ItemId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.MeasOption = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.StratumId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ItemId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DateTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Filename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.MeasOption = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Comment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.CycleCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // MeasurementDateTimeLabel
@@ -98,54 +99,52 @@
             this.ItemId,
             this.DateTime,
             this.Filename,
+            this.CycleCount,
             this.Comment});
             this.listView1.FullRowSelect = true;
             this.listView1.Location = new System.Drawing.Point(12, 48);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
+            this.listView1.ShowItemToolTips = true;
             this.listView1.Size = new System.Drawing.Size(604, 418);
             this.listView1.TabIndex = 13;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
-
             // 
             // MeasOption
             // 
-            this.MeasOption.DisplayIndex = 0;
             this.MeasOption.Text = "Meas Option";
             this.MeasOption.Width = 87;
             // 
             // StratumId
             // 
-            this.StratumId.DisplayIndex = 1;
             this.StratumId.Text = "Stratum id";
             this.StratumId.Width = 68;
             // 
             // ItemId
             // 
-            this.ItemId.DisplayIndex = 2;
             this.ItemId.Text = "Item id";
             this.ItemId.Width = 69;
             // 
             // DateTime
             // 
-            this.DateTime.DisplayIndex = 3;
             this.DateTime.Text = "Date and Time";
             this.DateTime.Width = 104;
             // 
             // Filename
             // 
-            this.Filename.DisplayIndex = 4;
             this.Filename.Text = "Filename";
             this.Filename.Width = 110;
-
             // 
             // Comment
             // 
-            this.Comment.DisplayIndex = 5;
             this.Comment.Text = "Comment";
-            this.Comment.Width = 170;
+            this.Comment.Width = 150;
+            // 
+            // CycleCount
+            // 
+            this.CycleCount.Text = "Cycles";
+            this.CycleCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // IDDAcquireDBMeas
             // 
@@ -180,5 +179,6 @@
         private System.Windows.Forms.ColumnHeader Filename;
         private System.Windows.Forms.ColumnHeader MeasOption;
         private System.Windows.Forms.ColumnHeader Comment;
+        private System.Windows.Forms.ColumnHeader CycleCount;
     }
 }

@@ -43,9 +43,7 @@ namespace DetectorDefs
         /* LM */
         NPOD, LMMM, LMI = LMMM, PTR32, MCA527,
         /* Simulated */
-        MCNPX, N1,
-        /* Emulation */
-        Thrift, Smart, DolceVita // three types of emulator
+        MCNPX, N1
     };  // note: only LMI used for older N-1 data, now the files say "LMMM" and we also find an occasional NPOD
 
     public static class InstrTypeExtensions
@@ -55,13 +53,13 @@ namespace DetectorDefs
             return itype >= InstrType.AMSR;
         }
 
-        public static AnalysisDefs.FAType DefaultFAFor(this InstrType itype)
+        public static FAType DefaultFAFor(this InstrType itype)
         {
-            return itype >= InstrType.AMSR ? AnalysisDefs.FAType.FAOn : AnalysisDefs.FAType.FAOff;
+            return itype >= InstrType.AMSR ? FAType.FAOn : FAType.FAOff;
         }
 
         /// <summary>
-        /// orignally matched only on DGSR and AMSR, added HHMR/JSR15 and UNAP
+        /// originally matched only on DGSR and AMSR, added HHMR/JSR15 and UNAP (potentially an issue if JSR15 is not using fast acc)
         /// </summary>
         /// <param name="itype"></param>
         /// <returns></returns>
@@ -114,13 +112,18 @@ namespace DetectorDefs
             return itype < InstrType.NPOD && itype >= InstrType.JSR15;
         }
 
+		public static bool CanDoTriples(this InstrType itype)
+		{
+            return itype >= InstrType.MSR4A;
+		}
+
         /// INCC5 merges every known SR type into a short list of 6, to match sr lib
         /// This function adds the JSR-15 to the list
         /// MSR4 or 2150, JSR-11, JSR-12, PSR or ISR, DGSR, AMSR, JSR-15
         /// MSR4          JSR11   JSR12   PSR         DGSR  AMSR   JSR15
         public static string INCC5ComboBoxString(this InstrType itype)
         {
-            string s = String.Empty;
+            string s = string.Empty;
             switch (itype)
             {
                 case InstrType.MSR4A:
@@ -148,7 +151,7 @@ namespace DetectorDefs
         public static InstrType INCC5ComboBoxStringToType(string s)
         {
             InstrType i = InstrType.JSR15;
-            if (!System.Enum.TryParse<InstrType>(s, out i))
+            if (!Enum.TryParse(s, out i))
             {
                 if (s.CompareTo(INCC5ComboBoxString(InstrType.JSR12)) == 0)
                     i = InstrType.JSR12;
@@ -172,8 +175,8 @@ namespace DetectorDefs
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
-        INCCTransferCopy, INCCTransfer, Æther
-    };  //INCC transfer and room for more
+        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
+    };  // sources of data: file, DAQ, DB
 
 
 
@@ -198,6 +201,11 @@ namespace DetectorDefs
         public static bool SRDAQ(this ConstructedSource src, InstrType device)
         {
             return ((src == ConstructedSource.Live) && (device <= InstrType.UNAP)); // it is a Live SR DAQ
+        }
+		public static bool MightHaveScalerData(this ConstructedSource src, InstrType device)		
+        {
+            return (device <= InstrType.UNAP) && 
+					(src.INCC5FileData() || src.INCCTransferData() || src == ConstructedSource.Reanalysis);
         }
         /// <summary>
         ///  if this combination of data source and specific device point to a virtual SR return true o.w. false
@@ -266,13 +274,25 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransfer, "Transfer");
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
-                PrettyName.Add(ConstructedSource.Æther, "Reanalysis");
+                PrettyName.Add(ConstructedSource.Reanalysis, "Reanalysis");
             }
 		}
 
         public static string HappyFunName(this ConstructedSource src)
         {
             return PrettyName[src];
+        }
+
+		public static string ListModeLiveName =  "List mode device";
+
+		public static string NameForViewing(this ConstructedSource src, InstrType device)
+        {
+			if (device.IsListMode() && src.Live())
+			{
+				return ListModeLiveName;
+			}
+			else
+				return PrettyName[src];
         }
 
         public static ConstructedSource SrcToEnum(this string src)
@@ -282,6 +302,10 @@ namespace DetectorDefs
                 if (pair.Value.Equals(src))
                     return pair.Key;
             }
+			if (string.Compare(ListModeLiveName, src, true) == 0)
+			{
+				return ConstructedSource.Live;
+			}
             return ConstructedSource.Unknown;
         }
 
@@ -301,7 +325,7 @@ namespace DetectorDefs
     {
         public ConnectionInfo()
         {
-            Port = String.Empty;
+            Port = string.Empty;
             Wait = 500;
             Baud = 9600;
         }
@@ -309,13 +333,13 @@ namespace DetectorDefs
         {
             if (src != null)
             {
-                Port = String.Copy(src.Port);
+                Port = string.Copy(src.Port);
                 Wait = src.Wait;
                 Baud = src.Baud;
             }
             else
             {
-                Port = String.Empty;
+                Port = string.Empty;
                 Wait = 500;
                 Baud = 9600;
             }
@@ -325,12 +349,12 @@ namespace DetectorDefs
         /// <summary>
         /// millisecond protocol delay value, 500 default
         /// </summary>
-        public Int32 Wait { set; get; }
+        public int Wait { set; get; }
 
         /// <summary>
         /// Baud rate for current Shift Register instrument, 9600 for the old and true, whatever for the new and lame
         /// </summary>
-        public Int32 Baud { set; get; }
+        public int Baud { set; get; }
 
         public bool Equals(ConnectionInfo other)
         {
@@ -393,7 +417,7 @@ namespace DetectorDefs
                 NetComm = new LMMMNetComm();
                 DeviceConfig = new LMMMConfig();
             }
-            base.Wait = NetComm.Wait;
+            Wait = NetComm.Wait;
         }
 
         public bool Equals(LMConnectionInfo other)
@@ -443,7 +467,7 @@ namespace DetectorDefs
         }
         public void SetSRType(string v)
         {
-            bool b = System.Enum.TryParse(v, out srtype);
+            bool b = Enum.TryParse(v, out srtype);
             if (!b) srtype = InstrType.AMSR;
         }
 
@@ -481,7 +505,7 @@ namespace DetectorDefs
         /// </summary>
         public int SerialPort
         {
-            get { int p = 0; Int32.TryParse(conninfo.Port, out p); return p; }
+            get { int p = 0; int.TryParse(conninfo.Port, out p); return p; }
             set { conninfo.Port = value.ToString(); }
         }
         public int BaudRate
@@ -509,7 +533,7 @@ namespace DetectorDefs
 			switch (source)
 			{
 			case ConstructedSource.Live:
-				l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+				l = iname + "-" + srtype.ToString() + (string.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
 				break;
 			case ConstructedSource.NCDFile:
 			case ConstructedSource.SortedPulseTextFile:
@@ -534,7 +558,7 @@ namespace DetectorDefs
 			case ConstructedSource.Manual:
 				l = "Manual";
 				break;
-			case ConstructedSource.Æther:
+			case ConstructedSource.Reanalysis:
 				l += (" " + source.HappyFunName());
 				break;
 			}
@@ -547,7 +571,7 @@ namespace DetectorDefs
 				switch (source)
 				{
 				case ConstructedSource.Live:
-					l = iname + "-" + srtype.ToString() + (String.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
+					l = iname + "-" + srtype.ToString() + (string.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
 					break;
 				case ConstructedSource.NCDFile:
 				case ConstructedSource.SortedPulseTextFile:
@@ -573,7 +597,7 @@ namespace DetectorDefs
 				case ConstructedSource.Manual:
 					l = "Manual";
 					break;
-				case ConstructedSource.Æther:
+				case ConstructedSource.Reanalysis:
 					l += (" " + source.HappyFunName());
 					break;
 
@@ -582,27 +606,27 @@ namespace DetectorDefs
 		}
 		public DataSourceIdentifier()
         {
-            iname = String.Empty;
-            elecid = String.Empty;
-            filename = String.Empty;
-            type = String.Empty;
-            desc = String.Empty;
+            iname = string.Empty;
+            elecid = string.Empty;
+            filename = string.Empty;
+            type = string.Empty;
+            desc = string.Empty;
             conninfo = new ConnectionInfo();
-            dt = System.DateTimeOffset.Now;
+            dt = DateTimeOffset.Now;
         }
         public DataSourceIdentifier(DataSourceIdentifier dsid)
         {
-            iname = String.Copy(dsid.iname);
+            iname = string.Copy(dsid.iname);
             srtype = dsid.srtype;
             version = dsid.version;
-            elecid = String.Copy(dsid.elecid);
-            filename = String.Copy(dsid.filename);
+            elecid = string.Copy(dsid.elecid);
+            filename = string.Copy(dsid.filename);
             dt = new DateTimeOffset(dsid.dt.Ticks, dsid.dt.Offset);
             source = dsid.source;
-            desc = String.Copy(dsid.desc);
-            type = String.Copy(dsid.type);
+            desc = string.Copy(dsid.desc);
+            type = string.Copy(dsid.type);
 
-            System.Type t = dsid.conninfo.GetType();
+            Type t = dsid.conninfo.GetType();
             ConstructorInfo ci = t.GetConstructor(new Type[] { t });
             conninfo = (ConnectionInfo)ci.Invoke(new object[] { dsid.conninfo });
 
@@ -610,23 +634,23 @@ namespace DetectorDefs
 
         public void SetIdDetails(string name, string elec, string typedesc, InstrType rtype)
         {
-            DetectorId = String.Copy(name); 
-            ElectronicsId = String.Copy(elec); 
-            Type = String.Copy(typedesc);
+            DetectorId = string.Copy(name); 
+            ElectronicsId = string.Copy(elec); 
+            Type = string.Copy(typedesc);
             SRType = rtype;
         }
 
         // strong equality, maybe too strong
         public bool Equals(DataSourceIdentifier other)
         {
-            if (other as Object != null &&
-                this.iname.Equals(other.iname)
-                & this.srtype.Equals(other.srtype)
-                & this.elecid.Equals(other.elecid)
-                & this.filename.Equals(other.filename)
-                & this.type.Equals(other.type)
-                & this.dt.Equals(other.dt) // dev note: time may not be the same due to in-memory creation compared with fossilized definitions from DB
-                & this.conninfo.Equals(other.conninfo))
+            if (other as object != null &&
+                iname.Equals(other.iname)
+                & srtype.Equals(other.srtype)
+                & elecid.Equals(other.elecid)
+                & filename.Equals(other.filename)
+                & type.Equals(other.type)
+                & dt.Equals(other.dt) // dev note: time may not be the same due to in-memory creation compared with fossilized definitions from DB
+                & conninfo.Equals(other.conninfo))
             {
                 return true;
             }
@@ -638,9 +662,9 @@ namespace DetectorDefs
 
         public static bool operator ==(DataSourceIdentifier d1, DataSourceIdentifier d2)
         {
-            if (d1 as Object == null)
+            if (d1 as object == null)
             {
-                if (d2 as Object == null)
+                if (d2 as object == null)
                     return true;
                 else
                     return d2.Equals(null);
@@ -654,7 +678,7 @@ namespace DetectorDefs
             return (!d1.Equals(d2));
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             if (obj == null) return base.Equals(obj);
 
@@ -705,12 +729,12 @@ namespace DetectorDefs
         public override void GenParamList()
         {
             base.GenParamList();
-            this.Table = "detectors";
-            this.ps.Add(new DBParamEntry("detector_name", DetectorName));
-            this.ps.Add(new DBParamEntry("electronics_id", ElectronicsId));
-            this.ps.Add(new DBParamEntry("detector_type_freeform", Type));
-            this.ps.Add(new DBParamEntry("detector_type_id", (Int32)SRType));
-            this.ps.Add(new DBParamEntry("detector_alias", Identifier()));
+            Table = "detectors";
+            ps.Add(new DBParamEntry("detector_name", DetectorName));
+            ps.Add(new DBParamEntry("electronics_id", ElectronicsId));
+            ps.Add(new DBParamEntry("detector_type_freeform", Type));
+            ps.Add(new DBParamEntry("detector_type_id", (int)SRType));
+            ps.Add(new DBParamEntry("detector_alias", Identifier()));
         }
 
         public DBParamEntry NewForINCC6Params

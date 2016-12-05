@@ -68,7 +68,7 @@ namespace AnalysisDefs
                     }
                     else
                     {
-                        // exit processing completely, do not compute  or save results
+                        // exit processing completely, do not compute or save results
                         NC.App.Opstate.Abort();
                     }
                 }
@@ -161,6 +161,18 @@ namespace AnalysisDefs
             }
         }
 
+		public static void SetQCStatus(this Measurement meas, Cycle cycle)
+		{
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
+                cycle.SetQCStatus(mkey, QCTestStatus.Pass, cycle.HighVoltage);  // prep for analyis one by one
+			}
+
+		}
+
          //<summary>
          //This is a tentative summary over all cycles of the first stage counting results
          //Any simple sums/averages are finished here after the per-cycle Accumulate methods are used to accumulate the sums
@@ -171,7 +183,7 @@ namespace AnalysisDefs
             if (NC.App.Opstate.IsAbortRequested)
                 return;
 
-            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);
+            uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // APluralityOfMultiplicityAnalyzers: this may need to summarize across analyzers, as well as the single value on the measurement
 			if (meas.Cycles.Count < 1)  // nothing can be done
 				return;
 			if (validMultCyclesCount == 0 && !meas.HasReportableData) // nothing can be done
@@ -183,7 +195,7 @@ namespace AnalysisDefs
                 {
                     ulong maxbins = 0; ulong minbins = 0;
                     MultiplicityCountingRes mcr = (MultiplicityCountingRes)pair.Value;
-                    Object obj; MultiplicityCountingRes ccm;
+                    object obj; MultiplicityCountingRes ccm;
                     foreach (Cycle cc in meas.Cycles)
                     {
                         bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
@@ -200,22 +212,22 @@ namespace AnalysisDefs
                     Array.Resize(ref mcr.UnAMult, (int)mcr.MaxBins);
                     mcr.AB.Resize((int)mcr.MaxBins);
 
-					// do the scaler summaries here since they are not done in CalcAvgsAndSums
 					double denom = 0.0;
-					foreach (Cycle cc in meas.Cycles)
-                    {
-						if (!cc.QCStatusValid((Multiplicity)pair.Key))
-							continue;
-                        bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
-                        if (!there)
-                            continue;
-                        ccm = (MultiplicityCountingRes)obj;
+                    if (mcr.S1Sum == 0 && mcr.S2Sum == 0)
+					    foreach (Cycle cc in meas.Cycles)
+                        {
+						    if (!cc.QCStatusValid((Multiplicity)pair.Key))
+							    continue;
+                            bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
+                            if (!there)
+                                continue;
+                            ccm = (MultiplicityCountingRes)obj;
 
-						denom++;
-                        mcr.S1Sum += ccm.Scaler1.v;
-                        mcr.S2Sum += ccm.Scaler2.v;
-                    }
-					if (denom > 0)
+						    denom++;
+                            mcr.S1Sum += ccm.Scaler1.v;
+                            mcr.S2Sum += ccm.Scaler2.v;
+                        }
+					if (denom > 0) // error-corrected scaler rates wrongly carried in these two vars from CalcAvgAndSums after this step, should fix this someday
 					{
 						mcr.Scaler1.v = mcr.S1Sum / denom;
 						mcr.Scaler2.v = mcr.S2Sum / denom;
@@ -244,13 +256,11 @@ namespace AnalysisDefs
                         if (!pair.Key.suspect) // accumulate the relevant counts
                         {
                             ICountingResult cr = (ICountingResult)pair.Value;
-                            Object obj;
+							object obj;
                             bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
                             if (!there)
                                 continue;
                             cr.Accumulate((ICountingResult)obj);
-
-
                         }
                     }
                 }
@@ -258,7 +268,7 @@ namespace AnalysisDefs
                 if (meas.Cycles.Count > 0)  // adjustments
                 {
                     // average the summed coincidence matrix rates
-                    System.Collections.IEnumerator iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Coincidence));
+                    IEnumerator iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Coincidence));
                     while (iter.MoveNext())
                     {
                         if (meas.CountTimeInSeconds == 0)
@@ -277,7 +287,7 @@ namespace AnalysisDefs
                     }
 
                    //  make sure total time is there for the rates
-                    uint validGeneralCyclesCount = meas.RawCycleSummary();
+                    uint validGeneralCyclesCount = meas.NumberOfRawCyclesWithCounts();
                     iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.BaseRate));
                     while (iter.MoveNext())
                     {
@@ -288,7 +298,7 @@ namespace AnalysisDefs
                     }
 
                     // do the final Feynman computation
-                    System.Collections.IEnumerator fritter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Feynman));
+                    IEnumerator fritter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Feynman));
                     while (fritter.MoveNext())
                     {
                         FeynmanResultExt fr = (FeynmanResultExt)fritter.Current;
@@ -297,7 +307,17 @@ namespace AnalysisDefs
                         fr.cbar = nfr.cbar;
                         fr.c2bar = nfr.c2bar;
                         fr.c3bar = nfr.c3bar;
-                    }
+                    }                                  
+                }
+
+                // fill in the traditional results rec values
+                if (meas.INCCAnalysisResults.TradResultsRec != null)
+                {
+                    uint gc = meas.Cycles.GetValidCycleCount();
+                    uint tnc = meas.NumberOfRawCyclesWithCounts();
+                    meas.INCCAnalysisResults.TradResultsRec.total_number_runs = (int)tnc;
+                    if (gc > 0)
+                        meas.INCCAnalysisResults.TradResultsRec.total_good_count_time = (tnc / gc);
                 }
             }
             catch (Exception ex)
@@ -341,7 +361,11 @@ namespace AnalysisDefs
                 INCCResult results;
                 MeasOptionSelector ar = new MeasOptionSelector(meas.MeasOption, mkey);
                 bool found = meas.INCCAnalysisResults.TryGetValue(ar, out results);
-                // I do solemnly swear or affirm "assert" that found == true, or all is lost!
+				if (!found)
+				{
+					meas.AddErrorMessage("No results available", 10151, mkey);
+					return;
+				}
                 /* if using measure to precision, and max # runs reached, then add warning message indicating actual precision reached. */
                 if (meas.AcquireState.acquire_type == AcquireConvergence.DoublesPrecision)
                 {
@@ -350,7 +374,7 @@ namespace AnalysisDefs
                         double error = results.rates.DTCRates.Doubles.err / results.rates.DTCRates.DoublesRate * 100.0;
                         if (error > meas.AcquireState.meas_precision)
                         {
-                            meas.AddWarningMessage("Measurement doubles error = " + error.ToString(), 10126, mkey);
+                            meas.AddWarningMessage("Measurement doubles error = " + error.ToString("F2"), 10126, mkey);
                         }
                     }
                 }
@@ -361,7 +385,7 @@ namespace AnalysisDefs
                         double error = results.rates.DTCRates.Triples.err / results.rates.DTCRates.TriplesRate * 100.0;
                         if (error > meas.AcquireState.meas_precision)
                         {
-                            meas.AddWarningMessage("Measurement triples error = " + error.ToString(), 10127, mkey);
+                            meas.AddWarningMessage("Measurement triples error = " + error.ToString("F2"), 10127, mkey);
                         }
                     }
                 }
@@ -387,8 +411,7 @@ namespace AnalysisDefs
                                 meas.AddWarningMessage("Background triples rate " + results.rates.DTCRates.TriplesRate + " greater than " + meas.Tests.bkgTriplesRateLimit, 10142, mkey);
 
                             // dev note: this is a background measurement per se, so we copy the results to the Background class and store the entire thing that way
-                            // Need to account for Active bkg beginning here.
-                            
+                            // NEXT: Need to account for Active bkg beginning here.                            
                             
                             if (Integ.GetCurrentAcquireParams().well_config == WellConfiguration.Active)// Is an active acquisition.
                             {
@@ -545,7 +568,7 @@ namespace AnalysisDefs
                         case AssaySelector.MeasurementOption.verification:
                             // see INCC calc_asy.cpp
                             // dev note: check for item in the item table, make sure to place this item id on the MeasurementId.item property
-                            if (!String.IsNullOrEmpty(meas.AcquireState.item_id))
+                            if (!string.IsNullOrEmpty(meas.AcquireState.item_id))
                             {
                                 meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10194, "Using item id '{0}'", meas.AcquireState.item_id);
                             }
@@ -704,7 +727,7 @@ namespace AnalysisDefs
                     }
                     bool success = false;
                     kares.dcl_pu_mass = meas.AcquireState.mass;  // dev note: another use of acq, a requirement, here
-                    // JFL copy the input calib to the results rec
+                    // copy the input calibration params to the copy on the results rec, to be saved with the KA results
                     kares.methodParams = new INCCAnalysisParams.known_alpha_rec(ka_params);
 
                     if (ka_params.known_alpha_type == INCCAnalysisParams.KnownAlphaVariant.Conventional)
@@ -747,7 +770,7 @@ namespace AnalysisDefs
                          INCCAnalysis.calc_known_alpha_moisture_corr(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* dry alpha */
@@ -765,7 +788,7 @@ namespace AnalysisDefs
                             INCCAnalysis.calc_known_alpha_moisture_corr_mult_doubles(
                                     results.rates.DTCRates.Singles,
                                     results.rates.DTCRates.Doubles,
-                                    new Tuple(), new Tuple(), // todo: use scalers 
+                                    results.Scaler1, results.Scaler2,
                                     ref kares.corr_singles, /* ring ratio */
                                     ref kares.corr_factor,
                                     ref kares.dry_alpha_or_mult_dbls, /* moist mult_corr_doubles */
@@ -790,11 +813,11 @@ namespace AnalysisDefs
                     }
                     if (!kares.pass)
                     {
-                        meas.AddWarningMessage("Known Alpha: failed stratum rejection limits", 10198, mkey);
+                        meas.AddWarningMessage("Known alpha: failed stratum rejection limits", 10198, mkey);
                     }
                     else
                     {
-                        meas.AddWarningMessage("Known Alpha: passed stratum rejection limits", 10200, mkey);
+                        meas.AddWarningMessage("Known alpha: passed stratum rejection limits", 10200, mkey);
                     }
                     if (kares.pu240e_mass.v > kares.methodParams.cev.upper_mass_limit)
                     {
@@ -1270,25 +1293,40 @@ namespace AnalysisDefs
         /// </summary>
         public static void CalcAvgAndSums(this Measurement meas)
         {
-            AssaySelector.MeasurementOption at = meas.MeasurementId.MeasOption;
             RatesAdjustments dtchoice = RatesAdjustments.DeadtimeCorrected;
-           // do
-           // {
-                if (NC.App.Opstate.IsAbortRequested)
-                    return;
 
-                IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
-                while (iter.MoveNext())
+            if (NC.App.Opstate.IsAbortRequested)
+                return;
+
+            IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
+            while (iter.MoveNext())
+            {
+                Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
+                mcr.ComputeHitSums();
+				// APluralityOfMultiplicityAnalyzers: When a list mode sourced measurement is in use, and 
+				// cycle data comes from a prior analysis via a DB cycle source or Verification reanalysis, 
+				// doubles are computed using the LMSupport.SDTMultiplicityCalculator.
+				// Note that DAQ LM sourced INCC5 analyses will have the unnormalized Acc distro. 
+				// The method INCCAnalysis.CalcAveragesAndSums uses the unnormalized
+				// Acc distro (mcr.UnAMult), but in the two cases above there is only the normalized Acc and RealsAcc distros are present.
+				// So the *unnormalized distro* must be computed and placed on each cycle, then and only then are doubles calculated correctly.
+                INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
+                mcr.Scaler1Rate.v = mcr.Scaler1.v;
+                mcr.Scaler1Rate.err = mcr.Scaler1.err;
+                mcr.Scaler2Rate.v = mcr.Scaler2.v;
+                mcr.Scaler2Rate.err = mcr.Scaler2.err;
+                MeasOptionSelector mos = new MeasOptionSelector(meas.MeasOption, mkey);
+                INCCResult results = meas.INCCAnalysisState.Lookup(mos);
+                if (results != null)
                 {
-                    Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
-                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
-                    mcr.ComputeSums();
-                    INCCAnalysis.CalcAveragesAndSums(mkey, mcr, meas, dtchoice, meas.Detector.Id.SRType);
+                    results.Scaler1Rate.v = mcr.Scaler1.v;
+                    results.Scaler1Rate.err = mcr.Scaler1.err;
+                    results.Scaler2Rate.v = mcr.Scaler2.v;
+                    results.Scaler2Rate.err = mcr.Scaler2.err;
                 }
-            //    dtchoice++;
-            //} while (dtchoice <= RatesAdjustments.DytlewskiDeadtimeCorrected);
+            }
         }
 
         #endregion INCC calculation control methods
@@ -1298,6 +1336,30 @@ namespace AnalysisDefs
 		/// </summary>
 		public static void SaveMeasurementResults(this Measurement meas)
 		{
+			if (meas.Detector.ListMode)
+			{
+				long mid = meas.MeasurementId.UniqueId;
+				foreach(SpecificCountingAnalyzerParams s in meas.CountingAnalysisResults.Keys)
+				{
+					// this is a virtual LMSR so save each mkey
+					Type t = s.GetType();
+					DB.ElementList els = s.ToDBElementList();
+					if (t.Equals(typeof(Multiplicity)))
+                    {
+                        Multiplicity thisone = ((Multiplicity)s);
+						els.Add(new DB.Element("predelay", thisone.SR.predelay));
+                    }
+                    else if (t.Equals(typeof(Coincidence)))
+                    {
+                        Coincidence thisone = ((Coincidence)s);
+						els.Add(new DB.Element("predelay", thisone.SR.predelay));
+                    }
+					DB.LMParamsRelatedBackToMeasurement counter = new DB.LMParamsRelatedBackToMeasurement(s.Table);
+					s.Rank = counter.Create(mid, els);
+					meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, string.Format("Preserving {0}_m as {1}", s.Table, s.Rank));
+				}
+			}
+
             SaveMeasurementCycles(meas);
 
 			IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();
@@ -1309,7 +1371,7 @@ namespace AnalysisDefs
 
 				INCCResult results;
 				MeasOptionSelector moskey = new MeasOptionSelector(meas.MeasOption, mkey);
-				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);
+				bool found = meas.INCCAnalysisResults.TryGetValue(moskey, out results);  // APluralityOfMultiplicityAnalyzers: when does this actually get saved? It needs to be saved to DB after all calculations are complete
 
 				try
 				{
@@ -1372,18 +1434,20 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Preserve a measurement cycle list in a database
-        /// Limited to INCC5 SR values
-        /// URGENT: save results for EACH mkey (e.g. LM), not just the first one; save LM-specific cycle info, e.g. list mode channel results, per cycle counting results for raw LM analyses, output file name
-        /// URGENT: status shoud be set on db acquire lists, becuse it can read in 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so we should only use the processed cycles.
+        /// Limited to INCC5 SR and INCC6 VSR values
+        /// TODO: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// TODO: status shoud be set on db acquire lists, because it can read in e.g. 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so the code should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
         public static void SaveMeasurementCycles(this Measurement m)
         {
             long mid = m.MeasurementId.UniqueId;
-            //Could we actually not do this when reanalyzing? hn 9.21.2015
-            NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, String.Format("{0} cycles stored", m.Cycles.Count));
-
+            // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
+            if (!m.Detector.ListMode)
+                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            else
+                NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);
+            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
         }
 
         /// <summary>
@@ -1415,7 +1479,7 @@ namespace AnalysisDefs
 					do
 					{
 						long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
-						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}{2})", imr.Table, resid, mresid));
+						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}, {2})", imr.Table, resid, mresid));
 					} while (imr.methodParams.Pump > 0);
                 }
             }                        
@@ -1445,9 +1509,8 @@ namespace AnalysisDefs
             long mid = m.MeasurementId.UniqueId;
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
-            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList());
+            bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // APluralityOfMultiplicityAnalyzers: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
             m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
-
         }
 
 		/// <summary>
@@ -1467,6 +1530,24 @@ namespace AnalysisDefs
 				id = m.Persist();
 			}
 		}
+
+
+        // for report recalculation
+        public static void ReportRecalc(this Measurement m)
+        {
+            NC.App.Opstate.Measurement = m;
+            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+            m.Cycles = new CycleList();
+            m.CurrentRepetition = 0;
+            foreach (Cycle cycle in cl)
+            {
+                m.CurrentRepetition++;
+                m.Add(cycle);
+                CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
+                m.CycleStatusTerminationCheck(cycle);
+            }
+           m.CalculateMeasurementResults();
+        }
 	}
 
 }

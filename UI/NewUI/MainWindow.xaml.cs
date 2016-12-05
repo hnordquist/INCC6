@@ -52,7 +52,7 @@ namespace NewUI
             InitializeComponent();
 			main = new WinPos();
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         /////////////////
@@ -94,7 +94,7 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             if (det.ListMode)
             {
-                NewUI.LMConnectionParams f = new NewUI.LMConnectionParams(det, acq, false);
+                LMConnectionParams f = new LMConnectionParams(det, acq, false);
                 f.StartWithLMDetail();
                 f.ShowDialog();
             }
@@ -129,7 +129,7 @@ namespace NewUI
 			if (f.DialogResult == System.Windows.Forms.DialogResult.OK && f.EditItem)
 			{
 				MessageBox.Show("The Item Id Entry dialogbox will now be displayed for you to enter\r\n" + 
-								"the item data needed for the collar data you just entered", NCC.IntegrationHelpers.GetAppTitle());
+								"the item data needed for the collar data you just entered", Integ.GetAppTitle());
 				IDDItemDataEntry g = new IDDItemDataEntry();
 				g.ShowDialog();
 			}
@@ -373,13 +373,13 @@ namespace NewUI
 	        /* if an Initial source measurement has not been done for this detector, do not allow a bias test to be performed. */
 	        if ((f.np.biasMode== NormTest.AmLiSingles) &&
 		        (f.np.amliRefSinglesRate <= 0.0))
-                MessageBox.Show(String.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
+                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
 	        else if ((f.np.biasMode== NormTest.Cf252Doubles) &&
 		        (f.np.cf252RefDoublesRate.v <= 0.0))
-                MessageBox.Show(String.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference doubles rate and date are entered manually.", f.Acq.detector_id));
+                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference doubles rate and date are entered manually.", f.Acq.detector_id));
 	        else if ((f.np.biasMode== NormTest.Cf252Singles) &&
 		        (f.np.cf252RefDoublesRate.v <= 0.0))
-                MessageBox.Show(String.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
+                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
             else
                 f.ShowDialog();
         }
@@ -503,24 +503,25 @@ namespace NewUI
             f.Show();
         }
 
+		private void ReportCascadeViewClick(object sender, RoutedEventArgs e)
+		{
+            Overview Ⱡ = new Overview();
+            Ⱡ.Show();
+		}
+
         private void ReportPlotNormHistoryClick(object sender, RoutedEventArgs e)
         {
-            //TODO
+            IDDPlotBiasMeasHistory h = new IDDPlotBiasMeasHistory();
+            if (h.irlist.Count < 1)
+                MessageBox.Show("No normalization data to plot.", "WARNING");
+            else
+               h.ShowDialog();
         }
 
         private void ReportPlotCalVerificationClick(object sender, RoutedEventArgs e)
         {
-            //TODO
-        }
-
-        //////////////////
-        //  TOOLS MENU  //
-        //////////////////
-
-        private void ToolsReviewToolClick(object sender, RoutedEventArgs e)
-        {
-            IDDTools f = new IDDTools();
-            f.Show();
+            IDDPlotAssayResults h = new IDDPlotAssayResults();
+            h.ShowDialog();
         }
 
         /////////////////
@@ -540,8 +541,9 @@ namespace NewUI
 
         private void HelpAppInfoClick(object sender, RoutedEventArgs e)
         {
-            IDDHelpInfoDialog f = new IDDHelpInfoDialog();
-            f.Show();
+            string[] x = NCCConfig.Config.ShowCfgLines(NC.App.Config, true, true);
+			foreach(string s in x)			
+				NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 0, s);
         }
 
         private void HelpAboutINCCClick(object sender, RoutedEventArgs e)
@@ -555,25 +557,21 @@ namespace NewUI
 
         }
 
-        ///////////////////
-        //  MOUSER MENU  //
-        ///////////////////
-
         private void AnalysisWizardClick(object sender, RoutedEventArgs e)
         {
-            AcquireParameters acq = null;
+			AcquireParameters acq = null;
             Detector det = null;
 			NC.App.DB.ResetAcquireParametersMap();  // force read from DB to get as-is default acquire state
-			// next: do a refresh of the specific acquire instance, not the entire list
+			// NEXT: do a refresh of the specific acquire instance, not the entire list
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             if (!det.ListMode)
             {
                 MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
                 return;
             }
-            AnalysisWizard f = new AnalysisWizard(AnalysisWizard.AWSteps.Step3, acq, det);
-            System.Windows.Forms.DialogResult dr = f.ShowDialog();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+			LMAcquire a = new LMAcquire(acq, det);
+			a.ShowDialog();
+			if (a.DialogResult == System.Windows.Forms.DialogResult.OK)
             {
                 if (acq.modified || acq.lm.modified)
                 {
@@ -638,7 +636,7 @@ namespace NewUI
                     case ConstructedSource.ReviewFile:
                         UIIntegration.Controller.file = true;
                         string xs = UIIntegration.GetUsersFolder("Select Input Folder", NC.App.AppContext.FileInput);
-                        if (!String.IsNullOrEmpty(xs))
+                        if (!string.IsNullOrEmpty(xs))
                         {
                             NC.App.AppContext.FileInput = xs;
                             NC.App.AppContext.FileInputList = null;  // no explicit file list
@@ -672,7 +670,7 @@ namespace NewUI
                 NC.App.Opstate.Measurement.Detector.Id.source = NC.App.Opstate.Measurement.AcquireState.data_src;  // set the detector overall data source value here
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-            }
+			}
         }
 
 
@@ -704,11 +702,6 @@ namespace NewUI
         {
             IDDRestoreInitialData d = new IDDRestoreInitialData();  // all processing occurs in the OK handler 
             d.ShowDialog();
-        }
-
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void EnableLog_Unchecked(object sender, RoutedEventArgs e)
@@ -803,7 +796,7 @@ namespace NewUI
             if (qw == System.Windows.Forms.DialogResult.OK)
             {
                 NCCFile.SAFile onefile = new NCCFile.SAFile();
-                string path = System.IO.Path.GetFullPath(aDlg.FileName);
+                string path = Path.GetFullPath(aDlg.FileName);
                 onefile.Process(path);
             }
         }
@@ -823,7 +816,7 @@ namespace NewUI
             if (qw == System.Windows.Forms.DialogResult.OK)
 			{
 				NCCFile.ItemFile onefile = new NCCFile.ItemFile();
-				string path = System.IO.Path.GetFullPath(aDlg.FileName);
+				string path = Path.GetFullPath(aDlg.FileName);
 				onefile.Process(path);
 				// todo: now do something with the results
 			}

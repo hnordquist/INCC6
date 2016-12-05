@@ -146,10 +146,9 @@ namespace AnalysisDefs
             return good;
         }
 
-        public void AddMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector selector, AnalysisMethod method, INCCMethodResult value)  // could derive method type fror last arg, lazy boy
+        public void AddMethodResults(SpecificCountingAnalyzerParams mkey, INCCSelector selector, AnalysisMethod method, INCCMethodResult value)  // could derive method type from last arg, lazy boy
         {
             INCCMethodResults methods;
-            //Joe thinks not needed 10-1  INCCMethodResult temp = new INCCMethodResult();
             bool good = methodsresults.TryGetValue(mkey, out methods);
             // first look for the incc results map
             if (!good || methods == null) // add new method map to results for this key
@@ -188,9 +187,9 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="am"></param>
         /// <returns></returns>
-        private System.Type GetMethodType(AnalysisMethod am)
+        private Type GetMethodType(AnalysisMethod am)
         {
-            System.Type res = null;
+            Type res = null;
             switch (am)
             {
                 case AnalysisMethod.CalibrationCurve:
@@ -451,6 +450,11 @@ namespace AnalysisDefs
             public double total_good_count_time, net_drum_weight, db_version;
             public AssaySelector.MeasurementOption meas_option;
             public bool completed;
+
+			// last but not least, the extra data used for the active/passive measurement pairing
+			public DateTimeOffset original_meas_date;
+			MeasId passive, active;
+
 			public long MeasId {get; set; }
 
             public results_rec()
@@ -468,7 +472,7 @@ namespace AnalysisDefs
                 tests = new TestParameters(src.tests);
                 norm = new NormParameters(src.norm); 
                 bkg = new BackgroundParameters(src.bkg); 
-                cycles = src.cycles;  // next: not a copy, so do not change list until this is saved!
+                cycles = src.cycles;  // devnote: not a deep copy of the cycles, do not change list until this is saved!
    
                 hc = new holdup_config_rec(src.hc);  // left unfinished in real code, only available on transfer op
                 item = new ItemId(src.item);
@@ -477,7 +481,12 @@ namespace AnalysisDefs
 
                 mcr = new MultiplicityCountingRes(src.mcr);
 
-				primary = src.primary;
+                primary = src.primary;
+                total_good_count_time = src.total_good_count_time;
+                total_number_runs = src.total_number_runs;
+                original_meas_date = new DateTimeOffset(src.original_meas_date.Ticks, src.original_meas_date.Offset);
+				passive = new MeasId(src.passive);  // TODO: collar with active and passive measurements not fully accounted for yet
+				active = new MeasId(src.active); // TODO: collar with active and passive measurements not fully accounted for yet
             }
 
             // this should be created at some correct moment, after analyzer and method map construction, AND THEN inserted into the meas.Result map
@@ -501,7 +510,7 @@ namespace AnalysisDefs
                         mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[det.MultiplicityParams];
                     }
                     catch (Exception)
-                    {
+                    {   // APluralityOfMultiplicityAnalyzers: check this logic
                         // NEXT: code 'gets here' if the detector settings do not match any of the explicitly LM-defined Multiplicity analyzer(s).
                         // so for now we'll override det.MultiplicityParams with the first available LM-defined Multiplicity upstream, so the code does not 'get here'
                         if (mcr == null)
@@ -510,16 +519,23 @@ namespace AnalysisDefs
                 if (mcr == null)
                     mcr = new MultiplicityCountingRes();  // inadequate attempt tries to account for LM-only condition, where no mcr, or no matching mcr, exists
 
-                hc = new holdup_config_rec();// next: from m.AcquireState.glovebox_id
+                hc = new holdup_config_rec();// NEXT: from m.AcquireState.glovebox_id, look it up and build it here
                 item = new ItemId(m.MeasurementId.Item);
                 // pu_date wiped out in item when was in measurement.
                 item.pu_date = m.Isotopics.pu_date;
                 item.am_date = m.Isotopics.am_date;
                 meas_option = m.MeasOption;
 
+                primary = m.INCCAnalysisState.Methods.Normal;
+                total_number_runs = m.AcquireState.num_runs;
+
                 INCCMethodResults imr;
-                if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // devnote: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 
+                if (m.INCCAnalysisResults.TryGetINCCResults(det.MultiplicityParams, out imr)) // APluralityOfMultiplicityAnalyzers: see notes above about issues with multiple MultiplicityParams that do not match the detector's default values 
                     primary = imr.primaryMethod;
+
+				original_meas_date = new DateTimeOffset(acq.MeasDateTime.Ticks, acq.MeasDateTime.Offset);
+				passive = new MeasId(m.MeasurementId);  // NEXT: fill it in until the distinction between the two separate measurements can be made
+				active = new MeasId(m.MeasurementId);  // NEXT: fill it in until the distinction between the two separate measurements can be made
             }
 
 
@@ -1182,7 +1198,20 @@ namespace AnalysisDefs
                 methodParams = new INCCAnalysisParams.known_m_rec();
             }
 
-            // todo: copy constructor here
+			public results_known_m_rec(results_known_m_rec src)
+            {
+                src.methodParams.CopyTo(methodParams);
+                mult = src.mult;
+				alpha = src.alpha;
+                pu239e_mass = src.pu239e_mass;
+                pu240e_mass = new Tuple(src.pu240e_mass);
+                pu_mass = new Tuple(src.pu_mass);
+                dcl_pu240e_mass = src.dcl_pu240e_mass;
+                dcl_pu_mass = src.dcl_pu_mass;
+                dcl_minus_asy_pu_mass = new Tuple(src.dcl_minus_asy_pu_mass);
+                dcl_minus_asy_pu_mass_pct = src.dcl_minus_asy_pu_mass_pct;
+                pass = src.pass;
+            }
 
             public override void CopyTo(INCCMethodResult imr)
             {
@@ -1706,7 +1735,7 @@ namespace AnalysisDefs
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];  // devnote: multmult assuming only one detector here, doh
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[m.Detector.MultiplicityParams];  // APluralityOfMultiplicityAnalyzers: assuming only one detector here, doh, similarly for many other results text generators
 
                 sec.AddHeader(" Add-a-source results");  // section header
                 if (methodParams.use_truncated_mult) // && (m.->doubles <= methodParams.tm_dbls_rate_upper_limit)) // next: Where does double value come from? AAS results or summary results or where?

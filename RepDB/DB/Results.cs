@@ -46,7 +46,7 @@ namespace DB
 
         public DataTable AllResults(string name = null)
         {
-            if (!String.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
                 return ResultsForDet(name);
             else
             {
@@ -108,7 +108,7 @@ namespace DB
         }
         public long Lookup(string detname, DateTime dt)
         {
-            if (String.IsNullOrEmpty(detname))
+            if (string.IsNullOrEmpty(detname))
                 return -1;
             db.SetConnection();
             Measurements m = new Measurements(db);
@@ -117,7 +117,7 @@ namespace DB
                 "AND measurements.DateTime=results_rec.original_meas_date) where results_rec.original_meas_date=" + SQLSpecific.getDate(dt);
             string r = db.Scalar(s);
             long lr = -1;
-            if (!Int64.TryParse(r, out lr))
+            if (!long.TryParse(r, out lr))
                 lr = -1;
             return lr;
         }
@@ -130,6 +130,14 @@ namespace DB
             string wh = " where id=" + rid.ToString();
             string sSQL = sSQL1 + sParams.ColumnEqValueList + wh;
             return db.Execute(sSQL);
+        }
+
+		public bool UpdateEndingComment(long mid, string ec)
+		{
+            db.SetConnection();
+            string wh = " where mid=" + mid.ToString();
+            string sSQL1 = "UPDATE results_rec SET ending_comment=" +  SQLSpecific.QVal(ec) + wh;
+            return db.Execute(sSQL1);
         }
 
 		public DataTable ResultsForDetWithC(string name)
@@ -240,7 +248,50 @@ namespace DB
 			string sSQL = "SELECT * FROM "+ newtable + " where mid=" + mid.ToString() + " AND " + newtable + ".rid=" + rid.ToString();
             return db.DT(sSQL);
         }
+    }
+
+	public class LMParamsRelatedBackToMeasurement
+    {
+        public string table;
+
+        public LMParamsRelatedBackToMeasurement(string table = "", DB db = null)
+        {
+            this.table = table;
+            if (db != null)
+                this.db = db;
+            else
+                this.db = new DB(false);
+        }
+
+		public LMParamsRelatedBackToMeasurement(DB db)
+        {
+            if (db != null)
+                this.db = db;
+            else
+                this.db = new DB(false);
+        }
+        DB db;
+
+        public long Create(long mid, ElementList resParams)
+        {
+            db.SetConnection();
+            resParams.Add(new Element("mid", mid));
+            ArrayList sqlList = new ArrayList();
+            string sSQL1 = "Insert into " + table + "_m" + " ";
+            string sSQL = sSQL1 + resParams.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID(table + "_m" ));
+            return db.ExecuteTransactionID(sqlList);
+        }
+
+        public DataTable GetCounterParams(long mid)
+        {
+			db.SetConnection();
+            string sSQL = "SELECT * from " + table + "_m" + " where mid=" + mid.ToString();
+            return db.DT(sSQL);
+        }
 
     }
+
 
 }

@@ -45,7 +45,7 @@ namespace NewUI
             // Generate an instance of the generic acquire dialog event handlers object (this now includes the AcquireParameters object used for change tracking)
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.calibration;
-            this.Text += " for detector " + ah.det.Id.DetectorName;
+            Text += " for detector " + ah.det.Id.DetectorName;
 
             NumCyclesTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
             NumCyclesTextBox.NumberFormat = NumericTextBox.Formatter.NONE;
@@ -62,6 +62,7 @@ namespace NewUI
             MinNumCyclesTextBox.NumberFormat = NumericTextBox.Formatter.NONE;
             LoadLists();
             FieldFiller();
+            Pu240eCoeffBtn.Enabled = !string.IsNullOrEmpty(NC.App.Config.VersionBranchString);
         }
 
         private void LoadLists ()
@@ -70,59 +71,68 @@ namespace NewUI
             {
                 MaterialTypeComboBox.Items.Add(desc.Name);
             }
-            this.ItemIdComboBox.Items.Clear();
+            ItemIdComboBox.Items.Clear();
             foreach (ItemId id in NC.App.DB.ItemIds.GetList())
             {
                 ItemIdComboBox.Items.Add(id.item);
             }
-            this.DataSourceComboBox.Items.Clear();
-            foreach (ConstructedSource cs in System.Enum.GetValues(typeof(ConstructedSource)))
+            DataSourceComboBox.Items.Clear();
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
             {
                 if (cs.AcquireChoices() || cs.LMFiles(ah.det.Id.SRType))
-                    DataSourceComboBox.Items.Add(cs.HappyFunName());
+                    DataSourceComboBox.Items.Add(cs.NameForViewing(ah.det.Id.SRType));
             }
         }
         private void FieldFiller ()
         {
             // Populate the UI fields with values from the local AcquireParameters object
-            this.QCTestsCheckBox.Checked = ah.ap.qc_tests;
-            this.PrintResultsCheckBox.Checked = ah.ap.print;
-            this.CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
-            this.NumCyclesTextBox.Value = ah.ap.num_runs;
-            this.CommentTextBox.Text = ah.ap.comment;
-            this.CountTimeTextBox.Value = ah.ap.run_count_time;
-            this.MeasPrecisionTextBox.Value = ah.ap.meas_precision;
-            this.MinNumCyclesTextBox.Value = ah.ap.min_num_runs;
-            this.MaxNumCyclesTextBox.Value = ah.ap.max_num_runs;
+            QCTestsCheckBox.Checked = ah.ap.qc_tests;
+            PrintResultsCheckBox.Checked = ah.ap.print;
+            CommentAtEndCheckBox.Checked = ah.ap.ending_comment;
+            NumCyclesTextBox.Value = ah.ap.num_runs;
+            CommentTextBox.Text = ah.ap.comment;
+            CountTimeTextBox.Value = ah.ap.run_count_time;
+            MeasPrecisionTextBox.Value = ah.ap.meas_precision;
+            MinNumCyclesTextBox.Value = ah.ap.min_num_runs;
+            MaxNumCyclesTextBox.Value = ah.ap.max_num_runs;
 
-            this.DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
+            DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
             
             if (ah.ap.acquire_type == AcquireConvergence.CycleCount)
             {
-                this.UseNumCyclesRadioButton.Checked = true;
+                UseNumCyclesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.DoublesPrecision)
             {
-                this.UseDoublesRadioButton.Checked = true;
+                UseDoublesRadioButton.Checked = true;
             }
             else if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
             {
-                this.UseTriplesRadioButton.Checked = true;
+                UseTriplesRadioButton.Checked = true;
             }
-            DataSourceComboBox.SelectedItem = ah.ap.data_src.HappyFunName();
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
+            DataSourceComboBox.SelectedItem = ah.ap.data_src.NameForViewing(ah.det.Id.SRType);
+			MaterialTypeComboBox_SelectedItem();
             ItemIdComboBox.SelectedItem = ah.ap.item_id;
         }
+
+		private void MaterialTypeComboBox_SelectedItem()
+		{
+			if (NC.App.DB.Materials.Has(ah.ap.item_type))  // avoid case-insensitive mis-match by using the Name in the Materials list against that from the DB Acquire instance
+			{
+				INCCDB.Descriptor d = NC.App.DB.Materials.Get(ah.ap.item_type);
+				MaterialTypeComboBox.SelectedItem = d.Name;
+			}
+		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
             DialogResult res = DialogResult.Cancel;
-            /* build message to warn user about selected analysis methods           and requirements for calibration of known alpha. */
+            /* build message to warn user about selected analysis methods and requirements for calibration of known alpha. */
             AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
             if (am == null || !am.CalibrationAnalysisSelected())
                 MessageBox.Show("Warning - no analysis methods selected for calibration.", "Check calibration methods", MessageBoxButtons.OKCancel);
             else
             {
-                string a = String.Format("These analysis methods are selected for calibration of material type {0} for detector {1}",
+                string a = string.Format("These analysis methods are selected for calibration of material type {0} for detector {1}",
                         ah.ap.item_type,
                         ah.ap.detector_id);
                 if (am.Has(AnalysisMethod.CalibrationCurve))
@@ -139,7 +149,7 @@ namespace NewUI
                 a += "\r\n" + String.Format("Declared mass for item {0} = {1}\r\n", ah.ap.item_id, ah.ap.mass.ToString("F4"));
                 res = MessageBox.Show(a, "Check calibration methods", MessageBoxButtons.OKCancel);
             }
-            if (res != System.Windows.Forms.DialogResult.OK)
+            if (res != DialogResult.OK)
                 return;
 
             if (DeclaredMassTextBox.Value != ah.ap.mass)
@@ -175,18 +185,18 @@ namespace NewUI
                 //user can cancel in here during LM set-up, account for it.
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
-                this.Close();
+                Close();
             }
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/calibrationmeasurementsacquire.htm"); 
+            Help.ShowHelp(null, ".\\inccuser.chm", HelpNavigator.Topic, "/WordDocuments/calibrationmeasurementsacquire.htm"); 
         }
 
         private void ItemIdComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -277,10 +287,21 @@ namespace NewUI
 			switch (ah.ap.data_src)
 			{
 				case ConstructedSource.Live:
-					CountTimeTextBox.Enabled = true;
+					CountTimeTextBox.Enabled = (ah.det.Id.SRType != InstrType.JSR11);
+					if (ah.det.Id.SRType.CanDoTriples())
+					{
+						UseTriplesRadioButton.Enabled = true;
+					}
+					else
+					{
+						UseTriplesRadioButton.Enabled = false;
+						if (ah.ap.acquire_type == AcquireConvergence.TriplesPrecision)
+						{
+							ah.ap.acquire_type = AcquireConvergence.CycleCount;
+						}
+					}
 					UseNumCyclesRadioButton.Enabled = true;
 					UseDoublesRadioButton.Enabled = true;
-					UseTriplesRadioButton.Enabled = true;
 					NumCyclesTextBox.Enabled = ah.CycleCount;
 					MeasPrecisionTextBox.Enabled = !ah.CycleCount;
 					MinNumCyclesTextBox.Enabled = !ah.CycleCount;
@@ -337,8 +358,8 @@ namespace NewUI
 
         private void FieldFillerOnItemId()
         {
-            MaterialTypeComboBox.SelectedItem = ah.ap.item_type;
-            DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
+			MaterialTypeComboBox_SelectedItem();
+			DeclaredMassTextBox.Text = ah.ap.mass.ToString("F3");
         }
 
         private void ItemIdComboBox_Leave(object sender, EventArgs e)

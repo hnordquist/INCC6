@@ -54,7 +54,9 @@ namespace NewUI
                 MBAComboBox.Items.Add(desc);
             }
 
-            Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
+			AcquireParameters _acq = null;
+            Integ.GetCurrentAcquireDetectorPair(ref _acq, ref det);
+			acq = new AcquireParameters(_acq);    // making a copy fixes an aliasing issue for some current detector conditions
             initdetname = string.Copy(det.Id.DetectorId);
             try
             {
@@ -134,8 +136,7 @@ namespace NewUI
                 acq.review.MultiplicityDistributions = IndividualMultiplicityDistributionsCheckBox.Checked;
                 acq.user_id = InspectorNameTextBox.Text;
                 acq.campaign_id = InspectionNumberTextBox.Text;
-                acq.MeasDateTime = sel.TimeStamp;
-                acq.lm.TimeStamp = sel.TimeStamp;
+                acq.MeasDateTime = sel.TimeStamp; // The Setter handles the LM params field copy too
                 // facility and mba already set by selector handlers
                 NC.App.DB.AddAcquireParams(sel, acq);  // it's a new one, not the existing one modified
             }

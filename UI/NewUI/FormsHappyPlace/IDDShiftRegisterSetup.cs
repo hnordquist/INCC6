@@ -54,18 +54,18 @@ namespace NewUI
 
 			ShiftRegisterTypeComboBox.Items.Clear();
 
-			/* JFL added */
+			/* LM entries */
 			if (det.ListMode) 
 			{
 				foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetLMList()) {
 					InstrType dty;
-					Enum.TryParse<InstrType>(dt.Name, out dty);
+					Enum.TryParse(dt.Name, out dty);
 					if (dty.IsListMode())
 						ShiftRegisterTypeComboBox.Items.Add(dty.ToString());
 				}
 				ShiftRegisterTypeComboBox.SelectedItem = det.Id.SRType.ToString();
 			} 
-			else 
+			else /* SR entries */
 			{
 				foreach (INCCDB.Descriptor dt in NC.App.DB.DetectorTypes.GetINCC5SRList()) {
 					ShiftRegisterTypeComboBox.Items.Add(dt.Name);
@@ -121,8 +121,8 @@ namespace NewUI
             PredelayTextBox.Max = 1237.75;
             PredelayTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;
             PredelayTextBox.NumberFormat = NumericTextBox.Formatter.F2;
-            PredelayTextBox.Steps = 0.25;
             PredelayTextBox.Value = det.SRParams.predelayMS;
+            SetPredelayStepConstraint(det.Id.SRType);
 
             DieAwayTimeTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             DieAwayTimeTextBox.NumStyles = System.Globalization.NumberStyles.AllowDecimalPoint;
@@ -183,9 +183,9 @@ namespace NewUI
         private void ShiftRegisterTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             InstrType t = InstrType.AMSR;
-            /* JFL added, type changes within the SR/LM families are supported */
+            /* added back, type changes within the SR/LM families are supported */
             if (det.Id.SRType.IsListMode())
-                System.Enum.TryParse<InstrType>((string)ShiftRegisterTypeComboBox.SelectedItem, true, out t);
+                Enum.TryParse((string)ShiftRegisterTypeComboBox.SelectedItem, true, out t);
             else
                 t = InstrTypeExtensions.INCC5ComboBoxStringToType((string)ShiftRegisterTypeComboBox.SelectedItem);
             if (det.Id.SRType != t)
@@ -208,7 +208,7 @@ namespace NewUI
 				PredelayTextBox.Steps = 0.25; // traditional step increment
 				if ((PredelayTextBox.Value % 0.25) != 0)
 				{
-		            PredelayTextBox.Value = Bounce25Step(PredelayTextBox.Value);
+					PredelayTextBox.Value = Bounce25Step(PredelayTextBox.Value);
 				}
 			}
 		}
