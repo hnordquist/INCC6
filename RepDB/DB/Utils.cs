@@ -442,7 +442,16 @@ namespace DB
             }
             return res;
         }
-
+        public static uint[] ReifyUInt32s(string Int32s)
+        {
+            string[] s = Int32s.Split(',');
+            uint[] res = new uint[s.Length];
+            for (int i = 0; i < s.Length; i++)
+            {
+                uint.TryParse(s[i], out res[i]);
+            }
+            return res;
+        }
 		/// <summary>
 		/// "1,0" -> bool[] fron = new {true, false}
 		/// "true,false" -> bool[] fron = new {true, false}
@@ -508,6 +517,19 @@ namespace DB
                 return string.Empty;
             StringBuilder s = new StringBuilder(a.Length * (2 + 14));
             foreach (ulong ul in a)
+            {
+                s.Append(ul);
+                s.Append(',');
+            }
+            s.Remove(s.Length - 1, 1);
+            return s.ToString();
+        }
+		public static string Stringify(uint[] a)
+        {
+            if (a.Length < 1)
+                return string.Empty;
+            StringBuilder s = new StringBuilder(a.Length * (2 + 8));
+            foreach (uint ul in a)
             {
                 s.Append(ul);
                 s.Append(',');

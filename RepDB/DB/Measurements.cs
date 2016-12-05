@@ -279,6 +279,13 @@ namespace DB
             return db.ExecuteTransaction(sqlList);
         }
 
+        public bool AddOneCycle(string table, ElementList sParams)
+        {
+            db.SetConnection();
+            string sSQL ="Insert into " + table + " " + sParams.ColumnsValues;
+            return db.Execute(sSQL);
+        }
+
         public DataTable GetCycles(long mid)
         {
             db.SetConnection();
@@ -286,6 +293,18 @@ namespace DB
             return db.DT(sSQL);
         }
 
+		public DataTable GetAllLMCycles(string table, long mid)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * FROM table Where mid=" + mid;
+            return db.DT(sSQL);
+        }
+		public DataTable GetLMCycles(string table, long cid, long mid)
+        {
+            db.SetConnection();
+            string sSQL = "SELECT * FROM table Where cid=" + cid + " AND mid=" + mid;
+            return db.DT(sSQL);
+        }
         public int GetCycleCount(long mid)
         {
             string sSQL = "SELECT COUNT(id) FROM cycles Where mid=" + mid;

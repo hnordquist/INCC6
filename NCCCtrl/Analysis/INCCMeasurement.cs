@@ -1434,8 +1434,7 @@ namespace AnalysisDefs
 
         /// <summary>
         /// Preserve a measurement cycle list in a database
-        /// Limited to INCC5 SR and INCC6 VSR values
-        /// TODO: Need db table save for for LM-specific results Feynman, Rossi, Event, Coincidence) (Mult is working now)
+        /// TODO: Need db table save for for LM-specific results (Coincidence) (Mult, Feynman, Rossi, Event working now)
         /// TODO: status shoud be set on db acquire lists, because it can read in e.g. 1500 but only 1450 are good, or cancel can cause only 20 to have been processed so the code should only use the processed cycles.
         /// </summary>
         /// <param name="m">The measurement containing the cycles to preserve</param>
@@ -1443,10 +1442,15 @@ namespace AnalysisDefs
         {
             long mid = m.MeasurementId.UniqueId;
             // Could we actually not do this when reanalyzing? hn 9.21.2015; No: the results are recalculated, so they must be stored and copied again 
-            if (!m.Detector.ListMode)
-                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);
+            if (m.Detector.ListMode)
+			{
+				if (m.CountingAnalysisResults.SingleMultiplicityAnalyzer)
+					NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults.SingleMultiplicityAnalyzerKey, mid);   // treat this as an SR cycle, fast operation, no extra tables involved
+				else
+					NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);  // > 1 Mult and >= 0 non-mults 
+			}
             else
-                NC.App.DB.AddCycles(m.Cycles, m.CountingAnalysisResults, mid);
+                NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);  // traditional single SR with multiplicity key to a single cycle result
             m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
         }
 
@@ -1536,15 +1540,58 @@ namespace AnalysisDefs
         public static void ReportRecalc(this Measurement m)
         {
             NC.App.Opstate.Measurement = m;
-            CycleList cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+            CycleList cl;
+            if (m.Detector.ListMode)
+            {
+                cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src, m.AnalysisParams);  // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
+                foreach (Cycle c in cl)  // restore Alpha Beta coefficients on each mcr on each cycle for later per-cycle DTC rate recalculation
+                {
+                    IEnumerator iter = c.CountingAnalysisResults.GetMultiplicityEnumerator();
+                    while (iter.MoveNext())
+                    try
+                    {
+                        Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;  // clean up this syntax, it's silly
+                        MultiplicityCountingRes mcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
+                        LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(mkey, mcr);
+                    }
+                    catch (Exception)
+                    { }
+                }
+            }
+            else
+            {
+                cl = NC.App.DB.GetCycles(m.Detector, m.MeasurementId, m.AcquireState.data_src);
+                uint maximalmax = 0;
+                if (m.Detector.AB.Unset)
+                {
+                    foreach (Cycle c in cl)
+                        maximalmax = (uint)Math.Max(maximalmax, c.MultiplicityResults(m.Detector.MultiplicityParams).MaxBins);
+                    ABKey akey = new ABKey(m.Detector.MultiplicityParams, maximalmax); // max of all cycles mcr.MaxBins
+                    LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(akey, m.Detector.AB);
+                }
+                ABKey abkey = new ABKey(m.Detector.MultiplicityParams, m.Detector.AB.MaxBins);
+                foreach (Cycle c in cl) // restore Alpha Beta coefficients on each cycle
+                    LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, c.MultiplicityResults(m.Detector.MultiplicityParams).AB);
+            }
             m.Cycles = new CycleList();
             m.CurrentRepetition = 0;
-            foreach (Cycle cycle in cl)
+            foreach (Cycle c in cl)
             {
                 m.CurrentRepetition++;
-                m.Add(cycle);
-                CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
-                m.CycleStatusTerminationCheck(cycle);
+                m.Add(c);
+                IEnumerator iter = c.CountingAnalysisResults.GetMultiplicityEnumerator();
+                while (iter.MoveNext())
+                    try
+                    {
+                        Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;  // clean up this syntax, it's silly
+                        MultiplicityCountingRes mcr = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
+                        if (CycleProcessing.ConductStep(CycleProcessing.CycleStep.Deadtime, m.MeasOption))
+                            CycleProcessing.DeadtimeCorrection(m, mkey, mcr, did: m.Detector.Id, isCycle: false);
+                    }
+                    catch (Exception)
+                    { } 
+                CycleProcessing.ApplyTheCycleConditioningSteps(c, m);
+                m.CycleStatusTerminationCheck(c);
             }
            m.CalculateMeasurementResults();
         }

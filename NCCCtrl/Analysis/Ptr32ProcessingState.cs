@@ -48,6 +48,7 @@ namespace Analysis
             m_parser = new Ptr32Parser(Analyze);
             m_writingFile = CentralizedState.App.AppContext.LiveFileWrite;
         }
+
         /// <summary>
         /// Perform initialization at the start of a new cycle.
         /// </summary>
@@ -121,6 +122,14 @@ namespace Analysis
                 file.Events.Write(times, 0, count);
             }
         }
+
+		public void ResetRawDataBuffer()
+		{
+			if (rawDataBuff != null && rawDataBuff.Length != eventBufferLength)
+				rawDataBuff = null;			
+			if (rawDataBuff == null)
+				rawDataBuff = new byte[eventBufferLength];
+		}
 
         private Ptr32Parser m_parser;
         private NCCFile.PTRFilePair file;

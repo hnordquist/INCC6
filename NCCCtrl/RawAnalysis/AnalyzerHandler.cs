@@ -36,6 +36,7 @@ namespace LMRawAnalysis
 
     sealed public class AnalyzerHandler
     {
+        public NCC.CancelStopAbort csa;
         public double ticSizeInSeconds;
         private ulong timeBaseConversion;
 
@@ -900,6 +901,7 @@ namespace LMRawAnalysis
         {
             RossiAlphaCircularStackAnalysis ra = new RossiAlphaCircularStackAnalysis(gateWidthInTics);
             rossiAlphaAnalyzers.Add(ra);
+            ra.csa = csa;
 
             log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a RossiAlphaAnalyzer with gate= " + gateWidthInTics + " tics.");
             log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "The number of RossiAlpha gates is= " + RawAnalysisProperties.numRAGatesPerWindow);

@@ -73,6 +73,7 @@ namespace LMRawAnalysis
     /// </summary>
     sealed public class RossiAlphaCircularStackAnalysis
     {
+        public NCC.CancelStopAbort csa;
         public ulong rossiAlphaGateWidth;
         public ulong rossiAlphaWindowWidth;  //equal to RawAnalysisProperties.numRAGatesPerWindow * gate width
         public uint[] neutronsPerRossiAlphaGate = new uint[RawAnalysisProperties.numRAGatesPerWindow];
@@ -219,7 +220,7 @@ namespace LMRawAnalysis
                     RossiAlphaCircularNeutronEvent anEvent;
                     RossiAlphaCircularNeutronEvent nextEvent;
 
-                    for (j = 0; j < numEventsThisBlock; j++)
+                    for (j = 0; j < numEventsThisBlock && !csa.IsQuitRequested; j++)
                     {
                         eventTime = inputEventTime[j];
                         eventNeutrons = inputEventNeutrons[j];
@@ -297,6 +298,8 @@ namespace LMRawAnalysis
                             deltaTimeInQueue = eventTime - startOfList.eventTime;
                         }  //END of handling an individual NeutronEvent
 
+                        if (csa.IsQuitRequested)
+                            break;
                     }  //END of handling this block of events
 
                     //prepare this thread's wait condition so will wait for a message 

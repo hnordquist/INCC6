@@ -82,29 +82,31 @@ namespace NewUI
 			int num = 0;
 			foreach(INCCResults.results_rec res in mlist)
 			{
-				NormDoubles nd = new NormDoubles(res.acq.MeasDateTime);
+				NormValues nv = new NormValues(res.acq.MeasDateTime);
+				nv.test = norm.biasMode;
 				if (norm.biasMode == NormTest.Cf252Doubles)
 				{
-					nd.Doubles = res.mcr.DeadtimeCorrectedDoublesRate.v;
-					nd.DoublesPlusErr = res.mcr.DeadtimeCorrectedDoublesRate.v + res.mcr.DeadtimeCorrectedDoublesRate.err;
-					nd.DoublesMinusErr = res.mcr.DeadtimeCorrectedDoublesRate.v - res.mcr.DeadtimeCorrectedDoublesRate.err;
-					normlist.Add(nd);
+					nv.Doubles = res.mcr.DeadtimeCorrectedDoublesRate.v;
+					nv.DoublesPlusErr = res.mcr.DeadtimeCorrectedDoublesRate.v + res.mcr.DeadtimeCorrectedDoublesRate.err;
+					nv.DoublesMinusErr = res.mcr.DeadtimeCorrectedDoublesRate.v - res.mcr.DeadtimeCorrectedDoublesRate.err;
+					normlist.Add(nv);
 				}
 				else
 				{
-					nd.Doubles = res.mcr.DeadtimeCorrectedSinglesRate.v;
-					nd.DoublesPlusErr = res.mcr.DeadtimeCorrectedSinglesRate.v + res.mcr.DeadtimeCorrectedSinglesRate.err;
-					nd.DoublesMinusErr = res.mcr.DeadtimeCorrectedSinglesRate.v - res.mcr.DeadtimeCorrectedSinglesRate.err;
+					nv.Doubles = res.mcr.DeadtimeCorrectedSinglesRate.v;
+					nv.DoublesPlusErr = res.mcr.DeadtimeCorrectedSinglesRate.v + res.mcr.DeadtimeCorrectedSinglesRate.err;
+					nv.DoublesMinusErr = res.mcr.DeadtimeCorrectedSinglesRate.v - res.mcr.DeadtimeCorrectedSinglesRate.err;
+					normlist.Add(nv);
 				}
-				if (nd.DoublesPlusErr > normlist.MaxDoubles)
+				if (nv.DoublesPlusErr > normlist.MaxDoubles)
 				{
-					normlist.MaxDoubles = nd.DoublesPlusErr;
+					normlist.MaxDoubles = nv.DoublesPlusErr;
 				}
-				if (nd.DoublesMinusErr < normlist.MinDoubles)
+				if (nv.DoublesMinusErr < normlist.MinDoubles)
 				{
-					normlist.MinDoubles = nd.DoublesMinusErr;
+					normlist.MinDoubles = nv.DoublesMinusErr;
 				}
-				nd.number = ++num;
+				nv.number = ++num;
 			}
 			normlist.CalcLowerUpper();
 
@@ -124,7 +126,7 @@ namespace NewUI
             maxpt.Height = -5;
             maxpt.Width = 0;
             maxpt.AnchorOffsetY = -2.5;
-			foreach(NormDoubles n in normlist)
+			foreach(NormValues n in normlist)
 			{
 				int i = s.Points.AddXY(n.number, n.Doubles, n.DoublesMinusErr, n.DoublesPlusErr);
                 if (n.DoublesPlusErr == normlist.MaxDoubles)   
@@ -135,7 +137,8 @@ namespace NewUI
                 s.Points[i].ToolTip = n.ToString();
 			}      
             chart1.Annotations.Add(maxpt);
- 			maxpt.AnchorDataPoint = s.Points[imax];
+			if (s.Points.Count > 0)
+ 				maxpt.AnchorDataPoint = s.Points[imax];
        }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -144,26 +147,31 @@ namespace NewUI
         }
     }
 
-    class NormDoubles
+    class NormValues
     {
         public double Doubles;
         public double DoublesPlusErr;
         public double DoublesMinusErr;
         public int number;
         public DateTimeOffset dto;
+		public NormTest test;
 
-        internal NormDoubles(DateTimeOffset _dto)
+        internal NormValues(DateTimeOffset _dto)
         {
             dto = _dto;
+			test = NormTest.Cf252Doubles;
         }
 
         public override string ToString()
         {
-            return string.Format("Doubles: {0:F5} -{1:F5} +{2:F5},   {3}", Doubles, Doubles - DoublesMinusErr, DoublesPlusErr - Doubles, dto.ToString("yyyy-MM-dd HH:mm:ss")); 
+			string s = "Doubles";
+			if (test != NormTest.Cf252Doubles)
+				s = "Singles";
+			return string.Format(s + ": {0:F5} -{1:F5} +{2:F5},   {3}", Doubles, Doubles - DoublesMinusErr, DoublesPlusErr - Doubles, dto.ToString("yyyy-MM-dd HH:mm:ss")); 
         }
     }
 
-    class NormList : List<NormDoubles>
+    class NormList : List<NormValues>
     {
         public NormList()
         {
@@ -180,7 +188,7 @@ namespace NewUI
         public double[] RefDoublesMinusErr;
         public int RefNumber;
 
-        public double[] DoublesAsArray
+        public double[] ValuesAsArray
         {
             get
             {
@@ -189,7 +197,7 @@ namespace NewUI
                 int i = 0;
                 while (iter.MoveNext())
                 {
-                    a[i] = ((NormDoubles)iter.Current).Doubles;
+                    a[i] = ((NormValues)iter.Current).Doubles;
                     i++;
                 }
                 return a;
@@ -204,7 +212,7 @@ namespace NewUI
 			bool first = true;
             while (iter.MoveNext())
             {
-                NormDoubles dl = (NormDoubles)iter.Current;
+                NormValues dl = (NormValues)iter.Current;
 				if (first)
 				{
 					lower = dl.DoublesMinusErr;

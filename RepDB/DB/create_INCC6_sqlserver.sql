@@ -555,13 +555,65 @@ CREATE TABLE cycles(
 	[high_voltage] float NULL,
 	[status] int NULL,
 	[chnhits] nvarchar(1024) NULL,
+	[lmfilename] nvarchar(1024) NULL,
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE
 );
 GO
-CREATE TABLE cycleslm(
+CREATE TABLE CyclesMult(
+	[id] INTEGER Primary Key,
+	[cid] INTEGER NOT NULL,
+	[gateWidth] float,
+	[singles] float NULL,
+	[reals_plus_acc] float NULL,
+	[acc] float NULL,
+	[mult_reals_plus_acc] nvarchar(1024) NULL,
+	[mult_acc] nvarchar(1024) NULL,
+	[mult_acc_un] nvarchar(1024) NULL,
+	[singles_rate] float NULL,
+	[doubles_rate] float NULL,
+	[triples_rate] float NULL,
+	[status] int NULL,
+	[mid] INTEGER NOT NULL,
+	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
+);
+GO
+CREATE TABLE CyclesFeyn(
 	[id] INTEGER IDENTITY Primary Key,
 	[cid] INTEGER NOT NULL,
-	[chnhits] nvarchar(1024) NULL,
+	[gateWidth] float,
+ 	[cbar] float NULL,
+	[c2bar] float NULL,
+	[c3bar] float NULL,
+	[C] float NULL,
+	[mid] INTEGER NOT NULL,
+	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
+);
+GO
+CREATE TABLE CyclesTIR(  /* Time Interval (Event) and Rossi */
+	[id] INTEGER IDENTITY Primary Key,
+	[cid] INTEGER NOT NULL,
+	[gateWidth] float,
+	[length] int NULL, 
+	[gateData] nvarchar(max) NULL, 
+	[counter_type] nvarchar(40) NULL,
+	[mid] INTEGER NOT NULL,
+	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
+);
+GO
+CREATE TABLE CyclesCoin(  /* Coincidence */
+	[id] INTEGER Primary Key,
+	[cid] INTEGER NOT NULL,
+	[gateWidth] float,
+	[backgroundgatewidth] float NULL,
+	[accidentalsgatewidth] float NULL,
+	[FA] int not NULL default 1,
+	[predelay] float NULL,
+	[numchn] int not NULL default 32,
+	[RAchnhits] nvarchar(max) NULL,  /* todo: need numchn of these, try a sparse rep */
+	[RAchnhits1] nvarchar(max) NULL,  /* ... */
+	[Achnhits] nvarchar(max) NULL,  /* todo: need numchn of these, try a sparse rep */
+	[Achnhits1] nvarchar(max) NULL,  /* ... */
+	[mid] INTEGER NOT NULL,
 	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
 );
 GO
@@ -2013,7 +2065,7 @@ INSERT INTO [detector_types] VALUES('PSR','PSR4 or ISR');
 GO
 INSERT INTO [detector_types] VALUES('DGSR','DGSR');
 GO
-INSERT INTO [detector_types] VALUES('AMSR','Advanced Multiplicty Shift Register');
+INSERT INTO [detector_types] VALUES('AMSR','Advanced Multiplicity Shift Register');
 GO
 INSERT INTO [detector_types] VALUES('JSR15','JSR15');
 GO

@@ -150,6 +150,7 @@ namespace ListModeDB
                     ((Multiplicity)sca).BackgroundGateTimeStepInTics = DB.Utils.DBUInt64(dr["backgroundgatewidth"]);
                     ((Multiplicity)sca).FA = (DB.Utils.DBBool(dr["FA"]) ? FAType.FAOn : FAType.FAOff);
                     ((Multiplicity)sca).SR.gateLength = sca.gateWidthTics;
+                    // predelay is on the SR member
                 }
                 else if (t == typeof(Coincidence))
                 {
@@ -157,8 +158,9 @@ namespace ListModeDB
                     ((Coincidence)sca).BackgroundGateTimeStepInTics = DB.Utils.DBUInt64(dr["backgroundgatewidth"]);
                     // ((Coincidence)sca).FA = FAType.FAOff;  // always off by definition
                     ((Coincidence)sca).SR.gateLength = sca.gateWidthTics;
-                }
-                sca.Active = DB.Utils.DBBool(dr["active"]);
+                    // predelay is on the SR member
+            }
+            sca.Active = DB.Utils.DBBool(dr["active"]);
                 if (dr.Table.Columns.Contains("rank"))
                     sca.Rank = DB.Utils.DBUInt16(dr["rank"]);
 
