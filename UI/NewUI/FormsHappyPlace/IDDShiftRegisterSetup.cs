@@ -287,7 +287,10 @@ namespace NewUI
             {
                 AcquireParameters acq = Integ.GetCurrentAcquireParamsFor(det);
                 acq.lm.FADefault = m_curGateTriggerType;
+                det.SRParams.CopyValues(sr1);
+                NC.App.DB.UpdateDetectorParams(det);
                 NC.App.DB.UpdateAcquireParams(acq, isLM: true); // update it
+                modified = false;
             }
             if (det.Id.modified) // type changed only, so gotta save the change in the Detectors table, as well as the sr_parms table
             {
