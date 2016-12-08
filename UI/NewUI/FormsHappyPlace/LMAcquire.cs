@@ -554,6 +554,7 @@ namespace NewUI
                 {
                     cell.Tag = x;
 					PreserveAnalyzerChanges = true;
+                    ap.modified = true;
                 }
                 else
                     cell.Value = x.ToString();
@@ -639,7 +640,9 @@ namespace NewUI
 			{
 				s = new Multiplicity(FA);
 				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
-				if (FA == FAType.FAOn)
+                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2]);
+                ((Multiplicity)s).SR.gateLengthMS = Construct(row.Cells[2])/10;
+                if (FA == FAType.FAOn)
 					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
 				else
 					((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
@@ -859,7 +862,7 @@ namespace NewUI
 					if (r == null) // empty row, so just skip it
 						continue;
 					row.Cells[0].Tag = r.Active;  // reset the tag for the check box, it is the only one not updated elsewhere
-					cntap.Add(r);
+                    cntap.Add(r);
 					r.modified = !CompareAnalyzers((SpecificCountingAnalyzerParams)row.Tag, r);
 				}
 				N.App.Opstate.Measurement.AnalysisParams = cntap;
@@ -939,11 +942,9 @@ namespace NewUI
 					meas.AcquireState.lm.Interval = ap.lm.Interval;
 					LMParamUpdate = false;
 				}
-				if (AcqParamUpdate)
-				{
-					N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
-					AcqParamUpdate = false;
-				}
+				N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
+                
+				AcqParamUpdate = false;
             }
         }
 
@@ -996,6 +997,14 @@ namespace NewUI
         {
             PreserveNewState();
             SaveAcqStateChanges();
+            N.App.Opstate.Measurement.InitializeResultsSummarizers();
+            N.App.Opstate.Measurement.INCCAnalysisState.ClearINCCAnalysisResults();
+            N.App.Opstate.Measurement.PrepareINCCResults();
+
+            ResetMeasurement();
+            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
+
+
         }
         // NEXT: consider a pop-out report dialog with tabs for each report rather than the concatenated list  4 hrs 
         void ReportPreview()
