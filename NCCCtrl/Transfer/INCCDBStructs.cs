@@ -1502,12 +1502,12 @@ namespace NCCTransfer
         public byte active;
         public byte active_mult;
         public byte active_passive;
-        public byte collar;
+        public byte collaramli;
         public byte normal_method;
         public byte backup_method;
         public byte curium_ratio;
         public byte truncated_mult;
-        public byte analysis_method_spare1;
+        public byte collarcf;
         public byte analysis_method_spare2;
         public byte analysis_method_spare3;
         public byte analysis_method_spare4;

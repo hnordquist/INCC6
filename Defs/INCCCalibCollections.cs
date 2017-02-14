@@ -66,11 +66,12 @@ namespace AnalysisDefs
                         ams.choices[(int)AnalysisMethod.Active] = DB.Utils.DBBool(dr["active"]);
                         ams.choices[(int)AnalysisMethod.ActivePassive] = DB.Utils.DBBool(dr["active_passive"]);
                         ams.choices[(int)AnalysisMethod.ActiveMultiplicity] = DB.Utils.DBBool(dr["active_mult"]);
-                        ams.choices[(int)AnalysisMethod.Collar] = DB.Utils.DBBool(dr["collar"]);
+                        ams.choices[(int)AnalysisMethod.CollarAmLi] = DB.Utils.DBBool(dr["collaramli"]);
                         ams.choices[(int)AnalysisMethod.CuriumRatio] = DB.Utils.DBBool(dr["curium_ratio"]);
                         ams.choices[(int)AnalysisMethod.TruncatedMultiplicity] = DB.Utils.DBBool(dr["truncated_mult"]);
                         ams.Normal = (AnalysisMethod)DB.Utils.DBInt32(dr["normal_method"]);
                         ams.Backup = (AnalysisMethod)DB.Utils.DBInt32(dr["backup_method"]);
+                        ams.choices[(int)AnalysisMethod.CollarCf] = DB.Utils.DBBool(dr["collarcf"]);
                         if (dr.Table.Columns.Contains("aux_method"))
                             ams.Auxiliary = (AnalysisMethod)DB.Utils.DBInt32(dr["aux_method"]);
                         dmam.Add(sel, ams);
@@ -193,7 +194,10 @@ namespace AnalysisDefs
                                 case AnalysisMethod.CalibrationCurve:
                                     rec = new INCCAnalysisParams.cal_curve_rec();
                                     break;
-                                case AnalysisMethod.Collar:
+                                case AnalysisMethod.CollarAmLi:
+                                    rec = new INCCAnalysisParams.collar_combined_rec();
+                                    break;
+                                case AnalysisMethod.CollarCf:
                                     rec = new INCCAnalysisParams.collar_combined_rec();
                                     break;
                                 case AnalysisMethod.CuriumRatio:
@@ -240,7 +244,8 @@ namespace AnalysisDefs
 						case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = (md.Item2).ToDBElementList();
 							break;
-                        case AnalysisMethod.Collar:  // bad mojo with the design break here
+                        case AnalysisMethod.CollarAmLi:  // bad mojo with the design break here fix HN 1/26/2017
+                        case AnalysisMethod.CollarCf:
 							parms = (md.Item2).ToDBElementList();
 							db.UpdateCalib(detname, mat, parms.OptTable, parms);
 							parms = (md.Item2).ToDBElementList();
@@ -475,7 +480,8 @@ namespace AnalysisDefs
                             lvl = LogLevels.Info;
                         ams.AddMethod(am, acp);
                         break;
-                    case AnalysisMethod.Collar:
+                    case AnalysisMethod.CollarAmLi:
+                    case AnalysisMethod.CollarCf:
                         INCCAnalysisParams.collar_combined_rec cr = new INCCAnalysisParams.collar_combined_rec();
                         dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
                         if (dr != null)
@@ -837,7 +843,8 @@ namespace AnalysisDefs
                     }
                     break;
 
-					case AnalysisMethod.Collar:
+					case AnalysisMethod.CollarAmLi:
+                    case AnalysisMethod.CollarCf:
                     {
                         INCCMethodResults.results_collar_rec res = (INCCMethodResults.results_collar_rec)
                         m.INCCAnalysisResults.LookupMethodResults(mkey, m.INCCAnalysisState.Methods.selector, am, false);
@@ -1099,7 +1106,8 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar: // bad mojo with the design break here
+                        case AnalysisMethod.CollarAmLi: // bad mojo with the design break here
+                        case AnalysisMethod.CollarCf:
                         case AnalysisMethod.ActiveMultiplicity:
                         case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = ((ParameterBase)md.Item2).ToDBElementList();

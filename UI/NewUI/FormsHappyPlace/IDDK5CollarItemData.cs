@@ -138,7 +138,7 @@ namespace NewUI
 
         private void SaveParamsToDb ()
         {
-            mp = new MethodParamFormFields(AnalysisMethod.Collar);
+            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             INCCAnalysisParams.collar_combined_rec inDB;
 

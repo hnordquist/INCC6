@@ -45,7 +45,7 @@ namespace NewUI
         public IDDCorrectionFactors(INCCAnalysisParams.collar_combined_rec c, bool mod)
         {
             InitializeComponent();
-            mp = new MethodParamFormFields(AnalysisMethod.Collar);
+            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
             modified = mod;
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             this.Text += " for " + mp.det.Id.DetectorName;

@@ -66,7 +66,8 @@ namespace NewUI
                 ActivePassiveCheckBox.Checked = am.choices[(int)AnalysisMethod.ActivePassive];
                 ActiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.Active];
                 ActiveMultCheckBox.Checked = am.choices[(int)AnalysisMethod.ActiveMultiplicity];
-                CollarCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar];
+                CollarAmLiCheckBox.Checked = am.choices[(int)AnalysisMethod.CollarAmLi];
+                CollarCfCheckBox.Checked = am.choices[(int)AnalysisMethod.CollarCf];
                 PassiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.CalibrationCurve];
                 KnownAlphaCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownA];
                 KnownMCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownM];
@@ -92,40 +93,60 @@ namespace NewUI
 
         private void collaractive()
         {
-            if (CollarCheckBox.Checked == true)
+            string CollarName;
+            if (CollarAmLiCheckBox.Checked == true)
             {
-                string CollarName = CollarCheckBox.Name;
+                CollarName = CollarAmLiCheckBox.Name;
                 foreach (Control cb in this.Controls)
                 {
                     if (cb is CheckBox)
                     {
-                        if (cb.Name != CollarCheckBox.Name)
+                        if (cb.Name != CollarAmLiCheckBox.Name)
                         {
                             cb.Enabled = false;
                         }
                     }
                 }
-                am.Normal = AnalysisMethod.Collar;
+                am.Normal = AnalysisMethod.CollarAmLi;
+                am.Backup = AnalysisMethod.None;
+                am.Auxiliary = AnalysisMethod.None;
+            }
+            else if (CollarCfCheckBox.Checked == true)
+            {
+                CollarName = CollarCfCheckBox.Name;
+                foreach (Control cb in this.Controls)
+                {
+                    if (cb is CheckBox)
+                    {
+                        if (cb.Name != CollarCfCheckBox.Name)
+                        {
+                            cb.Enabled = false;
+                        }
+                    }
+                }
+                am.Normal = AnalysisMethod.CollarCf;
                 am.Backup = AnalysisMethod.None;
                 am.Auxiliary = AnalysisMethod.None;
             }
             else
             {
 
+                //Check this. hn 1/26/17
                 bool anyChecked = false;
-                string CollarName = CollarCheckBox.Name;
+                CollarName = CollarAmLiCheckBox.Name;
                 foreach (Control cb in this.Controls)
                 {
                     if (cb is CheckBox)
                     {
-                        if (cb.Name != CollarCheckBox.Name)
+                        if (cb.Name != CollarAmLiCheckBox.Name && cb.Name != CollarCfCheckBox.Name)
                         {
                             ((CheckBox)cb).Enabled = true;
                             anyChecked |= ((CheckBox)cb).Checked;
                         }
                     }
                 }
-                this.CollarCheckBox.Enabled = !anyChecked;
+                this.CollarAmLiCheckBox.Enabled = !anyChecked;
+                this.CollarCfCheckBox.Enabled = !anyChecked;
                 if (am.AnySelected())
                 {
                     am.choices[0] = false;
@@ -189,7 +210,7 @@ namespace NewUI
 
         private void CollarCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;
+            am.choices[(int)AnalysisMethod.CollarAmLi] = ((CheckBox)sender).Checked;
             choke((CheckBox)sender);
                   
         }
@@ -272,6 +293,12 @@ namespace NewUI
         private void HelpBtn_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void CollarCfCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            am.choices[(int)AnalysisMethod.CollarCf] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace NewUI
         public IDDCollarCrossRef(INCCAnalysisParams.collar_combined_rec c = null, bool mod = false)
         {
             InitializeComponent();
-            mp = new MethodParamFormFields(AnalysisMethod.Collar);
+            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
 
             RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             RelativeDoublesRateTextBox.NumberFormat = NumericTextBox.Formatter.F3;

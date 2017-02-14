@@ -186,7 +186,7 @@ namespace NewUI
 						dlgres = (new IDDHeavyMetalItemData(am, ah.ap.ItemId).ShowDialog());
 				}
 				// if Verif + collar  get collar data
-				if (am.Has(AnalysisMethod.Collar))
+				if (am.Has(AnalysisMethod.CollarAmLi))
 				{
 					dlgres = (new IDDCollarData().ShowDialog());
 				}

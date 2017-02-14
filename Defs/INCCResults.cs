@@ -213,7 +213,10 @@ namespace AnalysisDefs
                 case AnalysisMethod.CuriumRatio:
                     res = typeof(INCCMethodResults.results_curium_ratio_rec);
                     break;
-                case AnalysisMethod.Collar:
+                case AnalysisMethod.CollarAmLi:
+                    res = typeof(INCCMethodResults.results_collar_rec);
+                    break;
+                case AnalysisMethod.CollarCf:
                     res = typeof(INCCMethodResults.results_collar_rec);
                     break;
                 case AnalysisMethod.Active:

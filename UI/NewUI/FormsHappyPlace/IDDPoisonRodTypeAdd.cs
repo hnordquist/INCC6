@@ -80,10 +80,12 @@ namespace NewUI
                 {
                     NC.App.DB.PoisonRods.Set(model);
                     NC.App.DB.PoisonRods.Refresh();
-                    DialogResult = DialogResult.OK;
                     RefreshCombo(pick:true);
                 }
             }
+            
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

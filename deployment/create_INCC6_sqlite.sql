@@ -389,13 +389,13 @@ CREATE TABLE analysis_method_rec(
    [active] int,
    [active_mult] int,
    [active_passive] int,
-   [collar] int,
+   [collaramli] int,
    [normal_method] int,
    [backup_method] int,
    [aux_method] int,
    [curium_ratio] int,
    [truncated_mult] int,
-   [spare1] int,
+   [collarcf] int,
    [spare2] int,
    [spare3] int,
    [spare4] int,
@@ -1994,7 +1994,7 @@ INSERT INTO [HVCalibrationParams] ([detector_id],[minv],[maxv],[duration],[stepv
 GO
 INSERT INTO [analysis_method_rec] (id, item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],
 [known_m],[multiplicity],[add_a_source],[active],[active_mult],
-[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0);
+[active_passive],[collaramli],[normal_method],[backup_method],[curium_ratio],[truncated_mult],[collarcf]) VALUES(1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [sr_parms_rec]	(detector_id,[sr_detector_id],[sr_type],[sr_port_number],[predelay],[gate_length],[gate_length2],
 [high_voltage],[die_away_time],[efficiency], [multiplicity_deadtime],[coeff_a_deadtime],[coeff_b_deadtime],
@@ -2028,8 +2028,8 @@ INSERT INTO [HVCalibrationParams] ([detector_id],[minv],[maxv],[duration],[stepv
 GO
 INSERT INTO [analysis_method_rec] 
 (id,item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],[known_m],[multiplicity],[add_a_source],[active],
-[active_mult], [active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) 
-VALUES(2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0);
+[active_mult], [active_passive],[collaramli],[normal_method],[backup_method],[curium_ratio],[truncated_mult],[collarcf]) 
+VALUES(2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [isotopics] 
 ([id],[pu238],[pu239],[pu240],[pu241],[pu242],[am241],[pu238_err],[pu239_err],[pu240_err],[pu241_err],[pu242_err],[am241_err],

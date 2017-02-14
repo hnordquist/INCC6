@@ -40,7 +40,7 @@
             this.CuRatioCheckBox = new System.Windows.Forms.CheckBox();
             this.TruncatedMultCheckBox = new System.Windows.Forms.CheckBox();
             this.ActiveCalCurveCheckBox = new System.Windows.Forms.CheckBox();
-            this.CollarCheckBox = new System.Windows.Forms.CheckBox();
+            this.CollarAmLiCheckBox = new System.Windows.Forms.CheckBox();
             this.ActiveMultCheckBox = new System.Windows.Forms.CheckBox();
             this.ActivePassiveCheckBox = new System.Windows.Forms.CheckBox();
             this.PassiveLabel = new System.Windows.Forms.Label();
@@ -48,6 +48,7 @@
             this.SelectMethodsLabel = new System.Windows.Forms.Label();
             this.ProvisoLabel = new System.Windows.Forms.Label();
             this.MaterialTypeLabel = new System.Windows.Forms.Label();
+            this.CollarCfCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // MaterialTypeComboBox
@@ -177,21 +178,21 @@
             this.ActiveCalCurveCheckBox.UseVisualStyleBackColor = true;
             this.ActiveCalCurveCheckBox.CheckedChanged += new System.EventHandler(this.ActiveCalCurveCheckBox_CheckedChanged);
             // 
-            // CollarCheckBox
+            // CollarAmLiCheckBox
             // 
-            this.CollarCheckBox.AutoSize = true;
-            this.CollarCheckBox.Location = new System.Drawing.Point(221, 175);
-            this.CollarCheckBox.Name = "CollarCheckBox";
-            this.CollarCheckBox.Size = new System.Drawing.Size(52, 17);
-            this.CollarCheckBox.TabIndex = 12;
-            this.CollarCheckBox.Text = "Collar";
-            this.CollarCheckBox.UseVisualStyleBackColor = true;
-            this.CollarCheckBox.CheckedChanged += new System.EventHandler(this.CollarCheckBox_CheckedChanged);
+            this.CollarAmLiCheckBox.AutoSize = true;
+            this.CollarAmLiCheckBox.Location = new System.Drawing.Point(221, 175);
+            this.CollarAmLiCheckBox.Name = "CollarAmLiCheckBox";
+            this.CollarAmLiCheckBox.Size = new System.Drawing.Size(124, 17);
+            this.CollarAmLiCheckBox.TabIndex = 12;
+            this.CollarAmLiCheckBox.Text = "Collar -- AmLi Source";
+            this.CollarAmLiCheckBox.UseVisualStyleBackColor = true;
+            this.CollarAmLiCheckBox.CheckedChanged += new System.EventHandler(this.CollarCheckBox_CheckedChanged);
             // 
             // ActiveMultCheckBox
             // 
             this.ActiveMultCheckBox.AutoSize = true;
-            this.ActiveMultCheckBox.Location = new System.Drawing.Point(221, 198);
+            this.ActiveMultCheckBox.Location = new System.Drawing.Point(221, 221);
             this.ActiveMultCheckBox.Name = "ActiveMultCheckBox";
             this.ActiveMultCheckBox.Size = new System.Drawing.Size(74, 17);
             this.ActiveMultCheckBox.TabIndex = 13;
@@ -202,7 +203,7 @@
             // ActivePassiveCheckBox
             // 
             this.ActivePassiveCheckBox.AutoSize = true;
-            this.ActivePassiveCheckBox.Location = new System.Drawing.Point(221, 221);
+            this.ActivePassiveCheckBox.Location = new System.Drawing.Point(221, 244);
             this.ActivePassiveCheckBox.Name = "ActivePassiveCheckBox";
             this.ActivePassiveCheckBox.Size = new System.Drawing.Size(97, 17);
             this.ActivePassiveCheckBox.TabIndex = 14;
@@ -255,11 +256,23 @@
             this.MaterialTypeLabel.TabIndex = 19;
             this.MaterialTypeLabel.Text = "Material type";
             // 
+            // CollarCfCheckBox
+            // 
+            this.CollarCfCheckBox.AutoSize = true;
+            this.CollarCfCheckBox.Location = new System.Drawing.Point(221, 198);
+            this.CollarCfCheckBox.Name = "CollarCfCheckBox";
+            this.CollarCfCheckBox.Size = new System.Drawing.Size(111, 17);
+            this.CollarCfCheckBox.TabIndex = 20;
+            this.CollarCfCheckBox.Text = "Collar -- Cf Source";
+            this.CollarCfCheckBox.UseVisualStyleBackColor = true;
+            this.CollarCfCheckBox.CheckedChanged += new System.EventHandler(this.CollarCfCheckBox_CheckedChanged);
+            // 
             // IDDAnalysisMethodsConfig
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 325);
+            this.Controls.Add(this.CollarCfCheckBox);
             this.Controls.Add(this.MaterialTypeLabel);
             this.Controls.Add(this.ProvisoLabel);
             this.Controls.Add(this.SelectMethodsLabel);
@@ -267,7 +280,7 @@
             this.Controls.Add(this.PassiveLabel);
             this.Controls.Add(this.ActivePassiveCheckBox);
             this.Controls.Add(this.ActiveMultCheckBox);
-            this.Controls.Add(this.CollarCheckBox);
+            this.Controls.Add(this.CollarAmLiCheckBox);
             this.Controls.Add(this.ActiveCalCurveCheckBox);
             this.Controls.Add(this.TruncatedMultCheckBox);
             this.Controls.Add(this.CuRatioCheckBox);
@@ -302,7 +315,7 @@
         private System.Windows.Forms.CheckBox CuRatioCheckBox;
         private System.Windows.Forms.CheckBox TruncatedMultCheckBox;
         private System.Windows.Forms.CheckBox ActiveCalCurveCheckBox;
-        private System.Windows.Forms.CheckBox CollarCheckBox;
+        private System.Windows.Forms.CheckBox CollarAmLiCheckBox;
         private System.Windows.Forms.CheckBox ActiveMultCheckBox;
         private System.Windows.Forms.CheckBox ActivePassiveCheckBox;
         private System.Windows.Forms.Label PassiveLabel;
@@ -310,5 +323,6 @@
         private System.Windows.Forms.Label SelectMethodsLabel;
         private System.Windows.Forms.Label ProvisoLabel;
         private System.Windows.Forms.Label MaterialTypeLabel;
+        private System.Windows.Forms.CheckBox CollarCfCheckBox;
     }
 }
