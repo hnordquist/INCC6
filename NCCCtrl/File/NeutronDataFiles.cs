@@ -3354,7 +3354,7 @@ namespace NCCFile
 				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
 				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
 				T n = new T();
-				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				n.Log = NC.App.DataLogger;
 				n.Num = files.state.cur++;
 				n.Filename = f;
 				n.ExtractDateFromFilename();
@@ -3383,7 +3383,7 @@ namespace NCCFile
                 string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
                 log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
                 T n = new T();
-                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+                n.Log = NC.App.DataLogger;
                 n.Num = files.state.cur++;
                 n.Filename = f;
                 n.ExtractDateFromFilename();

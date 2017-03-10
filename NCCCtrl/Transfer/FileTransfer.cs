@@ -217,7 +217,7 @@ namespace NCCTransfer
             byte[] los_bytos = new byte[stream.Length];
 
             int thisread = reader.Read(los_bytos, 0, INCCFileInfo.DETECTOR_SAVE_RESTORE.Length);  // cannot throw due to length check under normal circumstances, so this is ok 
-            string str2 = System.Text.ASCIIEncoding.ASCII.GetString(los_bytos, 0, thisread);
+            string str2 = Encoding.ASCII.GetString(los_bytos, 0, thisread);
 
             if (!str2.Equals(INCCFileInfo.DETECTOR_SAVE_RESTORE)) // pre-check should prevent this condition 
             {
@@ -1906,7 +1906,7 @@ namespace NCCTransfer
         public List<run_rec_ext_plus> times;
         public DateTime dt;
         public byte meas_option;
-        public UInt16 num_runs;
+        public ushort num_runs;
         public bool skip;
 
         public struct run_rec_ext_plus
@@ -1955,10 +1955,10 @@ namespace NCCTransfer
                     int integrated_review_data_rec_size = Marshal.SizeOf(ird);  // should be 60
                     meas_option = reader.ReadByte(); // meas option byte v,b,n V,B,N                    
                     los_bytos = TransferUtils.TryReadBytes(reader, INCC.MAX_DETECTOR_ID_LENGTH - 1);
-                    detector = System.Text.ASCIIEncoding.ASCII.GetString(los_bytos, 0, INCC.MAX_DETECTOR_ID_LENGTH - 1);
+                    detector = Encoding.ASCII.GetString(los_bytos, 0, INCC.MAX_DETECTOR_ID_LENGTH - 1);
                     detector = detector.Trim();
                     los_bytos = TransferUtils.TryReadBytes(reader, INCC.MAX_ITEM_ID_LENGTH - 1);
-                    item = System.Text.ASCIIEncoding.ASCII.GetString(los_bytos, 0, INCC.MAX_ITEM_ID_LENGTH - 1);
+                    item = Encoding.ASCII.GetString(los_bytos, 0, INCC.MAX_ITEM_ID_LENGTH - 1);
                     item = item.Trim();
 
                     byte[] meas_date = new byte[9];
@@ -1968,8 +1968,8 @@ namespace NCCTransfer
                     los_bytos = TransferUtils.TryReadBytes(reader, INCC.DATE_TIME_LENGTH - 1);
                     Array.Copy(los_bytos, meas_time, INCC.DATE_TIME_LENGTH - 1);
                     dt = INCC.DateTimeFrom(
-                                    System.Text.ASCIIEncoding.ASCII.GetString(meas_date, 0, INCC.DATE_TIME_LENGTH - 1),
-                                    System.Text.ASCIIEncoding.ASCII.GetString(meas_time, 0, INCC.DATE_TIME_LENGTH - 1));
+									Encoding.ASCII.GetString(meas_date, 0, INCC.DATE_TIME_LENGTH - 1),
+									Encoding.ASCII.GetString(meas_time, 0, INCC.DATE_TIME_LENGTH - 1));
 
                     num_runs = reader.ReadUInt16();  // runs
                     for (int i = 0; i < num_runs; i++)
@@ -1994,7 +1994,7 @@ namespace NCCTransfer
                         TransferUtils.Copy(irdr.time, 0, rre.run_time, 0, INCC.DATE_TIME_LENGTH - 1);
                         rre.run_time[8] = 0;
                         rrep.dt = INCC.DateTimeFrom(TransferUtils.str(rre.run_date, INCC.DATE_TIME_LENGTH), TransferUtils.str(rre.run_time, INCC.DATE_TIME_LENGTH));
-                        rre.run_count_time = (double)irdr.meas_time;
+                        rre.run_count_time = irdr.meas_time;
                         rre.run_singles = irdr.totals;
                         rre.run_reals_plus_acc = irdr.r_plus_a;
                         rre.run_acc = irdr.a;
@@ -2005,12 +2005,12 @@ namespace NCCTransfer
                         for (int j = 0; j < irdr.n_mult && j < (INCC.SR_MAX_MULT * 2); j++)
                         {
                             mult_data = reader.ReadUInt32();
-                            rre.run_mult_reals_plus_acc[j] = (double)mult_data;
+                            rre.run_mult_reals_plus_acc[j] = mult_data;
                         }
                         for (int j = 0; j < irdr.n_mult && j < (INCC.SR_MAX_MULT * 2); j++)
                         {
                             mult_data = reader.ReadUInt32();
-                            rre.run_mult_acc[j] = (double)mult_data;
+                            rre.run_mult_acc[j] = mult_data;
                         }
                         runs.Add(rre);
                         times.Add(rrep);

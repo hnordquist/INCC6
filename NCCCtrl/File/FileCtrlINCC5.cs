@@ -679,7 +679,7 @@ namespace NCCFile
 
 		static void GCCollect()
 		{
-			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+			LMLoggers.LognLM log = NC.App.ControlLogger;
             long mem = GC.GetTotalMemory(false);
             log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
             log.TraceEvent(LogLevels.Verbose, 4248, "GC now");

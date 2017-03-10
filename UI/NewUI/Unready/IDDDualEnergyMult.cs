@@ -26,32 +26,27 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-
+using AnalysisDefs;
 namespace NewUI
 {
+	using Integ = NCC.IntegrationHelpers;
     public partial class IDDDualEnergyMult : Form
     {
         public IDDDualEnergyMult()
         {
             InitializeComponent();
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+			InnerTextBox.Text = "0.0001"; // default
+			OuterTextBox.Text = "0.0001"; // default
+			_reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");  // reg ex for number test
+			det = Integ.GetCurrentAcquireDetector();
+            Text += " for detector " + det.Id.DetectorName;
         }
 
-        private void InnerTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void OuterTextBox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
+		private Detector det;
+		Regex _reg;
 
         private void PrintBtn_Click(object sender, EventArgs e)
         {
@@ -72,5 +67,45 @@ namespace NewUI
         {
 
         }
+
+		private void GridView_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+			if (string.IsNullOrEmpty(e.FormattedValue.ToString()))
+			{
+				GridView.Rows[e.RowIndex].ErrorText = "Value must not be empty";
+				e.Cancel = true;
+			} else
+			{
+				if (!_reg.IsMatch(e.FormattedValue.ToString()))
+				{
+					GridView.Rows[e.RowIndex].ErrorText = "Value is not a floating point number";
+					e.Cancel = true;
+					double res = (double)GridView.Rows[e.RowIndex].Tag;
+					if (e.ColumnIndex == 0)
+						GridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("F2");
+					else
+						GridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("F3");
+					GridView.Rows[e.RowIndex].ErrorText = string.Empty;
+					GridView.RefreshEdit();
+				} else
+        {
+					double res = 0;
+					double.TryParse(e.FormattedValue.ToString(), out res);
+					GridView.Rows[e.RowIndex].Tag = res;
+					if (e.ColumnIndex == 0)
+						GridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("F2");
+					else
+						GridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("F3");
+					GridView.RefreshEdit();
+				}
+			}
+        }
+
+        private void GridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            // Clear the row error in case the user presses ESC.   
+            GridView.Rows[e.RowIndex].ErrorText = string.Empty;
+        }
+
     }
 }

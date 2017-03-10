@@ -68,7 +68,7 @@ namespace NewUI
 
         bool PrepList()
         {
-			ctrllog = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
+			ctrllog = N.App.ControlLogger;
             if ((IsIso && ilist.Count == 0) || (!IsIso && cilist.Count == 0))
             {
                 string msg = string.Format("No isotopics found.");

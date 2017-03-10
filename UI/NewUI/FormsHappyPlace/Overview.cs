@@ -272,7 +272,7 @@ namespace NewUI
 		{
 			InitializeComponent();
 
-            NCC.IntegrationHelpers.GetCurrentAcquireDetectorPair(ref curacq, ref curdet);
+			Integ.GetCurrentAcquireDetectorPair(ref curacq, ref curdet);
 			LoadDetectors(true);
 			LoadCollarItems(true);
 			LoadItems(true);
@@ -691,7 +691,7 @@ namespace NewUI
         List<string> GenMeasStr(INCCDB.IndexedResults ir)
         {
             List<string> _ls = new List<string>();
-            string l = ir.Rid.ToString() + " cycles";
+            string l = ir.Rid.ToString() + " cycles; '" + ir.Material + "'";
             //if (!string.IsNullOrEmpty(ir.Campaign))
             //    l = l + ", campaign: " + ir.Campaign;
             _ls.Add(l);

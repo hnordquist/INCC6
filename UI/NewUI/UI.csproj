@@ -28,7 +28,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NewUI</RootNamespace>
     <AssemblyName>INCC6</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

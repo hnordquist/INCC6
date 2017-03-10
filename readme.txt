@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Dec 2, 2016 (NDATest)
+6.18 Mar 10, 2017 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -39,8 +39,8 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************
 Minimum requirements
 
-OS Windows 7 or above
-.NET 4.5 or higher
+OS Windows XP or above
+.NET 4.0 or higher
 
 INSTALLATION INSTRUCTIONS:
 
@@ -120,7 +120,7 @@ Issues for basic INCC5/6 feature COMPLETION
 #84  Implement Collar
 #35  Hold-up analysis required
 ***  Active/Passive paired measurements
-***  Truncated multiplicity and some multiplicity analyses are incomplete
+***  Truncated multiplicity and some multiplicity analyses, (e.g. dual-energy) are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
@@ -132,7 +132,6 @@ Issues for basic INCC6 List mode
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
 100  Rossi processing too slow on "big" data files
-133  List Mode not working in newer version of INCC6
 
 Issues for production
 #95  Just say yes to updated and complete documentation
@@ -140,13 +139,18 @@ Issues for production
 
 Closed issues
 
-6.18 Dec 2, 2016  ************
+6.18 Feb 07, 2017  ************
+***  Clean up logger API style
+***  Finish Dual-energy multiplicity dialog, database abd data structure design
+***  Supports XP again
+
+6.18 Dec 12, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis
 ***  Multiplicity analyzer cycle DTC rates recalculation on report operation
 86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
      (! still working on restore) 
 ***  List Mode Acquire DAQ settings not preserved
-
+133  List Mode not working in newer version of INCC6
 
 6.17 (6.0.17) Oct 31, 2016  ************
 79   Plot Norm, Plot Ver, Plot SDT diagnostic tools

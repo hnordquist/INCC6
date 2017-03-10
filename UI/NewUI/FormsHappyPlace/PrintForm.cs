@@ -48,6 +48,7 @@ namespace NewUI
             PrintText.Text = text;
             FileName = FilePath;
             doc.PrintPage += new PrintPageEventHandler(this.document_PrintPage);
+            this.TopMost = true;
         }
 
         private void PrintParameters_Click(object sender, EventArgs e)
