@@ -910,6 +910,7 @@ CREATE TABLE LMINCCAppContext(
 	[INCCParity] int NULL,
 	[INCCXfer] int NULL,
 	[sortPulseFile] int NULL,
+	[cullLMOutliers] int NULL,
 	[pulseFileNCD] int NULL,
 	[ptrFileNCD] int NULL,
 	[nilaFileNCD] int NULL,
@@ -2123,7 +2124,7 @@ INSERT INTO [LMNetComm] VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
 GO
 INSERT INTO [detectors] VALUES('AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO

@@ -54,12 +54,12 @@ namespace NCCConfig
         detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
 
-		reportSect, query
+		reportSect, query, tau, Tee
     }
 
 	public partial class Config
@@ -144,6 +144,7 @@ namespace NCCConfig
                                             v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 6;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           
             { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },                                                           
+            { "filterLMOutliers", "trim out certain outlier events in LM pulse trains", v => app.FilterLMOutliers = v != null },                                                           
             { "sortPulseFile", "sort and save pulse files, (line-delimited fixed-point strings, unsorted)", v => app.SortPulseFile = v != null },                                                           
             { "INCCXfer", "identify and process ye olde INCC Transfer files, (incomplete but worthy)",  v => app.INCCXfer = v != null },                                                           
             { "overwriteXfer", "replace existing definitions during each INCC Transfer operation",  v => app.OverwriteImportedDefs = v != null },                                                           
@@ -155,7 +156,10 @@ namespace NCCConfig
             { "mcaFileAssay", "use MCA-527 file streams for input", v => app.MCA527FileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
-            { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input\r\n\r\nLMMM HV control ********************", v => app.ReviewFileAssay = v != null }, 
+            { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null }, 
+            { "LMFilterParams=", "interval in µ-seconds (1-64256) and cutoff count level {µ-seconds:neutrons}, defaults to 140 µ-seconds and 4 neutrons\r\n\r\nLMMM HV control ********************", 
+                                            (b, s) => acq.LMFilterParams(b, s) },  
+
          
             // HV Calibration action and parameters
             { "hv|hvcalib:", "start an HV calibration using the current HV parameters", 

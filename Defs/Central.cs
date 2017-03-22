@@ -454,7 +454,6 @@ namespace NCC
                 cfg.CmdLineActionOverride(); // override default file input setting with active command action (if any) from cmd line
                 name = Config.AppName;
                 Opstate.Action = (NCCAction)cfg.Cur.Action;  // command line flag can set this, the override above makes sure the cmd line is the state
-
                                 loggers = new LMLoggers(cfg);  // forces init
             }
             return good;

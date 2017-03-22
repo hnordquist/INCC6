@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Mar 10, 2017 (NDATest)
+6.18 Mar 23, 2017 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -139,10 +139,11 @@ Issues for production
 
 Closed issues
 
-6.18 Feb 07, 2017  ************
+6.18 Mar 23, 2017  ************
 ***  Clean up logger API style
 ***  Finish Dual-energy multiplicity dialog, database abd data structure design
 ***  Supports XP again
+**   PTR-32 .bin single-channel list mode file cmd line peak filter tool added
 
 6.18 Dec 12, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis

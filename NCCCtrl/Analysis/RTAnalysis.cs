@@ -54,6 +54,17 @@ namespace Analysis
             results = null;
         }
 
+		public double TickSizeInSeconds {
+			get {
+					if (Handler != null)
+						return Handler.ticSizeInSeconds;
+					else
+						return _TickSizeInSeconds;
+			}
+			set {_TickSizeInSeconds = value; }
+		}
+		private double _TickSizeInSeconds;
+
         LMLoggers.LognLM logger;
         RawAnalyzerHandler handler;
         RawResults results;
@@ -147,6 +158,7 @@ namespace Analysis
 
         public void HandleAnArrayOfNeutronEvents(List<ulong> timeOfNewEvents, List<uint> neutronsOfNewEvents, int actualEventCount)
         {
+			if (handler != null)
 			handler.HandleAnArrayOfNeutronEvents(timeOfNewEvents, neutronsOfNewEvents, actualEventCount);
         }
 
@@ -155,6 +167,7 @@ namespace Analysis
         {
             try
             {
+				if (handler != null)
                 handler.EndAnalysisImmediately();
             }
             catch (Exception x)
@@ -166,11 +179,13 @@ namespace Analysis
 
         public void EndCountingWhenFinishedWithPresentEventQueue()
         {
+            if (handler != null)
             handler.EndAnalysisWhenFinishedWithPresentEventQueue();
         }
 
         public void ResetCompletely(bool closeCounters)
         {
+ 			if (handler != null)
             handler.ResetCompletely(closeCounters);
             if (!closeCounters)
                 logger.TraceEvent(LogLevels.Verbose, 1011, "Reset and prepared analysers for the next cycle");
@@ -182,6 +197,7 @@ namespace Analysis
         {
             try
             {
+				if (handler != null)
                 results = handler.GetResults();
             }
             catch (Exception x)
@@ -222,7 +238,7 @@ namespace Analysis
 
         public FeynmanResult GetIthFeynmanResult(int i)
         {
-            if (results.numFeynmanAnalyzers > 0)
+            if (results != null && results.numFeynmanAnalyzers > 0)
                 return results.feynmanResults[i];
             else
                 return null;
@@ -233,14 +249,14 @@ namespace Analysis
         {
             if (fa == FAType.FAOn)
             {
-                if (results.numFastBackgroundMultiplicityAnalyzers > 0)
+                if (results != null && results.numFastBackgroundMultiplicityAnalyzers > 0)
                     return results.multiplicityFastBackgroundResults[i];
                 else
                     return null;
             }
             else if (fa == FAType.FAOff)
             {
-                if (results.numSlowBackgroundMultiplicityAnalyzers > 0)
+                if (results != null && results.numSlowBackgroundMultiplicityAnalyzers > 0)
                     return results.multiplicitySlowBackgroundResults[i];
                 else
                     return null;
@@ -250,7 +266,7 @@ namespace Analysis
 
         public RateResult GetIthRateResult(int i)
         {
-            if (results.numRateAnalyzers > 0)
+            if (results != null && results.numRateAnalyzers > 0)
                 return results.rateResults[i];
             else
                 return null;
@@ -258,7 +274,7 @@ namespace Analysis
         
         public CoincidenceResult GetIthCoincidenceMatrixResult(int i)
         {
-            if (results.numCoincidenceSlowBackgroundAnalyzers > 0)
+            if (results != null && results.numCoincidenceSlowBackgroundAnalyzers > 0)
                 return results.coincidenceSlowBackgroundResults[i];
             else
                 return null;
@@ -266,14 +282,14 @@ namespace Analysis
 
         public RossiAlphaResult GetIthRossiAlphaResult(int i)
         {
-            if (results.numRossiAlphaAnalyzers > 0)
+            if (results != null && results.numRossiAlphaAnalyzers > 0)
                 return results.rossiAlphaResults[i];
             else
                 return null;
         }
         public EventSpacingResult GetIthTimeIntervalResult(int i)
         {
-            if (results.numEventSpacingAnalyzers > 0)
+            if (results != null && results.numEventSpacingAnalyzers > 0)
                 return results.eventSpacingResults[i];
             else
                 return null;
