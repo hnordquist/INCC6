@@ -266,7 +266,7 @@ namespace NCCFile
 
         public virtual void ExtractDateFromFilename()
         {
-            DTO = FromFilename(this.Filename);
+            DTO = FromFilename(Filename);
         }
 
         public string GeneratePathWithDTPrefix()
@@ -950,13 +950,13 @@ namespace NCCFile
 
         public BinaryWriter writer;
         public BinaryReader reader;
-        byte[] header;
+        internal byte[] header;
         public string headerstr;
         public int thisread;
         public long read, eventsectionlen;
         ulong mark;
 
-        public UInt16 CycleNumber;
+        public ushort CycleNumber;
         public const int HeaderLength = 0x1000;
         public int ReportedCountTimeSecs = 0;
 
@@ -979,10 +979,10 @@ namespace NCCFile
             Regex reg = new Regex("^@(\\d+).+@(\\d+)");
             if (reg.IsMatch (headerstr))
             {
-                Match m = reg.Match(headerstr);
+                Match m = reg.Match(headerstr);  // sometimes a 0 appears, which is wrong
                 ReportedCountTimeSecs = 0;
                 
-                Int32.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
+                int.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
             }
             return thisread;
         }
@@ -1049,12 +1049,12 @@ namespace NCCFile
             int i = 0;
             for (i = 0; i < count; i++) // convert back down to uint delta times
             {
-                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful);
+                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful); //  URGENT:these might be using thew wrong masks, check it
                 writer.Write(ubuff);
                 mark = buffer[index + i];
             }           
         }
-        public void Write(List<ulong> buffer, int index, int count)
+        public void Write(List<ulong> buffer, int index, int count) //  URGENT:these might be using thew wrong masks, check it
         {
             if (writer == null)
                 return;
@@ -1229,6 +1229,7 @@ namespace NCCFile
             bool res = Events.CreateForWriting();
             if (res)
             {
+				if (!SoloBinFile)
                 Channels.CreateForWriting();
                 Events.WriteHeader(FirmwareIdent);
             }
@@ -1246,6 +1247,7 @@ namespace NCCFile
         public void CloseWriter()
         {
             Events.CloseWriter();
+			if (!SoloBinFile)
             Channels.CloseWriter();
         }
 
@@ -1264,7 +1266,7 @@ namespace NCCFile
         public void ExtractDateFromFilename()
         {
             DateTimeOffset dt = DateTimeOffset.Now;
-            PTRFilePair.GetDateFromName(Filename, ref dt, ref CycleNumber);
+            GetDateFromName(Filename, ref dt, ref CycleNumber);
             DTO = dt;
         }
 
@@ -1299,7 +1301,175 @@ namespace NCCFile
             DTO = dt;
         }
 
+		static Regex wxreg;
+		public static bool MatchSuffixTimeStampStyle(string mark, string suffix, string fname)
+		{
+			if (wxreg== null)
+				wxreg = new Regex("("+ mark + "\\." + suffix + ")|(\\[\\d*\\])\\." + suffix + "$");
+			return wxreg.IsMatch(fname);
+		}
 
+
+    }
+
+	public class PTREventFileClone : NeutronDataFile
+    {
+
+        public BinaryWriter writer;
+        byte[] header;
+        ulong mark;
+
+        public ushort CycleNumber;
+        public int ReportedCountTimeSecs = 0;
+
+        public PTREventFileClone(PTREventFile src)
+        {
+			Init();
+			Log = src.Log;
+			CloneFilePathAndName(src);
+        }
+
+		void Init()
+		{
+			mark = 0;
+            header = new byte[PTREventFile.HeaderLength];
+		}
+
+        public PTREventFileClone()
+        {
+			Init();
+        }
+        public void CloneHeader(PTREventFile src)
+        {
+			Array.Copy(src.header, header, PTREventFile.HeaderLength);
+        }
+
+		void CloneFilePathAndName(PTREventFile src)
+        {
+			if (src.PrefixPath != null)
+				PrefixPath = string.Copy(src.PrefixPath);
+			Num = src.Num;
+			Filename = src.Filename;
+            int idx = Filename.LastIndexOf("_MM.bin");
+            if (idx < 0)
+				idx = Filename.LastIndexOf(".bin");
+            string loc = "";
+            if (idx > -1)
+			{
+                loc = Filename.Remove(idx); // Remove path information from string.
+				Filename = loc + "_MM.bin";
+			}
+
+		}
+
+        //  when encountering the same file name, create a file name with a very special signifier
+        public override bool CreateForWriting()
+        {
+			bool ok = false;
+            try
+            {
+                if (File.Exists(Filename))
+				{                    
+					string f = Path.GetFullPath(Filename);
+					int dot = f.LastIndexOf('.');
+					if (dot >= 0)
+					{
+		                string fsuffix = f.Substring(dot);
+						string s = string.Format("[{0}]{1}", DateTime.Now.Ticks.ToString().Substring(5,8), fsuffix);
+						Filename = string.Concat(f.Remove(dot), s);
+					}
+				}
+                if (Log != null) Log.TraceEvent(LogLevels.Info, 111, "Creating new file: " + Filename);
+                stream = File.Create(Filename);
+                ok = true;
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+
+			if (ok)
+                writer = new BinaryWriter(stream);
+            mark = 0;
+            return ok;
+        }
+
+        public override void ConstructFullPathName(string opt = "")
+        {
+            base.ConstructFullPathName(opt);
+        }
+
+        public void WriteHeader(string ignore = null)
+        {
+            Write(header, 0, header.Length);
+        }
+
+        public void Write(byte[] buffer, int index, int count)
+        {
+            if (writer != null)
+                writer.Write(buffer, index, count);
+        }
+        public void Write(ulong[] buffer, int index, int count)
+        {
+            if (writer == null)
+                return;
+            uint delta = 0; uint ubuffA = 0; uint ubuffB = 0;
+            int i = 0;
+			delta = ubuffA = (uint)((buffer[index + i] - mark));
+            writer.Write(delta);
+            for (i = 1; i < count; i++) // convert back down to uint delta times
+            {
+                ubuffB = (uint)((buffer[index + i] - mark));
+				delta = ubuffB - ubuffA;
+				ubuffA = ubuffB;
+                writer.Write(delta);
+                mark = buffer[index + i];
+            }           
+        }
+        public void Write(List<ulong> buffer, int index, int count)
+        {
+            if (writer == null)
+                return;
+            uint delta = 0; uint ubuffA = 0; uint ubuffB = 0;
+            int i = 0;
+			delta = ubuffA = (uint)((buffer[index + i] - mark));
+            writer.Write(delta);
+            for (i = 1; i < count; i++) // convert back down to uint delta times
+            {
+                ubuffB = (uint)((buffer[index + i] - mark));
+				delta = ubuffB - ubuffA;
+				ubuffA = ubuffB;
+                writer.Write(delta);
+                mark = buffer[index + i];
+            }  
+        }
+        public void Write(ulong onetimestamp)
+        {
+            if (writer == null)
+                return;
+            uint ubuff = (uint)(onetimestamp);
+            writer.Write(ubuff);
+        }
+
+		public override void CloseWriter()
+        {
+            if (writer != null && Log != null) Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
+            try
+            {
+                if (writer != null)
+                {
+                    writer.Flush();
+                    writer.Close();
+                }
+                CloseStream();
+				writer = null;
+				stream = null;
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+        }
     }
 
 	public class TimestampOverflowException : Exception { }
