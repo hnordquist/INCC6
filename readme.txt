@@ -7,7 +7,7 @@ This work was supported by the United States Member State Support Program to IAE
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
 Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security.
 
-Copyright 2016, Los Alamos National Security, LLC. This software application and associated
+Copyright 2017, Los Alamos National Security, LLC. This software application and associated
 material ("The Software") was prepared by the Los Alamos National Security, LLC. (LANS), under
 Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE). All rights in the software
 application and associated material are reserved by DOE on behalf of the Government and LANS

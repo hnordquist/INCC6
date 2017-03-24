@@ -33,11 +33,11 @@ using NCCConfig;
 using NCCReporter;
 namespace Analysis
 {
-    using NC = NCC.CentralizedState;
-    using RawAnalyzerHandler = LMRawAnalysis.AnalyzerHandler;
-    using RawStatus = LMRawAnalysis.AnalyzerHandlerStatus;
+	using NC = NCC.CentralizedState;
+	using RawAnalyzerHandler = LMRawAnalysis.AnalyzerHandler;
+	using RawStatus = LMRawAnalysis.AnalyzerHandlerStatus;
 
-    public class LMProcessingState : ProcessingState
+	public class LMProcessingState : ProcessingState
     {
         internal LMProcessingState()
         {
