@@ -95,7 +95,7 @@ namespace NewUI
         public IDDIsotopics(string selected = "default")
         {
             InitializeComponent();
-            applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
+            applog = NC.App.AppLogger;
             acq = Integ.GetCurrentAcquireParams();
             if (string.IsNullOrEmpty(selected) || string.Compare(selected, "default",true) == 0)
             {

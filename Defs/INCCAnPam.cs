@@ -1229,6 +1229,8 @@ namespace AnalysisDefs
                 detector_efficiency = new double[MAX_DUAL_ENERGY_ROWS];
                 inner_outer_ring_ratio = new double[MAX_DUAL_ENERGY_ROWS];
                 relative_fission = new double[MAX_DUAL_ENERGY_ROWS];
+				inner_ring_efficiency = 0.001;
+				outer_ring_efficiency = 0.001;
             }
 
             public de_mult_rec(de_mult_rec src)
@@ -1237,6 +1239,9 @@ namespace AnalysisDefs
                 Array.Copy(src.detector_efficiency, detector_efficiency, src.detector_efficiency.Length);
                 Array.Copy(src.inner_outer_ring_ratio, inner_outer_ring_ratio, src.inner_outer_ring_ratio.Length);
                 Array.Copy(src.relative_fission, relative_fission, src.relative_fission.Length);
+				inner_ring_efficiency = src.inner_ring_efficiency;
+				outer_ring_efficiency = src.outer_ring_efficiency;
+
             }
 
             public override void CopyTo(INCCMethodDescriptor imd)
@@ -1246,6 +1251,8 @@ namespace AnalysisDefs
                 Array.Copy(detector_efficiency, tgt.detector_efficiency, detector_efficiency.Length);
                 Array.Copy(inner_outer_ring_ratio, tgt.inner_outer_ring_ratio, inner_outer_ring_ratio.Length);
                 Array.Copy(relative_fission, tgt.relative_fission, relative_fission.Length);
+				tgt.inner_ring_efficiency = inner_ring_efficiency;
+				tgt.outer_ring_efficiency = outer_ring_efficiency;
                 imd.modified = true;
             }
 

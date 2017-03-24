@@ -335,7 +335,7 @@ namespace NewUI
                     {
                         SRInstrument sri = new SRInstrument(det);
                         sri.selected = true;
-                        sri.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
+                        sri.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
                         if (!Instruments.All.Contains(sri))
                             Instruments.All.Add(sri); // add to global runtime list 
                         dr = DialogResult.OK;
@@ -352,7 +352,7 @@ namespace NewUI
                         {
 							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
-                            NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
+                            NC.App.AppLogger.TraceEvent(LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement

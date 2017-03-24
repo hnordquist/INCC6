@@ -358,7 +358,7 @@ namespace NewUI
 		string TNameMap(Type t, FAType FA = FAType.FAOff)
 		{
 			if (barfoo == null)
-				 barfoo = new string[] {"Fast Multiplicity", "Multiplicity", "Feynman", "Rossi-α (alpha)", "Event Spacing", "Coincidence" };
+				 barfoo = new string[] {"Multiplicity (Fast Accidentals)", "Multiplicity (Conventional)", "Feynman", "Rossi-α (alpha)", "Event Spacing", "Coincidence" };
 			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
 				return barfoo[0];
 			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
@@ -554,6 +554,7 @@ namespace NewUI
                 {
                     cell.Tag = x;
 					PreserveAnalyzerChanges = true;
+                    ap.modified = true;
                 }
                 else
                     cell.Value = x.ToString();
@@ -1001,7 +1002,7 @@ namespace NewUI
         void ReportPreview()
         {
 
-            RawAnalysisReport rrep = new RawAnalysisReport(N.App.Loggers.Logger(LMLoggers.AppSection.Control));
+            RawAnalysisReport rrep = new RawAnalysisReport(N.App.ControlLogger);
             rrep.GenerateInitialReportContent(N.App.Opstate.Measurement);
 
             Array sv = Enum.GetValues(typeof(MethodResultsReport.INCCReportSection));
@@ -1011,7 +1012,7 @@ namespace NewUI
             SectionChoices[(int)MethodResultsReport.INCCReportSection.Context] = true;
             SectionChoices[(int)MethodResultsReport.INCCReportSection.ShiftRegister] = true;
             SectionChoices[(int)MethodResultsReport.INCCReportSection.Isotopics] = true;
-            MethodResultsReport mrep = new MethodResultsReport(N.App.Loggers.Logger(LMLoggers.AppSection.Control));
+            MethodResultsReport mrep = new MethodResultsReport(N.App.ControlLogger);
             mrep.ApplyReportSectionSelections(SectionChoices);
             mrep.GenerateInitialReportContent(N.App.Opstate.Measurement);
 
@@ -1315,7 +1316,7 @@ namespace NewUI
             if (N.App.Opstate.Measurement != null)
             {
                 N.App.Opstate.Measurement = null;
-                LMLoggers.LognLM log = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
+                LMLoggers.LognLM log = N.App.ControlLogger;
                 long mem = GC.GetTotalMemory(false);
                 log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
                 log.TraceEvent(LogLevels.Verbose, 4248, "GC now");

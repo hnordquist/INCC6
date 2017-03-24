@@ -140,11 +140,11 @@ namespace AnalysisDefs
             saParams = am.ToDBElementList();       
             if (!db.Update(sel.detectorid, sel.material, saParams)) // am not there, so add it
             {
-                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34027, "Failed to update analysis method spec for " + sel.ToString());
+                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34027, "Failed to update analysis method spec for " + sel.ToString());
             }
             else
             {
-                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34026, "Updated/created analysis method spec for " + sel.ToString());
+                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34026, "Updated/created analysis method spec for " + sel.ToString());
             }
             am.modified = false;
 
@@ -171,7 +171,7 @@ namespace AnalysisDefs
                     System.Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor> md = (System.Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>)iter.Current;
                     if (md.Item2 == null) // case from INCC5 transfer missing params, reflects file write bugs in INCC5 code
                     {
-                        NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34029, "Missing {0}'s INCC {1} {2} method parameters, adding default values", detname, kv.Key.material, md.Item1.FullName());
+                        NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34029, "Missing {0}'s INCC {1} {2} method parameters, adding default values", detname, kv.Key.material, md.Item1.FullName());
                         //OK, there is probably smarter way of doing ths, but for now, does find the nulls, then add default params where necessary. hn 9.23.2015
                         if (md.Item2 == null)
                         {
@@ -222,7 +222,7 @@ namespace AnalysisDefs
                         continue;
                     }
 
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34030, "Updating {0},{1} {2}", detname, mat, md.Item2.GetType().Name);
+                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34030, "Updating {0},{1} {2}", detname, mat, md.Item2.GetType().Name);
                     DB.ElementList parms = null;
 					bool bonk = false;
                     switch (md.Item1)
@@ -282,7 +282,7 @@ namespace AnalysisDefs
                 if (!(am > AnalysisMethod.None && am <= AnalysisMethod.TruncatedMultiplicity && (am != AnalysisMethod.INCCNone)))
                 {
                     if (!am.IsNone())
-                        NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Skipping DB ingest of {0} {1} calib params", sel, am);
+                        NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34061, "Skipping DB ingest of {0} {1} calib params", sel, am);
                     continue;
                 }
                 string current = String.Format("{0} {1} parameters", sel, am.FullName());
@@ -535,7 +535,7 @@ namespace AnalysisDefs
                     default:
                         break;
                 }
-                NC.App.Pest.logger.TraceEvent(lvl, logid, current);
+                NC.App.DBLogger.TraceEvent(lvl, logid, current);
             } // for
 
         }
@@ -554,7 +554,7 @@ namespace AnalysisDefs
 					if (!(am > AnalysisMethod.None && am <= AnalysisMethod.TruncatedMultiplicity && (am != AnalysisMethod.INCCNone)))
 					{
 						if (!am.IsNone())
-							NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Skipping DB ingest of {0} calib results", am);
+							NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34061, "Skipping DB ingest of {0} calib results", am);
 						continue;
 					}
 					long mid = m.MeasurementId.UniqueId;
@@ -1017,7 +1017,7 @@ namespace AnalysisDefs
 					}
 						break;
 					default:
-						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
+						NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
 						break;
 					}
 				} // for
@@ -1081,11 +1081,11 @@ namespace AnalysisDefs
                     System.Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor> md = (System.Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>)iter.Current;
                     if (md.Item2 == null) // case from INCC5 transfer missing params, reflects file write bugs in INCC5 code
                     {
-                        NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34029, "Missing {0}'s INCC {1} method parameters, skipping to next entry", detname, md.Item1.ToString());
+                        NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34029, "Missing {0}'s INCC {1} method parameters, skipping to next entry", detname, md.Item1.ToString());
                         continue;
                     }
 
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34030, "Updating <{0},{1}>: {2}", detname, mat, md.Item2.GetType().Name);
+                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34030, "Updating <{0},{1}>: {2}", detname, mat, md.Item2.GetType().Name);
 
                    DB.ElementList parms = null;
                     switch (md.Item1)

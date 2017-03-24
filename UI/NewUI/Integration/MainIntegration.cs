@@ -181,7 +181,7 @@ namespace NewUI
 
 				foreach (LMLoggers.AppSection source in Enum.GetValues(typeof(LMLoggers.AppSection)))
 				{
-					foreach (TraceListener l in NC.App.Logger(source).TS.Listeners)
+					foreach (TraceListener l in NC.App.Loggers.Logger(source).TS.Listeners)
 					{
 						if (l is WPFTraceListener)
 						{

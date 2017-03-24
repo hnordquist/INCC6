@@ -64,7 +64,10 @@ namespace NCCReporter
         {
             get { return (LognLM)reps[AppSection.Data]; }
         }
-
+        public LognLM ControlLogger
+        {
+            get { return (LognLM)reps[AppSection.Control]; }
+        }
         public LMLoggers(NCCConfig.Config cfg)
         {
             this.cfg = cfg;

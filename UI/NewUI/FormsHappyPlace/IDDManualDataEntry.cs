@@ -53,7 +53,7 @@ namespace NewUI
 
             ResetGrid();
 
-            m_log = NC.App.Logger(LMLoggers.AppSection.Data);
+            m_log = NC.App.DataLogger;
             ClipboardMonitor.Start();
             ClipboardMonitor.OnClipboardChange += new ClipboardMonitor.OnClipboardChangeEventHandler(ClipboardMonitor_OnClipboardChange);
             cyclesGridView.AutoResizeColumn(0, DataGridViewAutoSizeColumnMode.AllCellsExceptHeader);
