@@ -30,8 +30,6 @@
         {
             this.MaterialTypeComboBox = new System.Windows.Forms.ComboBox();
             this.ModeComboBox = new System.Windows.Forms.ComboBox();
-            this.PoisonRodTypesComboBox = new System.Windows.Forms.ComboBox();
-            this.PoisonAbsorptionFactorTextBox = new NewUI.NumericTextBox();
             this.RelativeDoublesRateTextBox = new NewUI.NumericTextBox();
             this.PrintBtn = new System.Windows.Forms.Button();
             this.NextBtn = new System.Windows.Forms.Button();
@@ -40,10 +38,8 @@
             this.MaterialTypeLabel = new System.Windows.Forms.Label();
             this.ModeLabel = new System.Windows.Forms.Label();
             this.ReferenceDateLabel = new System.Windows.Forms.Label();
-            this.PoisonAbsorptionFactorLabel = new System.Windows.Forms.Label();
             this.RelativeDoublesRateLabel = new System.Windows.Forms.Label();
             this.ReferenceDateTimePicker = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // MaterialTypeComboBox
@@ -70,39 +66,9 @@
             this.ModeComboBox.TabIndex = 1;
             this.ModeComboBox.SelectedIndexChanged += new System.EventHandler(this.ModeComboBox_SelectedIndexChanged);
             // 
-            // PoisonRodTypesComboBox
-            // 
-            this.PoisonRodTypesComboBox.FormattingEnabled = true;
-            this.PoisonRodTypesComboBox.Location = new System.Drawing.Point(466, 61);
-            this.PoisonRodTypesComboBox.Name = "PoisonRodTypesComboBox";
-            this.PoisonRodTypesComboBox.Size = new System.Drawing.Size(76, 21);
-            this.PoisonRodTypesComboBox.TabIndex = 2;
-            this.PoisonRodTypesComboBox.SelectedIndexChanged += new System.EventHandler(this.PoisonRodTypesComboBox_SelectedIndexChanged);
-            // 
-            // PoisonAbsorptionFactorTextBox
-            // 
-            this.PoisonAbsorptionFactorTextBox.Enabled = false;
-            this.PoisonAbsorptionFactorTextBox.Location = new System.Drawing.Point(466, 90);
-            this.PoisonAbsorptionFactorTextBox.Max = 1.7976931348623157E+308D;
-            this.PoisonAbsorptionFactorTextBox.Min = 0D;
-            this.PoisonAbsorptionFactorTextBox.Name = "PoisonAbsorptionFactorTextBox";
-            this.PoisonAbsorptionFactorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.PoisonAbsorptionFactorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.PoisonAbsorptionFactorTextBox.Size = new System.Drawing.Size(76, 20);
-            this.PoisonAbsorptionFactorTextBox.Steps = -1D;
-            this.PoisonAbsorptionFactorTextBox.TabIndex = 4;
-            this.PoisonAbsorptionFactorTextBox.Text = "0.000000E+000";
-            this.PoisonAbsorptionFactorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.PoisonAbsorptionFactorTextBox.Value = 0D;
-            // 
             // RelativeDoublesRateTextBox
             // 
-            this.RelativeDoublesRateTextBox.Location = new System.Drawing.Point(466, 120);
+            this.RelativeDoublesRateTextBox.Location = new System.Drawing.Point(151, 120);
             this.RelativeDoublesRateTextBox.Max = 1.7976931348623157E+308D;
             this.RelativeDoublesRateTextBox.Min = 0D;
             this.RelativeDoublesRateTextBox.Name = "RelativeDoublesRateTextBox";
@@ -188,19 +154,10 @@
             this.ReferenceDateLabel.TabIndex = 12;
             this.ReferenceDateLabel.Text = "Reference date";
             // 
-            // PoisonAbsorptionFactorLabel
-            // 
-            this.PoisonAbsorptionFactorLabel.AutoSize = true;
-            this.PoisonAbsorptionFactorLabel.Location = new System.Drawing.Point(339, 93);
-            this.PoisonAbsorptionFactorLabel.Name = "PoisonAbsorptionFactorLabel";
-            this.PoisonAbsorptionFactorLabel.Size = new System.Drawing.Size(121, 13);
-            this.PoisonAbsorptionFactorLabel.TabIndex = 13;
-            this.PoisonAbsorptionFactorLabel.Text = "Poison absorption factor";
-            // 
             // RelativeDoublesRateLabel
             // 
             this.RelativeDoublesRateLabel.AutoSize = true;
-            this.RelativeDoublesRateLabel.Location = new System.Drawing.Point(331, 122);
+            this.RelativeDoublesRateLabel.Location = new System.Drawing.Point(16, 122);
             this.RelativeDoublesRateLabel.Name = "RelativeDoublesRateLabel";
             this.RelativeDoublesRateLabel.Size = new System.Drawing.Size(129, 13);
             this.RelativeDoublesRateLabel.TabIndex = 14;
@@ -215,24 +172,13 @@
             this.ReferenceDateTimePicker.TabIndex = 15;
             this.ReferenceDateTimePicker.ValueChanged += new System.EventHandler(this.ReferenceDateTimePicker_ValueChanged);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(370, 66);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 13);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "Poison Rod Type";
-            // 
             // IDDCollarCrossRef
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(687, 158);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.ReferenceDateTimePicker);
             this.Controls.Add(this.RelativeDoublesRateLabel);
-            this.Controls.Add(this.PoisonAbsorptionFactorLabel);
             this.Controls.Add(this.ReferenceDateLabel);
             this.Controls.Add(this.ModeLabel);
             this.Controls.Add(this.MaterialTypeLabel);
@@ -241,8 +187,6 @@
             this.Controls.Add(this.NextBtn);
             this.Controls.Add(this.PrintBtn);
             this.Controls.Add(this.RelativeDoublesRateTextBox);
-            this.Controls.Add(this.PoisonAbsorptionFactorTextBox);
-            this.Controls.Add(this.PoisonRodTypesComboBox);
             this.Controls.Add(this.ModeComboBox);
             this.Controls.Add(this.MaterialTypeComboBox);
             this.Name = "IDDCollarCrossRef";
@@ -258,8 +202,6 @@
         private System.Windows.Forms.HelpProvider provider = new System.Windows.Forms.HelpProvider();
         private System.Windows.Forms.ComboBox MaterialTypeComboBox;
         private System.Windows.Forms.ComboBox ModeComboBox;
-        private System.Windows.Forms.ComboBox PoisonRodTypesComboBox;
-        private NumericTextBox PoisonAbsorptionFactorTextBox;
         private NumericTextBox RelativeDoublesRateTextBox;
         private System.Windows.Forms.Button PrintBtn;
         private System.Windows.Forms.Button NextBtn;
@@ -268,9 +210,7 @@
         private System.Windows.Forms.Label MaterialTypeLabel;
         private System.Windows.Forms.Label ModeLabel;
         private System.Windows.Forms.Label ReferenceDateLabel;
-        private System.Windows.Forms.Label PoisonAbsorptionFactorLabel;
         private System.Windows.Forms.Label RelativeDoublesRateLabel;
         private System.Windows.Forms.DateTimePicker ReferenceDateTimePicker;
-        private System.Windows.Forms.Label label1;
     }
 }

@@ -30,6 +30,12 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MDMGroupBox = new System.Windows.Forms.GroupBox();
             this.ModeLabel = new System.Windows.Forms.Label();
             this.DetectorLabel = new System.Windows.Forms.Label();
@@ -46,11 +52,11 @@
             this.NextBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
-            this.NumRodsLabel = new System.Windows.Forms.Label();
             this.K3Label = new System.Windows.Forms.Label();
             this.BackBtn = new System.Windows.Forms.Button();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.NumRods = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.AbsFactor = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.a = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.aerr = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -66,7 +72,6 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NumRodsTextBox = new NewUI.NumericTextBox();
             this.MDMGroupBox.SuspendLayout();
             this.K4GroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -96,7 +101,7 @@
             // DetectorLabel
             // 
             this.DetectorLabel.AutoSize = true;
-            this.DetectorLabel.Location = new System.Drawing.Point(19, 44);
+            this.DetectorLabel.Location = new System.Drawing.Point(17, 44);
             this.DetectorLabel.Name = "DetectorLabel";
             this.DetectorLabel.Size = new System.Drawing.Size(80, 13);
             this.DetectorLabel.TabIndex = 1;
@@ -105,7 +110,7 @@
             // MaterialLabel
             // 
             this.MaterialLabel.AutoSize = true;
-            this.MaterialLabel.Location = new System.Drawing.Point(18, 22);
+            this.MaterialLabel.Location = new System.Drawing.Point(17, 22);
             this.MaterialLabel.Name = "MaterialLabel";
             this.MaterialLabel.Size = new System.Drawing.Size(29, 13);
             this.MaterialLabel.TabIndex = 0;
@@ -274,15 +279,6 @@
             this.HelpBtn.UseVisualStyleBackColor = true;
             this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
             // 
-            // NumRodsLabel
-            // 
-            this.NumRodsLabel.AutoSize = true;
-            this.NumRodsLabel.Location = new System.Drawing.Point(11, 15);
-            this.NumRodsLabel.Name = "NumRodsLabel";
-            this.NumRodsLabel.Size = new System.Drawing.Size(130, 13);
-            this.NumRodsLabel.TabIndex = 7;
-            this.NumRodsLabel.Text = "Number of calibration rods";
-            // 
             // K3Label
             // 
             this.K3Label.AutoSize = true;
@@ -309,6 +305,7 @@
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Type,
+            this.NumRods,
             this.AbsFactor,
             this.a,
             this.aerr,
@@ -323,11 +320,17 @@
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
+            this.dataGridView1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dataGridView1_EditingControlShowing);
             // 
             // Type
             // 
             this.Type.HeaderText = "Poison Rod Type";
             this.Type.Name = "Type";
+            // 
+            // NumRods
+            // 
+            this.NumRods.HeaderText = "# of Rods";
+            this.NumRods.Name = "NumRods";
             // 
             // AbsFactor
             // 
@@ -339,103 +342,89 @@
             // 
             // a
             // 
-            this.a.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Format = "E3";
+            this.a.DefaultCellStyle = dataGridViewCellStyle2;
             this.a.HeaderText = "a";
             this.a.Name = "a";
             // 
             // aerr
             // 
-            this.aerr.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Format = "E3";
+            this.aerr.DefaultCellStyle = dataGridViewCellStyle3;
             this.aerr.HeaderText = "a error";
             this.aerr.Name = "aerr";
             // 
             // b
             // 
-            this.b.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Format = "E3";
+            this.b.DefaultCellStyle = dataGridViewCellStyle4;
             this.b.HeaderText = "b";
             this.b.Name = "b";
             // 
             // berr
             // 
-            this.berr.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Format = "E3";
+            this.berr.DefaultCellStyle = dataGridViewCellStyle5;
             this.berr.HeaderText = "b error";
             this.berr.Name = "berr";
             // 
             // c
             // 
-            this.c.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle6.Format = "E3";
+            this.c.DefaultCellStyle = dataGridViewCellStyle6;
             this.c.HeaderText = "c";
             this.c.Name = "c";
             // 
             // cerr
             // 
-            this.cerr.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Format = "E3";
+            this.cerr.DefaultCellStyle = dataGridViewCellStyle7;
             this.cerr.HeaderText = "c error";
             this.cerr.Name = "cerr";
             // 
             // dataGridViewTextBoxColumn1
             // 
-            dataGridViewCellStyle2.Format = "E3";
-            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Format = "E3";
+            this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn1.HeaderText = "Poison Rod Absorption Factor";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.ReadOnly = true;
             // 
             // dataGridViewTextBoxColumn2
             // 
-            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn2.HeaderText = "a";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             // 
             // dataGridViewTextBoxColumn3
             // 
-            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn3.HeaderText = "a error";
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             // 
             // dataGridViewTextBoxColumn4
             // 
-            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn4.HeaderText = "b";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             // 
             // dataGridViewTextBoxColumn5
             // 
-            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn5.HeaderText = "b error";
             this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
             // 
             // dataGridViewTextBoxColumn6
             // 
-            this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn6.HeaderText = "c";
             this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             // 
             // dataGridViewTextBoxColumn7
             // 
-            this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn7.HeaderText = "c error";
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-            // 
-            // NumRodsTextBox
-            // 
-            this.NumRodsTextBox.Location = new System.Drawing.Point(160, 12);
-            this.NumRodsTextBox.Max = 1.7976931348623157E+308D;
-            this.NumRodsTextBox.Min = 0D;
-            this.NumRodsTextBox.Name = "NumRodsTextBox";
-            this.NumRodsTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.NumRodsTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
-            this.NumRodsTextBox.Size = new System.Drawing.Size(100, 20);
-            this.NumRodsTextBox.Steps = -1D;
-            this.NumRodsTextBox.TabIndex = 6;
-            this.NumRodsTextBox.Text = "0.000000E+000";
-            this.NumRodsTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
-            this.NumRodsTextBox.Value = 0D;
             // 
             // IDDCorrectionFactors
             // 
@@ -445,8 +434,6 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.BackBtn);
             this.Controls.Add(this.K3Label);
-            this.Controls.Add(this.NumRodsLabel);
-            this.Controls.Add(this.NumRodsTextBox);
             this.Controls.Add(this.HelpBtn);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.NextBtn);
@@ -483,19 +470,9 @@
         private System.Windows.Forms.Button NextBtn;
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
-        private NumericTextBox NumRodsTextBox;
-        private System.Windows.Forms.Label NumRodsLabel;
         private System.Windows.Forms.Label K3Label;
         private System.Windows.Forms.Button BackBtn;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewComboBoxColumn Type;
-        private System.Windows.Forms.DataGridViewTextBoxColumn AbsFactor;
-        private System.Windows.Forms.DataGridViewTextBoxColumn a;
-        private System.Windows.Forms.DataGridViewTextBoxColumn aerr;
-        private System.Windows.Forms.DataGridViewTextBoxColumn b;
-        private System.Windows.Forms.DataGridViewTextBoxColumn berr;
-        private System.Windows.Forms.DataGridViewTextBoxColumn c;
-        private System.Windows.Forms.DataGridViewTextBoxColumn cerr;
         private System.Windows.Forms.HelpProvider provider;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
@@ -504,5 +481,14 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
+        private System.Windows.Forms.DataGridViewComboBoxColumn Type;
+        private System.Windows.Forms.DataGridViewTextBoxColumn NumRods;
+        private System.Windows.Forms.DataGridViewTextBoxColumn AbsFactor;
+        private System.Windows.Forms.DataGridViewTextBoxColumn a;
+        private System.Windows.Forms.DataGridViewTextBoxColumn aerr;
+        private System.Windows.Forms.DataGridViewTextBoxColumn b;
+        private System.Windows.Forms.DataGridViewTextBoxColumn berr;
+        private System.Windows.Forms.DataGridViewTextBoxColumn c;
+        private System.Windows.Forms.DataGridViewTextBoxColumn cerr;
     }
 }

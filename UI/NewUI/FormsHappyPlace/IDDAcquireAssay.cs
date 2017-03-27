@@ -159,7 +159,7 @@ namespace NewUI
                 {
                     IsotopicsBtn.Enabled = false; CompositeIsotopicsBtn.Enabled = false;
                 }
-                if (am.Has(AnalysisMethod.ActivePassive) || am.Has(AnalysisMethod.Collar))
+                if (am.Has(AnalysisMethod.ActivePassive) || am.Has(AnalysisMethod.CollarAmLi) || am.Has(AnalysisMethod.CollarCf))
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = true;
                 else
                     NumActiveCyclesLabel.Visible = NumActiveCyclesTextBox.Visible = false;
@@ -267,7 +267,7 @@ namespace NewUI
 						dlgres = (new IDDHeavyMetalItemData(am, ah.ap.ItemId).ShowDialog());
 				}
 				// if Verif + collar  get collar data
-				if (am.Has(AnalysisMethod.Collar))
+				if (am.Has(AnalysisMethod.CollarAmLi) || am.Has(AnalysisMethod.CollarCf))
 				{
 					dlgres = (new IDDCollarData().ShowDialog());
 				}

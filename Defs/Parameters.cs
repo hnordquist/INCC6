@@ -810,7 +810,7 @@ namespace AnalysisDefs
             {
                 imr = new INCCMethodResults();
                 Results.MethodsResults.Add(mkey, imr);
-                
+                INCCMethodResults.results_collar_rec collrec;
                 // second, go through the list of selected methods and add a new typed result instance, 
                 foreach (AnalysisMethod method in System.Enum.GetValues(typeof(AnalysisMethod))) // could use the GetOptionType scheme here
                 {
@@ -867,9 +867,14 @@ namespace AnalysisDefs
                                 am.GetMethodParameters(AnalysisMethod.ActivePassive).CopyTo(aprec.methodParams);
                                 imr.AddMethodResults(sel, method, aprec);
                                 break;
-                            case AnalysisMethod.Collar:
-                                INCCMethodResults.results_collar_rec collrec = new INCCMethodResults.results_collar_rec ();
-                                am.GetMethodParameters(AnalysisMethod.Collar).CopyTo(collrec.methodParams);
+                            case AnalysisMethod.CollarAmLi:
+                                collrec = new INCCMethodResults.results_collar_rec ();
+                                am.GetMethodParameters(AnalysisMethod.CollarAmLi).CopyTo(collrec.methodParams);
+                                imr.AddMethodResults(sel, method, collrec);
+                                break;
+                            case AnalysisMethod.CollarCf:
+                                collrec = new INCCMethodResults.results_collar_rec();
+                                am.GetMethodParameters(AnalysisMethod.CollarCf).CopyTo(collrec.methodParams);
                                 imr.AddMethodResults(sel, method, collrec);
                                 break;
                             case AnalysisMethod.CuriumRatio:

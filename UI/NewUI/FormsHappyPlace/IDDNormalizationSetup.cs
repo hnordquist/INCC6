@@ -107,6 +107,7 @@ namespace NewUI
             {
                 /* if normalization constant or error has changed then set
                     the measured rate and error to zero. */
+                    //This was blowing chunks and I don't know why.
                 NormParameters onp = NC.App.DB.NormParameters.GetMap()[det];
                 if ((onp.currNormalizationConstant.v != np.currNormalizationConstant.v) ||
                         onp.currNormalizationConstant.err != np.currNormalizationConstant.err)

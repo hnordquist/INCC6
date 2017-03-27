@@ -1039,7 +1039,7 @@ namespace AnalysisDefs
                     }
                 }
 
-                if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Collar))
+                if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.CollarAmLi) || meas.INCCAnalysisState.Methods.Has(AnalysisMethod.CollarCf))
                 {
                     meas.AddWarningMessage("Collar mass results", 10153, mkey); // NEXT: Collar is incomplete, new design from IAEA is pending, this is a big task 
                     INCCAnalysis.CalculateCollar(mkey, results, meas, RatesAdjustments.DeadtimeCorrected);

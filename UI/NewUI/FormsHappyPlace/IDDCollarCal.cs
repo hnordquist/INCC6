@@ -41,7 +41,8 @@ namespace NewUI
         public IDDCollarCal(INCCAnalysisParams.collar_combined_rec c, bool mod)
         {
             InitializeComponent();
-            mp = new MethodParamFormFields(AnalysisMethod.Collar);
+            //Figure out Cf here. HN 1/26/17
+            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
             modified = mod;
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             this.Text += " for " + mp.det.Id.DetectorName;

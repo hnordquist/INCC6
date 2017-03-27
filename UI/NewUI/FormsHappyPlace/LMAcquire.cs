@@ -640,7 +640,8 @@ namespace NewUI
 			{
 				s = new Multiplicity(FA);
 				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
-				if (FA == FAType.FAOn)
+                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2]); // NEXT: replication logic changed here, impact downstream, study
+                if (FA == FAType.FAOn)
 					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
 				else
 					((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
@@ -940,11 +941,9 @@ namespace NewUI
 					meas.AcquireState.lm.Interval = ap.lm.Interval;
 					LMParamUpdate = false;
 				}
-				if (AcqParamUpdate)
-				{
-					N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
-					AcqParamUpdate = false;
-				}
+				N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
+                
+				AcqParamUpdate = false;
             }
         }
 
@@ -997,6 +996,9 @@ namespace NewUI
         {
             PreserveNewState();
             SaveAcqStateChanges();
+ //         N.App.Opstate.Measurement.InitializeResultsSummarizers();
+ //         N.App.Opstate.Measurement.INCCAnalysisState.ClearINCCAnalysisResults();
+ //         N.App.Opstate.Measurement.PrepareINCCResults();
         }
         // NEXT: consider a pop-out report dialog with tabs for each report rather than the concatenated list  4 hrs 
         void ReportPreview()

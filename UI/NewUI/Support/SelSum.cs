@@ -63,9 +63,10 @@ namespace NewUI
                 CuriumRatio,
                 TruncatedMultiplicity,
                 ActiveCalibCurve,
-                Collar,
+                CollarAmLi,
                 ActiveMultiplicity,
                 ActivePassive,
+                CollarCf,
 			Comments,
             LMResults
         }
@@ -117,7 +118,8 @@ namespace NewUI
             Root.Add(Selections.CuriumRatio.ToString(), new State(Selections.CuriumRatio, false));
             Root.Add(Selections.TruncatedMultiplicity.ToString(), new State(Selections.TruncatedMultiplicity, false));
             Root.Add(Selections.ActiveCalibCurve.ToString(), new State(Selections.ActiveCalibCurve, false));
-            Root.Add(Selections.Collar.ToString(), new State(Selections.Collar, false));
+            Root.Add(Selections.CollarAmLi.ToString(), new State(Selections.CollarAmLi, false));
+            Root.Add(Selections.CollarCf.ToString(), new State(Selections.CollarCf, false));
             Root.Add(Selections.ActiveMultiplicity.ToString(), new State(Selections.ActiveMultiplicity, false));
             Root.Add(Selections.ActivePassive.ToString(), new State(Selections.ActivePassive, false));
 
@@ -356,9 +358,10 @@ namespace NewUI
 					entries["Active Status"] = acres.pass ? "Pass": ""; //	"Active calibration curve - measurement status"
 				}
 				break;
-			case Selections.Collar:
-               INCCMethodResults.results_collar_rec rcres = (INCCMethodResults.results_collar_rec)
-                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.Collar, false);
+			case Selections.CollarAmLi:
+            case Selections.CollarCf:
+                INCCMethodResults.results_collar_rec rcres = (INCCMethodResults.results_collar_rec)
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarAmLi, false);
 				if (rcres != null)
 				{
 					entries["Collar Dbls Rate"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar - corrected doubles rate"

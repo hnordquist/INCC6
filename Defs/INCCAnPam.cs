@@ -45,9 +45,9 @@ namespace AnalysisDefs
     public enum AnalysisMethod
     {
         None,
-        CalibrationCurve, KnownA, KnownM, Multiplicity, AddASource, Active, ActiveMultiplicity, ActivePassive, Collar, INCCNone, CuriumRatio, TruncatedMultiplicity, 
+        CalibrationCurve, KnownA, KnownM, Multiplicity, AddASource, Active, ActiveMultiplicity, ActivePassive, CollarAmLi, INCCNone, CuriumRatio, TruncatedMultiplicity, 
         /*EachEntryAfterHereSupportsINCCHacks,*/
-        DUAL_ENERGY_MULT_SAVE_RESTORE, COLLAR_SAVE_RESTORE, COLLAR_DETECTOR_SAVE_RESTORE, COLLAR_K5_SAVE_RESTORE, WMV_CALIB_TOKEN
+        DUAL_ENERGY_MULT_SAVE_RESTORE, COLLAR_SAVE_RESTORE, COLLAR_DETECTOR_SAVE_RESTORE, COLLAR_K5_SAVE_RESTORE, WMV_CALIB_TOKEN, CollarCf
     }
     public static class AnalysisMethodExtensions
     {
@@ -88,8 +88,8 @@ namespace AnalysisDefs
                 case AnalysisMethod.ActivePassive:
                     s = "Active/Passive";
                     break;
-                case AnalysisMethod.Collar:
-                    s = "Collar";
+                case AnalysisMethod.CollarAmLi:
+                    s = "Collar -- AmLi Source";
                     break;
                 case AnalysisMethod.ActiveMultiplicity:
                    s = "Active multiplicity";
@@ -99,6 +99,9 @@ namespace AnalysisDefs
                     break;
                 case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                     s = "Dual energy multiplicity";
+                    break;
+                case AnalysisMethod.CollarCf:
+                    s = s = "Collar -- Cf Source";
                     break;
                 default:
                     s = am.ToString();
@@ -307,12 +310,13 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("active", choices[(int)AnalysisMethod.Active]));
             ps.Add(new DBParamEntry("active_passive", choices[(int)AnalysisMethod.ActivePassive]));
             ps.Add(new DBParamEntry("active_mult", choices[(int)AnalysisMethod.ActiveMultiplicity]));
-            ps.Add(new DBParamEntry("collar", choices[(int)AnalysisMethod.Collar]));
+            ps.Add(new DBParamEntry("collaramli", choices[(int)AnalysisMethod.CollarAmLi]));
             ps.Add(new DBParamEntry("truncated_mult", choices[(int)AnalysisMethod.TruncatedMultiplicity]));
             ps.Add(new DBParamEntry("curium_ratio", choices[(int)AnalysisMethod.CuriumRatio]));
             ps.Add(new DBParamEntry("normal_method", (int)Normal));
             ps.Add(new DBParamEntry("backup_method", (int)Backup));
             ps.Add(new DBParamEntry("aux_method", (int)Auxiliary));
+            ps.Add(new DBParamEntry("collarcf", choices[(int)AnalysisMethod.CollarCf]));
         }
 
         static bool[] massoutlier;
@@ -1627,6 +1631,9 @@ namespace AnalysisDefs
             public collar_rec()
             {
                 cev = new CurveEquationVals();
+                //The collar equation needs a nonzero default for a.
+                cev.a = 1;
+                cev.modified = true;
                 poison_absorption_fact = new double[MAX_POISON_ROD_TYPES];
                 poison_absorption_fact[0] = 0.647;
                 poison_rod_a = new Tuple[MAX_POISON_ROD_TYPES];
@@ -1637,12 +1644,12 @@ namespace AnalysisDefs
                 for (int i = 0; i < MAX_POISON_ROD_TYPES; i++)
                 {
                     poison_rod_a[i]= new Tuple (0.0,0.0);
-                    poison_rod_b[i] = new Tuple(0.0, 0.0);
+                    poison_rod_b[i] = new Tuple(0.0,0.0);
                     poison_rod_c[i] = new Tuple(0.0, 0.0);
                 }
                 number_calib_rods = 2;
-                u_mass_corr_fact_a = new Tuple();
-                u_mass_corr_fact_b = new Tuple();
+                u_mass_corr_fact_a = new Tuple(.000724, .000012);
+                u_mass_corr_fact_b = new Tuple(453, 4.53);
                 sample_corr_fact = new Tuple();
             }
 

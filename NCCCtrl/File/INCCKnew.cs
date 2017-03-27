@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Los Alamos National Security, LLC
+Copyright (c) 2017, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2016. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
 DE-AC52-06NA25396 for Los Alamos National Laboratory (LANL), which is operated by Los Alamos National Security, 
@@ -226,7 +226,8 @@ namespace NCCTransfer
 							case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
 								  idcf.DetectorMaterialMethodParameters.Add(dmm, Calib5.MoveDE(se, md.Item2));
 								break;
-							case AnalysisMethod.Collar:
+							case AnalysisMethod.CollarAmLi:
+                            case AnalysisMethod.CollarCf:
                                 try
                                 { 
 									  idcf.DetectorMaterialMethodParameters.
@@ -260,9 +261,9 @@ namespace NCCTransfer
 		internal static class Calib5
 		{
 
-			internal unsafe static analysis_method_rec MoveAMR(INCCSelector se)
+			internal unsafe static analysis_method_rec_ext MoveAMR(INCCSelector se)
 			{
-				analysis_method_rec amr = new analysis_method_rec();
+				analysis_method_rec_ext amr = new analysis_method_rec_ext();
 				byte[] b = new byte[INCC.MAX_DETECTOR_ID_LENGTH];
 				char[] a = se.detectorid.ToCharArray(0, Math.Min(se.detectorid.Length, INCC.MAX_DETECTOR_ID_LENGTH));
 				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
@@ -279,8 +280,9 @@ namespace NCCTransfer
 				amr.active_mult = (byte)(ams.choices[(int)AnalysisMethod.ActiveMultiplicity] ? 1 : 0);
 				amr.active_passive = (byte)(ams.choices[(int)AnalysisMethod.ActivePassive] ? 1 : 0);
 				amr.add_a_source = (byte)(ams.choices[(int)AnalysisMethod.AddASource] ? 1 : 0);
-				amr.collar = (byte)(ams.choices[(int)AnalysisMethod.Collar] ? 1 : 0);
-				amr.curium_ratio = (byte)(ams.choices[(int)AnalysisMethod.CuriumRatio] ? 1 : 0);
+				amr.collaramli = (byte)(ams.choices[(int)AnalysisMethod.CollarAmLi] ? 1 : 0);
+                amr.collarcf = (byte)(ams.choices[(int)AnalysisMethod.CollarCf] ? 1 : 0);  // added, not compatible with INCC5 now, need a fork somewhere for INCC5 compat
+                amr.curium_ratio = (byte)(ams.choices[(int)AnalysisMethod.CuriumRatio] ? 1 : 0);
 				amr.known_alpha = (byte)(ams.choices[(int)AnalysisMethod.KnownA] ? 1 : 0);
 				amr.known_m = (byte)(ams.choices[(int)AnalysisMethod.KnownM] ? 1 : 0);
 				amr.multiplicity = (byte)(ams.choices[(int)AnalysisMethod.Multiplicity] ? 1 : 0);
@@ -1088,10 +1090,13 @@ namespace NCCTransfer
 				case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
 					r = INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS;
 					break;
-				case AnalysisMethod.Collar:
+				case AnalysisMethod.CollarAmLi:
 					r = INCC.SaveResultsMask.SAVE_COLLAR_RESULTS;
 					break;
-				default:
+                case AnalysisMethod.CollarCf:
+                    r = INCC.SaveResultsMask.SAVE_COLLAR_RESULTS;
+                    break;
+                default:
 					break;
 				}
 
@@ -1483,8 +1488,10 @@ namespace NCCTransfer
 			{
 				results_collar_rec res = new results_collar_rec();
 				INCCMethodResult result;
-                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.Collar, out result);
-				if (found)
+                bool found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.CollarAmLi, out result);
+                if (!found)
+                    found = ias.Results.TryGetMethodResults(mos.MultiplicityParams, ias.Methods.selector, AnalysisMethod.CollarCf, out result);
+                if (found)
 				{
 					INCCMethodResults.results_collar_rec m = (INCCMethodResults.results_collar_rec)result;
 					res.col_u235_mass = m.u235_mass.v;
@@ -2141,7 +2148,8 @@ namespace NCCTransfer
                     case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:	// Dual energy multiplicity
                         id = INCC.DUAL_ENERGY_MULT_SAVE_RESTORE;
                         break;
-                    case AnalysisMethod.Collar:
+                    case AnalysisMethod.CollarAmLi:
+                    case AnalysisMethod.CollarCf:
                     case AnalysisMethod.COLLAR_SAVE_RESTORE:
                         id = INCC.COLLAR_SAVE_RESTORE;
                         break;
@@ -2246,7 +2254,8 @@ namespace NCCTransfer
                             am.choices[(int)AnalysisMethod.ActiveMultiplicity] = (iamr.active_mult == 0 ? false : true);
                             am.choices[(int)AnalysisMethod.ActivePassive] = (iamr.active_passive == 0 ? false : true);
                             am.choices[(int)AnalysisMethod.AddASource] = (iamr.add_a_source == 0 ? false : true);
-                            am.choices[(int)AnalysisMethod.Collar] = (iamr.collar == 0 ? false : true);
+                            am.choices[(int)AnalysisMethod.CollarAmLi] = (iamr.collar == 0 ? false : true);
+                           // am.choices[(int)AnalysisMethod.CollarCf] = (iamr.collarcf == 0 ? false : true);  // not INCC5 binary compatible, need a fork somewhere
                             am.choices[(int)AnalysisMethod.CuriumRatio] = (iamr.curium_ratio == 0 ? false : true);
                             am.choices[(int)AnalysisMethod.KnownA] = (iamr.known_alpha == 0 ? false : true);
                             am.choices[(int)AnalysisMethod.KnownM] = (iamr.known_m == 0 ? false : true);
@@ -2470,8 +2479,9 @@ namespace NCCTransfer
  							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
 							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf, sel, collar_k5.collar_k5_mode);
-							if (combined != null)
-								am.AddMethod(AnalysisMethod.Collar, combined);							
+                            //NEXT: What to do w/AmLi vs Cf here? hn 1/26/17
+                            if (combined != null)
+								am.AddMethod(AnalysisMethod.CollarAmLi, combined);							
                             break;
                         case INCC.METHOD_ACTIVE_MULT:
                             active_mult_rec active_mult = (active_mult_rec)miter2.Current;
@@ -3678,7 +3688,10 @@ namespace NCCTransfer
                         mlogger.TraceEvent(LogLevels.Verbose, 34060, ("Transferring method results for " + r.GetType().ToString()));
                         results_collar_rec oldres = (results_collar_rec)r;
                         INCCMethodResults.results_collar_rec newres =
-                            (INCCMethodResults.results_collar_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.Collar, true);
+                            (INCCMethodResults.results_collar_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarAmLi, true);
+                        if (newres == null)
+                            newres =
+                            (INCCMethodResults.results_collar_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarCf, true);
 
                         newres.u235_mass.v = oldres.col_u235_mass; newres.u235_mass.err = oldres.col_u235_mass_err;
                         newres.percent_u235 = oldres.col_percent_u235;

@@ -1515,6 +1515,26 @@ namespace NCCTransfer
 
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    unsafe public struct analysis_method_rec_ext
+    {
+        public fixed byte item_type[INCC.MAX_ITEM_TYPE_LENGTH];
+        public fixed byte analysis_method_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
+        public byte cal_curve;
+        public byte known_alpha;
+        public byte known_m;
+        public byte multiplicity;
+        public byte add_a_source;
+        public byte active;
+        public byte active_mult;
+        public byte active_passive;
+        public byte collaramli;
+        public byte normal_method;
+        public byte backup_method;
+        public byte curium_ratio;
+        public byte truncated_mult;
+        public byte collarcf;
+    };
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     unsafe public struct cal_curve_rec
     {
         public byte cal_curve_equation;
