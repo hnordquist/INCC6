@@ -27,7 +27,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.IO;
-//using System.IO.Compression;
+using System.IO.Compression;
 using System.Windows;
 using System.Windows.Controls;
 using AnalysisDefs;
@@ -827,62 +827,61 @@ namespace NewUI
 
         private void BackupAllDataClick(object sender, RoutedEventArgs e)
         {
-            //string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
-            //if (!string.IsNullOrEmpty(dest))
-            //{
-            //    //Path to sql or sqlite files
-            //    string destFileName;
-            //    destFileName = string.Format("INCC-{0}.zip", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
-            //    using (FileStream zipToOpen = new FileStream(Path.Combine (dest,destFileName), FileMode.OpenOrCreate))
-            //    {
-            //        using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-            //        {
-            //            // Cannot archive connected DB or cfg, copy, archive, then delete.
-            //            // TODO: is this all that we want to save? HN 7/27/2016
-            //            string DBFolder = Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
-            //            string DBFile = Path.GetFullPath(NC.App.Pest.GetDBFileFromConxString());
-            //            string DBFileName = Path.GetFileName(NC.App.Pest.GetDBFileFromConxString());
-            //            string CfgPath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+			if (!string.IsNullOrEmpty(dest))
+			{
+				//Path to sql or sqlite files
+				string destFileName;
+				destFileName = string.Format("INCC-{0}.zip", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
+				using (FileStream zipToOpen = new FileStream(Path.Combine(dest, destFileName), FileMode.OpenOrCreate))
+				{
+					using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+					{
+						// Cannot archive connected DB or cfg, copy, archive, then delete.
+						// TODO: is this all that we want to save? HN 7/27/2016
+						string DBFolder = Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
+						string DBFile = Path.GetFullPath(NC.App.Pest.GetDBFileFromConxString());
+						string DBFileName = Path.GetFileName(NC.App.Pest.GetDBFileFromConxString());
+						string CfgPath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
-            //            File.Copy(Path.Combine(DBFolder,DBFile), Path.Combine(dest,DBFileName),true);
-            //            File.Copy(CfgPath, Path.Combine (dest, Path.GetFileName(CfgPath)), true);
+						File.Copy(Path.Combine(DBFolder, DBFile), Path.Combine(dest, DBFileName), true);
+						File.Copy(CfgPath, Path.Combine(dest, Path.GetFileName(CfgPath)), true);
 
-            //            ZipArchiveEntry dbFile = archive.CreateEntryFromFile(Path.Combine(dest,DBFileName),DBFileName);
-            //            ZipArchiveEntry cfgFile = archive.CreateEntryFromFile(Path.Combine(dest, Path.GetFileName(CfgPath)), Path.GetFileName(CfgPath));
-            //            NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 1111, String.Format("Zip file containing database and config created: {0}", Path.Combine(dest, destFileName)));
-            //            File.Delete(Path.Combine(dest, DBFileName));
-            //            File.Delete(Path.Combine(dest, Path.GetFileName(CfgPath)));
+						ZipArchiveEntry dbFile = archive.CreateEntryFromFile(Path.Combine(dest, DBFileName), DBFileName);
+						ZipArchiveEntry cfgFile = archive.CreateEntryFromFile(Path.Combine(dest, Path.GetFileName(CfgPath)), Path.GetFileName(CfgPath));
+						NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 1111, String.Format("Zip file containing database and config created: {0}", Path.Combine(dest, destFileName)));
+						File.Delete(Path.Combine(dest, DBFileName));
+						File.Delete(Path.Combine(dest, Path.GetFileName(CfgPath)));
 
-            //        }
-            //    }
+					}
+				}
 
-            //}
-            //else
-            //    MessageBox.Show("The destination folder could not be created", "ERROR");
-        }
+			} else
+				MessageBox.Show("The destination folder could not be created", "ERROR");
+		}
 
         private void RestoreAllDataClick(object sender, RoutedEventArgs e)
         {
-            //System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 
-            //openFileDialog1.InitialDirectory = Path.GetTempPath();
-            //openFileDialog1.Filter = "archive files (*.zip)|*.7z|All files (*.*)|*.*";
-            //openFileDialog1.FilterIndex = 2;
-            //openFileDialog1.RestoreDirectory = true;
+			openFileDialog1.InitialDirectory = Path.GetTempPath();
+			openFileDialog1.Filter = "archive files (*.zip)|*.7z|All files (*.*)|*.*";
+			openFileDialog1.FilterIndex = 2;
+			openFileDialog1.RestoreDirectory = true;
 
-            //if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            //{
-            //    using (ZipArchive archive = new ZipArchive(openFileDialog1.OpenFile()))
-            //    {
-            //        // TODO: What does restore mean? Right now, just extracts to temp. 
-            //        // would have to do some somersaults to switch DB and change app context to stored config.
-            //        foreach (ZipArchiveEntry entry in archive.Entries)
-            //        {
-            //            entry.ExtractToFile(Path.Combine(Path.GetTempPath(), entry.FullName),true);
-            //        }
-            //    }
-            //}
-        }
+			if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				using (ZipArchive archive = new ZipArchive(openFileDialog1.OpenFile()))
+				{
+					// TODO: What does restore mean? Right now, just extracts to temp. 
+					// would have to do some somersaults to switch DB and change app context to stored config.
+					foreach (ZipArchiveEntry entry in archive.Entries)
+					{
+						entry.ExtractToFile(Path.Combine(Path.GetTempPath(), entry.FullName), true);
+					}
+				}
+			}
+		}
 
         private void BatchAnalysisClick(object sender, RoutedEventArgs e)
         {

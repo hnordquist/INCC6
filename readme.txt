@@ -39,8 +39,8 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **********************************************************************************
 Minimum requirements
 
-OS Windows XP or above
-.NET 4.0 or higher
+OS Windows 7 or above
+.NET 4.5 or higher
 
 INSTALLATION INSTRUCTIONS:
 
@@ -142,7 +142,7 @@ Closed issues
 6.18 Mar 23, 2017  ************
 ***  Clean up logger API style
 ***  Finish Dual-energy multiplicity dialog, database abd data structure design
-***  Supports XP again
+***  Does not support XP
 **   PTR-32 .bin single-channel list mode file cmd line peak filter tool added
 
 6.18 Dec 12, 2016  ************
