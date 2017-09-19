@@ -435,7 +435,7 @@ namespace NCCConfig
         // This function uses the AppSettings property to read the appSettings configuration section.
         // The values are loaded into an internal params array with type markers.
         // All subsequent configuration set/get is through this in-memory parameter array.
-        void ReadAppSettings()
+        public void ReadAppSettings()
         {
             try
             {

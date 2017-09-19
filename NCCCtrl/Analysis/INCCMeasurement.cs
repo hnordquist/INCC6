@@ -28,6 +28,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using INCCCore;
 
 namespace AnalysisDefs
@@ -602,6 +604,7 @@ namespace AnalysisDefs
 
         static void CalculateVerificationResults(this Measurement meas, Multiplicity mkey, MultiplicityCountingRes results)
         {
+
             Tuple normal_mass = new Tuple(-1, 0), backup_mass = new Tuple(-1, 0);
             try
             {
@@ -1039,7 +1042,7 @@ namespace AnalysisDefs
                     }
                 }
 
-                if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Collar) || meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Collar))
+                if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Collar))
                 {
                     meas.AddWarningMessage("Collar mass results", 10153, mkey); // NEXT: Collar is incomplete, new design from IAEA is pending, this is a big task 
                     INCCAnalysis.CalculateCollar(mkey, results, meas, RatesAdjustments.DeadtimeCorrected);
@@ -1253,6 +1256,8 @@ namespace AnalysisDefs
                         }
                     }
                 }
+
+                DumpState(meas, mkey, results);
             }
             catch (Exception e)
             {
@@ -1261,7 +1266,353 @@ namespace AnalysisDefs
 
         }
 
-        
+        static void DumpState (Measurement m, Multiplicity mult, MultiplicityCountingRes res)
+        {
+            string folder = NC.App.AppContext.LogFilePath + "\\TestRuns\\" + String.Format("{0}\\{1}\\", DateTime.Now.Year,DateTime.Now.ToString ("MMM", CultureInfo.CurrentCulture));
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+            string file = String.Format("State_Meas_{0}_Type_{1}_Date_{2}.xml", m.MeasurementId.Item.item, m.MeasOption, DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss"));
+            FileStream testFile = new FileStream(Path.Combine(folder,file), FileMode.CreateNew);
+
+            StreamWriter writer = new StreamWriter(testFile, System.Text.Encoding.UTF8);
+            writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.WriteLine("<MeasurementState>");
+            writer.WriteLine("\t<File>");
+            writer.WriteLine(String.Format("\t\t<Filename>{0}</Filename>", folder, Path.GetFileName(file)));
+            writer.WriteLine("\t</File>");
+            //Write out the measurement
+            writer.WriteLine("\t<Measurement>");
+            writer.WriteLine(String.Format("\t<Option>{0}</Option>", m.MeasOption));
+            writer.WriteLine(String.Format("\t\t<CountTimeSecs>{0}</CountTimeSecs>", m.CountTimeInSeconds));
+            writer.WriteLine(String.Format("\t\t<CurrentRepitition>{0}</CurrentRepitition>", m.CurrentRepetition));
+            writer.WriteLine(String.Format("\t\t<FirstCycle>{0}</FirstCycle>", m.FirstCycle?1:0));
+            writer.WriteLine(String.Format("\t\t<ResultFile>{0}</ResultFile>", m.ResultsFiles.PrimaryINCC5Filename.Path));
+            writer.WriteLine("\t\t<AcquireParameters>");
+            writer.WriteLine(String.Format("\t\t\t<AcquireType>{0}</AcquireType>", m.AcquireState.acquire_type));
+            writer.WriteLine("\t\t</AcquireParameters>");
+            writer.WriteLine("\t\t<CountingAnalysisParameters>");
+            string[] values;
+            string[] keys;
+            //Counter params
+            foreach (SpecificCountingAnalyzerParams parms in m.AnalysisParams)
+            {
+                writer.WriteLine("\t\t\t<SpecificAnalysisParameters>");
+                values = parms.ToSimpleValueArray();
+                keys = parms.ToSimpleKeyArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+                writer.WriteLine("\t\t\t</SpecificAnalysisParameters>");
+            }
+            
+            writer.WriteLine("\t\t</CountingAnalysisParameters>");
+            //BackgroundParams
+            writer.WriteLine("\t\t<BackgroundParameters>");
+            values = m.Background.ToSimpleValueArray();
+            keys = m.Background.ToSimpleKeyArray();
+            for (int i = 0; i < values.Length; i++)
+            {
+                writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+            }
+            writer.WriteLine("\t\t</BackgroundParameters>");
+            //Cycles
+            writer.WriteLine("\t\t<CFCycleLists>");
+            if (m.CFCycles != null)
+            {
+                foreach (CycleList cl in m.CFCycles)
+                {
+                    writer.WriteLine("\t\t\t<CFCycleList>");
+                    foreach (Cycle c in cl)
+                    {
+                        writer.WriteLine("\t\t\t\t<Cycle>");
+                        keys = c.ToSimpleKeyArray();
+                        values = c.ToSimpleValueArray();
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                        }
+                        writer.WriteLine("\t\t\t\t</Cycle>");
+                    }
+                }
+                writer.WriteLine("\t\t\t</CFCycleList>");
+            }
+            writer.WriteLine("\t\t</CFCycleLists>");
+
+            writer.WriteLine("\t\t<CycleList>");
+            if (m.Cycles != null)
+            {
+                foreach (Cycle c in m.Cycles)
+                {
+                    writer.WriteLine("\t\t\t<Cycle>");
+                    keys = c.ToSimpleKeyArray();
+                    values = c.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                    writer.WriteLine("\t\t\t</Cycle>");
+                }
+            }
+            writer.WriteLine("\t\t</CycleList>");
+            //CountingResults
+            writer.WriteLine("\t\t<CountingResults>");
+            if (m.CountingAnalysisResults != null)
+            {
+                foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> kvp in m.CountingAnalysisResults)
+                {
+                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)kvp.Value;
+                    writer.WriteLine("\t\t\t<MultiplicityCountingResults>");
+                    keys = mcr.ToSimpleKeyArray();
+                    values = mcr.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                    writer.WriteLine("\t\t\t</MultiplicityCountingResults>");
+                }
+            }
+            writer.WriteLine("\t\t</CountingResults>");
+            //DetectorInfo
+            writer.WriteLine("\t\t<Detector>");
+            writer.WriteLine("\t\t\t<Id>");
+            if (m.Detector.Id != null)
+            {
+                keys = m.Detector.Id.ToSimpleKeyArray();
+                values = m.Detector.Id.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t\t</Id>");
+            writer.WriteLine("\t\t\t<AlphaBeta>");
+            if (m.Detector.AB != null)
+            {
+                keys = m.Detector.AB.ToSimpleKeyArray();
+                values = m.Detector.AB.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t\t</AlphaBeta>");
+            writer.WriteLine(String.Format("\t\t\t<ListMode>{0}</ListMode>", m.Detector.ListMode));
+            writer.WriteLine("\t\t\t<MultiplicityParameters>");
+            if (m.Detector.MultiplicityParams != null)
+            {
+                keys = m.Detector.MultiplicityParams.ToSimpleKeyArray();
+                values = m.Detector.MultiplicityParams.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t\t</MultiplicityParameters>");
+            writer.WriteLine("\t\t\t<SRParams>");
+            if (m.Detector.SRParams !=null)
+            {
+                keys = m.Detector.SRParams.ToSimpleKeyArray();
+                values = m.Detector.SRParams.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t\t</SRParams>");
+            writer.WriteLine("\t\t</Detector>");
+            writer.WriteLine("\t\t<DetectorList>");
+            writer.WriteLine("\t\t\t<Detector>");
+            foreach (Detector d in m.Detectors)
+            {
+                writer.WriteLine("\t\t\t\t<Id>");
+                if (d.Id != null)
+                {
+                    keys = d.Id.ToSimpleKeyArray();
+                    values = d.Id.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                }
+                writer.WriteLine("\t\t\t\t</Id>");
+                writer.WriteLine("\t\t\t\t<AlphaBeta>");
+                if (d.AB != null)
+                {
+                    keys = d.AB.ToSimpleKeyArray();
+                    values = d.AB.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                }
+                writer.WriteLine("\t\t\t\t</AlphaBeta>");
+                writer.WriteLine(String.Format("\t\t\t\t<ListMode>{0}</ListMode>", d.ListMode));
+                writer.WriteLine("\t\t\t\t<MultiplicityParameters>");
+                if (d.MultiplicityParams != null)
+                {
+                    keys = d.MultiplicityParams.ToSimpleKeyArray();
+                    values = d.MultiplicityParams.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                }
+                writer.WriteLine("\t\t\t\t</MultiplicityParameters>");
+                writer.WriteLine("\t\t\t\t<SRParams>");
+                if (d.SRParams != null)
+                {
+                    keys = d.SRParams.ToSimpleKeyArray();
+                    values = d.SRParams.ToSimpleValueArray();
+                    for (int i = 0; i < values.Length; i++)
+                    {
+                        writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                    }
+                }
+                writer.WriteLine("\t\t\t\t</SRParams>");
+                writer.WriteLine("\t\t\t</Detector>");
+            }
+            writer.WriteLine("\t\t</DetectorList>");
+            writer.WriteLine(String.Format("\t\t<HasReportableData>{0}</HasReportableData>", m.HasReportableData));
+            //AnalysisResults
+            writer.WriteLine("\t\t<INCCAnalysisResults>");
+            foreach (KeyValuePair<MeasOptionSelector, INCCResult> results in m.INCCAnalysisResults)
+            {
+                writer.WriteLine("\t\t\t<Result>");
+                writer.WriteLine(String.Format("\t\t\t\t<MeasurementOption>{0}</MeasurementOption>",results.Key.ToString()));
+                keys = results.Value.ToSimpleKeyArray();
+                values = results.Value.ToSimpleValueArray();
+                for(int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+                writer.WriteLine("\t\t\t</Result>");
+            }
+            writer.WriteLine("\t\t</INCCAnalysisResults>");
+            //AnalysisState
+            writer.WriteLine("\t\t<AnalysisState>");
+            //Methods
+            writer.WriteLine("\t\t\t<Methods>");
+            if (m.INCCAnalysisState.Methods != null)
+            {
+                keys = m.INCCAnalysisState.Methods.ToSimpleKeyArray();
+                values = m.INCCAnalysisState.Methods.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t\t</Methods>");
+            writer.WriteLine("\t\t\t<Results>");
+            IEnumerator iter = m.INCCAnalysisState.Methods.GetMethodEnumerator();
+            while (iter.MoveNext())
+            {
+                Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor> md = (Tuple<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>)iter.Current;
+                writer.WriteLine("\t\t\t\t<Method>");
+                writer.WriteLine(String.Format("\t\t\t\t\t<MethodName>{0}</MethodName>", md.Item1.FullName()));
+                foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> kvp in m.CountingAnalysisResults)
+                {
+                    INCCMethodResult currResults;
+                    m.INCCAnalysisState.Results.TryGetMethodResults(kvp.Key, m.INCCAnalysisState.Methods.selector, md.Item1, out currResults);
+                    if (currResults != null)
+                    {
+                        keys = currResults.ToSimpleKeyArray();
+                        values = currResults.ToSimpleValueArray();
+                        for (int i = 0; i < values.Length; i++)
+                        {
+                            writer.WriteLine(String.Format("\t\t\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                        }
+                    }
+                }
+                writer.WriteLine("\t\t\t\t</Method>");
+            }
+            writer.WriteLine("\t\t\t</Results>");
+            writer.WriteLine("\t\t</AnalysisState>");
+            //Isotopics
+            writer.WriteLine("\t\t<Isotopics>");
+            if (m.Isotopics != null)
+            {
+                keys = m.Isotopics.ToSimpleKeyArray();
+                values = m.Isotopics.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t</Isotopics>");
+            //MeasurementCycleStatusCounts
+            writer.WriteLine("\t\t<MeasurementCycleStatus>");
+            writer.WriteLine(String.Format("\t\t\t<AccSngWarning>{0}</AccSngWarning>", m.MeasCycleStatus.acc_sngl_warning_sent));
+            writer.WriteLine(String.Format("\t\t\t<AcqRuns>{0}</AcqRuns>", m.MeasCycleStatus.acquire_num_runs));
+            writer.WriteLine(String.Format("\t\t\t<ChecksumWarning>{0}</ChecksumWarning>", m.MeasCycleStatus.checksum_warning_sent));
+            writer.WriteLine(String.Format("\t\t\t<HVWarning>{0}</HVWarning>", m.MeasCycleStatus.high_voltage_warning_sent));
+            writer.WriteLine(String.Format("\t\t\t<InitNumberRuns>{0}</InitNumberRuns>", m.MeasCycleStatus.initial_num_runs));
+            writer.WriteLine(String.Format("\t\t\t<NumAccSngFailures>{0}</NumAccSngFailures>", m.MeasCycleStatus.num_acc_sngl_failures));
+            writer.WriteLine(String.Format("\t\t\t<NumChecksumFailures>{0}</NumChecksumFailures>", m.MeasCycleStatus.num_checksum_failures));
+            writer.WriteLine(String.Format("\t\t\t<NumHVFailures>{0}</NumHVFailures>", m.MeasCycleStatus.num_high_voltage_failures));
+            writer.WriteLine(String.Format("\t\t\t<NumOutlierFailures>{0}</NumOutlierFailures>", m.MeasCycleStatus.num_outlier_failures));
+            writer.WriteLine("\t\t</MeasurementCycleStatus>");
+            //DateTimeOffset
+            writer.WriteLine(String.Format("\t\t<DateTimeOffset>{0}</DateTimeOffset>", m.MeasDate.ToString()));
+            //MeasurementOption
+            writer.WriteLine(String.Format("\t\t<MeasurementOption>{0}</MeasurementOption>", m.MeasOption.PrintName()));
+            //MeasurementID
+            writer.WriteLine("\t\t<MeasurementID>");
+            if (m.MeasurementId != null)
+            {
+                keys = m.MeasurementId.ToSimpleKeyArray();
+                values = m.MeasurementId.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t</MeasurementID>");
+            //NormalizationParameters
+            writer.WriteLine("\t\t<NormParams>");
+            if (m.Norm != null)
+            {
+                keys = m.Norm.ToSimpleKeyArray();
+                values = m.Norm.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t</NormParams>");
+            //Repetitions
+            writer.WriteLine(String.Format("\t\t<RequestedRepetitions>{0}</RequestedRepetitions>", m.RequestedRepetitions));
+            //SinglesSum
+            writer.WriteLine(String.Format("\t\t<SinglesSum>{0}</SinglesSum>", m.SinglesSum));
+            //Stratum
+            writer.WriteLine("\t\t<Stratum>");
+            if (m.Stratum != null)
+            {
+                keys = m.Stratum.ToSimpleKeyArray();
+                values = m.Stratum.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t</Stratum>");
+            //TestParams
+            writer.WriteLine("\t\t<TestParams>");
+            if (m.Tests != null)
+            {
+                keys = m.Tests.ToSimpleKeyArray();
+                values = m.Tests.ToSimpleValueArray();
+                for (int i = 0; i < values.Length; i++)
+                {
+                    writer.WriteLine(String.Format("\t\t\t<{0}>{1}</{2}>", keys[i], values[i], keys[i]));
+                }
+            }
+            writer.WriteLine("\t\t</TestParams>");
+            writer.WriteLine("\t</Measurement>");
+            writer.WriteLine("</MeasurementState>");
+            writer.Flush();
+            writer.Close();
+        }
 
 
         /// <summary>

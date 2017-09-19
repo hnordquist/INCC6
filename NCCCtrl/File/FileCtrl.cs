@@ -714,8 +714,8 @@ enditall:
                     //read the header from the BIN file
                     ptrFile.Events.ReadHeader();
                     ShakeTime = 0;
-					cycle.TS = TimeSpan.FromSeconds(ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
-					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
+					cycle.TS = TimeSpan.FromSeconds (ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
+					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval in the file header is {0} seconds", cycle.TS.TotalSeconds);
                     //Add this as check. We should have this count - big T as final count rate
                     pps.PTRReportedCountTime += ptrFile.Events.ReportedCountTimeSecs;
                     if (!ptrFile.Channels.Active)

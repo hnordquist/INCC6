@@ -175,8 +175,7 @@ namespace AnalysisDefs
                             while (iter.MoveNext())
                             {
                                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                                if (mkey.Active)
-                                    sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
+                                sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
                             }
                         }
                         else
@@ -442,17 +441,8 @@ namespace AnalysisDefs
             row.Add((int)DetectorCalibration.ElectronicsId, det.Id.ElectronicsId);
             if (mkey != null)
             {
-                if (det.ListMode)
-                {
-                    row.Add((int)DetectorCalibration.Predelay, (mkey.sr.predelayMS).ToString());
-                    row.Add((int)DetectorCalibration.GateLength, (mkey.gateWidthTics/10).ToString());
-                }
-                else
-                {
-                    row.Add((int)DetectorCalibration.Predelay, (sr.predelay * 1e-1).ToString());
-                    row.Add((int)DetectorCalibration.GateLength, (sr.gateLength * 1e-1).ToString());
-                }
-                
+                row.Add((int)DetectorCalibration.Predelay, (sr.predelay * 1e-1).ToString());
+                row.Add((int)DetectorCalibration.GateLength, (sr.gateLength * 1e-1).ToString());
                 row.Add((int)DetectorCalibration.HighVoltage, sr.highVoltage.ToString());
                 row.Add((int)DetectorCalibration.DieAwayTime, (sr.dieAwayTime * 1e-1).ToString());
                 row.Add((int)DetectorCalibration.Efficiency, sr.efficiency.ToString());

@@ -97,7 +97,7 @@ namespace DAQ
                             srct.sri.PendingComplete();                        // when we get here, the raw results are already available on the SR thread structure
                             if (srct.sri.DAQState == DAQInstrState.HVCalib)
                             {
-
+                                //Some initialization of logger is wrong here.
                             }
                             else
                                 srct.SRCtrl.TransformResults(srct.SRCtrl.Det.Id, srct.sri.RDT.Cycle); // convert to enhanced results

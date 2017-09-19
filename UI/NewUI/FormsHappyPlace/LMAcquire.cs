@@ -51,7 +51,7 @@ namespace NewUI
 	{
 		Detector det;
         AcquireParameters ap;
-		bool PreserveAnalyzerChanges, AnalyzersLoaded, LMParamUpdate, AcqParamUpdate;
+		bool PreserveAnalyzerChanges, AnalyzersLoaded, LMParamUpdate, /*TODO -- yet it is used.*/AcqParamUpdate;
 		bool FromINCC5Acquire { set; get; } // if called directly from INCC5 acquire, force user to select a multiplicity analyzer
 
 		public enum LMSteps { FileBased, DAQBased, AnalysisSpec, Go };

@@ -65,15 +65,6 @@
     <ApplicationIcon>rel.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Defs">
-      <HintPath>..\..\deployment\Defs.dll</HintPath>
-    </Reference>
-    <Reference Include="NCCCtrl">
-      <HintPath>..\..\deployment\NCCCtrl.dll</HintPath>
-    </Reference>
-    <Reference Include="RepDB">
-      <HintPath>..\..\deployment\RepDB.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -137,12 +128,6 @@
     <Compile Include="FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs">
       <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarAcquire.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarAcquire.Designer.cs">
-      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormsHappyPlace\IDDCollarCal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -154,12 +139,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCollarCrossRef.Designer.cs">
       <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarItemData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarItemData.Designer.cs">
-      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCorrectionFactors.cs">
       <SubType>Form</SubType>
@@ -318,11 +297,23 @@
     <Compile Include="Unready\IDDCmSetup.Designer.cs">
       <DependentUpon>IDDCmSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarData.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarData.Designer.cs">
-      <DependentUpon>IDDCollarData.cs</DependentUpon>
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.Designer.cs">
+      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.Designer.cs">
+      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDCollarK5.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDCollarK5.Designer.cs">
+      <DependentUpon>IDDCollarK5.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDCollarManualAcquire.cs">
       <SubType>Form</SubType>
@@ -1089,17 +1080,11 @@
     <EmbeddedResource Include="FormsHappyPlace\IDDCf252SinglesNorm.resx">
       <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDCollarAcquire.resx">
-      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCollarCal.resx">
       <DependentUpon>IDDCollarCal.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCollarCrossRef.resx">
       <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDCollarItemData.resx">
-      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCorrectionFactors.resx">
       <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
@@ -1265,8 +1250,14 @@
     <EmbeddedResource Include="Unready\IDDCmSetup.resx">
       <DependentUpon>IDDCmSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDCollarData.resx">
-      <DependentUpon>IDDCollarData.cs</DependentUpon>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarAcquire.resx">
+      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarItemData.resx">
+      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDCollarK5.resx">
+      <DependentUpon>IDDCollarK5.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDCollarManualAcquire.resx">
       <DependentUpon>IDDCollarManualAcquire.cs</DependentUpon>
@@ -1543,6 +1534,24 @@
   <ItemGroup>
     <None Include="Resources\DaveEclipseClip.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NCCCore\NCCCore.csproj">
+      <Project>{00572805-e746-49f5-aa40-25313e3a87e3}</Project>
+      <Name>NCCCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Defs\Defs.csproj">
+      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
+      <Name>Defs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\NCCCtrl\NCCCtrl.csproj">
+      <Project>{c4393a93-abf7-448c-a3eb-4f0e5a1f7376}</Project>
+      <Name>NCCCtrl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\RepDB\RepDB.csproj">
+      <Project>{15214429-93da-45c9-a0bc-30285c990a5d}</Project>
+      <Name>RepDB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /B /V /Y "$(TargetPath)" "$(SolutionDir)deployment"
@@ -1560,9 +1569,6 @@ copy /B /V /Y "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBu
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
+
   -->
 </Project>

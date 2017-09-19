@@ -63,8 +63,7 @@ namespace NewUI
                     ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
                 }
                 else
-                    //Default long delay = 4096 for slow.
-                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40000;
                 // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
                 CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
                 foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)

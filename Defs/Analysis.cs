@@ -84,7 +84,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("rank", Rank));
         }
 
-		public const long Select = -99;  // values < 0 used for sorting and selection
+		public const long Select = 0;  // values < 0 used for sorting and selection
     }
 
     public class SpecificCountingAnalyzerParamsEqualityComparer : IEqualityComparer<SpecificCountingAnalyzerParams>
@@ -161,6 +161,11 @@ namespace AnalysisDefs
             set { backgroundGateTimeStepInTics = value; }
         }
 
+        public long Rank
+        {
+            get { return rank; }
+            set { rank = value; }
+        }
         /// <summary>
         /// The original exposed member for prior clients, e.g. Core. Use SR now
         /// </summary>
@@ -183,6 +188,7 @@ namespace AnalysisDefs
         }
         private ulong backgroundGateTimeStepInTics;
         private ulong accidentalsGateDelayInTics;  // often a property of the HW
+        private long rank; // This is a flag for now HN 9/13/2017
 
         public Multiplicity()
             : base()
@@ -210,6 +216,7 @@ namespace AnalysisDefs
                 accidentalsGateDelayInTics = src.accidentalsGateDelayInTics;
                 SR = new ShiftRegisterParameters(src.SR);
                 reason = string.Copy(src.reason);
+                Rank = src.Rank;
             }
             else
             {
@@ -237,6 +244,7 @@ namespace AnalysisDefs
             accidentalsGateDelayInTics = mul.accidentalsGateDelayInTics;
             SR = new ShiftRegisterParameters(mul.SR);
             reason = string.Copy(mul.reason);
+            Rank = mul.Rank;
         }
         public bool Equals(Multiplicity other)
         {
@@ -244,6 +252,7 @@ namespace AnalysisDefs
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
+                Rank == other.Rank &&
                 SR.Equals(other.SR))
             {
                 return true;
@@ -260,6 +269,7 @@ namespace AnalysisDefs
 				FA == other.FA && gateWidthTics == other.gateWidthTics && 
                 AccidentalsGateDelayInTics == other.AccidentalsGateDelayInTics && 
                 BackgroundGateTimeStepInTics == other.BackgroundGateTimeStepInTics &&
+                Rank == other.Rank &&
                 EqualsButForLMValues(other.SR))
             {
                 return true;
@@ -293,8 +303,9 @@ namespace AnalysisDefs
         public override int GetHashCode()
         {
             int hCode = FA.GetHashCode() ^ gateWidthTics.GetHashCode() ^ //suspect.GetHashCode() ^
-                accidentalsGateDelayInTics.GetHashCode() ^ backgroundGateTimeStepInTics.GetHashCode();
-            hCode ^= sr.GetHashCode();
+                accidentalsGateDelayInTics.GetHashCode() ^ backgroundGateTimeStepInTics.GetHashCode() 
+                ^ Rank.GetHashCode();
+            hCode ^= sr.GetHashCode() ;
             return hCode.GetHashCode();
         }
         public static string TimeUnitImage(ulong t, bool withunitsspace = false)
@@ -367,6 +378,8 @@ namespace AnalysisDefs
             if (res == 0)
                 res = x.suspect.CompareTo(y.suspect);
             if (res == 0)
+                res = x.Rank.CompareTo(y.Rank);
+            if (res == 0)
                 res = x.SR.CompareTo(y.SR);
 
             return res;
@@ -385,6 +398,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("backgroundgatewidth", BackgroundGateTimeStepInTics));
             ps.Add(new DBParamEntry("accidentalsgatewidth", AccidentalsGateDelayInTics));
             ps.Add(new DBParamEntry("FA", FA == FAType.FAOn));
+            ps.Add(new DBParamEntry("rank", Rank));
         }
     }
 

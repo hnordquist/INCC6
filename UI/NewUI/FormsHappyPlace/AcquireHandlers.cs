@@ -143,6 +143,13 @@ namespace NewUI
             // Auto-format or reset the textbox value, depending on whether the entered value was different/valid
             ((TextBox)sender).Text = Format.Rend(ap.max_num_runs);
         }
+        public void FastCheckbox_Leave(object sender, EventArgs e)
+        {
+            if (((CheckBox)sender).Checked && det.MultiplicityParams.FA != FAType.FAOn) ap.modified = true;
+            det.MultiplicityParams.FA = ((CheckBox)sender).Checked ? FAType.FAOn : FAType.FAOff;
+            NC.App.DB.UpdateAcquireParams(ap); //update it again
+            NC.App.DB.UpdateDetector(det);
+        }
 
         public void DeclaredMassTextBox_Leave(object sender, EventArgs e)
         {

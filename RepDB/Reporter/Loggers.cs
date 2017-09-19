@@ -46,7 +46,7 @@ namespace NCCReporter
     public class LMLoggers
     {
 
-        public enum AppSection { App, Data, Analysis, Control, Collect, DB };
+        public enum AppSection { App, Data, Analysis, Control, Collect, DB ,Test};
 
         Hashtable reps = null;
         NCCConfig.Config cfg = null;
@@ -55,7 +55,10 @@ namespace NCCReporter
         {
             return (LognLM)reps[wp];
         }
-
+        public LognLM TestLogger
+        {
+            get { return (LognLM)reps[AppSection.Test]; }
+        }
         public LognLM AppLogger
         {
             get { return (LognLM)reps[AppSection.App]; }
@@ -99,7 +102,30 @@ namespace NCCReporter
             }
         }
 
-        public class LognLM
+        /*public interface IINCCLog
+        {
+            void EmitFatalErrorMsg();
+            void Flush();
+            // todo: once performance of logging is understood, move to external string storage based on event ids for all logging statements      
+            void Log(Int32 id);	// Writes an externally defined message to the application's log listeners.
+            void Log(Int32 id, params object[] args);	// Writes an externally defined message to the application's log listeners.
+            bool ShouldTrace(LogLevels eventType);
+            void TraceData(LogLevels eventType, int id, object data);
+            void TraceData(LogLevels eventType, int id, params object[] data);
+            void TraceEvent(LogLevels eventType, int id);
+            void TraceEvent(LogLevels eventType, int id, string message);
+            void TraceEventConsole(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventConsoleUI(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventFileOnly(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventButNotToUI(LogLevels eventType, int id, string message, TraceEventCache tec = null);
+            void TraceEvent(LogLevels eventType, int id, string format, params object[] args);
+            void TraceInformation(string message);
+            void TraceInformation(string format, params object[] args);
+            void TraceException(Exception ex, bool stack = false);	// Writes exception information to the application's log listeners.
+            void TraceExceptionButNotToUI(Exception ex, bool stack = false);
+        }*/
+
+        public class LognLM//:IINCCLog
         {
 
             TraceSource ts = null;
@@ -164,7 +190,8 @@ namespace NCCReporter
 
             }
 
-            readonly string colossalErrorMsg = "Sometng whrong ihere";
+            //This was dumb and misspelled. Fixed it. HN 04_26_2017
+            readonly string colossalErrorMsg = "Fatal error encountered.";
             public void EmitFatalErrorMsg()
             {
                 TraceEvent(LogLevels.Error, 0x2A2A, colossalErrorMsg);

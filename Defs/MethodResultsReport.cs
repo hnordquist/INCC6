@@ -419,17 +419,9 @@ namespace AnalysisDefs
         {
             // if this is based on a virtual SR then show it
             if (det.Id.source.UsingVirtualSRCounting(det.Id.SRType))
-            {
                 sec.AddTwo(" Virtual shift register:", mu.ToString());
-                //write the predelay and gw from the multiplicity for LM
-                sec.AddTwo("Predelay:", mu.SR.predelayMS);
-                sec.AddTwo("Gate length:", mu.AccidentalsGateDelayInTics / 10);
-            }
-            else
-            {
-                sec.AddTwo("Predelay:", mu.SR.predelayMS);
-                sec.AddTwo("Gate length:", mu.SR.gateLengthMS);
-            }
+            sec.AddTwo("Predelay:", mu.SR.predelayMS);
+            sec.AddTwo("Gate length:", mu.SR.gateLengthMS);
             if (det.Id.SRType == InstrType.DGSR)
                 sec.AddTwo("Gate length2:", mu.SR.gateLengthMS); 
             sec.AddIntegerRow("High voltage:", (Int32)mu.SR.highVoltage);

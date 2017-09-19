@@ -396,8 +396,6 @@ namespace NewUI
 
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
             NormParameters npp = Integ.GetCurrentNormParams(det);
-            if (Integ.GetMethodSelections(det.Id.DetectorId, ap.ItemId.material) == null)
-                NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Error, 0, "You must enter at least one analysis method for this detector.");
             if (Integ.GetMethodSelections(det.Id.DetectorId, ap.ItemId.material).Has(AnalysisMethod.Collar))
             {
                 IDDAcquireAssay f = new IDDAcquireAssay();
