@@ -161,11 +161,6 @@ namespace AnalysisDefs
             set { backgroundGateTimeStepInTics = value; }
         }
 
-        public long Rank
-        {
-            get { return rank; }
-            set { rank = value; }
-        }
         /// <summary>
         /// The original exposed member for prior clients, e.g. Core. Use SR now
         /// </summary>
@@ -188,7 +183,6 @@ namespace AnalysisDefs
         }
         private ulong backgroundGateTimeStepInTics;
         private ulong accidentalsGateDelayInTics;  // often a property of the HW
-        private long rank; // This is a flag for now HN 9/13/2017
 
         public Multiplicity()
             : base()
