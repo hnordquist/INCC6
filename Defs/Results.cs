@@ -1522,7 +1522,6 @@ namespace AnalysisDefs
             AFactorialMoments[1] = mr.AfactorialMoment1;
             AFactorialMoments[2] = mr.AfactorialMoment2;
             AFactorialMoments[3] = mr.AfactorialMoment3;
-
         }
 
         public void ComputeHitSums()

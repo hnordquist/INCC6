@@ -27,14 +27,15 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using NCCReporter;
 
 namespace AnalysisDefs
 {
 
     using Tuple = VTuple;
-
-
+    public enum CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 };
+    
     // map from a selector pair key to a specific INCC analysis parameter instance
     public class INCCMethods : Dictionary<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>
     {
@@ -45,9 +46,9 @@ namespace AnalysisDefs
     public enum AnalysisMethod
     {
         None,
-        CalibrationCurve, KnownA, KnownM, Multiplicity, AddASource, Active, ActiveMultiplicity, ActivePassive, CollarAmLi, INCCNone, CuriumRatio, TruncatedMultiplicity, 
+        CalibrationCurve, KnownA, KnownM, Multiplicity, AddASource, Active, ActiveMultiplicity, ActivePassive, Collar, INCCNone, CuriumRatio, TruncatedMultiplicity, 
         /*EachEntryAfterHereSupportsINCCHacks,*/
-        DUAL_ENERGY_MULT_SAVE_RESTORE, COLLAR_SAVE_RESTORE, COLLAR_DETECTOR_SAVE_RESTORE, COLLAR_K5_SAVE_RESTORE, WMV_CALIB_TOKEN, CollarCf
+        DUAL_ENERGY_MULT_SAVE_RESTORE, COLLAR_SAVE_RESTORE, COLLAR_DETECTOR_SAVE_RESTORE, COLLAR_K5_SAVE_RESTORE, WMV_CALIB_TOKEN
     }
     public static class AnalysisMethodExtensions
     {
@@ -88,8 +89,8 @@ namespace AnalysisDefs
                 case AnalysisMethod.ActivePassive:
                     s = "Active/Passive";
                     break;
-                case AnalysisMethod.CollarAmLi:
-                    s = "Collar -- AmLi Source";
+                case AnalysisMethod.Collar:
+                    s = "Collar";
                     break;
                 case AnalysisMethod.ActiveMultiplicity:
                    s = "Active multiplicity";
@@ -99,9 +100,6 @@ namespace AnalysisDefs
                     break;
                 case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                     s = "Dual energy multiplicity";
-                    break;
-                case AnalysisMethod.CollarCf:
-                    s = s = "Collar -- Cf Source";
                     break;
                 default:
                     s = am.ToString();
@@ -255,6 +253,8 @@ namespace AnalysisDefs
         public INCCAnalysisParams.INCCMethodDescriptor GetMethodParameters(AnalysisMethod am)
         {
             INCCAnalysisParams.INCCMethodDescriptor surr;
+            //if (am.Equals(AnalysisMethod.Collar))
+            //    ;
             bool got = methods.TryGetValue(am, out surr);
             return surr;
         }
@@ -310,13 +310,12 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("active", choices[(int)AnalysisMethod.Active]));
             ps.Add(new DBParamEntry("active_passive", choices[(int)AnalysisMethod.ActivePassive]));
             ps.Add(new DBParamEntry("active_mult", choices[(int)AnalysisMethod.ActiveMultiplicity]));
-            ps.Add(new DBParamEntry("collaramli", choices[(int)AnalysisMethod.CollarAmLi]));
+            ps.Add(new DBParamEntry("collar", choices[(int)AnalysisMethod.Collar]));
             ps.Add(new DBParamEntry("truncated_mult", choices[(int)AnalysisMethod.TruncatedMultiplicity]));
             ps.Add(new DBParamEntry("curium_ratio", choices[(int)AnalysisMethod.CuriumRatio]));
             ps.Add(new DBParamEntry("normal_method", (int)Normal));
             ps.Add(new DBParamEntry("backup_method", (int)Backup));
             ps.Add(new DBParamEntry("aux_method", (int)Auxiliary));
-            ps.Add(new DBParamEntry("collarcf", choices[(int)AnalysisMethod.CollarCf]));
         }
 
         static bool[] massoutlier;
@@ -676,6 +675,9 @@ namespace AnalysisDefs
             }
         }
 
+        public static readonly ReadOnlyCollection<string> CollarTypeStrings = new ReadOnlyCollection<string>
+            (new List<String> {
+         "AmLi Thermal (no Cd)", "AmLi Fast (Cd)", "Cf Thermal (no Cd)", "Cf Fast (noCd)" });
         public enum MultChoice
         {
             CONVENTIONAL_MULT, // 1st mult radio button
@@ -1554,15 +1556,14 @@ namespace AnalysisDefs
 
         public class collar_detector_rec : INCCMethodDescriptor
         {
-            	//false "Thermal (no Cd)",
-	            //true "Fast (Cd)",
-            public bool collar_mode;
+            //Enum CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
+            public int collar_mode;
             public DateTime reference_date;
             public double relative_doubles_rate;
 
             public collar_detector_rec()
             {
-                collar_mode = false;
+                collar_mode = (int)CollarType.AmLiThermal;
                 relative_doubles_rate = 1;
                 reference_date = new DateTime (1989,10,17);
             }
@@ -1587,7 +1588,7 @@ namespace AnalysisDefs
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Fixed); // uses E
-                sec.AddTwo("Collar Mode", collar_mode?"Fast(Cd)":"Thermal (no Cd)");
+                sec.AddTwo("Collar Mode", CollarTypeStrings[collar_mode]);
                 sec.AddTwo("Reference Doubles Rate", relative_doubles_rate);
                 sec.AddTwo("Reference Date", reference_date.ToShortDateString());
                 return sec;
@@ -1607,9 +1608,8 @@ namespace AnalysisDefs
         public const int MAX_POISON_ROD_TYPES = 10; /*max # different types poison rods */
         public class collar_rec : INCCMethodDescriptor
         {
-            //false "Thermal (no Cd)",
-            //true "Fast (Cd)",
-            public bool collar_mode;
+            //enum CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
+            public int collar_mode;
             public double[] poison_absorption_fact;
             public Tuple[] poison_rod_a;
             public Tuple[] poison_rod_b;
@@ -1722,9 +1722,7 @@ namespace AnalysisDefs
         public const int MAX_COLLAR_K5_PARAMETERS = 20; /*max number collar K = 5 parameters */
         public class collar_k5_rec : INCCMethodDescriptor
         {
-            //false "Thermal (no Cd)",
-            //true "Fast (Cd)",
-            public bool k5_mode;
+            public int k5_mode;
             public bool[] k5_checkbox;
             public Tuple[] k5;
             public string k5_item_type;
@@ -1795,24 +1793,42 @@ namespace AnalysisDefs
             public collar_k5_rec k5;
             public collar_rec collar;
             public collar_detector_rec collar_det;
+            private int mode;
             
-            public collar_combined_rec()
+            public collar_combined_rec(int collar_mode = -1)
             {
+                mode = collar_mode;
 				Init();
             }
-            public collar_combined_rec(collar_combined_rec src)
+            public collar_combined_rec(collar_combined_rec src, int collar_mode = -1)
             {
-				Init();
+                mode = collar_mode;
+                Init();
 				src.collar.CopyTo(collar);
                 src.collar_det.CopyTo(collar_det);
                 src.k5.CopyTo(k5);
-           }
+            }
 
-			public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
+            public string GetCollarModeString ()
+            {
+                return CollarTypeStrings[collar.collar_mode];
+            }
+            //This method is never used..... hmmmm.
+            public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
             {
                 collar = col; // shallow copies, ok?
                 collar_det = det;
                 k5 = k5e;
+                if (mode != -1)
+                {
+                    //Set in Analysis Parms selection....
+                    collar.collar_mode = mode;
+                    collar.modified = true;
+                    collar_det.collar_mode = mode;
+                    collar_det.modified = true;
+                    k5.k5_mode = mode;
+                    k5.modified = true;
+                }
 				Pump = 0; // prep for use
             }
 
@@ -1821,7 +1837,17 @@ namespace AnalysisDefs
                 collar_det = new collar_detector_rec();
                 collar = new collar_rec();
                 k5 = new collar_k5_rec();
-				Pump = 0; // prep for use
+                if (mode != -1)
+                {
+                    //Set in Analysis Parms selection....
+                    collar.collar_mode = mode;
+                    collar.modified = true;
+                    collar_det.collar_mode = mode;
+                    collar_det.modified = true;
+                    k5.k5_mode = mode;
+                    k5.modified = true;
+                }
+                Pump = 0; // prep for use
 			}
 
             public override void CopyTo(INCCMethodDescriptor imd)

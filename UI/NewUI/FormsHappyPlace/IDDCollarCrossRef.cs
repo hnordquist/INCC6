@@ -42,16 +42,17 @@ namespace NewUI
         List<poison_rod_type_rec> poison;
         bool modified;
 
-        public IDDCollarCrossRef(INCCAnalysisParams.collar_combined_rec c = null, bool mod = false)
+        public IDDCollarCrossRef(int mode, bool mod, INCCAnalysisParams.collar_combined_rec c = null)
         {
             InitializeComponent();
-            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
+            mp = new MethodParamFormFields(AnalysisMethod.Collar);
 
             RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             RelativeDoublesRateTextBox.NumberFormat = NumericTextBox.Formatter.F3;
 
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             this.Text += " for " + mp.det.Id.DetectorName;
+
             modified = mod;
             mp.RefreshMatTypeComboBox(MaterialTypeComboBox);
 			mp.SelectMaterialType(MaterialTypeComboBox);
@@ -59,6 +60,15 @@ namespace NewUI
             {
                 mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
+                if (mode != -1)
+                {
+                    col.collar.collar_mode = mode;
+                    col.modified = true;
+                    col.collar_det.collar_mode = mode;
+                    col.collar_det.modified = true;
+                    col.k5.k5_mode = mode;
+                    col.k5.modified = true;
+                }
             }
             else if (mp.HasMethod && c != null)
             {
@@ -66,7 +76,7 @@ namespace NewUI
             }
             else
             {
-                mp.imd = new INCCAnalysisParams.collar_combined_rec(); // not mapped, so make a new one
+                mp.imd = new INCCAnalysisParams.collar_combined_rec(mp.acq.collar_mode); // not mapped, so make a new one
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
                 modified = true;
             }
@@ -78,7 +88,7 @@ namespace NewUI
         public void CrossReferenceFieldFiller(INCCAnalysisParams.collar_combined_rec col)
         {
             MaterialTypeComboBox.SelectedIndex = MaterialTypeComboBox.FindStringExact(mp.acq.item_type)>=0?MaterialTypeComboBox.FindStringExact(mp.acq.item_type):0;
-            ModeComboBox.SelectedIndex = Convert.ToInt32(col.collar_det.collar_mode);
+            ModeComboBox.SelectedIndex = col.collar_det.collar_mode;
             RelativeDoublesRateTextBox.Value = col.collar_det.relative_doubles_rate;
             ReferenceDateTimePicker.Value = col.collar_det.reference_date;
             poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
@@ -139,10 +149,10 @@ namespace NewUI
 
         private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (col.collar.collar_mode != Convert.ToBoolean(ModeComboBox.SelectedIndex))
+            if (col.collar.collar_mode != ModeComboBox.SelectedIndex)
             {
                 // copied three times as in INCC5, keeping it the same
-                col.collar.collar_mode = Convert.ToBoolean(ModeComboBox.SelectedIndex);
+                col.collar.collar_mode = ModeComboBox.SelectedIndex;
                 col.collar_det.collar_mode = col.collar.collar_mode;
                 col.k5.k5_mode = col.collar.collar_mode;
                 modified = true;
@@ -196,6 +206,7 @@ namespace NewUI
         {
             //store changes?
             IDDCollarCal cal = new IDDCollarCal(col,modified);
+            cal.StartPosition = FormStartPosition.CenterScreen;
             cal.Show();
             this.Close();
         }

@@ -283,6 +283,21 @@ namespace NewUI
                 DeadtimeCoefficientATextBox.Value,DeadtimeCoefficientBTextBox.Value, DeadtimeCoefficientCTextBox.Value,MultiplicityDeadtimeTextBox.Value);
             bool modified = sr1.CompareTo(det.SRParams) != 0;
 
+            //Check for LM multiplicity records and update accordingly.
+            if (modified && det.ListMode)
+            {
+                //Otherwise, it will be added.
+                det.MultiplicityParams.gateWidthTics = (ulong)det.SRParams.gateLengthMS * 10;
+                //If we are collecting rates only for a LM device, set these hard-coded values for fast/slow.
+                if (det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                }
+                else
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40000;
+                det.MultiplicityParams.FA = LMFA.Checked ? FAType.FAOn : FAType.FAOff;
+            }
+
             if (m_bgateTriggerTypeChange)
             {
                 AcquireParameters acq = Integ.GetCurrentAcquireParamsFor(det);

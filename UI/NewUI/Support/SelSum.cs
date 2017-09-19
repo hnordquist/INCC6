@@ -361,7 +361,7 @@ namespace NewUI
 			case Selections.CollarAmLi:
             case Selections.CollarCf:
                 INCCMethodResults.results_collar_rec rcres = (INCCMethodResults.results_collar_rec)
-                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarAmLi, false);
+                        m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.Collar, false);
 				if (rcres != null)
 				{
 					entries["Collar Dbls Rate"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar - corrected doubles rate"

@@ -1286,10 +1286,24 @@ namespace NCCFile
             {
                 try
                 {
-                    DateTime dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
-                    TimeSpan tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
-                    CycleNumber = Convert.ToUInt16(split[2]);
-                    dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
+                    DateTime dtyyMMdd;
+                    TimeSpan tsHHmmsss;
+                    //Daniela had files like this. It has a prefix on it, no time, just cycle #s.
+                    if (!DateTime.TryParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture,
+                                     System.Globalization.DateTimeStyles.None, out dtyyMMdd))
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[1], "MMddyyyy", System.Globalization.CultureInfo.InvariantCulture);
+                        CycleNumber = Convert.ToUInt16(split[2]);
+                        dt = File.GetLastWriteTime(fname);
+                    }
+                    else
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+                        tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
+                        CycleNumber = Convert.ToUInt16(split[2]);
+                        dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
+
+                    }
                 }
                 catch (FormatException)
                 {

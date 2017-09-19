@@ -3611,7 +3611,7 @@ namespace AnalysisDefs
             ap.campaign_id = dr["campaign_id"].ToString();
             ap.item_id = dr["item_id"].ToString(); // same id in results_rec and acquire_parms_rec after all
             ap.stratum_id = new Descriptor(dr["stratum_id"].ToString(), dr["stratum_id_description"].ToString());
-            ap.collar_mode = DB.Utils.DBBool(dr["collar_mode"].ToString());
+            ap.collar_mode = DB.Utils.DBInt32(dr["collar_mode"].ToString());
             ap.inventory_change_code = dr["inventory_change_code"].ToString();
             ap.io_code = dr["io_code"].ToString();
             ap.well_config = (WellConfiguration)(DB.Utils.DBInt32(dr["well_config"].ToString()));
@@ -4316,8 +4316,8 @@ namespace AnalysisDefs
 			}
 			return ms;
 		}
- 
-        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
+
+        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option, string insnum = "")
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
@@ -4364,7 +4364,61 @@ namespace AnalysisDefs
             return ms;
         }
 
-		public bool DeleteMeasurement(MeasId id)
+
+        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, ItemId id = null)
+        {
+            List<Measurement> ms = new List<Measurement>();
+            DataTable dt_meas;
+            ResultsRecs recs = new ResultsRecs();
+
+            dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, DetName);
+
+            foreach (DataRow dr in dt_meas.Rows)
+            {
+                AssaySelector.MeasurementOption thisopt;
+                if (!option.IsWildCard())
+                {
+                    thisopt = AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString());
+                    if (thisopt != option)
+                        continue; // skip this one, better to do this at the select level because the resultrecs above are relatively big objects to process 
+                }
+
+                // create the measurement id from the measurements table, augment with item id later
+                MeasId MeaId = new MeasId(
+                    AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
+                    DB.Utils.DBDateTimeOffset(dr["DateTime"]),
+                    dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
+
+                // get the traditional results rec that matches the measurement id 
+                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
+                if (rec != null)
+                {
+                    if (id.item == rec.item.item)
+                    {
+                        Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+                        MeaId.Item.Copy(rec.item);
+                        ms.Add(m);
+                        if (m.ResultsFiles != null)      // it is never null
+                        {
+                            bool LMOnly = option.IsListMode();
+                            if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+                                m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+                            List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+                            foreach (string rfpath in lrfpaths)
+                                m.ResultsFiles.Add(LMOnly, rfpath);
+                        }
+                        IngestAnalysisMethodResultsFromDB(m);
+                    }
+                    else
+                        //Not the item we are looking for.
+                        continue;
+                }
+                // for Reanalysis, and Assay summary: cycles restored elsewhere, trad results not yet, etc 
+            }
+            return ms;
+        }
+
+        public bool DeleteMeasurement(MeasId id)
 		{
 			DB.Measurements mdb = new DB.Measurements();
 			return mdb.Delete(id.UniqueId);
@@ -4972,6 +5026,8 @@ namespace AnalysisDefs
             if (db == null) db = new DB.Detectors();
 
             DB.ElementList els = dr.SRParams.ToDBElementList();
+            //Store SR parms to multiplicity also
+            
             long l = db.PrimaryKey(dr.Id.DetectorId);
             if (l < 0)
             {
@@ -5021,8 +5077,10 @@ namespace AnalysisDefs
                     b = lnnc.UpdateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
                     NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34035, UpdateFrag(b) + " detector LM params for {0}", dr.Id.DetectorId);
                 }
+
             }
-            // todo: then multiplicity, but ... values may already be preserved for LMMM, and not needed for SR, analyze
+         
+
         }
 
 
@@ -5033,7 +5091,7 @@ namespace AnalysisDefs
             DB.ElementList els = null;
             els = new DB.ElementList();
             els.Add(new DB.Element("detector_name",det.Id.DetectorName)); 
-            
+
             if (!db.DefinitionExists(els))
             {
                 long id = db.Insert(det.Id.DetectorId, det.Id.Identifier(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
@@ -5048,6 +5106,7 @@ namespace AnalysisDefs
 
 			UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
 			UpdateDetectorαβ(det, db);
+            
         }
 
 		

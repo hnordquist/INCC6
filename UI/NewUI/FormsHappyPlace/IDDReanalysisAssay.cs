@@ -186,9 +186,9 @@ namespace NewUI
 						dlgres = (new IDDHeavyMetalItemData(am, ah.ap.ItemId).ShowDialog());
 				}
 				// if Verif + collar  get collar data
-				if (am.Has(AnalysisMethod.CollarAmLi))
+				if (am.Has(AnalysisMethod.Collar))
 				{
-					dlgres = (new IDDCollarData().ShowDialog());
+					dlgres = (new IDDCollarItemData().ShowDialog());
 				}
 				// if Verif + curium ratio, get cm_pu_ratio w dlg; 
 				if (am.Has(AnalysisMethod.CuriumRatio))

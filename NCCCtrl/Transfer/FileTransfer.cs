@@ -74,7 +74,7 @@ namespace NCCTransfer
         public string item_type;
         public string detector_id;
         public byte analysis_method;
-        public short extra; // -1, 0, 1 collar flag
+        public int extra; // -1, 0, 1 collar flag -- Now an enum, changed to int.
 
 		public override string ToString()
 		{
@@ -1112,7 +1112,16 @@ namespace NCCTransfer
 
 			try
 			{
-				WriteResultsRec(results_rec_list[0], bw);
+                results_rec temp = new results_rec ();
+                temp = results_rec_list[0];
+				if (this.Path.EndsWith ("RTS"))
+                {
+                    //No info in results for rates only. Do something. HN 5/10/2017
+                    temp.db_version = 6.0;
+                    WriteResultsRec(temp, bw);
+                }
+                else
+                    WriteResultsRec(results_rec_list[0], bw);
 				WriteResultsStatus(results_status_list[0], bw);
                 foreach (iresultsbase irb in method_results_list)
                 {
@@ -1301,9 +1310,11 @@ namespace NCCTransfer
             results_multiplicity_rec results_multiplicity;
             INCC.SaveResultsMask results_status;
             item_id_entry_rec item_id_entry;
-
+            byte[] los_bytos = null;
             mlogger.TraceEvent(LogLevels.Verbose, 33090, "Scanning the measurement transfer file {0}", source_path_filename);
-
+            int sz = 0;
+            //No method results if RTS only
+            
             results_rec results = new results_rec();
             meas_id id = new meas_id();
             try
@@ -1318,8 +1329,9 @@ namespace NCCTransfer
                 mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot open file {0}", source_path_filename);
                 return result;
             }
-            int sz = Marshal.SizeOf(results);
-            byte[] los_bytos = TransferUtils.TryReadBytes(reader, sz);
+            bool rates = fi.Extension.Equals(".RTS");
+            sz = Marshal.SizeOf(results);
+            los_bytos = TransferUtils.TryReadBytes(reader, sz);
             if (los_bytos != null)
                 fixed (byte* pData = los_bytos)
                 {
@@ -1331,11 +1343,13 @@ namespace NCCTransfer
                 return result;
             }
 
+            /*bool oldrec = false;
             double db_version = 5.0;
             if (results.db_version != db_version)
             {
                 old_results_rec old_results = new old_results_rec();
                 sz = Marshal.SizeOf(old_results);
+                //sz = 5628;
                 stream.Seek(0, SeekOrigin.Begin);
                 los_bytos = TransferUtils.TryReadBytes(reader, sz);
                 if (los_bytos != null)
@@ -1347,13 +1361,12 @@ namespace NCCTransfer
                 {
                 }
                 // devnote: consider implementing this if old data still is of interest: convert_results (old_results, &results);
-                mlogger.TraceEvent(LogLevels.Warning, 33094, "Cannot use file {0}, not a version 5 result", source_path_filename);
-                return result;
-            }
-
+                oldrec = true;
+            }*/ //Old here means really old......
             try
             {
 
+                //Do for rates, also
                 TransferUtils.Copy(results.meas_date, 0, id.meas_date, 0, INCC.DATE_TIME_LENGTH);
                 TransferUtils.Copy(results.meas_time, 0, id.meas_time, 0, INCC.DATE_TIME_LENGTH);
                 TransferUtils.Copy(results.filename, 0, id.filename, 0, INCC.FILE_NAME_LENGTH);
@@ -1367,8 +1380,12 @@ namespace NCCTransfer
                                             TransferUtils.str(id.meas_time, INCC.DATE_TIME_LENGTH)).ToString("yy.MM.dd HH:mm:ss K"), // IAEA format
                                              fname);
 
+
                 ///* get word defining which results are valid for this data set */
-                results_status = (INCC.SaveResultsMask)TransferUtils.ReadInt16(reader, "saved results");
+                if (!rates)
+                    results_status = (INCC.SaveResultsMask)TransferUtils.ReadInt16(reader, "saved results");
+                else
+                    results_status = 0;
 
                 ///* add facility if necessary */
                 string s = TransferUtils.str(results.results_facility, INCC.FACILITY_LENGTH);
@@ -1433,281 +1450,294 @@ namespace NCCTransfer
                 results_status_list.Add(results_status);
 
                 #region method results
-                // here we preserve specific typed method results records, these are generally small and are indexed by the detector/material type tuple
-                if ((results_status & INCC.SaveResultsMask.SAVE_INIT_SRC_RESULTS) != 0)
+                if (fi.Extension != ".RTS") // We have method results
                 {
-                    results_init_src_rec results_init_src = new results_init_src_rec();
-                    sz = Marshal.SizeOf(results_init_src);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    // here we preserve specific typed method results records, these are generally small and are indexed by the detector/material type tuple
+                    if ((results_status & INCC.SaveResultsMask.SAVE_INIT_SRC_RESULTS) != 0)
+                    {
+                        results_init_src_rec results_init_src = new results_init_src_rec();
+                        sz = Marshal.SizeOf(results_init_src);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_init_src = *(results_init_src_rec*)pData;
+                            }
+                        else
                         {
-                            results_init_src = *(results_init_src_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_init_src_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_init_src_rec read failed");
+                        method_results_list.Add(results_init_src);
                     }
-                    method_results_list.Add(results_init_src);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_BIAS_RESULTS) != 0)
-                {
-                    results_bias_rec results_bias = new results_bias_rec();
-                    sz = Marshal.SizeOf(results_bias);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz); if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_BIAS_RESULTS) != 0)
+                    {
+                        results_bias_rec results_bias = new results_bias_rec();
+                        sz = Marshal.SizeOf(results_bias);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz); if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_bias = *(results_bias_rec*)pData;
+                            }
+                        else
                         {
-                            results_bias = *(results_bias_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_bias_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_bias_rec read failed");
+                        method_results_list.Add(results_bias);
                     }
-                    method_results_list.Add(results_bias);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_PRECISION_RESULTS) != 0)
-                {
-                    results_precision_rec results_precision = new results_precision_rec();
-                    sz = Marshal.SizeOf(results_precision);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_PRECISION_RESULTS) != 0)
+                    {
+                        results_precision_rec results_precision = new results_precision_rec();
+                        sz = Marshal.SizeOf(results_precision);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_precision = *(results_precision_rec*)pData;
+                            }
+                        else
                         {
-                            results_precision = *(results_precision_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_precision_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_precision_rec read failed");
+                        method_results_list.Add(results_precision);
                     }
-                    method_results_list.Add(results_precision);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_CAL_CURVE_RESULTS) != 0)
-                {
-                    results_cal_curve_rec results_cal_curve = new results_cal_curve_rec();
-                    sz = Marshal.SizeOf(results_cal_curve);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_CAL_CURVE_RESULTS) != 0)
+                    {
+                        results_cal_curve_rec results_cal_curve = new results_cal_curve_rec();
+                        sz = Marshal.SizeOf(results_cal_curve);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_cal_curve = *(results_cal_curve_rec*)pData;
+                            }
+                        else
                         {
-                            results_cal_curve = *(results_cal_curve_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_cal_curve_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_cal_curve_rec read failed");
+                        method_results_list.Add(results_cal_curve);
                     }
-                    method_results_list.Add(results_cal_curve);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_KNOWN_ALPHA_RESULTS) != 0)
-                {
-                    results_known_alpha_rec results_known_alpha = new results_known_alpha_rec();
-                    sz = Marshal.SizeOf(results_known_alpha);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_KNOWN_ALPHA_RESULTS) != 0)
+                    {
+                        results_known_alpha_rec results_known_alpha = new results_known_alpha_rec();
+                        sz = Marshal.SizeOf(results_known_alpha);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_known_alpha = *(results_known_alpha_rec*)pData;
+                            }
+                        else
                         {
-                            results_known_alpha = *(results_known_alpha_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_known_alpha_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_known_alpha_rec read failed");
+                        method_results_list.Add(results_known_alpha);
                     }
-                    method_results_list.Add(results_known_alpha);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_KNOWN_M_RESULTS) != 0)
-                {
-                    results_known_m_rec results_known_m = new results_known_m_rec();
-                    sz = Marshal.SizeOf(results_known_m);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_KNOWN_M_RESULTS) != 0)
+                    {
+                        results_known_m_rec results_known_m = new results_known_m_rec();
+                        sz = Marshal.SizeOf(results_known_m);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_known_m = *(results_known_m_rec*)pData;
+                            }
+                        else
                         {
-                            results_known_m = *(results_known_m_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_known_m_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_known_m_rec read failed");
+                        method_results_list.Add(results_known_m);
                     }
-                    method_results_list.Add(results_known_m);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_MULTIPLICITY_RESULTS) != 0)
-                {
-                    results_multiplicity = new results_multiplicity_rec();
-                    sz = Marshal.SizeOf(results_multiplicity);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_MULTIPLICITY_RESULTS) != 0)
+                    {
+                        results_multiplicity = new results_multiplicity_rec();
+                        sz = Marshal.SizeOf(results_multiplicity);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_multiplicity = *(results_multiplicity_rec*)pData;
+                            }
+                        else
                         {
-                            results_multiplicity = *(results_multiplicity_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_multiplicity_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_multiplicity_rec read failed");
+                        method_results_list.Add(results_multiplicity);
                     }
-                    method_results_list.Add(results_multiplicity);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS) != 0)
-                {
-                    results_de_mult_rec results_de_mult = new results_de_mult_rec();
-                    sz = Marshal.SizeOf(results_de_mult);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
+                    if ((results_status & INCC.SaveResultsMask.SAVE_DUAL_ENERGY_MULT_RESULTS) != 0)
+                    {
+                        results_de_mult_rec results_de_mult = new results_de_mult_rec();
+                        sz = Marshal.SizeOf(results_de_mult);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_de_mult = *(results_de_mult_rec*)pData;
+                            }
+                        else
                         {
-                            results_de_mult = *(results_de_mult_rec*)pData;
+                            throw new TransferUtils.TransferParsingException("results_de_mult_rec read failed");
                         }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_de_mult_rec read failed");
-                    }
-                    method_results_list.Add(results_de_mult);
- 
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_PASSIVE_RESULTS) != 0)
-                {
-                    results_active_passive_rec results_active_passive = new results_active_passive_rec();
-                    sz = Marshal.SizeOf(results_active_passive);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_active_passive = *(results_active_passive_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_active_passive_rec read failed");
-                    }
-                    method_results_list.Add(results_active_passive);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_COLLAR_RESULTS) != 0)
-                {
-                    results_collar_rec results_collar = new results_collar_rec();
-                    sz = Marshal.SizeOf(results_collar);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_collar = *(results_collar_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_collar_rec read failed");
-                    }
-                    method_results_list.Add(results_collar);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_RESULTS) != 0)
-                {
-                    results_active_rec results_active = new results_active_rec();
-                    sz = Marshal.SizeOf(results_active);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_active = *(results_active_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_active_rec read failed");
-                    }
-                    method_results_list.Add(results_active);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_MULTIPLICITY_RESULTS) != 0)
-                {
-                    results_active_mult_rec results_active_mult = new results_active_mult_rec();
-                    sz = Marshal.SizeOf(results_active_mult);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_active_mult = *(results_active_mult_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_active_mult_rec read failed");
-                    }
-                    method_results_list.Add(results_active_mult);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_CURIUM_RATIO_RESULTS) != 0)
-                {
-                    results_curium_ratio_rec results_curium_ratio = new results_curium_ratio_rec();
-                    sz = Marshal.SizeOf(results_curium_ratio);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_curium_ratio = *(results_curium_ratio_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_curium_ratio_rec read failed");
-                    }
-                    method_results_list.Add(results_curium_ratio);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_RESULTS) != 0)
-                {
-                    results_truncated_mult_rec results_truncated_mult = new results_truncated_mult_rec();
-                    sz = Marshal.SizeOf(results_truncated_mult);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_truncated_mult = *(results_truncated_mult_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_truncated_mult_rec read failed");
-                    }
-                    method_results_list.Add(results_truncated_mult);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_BKG_RESULTS) != 0)
-                {
-                    results_tm_bkg_rec results_tm_bkg = new results_tm_bkg_rec();
-                    sz = Marshal.SizeOf(results_tm_bkg);
-                    los_bytos = TransferUtils.TryReadBytes(reader, sz);
-                    if (los_bytos != null)
-                        fixed (byte* pData = los_bytos)
-                        {
-                            results_tm_bkg = *(results_tm_bkg_rec*)pData;
-                        }
-                    else
-                    {
-                        throw new TransferUtils.TransferParsingException("results_tm_bkg_rec read failed");
-                    }
-                    method_results_list.Add(results_tm_bkg);
-                }
-                if ((results_status & INCC.SaveResultsMask.SAVE_ADD_A_SOURCE_RESULTS) != 0)
-                {
-                    results_add_a_source_rec results_add_a_source = new results_add_a_source_rec();
-                    sz = Marshal.SizeOf(results_add_a_source);
-                    los_bytos = TransferUtils.ReadBytes(reader, sz, "results_add_a_source_rec");
-                    fixed (byte* pData = los_bytos)
-                    {
-                        results_add_a_source = *(results_add_a_source_rec*)pData;
-                    }
-                    method_results_list.Add(results_add_a_source);
-                }
-                #endregion method results
+                        method_results_list.Add(results_de_mult);
 
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_PASSIVE_RESULTS) != 0)
+                    {
+                        results_active_passive_rec results_active_passive = new results_active_passive_rec();
+                        sz = Marshal.SizeOf(results_active_passive);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_active_passive = *(results_active_passive_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_active_passive_rec read failed");
+                        }
+                        method_results_list.Add(results_active_passive);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_COLLAR_RESULTS) != 0)
+                    {
+                        results_collar_rec results_collar = new results_collar_rec();
+                        sz = Marshal.SizeOf(results_collar);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_collar = *(results_collar_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_collar_rec read failed");
+                        }
+                        method_results_list.Add(results_collar);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_RESULTS) != 0)
+                    {
+                        results_active_rec results_active = new results_active_rec();
+                        sz = Marshal.SizeOf(results_active);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_active = *(results_active_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_active_rec read failed");
+                        }
+                        method_results_list.Add(results_active);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_ACTIVE_MULTIPLICITY_RESULTS) != 0)
+                    {
+                        results_active_mult_rec results_active_mult = new results_active_mult_rec();
+                        sz = Marshal.SizeOf(results_active_mult);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_active_mult = *(results_active_mult_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_active_mult_rec read failed");
+                        }
+                        method_results_list.Add(results_active_mult);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_CURIUM_RATIO_RESULTS) != 0)
+                    {
+                        results_curium_ratio_rec results_curium_ratio = new results_curium_ratio_rec();
+                        sz = Marshal.SizeOf(results_curium_ratio);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_curium_ratio = *(results_curium_ratio_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_curium_ratio_rec read failed");
+                        }
+                        method_results_list.Add(results_curium_ratio);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_RESULTS) != 0)
+                    {
+                        results_truncated_mult_rec results_truncated_mult = new results_truncated_mult_rec();
+                        sz = Marshal.SizeOf(results_truncated_mult);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_truncated_mult = *(results_truncated_mult_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_truncated_mult_rec read failed");
+                        }
+                        method_results_list.Add(results_truncated_mult);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_TRUNCATED_MULT_BKG_RESULTS) != 0)
+                    {
+                        results_tm_bkg_rec results_tm_bkg = new results_tm_bkg_rec();
+                        sz = Marshal.SizeOf(results_tm_bkg);
+                        los_bytos = TransferUtils.TryReadBytes(reader, sz);
+                        if (los_bytos != null)
+                            fixed (byte* pData = los_bytos)
+                            {
+                                results_tm_bkg = *(results_tm_bkg_rec*)pData;
+                            }
+                        else
+                        {
+                            throw new TransferUtils.TransferParsingException("results_tm_bkg_rec read failed");
+                        }
+                        method_results_list.Add(results_tm_bkg);
+                    }
+                    if ((results_status & INCC.SaveResultsMask.SAVE_ADD_A_SOURCE_RESULTS) != 0)
+                    {
+                        results_add_a_source_rec results_add_a_source = new results_add_a_source_rec();
+                        sz = Marshal.SizeOf(results_add_a_source);
+                        los_bytos = TransferUtils.ReadBytes(reader, sz, "results_add_a_source_rec");
+                        fixed (byte* pData = los_bytos)
+                        {
+                            results_add_a_source = *(results_add_a_source_rec*)pData;
+                        }
+                        method_results_list.Add(results_add_a_source);
+                    }
+                    #endregion method results
+                }
                 // create cycle list here!
                 // NEXT: this does not read multiple run sets for each add-a-src position, this only gets the first cycle set
-                if (results.meas_option != INCC.OPTION_HOLDUP)
+                if (results.meas_option != INCC.OPTION_HOLDUP || fi.Extension == "RTS")
                 {
                     number_runs = TransferUtils.ReadUInt16(reader, "number of runs");
                     mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} INCC runs into cycles", number_runs);
                     run_rec run = new run_rec();
+                    run_rec_ext run2 = new run_rec_ext();
                     for (n = 0; n < number_runs; n++)
                     {
-                        sz = Marshal.SizeOf(run);
+                        //Old vs new run record
+                        if (results.db_version < 6.0)
+                            sz = Marshal.SizeOf(run);
+                        else
+                            sz = Marshal.SizeOf(run2);
                         los_bytos = TransferUtils.TryReadBytes(reader, sz);
                         if (los_bytos != null && los_bytos.Length >= sz)  // gonna fail here if size is not exact
                             fixed (byte* pData = los_bytos)
                             {
-                                run = *(run_rec*)pData;
+                                if (results.db_version < 6.0)
+                                    run = *(run_rec*)pData;
+                                else
+                                    run2 = *(run_rec_ext*)pData;
                             }
                         else
                         {
                             throw new TransferUtils.TransferParsingException("run_rec " + (n + 1).ToString() + " read failed");
                         }
-                        run_rec_list.Add(run);
+                        if (results.db_version < 6.0)
+                            run_rec_list.Add(run);
+                        else
+                            run_rec_list2.Add(run2);
                     }
                 }
 
@@ -1856,6 +1886,7 @@ namespace NCCTransfer
 
         // los cycles de xfer
         public List<run_rec> run_rec_list = new List<run_rec>();
+        public List<run_rec_ext> run_rec_list2 = new List<run_rec_ext>();
 
         // for add-a-src
         public List<run_rec>[] CFrun_rec_list;

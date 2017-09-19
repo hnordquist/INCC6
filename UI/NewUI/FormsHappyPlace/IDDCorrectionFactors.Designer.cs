@@ -36,6 +36,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MDMGroupBox = new System.Windows.Forms.GroupBox();
             this.ModeLabel = new System.Windows.Forms.Label();
             this.DetectorLabel = new System.Windows.Forms.Label();
@@ -72,6 +73,7 @@
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MDMGroupBox.SuspendLayout();
             this.K4GroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -82,7 +84,7 @@
             this.MDMGroupBox.Controls.Add(this.ModeLabel);
             this.MDMGroupBox.Controls.Add(this.DetectorLabel);
             this.MDMGroupBox.Controls.Add(this.MaterialLabel);
-            this.MDMGroupBox.Location = new System.Drawing.Point(686, 15);
+            this.MDMGroupBox.Location = new System.Drawing.Point(674, 15);
             this.MDMGroupBox.Name = "MDMGroupBox";
             this.MDMGroupBox.Size = new System.Drawing.Size(143, 90);
             this.MDMGroupBox.TabIndex = 1;
@@ -126,7 +128,7 @@
             this.K4GroupBox.Controls.Add(this.AErrorTextBox);
             this.K4GroupBox.Controls.Add(this.BTextBox);
             this.K4GroupBox.Controls.Add(this.ATextBox);
-            this.K4GroupBox.Location = new System.Drawing.Point(15, 350);
+            this.K4GroupBox.Location = new System.Drawing.Point(15, 233);
             this.K4GroupBox.Name = "K4GroupBox";
             this.K4GroupBox.Size = new System.Drawing.Size(338, 101);
             this.K4GroupBox.TabIndex = 2;
@@ -224,7 +226,7 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.BTextBox.Size = new System.Drawing.Size(100, 20);
             this.BTextBox.Steps = -1D;
-            this.BTextBox.TabIndex = 1;
+            this.BTextBox.TabIndex = 3;
             this.BTextBox.Text = "0.000000E+000";
             this.BTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.BTextBox.Value = 0D;
@@ -244,14 +246,14 @@
             | System.Globalization.NumberStyles.AllowExponent)));
             this.ATextBox.Size = new System.Drawing.Size(100, 20);
             this.ATextBox.Steps = -1D;
-            this.ATextBox.TabIndex = 0;
+            this.ATextBox.TabIndex = 1;
             this.ATextBox.Text = "0.000000E+000";
             this.ATextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.ATextBox.Value = 0D;
             // 
             // NextBtn
             // 
-            this.NextBtn.Location = new System.Drawing.Point(745, 368);
+            this.NextBtn.Location = new System.Drawing.Point(745, 251);
             this.NextBtn.Name = "NextBtn";
             this.NextBtn.Size = new System.Drawing.Size(75, 23);
             this.NextBtn.TabIndex = 3;
@@ -261,7 +263,7 @@
             // 
             // CancelBtn
             // 
-            this.CancelBtn.Location = new System.Drawing.Point(745, 397);
+            this.CancelBtn.Location = new System.Drawing.Point(745, 280);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
             this.CancelBtn.TabIndex = 4;
@@ -271,7 +273,7 @@
             // 
             // HelpBtn
             // 
-            this.HelpBtn.Location = new System.Drawing.Point(745, 426);
+            this.HelpBtn.Location = new System.Drawing.Point(745, 309);
             this.HelpBtn.Name = "HelpBtn";
             this.HelpBtn.Size = new System.Drawing.Size(75, 23);
             this.HelpBtn.TabIndex = 5;
@@ -290,7 +292,7 @@
             // 
             // BackBtn
             // 
-            this.BackBtn.Location = new System.Drawing.Point(745, 339);
+            this.BackBtn.Location = new System.Drawing.Point(745, 222);
             this.BackBtn.Name = "BackBtn";
             this.BackBtn.Size = new System.Drawing.Size(75, 23);
             this.BackBtn.TabIndex = 9;
@@ -313,10 +315,10 @@
             this.berr,
             this.c,
             this.cerr});
-            this.dataGridView1.Location = new System.Drawing.Point(12, 123);
+            this.dataGridView1.Location = new System.Drawing.Point(12, 107);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(847, 210);
-            this.dataGridView1.TabIndex = 10;
+            this.dataGridView1.Size = new System.Drawing.Size(817, 98);
+            this.dataGridView1.TabIndex = 0;
             this.dataGridView1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellEndEdit);
             this.dataGridView1.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dataGridView1_CellFormatting);
             this.dataGridView1.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dataGridView1_CellValidating);
@@ -326,11 +328,13 @@
             // 
             this.Type.HeaderText = "Poison Rod Type";
             this.Type.Name = "Type";
+            this.Type.Width = 50;
             // 
             // NumRods
             // 
             this.NumRods.HeaderText = "# of Rods";
             this.NumRods.Name = "NumRods";
+            this.NumRods.Width = 50;
             // 
             // AbsFactor
             // 
@@ -339,6 +343,7 @@
             this.AbsFactor.HeaderText = "Poison Rod Absorption Factor";
             this.AbsFactor.Name = "AbsFactor";
             this.AbsFactor.ReadOnly = true;
+            this.AbsFactor.Width = 75;
             // 
             // a
             // 
@@ -389,12 +394,15 @@
             this.dataGridViewTextBoxColumn1.HeaderText = "Poison Rod Absorption Factor";
             this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
             this.dataGridViewTextBoxColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn1.Width = 50;
             // 
             // dataGridViewTextBoxColumn2
             // 
             this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle8;
             this.dataGridViewTextBoxColumn2.HeaderText = "a";
             this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+            this.dataGridViewTextBoxColumn2.ReadOnly = true;
+            this.dataGridViewTextBoxColumn2.Width = 75;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -426,11 +434,18 @@
             this.dataGridViewTextBoxColumn7.HeaderText = "c error";
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             // 
+            // dataGridViewTextBoxColumn8
+            // 
+            dataGridViewCellStyle9.Format = "E3";
+            this.dataGridViewTextBoxColumn8.DefaultCellStyle = dataGridViewCellStyle9;
+            this.dataGridViewTextBoxColumn8.HeaderText = "c error";
+            this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+            // 
             // IDDCorrectionFactors
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(863, 476);
+            this.ClientSize = new System.Drawing.Size(838, 352);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.BackBtn);
             this.Controls.Add(this.K3Label);
@@ -490,5 +505,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn berr;
         private System.Windows.Forms.DataGridViewTextBoxColumn c;
         private System.Windows.Forms.DataGridViewTextBoxColumn cerr;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
     }
 }

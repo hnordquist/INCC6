@@ -43,6 +43,39 @@ namespace NewUI
         double total = 1;
         double totalerr = 0;
 
+        public IDDK5CollarItemData(bool suppressBackButton = false)
+        {
+            InitializeComponent();
+            mp = new MethodParamFormFields(AnalysisMethod.Collar);
+            Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
+            INCCAnalysisParams.collar_combined_rec inDB;
+
+            if (mp.HasMethod)
+            {
+                mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
+                inDB = (INCCAnalysisParams.collar_combined_rec)mp.imd;
+            }
+
+            K5TextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            K5TextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            K5ErrorTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            K5ErrorTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            K5TextBox.Value = col.collar.sample_corr_fact.v;
+            K5ErrorTextBox.Value = col.collar.sample_corr_fact.err;
+
+            for (int i = 0; i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
+            {
+                if (col.k5.k5[i] != null)
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.CreateCells(dataGridView1);
+                    dataGridView1.Rows.Add(new object[] { col.k5.k5_checkbox[i], col.k5.k5_label[i], col.k5.k5[i].v, col.k5.k5[i].err });
+                }
+            }
+            k5TotalTextBox.Value = total;
+            k5TotalErrTextBox.Value = totalerr;
+
+        }
         public IDDK5CollarItemData(INCCAnalysisParams.collar_combined_rec c, bool mod)
         {
             InitializeComponent();
@@ -125,6 +158,7 @@ namespace NewUI
         {
             StoreChanges();
             SaveParamsToDb();
+            DialogResult = DialogResult.OK;
             Close();
         }
 
@@ -132,13 +166,14 @@ namespace NewUI
         {
             StoreChanges();
             IDDCollarCal calib = new IDDCollarCal(col, modified);
+            calib.StartPosition = FormStartPosition.CenterScreen;
             calib.Show();
             Close();
         }
 
         private void SaveParamsToDb ()
         {
-            mp = new MethodParamFormFields(AnalysisMethod.CollarAmLi);
+            mp = new MethodParamFormFields(AnalysisMethod.Collar);
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             INCCAnalysisParams.collar_combined_rec inDB;
 

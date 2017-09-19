@@ -142,6 +142,7 @@ namespace LMRawAnalysis
             int arrayLength;
             double[] alpha;
             double[] beta;
+            //todo: check this out. Makes it slow and is dumb HN -- yes, I said it
             BigFloat[] α = new BigFloat[0], β = new BigFloat[0];
 
             result = new MultiplicityResult();
@@ -281,6 +282,7 @@ namespace LMRawAnalysis
             //calculate the alphas
             alpha[0] = 0.0;
             alpha[1] = 1.0;
+            //todo: do math simplification here as done for SR. HN
             for (int n = 2; n <= biggestKey; n++)
             {
                 if (phi > 1e-20)
@@ -553,23 +555,23 @@ namespace LMRawAnalysis
             if (wasFastAccidentals)
             {
                 PTsingles = RAfactorialMoment0;
-                double gateFactor = numAccidentalGates / Math.Floor(totalMeasurementTime / (multiplicityGateWidth * ticSizeInSeconds));
-                RTsingles = AfactorialMoment1 / gateFactor;
+                //double gateFactor = numAccidentalGates / Math.Floor(totalMeasurementTime / (multiplicityGateWidth * ticSizeInSeconds));
+                RTsingles = AfactorialMoment1 / (AfactorialMoment0*TimeSpan.FromTicks((long)multiplicityGateWidth).TotalSeconds);
                 normRAfactorialMoment1 = RAfactorialMoment1 / PTsingles;
                 normRAfactorialMoment2 = RAfactorialMoment2 / PTsingles;
                 //NOT USED:  double normRAfactorialMoment3 = RAfactorialMoment3 / PTsingles;
                 normRAfactorialMomentAlpha1 = RAfactorialMomentAlpha1 / PTsingles;
                 normRAfactorialMomentBeta2 = RAfactorialMomentBeta2 / PTsingles;
-                normAfactorialMoment0 = AfactorialMoment0 / numAccidentalGates;
-                normAfactorialMoment1 = AfactorialMoment1 / numAccidentalGates;
-                normAfactorialMoment2 = AfactorialMoment2 / numAccidentalGates;
-                normAfactorialMoment3 = AfactorialMoment3 / numAccidentalGates;
-                normAfactorialMomentAlpha1 = AfactorialMomentAlpha1 / numAccidentalGates;
-                normAfactorialMomentBeta2 = AfactorialMomentBeta2 / numAccidentalGates;
+                normAfactorialMoment0 = AfactorialMoment0 / AfactorialMoment0;
+                normAfactorialMoment1 = AfactorialMoment1 / AfactorialMoment0;
+                normAfactorialMoment2 = AfactorialMoment2 / AfactorialMoment0;
+                normAfactorialMoment3 = AfactorialMoment3 / AfactorialMoment0;
+                normAfactorialMomentAlpha1 = AfactorialMomentAlpha1 / AfactorialMoment0;
+                normAfactorialMomentBeta2 = AfactorialMomentBeta2 / AfactorialMoment0;
             }
             else
             {
-                PTsingles = AfactorialMoment0;  //XXX SHOULDN'T THIS BE RAfactorialMoment0 not AfactorialMoment0???, answer, no, the two values should be the same, RA and A of 0 are identical for "slow"
+                PTsingles = RAfactorialMoment0;  //XXX SHOULDN'T THIS BE RAfactorialMoment0 not AfactorialMoment0???, answer, no, the two values should be the same, RA and A of 0 are identical for "slow"
                 RTsingles = AfactorialMoment0;
                 normRAfactorialMoment1 = RAfactorialMoment1 / PTsingles;
                 normRAfactorialMoment2 = RAfactorialMoment2 / PTsingles;

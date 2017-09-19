@@ -66,8 +66,8 @@ namespace NewUI
                 ActivePassiveCheckBox.Checked = am.choices[(int)AnalysisMethod.ActivePassive];
                 ActiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.Active];
                 ActiveMultCheckBox.Checked = am.choices[(int)AnalysisMethod.ActiveMultiplicity];
-                CollarAmLiCheckBox.Checked = am.choices[(int)AnalysisMethod.CollarAmLi];
-                CollarCfCheckBox.Checked = am.choices[(int)AnalysisMethod.CollarCf];
+                CollarAmLiCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar] && (acq.collar_mode == (int)CollarType.AmLiThermal || acq.collar_mode == (int)CollarType.AmLiFast);
+                CollarCfCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar] && (acq.collar_mode == (int)CollarType.CfThermal || acq.collar_mode == (int)CollarType.CfFast);
                 PassiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.CalibrationCurve];
                 KnownAlphaCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownA];
                 KnownMCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownM];
@@ -93,6 +93,7 @@ namespace NewUI
 
         private void collaractive()
         {
+            // Modified 5/4/2017 -- Looks for the Collar check, then sets the AcquireParms to default of thermal for source type selectd. HN 5/4/2017
             string CollarName;
             if (CollarAmLiCheckBox.Checked == true)
             {
@@ -107,9 +108,11 @@ namespace NewUI
                         }
                     }
                 }
-                am.Normal = AnalysisMethod.CollarAmLi;
+                am.Normal = AnalysisMethod.Collar;
                 am.Backup = AnalysisMethod.None;
                 am.Auxiliary = AnalysisMethod.None;
+                acq.collar_mode = (int)AnalysisDefs.CollarType.AmLiThermal;
+                am.modified = true;
             }
             else if (CollarCfCheckBox.Checked == true)
             {
@@ -124,13 +127,15 @@ namespace NewUI
                         }
                     }
                 }
-                am.Normal = AnalysisMethod.CollarCf;
+                am.Normal = AnalysisMethod.Collar;
                 am.Backup = AnalysisMethod.None;
                 am.Auxiliary = AnalysisMethod.None;
+                acq.collar_mode = (int)AnalysisDefs.CollarType.CfThermal;
+                acq.modified = true;
+                am.modified = true;
             }
             else
             {
-
                 //Check this. hn 1/26/17
                 bool anyChecked = false;
                 CollarName = CollarAmLiCheckBox.Name;
@@ -210,7 +215,7 @@ namespace NewUI
 
         private void CollarCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            am.choices[(int)AnalysisMethod.CollarAmLi] = ((CheckBox)sender).Checked;
+            am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;
             choke((CheckBox)sender);
                   
         }
@@ -297,7 +302,7 @@ namespace NewUI
 
         private void CollarCfCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            am.choices[(int)AnalysisMethod.CollarCf] = ((CheckBox)sender).Checked;
+            am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;
             choke((CheckBox)sender);
         }
     }

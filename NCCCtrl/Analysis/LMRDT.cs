@@ -211,11 +211,17 @@ namespace Analysis
 		public override void AccumulateCycleSummary()
 		{
 			base.AccumulateCycleSummary();
-			if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
+            //OK, there is version of PTR that shows wrong time in header. This may break other things, but we
+            //want calculated time for PTR. HN
+            double timebase = sup.Handler.ticSizeInSeconds;
+            if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
+                if (numValuesParsed > 0)
+                    cycle.TS = TimeSpan.FromTicks((long)(timeArray[(int)numValuesParsed - 1] / 10));
+
+            if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
 			{
-				if (cycle.TS.Ticks == 0L)
+                if (cycle.TS.Ticks == 0L)
 				{
-					double timebase = sup.Handler.ticSizeInSeconds;
 					long tiks = 0;
 					// convert to a TimeSpan
 					if (timebase == 1e-7)  // LMMM NCD 

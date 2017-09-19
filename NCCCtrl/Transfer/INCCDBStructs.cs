@@ -1502,12 +1502,11 @@ namespace NCCTransfer
         public byte active;
         public byte active_mult;
         public byte active_passive;
-        public byte collaramli;
+        public byte collar;
         public byte normal_method;
         public byte backup_method;
         public byte curium_ratio;
         public byte truncated_mult;
-        public byte collarcf;
         public byte analysis_method_spare2;
         public byte analysis_method_spare3;
         public byte analysis_method_spare4;
@@ -1610,16 +1609,19 @@ namespace NCCTransfer
         public double col_sample_corr_fact_err;
         fixed double collar_spares[INCC.NUMBER_COL_SPARES];
         public fixed byte collar_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_mode;
+        //Change to int to hold Enum CollarType
+        public int collar_mode;
         public double col_lower_mass_limit;
         public double col_upper_mass_limit;
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     unsafe public struct collar_detector_rec
     {
         public fixed byte collar_detector_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_detector_mode;
+        //Changed to reflect new CollarType enum
+        public int collar_detector_mode;
         public fixed byte collar_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public fixed byte col_reference_date[INCC.DATE_TIME_LENGTH];
         public double col_relative_doubles_rate;
@@ -1633,7 +1635,7 @@ namespace NCCTransfer
         public fixed double collar_k5[INCC.MAX_COLLAR_K5_PARAMETERS];
         public fixed double collar_k5_err[INCC.MAX_COLLAR_K5_PARAMETERS];
         public fixed byte collar_k5_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_k5_mode;
+        public int collar_k5_mode;
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1841,7 +1843,7 @@ namespace NCCTransfer
         public fixed byte results_campaign_id[INCC.MAX_CAMPAIGN_ID_LENGTH];
         public fixed byte results_inspection_number[INCC.MAX_CAMPAIGN_ID_LENGTH];
         public fixed byte results_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte results_collar_mode;
+        public int results_collar_mode;
         public fixed byte results_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public fixed byte results_detector_type[INCC.DETECTOR_TYPE_LENGTH];
         public fixed byte results_electronics_id[INCC.ELECTRONICS_ID_LENGTH];
@@ -2295,7 +2297,7 @@ namespace NCCTransfer
         public fixed byte col_pass_fail[INCC.PASS_FAIL_LENGTH];
         fixed double col_spares[INCC.NUMBER_COL_RESULTS_SPARES];
         public fixed byte col_collar_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte col_collar_mode;
+        public int col_collar_mode;
         public fixed byte col_collar_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public byte col_collar_equation;
         public double col_a_res;

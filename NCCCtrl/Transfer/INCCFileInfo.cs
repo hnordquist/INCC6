@@ -38,7 +38,7 @@ using NCCReporter;
 /// </summary>
 namespace NCCTransfer
 {
-    public enum eFileType { eUnknown, eInitialDataDetector, eInitialDataCalibration, eTransfer, eNCC, eOldNCC, eZip, eFolder, eFileList }
+    public enum eFileType { eUnknown, eInitialDataDetector, eInitialDataCalibration, eTransfer, eNCC, eOldNCC, eZip, eFolder, eFileList, eRatesOnly }
 
 
     public partial class INCCFileInfo
@@ -142,6 +142,15 @@ namespace NCCTransfer
                             result = irf; // this now has the structs ready
                     }
                     break;
+                case eFileType.eRatesOnly:
+                    {
+                        //Surely we can read an rts file?
+                        INCCTransferFile rts = new INCCTransferFile(mlogger, mpath);
+                        bool good = rts.Restore(mpath);
+                        if (good)
+                            result = rts;
+                    }
+                    break;
                 case eFileType.eUnknown:
                     mlogger.TraceEvent(LogLevels.Info, 34007, "Skipping {0}", mpath);
                     break;
@@ -183,7 +192,12 @@ namespace NCCTransfer
                 return result;
             }
 
-
+            if (fi.Extension.ToLower().Equals(".rts"))
+            {
+                mlogger.TraceEvent(LogLevels.Info, 76543, "Found rates only file {0}", source_path_filename);
+                result = eFileType.eRatesOnly;
+                
+            }
             FileStream stream;
             BinaryReader reader;
             byte[] buff;
@@ -199,8 +213,16 @@ namespace NCCTransfer
                 return result;
             }
 
-			int thisread = 0;
+            if (fi.Extension.ToLower().Equals(".rts"))
+            {
+                mlogger.TraceEvent(LogLevels.Info, 33003, "This is a rates only transfer file");
+                reader.Close();
+                return result;
+            }
+
+            int thisread = 0;
             string str2, str2a,str2b;
+
             if (stream.Length < CALIBRATION_SAVE_RESTORE.Length)
             {
                 mlogger.TraceEvent(LogLevels.Info, 33003, "Skipping this tiny file");
@@ -212,10 +234,10 @@ namespace NCCTransfer
                 thisread = reader.Read(buff, 0, DETECTOR_SAVE_RESTORE.Length);  // cannot throw due to length check under normal circumstances, so this is ok 
                 str2 = System.Text.ASCIIEncoding.ASCII.GetString(buff, 0, thisread);
                 stream.Seek(0, SeekOrigin.Begin);
-                thisread = reader.Read(buff, 0, INTEGRATED_REVIEW.Length);  
+                thisread = reader.Read(buff, 0, INTEGRATED_REVIEW.Length);
                 str2a = System.Text.ASCIIEncoding.ASCII.GetString(buff, 0, thisread);
                 stream.Seek(0, SeekOrigin.Begin);
-                thisread = reader.Read(buff, 0, OLD_REVIEW.Length); 
+                thisread = reader.Read(buff, 0, OLD_REVIEW.Length);
                 str2b = System.Text.ASCIIEncoding.ASCII.GetString(buff, 0, thisread);
             }
             else
@@ -224,7 +246,7 @@ namespace NCCTransfer
                 reader.Close();
                 return result;
             }
-
+            
             if (str2.Equals(DETECTOR_SAVE_RESTORE))
             {
                 result = eFileType.eInitialDataDetector;

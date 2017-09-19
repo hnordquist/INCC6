@@ -1046,6 +1046,8 @@ namespace AnalysisDefs
 
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
+            if (INCCAnalysisResults.TradResultsRec == null)//Happens when using rates only measurement....
+                INCCAnalysisResults.TradResultsRec = new INCCResults.results_rec(this);
             long rid = dbres.Create(mid, INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 

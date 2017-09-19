@@ -867,14 +867,9 @@ namespace AnalysisDefs
                                 am.GetMethodParameters(AnalysisMethod.ActivePassive).CopyTo(aprec.methodParams);
                                 imr.AddMethodResults(sel, method, aprec);
                                 break;
-                            case AnalysisMethod.CollarAmLi:
+                            case AnalysisMethod.Collar:
                                 collrec = new INCCMethodResults.results_collar_rec ();
-                                am.GetMethodParameters(AnalysisMethod.CollarAmLi).CopyTo(collrec.methodParams);
-                                imr.AddMethodResults(sel, method, collrec);
-                                break;
-                            case AnalysisMethod.CollarCf:
-                                collrec = new INCCMethodResults.results_collar_rec();
-                                am.GetMethodParameters(AnalysisMethod.CollarCf).CopyTo(collrec.methodParams);
+                                am.GetMethodParameters(AnalysisMethod.Collar).CopyTo(collrec.methodParams);
                                 imr.AddMethodResults(sel, method, collrec);
                                 break;
                             case AnalysisMethod.CuriumRatio:
@@ -956,7 +951,8 @@ namespace AnalysisDefs
         public ErrorCalculationTechnique error_calc_method;
         public string inventory_change_code;
         public string io_code;
-        public bool collar_mode;
+        public int collar_mode;
+        //CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
         public double drum_empty_weight;
         protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;

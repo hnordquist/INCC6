@@ -213,10 +213,7 @@ namespace AnalysisDefs
                 case AnalysisMethod.CuriumRatio:
                     res = typeof(INCCMethodResults.results_curium_ratio_rec);
                     break;
-                case AnalysisMethod.CollarAmLi:
-                    res = typeof(INCCMethodResults.results_collar_rec);
-                    break;
-                case AnalysisMethod.CollarCf:
+                case AnalysisMethod.Collar:
                     res = typeof(INCCMethodResults.results_collar_rec);
                     break;
                 case AnalysisMethod.Active:
@@ -510,6 +507,8 @@ namespace AnalysisDefs
                 if (m.CountingAnalysisResults.Count > 0 && m.CountingAnalysisResults.HasMultiplicity)
                     try
                     {
+                        //OK, this is default behavior. When doing an acquire, we insert the detector meas. parms as default.
+                        //todo: fix key mismatch HN
                         mcr = (MultiplicityCountingRes)m.CountingAnalysisResults[det.MultiplicityParams];
                     }
                     catch (Exception)
@@ -624,12 +623,7 @@ namespace AnalysisDefs
 
         // suitable for spreadsheet use, convert to lines by ToString() on each row entry
         public virtual List<NCCReporter.Row> ToColumns(Measurement m) { return new List<NCCReporter.Row>(); }
-
-        public override void GenParamList()  // force implementation in subclasses
-        {
-			ps = new List<DBParamEntry>();
-        }
-   
+        //The GenParams here actually did the OPPOSITE of what you said in notes, which was to force child classes to implement. HN 3/2/2017
     }
 
     public class INCCMethodResult : ParameterBase, IINCCStringRep 
@@ -1958,6 +1952,7 @@ namespace AnalysisDefs
 
         public class results_collar_rec : INCCMethodResult
         {
+            //TODO: this needs to incorporate all the results
             public Tuple k0,k1,k2,k3,k4,k5;
             public Tuple u235_mass;
             public double percent_u235;

@@ -423,7 +423,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if ((det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())&& !mo.HasFlag (AssaySelector.MeasurementOption.rates))
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }
