@@ -296,9 +296,8 @@ namespace AnalysisDefs
 
         public override int GetHashCode()
         {
-            int hCode = FA.GetHashCode() ^ gateWidthTics.GetHashCode() ^ //suspect.GetHashCode() ^
-                accidentalsGateDelayInTics.GetHashCode() ^ backgroundGateTimeStepInTics.GetHashCode() 
-                ^ Rank.GetHashCode();
+            int hCode = FA.GetHashCode() ^ gateWidthTics.GetHashCode() ^ suspect.GetHashCode() ^
+                accidentalsGateDelayInTics.GetHashCode() ^ backgroundGateTimeStepInTics.GetHashCode();
             hCode ^= sr.GetHashCode() ;
             return hCode.GetHashCode();
         }
@@ -312,9 +311,9 @@ namespace AnalysisDefs
 
             string unit;
             if (t <= 10)  // tics
-                unit = "tics";
+                unit = " tics";
             else  // ms
-                unit = "ms";
+                unit = " μs";
             if (withunitsspace)
                 s += " ";
             s += unit;
@@ -339,9 +338,9 @@ namespace AnalysisDefs
             if (FA == FAType.FAOn)
             {
                 s += " fast acc.,   gate ";
-                s += SR.gateLength.ToString();
+                s += SR.gateLengthMS.ToString();
 				s += ", with internal gate ";
-                s += TimeUnitImage(backgroundGateTimeStepInTics, withunitsspace: true);
+                s += TimeUnitImage(accidentalsGateDelayInTics, withunitsspace: true);
             }
             else
             {
@@ -752,6 +751,7 @@ namespace AnalysisDefs
 			// 3: mark for display in GUI
 			match.Rank = SpecificCountingAnalyzerParams.Select; // values < 0 flag uses for UI sorting and selection
             return anew;
+            //OK, you were trying to do same thing I've done here. URGH. HN
 		}
 	}
 

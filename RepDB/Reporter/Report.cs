@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace NCCReporter
 {
@@ -85,7 +86,7 @@ namespace NCCReporter
         public TabularReport(System.Type et, LMLoggers loggers)
         {
             this.loggers = loggers;
-            Separator = ',';
+            Separator = '\t';
             GenColumns(et);
             rows = new Row[0]; // non-null to start
             f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
@@ -98,7 +99,7 @@ namespace NCCReporter
         public TabularReport(LMLoggers loggers)
         {
             this.loggers = loggers;
-            Separator = ',';
+            Separator = '\t';
             rows = new Row[0]; // non-null to start
             f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
         }
@@ -114,7 +115,7 @@ namespace NCCReporter
             switch (separator)
             {
                 case ',': suffix = "csv"; break;
-                case '\t': suffix = "dat"; break;
+                case '\t': suffix = "csv"; break;
                 case '|': suffix = "txt"; break;
                 default: suffix = "txt"; break;
             }
@@ -270,8 +271,9 @@ namespace NCCReporter
             } while (r < repeat);
         }
 
-        public string ToLine(char separator = ',')
+        public string ToLine(char separator = '\t' )//tab delimited instead
         {
+
             string l = "";
             foreach (KeyValuePair<int, string> pair in this)
             {
@@ -391,7 +393,7 @@ namespace NCCReporter
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
                 stream = File.Create(filename);
-                writer = new StreamWriter(stream);// , System.Text.Encoding.Unicode);
+                writer = new StreamWriter(stream, System.Text.Encoding.Unicode);
                 return true;
             }
             catch (Exception e)

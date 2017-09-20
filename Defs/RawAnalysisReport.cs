@@ -1520,7 +1520,7 @@ namespace AnalysisDefs
             return rows;
         }
 
-        public override void StartReportGeneration(Measurement m, string pretext, char separator = ',', string suffixoverride = null)  // space char as separator forces text report generation
+        public override void StartReportGeneration(Measurement m, string pretext, char separator = '\t', string suffixoverride = null)  // space char as separator forces text report generation
         {
             base.StartReportGeneration(m, pretext, separator);
 

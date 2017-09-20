@@ -294,7 +294,7 @@ namespace NewUI
                     det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
                 }
                 else
-                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40000;
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
                 det.MultiplicityParams.FA = LMFA.Checked ? FAType.FAOn : FAType.FAOff;
             }
 
