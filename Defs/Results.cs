@@ -1198,7 +1198,7 @@ namespace AnalysisDefs
         public double efficiency, multiplication, multiAlpha; // computed in the same manner as mass but only in multiplicity analysis
 
         public ulong accidentalsDelay;
-        public ulong[] RAMult, UnAMult, NormedAMult;
+        public ulong[] RAMult, UnAMult, NormedAMult;//Adding αβ moments for debug of DTC HN
         ulong maxBins, minBins;
         AlphaBeta αβ;
 
@@ -1221,6 +1221,10 @@ namespace AnalysisDefs
         }
         public double[] RAFactorialMoments;
         public double[] AFactorialMoments;
+        public double AFactorialAlphaMoment1;
+        public double RAFactorialAlphaMoment1;
+        public double AFactorialBetaMoment2;
+        public double RAFactorialBetaMoment2;
 
         double _RASum, _ASum, _UnASum, _S1Sum, _S2Sum;
 
@@ -1370,6 +1374,10 @@ namespace AnalysisDefs
             Array.Resize(ref AFactorialMoments, src.AFactorialMoments.Length);
             Array.Copy(src.RAFactorialMoments, RAFactorialMoments, RAFactorialMoments.Length);
             Array.Copy(src.AFactorialMoments, AFactorialMoments, AFactorialMoments.Length);
+            AFactorialAlphaMoment1 = src.AFactorialAlphaMoment1;
+            RAFactorialAlphaMoment1 = src.RAFactorialAlphaMoment1;
+            AFactorialBetaMoment2 = src.AFactorialBetaMoment2;
+            RAFactorialBetaMoment2 = src.RAFactorialBetaMoment2;
         }
 
         public void TransferSums(MultiplicityCountingRes src)
@@ -1421,6 +1429,10 @@ namespace AnalysisDefs
             singles = new VTuple();
             RAFactorialMoments = new double[4];
             AFactorialMoments = new double[4];
+            AFactorialAlphaMoment1 = 0;
+            RAFactorialAlphaMoment1 = 0;
+            AFactorialBetaMoment2 = 0;
+            RAFactorialBetaMoment2 =0;
             multiplication = 1.0;
             uncorrectedfrominccres = new Rates();
             covariance_matrix = new double[3 * 3];
@@ -1432,6 +1444,12 @@ namespace AnalysisDefs
         {
             FA = src.FA;
             idx = src.idx;
+            Array.Resize(ref RAFactorialMoments, src.RAFactorialMoments.Length);
+            Array.Resize(ref AFactorialMoments, src.AFactorialMoments.Length);
+            AFactorialAlphaMoment1 = src.AFactorialAlphaMoment1;
+            RAFactorialAlphaMoment1 = src.RAFactorialAlphaMoment1;
+            AFactorialBetaMoment2 = src.AFactorialBetaMoment2;
+            RAFactorialBetaMoment2 = src.RAFactorialBetaMoment2;
             Array.Resize(ref RAMult, src.RAMult.Length);
             Array.Resize(ref UnAMult, src.UnAMult.Length);
             Array.Resize(ref NormedAMult, src.NormedAMult.Length);
@@ -1522,6 +1540,11 @@ namespace AnalysisDefs
             AFactorialMoments[1] = mr.AfactorialMoment1;
             AFactorialMoments[2] = mr.AfactorialMoment2;
             AFactorialMoments[3] = mr.AfactorialMoment3;
+            //For now, don't put intermediats in results. HN
+            AFactorialAlphaMoment1 = mr.AfactorialAlphaMoment1;
+            RAFactorialAlphaMoment1 = mr.RAfactorialAlphaMoment1;
+            AFactorialBetaMoment2 = mr.AfactorialBetaMoment2;
+            RAFactorialBetaMoment2 = mr.RAfactorialBetaMoment2;
         }
 
         public void ComputeHitSums()

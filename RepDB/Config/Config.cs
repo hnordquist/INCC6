@@ -143,6 +143,12 @@ namespace NCCConfig
             return x;
         }
 
+        public Config(String settingsFile)
+        {
+            _parms = ParameterBasis();  // alloc table
+            db = new DBConfig(_parms);  // set up DB config
+            ReadAppSettings(settingsFile); // get the DB settings
+        }
         public Config()
         {
             _parms = ParameterBasis();  // alloc table
@@ -428,6 +434,38 @@ namespace NCCConfig
             catch (ConfigurationErrorsException e)
             {
                 Console.WriteLine("[CreateAppSettings: {0}]", e.ToString());
+            }
+        }
+
+        public void ReadAppSettings(String FullConfigFilePathAndName)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(FullConfigFilePathAndName);
+
+            try
+            {
+                // Get the AppSettings section and store DB info.
+                System.Configuration.AppSettingsSection appSettings =
+                    (System.Configuration.AppSettingsSection)config.AppSettings;
+                foreach (var key in appSettings.Settings.AllKeys)
+                {
+                    Console.WriteLine("Key: {0} Value: {1}", key, appSettings.Settings[key]);
+                    switch (key)
+                    {
+                        case "MyProviderName":
+                            this.DB.MyProviderName = config.AppSettings.Settings[key].Value;
+                            break;
+                        case "MyDBConnectionString":
+                            this.DB.MyDBConnectionString = config.AppSettings.Settings[key].Value;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (ConfigurationErrorsException e)
+            {
+                Console.WriteLine("[ReadAppSettings: {0}]",
+                    e.ToString());
             }
         }
 

@@ -6,19 +6,28 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace TestINCCAlgorithms
 {
     using Integ = NCC.IntegrationHelpers;
-    using N = NCC.CentralizedState;
+    using theDB = DB;
     [TestClass]
     public class TestINCCAlgorithms
     {
-        public NCCConfig.Config c;
+        
+        public String rootLoc;
+        Measurement temp;
+        Detector det;
 
         [TestMethod]
         public void Init()
         {
-            Console.WriteLine("Loading configuration file");
-            c = new NCCConfig.Config(); // gets DB params
-            if (!N.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
-                Console.WriteLine("Could not load configuration.");
+            //Set up our test environment
+            DB.DBMain.SwitchDB("c:\\code\\incc\\deployment\\incc6.sqlite");
+            
+            Integ.SetNewCurrentDetector("test", true);
+            AcquireParameters ap = new AcquireParameters();
+            ap.acquire_type = AcquireConvergence.CycleCount;
+            ap.data_src = DetectorDefs.ConstructedSource.CycleFile;
+
+            temp = Integ.BuildMeasurementTemp(ap, new Detector(), AssaySelector.MeasurementOption.rates);
+
         }
 
         [TestMethod]

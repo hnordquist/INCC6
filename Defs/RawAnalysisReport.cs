@@ -76,7 +76,7 @@ namespace AnalysisDefs
         enum CycleSource { Source, Identifier, DateTime }
         enum DistributionsAndAlphaBeta { RA, A, Alpha, Beta }
         enum eMultiplicityDistributions { RA, A }
-        enum ComputedMultiplicityIntermediates { RAMoments, AMoments }
+        enum ComputedMultiplicityIntermediates { RAMoments, AMoments, RAAlphaMoments, AAlphaMoments, RABetaMoments, ABetaMoments }
 
         enum INCCCycles { Singles, RA, A, Scaler1, Scaler2, QCTests }
         enum RawCycles { Singles, RA, A, QCTests }
@@ -466,7 +466,7 @@ namespace AnalysisDefs
                 if (det.Id.SRType.IsListMode()) // Only add long delay for LM instruments hn 9.21.2015
                 {
                     row.Add((int)DetectorCalibration.FA, mkey.FA.ToString());
-                    row.Add((int)DetectorCalibration.LongDelay, (mkey.FA == FAType.FAOn ? mkey.BackgroundGateTimeStepInTics * 1e-1 : mkey.AccidentalsGateDelayInTics * 1e-1).ToString());
+                    row.Add((int)DetectorCalibration.LongDelay, (mkey.FA == FAType.FAOn ? mkey.AccidentalsGateDelayInTics * 1e-1 : mkey.AccidentalsGateDelayInTics * 1e-1).ToString());
                 }
                 else
                 {
@@ -481,8 +481,7 @@ namespace AnalysisDefs
         Row[] GenMultiplicityIntermediatesRow(CountingResultsMap map, Cycle c = null)
         {
             Row[] rows = new Row[4] { new Row(), new Row(), new Row(), new Row() };  // four moments, 1 row for each
-            //row.Add((int)ComputedMultiplicityIntermediates.Alpha, "");
-            //row.Add((int)ComputedMultiplicityIntermediates.Beta, "");
+
             IEnumerator iter = map.GetATypedResultEnumerator(typeof(AnalysisDefs.Multiplicity));
             int ecount = System.Enum.GetValues(typeof(ComputedMultiplicityIntermediates)).Length;
             int i = 0, repeat = 0, r = 0;
@@ -502,6 +501,27 @@ namespace AnalysisDefs
                 {
                     rows[r].Add((int)ComputedMultiplicityIntermediates.RAMoments + repeat, mcr.RAFactorialMoments[r].ToString());
                     rows[r].Add((int)ComputedMultiplicityIntermediates.AMoments + repeat, mcr.AFactorialMoments[r].ToString());
+                    if (r == 1)
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RAAlphaMoments + repeat, mcr.RAFactorialAlphaMoment1.ToString());
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.AAlphaMoments + repeat, mcr.AFactorialAlphaMoment1.ToString());
+                    }
+                    else
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RAAlphaMoments + repeat, "--");
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.AAlphaMoments + repeat, "--");
+                    }
+                    if (r==2)
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RABetaMoments + repeat, mcr.RAFactorialBetaMoment2.ToString());
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.ABetaMoments + repeat, mcr.AFactorialBetaMoment2.ToString());
+                    }
+                    else
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RABetaMoments + repeat, "--");
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.ABetaMoments + repeat, "--");
+                    }
+
                 }
                 i++;
             }

@@ -469,6 +469,7 @@ namespace NCC
 			bool there = false;
 			try
 			{
+                
 				there = pest.IsItThere;
 				if (!there)
 				{

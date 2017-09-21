@@ -593,6 +593,11 @@ namespace LMRawAnalysis
             double PTdoubles = PTsingles * (normRAfactorialMoment1 - normAfactorialMoment1);
             double PTtriples;
             double PTtriplesDTcoef;
+            //Store alphabeta intermediates
+            result.AfactorialAlphaMoment1 = normAfactorialMomentAlpha1;
+            result.RAfactorialAlphaMoment1 = normRAfactorialMomentAlpha1;
+            result.AfactorialBetaMoment2= normAfactorialMomentBeta2;
+            result.RAfactorialBetaMoment2 = normRAfactorialMomentBeta2;
             if (AfactorialMoment0 != 0.0)
             {
                 PTtriples = PTsingles * ((normRAfactorialMoment2 - normAfactorialMoment2)
