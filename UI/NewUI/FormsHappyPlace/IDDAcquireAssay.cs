@@ -45,6 +45,39 @@ namespace NewUI
             ah = new AcquireHandlers();
             ah.mo = AssaySelector.MeasurementOption.verification;
             Text += " for detector " + ah.det.Id.DetectorName;
+            if (ah.det.ListMode)
+            {
+                //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
+                ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
+                if (ah.det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                }
+                else
+                {
+                    //Default long delay = 4096 for slow.
+                    ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                }
+                    // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
+                CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
+                foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
+                {
+                    existing.Active = false;
+                }
+                if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
+                {
+                    AnalysisParams.Insert(0, ah.det.MultiplicityParams);
+                }
+                SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
+                currentParms.Active = true;
+                currentParms.Rank = 0;
+                NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
+                NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
+                NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+            }
+
             FieldFiller();
 			EnableTermControls();
             ToolTip mustSelect = new ToolTip();
@@ -290,46 +323,55 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-            bool isCollar = Integ.GetMethodSelections(Integ.GetCurrentAcquireParams()).Has(AnalysisMethod.Collar);
-            if (string.IsNullOrEmpty(ItemIdComboBox.Text))
+            AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
+            if (am != null)
             {
-                MessageBox.Show("You must enter an item id for this assay.", "ERROR");
-                DialogResult = DialogResult.Abort;
-            }
-
-            else if (!isCollar)
-            {
-                // save/update item id changes only when user selects OK
-                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
-                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
-
-                NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-                NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
-                bool ocntinue = GetAdditionalParameters();
-                if (ocntinue && (ah.OKButton_Click(sender, e) == DialogResult.OK))
+                bool isCollar = Integ.GetMethodSelections(Integ.GetCurrentAcquireParams()).Has(AnalysisMethod.Collar);
+                if (string.IsNullOrEmpty(ItemIdComboBox.Text))
                 {
-                    Visible = false;
-                    // Add strata update to measurement object.    HN 9.23.2015              
-                    UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
-                    UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
+                    MessageBox.Show("You must enter an item id for this assay.", "ERROR");
+                    DialogResult = DialogResult.Abort;
+                }
+
+                else if (!isCollar)
+                {
+                    // save/update item id changes only when user selects OK
+                    ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                    Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+
+                    NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+                    NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+                    bool ocntinue = GetAdditionalParameters();
+                    if (ocntinue && (ah.OKButton_Click(sender, e) == DialogResult.OK))
+                    {
+                        Visible = false;
+                        // Add strata update to measurement object.    HN 9.23.2015              
+                        UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
+                        UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
+                        Close();
+                    }
+                    DialogResult = DialogResult.None;
+                }
+                else
+                {
+                    //Collar
+                    // save/update item id changes only when user selects OK
+                    ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                    Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+
+                    NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+                    NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+
+                    DialogResult = DialogResult.OK;
                     Close();
                 }
-                DialogResult = DialogResult.None;
             }
             else
             {
-                //Collar
-                // save/update item id changes only when user selects OK
-                ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
-                Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
-
-                NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-                NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
-                
-                DialogResult = DialogResult.OK;
-                Close();
+                MessageBox.Show(string.Format("No analysis methods specified for detector {0} and material {1}", ah.ap.detector_id, ah.ap.item_type),
+                    "Verification", MessageBoxButtons.OK);
             }
-		}
+        }
 
 		private void CancelBtn_Click(object sender, EventArgs e)
         {

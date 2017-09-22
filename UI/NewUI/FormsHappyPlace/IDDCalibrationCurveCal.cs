@@ -279,6 +279,9 @@ namespace NewUI
 
         private void PrintBtn_Click(object sender, EventArgs e)
         {
+            if (cal_curve.modified)
+                //Save if they are printing.
+                mp.Persist();
             NCCReporter.Section sec = new NCCReporter.Section(null,0,0,0);
             List<NCCReporter.Row> rows = new List<NCCReporter.Row>();
             rows = cal_curve.ToLines(null);
@@ -300,6 +303,8 @@ namespace NewUI
         {
             if (cct != cal_curve.CalCurveType)
                 mp.imd.modified = true;
+            //Was not storing the changed values.HN
+            //todo: use numerictextbox instead. Can check ranges. HN 9/22/2017
             mp.Persist();
             this.Close();
         }

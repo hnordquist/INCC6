@@ -396,36 +396,44 @@ namespace NewUI
 
             Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
             NormParameters npp = Integ.GetCurrentNormParams(det);
-            if (Integ.GetMethodSelections(det.Id.DetectorId, ap.ItemId.material).Has(AnalysisMethod.Collar))
+            AnalysisMethods am = Integ.GetMethodSelections(ap);
+            if (am != null)
             {
-                IDDAcquireAssay f = new IDDAcquireAssay();
-                DialogResult result = f.ShowDialog();
-                f.Close();
-                if (result == System.Windows.Forms.DialogResult.OK)
+                if (Integ.GetMethodSelections(det.Id.DetectorId, ap.ItemId.material).Has(AnalysisMethod.Collar))
                 {
-                    IDDCollarItemData data = new IDDCollarItemData();
-                    result = data.ShowDialog();
-                    data.Close();
-                }
+                    IDDAcquireAssay f = new IDDAcquireAssay();
+                    DialogResult result = f.ShowDialog();
+                    f.Close();
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        IDDCollarItemData data = new IDDCollarItemData();
+                        result = data.ShowDialog();
+                        data.Close();
+                    }
 
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    
-                    IDDK5CollarItemData k5 = new IDDK5CollarItemData(parms,true);
-                    result = k5.ShowDialog();
-                    k5.Close();
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+
+                        IDDK5CollarItemData k5 = new IDDK5CollarItemData(parms, true);
+                        result = k5.ShowDialog();
+                        k5.Close();
+                    }
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        IDDCollarAcquire dlg = new IDDCollarAcquire(npp);
+                        dlg.ShowDialog();
+                    }
+
                 }
-                if (result == System.Windows.Forms.DialogResult.OK)
+                else
                 {
-                    IDDCollarAcquire dlg = new IDDCollarAcquire(npp);
-                    dlg.ShowDialog();
+                    IDDAcquireAssay f = new IDDAcquireAssay();
+                    f.ShowDialog();
                 }
-                
             }
             else
             {
-                IDDAcquireAssay f = new IDDAcquireAssay();
-                f.ShowDialog();
+                System.Windows.Forms.MessageBox.Show("You must define at least one analysis method.", "ERROR");
             }
 
         }
