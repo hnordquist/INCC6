@@ -1993,7 +1993,7 @@ INSERT INTO [HVCalibrationParams] ([detector_id],[minv],[maxv],[duration],[stepv
 GO
 INSERT INTO [analysis_method_rec] (id, item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],
 [known_m],[multiplicity],[add_a_source],[active],[active_mult],
-[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult] VALUES(1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0);
+[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [sr_parms_rec]	(detector_id,[sr_detector_id],[sr_type],[sr_port_number],[predelay],[gate_length],[gate_length2],
 [high_voltage],[die_away_time],[efficiency], [multiplicity_deadtime],[coeff_a_deadtime],[coeff_b_deadtime],
@@ -2028,7 +2028,7 @@ GO
 INSERT INTO [analysis_method_rec] 
 (id,item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],[known_m],[multiplicity],[add_a_source],[active],
 [active_mult], [active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) 
-VALUES(2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
+VALUES(2,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [isotopics] 
 ([id],[pu238],[pu239],[pu240],[pu241],[pu242],[am241],[pu238_err],[pu239_err],[pu240_err],[pu241_err],[pu242_err],[am241_err],
@@ -2188,15 +2188,15 @@ INSERT INTO [known_alpha_rec] VALUES(1,2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0
 GO
 INSERT INTO [multiplicity_rec] VALUES(1,2,1,0,473.5,2.154,3.789,5.211,3.163,8.24,17.321,1.0,0.0,0.0,0.0,1.0,NULL,NULL,1.0);
 GO
-INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL);
 GO
 INSERT INTO [cal_curve_rec] VALUES(1,2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
 INSERT INTO [acquire_parms_rec] VALUES(1, 'XXXX','XXXX','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',         0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
 GO
-INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL);
 GO
-INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL);
 GO
 INSERT INTO [acquire_parms_rec] VALUES(2, 'XXXX','XXXX','XXXX','XXXX','JSR-15','Pu','','Default','Default','','','XXXX','XXXX','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1,0,40,2,'','',0,0,'2016-08-05T11:05:39.2729192-06:00','2016-08-05T16:28:15.4647845-06:00','JSR-15');
 GO
