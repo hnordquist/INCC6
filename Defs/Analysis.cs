@@ -370,8 +370,8 @@ namespace AnalysisDefs
                 res = x.backgroundGateTimeStepInTics.CompareTo(y.backgroundGateTimeStepInTics);
             if (res == 0)
                 res = x.suspect.CompareTo(y.suspect);
-            if (res == 0)
-                res = x.Rank.CompareTo(y.Rank);
+            //if (res == 0)
+            //    res = x.Rank.CompareTo(y.Rank);
             if (res == 0)
                 res = x.SR.CompareTo(y.SR);
 

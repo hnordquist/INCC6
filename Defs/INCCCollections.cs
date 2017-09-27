@@ -4393,7 +4393,22 @@ namespace AnalysisDefs
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
                 if (rec != null)
                 {
-                    if (id.item == rec.item.item)
+                    if (id == null)//Rates only
+                    {
+                        Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+                        ms.Add(m);
+                        if (m.ResultsFiles != null)      // it is never null Yes it is for rates.
+                        {
+                            bool LMOnly = option.IsListMode();
+                            if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+                                m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+                            List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+                            foreach (string rfpath in lrfpaths)
+                                m.ResultsFiles.Add(LMOnly, rfpath);
+                        }
+                        IngestAnalysisMethodResultsFromDB(m);
+                    }
+                    else if (id.item == rec.item.item)
                     {
                         Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
                         MeaId.Item.Copy(rec.item);
