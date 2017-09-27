@@ -125,6 +125,37 @@ namespace NewUI
 		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            if (DeclaredMassTextBox.Value != ah.ap.mass)
+            {
+                ah.ap.mass = DeclaredMassTextBox.Value; ah.ap.modified = true;
+            }
+            if (CountTimeTextBox.Value != ah.ap.run_count_time)
+            {
+                ah.ap.run_count_time = CountTimeTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)NumCyclesTextBox.Value != ah.ap.num_runs)
+            {
+                ah.ap.num_runs = (ushort)NumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if (MeasPrecisionTextBox.Value != ah.ap.meas_precision)
+            {
+                ah.ap.meas_precision = MeasPrecisionTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)MinNumCyclesTextBox.Value != ah.ap.min_num_runs)
+            {
+                ah.ap.min_num_runs = (ushort)MinNumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)MaxNumCyclesTextBox.Value != ah.ap.max_num_runs)
+            {
+                ah.ap.max_num_runs = (ushort)MaxNumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if (ah.ap.modified)
+                NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.ap);
+
+
+            // save/update item id changes only when user selects OK
+            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list
             DialogResult res = DialogResult.Cancel;
             /* build message to warn user about selected analysis methods and requirements for calibration of known alpha. */
             AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
@@ -152,34 +183,8 @@ namespace NewUI
             if (res != DialogResult.OK)
                 return;
 
-            if (DeclaredMassTextBox.Value != ah.ap.mass)
-            {
-                ah.ap.mass = DeclaredMassTextBox.Value; ah.ap.modified = true;
-            }
-            if (CountTimeTextBox.Value != ah.ap.run_count_time)
-            {
-                ah.ap.run_count_time = CountTimeTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)NumCyclesTextBox.Value != ah.ap.num_runs)
-            {
-                ah.ap.num_runs = (ushort)NumCyclesTextBox.Value; ah.ap.modified = true;
-            }
-            if (MeasPrecisionTextBox.Value != ah.ap.meas_precision)
-            {
-                ah.ap.meas_precision = MeasPrecisionTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)MinNumCyclesTextBox.Value != ah.ap.min_num_runs)
-            {
-                ah.ap.min_num_runs = (ushort)MinNumCyclesTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)MaxNumCyclesTextBox.Value != ah.ap.max_num_runs)
-            {
-                ah.ap.max_num_runs = (ushort)MaxNumCyclesTextBox.Value; ah.ap.modified = true;
-            }
+            
 
-            // save/update item id changes only when user selects OK
-            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list
             if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
             {
                 //user can cancel in here during LM set-up, account for it.

@@ -398,18 +398,12 @@
             this.NumCyclesTextBox.Max = 1.7976931348623157E+308D;
             this.NumCyclesTextBox.Min = 0D;
             this.NumCyclesTextBox.Name = "NumCyclesTextBox";
-            this.NumCyclesTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.NumCyclesTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
+            this.NumCyclesTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.N4;
+            this.NumCyclesTextBox.NumStyles = System.Globalization.NumberStyles.Integer;
             this.NumCyclesTextBox.Size = new System.Drawing.Size(100, 20);
-            this.NumCyclesTextBox.Steps = -1D;
             this.NumCyclesTextBox.TabIndex = 5;
-            this.NumCyclesTextBox.Text = "0.000000E+000";
-            this.NumCyclesTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.NumCyclesTextBox.Text = "10";
+            this.NumCyclesTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Integer;
             this.NumCyclesTextBox.Value = 0D;
             // 
             // DeclaredMassTextBox
@@ -418,17 +412,11 @@
             this.DeclaredMassTextBox.Max = 1.7976931348623157E+308D;
             this.DeclaredMassTextBox.Min = 0D;
             this.DeclaredMassTextBox.Name = "DeclaredMassTextBox";
-            this.DeclaredMassTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.DeclaredMassTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
+            this.DeclaredMassTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.F3;
+            this.DeclaredMassTextBox.NumStyles  = System.Globalization.NumberStyles.Float;
             this.DeclaredMassTextBox.Size = new System.Drawing.Size(100, 20);
-            this.DeclaredMassTextBox.Steps = -1D;
             this.DeclaredMassTextBox.TabIndex = 4;
-            this.DeclaredMassTextBox.Text = "0.000000E+000";
+            this.DeclaredMassTextBox.Text = "0.00";
             this.DeclaredMassTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.DeclaredMassTextBox.Value = 0D;
             this.DeclaredMassTextBox.Leave += new System.EventHandler(this.DeclaredMassTextBox_Leave);
@@ -439,18 +427,12 @@
             this.CountTimeTextBox.Max = 1.7976931348623157E+308D;
             this.CountTimeTextBox.Min = 0D;
             this.CountTimeTextBox.Name = "CountTimeTextBox";
-            this.CountTimeTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
-            this.CountTimeTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
-            | System.Globalization.NumberStyles.AllowLeadingSign) 
-            | System.Globalization.NumberStyles.AllowTrailingSign) 
-            | System.Globalization.NumberStyles.AllowDecimalPoint) 
-            | System.Globalization.NumberStyles.AllowThousands) 
-            | System.Globalization.NumberStyles.AllowExponent)));
+            this.CountTimeTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.N4;
+            this.CountTimeTextBox.NumStyles = System.Globalization.NumberStyles.Integer;
             this.CountTimeTextBox.Size = new System.Drawing.Size(100, 20);
-            this.CountTimeTextBox.Steps = -1D;
             this.CountTimeTextBox.TabIndex = 3;
-            this.CountTimeTextBox.Text = "0.000000E+000";
-            this.CountTimeTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.CountTimeTextBox.Text = "30";
+            this.CountTimeTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Integer;
             this.CountTimeTextBox.Value = 0D;
             // 
             // IDDAcquireCalibration

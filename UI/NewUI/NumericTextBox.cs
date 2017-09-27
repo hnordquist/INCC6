@@ -91,6 +91,7 @@ namespace NewUI
             F4,
             F6,
             N3,
+            N4,
             P1
         }
         private Formatter _NumberFormat = Formatter.E6;
@@ -121,6 +122,8 @@ namespace NewUI
                         return "F6";
                     case(Formatter.N3):
                         return "N3";
+                    case (Formatter.N4):
+                        return "N4";
                     case (Formatter.P1):
                         return "P1";
                     case Formatter.NONE:
