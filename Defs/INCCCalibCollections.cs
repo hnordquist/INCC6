@@ -1017,8 +1017,10 @@ namespace AnalysisDefs
 					}
 						break;
 					default:
-						NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
-						break;
+                            {
+                                NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34061, "Unimplemented DB restore of {0} calib results", am.FullName());
+                                break;
+                            }
 					}
 				} // for
 			}

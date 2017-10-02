@@ -54,7 +54,7 @@ namespace AnalysisDefs
 
         protected enum ReportSections { SofwareContext, DescriptiveSummary, MeasurementDetails, DetectorCalibration, RawAndMultSums, ComputedMultiplicityIntermediates, CycleSource, ChannelCounts, ChannelRates, MultiplicityDistributions, RawCycles, RateCycles, DTCRateCycles, RepResults, RepDytlewskiResults }
 
-        enum DescriptiveSummary { Facility, MBA, MeasDate, ResultsFileName, InspNum, InspName, Comment }
+        enum DescriptiveSummary { Facility, MBA, MeasDate, ItemID, ResultsFileName, InspNum, InspName, Comment }
         enum MeasurementDetails { MeasType, DetectorConfig, DataSource, QCTests, ErrorCalc, AccidentalsMethod, CycleCount, TotalCountTime }
         enum BaseDetectorCalibration
         {
@@ -395,6 +395,7 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Facility, meas.AcquireState.facility.ToString());
             row.Add((int)DescriptiveSummary.MBA, meas.AcquireState.mba.ToString());
             row.Add((int)DescriptiveSummary.MeasDate, meas.MeasDate.ToString());
+            row.Add((int)DescriptiveSummary.ItemID, meas.MeasurementId.Item.item);
             row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFiles.CSVResultsFileName.Path);
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
@@ -1005,7 +1006,7 @@ namespace AnalysisDefs
                             if (sec == null) sec = new Section(typeof(Rossi), 1);
                             temp = GenRossiRows(rar);
                             Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
-                            sec.AddLabelAndColumn(r);
+                            //sec.AddLabelAndColumn(r);
                             sec.AddRange(temp);
                             i++;
                         }
@@ -1310,15 +1311,12 @@ namespace AnalysisDefs
         Row GenRossiParamsRow(RossiAlphaResultExt rar, Cycle c = null)
         {
             Row row = new Row();
-            int shift = 0;
-            if (c != null)
+            for (ulong i = 0; i < (ulong)rar.gateData.Length; i++)
             {
-                row.Add(0, c.seq.ToString());
-                shift = 1;
+                ulong bin = (ulong)rar.gateWidth * (ulong)i;
+                row.Add((int)i, bin.ToString());
             }
-
-            row.Add((int)Rossi.GateWidth + shift, rar.gateWidth.ToString());
-            row.Add((int)Rossi.Numgates + shift, rar.gateData.Length.ToString());
+            
             return row;
         }
 
@@ -1342,7 +1340,7 @@ namespace AnalysisDefs
                     break;
                 }
             }
-            //happy dad!
+            //happy dad! -- You are a dork
             if (i == 0) // rolled all the way to the start ofthe array and found all 0s, empty bins!
             {
                 maxindex = 0; // not 1000 and not -1

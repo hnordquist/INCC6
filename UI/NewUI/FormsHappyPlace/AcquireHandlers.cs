@@ -369,6 +369,8 @@ namespace NewUI
 							if (cl.Count > 0)
 								NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time
 									= cl[0].TS.TotalSeconds;
+                            //Was not populating the total count time
+                            NC.App.Opstate.Measurement.CountTimeInSeconds = (double)(cl.Count * cl[0].TS.TotalSeconds);
                             NC.App.DB.UpdateAcquireParams(ap); //update it again
                         }
                     }
