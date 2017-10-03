@@ -181,6 +181,7 @@ namespace NewUI
         {
             //Now using NumericTextBox
             //Save every time.
+            mp.imd.modified = true;
             mp.cev.modified = true;
             mp.cev.lower_mass_limit = LowerMassLimitTextBox.Value;
             mp.cev.upper_mass_limit = UpperMassLimitTextBox.Value;
@@ -206,14 +207,12 @@ namespace NewUI
 
             if (HeavyMetalRadioButton.Checked)
             {
-                mp.imd.modified = true;
                 cal_curve.heavy_metal_corr_factor = HvyMetalWeightingTextBox.Value;
                 cal_curve.heavy_metal_reference = HvyMetalRefTextBox.Value;
                 cal_curve.CalCurveType = INCCAnalysisParams.CalCurveType.HM;
             }
             else if (PassiveUraniumRadioButton.Checked)
             {
-                mp.imd.modified = true;
                 cal_curve.CalCurveType = INCCAnalysisParams.CalCurveType.U;
                 cal_curve.percent_u235 = U235PercentTextBox.Value;
             }
