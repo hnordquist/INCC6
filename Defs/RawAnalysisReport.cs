@@ -82,7 +82,7 @@ namespace AnalysisDefs
         enum RawCycles { Singles, RA, A, QCTests }
         enum RateCycles { Singles, Doubles, Triples, Mass, QCTests }
         enum DTCRateCycles { Singles = RateCycles.Singles, Doubles = RateCycles.Doubles, Triples = RateCycles.Triples, Mass = RateCycles.Mass, QCTests = RateCycles.QCTests }
-        enum RepResults { Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
+        enum RepResults { GateWidth, Predelay, Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
         enum ChannelCounts
         {
             C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27, C28, C29, C30, C31, C32
@@ -107,10 +107,11 @@ namespace AnalysisDefs
         protected FAType FASelector;
 
 
+        //Various units totally stupid. Attempt to put all in " µSec"
         string DetectorCalibrationHeader(ValueType e)
         {
-            string s = e.ToString();
-            switch ((DetectorCalibration)e)
+            string s = e.ToString() + " µSec";
+            /*switch ((DetectorCalibration)e)
             {
                 case DetectorCalibration.LongDelay:
                 case DetectorCalibration.Predelay:
@@ -121,12 +122,12 @@ namespace AnalysisDefs
                     break;
                 case DetectorCalibration.DTCoeffT:
                 case DetectorCalibration.DTCoeffC:
-                    s += " nSec";
+                    s += " µSec";
                     break;
                 case DetectorCalibration.DTCoeffB:
-                    s += " pSec";
+                    s += " µSec";
                     break;
-            }
+            }*/
             return s;
         }
 
@@ -441,6 +442,7 @@ namespace AnalysisDefs
             row.Add((int)DetectorCalibration.DetectorType, det.Id.SRType.ToString());
             row.Add((int)DetectorCalibration.DetectorId, det.Id.DetectorId);
             row.Add((int)DetectorCalibration.ElectronicsId, det.Id.ElectronicsId);
+            //Modify to print all in microseconds
             if (mkey != null)
             {
                 if (det.ListMode)
@@ -450,16 +452,16 @@ namespace AnalysisDefs
                 }
                 else
                 {
-                    row.Add((int)DetectorCalibration.Predelay, (sr.predelay * 1e-1).ToString());
-                    row.Add((int)DetectorCalibration.GateLength, (sr.gateLength * 1e-1).ToString());
+                    row.Add((int)DetectorCalibration.Predelay, (sr.predelay/10).ToString());
+                    row.Add((int)DetectorCalibration.GateLength, (sr.gateLength/10).ToString());
                 }
                 row.Add((int)DetectorCalibration.HighVoltage, sr.highVoltage.ToString());
                 row.Add((int)DetectorCalibration.DieAwayTime, (sr.dieAwayTime * 1e-1).ToString());
                 row.Add((int)DetectorCalibration.Efficiency, sr.efficiency.ToString());
-                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs/1000).ToString());
                 row.Add((int)DetectorCalibration.DTCoeffA, (sr.deadTimeCoefficientAinMicroSecs).ToString());
-                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs).ToString());
-                row.Add((int)DetectorCalibration.DTCoeffC, (sr.deadTimeCoefficientCinNanoSecs).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs/1000000).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffC, (sr.deadTimeCoefficientCinNanoSecs/1000).ToString());
                 row.Add((int)DetectorCalibration.DoublesGateFraction, sr.doublesGateFraction.ToString());
                 row.Add((int)DetectorCalibration.TriplesGateFraction, sr.triplesGateFraction.ToString());
 

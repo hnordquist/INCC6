@@ -840,9 +840,10 @@ enditall:
 
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
-
-                    new ReportMangler(ctrllog).GenerateReports(meas);
+                    //Generating report before saving results? Brilliant. 
                     meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas);
+
 				}
             }
 

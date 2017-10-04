@@ -304,15 +304,16 @@ namespace AnalysisDefs
         public static string TimeUnitImage(ulong t, bool withunitsspace = false)
         {
             string s;
-            if (t <= 10)  // tics
-                s = t.ToString();
-            else
+            //Everything in microseconds
+            //if (t <= 10)  // tics
+            //    s = t.ToString();
+            //else
                 s = (t / 10).ToString();
 
             string unit;
-            if (t <= 10)  // tics
-                unit = " tics";
-            else  // ms
+            //if (t <= 10)  // tics
+            //    unit = " tics";
+            //else  // ms
                 unit = " μs";
             if (withunitsspace)
                 s += " ";
@@ -324,11 +325,11 @@ namespace AnalysisDefs
             string s = "";
             if (FA == FAType.FAOn)
             {
-                s += "FA " + TimeUnitImage(accidentalsGateDelayInTics);
+                s += "FA " + TimeUnitImage(gateWidthTics);
             }
             else
             {
-                s += "A " + TimeUnitImage(accidentalsGateDelayInTics);
+                s += "A " + TimeUnitImage(gateWidthTics);
             }
             return s;
         }

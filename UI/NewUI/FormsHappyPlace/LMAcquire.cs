@@ -631,22 +631,27 @@ namespace NewUI
 
         SpecificCountingAnalyzerParams Constructed(DataGridViewRow row)
 		{
-			SpecificCountingAnalyzerParams s = null;
+            //Well, this is stupid. Analyzers are created, but no DT coeffs are copied because the underlying
+            //SR Params are not copied.
+            SpecificCountingAnalyzerParams s = null;
 			Type t; FAType FA;
 			if (row.Cells[1].Value == null)
 				return null;
 			TTypeMap((string)row.Cells[1].Value, out t, out FA);
 			if (t.Equals(typeof(Multiplicity)))
 			{
-				s = new Multiplicity(FA);
-				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
+                s = new Multiplicity(FA);
+                //Start with stuff from main SR params
+                ((Multiplicity)s).sr.CopyValues(det.SRParams);
+                ((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
                 ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2]);
                 ((Multiplicity)s).SR.gateLengthMS = Construct(row.Cells[2])/10;
                 if (FA == FAType.FAOn)
 					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
 				else
 					((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
-			}
+
+            }
 			else if (t.Equals(typeof(Feynman)))
 			{
 				s = new Feynman();
