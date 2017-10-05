@@ -164,6 +164,7 @@ namespace NewUI
             EfficiencyTextBox.NumberFormat = NumericTextBox.Formatter.F4;
             EfficiencyTextBox.Value = det.SRParams.efficiency;
             EfficiencyTextBox.Min = 0;
+            EfficiencyTextBox.Max = 1;
 
             HighVoltageTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
             HighVoltageTextBox.NumStyles = System.Globalization.NumberStyles.Integer;

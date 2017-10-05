@@ -1008,6 +1008,7 @@ namespace AnalysisDefs
                             if (sec == null) sec = new Section(typeof(Rossi), 1);
                             temp = GenRossiRows(rar);
                             Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
+                            sec.Add(GenRossiParamsRow(rar));
                             //sec.AddLabelAndColumn(r);
                             sec.AddRange(temp);
                             i++;
@@ -1259,9 +1260,9 @@ namespace AnalysisDefs
 
         Row[] GenRossiRows(RossiAlphaResultExt rar, Cycle c = null)
         {
-            Row[] rows = new Row[2];
-            rows[0] = GenRossiParamsRow(rar, c);
-            rows[1] = GenRossiDataRow(rar, c);
+            Row[] rows = new Row[0];
+
+            rows[0] = GenRossiDataRow(rar, c);
             return rows;
         }
         Row[] GenTimeIntervalRows(TimeIntervalResult esr, Cycle c = null)
@@ -1315,8 +1316,10 @@ namespace AnalysisDefs
             Row row = new Row();
             for (ulong i = 0; i < (ulong)rar.gateData.Length; i++)
             {
-                ulong bin = (ulong)rar.gateWidth * (ulong)i;
-                row.Add((int)i, bin.ToString());
+                // Change the "bins" for Rossi Alpha display
+                float slice = rar.gateWidth / (ulong)rar.gateData.Length;
+                float bin = i * slice;
+                row.Add((int)i, bin.ToString("F4"));
             }
             
             return row;

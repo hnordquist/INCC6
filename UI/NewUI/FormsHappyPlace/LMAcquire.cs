@@ -74,6 +74,10 @@ namespace NewUI
 			BuildAnalyzerCombo();
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
+
+            //Set default to live acquisition.
+            DataSource.SelectedIndex = 0;
+            ap.data_src = ConstructedSource.Live;
 		}
 
 		void BuildAnalyzerCombo()
@@ -857,7 +861,11 @@ namespace NewUI
 		}
 		private void PreserveNewState()
         {    
-			CheckActiveChecks();      
+			CheckActiveChecks();
+            if (DataSource.SelectedIndex == -1)
+                //force to select something
+                DataSource.SelectedIndex = 0;//live
+            ap.data_src = DataSource.SelectedIndex == 0 ? ConstructedSource.Live : ConstructedSource.PTRFile;
 			if (PreserveAnalyzerChanges)
 			{
 				CountingAnalysisParameters cntap = new CountingAnalysisParameters();
@@ -872,7 +880,7 @@ namespace NewUI
 				}
 				N.App.Opstate.Measurement.AnalysisParams = cntap;
 				N.App.LMBD.ReplaceCounters(det, cntap);
-				PreserveAnalyzerChanges = false;
+				//PreserveAnalyzerChanges = false;
 			}
             if (N.App.AppContext.modified)
                 N.App.LMBD.UpdateLMINCCAppContext();

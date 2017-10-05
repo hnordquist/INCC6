@@ -58,6 +58,7 @@ namespace NewUI
                 if (!CheckRange(_Value))
                 {
                     MessageBox.Show(String.Format("The number must be between {0} and {1}", _Min.ToString(), _Max.ToString()));
+                    _Value = Min;
                     e.Cancel = true;
                 }
             }
