@@ -144,7 +144,7 @@ using NDesk.Options;
 
 namespace NDesk.Options {
 
-	public class OptionValueCollection : IList, IList<string> {
+	public sealed class OptionValueCollection : IList, IList<string> {
 
 		List<string> values = new List<string> ();
 		OptionContext c;

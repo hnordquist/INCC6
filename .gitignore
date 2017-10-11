@@ -5,3 +5,4 @@ obj
 *.user
 *.VC.db
 /Help/inccuser/INCCelp.hnd
+/.vs

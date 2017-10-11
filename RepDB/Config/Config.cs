@@ -716,7 +716,7 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || DatazFileAssay || PulseFileAssay || DBDataAssay); }
         }
 
 		private string overridepath(NCCFlags flag)
@@ -837,6 +837,11 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.mcaFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
+        }
+        public bool DatazFileAssay
+        {
+            get { return (bool)getVal(NCCFlags.datazFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazFileAssay, value); }
         }
         public bool SortPulseFile
         {
@@ -1127,6 +1132,7 @@ namespace NCCConfig
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
                 setVal(NCCFlags.mcaFileAssay, false);
+                setVal(NCCFlags.datazFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
@@ -1138,6 +1144,7 @@ namespace NCCConfig
 				(bool)getVal(NCCFlags.testDataFileAssay) ||
                 (bool)getVal(NCCFlags.reviewFileAssay) ||
                 (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.datazFileAssay) ||
                 (bool)getVal(NCCFlags.mcaFileAssay) ||
                 (bool)getVal(NCCFlags.dbDataAssay) ||
                 (bool)getVal(NCCFlags.INCCXfer) ||
@@ -1197,7 +1204,9 @@ namespace NCCConfig
 				else if (TestDataFileAssay)
 					x[ix++] = ("  use sorted pulse files" + fis);
 				else if (ReviewFileAssay)
-					x[ix++] = ("  use sorted pulse files" + fis);
+					x[ix++] = ("  use NCC files" + fis);
+				else if (DatazFileAssay)
+					x[ix++] = ("  use Dataz (e.g. MCSR) files" + fis);
 				else if (NCDFileAssay)
 					x[ix++] = ("  use LMMM NCD files" + fis);
 				else

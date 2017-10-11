@@ -261,7 +261,12 @@ namespace NewUI
                 string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
-				int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * ((measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions))));
+                double sofar = 0;
+                if (measStatus.RequestedRepetitions != 0)
+                    sofar = (measStatus.CurrentRepetition - 1) / (double)measStatus.RequestedRepetitions;
+                else
+                    sofar = 1;
+                int per = Math.Abs(Math.Min(100, (int)Math.Round(100.0 * sofar)));
 				try
 				{
                     measFctrl.mProgressTracker.ReportProgress(per, // a % est of files

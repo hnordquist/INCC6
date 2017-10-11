@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Mar 23, 2017 (NDATest)
+6.18 Oct 15, 2017 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -87,8 +87,8 @@ SQLite/SQL Server database schema and related files
 System.Data.SQLite.dll    ; SQLite .NET Interop assembly 1.0.94.0
 sqlite3.exe               ; SQLite database utility, for diagnostic use
 
-INCC6.sqlite              ; Empty database, created with reset.bat
-Default.sqlite            ; Empty database, created with reset.bat
+INCC6.sqlite              ; Empty database, (re)created with reset.bat
+Default.sqlite            ; Empty database
 drop_INCC6_sqlite.sql     ; INCC6 SQLite schema DROP table statements
 create_INCC6_sqlite.sql   ; INCC6 SQLite schema CREATE and INSERT statements
 reset.bat                 ; Uses sqlite3.exe on sql schema files to recreate a new empty INCC6 database
@@ -139,11 +139,14 @@ Issues for production
 
 Closed issues
 
+6.18 Oct 15, 2017  ************
+***  Basic Dataz file support added, cmd line only
+
 6.18 Mar 23, 2017  ************
 ***  Clean up logger API style
-***  Finish Dual-energy multiplicity dialog, database abd data structure design
+***  Finish Dual-energy multiplicity dialog, database and data structure design
 ***  Supports XP again
-**   PTR-32 .bin single-channel list mode file cmd line peak filter tool added
+***  PTR-32 .bin single-channel list mode file cmd line peak filter tool added
 
 6.18 Dec 12, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis

@@ -2401,6 +2401,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
             pb.ps.Add(new DBParamEntry("dbDataAssay", DBDataAssay));
+            pb.ps.Add(new DBParamEntry("datazFileAssay", DatazFileAssay));
             pb.ps.Add(new DBParamEntry("reviewFileAssay", ReviewFileAssay));
             pb.ps.Add(new DBParamEntry("nilaFileAssay", MCA527FileAssay));
             pb.ps.Add(new DBParamEntry("opStatusPktInterval", StatusPacketCount));

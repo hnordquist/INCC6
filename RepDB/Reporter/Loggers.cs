@@ -479,7 +479,7 @@ namespace NCCReporter
             // dev note: s = System.Text.RegularExpressions.Regex.Replace(s, @"[\r\n\\'""]", @"\$0");
             static public string FlattenChars(string s, char eolchar = '\\', int npchar = 46) // 46 is '.' //  unicode 0x26F7 is SKIER if your font has it LOL
             {
-                if (String.IsNullOrEmpty(s))  // null to empty string, callers may now relax
+                if (string.IsNullOrEmpty(s))  // null to empty string, callers may now relax
                     return "";
                 char[] ca = s.ToCharArray();
                 int i;

@@ -295,23 +295,24 @@ namespace NewUI
                     det.SRParams.CopyValues(sr1);
                 NC.App.DB.UpdateDetector(det); // also updates the params in one step
                 det.Id.modified = false;
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
             }
             else if (modified || mod)  // only SR params changed
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
                 /* Update SR Params */
                 det.SRParams.CopyValues(sr1);
-                NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call
+                if (NC.App.DB.Detectors.GetItByDetectorId(det.Id.DetectorId) != null)
+                    NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call, if not presetn, the in-memory representation is saved by the caller later.
             }
             else
-                DialogResult = System.Windows.Forms.DialogResult.Ignore;
+                DialogResult = DialogResult.Ignore;
             this.Close();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 

@@ -175,7 +175,7 @@ namespace DetectorDefs
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
-        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
+        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ , DatazFile
     };  // sources of data: file, DAQ, DB
 
 
@@ -275,6 +275,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
                 PrettyName.Add(ConstructedSource.Reanalysis, "Reanalysis");
+                PrettyName.Add(ConstructedSource.DatazFile, "IAEA Dataz file");
             }
 		}
 
