@@ -156,6 +156,9 @@ namespace NewUI
             {
                 modified = m_iso.modified = true;
                 m_iso.am_date = dt;
+                //set Pu date if Am date is changed. HN 10/17/2017 Issue #165
+                m_iso.pu_date = new DateTime(dt.Ticks);
+                PuDateTimePicker.Value = m_iso.am_date;   
             }
         }
 
@@ -528,12 +531,27 @@ namespace NewUI
 
             if (isolist.Count > 0)  // look for id on the list
             {
+                //look first
+                m_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+                //Wasn't there....Add it
+                if (m_iso == null)
+                {
+                    //Add a new one
+                    Isotopics update = new Isotopics(NC.App.DB.Isotopics.GetDefault());
+                    update.id = id;
+                    update.modified = true;
+                    NC.App.DB.Isotopics.Set(update);
+                    NC.App.DB.Isotopics.Refresh();
+                    isolist = NC.App.DB.Isotopics.GetList();
+                    m_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+                }
                 //This never loaded all the isotopics before?? hn 4.30.2015
                 foreach (Isotopics tope in isolist)
                 {
                     IsotopicsIdComboBox.Items.Add(tope.id);
                 }
-                m_iso = isolist.Find(i => string.Equals(i.id, id, StringComparison.OrdinalIgnoreCase));
+                
+
             }
             else // Should never hit here, happens if DB is blank. Add a single "Default"
             {

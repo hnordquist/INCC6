@@ -170,7 +170,7 @@ namespace NewUI
             get { return _NumStyles; }
             set { _NumStyles = value; }
         }
-        private double _Min = 0;
+        private double _Min = -1000;
         public double Min
         {
             get { return _Min; }

@@ -47,35 +47,8 @@ namespace NewUI
             Text += " for detector " + ah.det.Id.DetectorName;
             if (ah.det.ListMode)
             {
-                //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
-                ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
-                if (ah.det.MultiplicityParams.FA == FAType.FAOn)
-                {
-                    ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
-                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
-                }
-                else
-                {
-                    //Default long delay = 4096 for slow.
-                    ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
-                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
-                }
-                    // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
-                CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
-                foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
-                {
-                    existing.Active = false;
-                }
-                if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
-                {
-                    AnalysisParams.Insert(0, ah.det.MultiplicityParams);
-                }
-                SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
-                currentParms.Active = true;
-                currentParms.Rank = 0;
-                NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
-                NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
-                NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+                //Make a multiplicity counter if LM and not there.
+                CreateMultiplicityAnalyzer();
             }
 
             FieldFiller();
@@ -86,6 +59,39 @@ namespace NewUI
             Pu240eCoeffBtn.Enabled = !string.IsNullOrEmpty(NC.App.Config.VersionBranchString);
         }
 
+        private void CreateMultiplicityAnalyzer()
+        {
+            //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
+            ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
+            if (ah.det.MultiplicityParams.FA == FAType.FAOn)
+            {
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+            }
+            else
+            {
+                //Default long delay = 4096 for slow.
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+            }
+            // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
+            CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
+            foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
+            {
+                existing.Active = false;
+            }
+            if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
+            {
+                AnalysisParams.Insert(0, ah.det.MultiplicityParams);
+            }
+            SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
+            currentParms.Active = true;
+            currentParms.Rank = 0;
+            NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
+            NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
+            NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+
+        }
         private void FieldFillerOnItemId()
         {
             StratumIdComboBox.SelectedItem = ah.ap.stratum_id.Name;
@@ -239,19 +245,14 @@ namespace NewUI
             if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id. Isotopics already saved to DB in IDDIsotopics*/
             {
                 ah.ap.isotopics_id = selected.id;
-                // NEXT: do new item id stuff right after this
             }
-            else if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
-            {
-                // isotopic settings will be loaded from DB prior to running measurement
-
                 // change the isotopics setting on the current item id state
                 ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
                 if (Cur == null)                         // blank or unspecified somehow
                     return;
                 Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
                 Cur.modified = true;
-            }
+
         }
 
         private void CompositeIsotopicsBtn_Click(object sender, EventArgs e)

@@ -33,6 +33,7 @@ using AnalysisDefs;
 
 namespace NewUI
 {
+    //This whole file looks like it shouldn't work at all. hn 10.17.2017
     using NC = NCC.CentralizedState;
     
     public partial class IDDAcquireDBMeas : Form
@@ -109,7 +110,7 @@ namespace NewUI
 				else
 					lvii.ToolTipText = "(" + m.MeasurementId.UniqueId.ToString() + ") " + fname;
 			}
-
+            
             //Add also any rates only measurements. No reason they can't be used here.
             /*mlist = NC.App.DB.MeasurementIds(ah.det.Id.DetectorName, "Rates");
             NC.App.Logger(NCCReporter.LMLoggers.AppSection.App).

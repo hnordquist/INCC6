@@ -246,7 +246,7 @@ namespace AnalysisDefs
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
-                Rank == other.Rank &&
+                /*Rank == other.Rank &&*/
                 SR.Equals(other.SR))
             {
                 return true;

@@ -1166,12 +1166,18 @@ namespace AnalysisDefs
                             SpecificCountingAnalyzerParams sap = (SpecificCountingAnalyzerParams)iter.Current;
                             Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
                             sec.AddLabelAndColumn(r, "Cycle");
+                            bool labeled = false;
                             foreach (Cycle cyc in cycles)
                             {
                                 Object obj;
                                 bool there = cyc.CountingAnalysisResults.TryGetValue(sap, out obj);
                                 if (!there)
                                     continue;
+                                if (!labeled)
+                                {
+                                    sec.Add(GenRossiParamsRow((RossiAlphaResultExt)obj));
+                                    labeled = true;
+                                }
                                 temp = GenRossiRows((RossiAlphaResultExt)obj, cyc);
                                 sec.AddRange(temp);
                             }
@@ -1260,7 +1266,7 @@ namespace AnalysisDefs
 
         Row[] GenRossiRows(RossiAlphaResultExt rar, Cycle c = null)
         {
-            Row[] rows = new Row[0];
+            Row[] rows = new Row[1];
 
             rows[0] = GenRossiDataRow(rar, c);
             return rows;
