@@ -62,6 +62,13 @@ namespace AnalysisDefs
         {
         }
 
+        public Detector(Detector src, string ID, string typedescr, string elec_id, InstrType inst)
+            : base(new DataSourceIdentifier(src.Item1), new Multiplicity(src.Item2), new AlphaBeta(src.Item3))
+        {
+            this.Item1.SetIdDetails(ID,elec_id,typedescr,inst);
+
+        }
+
         public Detector(DataSourceIdentifier dsid, Multiplicity mul, AlphaBeta ab)
             : base(new DataSourceIdentifier(dsid), new Multiplicity(mul), new AlphaBeta(ab))
         {
@@ -743,6 +750,13 @@ namespace AnalysisDefs
             InitMisc();
         }
 
+        public Measurement(AssaySelector.MeasurementOption at)
+        {
+            mt = new MeasurementTuple();
+            this.logger = null;
+            mid = new MeasId(at);
+            InitMisc();
+        }
         public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
         {
             mt = newMT;

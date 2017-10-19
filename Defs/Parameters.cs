@@ -985,7 +985,8 @@ namespace AnalysisDefs
             max_num_runs = 1000;
             meas_precision = 1.0;
             well_config = WellConfiguration.Passive;
-            error_calc_method = ErrorCalculationTechnique.Theoretical;
+            //Default should be sample.
+            error_calc_method = ErrorCalculationTechnique.Sample;
             inventory_change_code = string.Empty;
             io_code = string.Empty;
 			ending_comment_str = string.Empty;
