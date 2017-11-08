@@ -82,6 +82,7 @@ namespace AnalysisDefs
         public Multiplicity MultiplicityParams
         {
             get { return Item2; }
+            set { Item2.CopyValues(value); }
         }
 
         public DataSourceIdentifier Id
@@ -524,6 +525,7 @@ namespace AnalysisDefs
 		public Detector Detector
         {
             get { return mt.Detectors[0]; }
+            set { mt.Detectors.Add(value); }
         }
 
         /// <summary>
@@ -757,7 +759,7 @@ namespace AnalysisDefs
             mid = new MeasId(at);
             InitMisc();
         }
-        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
+        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger= null)
         {
             mt = newMT;
             this.logger = logger;

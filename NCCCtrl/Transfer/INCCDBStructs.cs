@@ -2405,7 +2405,7 @@ namespace NCCTransfer
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    unsafe struct results_active_mult_rec : iresultsbase
+    public unsafe struct results_active_mult_rec : iresultsbase
     {
         public double am_mult;
         public double am_mult_err;

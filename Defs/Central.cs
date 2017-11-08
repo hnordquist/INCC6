@@ -693,6 +693,26 @@ namespace NCC
             return meas;
 
         }
+        public static Measurement BuildMeasurementTemp(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo, TestParameters tp, BackgroundParameters bkg, NormParameters np, AnalysisDefs.Isotopics iso, HVCalibrationParameters hvp )
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    tp,
+                                    np,
+                                    bkg,
+                                    iso,
+                                    acq,
+                                    hvp);
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
+
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo);
+
+            FillInMeasurementDetails(meas);
+            // ready for insertion of methods and processing start
+            return meas;
+
+        }
 
         /// <summary>
         /// Prepare measurement instance content for analysis
