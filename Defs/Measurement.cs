@@ -613,7 +613,7 @@ namespace AnalysisDefs
             return sl;
         }
 
-        // These are live adders, they use for now for the dt ts
+        // These are live adders, they use for now the dt ts
         // NEXT: DB restore messages whilst retaining timestamps
         public List<MeasurementMsg> GetMessageList(Multiplicity mul)
         {

@@ -330,7 +330,7 @@ namespace AnalysisDefs
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 string h = string.Format("Normalization results for reference source: {0}", sourceId);
                 sec.AddHeader(h);  // section header
-                sec.AddNumericRow("Current normalization constant", m.Norm.currNormalizationConstant);
+                sec.AddNumericRow("Current normalization constant:", m.Norm.currNormalizationConstant);
 
                 if (mode == NormTest.AmLiSingles || mode == NormTest.Collar)
                 {

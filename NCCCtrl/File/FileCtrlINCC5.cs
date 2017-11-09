@@ -256,7 +256,7 @@ namespace NCCFile
                 acq.comment = def.comment.Substring(0, tx);
             else
                 acq.comment = def.comment;
-            acq.comment += SourceFilePrefixComment + System.IO.Path.GetFileName(path);
+            acq.comment += (SourceFilePrefixComment + " " + System.IO.Path.GetFileName(path));
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, dto);
             NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
@@ -584,7 +584,7 @@ namespace NCCFile
                 acq.comment = def.comment.Substring(0, tx);
             else
                 acq.comment = def.comment;
-            acq.comment += SourceFilePrefixComment + System.IO.Path.GetFileName(irf.Path);
+            acq.comment += (SourceFilePrefixComment + " " + System.IO.Path.GetFileName(irf.Path));
             acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
 
@@ -592,7 +592,7 @@ namespace NCCFile
             ItemId iid = NC.App.DB.ItemIds.Get(irf.item);
             if (iid == null)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database. Item type defaults to " + acq.item_type);
+                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in Op. Review files or the database. Item type defaults to " + acq.item_type);
             }
             else
             {

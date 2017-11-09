@@ -611,7 +611,7 @@ namespace NCCConfig
                 if (!string.IsNullOrEmpty(aca.Configuration))
                     result = aca.Configuration;
             }
-            return result;
+            return result + " UNVALIDATED!";
 
         }
 
@@ -654,6 +654,7 @@ namespace NCCConfig
             resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
@@ -864,7 +865,12 @@ namespace NCCConfig
             set { setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
-		public string ResultsFilePath
+        public string LogFilePathAndName
+        {
+            get { return overridepath(NCCFlags.loglocation); }
+            set { setIfNotOverride(NCCFlags.loglocation, value); }
+        }
+        public string ResultsFilePath
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
             set { setIfNotOverride(NCCFlags.resultsFileLoc, value); }
@@ -1163,9 +1169,11 @@ namespace NCCConfig
                 x[ix++] = "  root: " + RootLoc;
             if (isSet(NCCFlags.dailyRootPath))
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
-			if (isSet(NCCFlags.logFileLoc))
-				x[ix++] = "  log file path: " + LogFilePath;
-			if (isSet(NCCFlags.resultsFileLoc))
+            if (isSet(NCCFlags.logFileLoc))
+                x[ix++] = "  log file path: " + LogFilePath;
+            if (isSet(NCCFlags.loglocation))
+                x[ix++] = "  log file name: " + LogFilePathAndName;
+            if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
 
             x[ix++] = "  logging: " + Logging;

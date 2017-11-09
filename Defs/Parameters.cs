@@ -2530,8 +2530,8 @@ namespace AnalysisDefs
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
         }
 
-		public bool IsError { get { return lvl >= NCCReporter.LogLevels.Error; } }
-		public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
+		public bool IsError { get { return lvl <= NCCReporter.LogLevels.Error; } }
+        public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
 
 
         public override string ToString()

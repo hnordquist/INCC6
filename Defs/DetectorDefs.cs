@@ -188,7 +188,7 @@ namespace DetectorDefs
         }
         public static bool AcquireChoices(this ConstructedSource src)
         {
-            return src >= ConstructedSource.Live && src <= ConstructedSource.ReviewFile;
+            return (src >= ConstructedSource.Live && src <= ConstructedSource.ReviewFile) || src == ConstructedSource.DatazFile;
         }
         public static bool INCC5FileData(this ConstructedSource src)
         {
@@ -196,7 +196,7 @@ namespace DetectorDefs
         }
         public static bool INCCTransferData(this ConstructedSource src)
         {
-            return src == ConstructedSource.INCCTransferCopy || src == ConstructedSource.INCCTransfer;
+            return src == ConstructedSource.INCCTransferCopy || src == ConstructedSource.INCCTransfer || src == ConstructedSource.DatazFile;
         }
         public static bool SRDAQ(this ConstructedSource src, InstrType device)
         {
@@ -553,9 +553,12 @@ namespace DetectorDefs
 			case ConstructedSource.ReviewFile:
 				l += " (INCC Rad Review measurement data file)";
 				break;
-			case ConstructedSource.DB:
-				l = "DB Acquire";
-				break;
+            case ConstructedSource.DatazFile:
+                l += " (IAEA dataz data file)";
+                break;
+            case ConstructedSource.DB:
+			    l = "DB Acquire";
+			break;
 			case ConstructedSource.Manual:
 				l = "Manual";
 				break;
@@ -595,7 +598,10 @@ namespace DetectorDefs
 				case ConstructedSource.ReviewFile:
 					l = filename + " (INCC Rad Review measurement data file)";
 					break;
-				case ConstructedSource.Manual:
+                case ConstructedSource.DatazFile:
+                    l = filename + " (IAEA dataz data file)";
+                    break;
+                case ConstructedSource.Manual:
 					l = "Manual";
 					break;
 				case ConstructedSource.Reanalysis:

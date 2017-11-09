@@ -303,7 +303,7 @@ namespace NewUI
                 /* Update SR Params */
                 det.SRParams.CopyValues(sr1);
                 if (NC.App.DB.Detectors.GetItByDetectorId(det.Id.DetectorId) != null)
-                    NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call, if not presetn, the in-memory representation is saved by the caller later.
+                    NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call, if not present, the in-memory representation is saved by the caller later.
             }
             else
                 DialogResult = DialogResult.Ignore;

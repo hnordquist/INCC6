@@ -54,7 +54,7 @@ namespace AnalysisDefs
 
         protected enum ReportSections { SofwareContext, DescriptiveSummary, MeasurementDetails, DetectorCalibration, RawAndMultSums, ComputedMultiplicityIntermediates, CycleSource, ChannelCounts, ChannelRates, MultiplicityDistributions, RawCycles, RateCycles, DTCRateCycles, RepResults, RepDytlewskiResults }
 
-        enum DescriptiveSummary { Facility, MBA, MeasDate, ResultsFileName, InspNum, InspName, Comment }
+        enum DescriptiveSummary { Facility, MBA, MeasDate, ResultsFileName, InspNum, InspName, Comment, EndingComment }
         enum MeasurementDetails { MeasType, DetectorConfig, DataSource, QCTests, ErrorCalc, AccidentalsMethod, CycleCount, TotalCountTime }
         enum BaseDetectorCalibration
         {
@@ -398,6 +398,8 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
+            if (meas.AcquireState.ending_comment || !string.IsNullOrEmpty(meas.AcquireState.ending_comment_str))
+                row.Add((int)DescriptiveSummary.EndingComment, meas.AcquireState.ending_comment_str);
             return row;
         }
         Row GenMeasurementDetailsRow(bool hasMultiplicity)

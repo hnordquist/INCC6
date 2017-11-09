@@ -381,17 +381,46 @@ namespace AnalysisDefs
                         break;
 
                     case INCCReportSection.Messages:
-                        List<MeasurementMsg> sl = null;
+                        List<MeasurementMsg> sl = null;  
                         bool found = meas.Messages.TryGetValue(mkey, out sl);
                         if (found)
                         {
                             sec = new INCCStyleSection(null, 1);
-                            sec.AddHeader(string.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));  /// todo: is there an active messages section header analog?
-                            foreach (MeasurementMsg m in sl)
+                            if (sl.Count == 0)
+                                break;
+                            // do warnings first, then errors, zero, one, two sections are possible, headers must match 5.* exactly
+                            if (meas.MeasOption == AssaySelector.MeasurementOption.normalization)
                             {
-                                Row r = new Row();
-                                r.Add(0, m.text);  // expand to log style with toString?
-                                sec.Add(r);
+                                sec.AddHeader("Messages");
+                                foreach (MeasurementMsg m in sl)
+                                {
+                                    Row r = new Row();
+                                    r.Add(0, m.text);
+                                    sec.Add(r);
+                                }
+                            }
+                            else
+                            {
+                                List<MeasurementMsg> el = sl.FindAll(m => { return m.IsError; });
+                                List<MeasurementMsg> wl = sl.FindAll(m => { return !m.IsError; });
+                                if (wl.Count > 0)
+                                {
+                                    sec.AddHeader(string.Format("{0} messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));
+                                    foreach (MeasurementMsg m in wl)
+                                    {
+                                        Row r = new Row(); r.Add(0, m.text);
+                                        sec.Add(r);
+                                    }
+                                }
+                                if (el.Count > 0)
+                                {
+                                    sec.AddHeader(string.Format("{0} error messages", meas.INCCAnalysisState.Methods.HasActiveSelected() || meas.INCCAnalysisState.Methods.HasActiveMultSelected() ? "Active" : "Passive"));
+                                    foreach (MeasurementMsg m in el)
+                                    {
+                                        Row r = new Row(); r.Add(0, m.text);
+                                        sec.Add(r);
+                                    }
+                                }
                             }
                         }
                         break;
@@ -492,6 +521,9 @@ namespace AnalysisDefs
             sec.AddTwo("Accidentals method: ", meas.Tests.accidentalsMethod != AccidentalsMethod.None ? (meas.Tests.accidentalsMethod.ToString() + "d") : "Not set");
             sec.AddTwo("Inspector name: ", meas.AcquireState.user_id);
             sec.AddTwo("Passive comment:", meas.AcquireState.comment);
+            if (meas.AcquireState.ending_comment || !string.IsNullOrEmpty(meas.AcquireState.ending_comment_str))
+                sec.AddTwo("Ending comment:", meas.AcquireState.ending_comment_str);
+
         }
 
         public override string GenBaseFileName(string pretext)
