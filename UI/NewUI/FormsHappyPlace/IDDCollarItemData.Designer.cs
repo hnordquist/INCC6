@@ -32,16 +32,16 @@
             this.CancelBtn = new System.Windows.Forms.Button();
             this.HelpBtn = new System.Windows.Forms.Button();
             this.PoisonRodTypeComboBox = new System.Windows.Forms.ComboBox();
-            this.LengthTextBox = new System.Windows.Forms.TextBox();
-            this.LengthErrorTextBox = new System.Windows.Forms.TextBox();
-            this.TotalU235TextBox = new System.Windows.Forms.TextBox();
-            this.TotalU235ErrorTextBox = new System.Windows.Forms.TextBox();
-            this.TotalU238TextBox = new System.Windows.Forms.TextBox();
-            this.TotalRodsTextBox = new System.Windows.Forms.TextBox();
-            this.PoisonTextBox = new System.Windows.Forms.TextBox();
-            this.PoisonErrorTextBox = new System.Windows.Forms.TextBox();
-            this.TotalU238ErrorTextBox = new System.Windows.Forms.TextBox();
-            this.TotalPoisonRodsTextBox = new System.Windows.Forms.TextBox();
+            this.LengthTextBox = new NewUI.NumericTextBox();
+            this.LengthErrorTextBox = new NewUI.NumericTextBox();
+            this.TotalU235TextBox = new NewUI.NumericTextBox();
+            this.TotalU235ErrorTextBox = new NewUI.NumericTextBox();
+            this.TotalU238TextBox = new NewUI.NumericTextBox();
+            this.TotalRodsTextBox = new NewUI.NumericTextBox();
+            this.PoisonTextBox = new NewUI.NumericTextBox();
+            this.PoisonErrorTextBox = new NewUI.NumericTextBox();
+            this.TotalU238ErrorTextBox = new NewUI.NumericTextBox();
+            this.TotalPoisonRodsTextBox = new NewUI.NumericTextBox();
             this.PoisonRodTypeLabel = new System.Windows.Forms.Label();
             this.LengthLabel = new System.Windows.Forms.Label();
             this.LengthErrorLabel = new System.Windows.Forms.Label();
@@ -60,7 +60,7 @@
             this.OKBtn.Location = new System.Drawing.Point(253, 14);
             this.OKBtn.Name = "OKBtn";
             this.OKBtn.Size = new System.Drawing.Size(75, 23);
-            this.OKBtn.TabIndex = 0;
+            this.OKBtn.TabIndex = 11;
             this.OKBtn.Text = "OK";
             this.OKBtn.UseVisualStyleBackColor = true;
             this.OKBtn.Click += new System.EventHandler(this.OKBtn_Click);
@@ -70,7 +70,7 @@
             this.CancelBtn.Location = new System.Drawing.Point(253, 43);
             this.CancelBtn.Name = "CancelBtn";
             this.CancelBtn.Size = new System.Drawing.Size(75, 23);
-            this.CancelBtn.TabIndex = 1;
+            this.CancelBtn.TabIndex = 12;
             this.CancelBtn.Text = "Cancel";
             this.CancelBtn.UseVisualStyleBackColor = true;
             this.CancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
@@ -80,7 +80,7 @@
             this.HelpBtn.Location = new System.Drawing.Point(253, 72);
             this.HelpBtn.Name = "HelpBtn";
             this.HelpBtn.Size = new System.Drawing.Size(75, 23);
-            this.HelpBtn.TabIndex = 2;
+            this.HelpBtn.TabIndex = 13;
             this.HelpBtn.Text = "Help";
             this.HelpBtn.UseVisualStyleBackColor = true;
             this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
@@ -91,88 +91,208 @@
             this.PoisonRodTypeComboBox.Location = new System.Drawing.Point(111, 16);
             this.PoisonRodTypeComboBox.Name = "PoisonRodTypeComboBox";
             this.PoisonRodTypeComboBox.Size = new System.Drawing.Size(121, 21);
-            this.PoisonRodTypeComboBox.TabIndex = 3;
+            this.PoisonRodTypeComboBox.TabIndex = 0;
             this.PoisonRodTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.PoisonRodTypeComboBox_SelectedIndexChanged);
             // 
             // LengthTextBox
             // 
             this.LengthTextBox.Location = new System.Drawing.Point(111, 51);
+            this.LengthTextBox.Max = 1.7976931348623157E+308D;
+            this.LengthTextBox.Min = 0D;
             this.LengthTextBox.Name = "LengthTextBox";
+            this.LengthTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.LengthTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.LengthTextBox.Size = new System.Drawing.Size(121, 20);
-            this.LengthTextBox.TabIndex = 4;
-            this.LengthTextBox.TextChanged += new System.EventHandler(this.LengthTextBox_TextChanged);
+            this.LengthTextBox.Steps = -1D;
+            this.LengthTextBox.TabIndex = 1;
+            this.LengthTextBox.Text = "0.000000E+000";
+            this.LengthTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.LengthTextBox.Value = 0D;
             // 
             // LengthErrorTextBox
             // 
             this.LengthErrorTextBox.Location = new System.Drawing.Point(111, 77);
+            this.LengthErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.LengthErrorTextBox.Min = 0D;
             this.LengthErrorTextBox.Name = "LengthErrorTextBox";
+            this.LengthErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.LengthErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.LengthErrorTextBox.Size = new System.Drawing.Size(121, 20);
-            this.LengthErrorTextBox.TabIndex = 5;
-            this.LengthErrorTextBox.TextChanged += new System.EventHandler(this.LengthErrorTextBox_TextChanged);
+            this.LengthErrorTextBox.Steps = -1D;
+            this.LengthErrorTextBox.TabIndex = 2;
+            this.LengthErrorTextBox.Text = "0.000000E+000";
+            this.LengthErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.LengthErrorTextBox.Value = 0D;
             // 
             // TotalU235TextBox
             // 
             this.TotalU235TextBox.Location = new System.Drawing.Point(111, 103);
+            this.TotalU235TextBox.Max = 1.7976931348623157E+308D;
+            this.TotalU235TextBox.Min = 0D;
             this.TotalU235TextBox.Name = "TotalU235TextBox";
+            this.TotalU235TextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalU235TextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalU235TextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalU235TextBox.TabIndex = 6;
-            this.TotalU235TextBox.TextChanged += new System.EventHandler(this.TotalU235TextBox_TextChanged);
+            this.TotalU235TextBox.Steps = -1D;
+            this.TotalU235TextBox.TabIndex = 3;
+            this.TotalU235TextBox.Text = "0.000000E+000";
+            this.TotalU235TextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalU235TextBox.Value = 0D;
             // 
             // TotalU235ErrorTextBox
             // 
             this.TotalU235ErrorTextBox.Location = new System.Drawing.Point(111, 129);
+            this.TotalU235ErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.TotalU235ErrorTextBox.Min = 0D;
             this.TotalU235ErrorTextBox.Name = "TotalU235ErrorTextBox";
+            this.TotalU235ErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalU235ErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalU235ErrorTextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalU235ErrorTextBox.TabIndex = 7;
-            this.TotalU235ErrorTextBox.TextChanged += new System.EventHandler(this.TotalU235ErrorTextBox_TextChanged);
+            this.TotalU235ErrorTextBox.Steps = -1D;
+            this.TotalU235ErrorTextBox.TabIndex = 4;
+            this.TotalU235ErrorTextBox.Text = "0.000000E+000";
+            this.TotalU235ErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalU235ErrorTextBox.Value = 0D;
             // 
             // TotalU238TextBox
             // 
             this.TotalU238TextBox.Location = new System.Drawing.Point(111, 155);
+            this.TotalU238TextBox.Max = 1.7976931348623157E+308D;
+            this.TotalU238TextBox.Min = 0D;
             this.TotalU238TextBox.Name = "TotalU238TextBox";
+            this.TotalU238TextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalU238TextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalU238TextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalU238TextBox.TabIndex = 8;
-            this.TotalU238TextBox.TextChanged += new System.EventHandler(this.TotalU238TextBox_TextChanged);
+            this.TotalU238TextBox.Steps = -1D;
+            this.TotalU238TextBox.TabIndex = 5;
+            this.TotalU238TextBox.Text = "0.000000E+000";
+            this.TotalU238TextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalU238TextBox.Value = 0D;
             // 
             // TotalRodsTextBox
             // 
             this.TotalRodsTextBox.Location = new System.Drawing.Point(111, 207);
+            this.TotalRodsTextBox.Max = 1.7976931348623157E+308D;
+            this.TotalRodsTextBox.Min = 0D;
             this.TotalRodsTextBox.Name = "TotalRodsTextBox";
+            this.TotalRodsTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalRodsTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalRodsTextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalRodsTextBox.TabIndex = 10;
-            this.TotalRodsTextBox.TextChanged += new System.EventHandler(this.TotalRodsTextBox_TextChanged);
+            this.TotalRodsTextBox.Steps = -1D;
+            this.TotalRodsTextBox.TabIndex = 7;
+            this.TotalRodsTextBox.Text = "0.000000E+000";
+            this.TotalRodsTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalRodsTextBox.Value = 0D;
             // 
             // PoisonTextBox
             // 
             this.PoisonTextBox.Location = new System.Drawing.Point(111, 259);
+            this.PoisonTextBox.Max = 1.7976931348623157E+308D;
+            this.PoisonTextBox.Min = 0D;
             this.PoisonTextBox.Name = "PoisonTextBox";
+            this.PoisonTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.PoisonTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.PoisonTextBox.Size = new System.Drawing.Size(121, 20);
-            this.PoisonTextBox.TabIndex = 12;
-            this.PoisonTextBox.TextChanged += new System.EventHandler(this.PoisonTextBox_TextChanged);
+            this.PoisonTextBox.Steps = -1D;
+            this.PoisonTextBox.TabIndex = 9;
+            this.PoisonTextBox.Text = "0.000000E+000";
+            this.PoisonTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.PoisonTextBox.Value = 0D;
             // 
             // PoisonErrorTextBox
             // 
             this.PoisonErrorTextBox.Location = new System.Drawing.Point(111, 285);
+            this.PoisonErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.PoisonErrorTextBox.Min = 0D;
             this.PoisonErrorTextBox.Name = "PoisonErrorTextBox";
+            this.PoisonErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.PoisonErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.PoisonErrorTextBox.Size = new System.Drawing.Size(121, 20);
-            this.PoisonErrorTextBox.TabIndex = 13;
-            this.PoisonErrorTextBox.TextChanged += new System.EventHandler(this.PoisonErrorTextBox_TextChanged);
+            this.PoisonErrorTextBox.Steps = -1D;
+            this.PoisonErrorTextBox.TabIndex = 10;
+            this.PoisonErrorTextBox.Text = "0.000000E+000";
+            this.PoisonErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.PoisonErrorTextBox.Value = 0D;
             // 
             // TotalU238ErrorTextBox
             // 
             this.TotalU238ErrorTextBox.Location = new System.Drawing.Point(111, 181);
+            this.TotalU238ErrorTextBox.Max = 1.7976931348623157E+308D;
+            this.TotalU238ErrorTextBox.Min = 0D;
             this.TotalU238ErrorTextBox.Name = "TotalU238ErrorTextBox";
+            this.TotalU238ErrorTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalU238ErrorTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalU238ErrorTextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalU238ErrorTextBox.TabIndex = 15;
-            this.TotalU238ErrorTextBox.TextChanged += new System.EventHandler(this.TotalU238ErrorTextBox_TextChanged);
+            this.TotalU238ErrorTextBox.Steps = -1D;
+            this.TotalU238ErrorTextBox.TabIndex = 6;
+            this.TotalU238ErrorTextBox.Text = "0.000000E+000";
+            this.TotalU238ErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalU238ErrorTextBox.Value = 0D;
             // 
             // TotalPoisonRodsTextBox
             // 
             this.TotalPoisonRodsTextBox.Location = new System.Drawing.Point(111, 233);
+            this.TotalPoisonRodsTextBox.Max = 1.7976931348623157E+308D;
+            this.TotalPoisonRodsTextBox.Min = 0D;
             this.TotalPoisonRodsTextBox.Name = "TotalPoisonRodsTextBox";
+            this.TotalPoisonRodsTextBox.NumberFormat = NewUI.NumericTextBox.Formatter.E6;
+            this.TotalPoisonRodsTextBox.NumStyles = ((System.Globalization.NumberStyles)(((((((System.Globalization.NumberStyles.AllowLeadingWhite | System.Globalization.NumberStyles.AllowTrailingWhite) 
+            | System.Globalization.NumberStyles.AllowLeadingSign) 
+            | System.Globalization.NumberStyles.AllowTrailingSign) 
+            | System.Globalization.NumberStyles.AllowDecimalPoint) 
+            | System.Globalization.NumberStyles.AllowThousands) 
+            | System.Globalization.NumberStyles.AllowExponent)));
             this.TotalPoisonRodsTextBox.Size = new System.Drawing.Size(121, 20);
-            this.TotalPoisonRodsTextBox.TabIndex = 16;
-            this.TotalPoisonRodsTextBox.TextChanged += new System.EventHandler(this.TotalPoisonRodsTextBox_TextChanged);
+            this.TotalPoisonRodsTextBox.Steps = -1D;
+            this.TotalPoisonRodsTextBox.TabIndex = 8;
+            this.TotalPoisonRodsTextBox.Text = "0.000000E+000";
+            this.TotalPoisonRodsTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
+            this.TotalPoisonRodsTextBox.Value = 0D;
             // 
             // PoisonRodTypeLabel
             // 
@@ -316,16 +436,16 @@
         private System.Windows.Forms.Button CancelBtn;
         private System.Windows.Forms.Button HelpBtn;
         private System.Windows.Forms.ComboBox PoisonRodTypeComboBox;
-        private System.Windows.Forms.TextBox LengthTextBox;
-        private System.Windows.Forms.TextBox LengthErrorTextBox;
-        private System.Windows.Forms.TextBox TotalU235TextBox;
-        private System.Windows.Forms.TextBox TotalU235ErrorTextBox;
-        private System.Windows.Forms.TextBox TotalU238TextBox;
-        private System.Windows.Forms.TextBox TotalRodsTextBox;
-        private System.Windows.Forms.TextBox PoisonTextBox;
-        private System.Windows.Forms.TextBox PoisonErrorTextBox;
-        private System.Windows.Forms.TextBox TotalU238ErrorTextBox;
-        private System.Windows.Forms.TextBox TotalPoisonRodsTextBox;
+        private NumericTextBox LengthTextBox;
+        private NumericTextBox LengthErrorTextBox;
+        private NumericTextBox TotalU235TextBox;
+        private NumericTextBox TotalU235ErrorTextBox;
+        private NumericTextBox TotalU238TextBox;
+        private NumericTextBox TotalRodsTextBox;
+        private NumericTextBox PoisonTextBox;
+        private NumericTextBox PoisonErrorTextBox;
+        private NumericTextBox TotalU238ErrorTextBox;
+        private NumericTextBox TotalPoisonRodsTextBox;
         private System.Windows.Forms.Label PoisonRodTypeLabel;
         private System.Windows.Forms.Label LengthLabel;
         private System.Windows.Forms.Label LengthErrorLabel;

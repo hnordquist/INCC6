@@ -29,6 +29,7 @@ using System;
 
 namespace NCCReporter
 {
+
  #if EXCEL
 	using Excel = Microsoft.Office.Interop.Excel;
 #endif

@@ -47,7 +47,7 @@ namespace NewUI
 
             foreach (var stratum in sl)
             {
-                string [] row = new string [4]{stratum.Desc.Name,stratum.Stratum.bias_uncertainty.ToString("F3"), stratum.Stratum.random_uncertainty.ToString("F3"), stratum.Stratum.systematic_uncertainty.ToString("F3") };
+                string [] row = new string [4]{stratum.Desc.Name,stratum.Stratum.bias_uncertainty.ToString("F4"), stratum.Stratum.random_uncertainty.ToString("F4"), stratum.Stratum.systematic_uncertainty.ToString("F4") };
                 StrataView.Rows.Add(row);
             }
             this.Refresh();
@@ -111,18 +111,18 @@ namespace NewUI
                             Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
                             changed.Stratum.bias_uncertainty = d;
                             changed.Stratum.modified = true; 
-                            StrataView[col,row].Value = d.ToString("F2");
+                            StrataView[col,row].Value = d.ToString("F4");
                             break;
                         case 2:
                             Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
                             changed.Stratum.random_uncertainty = d;
                             changed.Stratum.modified = true;
-                            StrataView[col, row].Value = d.ToString("F2");
+                            StrataView[col, row].Value = d.ToString("F4");
                             break;
                         case 3:
                             Double.TryParse((StrataView[col, row]).Value.ToString(), out d);
                             changed.Stratum.systematic_uncertainty = d;
-                            StrataView[col, row].Value = d.ToString("F2");
+                            StrataView[col, row].Value = d.ToString("F4");
                             changed.Stratum.modified = true;
                             break;
                     }

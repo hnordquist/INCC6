@@ -140,7 +140,7 @@ namespace LMRawAnalysis
             for (i = 1; i < RawAnalysisProperties.circularListBlockIncrement; i++)  //as a starter, put RawAnalysisProperties.circularListBlockIncrement structures in the list
             {
                 endOfList.next = new RossiAlphaCircularNeutronEvent(i);  //create the next new struct at the end of the tail
-                endOfList = endOfList.next;  //move the tail to this new stuct
+                endOfList = endOfList.next;  //move the tail to this new struct
             }
             numObjectsInCircularLinkedList = RawAnalysisProperties.circularListBlockIncrement;
             endOfList.next = startOfList;  //close the loop, connecting the tail back to the head

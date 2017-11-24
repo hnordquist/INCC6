@@ -53,6 +53,9 @@ namespace DB
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string message, bool forceconsole = false)
         {
+            //if (!forceconsole && pest.logger != null)
+            //    pest.logger.TraceEvent(eventType, id, message);
+            //else
                 Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(message));
         }
 
@@ -63,6 +66,9 @@ namespace DB
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string format, params object[] args)
         {
+            //if (pest.logger != null)
+            //    pest.logger.TraceEvent(eventType, id, format, args);
+            //else
                 Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
       }
 

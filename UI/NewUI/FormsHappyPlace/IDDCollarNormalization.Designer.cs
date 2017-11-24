@@ -71,6 +71,7 @@
             this.NeutronYieldTextBox.Size = new System.Drawing.Size(199, 20);
             this.NeutronYieldTextBox.Steps = -1D;
             this.NeutronYieldTextBox.TabIndex = 1;
+            this.NeutronYieldTextBox.Text = "0.000000E+000";
             this.NeutronYieldTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NeutronYieldTextBox.Value = 0D;
             // 
@@ -90,6 +91,7 @@
             this.NormalizationConstantTextBox.Size = new System.Drawing.Size(199, 20);
             this.NormalizationConstantTextBox.Steps = -1D;
             this.NormalizationConstantTextBox.TabIndex = 2;
+            this.NormalizationConstantTextBox.Text = "0.000000E+000";
             this.NormalizationConstantTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NormalizationConstantTextBox.Value = 0D;
             // 
@@ -109,6 +111,7 @@
             this.NormalizationConstantErrorTextBox.Size = new System.Drawing.Size(199, 20);
             this.NormalizationConstantErrorTextBox.Steps = -1D;
             this.NormalizationConstantErrorTextBox.TabIndex = 3;
+            this.NormalizationConstantErrorTextBox.Text = "0.000000E+000";
             this.NormalizationConstantErrorTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.NormalizationConstantErrorTextBox.Value = 0D;
             // 
@@ -128,6 +131,7 @@
             this.ReferenceSinglesRateTextBox.Size = new System.Drawing.Size(199, 20);
             this.ReferenceSinglesRateTextBox.Steps = -1D;
             this.ReferenceSinglesRateTextBox.TabIndex = 4;
+            this.ReferenceSinglesRateTextBox.Text = "0.000000E+000";
             this.ReferenceSinglesRateTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.ReferenceSinglesRateTextBox.Value = 0D;
             // 
@@ -147,6 +151,7 @@
             this.AcceptanceLimitTextBox.Size = new System.Drawing.Size(199, 20);
             this.AcceptanceLimitTextBox.Steps = -1D;
             this.AcceptanceLimitTextBox.TabIndex = 6;
+            this.AcceptanceLimitTextBox.Text = "0.000000E+000";
             this.AcceptanceLimitTextBox.ToValidate = NewUI.NumericTextBox.ValidateType.Double;
             this.AcceptanceLimitTextBox.Value = 0D;
             // 
@@ -155,9 +160,9 @@
             this.AmLiSourceIdLabel.AutoSize = true;
             this.AmLiSourceIdLabel.Location = new System.Drawing.Point(95, 15);
             this.AmLiSourceIdLabel.Name = "AmLiSourceIdLabel";
-            this.AmLiSourceIdLabel.Size = new System.Drawing.Size(76, 13);
+            this.AmLiSourceIdLabel.Size = new System.Drawing.Size(52, 13);
             this.AmLiSourceIdLabel.TabIndex = 7;
-            this.AmLiSourceIdLabel.Text = "AmLi source id";
+            this.AmLiSourceIdLabel.Text = "Source id";
             // 
             // NeutronYieldLabel
             // 

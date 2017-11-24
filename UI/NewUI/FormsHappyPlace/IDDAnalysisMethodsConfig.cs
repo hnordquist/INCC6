@@ -66,7 +66,8 @@ namespace NewUI
                 ActivePassiveCheckBox.Checked = am.choices[(int)AnalysisMethod.ActivePassive];
                 ActiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.Active];
                 ActiveMultCheckBox.Checked = am.choices[(int)AnalysisMethod.ActiveMultiplicity];
-                CollarCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar];
+                CollarAmLiCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar] && (acq.collar_mode == CollarType.AmLiThermal || acq.collar_mode == CollarType.AmLiFast);
+                CollarCfCheckBox.Checked = am.choices[(int)AnalysisMethod.Collar] && (acq.collar_mode == CollarType.CfThermal || acq.collar_mode == CollarType.CfFast);
                 PassiveCalCurveCheckBox.Checked = am.choices[(int)AnalysisMethod.CalibrationCurve];
                 KnownAlphaCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownA];
                 KnownMCheckBox.Checked = am.choices[(int)AnalysisMethod.KnownM];
@@ -92,14 +93,16 @@ namespace NewUI
 
         private void collaractive()
         {
-            if (CollarCheckBox.Checked == true)
+            // Modified 5/4/2017 -- Looks for the Collar check, then sets the AcquireParms to default of thermal for source type selectd. HN 5/4/2017
+            string CollarName;
+            if (CollarAmLiCheckBox.Checked == true)
             {
-                string CollarName = CollarCheckBox.Name;
+                CollarName = CollarAmLiCheckBox.Name;
                 foreach (Control cb in this.Controls)
                 {
                     if (cb is CheckBox)
                     {
-                        if (cb.Name != CollarCheckBox.Name)
+                        if (cb.Name != CollarAmLiCheckBox.Name)
                         {
                             cb.Enabled = false;
                         }
@@ -108,24 +111,47 @@ namespace NewUI
                 am.Normal = AnalysisMethod.Collar;
                 am.Backup = AnalysisMethod.None;
                 am.Auxiliary = AnalysisMethod.None;
+                acq.collar_mode = (int)AnalysisDefs.CollarType.AmLiThermal;
+                am.modified = true;
             }
-            else
+            else if (CollarCfCheckBox.Checked == true)
             {
-
-                bool anyChecked = false;
-                string CollarName = CollarCheckBox.Name;
+                CollarName = CollarCfCheckBox.Name;
                 foreach (Control cb in this.Controls)
                 {
                     if (cb is CheckBox)
                     {
-                        if (cb.Name != CollarCheckBox.Name)
+                        if (cb.Name != CollarCfCheckBox.Name)
+                        {
+                            cb.Enabled = false;
+                        }
+                    }
+                }
+                am.Normal = AnalysisMethod.Collar;
+                am.Backup = AnalysisMethod.None;
+                am.Auxiliary = AnalysisMethod.None;
+                acq.collar_mode = CollarType.CfThermal;
+                acq.modified = true;
+                am.modified = true;
+            }
+            else
+            {
+                //Check this. hn 1/26/17
+                bool anyChecked = false;
+                CollarName = CollarAmLiCheckBox.Name;
+                foreach (Control cb in this.Controls)
+                {
+                    if (cb is CheckBox)
+                    {
+                        if (cb.Name != CollarAmLiCheckBox.Name && cb.Name != CollarCfCheckBox.Name)
                         {
                             ((CheckBox)cb).Enabled = true;
                             anyChecked |= ((CheckBox)cb).Checked;
                         }
                     }
                 }
-                this.CollarCheckBox.Enabled = !anyChecked;
+                this.CollarAmLiCheckBox.Enabled = !anyChecked;
+                this.CollarCfCheckBox.Enabled = !anyChecked;
                 if (am.AnySelected())
                 {
                     am.choices[0] = false;
@@ -272,6 +298,12 @@ namespace NewUI
         private void HelpBtn_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void CollarCfCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            am.choices[(int)AnalysisMethod.Collar] = ((CheckBox)sender).Checked;
+            choke((CheckBox)sender);
         }
     }
 }

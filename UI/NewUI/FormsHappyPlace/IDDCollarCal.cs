@@ -175,6 +175,7 @@ namespace NewUI
         {
             StoreChanges();
             IDDCorrectionFactors CorrFact = new IDDCorrectionFactors(col,modified);
+            CorrFact.StartPosition = FormStartPosition.CenterScreen;
             CorrFact.Show();
             this.Close();
         }
@@ -200,7 +201,8 @@ namespace NewUI
         private void BackBtn_Click(object sender, EventArgs e)
         {
             StoreChanges();
-            IDDCollarCrossRef CrossRef = new IDDCollarCrossRef(col,modified);
+            IDDCollarCrossRef CrossRef = new IDDCollarCrossRef(CollarType.Unset/*do nothing to mode here*/,modified,col);
+            CrossRef.StartPosition = FormStartPosition.CenterScreen;
             CrossRef.Show();
             this.Close();
         }
@@ -308,6 +310,7 @@ namespace NewUI
                 col.collar.cev.sigma_x = SigmaXTextBox.Value;
             }
         }
+
     }
 }
 ;

@@ -27,13 +27,14 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using NCCReporter;
 
 namespace AnalysisDefs
 {
 
     using Tuple = VTuple;
-
+    public enum CollarType : byte { Unset = 0xF, AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 };
 
     // map from a selector pair key to a specific INCC analysis parameter instance
     public class INCCMethods : Dictionary<AnalysisMethod, INCCAnalysisParams.INCCMethodDescriptor>
@@ -672,6 +673,9 @@ namespace AnalysisDefs
             }
         }
 
+        public static readonly ReadOnlyCollection<string> CollarTypeStrings = new ReadOnlyCollection<string>
+            (new List<String> {
+         "AmLi Thermal (no Cd)", "AmLi Fast (Cd)", "Cf Thermal (no Cd)", "Cf Fast (noCd)" });
         public enum MultChoice
         {
             CONVENTIONAL_MULT, // 1st mult radio button
@@ -1557,15 +1561,14 @@ namespace AnalysisDefs
 
         public class collar_detector_rec : INCCMethodDescriptor
         {
-            	//false "Thermal (no Cd)",
-	            //true "Fast (Cd)",
-            public bool collar_mode;
+            //Enum CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
+            public CollarType collar_mode;
             public DateTime reference_date;
             public double relative_doubles_rate;
 
             public collar_detector_rec()
             {
-                collar_mode = false;
+                collar_mode = CollarType.AmLiThermal;
                 relative_doubles_rate = 1;
                 reference_date = new DateTime (1989,10,17);
             }
@@ -1590,7 +1593,7 @@ namespace AnalysisDefs
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.SetFloatingPointFormat(INCCStyleSection.NStyle.Fixed); // uses E
-                sec.AddTwo("Collar Mode", collar_mode?"Fast(Cd)":"Thermal (no Cd)");
+                sec.AddTwo("Collar Mode", CollarTypeStrings[(int)collar_mode]);
                 sec.AddTwo("Reference Doubles Rate", relative_doubles_rate);
                 sec.AddTwo("Reference Date", reference_date.ToShortDateString());
                 return sec;
@@ -1600,7 +1603,7 @@ namespace AnalysisDefs
             {
                 base.GenParamList();
                 Table = "collar_detector_rec";
-                ps.Add(new DBParamEntry("collar_detector_mode", collar_mode));
+                ps.Add(new DBParamEntry("collar_detector_mode", (int)collar_mode));
                 ps.Add(new DBParamEntry("reference_date", reference_date));
                 ps.Add(new DBParamEntry("relative_doubles_rate", relative_doubles_rate));
             }
@@ -1610,9 +1613,8 @@ namespace AnalysisDefs
         public const int MAX_POISON_ROD_TYPES = 10; /*max # different types poison rods */
         public class collar_rec : INCCMethodDescriptor
         {
-            //false "Thermal (no Cd)",
-            //true "Fast (Cd)",
-            public bool collar_mode;
+            //enum CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
+            public CollarType collar_mode;
             public double[] poison_absorption_fact;
             public Tuple[] poison_rod_a;
             public Tuple[] poison_rod_b;
@@ -1627,6 +1629,9 @@ namespace AnalysisDefs
             public collar_rec()
             {
                 cev = new CurveEquationVals();
+                //The collar equation needs a nonzero default for a.
+                cev.a = 1;
+                cev.modified = true;
                 poison_absorption_fact = new double[MAX_POISON_ROD_TYPES];
                 poison_absorption_fact[0] = 0.647;
                 poison_rod_a = new Tuple[MAX_POISON_ROD_TYPES];
@@ -1641,8 +1646,8 @@ namespace AnalysisDefs
                     poison_rod_c[i] = new Tuple(0.0, 0.0);
                 }
                 number_calib_rods = 2;
-                u_mass_corr_fact_a = new Tuple();
-                u_mass_corr_fact_b = new Tuple();
+                u_mass_corr_fact_a = new Tuple(.000724, .000012);
+                u_mass_corr_fact_b = new Tuple(453, 4.53);
                 sample_corr_fact = new Tuple();
             }
 
@@ -1706,7 +1711,7 @@ namespace AnalysisDefs
                 cev.GenParamList();
                 ps.AddRange(cev.ps);
                 ps.Add(new DBParamEntry("number_calib_rods", number_calib_rods));
-                ps.Add(new DBParamEntry("collar_mode", collar_mode));
+                ps.Add(new DBParamEntry("collar_mode", (int)collar_mode));
                 ps.Add(new DBParamEntry("poison_absorption_fact", poison_absorption_fact));
                 ps.AddRange(TupleArrayPair("poison_rod_a", poison_rod_a));
                 ps.AddRange(TupleArrayPair("poison_rod_b", poison_rod_b));
@@ -1722,9 +1727,7 @@ namespace AnalysisDefs
         public const int MAX_COLLAR_K5_PARAMETERS = 20; /*max number collar K = 5 parameters */
         public class collar_k5_rec : INCCMethodDescriptor
         {
-            //false "Thermal (no Cd)",
-            //true "Fast (Cd)",
-            public bool k5_mode;
+            public CollarType k5_mode;
             public bool[] k5_checkbox;
             public Tuple[] k5;
             public string k5_item_type;
@@ -1782,7 +1785,7 @@ namespace AnalysisDefs
                 base.GenParamList();
                 Table = "collar_k5_rec";
 
-                ps.Add(new DBParamEntry("k5_mode", k5_mode));
+                ps.Add(new DBParamEntry("k5_mode", (int)k5_mode));
                 ps.Add(new DBParamEntry("k5_checkbox", k5_checkbox));
                 ps.AddRange(TupleArrayPair("k5", k5));
                 // devnote: "k5_item_type" now handled by relation back to relevant item type entry in DB ps.Add(new DBParamEntry("k5_item_type", k5_item_type));
@@ -1795,24 +1798,42 @@ namespace AnalysisDefs
             public collar_k5_rec k5;
             public collar_rec collar;
             public collar_detector_rec collar_det;
+            private CollarType mode;
             
-            public collar_combined_rec()
+            public collar_combined_rec(CollarType collar_mode = CollarType.Unset)
             {
+                mode = collar_mode;
 				Init();
             }
-            public collar_combined_rec(collar_combined_rec src)
+            public collar_combined_rec(collar_combined_rec src, CollarType collar_mode = CollarType.Unset)
             {
+                mode = collar_mode;
 				Init();
 				src.collar.CopyTo(collar);
                 src.collar_det.CopyTo(collar_det);
                 src.k5.CopyTo(k5);
            }
 
+            public string GetCollarModeString ()
+            {
+                return CollarTypeStrings[(int)collar.collar_mode];
+            }
+            //This method is never used..... hmmmm.
 			public collar_combined_rec(collar_detector_rec det, collar_rec col, collar_k5_rec k5e)
             {
                 collar = col; // shallow copies, ok?
                 collar_det = det;
                 k5 = k5e;
+                if (mode != CollarType.Unset)
+                {
+                    //Set in Analysis Parms selection....
+                    collar.collar_mode = mode;
+                    collar.modified = true;
+                    collar_det.collar_mode = mode;
+                    collar_det.modified = true;
+                    k5.k5_mode = mode;
+                    k5.modified = true;
+                }
 				Pump = 0; // prep for use
             }
 
@@ -1821,6 +1842,16 @@ namespace AnalysisDefs
                 collar_det = new collar_detector_rec();
                 collar = new collar_rec();
                 k5 = new collar_k5_rec();
+                if (mode != CollarType.Unset)
+                {
+                    //Set in Analysis Parms selection....
+                    collar.collar_mode = mode;
+                    collar.modified = true;
+                    collar_det.collar_mode = mode;
+                    collar_det.modified = true;
+                    k5.k5_mode = mode;
+                    k5.modified = true;
+                }
 				Pump = 0; // prep for use
 			}
 

@@ -115,7 +115,14 @@ namespace NewUI
 
         private void ChangeDirBtn_Click(object sender, EventArgs e)
         {
-
+            FolderBrowserDialog browse = new FolderBrowserDialog();
+            browse.SelectedPath = NC.App.AppContext.ResultsFilePath;
+            browse.Description = "Select the directory to store ASCII results files.";
+            //Would be nice if this would scroll to the selected folder, but this control is kinda whack. HN 1/26/17
+            if (browse.ShowDialog() == DialogResult.OK)
+            {
+                NC.App.AppContext.ResultsFilePath = browse.SelectedPath;
+            }
         }
 
         /// <summary>

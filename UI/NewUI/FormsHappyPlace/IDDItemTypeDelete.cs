@@ -43,6 +43,9 @@ namespace NewUI
             {
                 MaterialTypeComboBox.Items.Add(d.Name);
             }
+            MaterialTypeComboBox.SelectedIndex= -1;
+            MaterialTypeComboBox.Refresh();
+            this.Update();
         }
         INCCDB.Descriptor target;
         public IDDItemTypeDelete()
@@ -63,11 +66,15 @@ namespace NewUI
                 return;
             if (null != NC.App.DB.Materials.Get(target.Name))
             {
+                string s = target.Name;
                 if (NC.App.DB.Materials.Delete(target)) // removes from DB then from in-memory list, just like isotopics
                 {
                     target = null;
                     RefreshCombo();
+                    MessageBox.Show("Material " + s + " was deleted from the DB", "SUCCESS");
                 }
+                else
+                    MessageBox.Show("Unable to delete material type.", "WARNING");
             }
         }
 

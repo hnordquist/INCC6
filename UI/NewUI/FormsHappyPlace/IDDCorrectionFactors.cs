@@ -52,7 +52,8 @@ namespace NewUI
             
             col = c;
             MaterialLabel.Text = mp.acq.item_type;
-            ModeLabel.Text = col.collar.collar_mode ? "Fast(Cd)" : "Thermal (no Cd)";
+
+            ModeLabel.Text = col.GetCollarModeString();
             DetectorLabel.Text = mp.det.Id.DetectorName;
 
             ATextBox.NumberFormat = NumericTextBox.Formatter.E6;
@@ -63,8 +64,6 @@ namespace NewUI
             BTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             BErrorTextBox.NumberFormat = NumericTextBox.Formatter.E6;
             BErrorTextBox.ToValidate = NumericTextBox.ValidateType.Double;
-            NumRodsTextBox.NumberFormat = NumericTextBox.Formatter.NONE;
-            NumRodsTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
 
             FillForm();
             this.TopMost = true;
@@ -76,7 +75,6 @@ namespace NewUI
             AErrorTextBox.Value = col.collar.u_mass_corr_fact_a.err;
             BTextBox.Value = col.collar.u_mass_corr_fact_b.v;
             BErrorTextBox.Value  = col.collar.u_mass_corr_fact_b.err;
-            NumRodsTextBox.Value = col.collar.number_calib_rods;
             DataGridViewRow types = new DataGridViewRow();
             poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
 
@@ -93,27 +91,65 @@ namespace NewUI
                 combo.ColumnNumber = 0;
                 combo.RowNumber = j;
                 DataGridViewComboBoxCell cel = new DataGridViewComboBoxCell();
+
                 foreach (string s in list)
                 {
                     cel.Items.Add(s);
                 }
                 row.Cells[0] = cel;
                 row.Cells[0].Value = list[j];
-                row.Cells[1].ValueType = typeof(double);
-                row.Cells[1].Value = col.collar.poison_absorption_fact[j];
+                row.Cells[1].ValueType = typeof(int);
+                if (j == 0)
+                    row.Cells[1].Value = col.collar.number_calib_rods; //Make them all G type
+                else
+                    row.Cells[1].Value = 0;
                 row.Cells[2].ValueType = typeof(double);
-                row.Cells[2].Value = col.collar.poison_rod_a[j].v;
+                row.Cells[2].Value = col.collar.poison_absorption_fact[j];
                 row.Cells[3].ValueType = typeof(double);
-                row.Cells[3].Value = col.collar.poison_rod_a[j].err;
+                row.Cells[3].Value = col.collar.poison_rod_a[j].v;
                 row.Cells[4].ValueType = typeof(double);
-                row.Cells[4].Value = col.collar.poison_rod_b[j].v;
+                row.Cells[4].Value = col.collar.poison_rod_a[j].err;
                 row.Cells[5].ValueType = typeof(double);
-                row.Cells[5].Value = col.collar.poison_rod_b[j].err;
+                row.Cells[5].Value = col.collar.poison_rod_b[j].v;
                 row.Cells[6].ValueType = typeof(double);
-                row.Cells[6].Value = col.collar.poison_rod_c[j].v;
+                row.Cells[6].Value = col.collar.poison_rod_b[j].err;
                 row.Cells[7].ValueType = typeof(double);
-                row.Cells[7].Value = col.collar.poison_rod_c[j].err;
+                row.Cells[7].Value = col.collar.poison_rod_c[j].v;
+                row.Cells[8].ValueType = typeof(double);
+                row.Cells[8].Value = col.collar.poison_rod_c[j].err;
                 dataGridView1.Rows.Add(row);
+            }
+            for (int k = list.Count; k < 10; k++)
+            {
+                DataGridViewRow row = new DataGridViewRow();
+                row.CreateCells(dataGridView1);
+                DataGridCell combo = new DataGridCell();
+                combo.ColumnNumber = 0;
+                combo.RowNumber = k;
+                DataGridViewComboBoxCell cel = new DataGridViewComboBoxCell();
+                foreach (string s in list)
+                {
+                    cel.Items.Add(s);
+                }
+                row.Cells[0] = cel;
+                row.Cells[1].ValueType = typeof(int);
+                row.Cells[1].Value = 0;
+                row.Cells[2].ValueType = typeof(double);
+                row.Cells[2].Value = 0;
+                row.Cells[3].ValueType = typeof(double);
+                row.Cells[3].Value = 0;
+                row.Cells[4].ValueType = typeof(double);
+                row.Cells[4].Value = 0;
+                row.Cells[5].ValueType = typeof(double);
+                row.Cells[5].Value = 0;
+                row.Cells[6].ValueType = typeof(double);
+                row.Cells[6].Value = 0;
+                row.Cells[7].ValueType = typeof(double);
+                row.Cells[7].Value = 0;
+                row.Cells[8].ValueType = typeof(double);
+                row.Cells[8].Value = 0;
+                dataGridView1.Rows.Add(row);
+
             }
             SetHelp();
         }
@@ -122,14 +158,8 @@ namespace NewUI
         {
             ToolTip t1 = new ToolTip();
             t1.IsBalloon = true;
-            String display = "The number of rods in the fuel assembly used to determine the\r\n" +
-                            "calibration constants. For the calibrations in LA-11965-MS the number\r\n" +
-                            "is 204 for PWR and 76 for BWR fuel.";
-            provider.SetShowHelp(this.NumRodsTextBox, true);
-            provider.SetHelpString(this.NumRodsTextBox, display);
-            t1.SetToolTip(this.NumRodsTextBox, display);
 
-            display = "Enter the coefficient a for the uranium mass correctionf actor k4 = 1 +\r\n" +
+            String display = "Enter the coefficient a for the uranium mass correctionf actor k4 = 1 +\r\n" +
                 "a(b - u); see LA-11965-MS, p. 30. In LA-11965-MS a = 3.89E-004 for PWR fuel and\r\n" +
                 "7.24E-004 for BWR fuel.";
             provider.SetShowHelp(this.ATextBox, true);
@@ -160,6 +190,7 @@ namespace NewUI
         {
             StoreChanges();
             IDDK5CollarItemData k5 = new IDDK5CollarItemData(col, modified);
+            k5.StartPosition = FormStartPosition.CenterScreen;
             k5.Show();
             this.Close();
         }
@@ -186,6 +217,7 @@ namespace NewUI
         {
             StoreChanges();
             IDDCollarCal calib = new IDDCollarCal(col, modified);
+            calib.StartPosition = FormStartPosition.CenterScreen;
             calib.Show();
             this.Close();
         }
@@ -214,12 +246,6 @@ namespace NewUI
             {
                 modified = true;
                 col.collar.u_mass_corr_fact_b.err = BErrorTextBox.Value;
-            }
-            
-            if (col.collar.number_calib_rods != NumRodsTextBox.Value)
-            {
-                modified = true;
-                col.collar.number_calib_rods = (int)NumRodsTextBox.Value;
             }
 
             for (int i = 0; i < list.Count; i ++)
@@ -266,7 +292,26 @@ namespace NewUI
 
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            if (e.ColumnIndex > 1)// Numeric column and editable
+            if (e.ColumnIndex == 0)
+            {
+                DataGridViewComboBoxCell cel = (DataGridViewComboBoxCell)this.dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (!cel.Items.Contains(e.FormattedValue))
+                {
+                    for (int i = 0; i < dataGridView1.RowCount; i++)
+                    {
+                        DataGridViewComboBoxCell temp = (DataGridViewComboBoxCell)dataGridView1.Rows[i].Cells[0];
+                        temp.Items.Add(e.FormattedValue);
+                    }
+                    list.Add(e.FormattedValue.ToString());
+                    poison_rod_type_rec toAdd = new poison_rod_type_rec();
+                    toAdd.rod_type = e.FormattedValue.ToString();
+                    toAdd.absorption_factor = Double.Parse(dataGridView1.Rows[e.RowIndex].Cells[2].Value.ToString());
+                    toAdd.modified = true;
+                    poison.Add(toAdd);
+                    cel.Value = cel.Items.IndexOf(e.FormattedValue);
+                }
+            }
+           else if (e.ColumnIndex > 1)// Numeric column and editable
             {
                 if (String.IsNullOrEmpty (e.FormattedValue.ToString()))
                 {    
@@ -276,22 +321,35 @@ namespace NewUI
                 }
                 else
                 {
-                    Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");
-                    if (!reg.IsMatch(e.FormattedValue.ToString()))
+                    if (e.ColumnIndex != 1)
                     {
-                        dataGridView1.Rows[e.RowIndex].ErrorText = "Value is not a floating point number.";
-                        e.Cancel = true;
-                        double res = 0;
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
-                        dataGridView1.Rows[e.RowIndex].ErrorText = String.Empty;
-                        this.dataGridView1.RefreshEdit();
+                        Regex reg = new Regex("[1-9][0-9]*\\.?[0-9]*([Ee][+-]?[0-9]+)?");
+                        if (!reg.IsMatch(e.FormattedValue.ToString()))
+                        {
+                            dataGridView1.Rows[e.RowIndex].ErrorText = "Value is not a floating point number.";
+                            e.Cancel = true;
+                            double res = 0;
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
+                            dataGridView1.Rows[e.RowIndex].ErrorText = String.Empty;
+                            this.dataGridView1.RefreshEdit();
+                        }
+                        else
+                        {
+                            double res = 0;
+                            Double.TryParse(e.FormattedValue.ToString(), out res);
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = res.ToString("E3");
+                            this.dataGridView1.RefreshEdit();
+                        }
                     }
                     else
                     {
-                        double res = 0;
-                        Double.TryParse(e.FormattedValue.ToString(),out res);
-                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value= res.ToString ("E3");
-                        this.dataGridView1.RefreshEdit();
+                        //Num Rods is an int
+                        int number = -1;
+                        if (!Int32.TryParse(dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value.ToString(), out number))
+                        {
+                            MessageBox.Show("WARNING", "You must enter an integer between 0 and 10.");
+                            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = "1";
+                        }
                     }
                 }
             }
@@ -318,43 +376,47 @@ namespace NewUI
                         cell.ToolTipText = display;
                         break;
                     case 1:
+                        display = "Enter the number of rods of the selected type in this column.";
+                        cell.ToolTipText = display;
+                        break;
+                    case 2:
                         display = "The poison rod absorption factor is lambda in the poison correction\r\n" +
                             "factor k3 = 1 + a * n * N0 / N * [1 - exp(-lambda * Gd)] * (b - c * E); see\r\n" +
                             "LA-11965-MS, pp 25-30. For gadolinium the recommended factor is 0.647.";
                         cell.ToolTipText = display;
                         break;
-                    case 2:
+                    case 3:
                         display = "Enter coefficient a in the poison rod correction factor k3 = 1 + a * n * N0\r\n" +
                             "/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
                             "For PWR and BWR fuel the recommended values for a are 0.0213 and 0.0572, respectively.";
                         cell.ToolTipText = display;
                         break;
-                    case 3:
+                    case 4:
                         display = "Enter the error of coefficient a in the poison rod correction factor k3 = 1\r\n" +
                             "+ a * n * N0/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
-                            "For PWR and BWR fuel the recommended values for sigma (a) are 0.0.000532 and 0.000143, respectively.";
+                            "For PWR and BWR fuel the recommended values for sigma (a) are 0.0000532 and 0.000143, respectively.";
                         cell.ToolTipText = display;
                         break;
-                    case 4:
+                    case 5:
                         display = "Enter coefficient b in the poison rod correction factor k3 = 1 + a * n * N0\r\n" +
                             "/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
                             "For PWR and BWR fuel the recommended values for b are 2.27 and 1.92, respectively.";
                         cell.ToolTipText = display;
                         break;
-                    case 5:
+                    case 6:
                         display = "Enter the error of coefficient b in the poison rod correction factor k3 = 1\r\n" +
                             "+ a * n * N0/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
                             "For PWR and BWR fuel the recommended value for sigma (b) is 0.01.";
                         cell.ToolTipText = display;
                         break;
-                    case 6:
+                    case 7:
                         display = "Enter coefficient c in the poison rod correction factor k3 = 1 + a * n * N0\r\n" +
                             "/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
                             "For PWR and BWR fuel the recommended values for c are 0.40 and 0.29, respectively.\r\n" +
                             "(2.1000E-001 for PWR no Cd. JRCIspra2001).";
                         cell.ToolTipText = display;
                         break;
-                    case 7:
+                    case 8:
                         display = "Enter the error of coefficient c in the poison rod correction factor k3 = 1\r\n" +
                             "+ a * n * N0/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
                             "For PWR and BWR fuel the recommended values for sigma (c) are 0.005 and 0.01, respectively.";
@@ -364,5 +426,16 @@ namespace NewUI
             }
         }
 
+        private void dataGridView1_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (this.dataGridView1.CurrentCellAddress.X == 0)
+            {
+                ComboBox cb = e.Control as ComboBox;
+                if (cb != null)
+                {
+                    cb.DropDownStyle = ComboBoxStyle.DropDown;
+                }
+            }
+        }
     }
 }

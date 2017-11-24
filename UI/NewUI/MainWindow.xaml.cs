@@ -124,9 +124,9 @@ namespace NewUI
 
         private void SetupCollarItemDataEntryClick(object sender, RoutedEventArgs e)
         {
-            IDDCollarData f = new IDDCollarData();
+            IDDCollarItemData f = new IDDCollarItemData();
             f.ShowDialog();
-			if (f.DialogResult == System.Windows.Forms.DialogResult.OK && f.EditItem)
+			if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
 			{
 				MessageBox.Show("The Item Id Entry dialogbox will now be displayed for you to enter\r\n" + 
 								"the item data needed for the collar data you just entered", Integ.GetAppTitle());
@@ -206,12 +206,8 @@ namespace NewUI
         private void MaintainCollarClick(object sender, RoutedEventArgs e)
         {
             //HN -- Cross ref shown first, next button takes you to IDDCollarCal
-            IDDCollarCrossRef f = new IDDCollarCrossRef(); 
-            WinPos childPos = main.GetChildPos(f.Height, f.Width);
-            f.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            if (childPos.height < f.Height || childPos.width < f.Width) // Resize if it will go off screen.
-                f.Size = new System.Drawing.Size((int)childPos.width, (int)childPos.height);
-            f.Location = new System.Drawing.Point((int)childPos.left, (int)childPos.top);
+            IDDCollarCrossRef f = new IDDCollarCrossRef(Integ.GetCurrentAcquireParams().collar_mode,false);
+            f.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 
             f.ShowDialog();
         }
@@ -392,9 +388,43 @@ namespace NewUI
 
         private void AcquireVerificationClick(object sender, RoutedEventArgs e)
         {
-            IDDAcquireAssay f = new IDDAcquireAssay();
-            f.ShowDialog();
+            AcquireParameters ap = Integ.GetCurrentAcquireParams();
+            AnalysisMethods am = Integ.GetMethodSelections(ap);
+            if (am != null && am.Has(AnalysisMethod.Collar))
+            {
+                INCCAnalysisParams.collar_combined_rec parms = new INCCAnalysisParams.collar_combined_rec();
+                IDDAcquireAssay f = new IDDAcquireAssay();
+                System.Windows.Forms.DialogResult result = f.ShowDialog();
+                f.Close();
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    IDDCollarItemData data = new IDDCollarItemData();
+                    result = data.ShowDialog();
+                    data.Close();
+                }
+
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+
+                    IDDK5CollarItemData k5 = new IDDK5CollarItemData(parms, true);
+                    result = k5.ShowDialog();
+                    k5.Close();
+                }
+                if (result == System.Windows.Forms.DialogResult.OK)
+                {
+                    Detector det = Integ.GetCurrentAcquireDetector();
+                    NormParameters npp = Integ.GetCurrentNormParams(det);
+                    IDDCollarAcquire dlg = new IDDCollarAcquire(npp);
+                    dlg.ShowDialog();
+                }
+            }
+            else
+            {
+                IDDAcquireAssay f = new IDDAcquireAssay();
+                f.ShowDialog();
+            }
         }
+
 
         private void AcquireCalMeasClick(object sender, RoutedEventArgs e)
         {

@@ -37,7 +37,7 @@ namespace DB
     public enum Pieces { IOCodes, InvChangeCodes, 
         Measurements, HVResults,
         Detectors, TestParams, NormParams, BackgroundParams, AASSetupParams, Facilities, MBAs, Materials, Items, Isotopics, DetectorTypes, CollarItems,
-        Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams,
+        Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams, CollarParams, CollarDetectorParams, CollarK5Params,
         AnalysisMethodSpecifiers,
         CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams, Results, CompositeIsotopics, HoldupConfigs, PoisonRods
     }

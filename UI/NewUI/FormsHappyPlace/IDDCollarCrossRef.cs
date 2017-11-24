@@ -42,18 +42,17 @@ namespace NewUI
         List<poison_rod_type_rec> poison;
         bool modified;
 
-        public IDDCollarCrossRef(INCCAnalysisParams.collar_combined_rec c = null, bool mod = false)
+        public IDDCollarCrossRef(CollarType mode, bool mod, INCCAnalysisParams.collar_combined_rec c = null)
         {
             InitializeComponent();
             mp = new MethodParamFormFields(AnalysisMethod.Collar);
 
-            PoisonAbsorptionFactorTextBox.ToValidate = NumericTextBox.ValidateType.Float;
-            PoisonAbsorptionFactorTextBox.NumberFormat = NumericTextBox.Formatter.F3;
              RelativeDoublesRateTextBox.ToValidate = NumericTextBox.ValidateType.Float;
             RelativeDoublesRateTextBox.NumberFormat = NumericTextBox.Formatter.F3;
 
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
-            this.Text += " for " + mp.det.Id.DetectorName;
+            Text += " for " + mp.det.Id.DetectorName;
+
             modified = mod;
             mp.RefreshMatTypeComboBox(MaterialTypeComboBox);
 			mp.SelectMaterialType(MaterialTypeComboBox);
@@ -61,6 +60,15 @@ namespace NewUI
             {
                 mp.imd = new INCCAnalysisParams.collar_combined_rec((INCCAnalysisParams.collar_combined_rec)mp.ams.GetMethodParameters(mp.am));
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
+                if (mode != CollarType.Unset)
+                {
+                    col.collar.collar_mode = mode;
+                    col.modified = true;
+                    col.collar_det.collar_mode = mode;
+                    col.collar_det.modified = true;
+                    col.k5.k5_mode = mode;
+                    col.k5.modified = true;
+                }
             }
             else if (mp.HasMethod && c != null)
             {
@@ -68,37 +76,22 @@ namespace NewUI
             }
             else
             {
-                mp.imd = new INCCAnalysisParams.collar_combined_rec(); // not mapped, so make a new one
+                mp.imd = new INCCAnalysisParams.collar_combined_rec(mp.acq.collar_mode); // not mapped, so make a new one
                 col = (INCCAnalysisParams.collar_combined_rec)mp.imd;
                 modified = true;
             }
 
             CrossReferenceFieldFiller(col);
-            this.TopMost = true;
+            TopMost = true;
         }
 
         public void CrossReferenceFieldFiller(INCCAnalysisParams.collar_combined_rec col)
         {
             MaterialTypeComboBox.SelectedIndex = MaterialTypeComboBox.FindStringExact(mp.acq.item_type)>=0?MaterialTypeComboBox.FindStringExact(mp.acq.item_type):0;
-            ModeComboBox.SelectedIndex = Convert.ToInt32(col.collar_det.collar_mode);
+            ModeComboBox.SelectedIndex = (int)col.collar_det.collar_mode;
             RelativeDoublesRateTextBox.Value = col.collar_det.relative_doubles_rate;
             ReferenceDateTimePicker.Value = col.collar_det.reference_date;
             poison = NCC.CentralizedState.App.DB.PoisonRods.GetList();
-            for (int i = 0; i < poison.Count ; i ++) 
-            {
-                PoisonRodTypesComboBox.Items.Add (poison[i].rod_type);
-            }
-            if (PoisonRodTypesComboBox.Items.Count > 0)
-            {
-                int idx = PoisonRodTypesComboBox.FindStringExact(col.collar.poison_rod_type[0]);
-                PoisonRodTypesComboBox.SelectedIndex = idx;
-                PoisonAbsorptionFactorTextBox.Value = poison[idx].absorption_factor;
-            }
-            else
-            {
-                PoisonRodTypesComboBox.Items.Add("No types defined");
-                PoisonAbsorptionFactorTextBox.Value = 0;
-            }
             SetHelp();
         }
 
@@ -136,13 +129,6 @@ namespace NewUI
             provider.SetHelpString (this.ReferenceDateTimePicker, s1);
             t3.SetToolTip(ReferenceDateTimePicker, s1);
 
-            provider.SetShowHelp (this.PoisonAbsorptionFactorTextBox, true);
-            s1 =        "Enter the poison rod absorption factor. This is lambda in the poison correction factor \r\n" +
-                        "K3 = 1 + a * n * N0 / N [1 - exp (-lambda * Gd)] * (b - c * E);see LA-11965-MS, pp 25-30.\r\n" +
-                        "Override the default value for the current poison rod type here.";
-            provider.SetHelpString (this.PoisonAbsorptionFactorTextBox,s1);
-            t4.SetToolTip(PoisonAbsorptionFactorTextBox, s1);
-
             provider.SetShowHelp (this.RelativeDoublesRateTextBox, true);
             s1 =        "Enter the doubles rate for this collar relative to that for the LANL reference\r\n" +
                         "collar (LANL-3 for PWR, LANL-4 for BWR) for the same AmLi source and \r\n" +
@@ -163,10 +149,10 @@ namespace NewUI
 
         private void ModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (col.collar.collar_mode != Convert.ToBoolean(ModeComboBox.SelectedIndex))
+            if (col.collar.collar_mode != (CollarType)ModeComboBox.SelectedIndex)
             {
                 // copied three times as in INCC5, keeping it the same
-                col.collar.collar_mode = Convert.ToBoolean(ModeComboBox.SelectedIndex);
+                col.collar.collar_mode = (CollarType)ModeComboBox.SelectedIndex;
                 col.collar_det.collar_mode = col.collar.collar_mode;
                 col.k5.k5_mode = col.collar.collar_mode;
                 modified = true;
@@ -180,12 +166,6 @@ namespace NewUI
                 col.collar_det.reference_date = ReferenceDateTimePicker.Value.Date;
                 modified = true;
             }
-        }
-
-        private void PoisonRodTypesComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //Now, switches absorbption factor value. Still confused what to do with multiple rod types. HN
-            PoisonAbsorptionFactorTextBox.Value = poison[((ComboBox)sender).SelectedIndex].absorption_factor;
         }
 
         private void RelativeDoublesRateTextBox_TextChanged(object sender, EventArgs e)
@@ -226,8 +206,9 @@ namespace NewUI
         {
             //store changes?
             IDDCollarCal cal = new IDDCollarCal(col,modified);
+            cal.StartPosition = FormStartPosition.CenterScreen;
             cal.Show();
-            this.Close();
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
@@ -235,10 +216,10 @@ namespace NewUI
             if (modified)
             {
                 if (MessageBox.Show("Are you sure you want to abandon your changes and exit?", "WARNING", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    this.Close();
+                    Close();
             }
             else
-                this.Close();
+                Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

@@ -530,16 +530,6 @@ namespace LMRawAnalysis
                 }
             }
 
-            //store the factorial moments
-            result.RAfactorialMoment0 = RAfactorialMoment0;
-            result.RAfactorialMoment1 = RAfactorialMoment1;
-            result.RAfactorialMoment2 = RAfactorialMoment2;
-            result.RAfactorialMoment3 = RAfactorialMoment3;
-            result.AfactorialMoment0 = AfactorialMoment0;
-            result.AfactorialMoment1 = AfactorialMoment1;
-            result.AfactorialMoment2 = AfactorialMoment2;
-            result.AfactorialMoment3 = AfactorialMoment3;
-
             //NOTE: in the following calculations,
             //variables named PTxxx refer to "Pulse Triggered" phenomena, and
             //variables named RTxxx refer to "Regularly Triggered" phenomena (such as, fast-background counting)
@@ -590,20 +580,34 @@ namespace LMRawAnalysis
 
             double PTdoubles = PTsingles * (normRAfactorialMoment1 - normAfactorialMoment1);
             double PTtriples;
-            double PTtriplesDTcoef;
+            double PTtriplesDTCorrected;
+            //store the factorial moments
+            result.RAfactorialMoment0 = RAfactorialMoment0;
+            result.RAfactorialMoment1 = normRAfactorialMoment1;
+            result.RAfactorialMoment2 = normRAfactorialMoment2;
+            result.RAfactorialMoment3 = RAfactorialMoment3;
+            result.AfactorialMoment0 = normAfactorialMoment0;
+            result.AfactorialMoment1 = normAfactorialMoment1;
+            result.AfactorialMoment2 = normAfactorialMoment2;
+            result.AfactorialMoment3 = normAfactorialMoment3;
+            //Store alphabeta intermediates
+            result.AfactorialAlphaMoment1 = normAfactorialMomentAlpha1;
+            result.RAfactorialAlphaMoment1 = normRAfactorialMomentAlpha1;
+            result.AfactorialBetaMoment2= normAfactorialMomentBeta2;
+            result.RAfactorialBetaMoment2 = normRAfactorialMomentBeta2;
             if (AfactorialMoment0 != 0.0)
             {
                 PTtriples = PTsingles * ((normRAfactorialMoment2 - normAfactorialMoment2)
                                        - ((normAfactorialMoment1 / normAfactorialMoment0)
                                           * (normRAfactorialMoment1 - normAfactorialMoment1)));
-                PTtriplesDTcoef = PTsingles * ((normRAfactorialMomentBeta2 - normAfactorialMomentBeta2)
+                PTtriplesDTCorrected = PTsingles * ((normRAfactorialMomentBeta2 - normAfactorialMomentBeta2)
                                                - ((normAfactorialMomentAlpha1 / normAfactorialMoment0)
                                                   * (normRAfactorialMomentAlpha1 - normAfactorialMomentAlpha1)));
             }
             else
             {
                 PTtriples = 0.0;
-                PTtriplesDTcoef = 0.0;
+                PTtriplesDTCorrected = 0.0;
             }
 
             if (totalMeasurementTime > 1E-12)
@@ -611,14 +615,14 @@ namespace LMRawAnalysis
                 PTsingles /= totalMeasurementTime;
                 PTdoubles /= totalMeasurementTime;
                 PTtriples /= totalMeasurementTime;
-                PTtriplesDTcoef /= totalMeasurementTime;
+                PTtriplesDTCorrected /= totalMeasurementTime;
             }
             else
             {
                 PTsingles = 0.0;
                 PTdoubles = 0.0;
                 PTtriples = 0.0;
-                PTtriplesDTcoef = 0.0;
+                PTtriplesDTCorrected = 0.0;
             }
 
             //store the SDT rates
@@ -663,7 +667,7 @@ namespace LMRawAnalysis
             double exponent = ((DTcoeffA / 1E6) + ((DTcoeffB / 1E12) * PTsingles)) * PTsingles;
             double PTsinglesDTcorr = PTsingles * Math.Exp(exponent / 4.0);
             double PTdoublesDTcorr = PTdoubles * Math.Exp(exponent);
-            double PTtriplesDTcorr = PTtriplesDTcoef * Math.Exp((DTcoeffT / 1E9) * PTsingles);
+            double PTtriplesDTcorr = PTtriplesDTCorrected * Math.Exp((DTcoeffT / 1E9) * PTsingles);
 
             /** NOT USED ***
             double RTsinglesDTcorr = RTsingles * Math.Exp(( ((DTcoeffA/1E6) + ((DTcoeffB/1E12)*RTsingles)) *RTsingles)/4.0);
@@ -691,7 +695,7 @@ namespace LMRawAnalysis
             P23 = 1.0 + P03 - (2.0 * Math.Pow((1.0 - phi), 3.0));
             result.dytlewskiDeadTimeCorrectedTriplesRate = PTtriples / P03;
             //Martyn made me do it. hn 2.6.2015
-            result.deadTimeCorrectedTriplesRate = result.dytlewskiDeadTimeCorrectedTriplesRate;
+            //result.deadTimeCorrectedTriplesRate = result.dytlewskiDeadTimeCorrectedTriplesRate;
             result.dytlewskiDeadTimeCorrectedDoublesRate = (PTdoubles / P02) + ((PTtriples * P13) / (P02 * P03));
             result.dytlewskiDeadTimeCorrectedSinglesRate = PTsingles + ((P12 * PTdoubles) / P02) + (PTtriples * (((P12 * P13) / (P02 * P03)) - (P23 / P03)));
 

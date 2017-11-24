@@ -973,7 +973,7 @@ namespace NCCFile
             read = thisread;
             eventsectionlen -= thisread;
             //count time is in here at 
-            headerstr = bytestoASCIIchars(header, 0x1000, thisread);
+            headerstr = BytestoASCIIchars(header, 0x1000, thisread);
             // This parses out the count time from the file header per Huzsti's definition. w/TryParse, should default to zero
             // Currently, no check at end is implemented. HN 10.16.2015
             Regex reg = new Regex("^@(\\d+).+@(\\d+)");
@@ -1088,7 +1088,7 @@ namespace NCCFile
             }
         }
 
-        public string bytestoASCIIchars(byte[] bdata, int len, int max)
+        public string BytestoASCIIchars(byte[] bdata, int len, int max)
         {
             int i;
             char dchar;
@@ -1288,10 +1288,23 @@ namespace NCCFile
             {
                 try
                 {
-                    DateTime dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
-                    TimeSpan tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
+                    DateTime dtyyMMdd;
+                    TimeSpan tsHHmmsss;
+                    //Daniela had files like this. It has a prefix on it, no time, just cycle #s.
+                    if (!DateTime.TryParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture,
+                                     System.Globalization.DateTimeStyles.None, out dtyyMMdd))
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[1], "MMddyyyy", System.Globalization.CultureInfo.InvariantCulture);
+                        CycleNumber = Convert.ToUInt16(split[2]);
+                        dt = File.GetLastWriteTime(fname);
+                    }
+                    else
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+                        tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
                     CycleNumber = Convert.ToUInt16(split[2]);
                     dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
+                }
                 }
                 catch (FormatException)
                 {

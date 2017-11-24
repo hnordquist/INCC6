@@ -358,7 +358,7 @@ namespace NewUI
 		string TNameMap(Type t, FAType FA = FAType.FAOff)
 		{
 			if (barfoo == null)
-				 barfoo = new string[] {"Multiplicity (Fast Accidentals)", "Multiplicity (Conventional)", "Feynman", "Rossi-α (alpha)", "Event Spacing", "Coincidence" };
+				 barfoo = new string[] {"Fast Multiplicity", "Multiplicity", "Feynman", "Rossi-α (alpha)", "Event Spacing", "Coincidence" };
 			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOn)
 				return barfoo[0];
 			if (t.Equals(typeof(Multiplicity)) && FA == FAType.FAOff)
@@ -640,6 +640,7 @@ namespace NewUI
 			{
 				s = new Multiplicity(FA);
 				((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
+                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2]); // NEXT: replication logic changed here, impact downstream, study
 				if (FA == FAType.FAOn)
 					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
 				else
@@ -997,6 +998,9 @@ namespace NewUI
         {
             PreserveNewState();
             SaveAcqStateChanges();
+ //         N.App.Opstate.Measurement.InitializeResultsSummarizers();
+ //         N.App.Opstate.Measurement.INCCAnalysisState.ClearINCCAnalysisResults();
+ //         N.App.Opstate.Measurement.PrepareINCCResults();
         }
         // NEXT: consider a pop-out report dialog with tabs for each report rather than the concatenated list  4 hrs 
         void ReportPreview()

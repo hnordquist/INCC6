@@ -306,22 +306,16 @@
     <Compile Include="Unready\IDDCmSetup.Designer.cs">
       <DependentUpon>IDDCmSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unready\IDDCollarAcquire.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Unready\IDDCollarAcquire.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.Designer.cs">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarData.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormsHappyPlace\IDDCollarData.Designer.cs">
-      <DependentUpon>IDDCollarData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Unready\IDDCollarItemData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Unready\IDDCollarItemData.Designer.cs">
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.Designer.cs">
       <DependentUpon>IDDCollarItemData.cs</DependentUpon>
     </Compile>
     <Compile Include="Unready\IDDCollarK5.cs">
@@ -1265,13 +1259,10 @@
     <EmbeddedResource Include="Unready\IDDCmSetup.resx">
       <DependentUpon>IDDCmSetup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCollarAcquire.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarAcquire.resx">
       <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDCollarData.resx">
-      <DependentUpon>IDDCollarData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Unready\IDDCollarItemData.resx">
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarItemData.resx">
       <DependentUpon>IDDCollarItemData.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Unready\IDDCollarK5.resx">

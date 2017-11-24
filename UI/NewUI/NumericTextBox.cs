@@ -58,6 +58,7 @@ namespace NewUI
                 if (!CheckRange(_Value))
                 {
                     MessageBox.Show(String.Format("The number must be between {0} and {1}", _Min.ToString(), _Max.ToString()));
+                    _Value = Min;
                     e.Cancel = true;
                 }
             }
@@ -91,6 +92,7 @@ namespace NewUI
             F4,
             F6,
             N3,
+            N4,
             P1
         }
         private Formatter _NumberFormat = Formatter.E6;
@@ -121,6 +123,8 @@ namespace NewUI
                         return "F6";
                     case(Formatter.N3):
                         return "N3";
+                    case (Formatter.N4):
+                        return "N4";
                     case (Formatter.P1):
                         return "P1";
                     case Formatter.NONE:
@@ -166,7 +170,7 @@ namespace NewUI
             get { return _NumStyles; }
             set { _NumStyles = value; }
         }
-        private double _Min = 0;
+        private double _Min = -1000;
         public double Min
         {
             get { return _Min; }

@@ -164,6 +164,7 @@ namespace NewUI
             EfficiencyTextBox.NumberFormat = NumericTextBox.Formatter.F4;
             EfficiencyTextBox.Value = det.SRParams.efficiency;
             EfficiencyTextBox.Min = 0;
+            EfficiencyTextBox.Max = 1;
 
             HighVoltageTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
             HighVoltageTextBox.NumStyles = System.Globalization.NumberStyles.Integer;
@@ -283,11 +284,36 @@ namespace NewUI
                 DeadtimeCoefficientATextBox.Value,DeadtimeCoefficientBTextBox.Value, DeadtimeCoefficientCTextBox.Value,MultiplicityDeadtimeTextBox.Value);
             bool modified = sr1.CompareTo(det.SRParams) != 0;
 
-            if (m_bgateTriggerTypeChange)
+            //Check for LM multiplicity records and update accordingly.
+            if (false && det.ListMode)  // TODO: IAEA check this for exepcted procedure steps
+            {
+                //Don't check for modification with LM, always set these defaults
+
+                //Otherwise, it will be added.
+                det.MultiplicityParams.gateWidthTics = (ulong)det.SRParams.gateLengthMS * 10;
+                //If we are collecting rates only for a LM device, set these hard-coded values for fast/slow.
+                if (det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                }
+                else
+                {
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                }
+                det.MultiplicityParams.FA = LMFA.Checked ? FAType.FAOn : FAType.FAOff;
+                modified = true;
+            }
+
+            if (m_bgateTriggerTypeChange)  // eliminate this choice?
             {
                 AcquireParameters acq = Integ.GetCurrentAcquireParamsFor(det);
                 acq.lm.FADefault = m_curGateTriggerType;
+                //det.SRParams.CopyValues(sr1);
+                //NC.App.DB.UpdateDetectorParams(det);
                 NC.App.DB.UpdateAcquireParams(acq, isLM: true); // update it
+                //modified = false;
             }
             if (det.Id.modified) // type changed only, so gotta save the change in the Detectors table, as well as the sr_parms table
             {

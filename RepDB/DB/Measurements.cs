@@ -85,12 +85,6 @@ namespace DB
             return db.DT(sSQL);
         }
 
-        //public long PrimaryKey(string name, DateTimeOffset dt, string type = null)
-        //{
-        //    db.SetConnection();
-        //    long id = Lookup(name, dt, type);
-        //    return id;
-        //}
 
         public long Create(ElementList sParams) 
         {

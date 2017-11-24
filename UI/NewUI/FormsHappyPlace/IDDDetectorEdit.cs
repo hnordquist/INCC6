@@ -27,7 +27,6 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Windows.Forms;
-using AnalysisDefs;
 
 namespace NewUI
 {
@@ -72,27 +71,5 @@ namespace NewUI
         {
 
         }
-
-		private void ShowEx_Click(object sender, EventArgs e)
-		{
-			//DBObjList x = new DBObjList();
-			//x.Objects.ShowItemToolTips = true;
-   //         x.Objects.Clear();
-  //          foreach (Detector d in NCC.CentralizedState.App.DB.Detectors)
-  //          {
-
-
-  //              ListViewItem lvi = new ListViewItem(new string[] {
-		//			});
-  //              listView1.Items.Add(lvi);
-  //              lvi.Tag = p;  // for proper column sorting
-  //              mlistIndex++;
-  //          }
-  //          MCount.Text = listView1.Items.Count.ToString() + " measurements";
-  //          if (listView1.SelectedItems.Count > 0)
-  //              MCountSel.Text = listView1.SelectedItems.Count.ToString();
-  //          else
-  //              MCountSel.Text = string.Empty;
-		}
 	}
 }

@@ -198,7 +198,6 @@ namespace NewUI
             if (ah.ap.isotopics_id != selected.id) /* They changed the isotopics id. Isotopics already saved to DB in IDDIsotopics*/
             {
                 ah.ap.isotopics_id = selected.id;
-                // NEXT: do new item id stuff right after this
             }
             else if (straight)     // same iso name from iso selector but params might have changed, new item id application update occurs elsewhere
             {
@@ -269,7 +268,7 @@ namespace NewUI
 				// if Verif + collar  get collar data
 				if (am.Has(AnalysisMethod.Collar))
 				{
-					dlgres = (new IDDCollarData().ShowDialog());
+					dlgres = (new IDDCollarItemData().ShowDialog());
 				}
 				// if Verif + curium ratio, get cm_pu_ratio w dlg; 
 				if (am.Has(AnalysisMethod.CuriumRatio))
@@ -287,9 +286,16 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
+            AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
+            if (am != null)
+            {
+                bool isCollar = Integ.GetMethodSelections(Integ.GetCurrentAcquireParams()).Has(AnalysisMethod.Collar);
 			if (string.IsNullOrEmpty(ItemIdComboBox.Text))
+                {
 				MessageBox.Show("You must enter an item id for this assay.", "ERROR");
-			else
+                }
+
+                else if (!isCollar)
 			{
                 // save/update item id changes only when user selects OK
                 ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
@@ -306,6 +312,26 @@ namespace NewUI
 					UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
 					Close();
 				}
+                    DialogResult = DialogResult.None;
+                }
+                else
+                {
+                    //Collar
+                    // save/update item id changes only when user selects OK
+                    ItemId Cur = NC.App.DB.ItemIds.Get(ah.ap.item_id);
+                    Cur.IsoApply(NC.App.DB.Isotopics.Get(ah.ap.isotopics_id));           // apply the iso dates to the item
+
+                    NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+                    NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list 
+
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show(string.Format("No analysis methods specified for detector {0} and material {1}", ah.ap.detector_id, ah.ap.item_type),
+                    "Verification", MessageBoxButtons.OK);
 			}
 		}
 

@@ -672,7 +672,6 @@
             this.Text = "Collar Calibration";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

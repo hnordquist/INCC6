@@ -39,26 +39,26 @@
             this.PassiveUraniumRadioButton = new System.Windows.Forms.RadioButton();
             this.HeavyMetalRadioButton = new System.Windows.Forms.RadioButton();
             this.ConventionalRadioButton = new System.Windows.Forms.RadioButton();
-            this.ATextBox = new System.Windows.Forms.TextBox();
-            this.BTextBox = new System.Windows.Forms.TextBox();
-            this.CTextBox = new System.Windows.Forms.TextBox();
-            this.DTextBox = new System.Windows.Forms.TextBox();
-            this.VarianceATextBox = new System.Windows.Forms.TextBox();
-            this.VarianceBTextBox = new System.Windows.Forms.TextBox();
-            this.VarianceCTextBox = new System.Windows.Forms.TextBox();
-            this.VarianceDTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceABTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceACTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceADTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceBCTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceBDTextBox = new System.Windows.Forms.TextBox();
-            this.CovarianceCDTextBox = new System.Windows.Forms.TextBox();
-            this.SigmaXTextBox = new System.Windows.Forms.TextBox();
-            this.HvyMetalRefTextBox = new System.Windows.Forms.TextBox();
-            this.HvyMetalWeightingTextBox = new System.Windows.Forms.TextBox();
-            this.U235PercentTextBox = new System.Windows.Forms.TextBox();
-            this.LowerMassLimitTextBox = new System.Windows.Forms.TextBox();
-            this.UpperMassLimitTextBox = new System.Windows.Forms.TextBox();
+            this.ATextBox = new NumericTextBox();
+            this.BTextBox = new NumericTextBox();
+            this.CTextBox = new NumericTextBox();
+            this.DTextBox = new NumericTextBox();
+            this.VarianceATextBox = new NumericTextBox();
+            this.VarianceBTextBox = new NumericTextBox();
+            this.VarianceCTextBox = new NumericTextBox();
+            this.VarianceDTextBox = new NumericTextBox();
+            this.CovarianceABTextBox = new NumericTextBox();
+            this.CovarianceACTextBox = new NumericTextBox();
+            this.CovarianceADTextBox = new NumericTextBox();
+            this.CovarianceBCTextBox = new NumericTextBox();
+            this.CovarianceBDTextBox = new NumericTextBox(); 
+            this.CovarianceCDTextBox = new NumericTextBox();
+            this.SigmaXTextBox = new NumericTextBox();
+            this.HvyMetalRefTextBox = new NumericTextBox();
+            this.HvyMetalWeightingTextBox = new NumericTextBox();
+            this.U235PercentTextBox = new NumericTextBox();
+            this.LowerMassLimitTextBox = new NumericTextBox();
+            this.UpperMassLimitTextBox = new NumericTextBox();
             this.PrintBtn = new System.Windows.Forms.Button();
             this.OKBtn = new System.Windows.Forms.Button();
             this.CancelBtn = new System.Windows.Forms.Button();
@@ -198,7 +198,9 @@
             this.ATextBox.Name = "ATextBox";
             this.ATextBox.Size = new System.Drawing.Size(100, 20);
             this.ATextBox.TabIndex = 4;
-            this.ATextBox.Leave += new System.EventHandler(this.ATextBox_Leave);
+            this.ATextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.ATextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.ATextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // BTextBox
             // 
@@ -206,7 +208,9 @@
             this.BTextBox.Name = "BTextBox";
             this.BTextBox.Size = new System.Drawing.Size(100, 20);
             this.BTextBox.TabIndex = 5;
-            this.BTextBox.Leave += new System.EventHandler(this.BTextBox_Leave);
+            this.BTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.BTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.BTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // CTextBox
             // 
@@ -214,7 +218,9 @@
             this.CTextBox.Name = "CTextBox";
             this.CTextBox.Size = new System.Drawing.Size(100, 20);
             this.CTextBox.TabIndex = 6;
-            this.CTextBox.Leave += new System.EventHandler(this.CTextBox_Leave);
+            this.CTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // DTextBox
             // 
@@ -222,7 +228,9 @@
             this.DTextBox.Name = "DTextBox";
             this.DTextBox.Size = new System.Drawing.Size(100, 20);
             this.DTextBox.TabIndex = 7;
-            this.DTextBox.Leave += new System.EventHandler(this.DTextBox_Leave);
+            this.DTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.DTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.DTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // VarianceATextBox
             // 
@@ -230,7 +238,10 @@
             this.VarianceATextBox.Name = "VarianceATextBox";
             this.VarianceATextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceATextBox.TabIndex = 8;
-            this.VarianceATextBox.Leave += new System.EventHandler(this.VarianceATextBox_Leave);
+            this.VarianceATextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.VarianceATextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.VarianceATextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // VarianceBTextBox
             // 
@@ -238,7 +249,10 @@
             this.VarianceBTextBox.Name = "VarianceBTextBox";
             this.VarianceBTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceBTextBox.TabIndex = 9;
-            this.VarianceBTextBox.Leave += new System.EventHandler(this.VarianceBTextBox_Leave);
+            this.VarianceBTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.VarianceBTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.VarianceBTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // VarianceCTextBox
             // 
@@ -246,7 +260,9 @@
             this.VarianceCTextBox.Name = "VarianceCTextBox";
             this.VarianceCTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceCTextBox.TabIndex = 10;
-            this.VarianceCTextBox.Leave += new System.EventHandler(this.VarianceCTextBox_Leave);
+            this.VarianceCTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.VarianceCTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.VarianceCTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // VarianceDTextBox
             // 
@@ -254,7 +270,10 @@
             this.VarianceDTextBox.Name = "VarianceDTextBox";
             this.VarianceDTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceDTextBox.TabIndex = 11;
-            this.VarianceDTextBox.Leave += new System.EventHandler(this.VarianceDTextBox_Leave);
+            this.VarianceDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.VarianceDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.VarianceDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // CovarianceABTextBox
             // 
@@ -262,7 +281,10 @@
             this.CovarianceABTextBox.Name = "CovarianceABTextBox";
             this.CovarianceABTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceABTextBox.TabIndex = 12;
-            this.CovarianceABTextBox.Leave += new System.EventHandler(this.CovarianceABTextBox_Leave);
+            this.CovarianceABTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceABTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceABTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // CovarianceACTextBox
             // 
@@ -270,7 +292,10 @@
             this.CovarianceACTextBox.Name = "CovarianceACTextBox";
             this.CovarianceACTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceACTextBox.TabIndex = 13;
-            this.CovarianceACTextBox.Leave += new System.EventHandler(this.CovarianceACTextBox_Leave);
+            this.CovarianceACTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceACTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceACTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // CovarianceADTextBox
             // 
@@ -278,7 +303,10 @@
             this.CovarianceADTextBox.Name = "CovarianceADTextBox";
             this.CovarianceADTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceADTextBox.TabIndex = 14;
-            this.CovarianceADTextBox.Leave += new System.EventHandler(this.CovarianceADTextBox_Leave);
+            this.CovarianceADTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceADTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceADTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // CovarianceBCTextBox
             // 
@@ -286,7 +314,10 @@
             this.CovarianceBCTextBox.Name = "CovarianceBCTextBox";
             this.CovarianceBCTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceBCTextBox.TabIndex = 15;
-            this.CovarianceBCTextBox.Leave += new System.EventHandler(this.CovarianceBCTextBox_Leave);
+            this.CovarianceBCTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceBCTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceBCTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // CovarianceBDTextBox
             // 
@@ -294,7 +325,9 @@
             this.CovarianceBDTextBox.Name = "CovarianceBDTextBox";
             this.CovarianceBDTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceBDTextBox.TabIndex = 16;
-            this.CovarianceBDTextBox.Leave += new System.EventHandler(this.CovarianceBDTextBox_Leave);
+            this.CovarianceBDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceBDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceBDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // CovarianceCDTextBox
             // 
@@ -302,7 +335,9 @@
             this.CovarianceCDTextBox.Name = "CovarianceCDTextBox";
             this.CovarianceCDTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceCDTextBox.TabIndex = 17;
-            this.CovarianceCDTextBox.Leave += new System.EventHandler(this.CovarianceCDTextBox_Leave);
+            this.CovarianceCDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.CovarianceCDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.CovarianceCDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // SigmaXTextBox
             // 
@@ -310,7 +345,9 @@
             this.SigmaXTextBox.Name = "SigmaXTextBox";
             this.SigmaXTextBox.Size = new System.Drawing.Size(100, 20);
             this.SigmaXTextBox.TabIndex = 18;
-            this.SigmaXTextBox.Leave += new System.EventHandler(this.SigmaXTextBox_Leave);
+            this.SigmaXTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.SigmaXTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.SigmaXTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // HvyMetalRefTextBox
             // 
@@ -319,7 +356,9 @@
             this.HvyMetalRefTextBox.Size = new System.Drawing.Size(100, 20);
             this.HvyMetalRefTextBox.TabIndex = 19;
             this.toolTip1.SetToolTip(this.HvyMetalRefTextBox, resources.GetString("HvyMetalRefTextBox.ToolTip"));
-            this.HvyMetalRefTextBox.Leave += new System.EventHandler(this.HvyMetalRefTextBox_Leave);
+            this.HvyMetalRefTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.HvyMetalRefTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.HvyMetalRefTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // HvyMetalWeightingTextBox
             // 
@@ -328,7 +367,9 @@
             this.HvyMetalWeightingTextBox.Size = new System.Drawing.Size(100, 20);
             this.HvyMetalWeightingTextBox.TabIndex = 20;
             this.toolTip1.SetToolTip(this.HvyMetalWeightingTextBox, resources.GetString("HvyMetalWeightingTextBox.ToolTip"));
-            this.HvyMetalWeightingTextBox.Leave += new System.EventHandler(this.HvyMetalWeightingTextBox_Leave);
+            this.HvyMetalWeightingTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.HvyMetalWeightingTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.HvyMetalWeightingTextBox.NumberFormat = NumericTextBox.Formatter.E3;
             // 
             // U235PercentTextBox
             // 
@@ -337,7 +378,10 @@
             this.U235PercentTextBox.Size = new System.Drawing.Size(100, 20);
             this.U235PercentTextBox.TabIndex = 21;
             this.toolTip1.SetToolTip(this.U235PercentTextBox, resources.GetString("U235PercentTextBox.ToolTip"));
-            this.U235PercentTextBox.Leave += new System.EventHandler(this.U235PercentTextBox_Leave);
+            this.U235PercentTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.U235PercentTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.U235PercentTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // LowerMassLimitTextBox
             // 
@@ -345,7 +389,10 @@
             this.LowerMassLimitTextBox.Name = "LowerMassLimitTextBox";
             this.LowerMassLimitTextBox.Size = new System.Drawing.Size(100, 20);
             this.LowerMassLimitTextBox.TabIndex = 22;
-            this.LowerMassLimitTextBox.Leave += new System.EventHandler(this.LowerMassLimitTextBox_Leave);
+            this.LowerMassLimitTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.LowerMassLimitTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.LowerMassLimitTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
             // 
             // UpperMassLimitTextBox
             // 
@@ -353,7 +400,11 @@
             this.UpperMassLimitTextBox.Name = "UpperMassLimitTextBox";
             this.UpperMassLimitTextBox.Size = new System.Drawing.Size(100, 20);
             this.UpperMassLimitTextBox.TabIndex = 23;
-            this.UpperMassLimitTextBox.Leave += new System.EventHandler(this.UpperMassLimitTextBox_Leave);
+            this.UpperMassLimitTextBox.ToValidate = NumericTextBox.ValidateType.Double;
+            this.UpperMassLimitTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
+            this.UpperMassLimitTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+
+
             // 
             // PrintBtn
             // 
@@ -691,26 +742,26 @@
         private System.Windows.Forms.RadioButton PassiveUraniumRadioButton;
         private System.Windows.Forms.RadioButton HeavyMetalRadioButton;
         private System.Windows.Forms.RadioButton ConventionalRadioButton;
-        private System.Windows.Forms.TextBox ATextBox;
-        private System.Windows.Forms.TextBox BTextBox;
-        private System.Windows.Forms.TextBox CTextBox;
-        private System.Windows.Forms.TextBox DTextBox;
-        private System.Windows.Forms.TextBox VarianceATextBox;
-        private System.Windows.Forms.TextBox VarianceBTextBox;
-        private System.Windows.Forms.TextBox VarianceCTextBox;
-        private System.Windows.Forms.TextBox VarianceDTextBox;
-        private System.Windows.Forms.TextBox CovarianceABTextBox;
-        private System.Windows.Forms.TextBox CovarianceACTextBox;
-        private System.Windows.Forms.TextBox CovarianceADTextBox;
-        private System.Windows.Forms.TextBox CovarianceBCTextBox;
-        private System.Windows.Forms.TextBox CovarianceBDTextBox;
-        private System.Windows.Forms.TextBox CovarianceCDTextBox;
-        private System.Windows.Forms.TextBox SigmaXTextBox;
-        private System.Windows.Forms.TextBox HvyMetalRefTextBox;
-        private System.Windows.Forms.TextBox HvyMetalWeightingTextBox;
-        private System.Windows.Forms.TextBox U235PercentTextBox;
-        private System.Windows.Forms.TextBox LowerMassLimitTextBox;
-        private System.Windows.Forms.TextBox UpperMassLimitTextBox;
+        private NumericTextBox ATextBox;
+        private NumericTextBox BTextBox;
+        private NumericTextBox CTextBox;
+        private NumericTextBox DTextBox;
+        private NumericTextBox VarianceATextBox;
+        private NumericTextBox VarianceBTextBox;
+        private NumericTextBox VarianceCTextBox;
+        private NumericTextBox VarianceDTextBox;
+        private NumericTextBox CovarianceABTextBox;
+        private NumericTextBox CovarianceACTextBox;
+        private NumericTextBox CovarianceADTextBox;
+        private NumericTextBox CovarianceBCTextBox;
+        private NumericTextBox CovarianceBDTextBox;
+        private NumericTextBox CovarianceCDTextBox;
+        private NumericTextBox SigmaXTextBox;
+        private NumericTextBox HvyMetalRefTextBox;
+        private NumericTextBox HvyMetalWeightingTextBox;
+        private NumericTextBox U235PercentTextBox;
+        private NumericTextBox LowerMassLimitTextBox;
+        private NumericTextBox UpperMassLimitTextBox;
         private System.Windows.Forms.Button PrintBtn;
         private System.Windows.Forms.Button OKBtn;
         private System.Windows.Forms.Button CancelBtn;

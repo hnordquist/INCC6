@@ -216,13 +216,13 @@ namespace AnalysisDefs
                 //10240 NOT a reasonable default value for FA analysis per Martyn. HN 6.24.2015
                 if (FA == FAType.FAOn)
                 {
-                    backgroundGateTimeStepInTics = 2;
-                    accidentalsGateDelayInTics = 2;
+                    backgroundGateTimeStepInTics = 10;
+                    accidentalsGateDelayInTics = 10; // 1Mhz
                 }
                 else
                 {
-                    backgroundGateTimeStepInTics = 10240;
-                    accidentalsGateDelayInTics = 10240; // 10240 matches some traditional HW, larger values produce more accurate results, but slow down the processing
+                    backgroundGateTimeStepInTics = 40960;
+                    accidentalsGateDelayInTics = 40960; // Per Daniela // 10240 matches some traditional HW, larger values produce more accurate results, but slow down the processing
                 }
                 SR = new ShiftRegisterParameters();
             }

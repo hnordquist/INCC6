@@ -126,8 +126,11 @@ namespace AnalysisDefs
         public double RAfactorialMoment0, RAfactorialMoment1, RAfactorialMoment2, RAfactorialMoment3;
         //so-called Accidentals (A) factorial moments
         public double AfactorialMoment0, AfactorialMoment1, AfactorialMoment2, AfactorialMoment3;
+        public double AfactorialAlphaMoment1, RAfactorialAlphaMoment1;
+        public double AfactorialBetaMoment2, RAfactorialBetaMoment2;
 
         public List<string> warnings = new List<string>();
+
     }
     sealed public class FeynmanResult
     {

@@ -156,6 +156,9 @@ namespace NewUI
             {
                 modified = m_iso.modified = true;
                 m_iso.am_date = dt;
+                //set Pu date if Am date is changed. HN 10/17/2017 Issue #165
+                m_iso.pu_date = new DateTime(dt.Ticks);
+                PuDateTimePicker.Value = m_iso.am_date;   
             }
         }
 

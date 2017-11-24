@@ -620,7 +620,7 @@ namespace NCCTransfer
 				a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
 				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
 				TransferUtils.Copy(b, m.collar_detector_item_type);
-				m.collar_detector_mode = (byte)(imr.collar_det.collar_mode ? 1 : 0);
+                m.collar_detector_mode = _collarTypeByteTransform(imr.collar_det.collar_mode);
 
 				b = new byte[INCC.DATE_TIME_LENGTH];
 				a = imr.collar_det.reference_date.ToString("yy.MM.dd").ToCharArray();
@@ -663,7 +663,7 @@ namespace NCCTransfer
 				m.col_u_mass_corr_fact_a_err = imr.collar.u_mass_corr_fact_a.err;
 				m.col_u_mass_corr_fact_b = imr.collar.u_mass_corr_fact_b.v;
 				m.col_u_mass_corr_fact_b_err = imr.collar.u_mass_corr_fact_b.err;
-				m.collar_mode = (byte)(imr.collar.collar_mode ? 1 : 0);
+				m.collar_mode = (byte)imr.collar_det.collar_mode;
 
 				byte[] bb = new byte[INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH];
 				int indx = 0;
@@ -694,7 +694,7 @@ namespace NCCTransfer
 				TransferUtils.Copy(b, m.collar_k5_item_type);
 				CopyTuples(imr.k5.k5, m.collar_k5, m.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
 				TransferUtils.CopyBoolsToInts(imr.k5.k5_checkbox, m.collar_k5_checkbox);
-				m.collar_k5_mode = (byte)(imr.k5.k5_mode ? 1 : 0);
+				m.collar_k5_mode = _collarTypeByteTransform(imr.k5.k5_mode);
 
 				byte[] bb = new byte[INCC.MAX_COLLAR_K5_PARAMETERS * INCC.MAX_K5_LABEL_LENGTH];
 				int indx = 0;
@@ -841,7 +841,7 @@ namespace NCCTransfer
 				b = StringSquish(m.AcquireState.item_type, INCC.MAX_ITEM_TYPE_LENGTH);
 				TransferUtils.Copy(b, rec.results_item_type);
 
-				rec.results_collar_mode = (byte)(m.AcquireState.collar_mode ? 1 : 0);
+				rec.results_collar_mode = _collarTypeByteTransform(m.AcquireState.collar_mode);
 
                 b = StringSquish(m.Detector.Id.DetectorId, INCC.MAX_DETECTOR_ID_LENGTH);
 				TransferUtils.Copy(b, rec.results_detector_id);
@@ -1524,7 +1524,7 @@ namespace NCCTransfer
 					StatePack(m.pass, res.col_pass_fail);
 					StrToBytes(INCC.MAX_DETECTOR_ID_LENGTH, ias.Methods.selector.detectorid, res.col_collar_detector_id);
 					StrToBytes(INCC.MAX_ITEM_TYPE_LENGTH, ias.Methods.selector.material, res.col_collar_item_type);
-					res.col_collar_mode = (byte)(m.methodParams.collar.collar_mode ? 1 : 0);
+					res.col_collar_mode = _collarTypeByteTransform(m.methodParams.collar.collar_mode);
 					res.col_collar_equation = (byte)m.methodParamsC.cev.cal_curve_equation;
 					res.col_a_res = m.methodParamsC.cev.a;
 					res.col_b_res = m.methodParamsC.cev.b;
@@ -2470,6 +2470,7 @@ namespace NCCTransfer
  							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
 							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf, sel, collar_k5.collar_k5_mode);
+                            //NEXT: What to do w/AmLi vs Cf here? hn 1/26/17
 							if (combined != null)
 								am.AddMethod(AnalysisMethod.Collar, combined);							
                             break;
@@ -2591,7 +2592,7 @@ namespace NCCTransfer
 		unsafe void CollarK5(INCCAnalysisParams.collar_combined_rec combined, collar_k5_rec collar_k5, ushort bonk)
 		{
 			combined.k5 = new INCCAnalysisParams.collar_k5_rec();
-			combined.k5.k5_mode = (collar_k5.collar_k5_mode  != 0 ? true: false);
+			combined.k5.k5_mode = (CollarType)collar_k5.collar_k5_mode;
 			combined.k5.k5_item_type = TransferUtils.str(collar_k5.collar_k5_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
 			combined.k5.k5 = Copy(collar_k5.collar_k5, collar_k5.collar_k5_err, INCC.MAX_COLLAR_K5_PARAMETERS);
 			combined.k5.k5_checkbox = TransferUtils.Copy(collar_k5.collar_k5_checkbox,INCC.MAX_COLLAR_K5_PARAMETERS);
@@ -2606,7 +2607,7 @@ namespace NCCTransfer
 		unsafe void CollarDet(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
 		{
 			combined.collar_det = new INCCAnalysisParams.collar_detector_rec();
-			combined.collar_det.collar_mode = (collar_detector.collar_detector_mode == 0 ? false : true);
+            combined.collar_det.collar_mode = (CollarType)collar_detector.collar_detector_mode;
 			combined.collar_det.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
 			combined.collar_det.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
 			mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
@@ -2638,7 +2639,7 @@ namespace NCCTransfer
 			combined.collar.poison_rod_a = Copy(collar.col_poison_rod_a, collar.col_poison_rod_a_err, INCC.MAX_POISON_ROD_TYPES);
 			combined.collar.poison_rod_b = Copy(collar.col_poison_rod_b, collar.col_poison_rod_b_err, INCC.MAX_POISON_ROD_TYPES);
 			combined.collar.poison_rod_c = Copy(collar.col_poison_rod_c, collar.col_poison_rod_c_err, INCC.MAX_POISON_ROD_TYPES);
-			combined.collar.collar_mode = (collar.collar_mode == 0 ? false : true);
+            combined.collar.collar_mode = (CollarType)collar.collar_mode;
 			combined.collar.u_mass_corr_fact_a.v = collar.col_u_mass_corr_fact_a;
 			combined.collar.u_mass_corr_fact_a.err = collar.col_u_mass_corr_fact_a_err;
 			combined.collar.u_mass_corr_fact_b.v = collar.col_u_mass_corr_fact_b;
@@ -2653,6 +2654,11 @@ namespace NCCTransfer
 			}
 			mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- Collar params has mode {0} {1}", combined.collar.collar_mode, bonk);
 		}
+
+        internal static byte _collarTypeByteTransform(CollarType t)
+        {
+            return (byte)(t == 0 ? 0x0 : 0x1);  // non-zero treated as AmLiFast
+        }
 
 		#region measurement data transfer
 
@@ -3720,18 +3726,18 @@ namespace NCCTransfer
                         newres.methodParamsC.poison_rod_a[0] = new Tuple(oldres.col_poison_rod_a_res, oldres.col_poison_rod_a_err_res);
                         newres.methodParamsC.poison_rod_b[0] = new Tuple(oldres.col_poison_rod_b_res, oldres.col_poison_rod_b_err_res);
                         newres.methodParamsC.poison_rod_c[0] = new Tuple(oldres.col_poison_rod_c_res, oldres.col_poison_rod_c_err_res);
-                        newres.methodParamsC.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsC.collar_mode = (CollarType)oldres.col_collar_mode;
                         newres.methodParamsC.number_calib_rods = (int)oldres.col_number_calib_rods_res;
                         newres.methodParamsC.poison_rod_type[0] = TransferUtils.str(oldres.col_poison_rod_type_res, INCC.MAX_ROD_TYPE_LENGTH);
                         newres.methodParamsC.u_mass_corr_fact_a.v = oldres.col_u_mass_corr_fact_a_res; newres.methodParamsC.u_mass_corr_fact_a.err = oldres.col_u_mass_corr_fact_a_err_res;
                         newres.methodParamsC.u_mass_corr_fact_b.v = oldres.col_u_mass_corr_fact_b_res; newres.methodParamsC.u_mass_corr_fact_b.err = oldres.col_u_mass_corr_fact_b_err_res;
                         newres.methodParamsC.sample_corr_fact.v = oldres.col_sample_corr_fact_res; newres.methodParamsC.sample_corr_fact.err = oldres.col_sample_corr_fact_err_res;
 
-                        newres.methodParamsDetector.collar_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsDetector.collar_mode = (CollarType)oldres.col_collar_mode;
                         newres.methodParamsDetector.reference_date = INCC.DateFrom(TransferUtils.str(oldres.col_reference_date_res, INCC.DATE_TIME_LENGTH));
                         newres.methodParamsDetector.relative_doubles_rate = oldres.col_relative_doubles_rate_res;
 
-                        newres.methodParamsK5.k5_mode = (oldres.col_collar_mode == 0 ? false : true);
+                        newres.methodParamsK5.k5_mode = (CollarType)oldres.col_collar_mode;
                         newres.methodParamsK5.k5_item_type = TransferUtils.str(oldres.col_collar_item_type, INCC.MAX_ITEM_TYPE_LENGTH);
                         newres.methodParamsK5.k5 = Copy(oldres.collar_k5_res, oldres.collar_k5_err_res, INCC.MAX_COLLAR_K5_PARAMETERS);
                         newres.methodParamsK5.k5_checkbox = TransferUtils.Copy(oldres.collar_k5_checkbox_res, INCC.MAX_COLLAR_K5_PARAMETERS);

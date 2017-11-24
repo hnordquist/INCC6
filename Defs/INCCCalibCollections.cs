@@ -240,7 +240,7 @@ namespace AnalysisDefs
 						case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = (md.Item2).ToDBElementList();
 							break;
-                        case AnalysisMethod.Collar:  // bad mojo with the design break here
+                        case AnalysisMethod.Collar:  // Now hold somewhere else.
 							parms = (md.Item2).ToDBElementList();
 							db.UpdateCalib(detname, mat, parms.OptTable, parms);
 							parms = (md.Item2).ToDBElementList();
@@ -480,7 +480,7 @@ namespace AnalysisDefs
                         dr = db.Get(sel.detectorid, sel.material, "collar_detector_rec");
                         if (dr != null)
                         {
-                            cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
+                            cr.collar_det.collar_mode = (CollarType)DB.Utils.DBInt32(dr["collar_detector_mode"]);
                             cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
                             cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
                         }
@@ -490,7 +490,7 @@ namespace AnalysisDefs
                         if (dr != null)
                         {
                             CalCurveDBSnock(cr.collar.cev, dr);
-                            cr.collar.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
+                            cr.collar.collar_mode = (CollarType)DB.Utils.DBInt32(dr["collar_mode"]);
                             cr.collar.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
                             cr.collar.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
                             cr.collar.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
@@ -509,7 +509,7 @@ namespace AnalysisDefs
 						dr = db.Get(sel.detectorid, sel.material, "collar_k5_rec");
                         if (dr != null)
                         {
-                            cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+                            cr.k5.k5_mode = (CollarType)DB.Utils.DBInt32(dr["k5_mode"]);
                             cr.k5.k5_checkbox = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
 							cr.k5.k5_item_type = string.Copy(sel.material);
 							cr.k5.k5_label = DB.Utils.ReifyStrings(dr["k5_label"].ToString());
@@ -877,7 +877,7 @@ namespace AnalysisDefs
 
                             INCCAnalysisParams.collar_combined_rec cr = res.methodParams;
                             CalCurveDBSnock(cr.collar.cev, dr);
-                            cr.collar.collar_mode = DB.Utils.DBBool(dr["collar_mode"]);
+                            cr.collar.collar_mode = (CollarType)DB.Utils.DBInt32(dr["collar_mode"]);
                             cr.collar.number_calib_rods = DB.Utils.DBInt32(dr["number_calib_rods"]);
                             cr.collar.sample_corr_fact.v = DB.Utils.DBDouble(dr["sample_corr_fact"]);
                             cr.collar.sample_corr_fact.err = DB.Utils.DBDouble(dr["sample_corr_fact_err"]);
@@ -893,13 +893,13 @@ namespace AnalysisDefs
 
 							if (di < dt_collar_detector_rec_m.Rows.Count)
 								dr = dt_collar_detector_rec_m.Rows[di];
-                            cr.collar_det.collar_mode = DB.Utils.DBBool(dr["collar_detector_mode"]);
+                            cr.collar_det.collar_mode = (CollarType)DB.Utils.DBInt32(dr["collar_detector_mode"]);
                             cr.collar_det.reference_date = DB.Utils.DBDateTime(dr["reference_date"]);
                             cr.collar_det.relative_doubles_rate = DB.Utils.DBDouble(dr["relative_doubles_rate"]);
 
 							if (di < dt_collar_k5_rec_m.Rows.Count)
 								dr = dt_collar_k5_rec_m.Rows[di];
-							cr.k5.k5_mode = DB.Utils.DBBool(dr["k5_mode"]);
+							cr.k5.k5_mode = (CollarType)DB.Utils.DBInt32(dr["k5_mode"]);
                             bool[] b = DB.Utils.ReifyBools(dr["k5_checkbox"].ToString());
                             for (int i = 0; i < b.Length && i < INCCAnalysisParams.MAX_COLLAR_K5_PARAMETERS; i++)
                                 cr.k5.k5_checkbox[i] = b[i];
@@ -1099,7 +1099,7 @@ namespace AnalysisDefs
                         case AnalysisMethod.CuriumRatio:
                         case AnalysisMethod.Active:
                         case AnalysisMethod.ActivePassive:
-                        case AnalysisMethod.Collar: // bad mojo with the design break here
+                        case AnalysisMethod.Collar: // Will hold Cf/AmLi in the int for collar mode instead. 
                         case AnalysisMethod.ActiveMultiplicity:
                         case AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE:
                             parms = ((ParameterBase)md.Item2).ToDBElementList();

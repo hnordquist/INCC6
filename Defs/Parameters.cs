@@ -951,7 +951,7 @@ namespace AnalysisDefs
         public ErrorCalculationTechnique error_calc_method;
         public string inventory_change_code;
         public string io_code;
-        public bool collar_mode;
+        public CollarType collar_mode;
         public double drum_empty_weight;
         protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;
@@ -984,7 +984,7 @@ namespace AnalysisDefs
             max_num_runs = 1000;
             meas_precision = 1.0;
             well_config = WellConfiguration.Passive;
-            error_calc_method = ErrorCalculationTechnique.Theoretical;
+            error_calc_method = ErrorCalculationTechnique.Sample;
             inventory_change_code = string.Empty;
             io_code = string.Empty;
 			ending_comment_str = string.Empty;
@@ -1139,7 +1139,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("error_calc_method", (int)error_calc_method));
             this.ps.Add(new DBParamEntry("inventory_change_code", inventory_change_code));
             this.ps.Add(new DBParamEntry("io_code", io_code));
-            this.ps.Add(new DBParamEntry("collar_mode", collar_mode));
+            this.ps.Add(new DBParamEntry("collar_mode", (int)collar_mode));
             this.ps.Add(new DBParamEntry("drum_empty_weight", drum_empty_weight));
             this.ps.Add(new DBParamEntry("MeasDate", _MeasDateTime));
             this.ps.Add(new DBParamEntry("CheckDate", _CheckDateTime));

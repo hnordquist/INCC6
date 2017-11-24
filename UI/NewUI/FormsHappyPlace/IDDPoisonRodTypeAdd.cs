@@ -74,6 +74,7 @@ namespace NewUI
             {
                 if (NC.App.DB.PoisonRods.Has(model))  // it is already there, nothing to do, user must select cancel (INCC5-style) to close
                 {
+                DialogResult = DialogResult.Cancel;
                     return;
                 }
                 else
@@ -84,6 +85,7 @@ namespace NewUI
                     RefreshCombo(pick:true);
                 }
             }
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)

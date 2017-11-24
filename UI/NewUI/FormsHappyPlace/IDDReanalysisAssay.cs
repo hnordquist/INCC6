@@ -188,7 +188,7 @@ namespace NewUI
 				// if Verif + collar  get collar data
 				if (am.Has(AnalysisMethod.Collar))
 				{
-					dlgres = (new IDDCollarData().ShowDialog());
+					dlgres = (new IDDCollarItemData().ShowDialog());
 				}
 				// if Verif + curium ratio, get cm_pu_ratio w dlg; 
 				if (am.Has(AnalysisMethod.CuriumRatio))

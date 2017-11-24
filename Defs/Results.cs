@@ -1221,6 +1221,10 @@ namespace AnalysisDefs
         }
         public double[] RAFactorialMoments;
         public double[] AFactorialMoments;
+        public double AFactorialAlphaMoment1;
+        public double RAFactorialAlphaMoment1;
+        public double AFactorialBetaMoment2;
+        public double RAFactorialBetaMoment2;
 
         double _RASum, _ASum, _UnASum, _S1Sum, _S2Sum;
 

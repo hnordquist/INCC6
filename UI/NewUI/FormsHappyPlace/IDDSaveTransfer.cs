@@ -79,7 +79,7 @@ namespace NewUI
                         m.Cycles.AddRange(cl);
 						// NEXT: m.CFCyles for AAS not used for INCC6 created measurements, only INCC5 transfer measurements have them m.Add(c, i);
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
-						m.ReportRecalc(); // not strictly from INCC5 
+						m.ReportRecalc(); // dev note: not strictly from INCC5, but based on usage complaint from LANL 
 					}
 					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
 					foreach (INCCTransferFile itd in itdl)

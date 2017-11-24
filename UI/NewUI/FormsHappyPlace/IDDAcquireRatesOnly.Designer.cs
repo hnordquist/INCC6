@@ -310,7 +310,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(489, 532);
+            this.ClientSize = new System.Drawing.Size(489, 531);
             this.Controls.Add(this.HelpBtn);
             this.Controls.Add(this.CancelBtn);
             this.Controls.Add(this.OKButton);

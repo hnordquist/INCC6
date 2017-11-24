@@ -622,7 +622,7 @@ namespace AnalysisDefs
         // suitable for spreadsheet use, convert to lines by ToString() on each row entry
         public virtual List<NCCReporter.Row> ToColumns(Measurement m) { return new List<NCCReporter.Row>(); }
 
-        public override void GenParamList()  // force implementation in subclasses
+        public override void GenParamList()  // NEXT: check this, make virtual? abstract? to force implementation in subclasses
         {
 			ps = new List<DBParamEntry>();
         }

@@ -412,6 +412,7 @@ namespace DAQ
         {
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             SRControlThread srct = (SRControlThread)sender;
+            srct.sri.RDT.Init(NC.App.Loggers.DataLogger, NC.App.Loggers.AppLogger); // URGENT: Added? check this
             SRControl sr = srct.SRCtrl;
             string identifier = "<unset>";
             sr.Log.TraceEvent(LogLevels.Verbose, 87200, "Starting new SR thread");

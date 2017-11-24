@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Nov 16, 2017 (NDATest)
+6.18 Nov 24, 2017 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -117,7 +117,6 @@ See https://github.com/hnordquist/INCC6/issues
 
 
 Issues for basic INCC5/6 feature COMPLETION
-#84  Implement Collar
 #35  Hold-up analysis required
 ***  Active/Passive paired measurements
 ***  Truncated multiplicity and some multiplicity analyses, (e.g. dual-energy) are incomplete
@@ -139,7 +138,8 @@ Issues for production
 
 Closed issues
 
-6.18 Nov 10, 2017  ************
+6.18 Nov 24, 2017  ************
+***  LANL: collar implementation, assorted minor changes
 ***  Basic IAEA Dataz file support added
 ***  iRAP integration support added, cmd line only
 
