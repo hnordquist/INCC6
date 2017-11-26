@@ -642,7 +642,7 @@ namespace NCCConfig
             resetVal(NCCFlags.dailyRootPath, false, typeof(bool));
  
             resetVal(NCCFlags.logging, false, typeof(bool));
-            //resetVal(LMFlags.logAutoPath, false, typeof(bool));
+            resetVal(NCCFlags.quiet, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (int)TraceOptions.None, typeof(int));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
@@ -957,6 +957,12 @@ namespace NCCConfig
             set { setVal(NCCFlags.logging, value); }
         }
 
+        public bool Quiet
+        {
+            get { return (bool)getVal(NCCFlags.quiet); }
+            set { setVal(NCCFlags.quiet, value); }
+        }
+        
         /// <summary>
         /// integer representation of enum TraceOptions bitmap flag  
         /// </summary>

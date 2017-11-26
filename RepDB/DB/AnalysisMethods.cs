@@ -45,21 +45,22 @@ namespace DB
             GC.SuppressFinalize(this);
         }
 
-		protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
-			if (disposing)
-            try
-            {
-                if (db != null)
+            if (disposing)
+                try
                 {
-                    db . Dispose();
-						db = null;
+                    if (db != null)
+                    {
+                        db.Dispose();
+                        db = null;
+                    }
                 }
-            }
-            catch (Exception caught)
-            {
-                Console.WriteLine(caught.Message);
-            }
+                catch (Exception caught)
+                {
+                    if (!DBMain.ConsoleQuiet)
+                        Console.WriteLine(caught.Message);
+                }
         }
         public DataTable Methods()
         {

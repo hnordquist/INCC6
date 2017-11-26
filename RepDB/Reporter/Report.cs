@@ -82,7 +82,7 @@ namespace NCCReporter
         /// </summary>
         /// <param name="et">the column header type</param>
         /// <param name="loggers">the logger handle, lines are output to the logger as well as the output file</param>
-        public TabularReport(System.Type et, LMLoggers loggers)
+        public TabularReport(Type et, LMLoggers loggers)
         {
             this.loggers = loggers;
             Separator = ',';

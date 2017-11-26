@@ -47,29 +47,29 @@ namespace DB
         // The hook to the outside context of the DB class 
         public static Persistence pest;
 
+        public static bool ConsoleQuiet;
+
         /// <summary>
         /// Logs a message to the now defunct database logger.
         /// Now just logs to the console.
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string message, bool forceconsole = false)
         {
-            //if (!forceconsole && pest.logger != null)
-            //    pest.logger.TraceEvent(eventType, id, message);
-            //else
-                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(message));
+            if (ConsoleQuiet)
+                return;
+            Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(message));
         }
 
         /// <summary>
         /// Logs a message to the database logger.
-        /// Composes the .ENT format string with the args to prepare the message string.
+        /// Composes the .NET format string with the args to prepare the message string.
         /// If logger not defined, logs to the console.
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string format, params object[] args)
         {
-            //if (pest.logger != null)
-            //    pest.logger.TraceEvent(eventType, id, format, args);
-            //else
-                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
+            if (ConsoleQuiet)
+                return;
+            Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
       }
 
         public enum DbsWeLove { 
@@ -293,7 +293,8 @@ namespace DB
             }
             else
             {
-                Console.WriteLine(DBExceptionString(dbx, sql));
+                if (!ConsoleQuiet)
+                    Console.WriteLine(DBExceptionString(dbx, sql));
             }
             return neednew;
         }
@@ -765,7 +766,7 @@ namespace DB
 				}
 			} catch (Exception caught)
 			{
-				Console.WriteLine(caught.Message);
+                DBMain.AltLog(LogLevels.Error, 70130, caught.Message);
 			}
 		}
 		public void Dispose()

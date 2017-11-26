@@ -76,7 +76,7 @@ namespace NCCCmd
 				return;
 			}
 
-			LMLoggers.LognLM applog = N.App.ControlLogger;
+            LMLoggers.LognLM applog = N.App.ControlLogger;
 			bool OpenResults = N.App.AppContext.OpenResults;
 			try
 			{

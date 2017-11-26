@@ -41,6 +41,16 @@ namespace NCCReporter
         Warning = TraceEventType.Warning, Info = TraceEventType.Information, Verbose = TraceEventType.Verbose
     };
 
+    //// Keep LMLoggers for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+    //// Some non-core classes and methods were moved into the core project after the first division, no notice or reasons given
+    //public class Logging : LMLoggers
+    //{
+    //    public Logging(NCCConfig.Config cfg) : base(cfg)
+    //    {
+
+    //    }
+    //}
+
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
     // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
     public class LMLoggers
@@ -79,7 +89,8 @@ namespace NCCReporter
             {
                 LognLM l = new LognLM(wp.ToString(), cfg, pid);
                 reps.Add(wp, l);
-             }
+            }
+            DB.DBMain.ConsoleQuiet = cfg.App.Quiet;
         }
 
         public void Flush()
@@ -102,6 +113,16 @@ namespace NCCReporter
             }
         }
 
+        //// Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+        //// Some non-core classes and methods were moved into the core project after the first division, no notice or reasons given
+        //public class Log : LognLM
+        //{
+        //    public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+        //    {
+
+        //    }
+        //}
+
         public class LognLM
         {
 
@@ -119,6 +140,11 @@ namespace NCCReporter
             {
                 FileLogTraceListener listener = null;
                 ts = new TraceSource(section);
+
+                if (cfg.App.Quiet)
+                {
+                    ts.Listeners.Remove("console");
+                }
 
                 try
                 {
@@ -138,14 +164,14 @@ namespace NCCReporter
                             {
                                 listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
                                 listener.Location = LogFileLocation.Custom;
-                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName); 
+                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName);
                                 if (string.IsNullOrEmpty(x) || NCCConfig.Config.isDefaultPath(x))
                                     listener.CustomLocation = cfg.App.LogFilePath;
                                 else
                                     listener.CustomLocation = x;
                             }
                             else
-                                listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
+                                listener.BaseFileName = String.Format("I6[{0,4}]", pid); // add thread id here
                             listener.Append = true;
                             listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
@@ -162,7 +188,7 @@ namespace NCCReporter
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
@@ -187,20 +213,6 @@ namespace NCCReporter
             {
                 ts.Flush();
             }
-
-            // todo: once performance of logging is understood, move to external string storage based on event ids for all logging statements      
-            public void Log(Int32 id)	// Writes an externally defined message to the application's log listeners.
-            {
-                TraceEventType t = TraceEventType.Information; // deduce or mask from id
-                ts.TraceEvent(t, id);  // id is index into external string source (a dll or flat file)
-            }
-            public void Log(Int32 id, params object[] args)	// Writes an externally defined message to the application's log listeners.
-            {
-                TraceEventType t = TraceEventType.Information; // deduce or mask from id
-                ts.TraceEvent(t, id, "{0} {1} &c;", args); // look up format from external source
-            }
-
-
 
             // use these pass-throughs for now
 
@@ -268,7 +280,7 @@ namespace NCCReporter
             [Conditional("TRACE")]
             public void TraceData(LogLevels eventType, int id, params object[] data)
             {
-				if (!ShouldTrace(eventType))
+                if (!ShouldTrace(eventType))
                     return;
                 ts.TraceData((TraceEventType)eventType, id, data);
             }
@@ -445,47 +457,6 @@ namespace NCCReporter
                 if (stack)
                     ts.TraceEvent(TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
             }
-
-            public void TraceExceptionButNotToUI(Exception ex, bool stack = false)
-            {
-                TraceEventCache tec = new TraceEventCache();
-                System.Diagnostics.TraceListener tl = ts.Listeners["FileLog"];
-                if (tl != null)
-                {
-                    tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 999, ex.Source + ":" + ex.Message);
-                    if (stack)
-                        tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-                }
-                tl = ts.Listeners["console"];
-                if (tl != null)
-                {
-                    tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 999, ex.Source + ":" + ex.Message);
-                    if (stack)
-                        tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-                }
-            }
-
-            static public void TraceExceptionConsole(Exception ex, bool stack = false)
-            {
-                    Console.WriteLine("App\tError\t999\t" + ex.Source + ":" + ex.Message);
-                    if (stack)
-                        Console.WriteLine("App\tError\t998\t" + FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-            } 
-
-            // don't use these after all
-            //void WriteEntry(string m, TraceEventType t)	//Writes a message to the application's log listeners.
-            //{
-            //}
-            //void WriteEntry(String m, TraceEventType t, Int32 id)	// Writes a message to the application's log listeners.
-            //{
-            //}
-
-            //void WriteException(Exception ex, TraceEventType t, String m)	// Writes exception information to the application's log listeners.
-            //{
-            //}
-            //void WriteException(Exception ex, TraceEventType t, String m, Int32 id) //
-            //{
-            //}
 
             // dev note: s = System.Text.RegularExpressions.Regex.Replace(s, @"[\r\n\\'""]", @"\$0");
             static public string FlattenChars(string s, char eolchar = '\\', int npchar = 46) // 46 is '.' //  unicode 0x26F7 is SKIER if your font has it LOL

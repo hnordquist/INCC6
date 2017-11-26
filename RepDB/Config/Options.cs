@@ -36,7 +36,7 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+        logging, level, quiet, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
@@ -78,6 +78,7 @@ namespace NCCConfig
             { "log:", "enable logging with filter {level} (see -v)",  
                                             l => {app.Logging = true; if (l != null) app.SetLevel(ushort.Parse(l)); }},
 
+            { "quiet", "disable console logging", q => {app.Quiet = (q != null); }},
             { "root=", "specify base {file location} for all input and output files", c => app.RootLoc = c},
   			{ "rootAutoPath",  "append a daily root file folder name to the current root file folder specification", 
                 b => { if (b != null) app.DailyRootPath = true;} },
