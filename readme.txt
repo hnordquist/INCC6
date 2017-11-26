@@ -138,7 +138,7 @@ Issues for production
 
 Closed issues
 
-6.18 Nov 24, 2017  ************
+6.18 Nov 26, 2017  ************
 ***  LANL: collar implementation, assorted minor changes
 ***  Basic IAEA Dataz file support added
 ***  iRAP integration support added, cmd line only
