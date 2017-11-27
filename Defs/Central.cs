@@ -880,7 +880,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, should be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

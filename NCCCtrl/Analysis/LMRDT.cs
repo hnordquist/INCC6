@@ -714,12 +714,10 @@ namespace Analysis
         /// <returns></returns>
         public StreamStatusBlock PassBufferToTheCounters(int count)
         {
-            StreamStatusBlock endofdata = null;
-
-            endofdata = state.ConvertDataBuffer(count);
+            StreamStatusBlock endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
+			if (State.usingStreamRawAnalysis)
 			State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
-         
             return endofdata;
         }
 
@@ -950,8 +948,6 @@ namespace Analysis
             else if (times.Length > timeArray.Count)
                 timeArray.AddRange(new ulong[times.Length - timeArray.Count]);
 
-            //Array.Resize(ref neutronEventArray, channels.Length);
-            //Array.Resize(ref timeArray, times.Length);
             string msg = PrepRawStreams(num: (ulong)bytecount, combineDuplicateHits: mergeDuplicatesTimeChannelHits);
             return ssb;
         }

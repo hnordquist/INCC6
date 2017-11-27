@@ -715,7 +715,7 @@ enditall:
                     ptrFile.Events.ReadHeader();
                     ShakeTime = 0;
 					cycle.TS = TimeSpan.FromSeconds (ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
-					ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval in the file header is {0} seconds", cycle.TS.TotalSeconds);
+					ctrllog.TraceEvent(LogLevels.Info, 3340, "The bin file header reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
                     //Add this as check. We should have this count - big T as final count rate
                     pps.PTRReportedCountTime += ptrFile.Events.ReportedCountTimeSecs;
                     if (!ptrFile.Channels.Active)
@@ -976,7 +976,7 @@ enditall:
                     mcaFile.ReadHeader();
                     rdt.ResetTickSizeInSeconds(mcaFile.TimeUnitNanoSec / 1e9);
                     cycle.TS = TimeSpan.FromSeconds(mcaFile.MeasTime);  // requested or specified time in seconds
-                    ctrllog.TraceEvent(LogLevels.Info, 3335, "The reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
+                    ctrllog.TraceEvent(LogLevels.Info, 3340, "The file header reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
                     uint FBbytes = mcaFile.TotalBytes;
                     // read timestamps...
                     foreach (ulong deltaTime in mcaFile.EnumerateTimestamps())

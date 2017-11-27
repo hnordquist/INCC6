@@ -87,8 +87,8 @@ SQLite/SQL Server database schema and related files
 System.Data.SQLite.dll    ; SQLite .NET Interop assembly 1.0.94.0
 sqlite3.exe               ; SQLite database utility, for diagnostic use
 
-INCC6.sqlite              ; Empty database, created with reset.bat
-Default.sqlite            ; Empty database, created with reset.bat
+INCC6.sqlite              ; Empty database, (re)created with reset.bat
+Default.sqlite            ; Empty database
 drop_INCC6_sqlite.sql     ; INCC6 SQLite schema DROP table statements
 create_INCC6_sqlite.sql   ; INCC6 SQLite schema CREATE and INSERT statements
 reset.bat                 ; Uses sqlite3.exe on sql schema files to recreate a new empty INCC6 database
