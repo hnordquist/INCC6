@@ -3626,11 +3626,13 @@ namespace AnalysisDefs
 			{
                 ap.detector_id = dr["detector_name"].ToString();
 				ap.meas_detector_id = ap.detector_id;  // only one is captured in the results rec, but the other must match
+                ap.ending_comment = !string.IsNullOrEmpty(dr["ending_comment"].ToString());  // non-null entry in results_rec here means the ending comment was enabled and generated
 			}
             else
 			{
                 ap.detector_id = dr["detector_id"].ToString();
 				ap.meas_detector_id = dr["meas_detector_id"].ToString();  // make sure both are written correctly to the DB
+                ap.ending_comment = DB.Utils.DBBool(dr["ending_comment"]);  // it was and is a bool/int flag field in the acq record
 			}
             det = ap.detector_id;
 
