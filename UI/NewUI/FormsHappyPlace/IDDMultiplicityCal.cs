@@ -74,19 +74,19 @@ namespace NewUI
             switch (mult.solve_efficiency)
             {
                 case INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT:
-                    this.ConventionalMultRadioButton.Checked = true;
+                    ConventionalMultRadioButton.Checked = true;
                     break;
                 case INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED:
-                    this.WeightedMultRadioButton.Checked = true;
+                    WeightedMultRadioButton.Checked = true;
                     break;
                 case INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL:
-                    this.DualEnergyModelRadioButton.Checked = true;
+                    DualEnergyModelRadioButton.Checked = true;
                     break;
                 case INCCAnalysisParams.MultChoice.MULT_KNOWN_ALPHA:
-                    this.KnownAlphaRadioButton.Checked = true;
+                    KnownAlphaRadioButton.Checked = true;
                     break;
                 case INCCAnalysisParams.MultChoice.MULT_SOLVE_EFFICIENCY:
-                    this.SolveForEfficiencyRadioButton.Checked = true;
+                    SolveForEfficiencyRadioButton.Checked = true;
                     break;
             }
 
@@ -200,29 +200,18 @@ namespace NewUI
             FieldValorizer((TextBox)sender, ref mult.sigma_x);
         }
 
-        private void ConventionalMultRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void ARadioButton_CheckedChanged(object sender, EventArgs e)
         {
+			if (ConventionalMultRadioButton.Checked)
             mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT;
-        }
-
-        private void WeightedMultRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+			else if (WeightedMultRadioButton.Checked)
             mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED;
-        }
-
-        private void SolveForEfficiencyRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
-            mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_SOLVE_EFFICIENCY;
-        }
-
-        private void DualEnergyModelRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+			else if (DualEnergyModelRadioButton.Checked)
             mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL;
-        }
-
-        private void KnownAlphaRadioButton_CheckedChanged(object sender, EventArgs e)
-        {
+			else if (KnownAlphaRadioButton.Checked)
             mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_KNOWN_ALPHA;
+			else if (SolveForEfficiencyRadioButton.Checked)
+				mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_SOLVE_EFFICIENCY;
         }
 
         private void OKBtn_Click(object sender, EventArgs e)
@@ -232,6 +221,20 @@ namespace NewUI
             {
                 INCCAnalysisParams.multiplicity_rec chump = (INCCAnalysisParams.multiplicity_rec)mp.ams.GetMethodParameters(mp.am);
                 mp.imd.modified = (chump != null && chump.solve_efficiency != mult.solve_efficiency);
+            }
+            switch (mult.solve_efficiency)
+            {
+                case INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT:
+                    break;
+                case INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED:
+                    break;
+                case INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL:
+					new IDDDualEnergyMult().ShowDialog();
+                    break;
+                case INCCAnalysisParams.MultChoice.MULT_KNOWN_ALPHA:
+                    break;
+                case INCCAnalysisParams.MultChoice.MULT_SOLVE_EFFICIENCY:
+                    break;
             }
             mp.Persist();
             this.Close();
