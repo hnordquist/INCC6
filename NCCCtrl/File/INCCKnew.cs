@@ -621,7 +621,7 @@ namespace NCCTransfer
 				a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
 				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
 				TransferUtils.Copy(b, m.collar_detector_item_type);
-				m.collar_detector_mode = (int)imr.collar_det.collar_mode;
+				m.collar_detector_mode = (byte)imr.collar_det.collar_mode;
 
 				b = new byte[INCC.DATE_TIME_LENGTH];
 				a = imr.collar_det.reference_date.ToString("yy.MM.dd").ToCharArray();
@@ -664,7 +664,7 @@ namespace NCCTransfer
 				m.col_u_mass_corr_fact_a_err = imr.collar.u_mass_corr_fact_a.err;
 				m.col_u_mass_corr_fact_b = imr.collar.u_mass_corr_fact_b.v;
 				m.col_u_mass_corr_fact_b_err = imr.collar.u_mass_corr_fact_b.err;
-				m.collar_mode = imr.collar.collar_mode;
+				m.collar_mode = (byte)imr.collar.collar_mode;
 
 				byte[] bb = new byte[INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH];
 				int indx = 0;
