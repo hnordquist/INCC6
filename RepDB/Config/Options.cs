@@ -54,7 +54,7 @@ namespace NCCConfig
         detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
@@ -155,6 +155,7 @@ namespace NCCConfig
             { "ncdFileAssay", "use LMMM NCD files for input", v => app.NCDFileAssay = v != null }, 
             { "ptrFileAssay", "use PTR-32 dual file streams for input", v => app.PTRFileAssay = v != null }, 
             { "mcaFileAssay", "use MCA-527 file streams for input", v => app.MCA527FileAssay = v != null },
+            { "datazFileAssay", "use Dataz file streams for input", v => app.DatazFileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
             { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null }, 

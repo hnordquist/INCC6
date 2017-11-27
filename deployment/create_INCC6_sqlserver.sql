@@ -918,6 +918,7 @@ CREATE TABLE LMINCCAppContext(
 	[reviewFileAssay] int NULL,
 	[pulseFileAssay] int NULL,
 	[ptrFileAssay] int NULL,
+	[datazFileAssay] int NULL,
 	[dbDataAssay] int NULL,
 	[nilaFileAssay] int NULL,
 	[opStatusPktInterval] int NULL, /* every 1Mb, or 128 8192Kb, socket packet receipts, get the status from the analyzes, */
@@ -1997,7 +1998,7 @@ INSERT INTO [HVCalibrationParams] ([detector_id],[minv],[maxv],[duration],[stepv
 GO
 INSERT INTO [analysis_method_rec] (item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],
 [known_m],[multiplicity],[add_a_source],[active],[active_mult],
-[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0);
+[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [sr_parms_rec]	(detector_id,[sr_detector_id],[sr_type],[sr_port_number],[predelay],[gate_length],[gate_length2],
 [high_voltage],[die_away_time],[efficiency], [multiplicity_deadtime],[coeff_a_deadtime],[coeff_b_deadtime],
@@ -2124,7 +2125,7 @@ INSERT INTO [LMNetComm] VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
 GO
 INSERT INTO [detectors] VALUES('AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO

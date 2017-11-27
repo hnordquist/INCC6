@@ -402,6 +402,12 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");
                     break;
+                case ConstructedSource.DatazFile:
+                    Integ.BuildMeasurementMinimal(ap, det, mo);  
+                    NC.App.AppContext.DatazFileAssay = true;
+                    UIIntegration.Controller.file = true;
+                    dr = UIIntegration.GetUsersFile("Select a Dataz file", NC.App.AppContext.FileInput, "IAEA Dataz", "dataz");
+                    break;
                 case ConstructedSource.NCDFile:
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;

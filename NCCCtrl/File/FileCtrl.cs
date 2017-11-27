@@ -80,6 +80,8 @@ namespace NCCFile
                             TestDataAssay();
                         else if (NC.App.AppContext.ReviewFileAssay)
                             INCCReviewFileProcessing();
+                        else if (NC.App.AppContext.DatazFileAssay)
+                            DatazFileAssay();
                         else if (NC.App.AppContext.DBDataAssay)
                             DBDataAssay();
                         else
