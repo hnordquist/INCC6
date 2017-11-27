@@ -1507,6 +1507,7 @@ namespace NCCTransfer
         public byte backup_method;
         public byte curium_ratio;
         public byte truncated_mult;
+        public byte analysis_method_spare1;
         public byte analysis_method_spare2;
         public byte analysis_method_spare3;
         public byte analysis_method_spare4;

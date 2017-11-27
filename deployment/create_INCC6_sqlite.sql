@@ -395,6 +395,7 @@ CREATE TABLE analysis_method_rec(
    [aux_method] int,
    [curium_ratio] int,
    [truncated_mult] int,
+   [spare1] int,
    [spare2] int,
    [spare3] int,
    [spare4] int,
@@ -574,7 +575,7 @@ CREATE TABLE CyclesMult(
 	[status] int NULL,
 	[mid] INTEGER NOT NULL,
 	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
-);  
+);
 GO
 CREATE TABLE CyclesFeyn(
 	[id] INTEGER Primary Key,
@@ -2188,15 +2189,15 @@ INSERT INTO [known_alpha_rec] VALUES(1,2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0
 GO
 INSERT INTO [multiplicity_rec] VALUES(1,2,1,0,473.5,2.154,3.789,5.211,3.163,8.24,17.321,1.0,0.0,0.0,0.0,1.0,NULL,NULL,1.0);
 GO
-INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL,NULL);
 GO
 INSERT INTO [cal_curve_rec] VALUES(1,2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
 INSERT INTO [acquire_parms_rec] VALUES(1, 'XXXX','XXXX','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',         0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
 GO
-INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL,NULL);
 GO
-INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL,NULL);
 GO
 INSERT INTO [acquire_parms_rec] VALUES(2, 'XXXX','XXXX','XXXX','XXXX','JSR-15','Pu','','Default','Default','','','XXXX','XXXX','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1,0,40,2,'','',0,0,'2016-08-05T11:05:39.2729192-06:00','2016-08-05T16:28:15.4647845-06:00','JSR-15');
 GO
