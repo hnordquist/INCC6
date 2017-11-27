@@ -100,7 +100,7 @@ create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statement
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Collar acquire and Poison Rod details, Holdup and glovebox features,
+   Holdup and glovebox features,
    Active/Passive paired measurements, Rad Review controlled import,
    truncated multiplicity and some multiplicity analyses are incomplete,
    some Add-a-src processing, miscellaneous little-used features
@@ -120,7 +120,7 @@ Issues for basic INCC5/6 feature COMPLETION
 #84  Implement Collar
 #35  Hold-up analysis required
 ***  Active/Passive paired measurements
-***  Truncated multiplicity and some multiplicity analyses are incomplete
+***  Truncated multiplicity and some multiplicity analyses, (e.g. dual-energy) are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
