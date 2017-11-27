@@ -4222,7 +4222,9 @@ namespace AnalysisDefs
 			public IndexedResults() { }
 			public	string Campaign;
 			public	string Detector;
+			public	string Material;
 			public	string Option;
+            public string ItemId;
 			public	long Mid, Rid;
             public DateTimeOffset DateTime;
 		}
@@ -4246,9 +4248,10 @@ namespace AnalysisDefs
 						ir.Campaign = s;
 						ir.Option = dr["meas_option"].ToString();
 						ir.Detector = det;
+						ir.Material = dr["item_type"].ToString();
 						ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 						ir.Rid = DB.Utils.DBInt64(dr["id"]);
-						ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+						ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);							       ir.ItemId = dr["item_id"].ToString();
 						res.Add(ir);
 					}
 				}
@@ -4256,6 +4259,36 @@ namespace AnalysisDefs
 			return res;
 		}
 
+       public List<IndexedResults> IndexedResultsForDetWithItem(string det, string option, string item)
+        {
+            List<IndexedResults> res = new List<IndexedResults>();
+
+            DB.Results r = new DB.Results();
+            DataTable dt = r.ResultsForDetWithItem(det, item);
+            foreach (DataRow dr in dt.Rows)
+            {
+                string s = dr["item_id"].ToString();
+                if ((!string.IsNullOrEmpty(item) && (string.Compare(item, s, true) == 0)))
+                {
+                    string o = dr["meas_option"].ToString();
+                    if (string.IsNullOrEmpty(option) ||
+                        string.Compare(option, o) == 0)
+                    {
+                        IndexedResults ir = new IndexedResults();
+                        ir.Campaign = dr["campaign_id"].ToString();
+                        ir.Option = dr["meas_option"].ToString();
+                        ir.Detector = det;
+                        ir.Material = dr["item_type"].ToString();
+                        ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+                        ir.Rid = DB.Utils.DBInt64(dr["id"]);
+                        ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                        ir.ItemId = s;
+                        res.Add(ir);
+                    }
+                }
+            }
+            return res;
+        }
 
 		public List<IndexedResults> IndexedResultsFor(string option)
         {
@@ -4273,9 +4306,11 @@ namespace AnalysisDefs
 					ir.Campaign = dr["campaign_id"].ToString();
 					ir.Option = o;
 					ir.Detector = dr["detector_name"].ToString();
+					ir.Material = dr["item_type"].ToString();
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 					ir.Rid = DB.Utils.DBInt64(dr["id"]);
                     ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    ir.ItemId = dr["item_id"].ToString();
                     res.Add(ir);
 				}
 			}
