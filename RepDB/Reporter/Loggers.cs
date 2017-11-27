@@ -67,7 +67,10 @@ namespace NCCReporter
         {
             get { return (LognLM)reps[AppSection.Data]; }
         }
-
+        public LognLM ControlLogger
+        {
+            get { return (LognLM)reps[AppSection.Control]; }
+        }
         public LMLoggers(NCCConfig.Config cfg)
         {
             this.cfg = cfg;
@@ -152,14 +155,25 @@ namespace NCCReporter
                         if (item is FileLogTraceListener)
                         {
                             listener = (FileLogTraceListener)item;
-                            listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
-                            listener.Append = true;
-                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
                                 listener.CustomLocation = cfg.App.LogFilePath;
                             }
+                            if (cfg.App.isSet(NCCConfig.NCCFlags.loglocation))
+                            {
+                                listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
+                                listener.Location = LogFileLocation.Custom;
+                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName); 
+                                if (string.IsNullOrEmpty(x) || NCCConfig.Config.isDefaultPath(x))
+                                    listener.CustomLocation = cfg.App.LogFilePath;
+                                else
+                                    listener.CustomLocation = x;
+                            }
+                            else
+                                listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
+                            listener.Append = true;
+                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
                             // logdetails cmd line flag crudely enables this option set, only because the App.Config sharedListeners and switch source sections do not permit setting this attribute.
                             if (cfg.App.isSet(NCCConfig.NCCFlags.logDetails))
