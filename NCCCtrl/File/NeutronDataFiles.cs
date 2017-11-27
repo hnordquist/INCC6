@@ -973,13 +973,13 @@ namespace NCCFile
             read = thisread;
             eventsectionlen -= thisread;
             //count time is in here at 
-            headerstr = bytestoASCIIchars(header, 0x1000, thisread);
+            headerstr = BytestoASCIIchars(header, 0x1000, thisread);
             // This parses out the count time from the file header per Huzsti's definition. w/TryParse, should default to zero
             // Currently, no check at end is implemented. HN 10.16.2015
             Regex reg = new Regex("^@(\\d+).+@(\\d+)");
             if (reg.IsMatch (headerstr))
             {
-                Match m = reg.Match(headerstr);
+                Match m = reg.Match(headerstr);  // sometimes a 0 appears, which is wrong
                 ReportedCountTimeSecs = 0;
                 
                 Int32.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
@@ -1049,7 +1049,7 @@ namespace NCCFile
             int i = 0;
             for (i = 0; i < count; i++) // convert back down to uint delta times
             {
-                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful);
+                ubuff = (uint)((buffer[index + i] - mark) & 0xfffffffful);
                 writer.Write(ubuff);
                 mark = buffer[index + i];
             }           
@@ -1062,7 +1062,7 @@ namespace NCCFile
             int i = 0;
             for (i = 0; i < count; i++) // convert back down to uint delta times
             {
-                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful);
+                ubuff = (uint)((buffer[index + i] - mark) & 0xfffffffful);
                 writer.Write(ubuff);
                 mark = buffer[index + i];
             }
@@ -1088,7 +1088,7 @@ namespace NCCFile
             }
         }
 
-        public string bytestoASCIIchars(byte[] bdata, int len, int max)
+        public string BytestoASCIIchars(byte[] bdata, int len, int max)
         {
             int i;
             char dchar;
@@ -1374,7 +1374,7 @@ namespace NCCFile
 				bool usePreviousTimestamp = false;
 				ulong previousTimestamp = 0;
 				while (br.BaseStream.Position < startPosition + fileBlockSize) {
-					ulong timestamp = (ulong)br.ReadByte();
+					ulong timestamp = br.ReadByte();
 					if (timestamp == 0xff) {
 						previousTimestamp += timestamp;
 						usePreviousTimestamp = true;
@@ -1397,7 +1397,7 @@ namespace NCCFile
 				bool usePreviousTimestamp = false;
 				ulong previousTimestamp = 0;
 				while (br.BaseStream.Position < startPosition + fileBlockSize) {
-					ulong timestamp = (ulong)br.ReadUInt16();
+					ulong timestamp = br.ReadUInt16();
 					if (timestamp == 0xffff) {
 						previousTimestamp += timestamp;
 						usePreviousTimestamp = true;
@@ -1439,7 +1439,7 @@ namespace NCCFile
 				if (bytesRead != 1) { throw new SometingWrongHierException("R1"); }
 				// if the value is less than 192, we are done
 				if (bytes[0] < 0xC0) {
-					return (uint)bytes[0];
+					return bytes[0];
 				}
 				if (bytes[0] < 0xF0) {
 					// two bytes
@@ -1452,13 +1452,13 @@ namespace NCCFile
 					bytesRead = br.Read(bytes, 1, 2);
 					if (bytesRead != 2) { throw new SometingWrongHierException("R3");}
 					// 0b00001111 => 0x0f
-					return (((((uint)bytes[0]) & 0x0f) << 16) | (((uint)bytes[1]) << 8) | ((uint)bytes[2])) + 0x30C0;
+					return (((((uint)bytes[0]) & 0x0f) << 16) | (((uint)bytes[1]) << 8) | bytes[2]) + 0x30C0;
 				} else {
 					// four bytes
 					bytesRead = br.Read(bytes, 1, 3);
 					if (bytesRead != 3) { throw new SometingWrongHierException("R4"); }
 					// 0b00000011 => 0x03
-					return (((((uint)bytes[0]) & 0x03) << 24) | (((uint)bytes[1]) << 16) | (((uint)bytes[2]) << 8) | ((uint)bytes[3])) + 0x0C30C0;
+					return (((((uint)bytes[0]) & 0x03) << 24) | (((uint)bytes[1]) << 16) | (((uint)bytes[2]) << 8) | bytes[3]) + 0x0C30C0;
 				}
 			}
 		}
@@ -2103,7 +2103,7 @@ namespace NCCFile
 		Analysis.StreamStatusBlock sb;
 		public void CustomStatusBlock(string HW, string devicename, string source, string message)
 		{
-			double durationTics = (double)(LastTimeInTics - FirstEventTimeInTics);
+			double durationTics = LastTimeInTics - FirstEventTimeInTics;
 			if (durationTics <= 0)
 				durationTics = 1;
 
