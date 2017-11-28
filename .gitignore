@@ -6,3 +6,4 @@ obj
 *.VC.db
 /Help/inccuser/INCCelp.hnd
 /.vs
+/packages
