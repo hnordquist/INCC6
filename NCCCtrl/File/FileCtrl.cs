@@ -88,9 +88,7 @@ namespace NCCFile
                             PTRFilePairAssay();  // default, will fail if flags not set correctly
                         break;
                     case NCCAction.File:
-                        if (NC.App.AppContext.FilterLMOutliers)
-                            PTRFileCull();
-                        else if (NC.App.AppContext.INCCXfer)
+                        if (NC.App.AppContext.INCCXfer)
 						{
 							bool go = true; // got here from ui or cmd line, if from ui then go is true
 							if (!gui) // test this from cmd line
@@ -100,7 +98,11 @@ namespace NCCFile
 							}
 							if (go)
 								INCCTransferFileProcessing();
-						}				
+						}
+                        else if (NC.App.AppContext.DatazConvert)
+                            DatazFileConvert();
+                        else if (NC.App.AppContext.FilterLMOutliers)
+                            PTRFileCull();
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
                         else

@@ -670,6 +670,7 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
             resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.datazConvert, (ushort)0, typeof(ushort)); //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -854,7 +855,12 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.filterLMOutliers); }
             set { MutuallyExclusiveFileActions(NCCFlags.filterLMOutliers, value); }
         }
-		public bool HasFileAction
+        public bool DatazConvert
+        {
+            get { return (bool)getVal(NCCFlags.datazConvert); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazConvert, true); }
+        }
+        public bool HasFileAction
 		{
             get { return IsFileActionSet(); }
 		}
@@ -1138,6 +1144,7 @@ namespace NCCConfig
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
                 setVal(NCCFlags.filterLMOutliers, false);
+                setVal(NCCFlags.datazConvert, false);
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
@@ -1162,6 +1169,7 @@ namespace NCCConfig
                 (bool)getVal(NCCFlags.INCCXfer) ||
                 (bool)getVal(NCCFlags.pulseFileAssay) ||
                 (bool)getVal(NCCFlags.filterLMOutliers) ||
+                (bool)getVal(NCCFlags.datazConvert) ||
                 (bool)getVal(NCCFlags.ncdFileAssay) ||
                 (bool)getVal(NCCFlags.sortPulseFile);
         }
@@ -1684,8 +1692,15 @@ namespace NCCConfig
             set { if (value <= 64256 && value >= 0) setVal(NCCFlags.tau, value); }
         }
 
+
+        public ushort DatazConvertType
+        {
+            get { return (ushort)getVal(NCCFlags.datazConvertParams); }
+            set { if (value <= 4) setVal(NCCFlags.datazConvertParams, value); }
+        }
+
         // cmd line dual setters
-		public void LMFilterParams(string b, string s)
+        public void LMFilterParams(string b, string s)
         {
             try
             {

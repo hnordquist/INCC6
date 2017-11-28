@@ -207,6 +207,84 @@ namespace NCCFile
             }
         }
 
+        protected void DatazFileConvert() // URGENT //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
+        {
+            List<string> exts = new List<string>() { ".dataz" };
+            FileList<DatazFile> hdlr = new FileList<DatazFile>();
+            hdlr.Init(exts, ctrllog);
+            FileList<DatazFile> files = null;
+
+            // initialize operation timer here
+            NC.App.Opstate.ResetTimer(filegather, files, 170, (int)NC.App.AppContext.StatusTimerMilliseconds);
+            FireEvent(EventType.ActionPrep, this);
+            NC.App.Opstate.StampOperationStartTime();
+
+            if (NC.App.AppContext.FileInputList == null)
+                files = (FileList<DatazFile>)hdlr.BuildFileList(NC.App.AppContext.FileInput, NC.App.AppContext.Recurse, true);
+            else
+                files = (FileList<DatazFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
+            if (files == null || files.Count < 1)
+            {
+                NC.App.Opstate.StopTimer();
+                NC.App.Opstate.StampOperationStopTime();
+                FireEvent(EventType.ActionStop, this);
+                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Dataz files found");
+                return;
+            }
+
+            AssaySelector.MeasurementOption mo = NC.App.Opstate.Measurement.MeasOption;
+
+            foreach (DatazFile mc in files)
+            {
+
+                try
+                {
+                    if (!mc.OpenForReading())
+                        continue;
+                    if (NC.App.Opstate.IsQuitRequested)
+                        break;
+
+                    mc.ScanSections();
+                    mc.ProcessSections();
+                    if (mc.Cycles.Count == 0)
+                    {
+                        ctrllog.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
+                    }
+                    if (mc.Plateaux.Count == 0)
+                    {
+                        ctrllog.TraceEvent(LogLevels.Error, 404, $"This Dataz file has no defined sequences, over {mc.Cycles.Count} cycles.");
+                    }
+                    else
+                    {
+                        ctrllog.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
+                        System.Collections.IEnumerator iter = mc.GetSequences();
+                        while (iter.MoveNext())
+                        {
+                            DatazFile.Plateau pla = (DatazFile.Plateau)iter.Current;
+                        }
+                        ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz file conversion not yet implemented"); // URGENT
+                    }
+                }
+                catch (Exception e)
+                {
+                    NC.App.Opstate.SOH = OperatingState.Trouble;
+                    ctrllog.TraceException(e, true);
+                    ctrllog.TraceEvent(LogLevels.Error, 437, "Dataz data file processing stopped with error: '" + e.Message + "'");
+                }
+                finally
+                {
+                    mc.CloseReader();
+                    NC.App.Loggers.Flush();
+                }
+            }
+
+            NC.App.Opstate.ResetTokens();
+            NC.App.Opstate.SOH = OperatingState.Stopping;
+            NC.App.Opstate.StampOperationStopTime();
+            FireEvent(EventType.ActionFinished, this);
+
+
+        }
 
 
         public class DatazFile : NeutronDataFile   // NEXT: this is only the MCSR specific variant, expand class definitions later
@@ -297,9 +375,14 @@ namespace NCCFile
                         p.Cycles[j] = clist[i];
                     return p;
                 }
+
+                public DateTimeOffset FirstCycleTime
+                {
+                    get { return (Cycles != null && Cycles.Length > 0) ? Cycles[0].DTO : new DateTimeOffset(NCCTransfer.INCC.ZeroIAEATime);  }
+                }
             }
 
-            public void ProcessSections()
+            public void ProcessSections(bool analyze = true)
             {
                 AcquistionStateChanged = false;
                 ExtractTimeZone();
@@ -323,7 +406,7 @@ namespace NCCFile
                     else
                         Plateaux.Add(Plateau.Parse(s, Cycles));
                 }
-                if (Plateaux.Count > 0)
+                if (Plateaux.Count > 0 && analyze)  // set the current runtime state only if it will be used
                     SetCurrentAcquireStateFromZFile();
             }
 
