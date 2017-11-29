@@ -36,7 +36,7 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, quiet, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+        logging, level, quiet, logDetails, logFileLoc, logLocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,

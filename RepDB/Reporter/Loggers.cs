@@ -160,7 +160,7 @@ namespace NCCReporter
                                 listener.Location = LogFileLocation.Custom;
                                 listener.CustomLocation = cfg.App.LogFilePath;
                             }
-                            if (cfg.App.isSet(NCCConfig.NCCFlags.loglocation))
+                            if (cfg.App.isSet(NCCConfig.NCCFlags.logLocation))
                             {
                                 listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
                                 listener.Location = LogFileLocation.Custom;

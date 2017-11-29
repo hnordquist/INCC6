@@ -654,7 +654,7 @@ namespace NCCConfig
             resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
+            resetVal(NCCFlags.logLocation, Config.DefaultPath + "\\6.log", typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
@@ -873,8 +873,8 @@ namespace NCCConfig
 
         public string LogFilePathAndName
         {
-            get { return overridepath(NCCFlags.loglocation); }
-            set { setIfNotOverride(NCCFlags.loglocation, value); }
+            get { return overridepath(NCCFlags.logLocation); }
+            set { setIfNotOverride(NCCFlags.logLocation, value); }
         }
         public string ResultsFilePath
         {
@@ -1185,7 +1185,7 @@ namespace NCCConfig
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
             if (isSet(NCCFlags.logFileLoc))
                 x[ix++] = "  log file path: " + LogFilePath;
-            if (isSet(NCCFlags.loglocation))
+            if (isSet(NCCFlags.logLocation))
                 x[ix++] = "  log file name: " + LogFilePathAndName;
             if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
