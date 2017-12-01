@@ -126,16 +126,16 @@ namespace NCCConfig
             get { return _defaultreportsectional; }
         }
 
-        public struct CmdParams { public object val; public bool set; public System.Type type; public bool sticky;}
+        public struct CmdParams { public object val; public bool set; public Type type; public bool sticky;}
 
         private Hashtable _parms;
         private string[] _args;
 
         public static Hashtable ParameterBasis()
         {
-            Hashtable x = new Hashtable(System.Enum.GetValues(typeof(NCCFlags)).Length);
+            Hashtable x = new Hashtable(Enum.GetValues(typeof(NCCFlags)).Length);
 
-            foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+            foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
             {
                 CmdParams f = new CmdParams();
                 x.Add(e, f);
@@ -190,7 +190,7 @@ namespace NCCConfig
 
             string[] x = new string[500];
             int ix = 0;
-            System.Configuration.Configuration config =
+            Configuration config =
               ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             x[ix++] = "";
 
@@ -368,7 +368,7 @@ namespace NCCConfig
                 if (an.Name.Equals("RepDB") || an.Name.Equals("NCCCore") || an.Name.Equals("NCCCtrl") || an.Name.Equals("Defs") ||
                     an.Name.Equals("INCCCmd") || an.Name.Equals("INCC6"))  // todo: this hack needs redeeming: the list can and will change
                 {
-                    System.Reflection.AssemblyName[] ann = a.GetReferencedAssemblies();
+                    AssemblyName[] ann = a.GetReferencedAssemblies();
                     foreach (AssemblyName ns in ann)
                     {
                         fullset.Add(ns.FullName);
@@ -393,7 +393,7 @@ namespace NCCConfig
             try
             {
                 // save changed entries
-                foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+                foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
                 {
                     CmdParams f = (CmdParams)_parms[e];
                     if (f.set && f.sticky)
@@ -407,11 +407,11 @@ namespace NCCConfig
                 if (gottawrite)
                 {
                     // Get the application configuration file.
-                    System.Configuration.Configuration config =
+                    Configuration config =
                       ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
                     // do a remove and add only on those that actually change, not the entire damn thing
-                    foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+                    foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
                     {
                         CmdParams f = (CmdParams)_parms[e];
                         if (f.set && f.sticky)
@@ -444,8 +444,8 @@ namespace NCCConfig
 
                 if (appSettings.Count <= 0)
                 {
-                    Assembly exa = System.Reflection.Assembly.GetExecutingAssembly();
-                    Assembly ena = System.Reflection.Assembly.GetEntryAssembly();
+                    Assembly exa = Assembly.GetExecutingAssembly();
+                    Assembly ena = Assembly.GetEntryAssembly();
                     ResourceManager rm = new ResourceManager("DB.Properties.Resources", exa);  // LMConfig
                     // now write the file using the exe name
                     string f2 = rm.GetString("AppConfig");
@@ -456,7 +456,7 @@ namespace NCCConfig
                         Console.WriteLine("No application configuration file found, creating the file {0}, retry your operation", f3);
 
                         // Create the file
-                        using (System.IO.StreamWriter sw = System.IO.File.CreateText(f3))
+                        using (StreamWriter sw = File.CreateText(f3))
                         {
                             sw.Write(f2);  // write the XML
                         }
@@ -473,22 +473,16 @@ namespace NCCConfig
                 {
 
                     NCCFlags t = (NCCFlags)i;
-                    Config.CmdParams x = ((Config.CmdParams)_parms[t]);
+                    CmdParams x = ((CmdParams)_parms[t]);
 
                     // dev note: funky type switch thang, must be a better way with reflection or something eh?
-                    string v = (string)appSettings[t.ToString()];
+                    string v = appSettings[t.ToString()];
                     if (v != null)
                     {
                         if (x.type == typeof(int))
                         {
-                            Int32 res = 0;
-                            Int32.TryParse(v, out res);
-                            x.val = res;
-                        }
-                        if (x.type == typeof(int))
-                        {
-                            Int32 res = 0;
-                            Int32.TryParse(v, out res);
+                            int res = 0;
+                            int.TryParse(v, out res);
                             x.val = res;
                         }
                         else if (x.type == typeof(bool))
@@ -503,17 +497,23 @@ namespace NCCConfig
                         }
                         else if (x.type == typeof(ushort))
                         {
-                            UInt16 res = 0;
-                            UInt16.TryParse(v, out res);
+                            ushort res = 0;
+                            ushort.TryParse(v, out res);
                             x.val = res;
                         }
                         else if (x.type == typeof(uint))
                         {
-                            UInt32 res = 0;
-                            UInt32.TryParse(v, out res);
+                            uint res = 0;
+                            uint.TryParse(v, out res);
                             x.val = res;
                         }
-                        else // dev note: oughta noughta evah get here
+                        else if (x.type == typeof(double))
+                        {
+                            double res = 0;
+                            double.TryParse(v, out res);
+                            x.val = res;
+                        }
+                        else // dev note: cannot get here
                             x.val = v;
                     }
                     x.set = false; _parms[t] = x;
@@ -557,7 +557,7 @@ namespace NCCConfig
         {
             return (Config.CmdParams)_parms[t];
         }
-        protected void resetVal(NCCFlags f, object c, System.Type t, bool retain = true)
+        protected void resetVal(NCCFlags f, object c, Type t, bool retain = true)
         {
             Config.CmdParams x = ((Config.CmdParams)_parms[f]);
             x.val = c; x.set = false; x.type = t; x.sticky = retain; _parms[f] = x;
@@ -670,7 +670,7 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
             resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.datazConvert, (ushort)0, typeof(ushort)); //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
+            resetVal(NCCFlags.datazConvert, false, typeof(bool), retain: false); 
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -868,21 +868,21 @@ namespace NCCConfig
 		public string LogFilePath
         {
             get { return overridepath(NCCFlags.logFileLoc); }
-            set { setIfNotOverride(NCCFlags.logFileLoc, value); }
+            set { _setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
         public string LogFilePathAndName
         {
             get { return overridepath(NCCFlags.logLocation); }
-            set { setIfNotOverride(NCCFlags.logLocation, value); }
+            set { _setIfNotOverride(NCCFlags.logLocation, value); }
         }
         public string ResultsFilePath
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
-            set { setIfNotOverride(NCCFlags.resultsFileLoc, value); }
+            set { _setIfNotOverride(NCCFlags.resultsFileLoc, value); }
         }
 
-		private void setIfNotOverride(NCCFlags flag, string path)
+		private void _setIfNotOverride(NCCFlags flag, string path)
 		{
 			// do not set if it is the override value
 			Match m = PathMatch(path);
@@ -1079,7 +1079,7 @@ namespace NCCConfig
 
         public SourceLevels Level()
         {
-            ushort l = System.Convert.ToUInt16(getVal(NCCFlags.level));
+            ushort l = Convert.ToUInt16(getVal(NCCFlags.level));
             if (l < srclevelmap.Count)
                 return (SourceLevels)srclevelmap[l];
             else
@@ -1204,9 +1204,9 @@ namespace NCCConfig
 
             if (isSet(NCCFlags.openResults))
                 x[ix++] = "  open results: " + OpenResults.ToString();
-            if (isSet(NCCFlags.assayTypeSuffix))
-                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
             if (isSet(NCCFlags.results8Char))
+                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
+            if (isSet(NCCFlags.assayTypeSuffix))
                 x[ix++] = "  INCC5 suffix scheme: " + AssayTypeSuffix.ToString();
 
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
@@ -1573,6 +1573,7 @@ namespace NCCConfig
 
             resetVal(NCCFlags.tau, 140, typeof(int));
             resetVal(NCCFlags.Tee, 4, typeof(int));
+            resetVal(NCCFlags.datazConvertParams, 0, typeof(ushort)); //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)

@@ -195,8 +195,8 @@ namespace NCCFile
                 /* multiplicity values */
                 for (ushort j = 0; j < c.BinLen; j++)
                 {
-                    mcr.RAMult[j] = c.MultBins[j];
-                    mcr.NormedAMult[j] = c.MultAccBins[j];
+                    mcr.RAMult[j] = c.MultRABins[j];
+                    mcr.NormedAMult[j] = c.MultNormedAccBins[j];
                 }
                 ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
 
@@ -207,6 +207,7 @@ namespace NCCFile
             }
         }
 
+        enum DatazConversionTarget : ushort { TestData, NCC, XFer, InitialDataPair }
         protected void DatazFileConvert() // URGENT //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
         {
             List<string> exts = new List<string>() { ".dataz" };
@@ -245,7 +246,7 @@ namespace NCCFile
                         break;
 
                     mc.ScanSections();
-                    mc.ProcessSections();
+                    mc.ProcessSections(analyze:true);
                     if (mc.Cycles.Count == 0)
                     {
                         ctrllog.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
@@ -256,13 +257,116 @@ namespace NCCFile
                     }
                     else
                     {
+                        Measurement meas = null;
+                        AcquireParameters orig_acq = new AcquireParameters(NC.App.Opstate.Measurement.AcquireState);
+                        Detector curdet = NC.App.Opstate.Measurement.Detector;
+                        if (mc.AcquistionStateChanged)
+                        {
+                            orig_acq = new AcquireParameters(NC.App.Opstate.Measurement.AcquireState);
+                            curdet = mc.DataZDetector;
+                            if (curdet.AB.Unset)
+                            {
+                                ABKey abkey = new ABKey(curdet.MultiplicityParams, mc.MaxBins);
+                                LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
+                            }
+                        }
                         ctrllog.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
                         System.Collections.IEnumerator iter = mc.GetSequences();
                         while (iter.MoveNext())
                         {
                             DatazFile.Plateau pla = (DatazFile.Plateau)iter.Current;
+                            ResetMeasurement();
+                            // update acq and then meas here
+                            AcquireParameters newacq = ConfigureAcquireState(curdet, orig_acq, pla.Cycles[0].DTO, (ushort)pla.Num, mc.Filename);
+                            newacq.data_src = ConstructedSource.DatazFile;
+                            IntegrationHelpers.BuildMeasurement(newacq, curdet, mo);
+                            meas = NC.App.Opstate.Measurement;
+                            meas.MeasDate = newacq.MeasDateTime;
+                            meas.Persist();  // preserve the basic results record
+                            meas.RequestedRepetitions = (ushort)pla.Num;
+                            FireEvent(EventType.ActionInProgress, this);
+                            switch ((DatazConversionTarget)NC.App.Config.Cur.DatazConvertType)
+                            {
+                                case DatazConversionTarget.TestData:
+                                    for (int i = 0; i < meas.RequestedRepetitions; i++)
+                                        AddMCSRDataCycle(i, pla.Cycles[i], meas, mc.Filename);
+                                    AnalysisDefs.TestDataFile mdat = new AnalysisDefs.TestDataFile(ctrllog);
+                                    mdat.GenerateReport(meas);
+                                    break;
+                                case DatazConversionTarget.NCC:
+                                    {
+                                        string name;
+                                        if (NC.App.AppContext.Results8Char)
+                                            name = MethodResultsReport.EightCharConvert(meas.MeasDate) + ".ncc";
+                                        else
+                                        {
+                                            name = meas.MeasOption.PrintName() + meas.MeasDate.ToString("yyyyMMddHHmmss");
+                                            if (!string.IsNullOrEmpty(meas.Detector.Id.DetectorId))
+                                                name = meas.Detector.Id.DetectorId + " " + name;
+                                            name += ".ncc";
+                                        }
+                                        NCCFileWriter _NCC = new NCCFileWriter
+                                        {
+                                            MeasStartDate = meas.MeasDate,
+                                            DetectorId = meas.Detector.Id.DetectorId,
+                                            Name = name,
+                                            Path = meas.AcquireState.lm.Results,
+                                            ItemId = meas.AcquireState.ItemId.item,
+                                            MeasOption = "V", // todo: expand cmd line flags o include B,V,N, or add meas option to Dataz configuration section  meas.MeasOption.PrintName(),
+                                            Log = ctrllog,
+                                            RunTime = meas.AcquireState.run_count_time
+                                        };
+
+                                        ctrllog.TraceEvent(LogLevels.Info, 111, "Creating new output file: " + System.IO.Path.Combine(_NCC.Path, _NCC.Name));
+                                        bool yes = _NCC.StartNCCFile((ushort)pla.Num); // yes it truncates
+                                        if (!yes)
+                                        {
+                                            ctrllog.TraceEvent(LogLevels.Warning, 33085, "NCC file initialization failed."); 
+                                            continue;
+                                        }
+                                        List<NCCFileWriter.NCCData> xfer = new List<NCCFileWriter.NCCData>();
+                                        for (int i = 0; i < meas.RequestedRepetitions; i++)
+                                        {
+                                            DatazFile.Cycle c = pla.Cycles[i];
+                                            NCCFileWriter.NCCData ncd = new NCCFileWriter.NCCData()
+                                            {
+                                                dt = c.DTO.DateTime,
+                                                sr = new NCCFileWriter.SRData()
+                                                {
+                                                    totals = c.Singles,
+                                                    r_plus_a = c.RealsPlusAccidentals,
+                                                    a = c.Accidentals,
+                                                    scaler1 = 0,
+                                                    scaler2 = 0
+                                                },
+                                                mult = new NCCFileWriter.SRMult((ushort)c.BinLen)
+                                            };
+                                            if (ncd.mult.n_mult > 0)
+                                            {
+                                                for (int j = 0; j < c.BinLen; j++)
+                                                {
+                                                    ncd.mult.r_plus_a[j] = (uint)c.MultRABins[j]; // oops
+                                                    ncd.mult.a[j] = (uint)c.MultNormedAccBins[j]; // oops
+                                                }
+                                            }
+                                            xfer.Add(ncd);                                         
+                                        }
+                                        _NCC.TransferIRAPRunDataToNCCList(xfer);
+                                        _NCC.WriteBody();
+                                        _NCC.EndNCCFile();
+                                        //_NCC.FullPath
+                                    }
+
+                                    break;
+                                case DatazConversionTarget.XFer:
+                                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz to Transfer file conversion not yet implemented, and may never be");
+                                    break;
+                                case DatazConversionTarget.InitialDataPair:
+                                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz det/det.cal pair file conversion not yet implemented, and may never be");
+                                    break;
+                            }
+                            FireEvent(EventType.ActionInProgress, this);
                         }
-                        ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz file conversion not yet implemented"); // URGENT
                     }
                 }
                 catch (Exception e)
@@ -357,6 +461,7 @@ namespace NCCFile
                 public int StartIdx, EndIdx;
                 public int Num;
                 public double Avg;
+                public double CycleInterval;
                 public Cycle[] Cycles;
 
                 public Plateau()
@@ -373,6 +478,8 @@ namespace NCCFile
                     p.Cycles = new Cycle[p.Num];
                     for (int i = p.StartIdx, j = 0; i <= p.EndIdx; i++, j++)  // use GetRange and ToArray you silly person
                         p.Cycles[j] = clist[i];
+                    if (clist != null && clist.Count > 0)
+                        p.CycleInterval = clist[0].Duration.TotalSeconds;
                     return p;
                 }
 
@@ -436,7 +543,7 @@ namespace NCCFile
                     Configuration[SecondaryTag.SG].TryGetValue("Instrument", out a);  // unlikely now
                 if (string.IsNullOrEmpty(a))
                 {
-                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "No detector name specified, using current detecor for analysis");
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "No detector name specified, using current detector for analysis");
                     return;
                 }
 
@@ -492,6 +599,8 @@ namespace NCCFile
                     _candidate.SRParams.gateLengthMS = d;
                 }
 
+                string item = string.Empty;
+                Configuration[SecondaryTag.INCC].TryGetValue("ItemId", out item);
                 a = string.Empty;
                 Configuration[SecondaryTag.INCC].TryGetValue("MaterialType", out a);
                 string fac = string.Empty;
@@ -502,11 +611,11 @@ namespace NCCFile
                 Header.TryGetValue("Remarks", out msg);
 
                 // if det exists in DB then switch to that one, else add it to DB and switch to it, same for facility, system/mba, item type
-                SetNewAcquireState(_candidate, a, fac, mba, msg);
+                SetNewAcquireState(_candidate, a, fac, mba, msg, Plateaux[0].CycleInterval);
             }
 
 
-            bool SetNewAcquireState(Detector det0, string mtl, string fac, string mba, string msg)
+            bool SetNewAcquireState(Detector det0, string mtl, string fac, string mba, string msg, double interval)
             {
                 AcquireParameters acq = NC.App.DB.LastAcquire();
                 Detector det = NC.App.DB.Detectors.GetItByDetectorId(det0.Id.DetectorName);
@@ -576,8 +685,9 @@ namespace NCCFile
                     acq.ending_comment = true;
                     acq.ending_comment_str = msg;
                 }
-                if (AcquistionChangeNeeded(acq, det.Id.DetectorName, mtl, fac, mba))
+                if (AcquistionChangeNeeded(acq, det.Id.DetectorName, mtl, fac, mba, interval))
                 {
+                    acq.run_count_time = interval;
                     acq.detector_id = string.Copy(det.Id.DetectorName);
                     acq.meas_detector_id = string.Copy(det.Id.DetectorName);
                     if (!string.IsNullOrEmpty(mtl))
@@ -603,13 +713,14 @@ namespace NCCFile
                 return (curmul.SR.predelayMS != newmul.SR.predelayMS) || (curmul.SR.gateLengthMS != newmul.SR.gateLengthMS) || (curmul.SR.highVoltage != newmul.SR.highVoltage);  // dev note: FAType change not possible with current fixed SRType to FA type mapping for SRs
             }
 
-            static bool AcquistionChangeNeeded(AcquireParameters acq, string det, string mtl, string fac, string mba)
+            static bool AcquistionChangeNeeded(AcquireParameters acq, string det, string mtl, string fac, string mba, double interval)
             {
                 return !acq.detector_id.Equals(det, StringComparison.OrdinalIgnoreCase) ||
                        !acq.meas_detector_id.Equals(det, StringComparison.OrdinalIgnoreCase) ||
                     (!string.IsNullOrEmpty(fac) && !acq.facility.Name.Equals(fac, StringComparison.OrdinalIgnoreCase)) ||
                     (!string.IsNullOrEmpty(mba) && !acq.mba.Name.Equals(mba, StringComparison.OrdinalIgnoreCase)) ||
-                    (!string.IsNullOrEmpty(mtl) && !acq.item_type.Equals(mtl, StringComparison.OrdinalIgnoreCase));
+                    (!string.IsNullOrEmpty(mtl) && !acq.item_type.Equals(mtl, StringComparison.OrdinalIgnoreCase)) ||
+                    interval != acq.run_count_time;
             }
 
             public bool AcquistionStateChanged { get; private set; }
@@ -630,7 +741,7 @@ namespace NCCFile
                     accIdx, // Accidentals sum
                     multChannelsIdx,  // max mult bin count index
                     multIdx, // first index of multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
-                    multAccIdx; // first index of mult+acc multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
+                    multNormAccIdx; // first index of mult+acc multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
             }
             Indexes dataIndices;
 
@@ -705,8 +816,8 @@ namespace NCCFile
                 public ulong Singles, RealsPlusAccidentals, Accidentals, Reals;
                 public ulong[] Totals;  // 8 used of 32 possible
                 public uint BinLen;
-                public ulong[] MultAccBins;
-                public ulong[] MultBins;
+                public ulong[] MultNormedAccBins;
+                public ulong[] MultRABins;
 
                 static public Cycle Parse(string[] s, Indexes ind, TimeSpan tz)
                 {
@@ -742,18 +853,18 @@ namespace NCCFile
                     //c.Reals = c.RealsPlusAccidentals - c.Accidentals;
 
                     uint.TryParse(s[ind.multChannelsIdx], out c.BinLen);
-                    c.MultBins = new ulong[c.BinLen];
-                    c.MultAccBins = new ulong[c.BinLen];
+                    c.MultRABins = new ulong[c.BinLen];
+                    c.MultNormedAccBins = new ulong[c.BinLen];
                     for (int i = ind.multIdx + 1; i < (ind.multIdx + c.BinLen); i++)
-                        ulong.TryParse(s[i], out c.MultBins[i - (ind.multIdx + 1)]);
-                    ind.multAccIdx = ind.multIdx + 1 + (int)c.BinLen;
-                    for (int i = ind.multAccIdx; i < (ind.multAccIdx + c.BinLen); i++)
-                        ulong.TryParse(s[i], out c.MultAccBins[i - (ind.multAccIdx)]);
+                        ulong.TryParse(s[i], out c.MultRABins[i - (ind.multIdx + 1)]);
+                    ind.multNormAccIdx = ind.multIdx + 1 + (int)c.BinLen;
+                    for (int i = ind.multNormAccIdx; i < (ind.multNormAccIdx + c.BinLen); i++)
+                        ulong.TryParse(s[i], out c.MultNormedAccBins[i - (ind.multNormAccIdx)]);
 
                     int idx = 0;
                     for (idx = (int)(c.BinLen - 1); idx > 0; idx--)
                     {
-                        if (c.MultBins[idx] != 0 || c.MultAccBins[idx] != 0)
+                        if (c.MultRABins[idx] != 0 || c.MultNormedAccBins[idx] != 0)
                             break;
                     }
                     if (idx < (c.BinLen-1))

@@ -33,7 +33,9 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Runtime.InteropServices;
 using NCCReporter;
+
 namespace NCCFile
 {
 
@@ -2563,6 +2565,350 @@ namespace NCCFile
             return new LMPair((uint)chn, time);
         }
     }
+
+
+
+    public class NCCFileWriter : IDisposable   // doesn't follow the neutron data file class hierarchy at all
+    {
+        public LMLoggers.LognLM Log { set; get; }
+
+        /// <summary>
+        /// Name of NCC file
+        /// </summary>
+        public string Name { set; get; }
+        /// <summary>
+        /// Full path to location of NCC file
+        /// </summary>
+        public string Path { set; get; }
+        /// <summary>
+        /// Full path and file name of NCC file
+        /// </summary>
+        public string FullPath { protected set; get; }
+
+        public string DetectorId { set; get; }
+
+        public DateTimeOffset MeasStartDate { get; set; }
+
+
+        /// <summary>
+        /// B,N,V,b,n,v
+        /// </summary>
+        public string MeasOption { set; get; }
+        /// <summary>
+        /// From user or file
+        /// </summary>
+        public string ItemId { set; get; }
+        /// <summary>
+        /// number of data points in the data range
+        /// </summary>
+        public ushort NumRuns { get; set; }
+        /// <summary>
+        /// count in seconds of each cycle
+        /// </summary>
+        public double RunTime { protected get; set; }
+
+        public const string EmptyItemId = "Enter ID";
+
+
+        /*
+         *  Use:
+         *  create instance
+         *  set properties (Name, Path etc.)
+         *      caller knows output path, file name, detector, meas date, item id, meas option
+         *  Send in list of data points
+         *  Save()
+         */
+
+        public NCCFileWriter()
+        {
+            ItemId = EmptyItemId;
+            Runs = new List<RadReviewDataRec>();
+            Mults = new List<SRMult>();
+        }
+
+
+        public void TransferIRAPRunDataToNCCList(List<NCCData> xfer)
+        {
+            foreach (NCCData pt in xfer)
+            {
+                DateTimeOffset rdt = pt.dt;
+                SRData sr = pt.sr;
+                SRMult mult = pt.mult;
+                AddRun(rdt, sr, mult);
+            }
+            //Logger.SendDetail($"Converted {Runs.Count} runs ({NumRuns}) ({Mults.Count})");
+            //Logger.SendDetail($"runtime is {(ushort)RunTime}");
+        }
+
+        List<RadReviewDataRec> Runs;
+        List<SRMult> Mults;
+
+        public void AddRun(DateTimeOffset rdt, SRData sr, SRMult mult)
+        {
+            Runs.Add(CreateRadReviewDataRec(rdt, sr, mult));
+            Mults.Add(mult);
+            //Logger.SendDetail(" -- " + RadReviewDataRecToString(r));
+        }
+
+        public struct NCCData
+        {
+            public DateTime dt;
+            public SRData sr;
+            public SRMult mult;
+        }
+
+
+        /* structure of a run record from rad review 
+         original syntax is retained purposely */
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct RadReviewDataRec
+        {
+            public ulong date;   // 8 bytes
+            public ulong time;
+            public ushort meas_time; // 2 bytes
+            public double totals;
+            public double r_plus_a;
+            public double a;
+            public double scaler1;
+            public double scaler2;
+            public ushort n_mult;  // 2 bytes
+        };
+
+        /* support class for constructing binary recs */
+        public struct SRData
+        {
+            public double totals;
+            public double r_plus_a;
+            public double a;
+            public double scaler1;
+            public double scaler2;
+        }
+        /* this is a separate struct so that future data streams can augment with a separate file source, if desired; */
+        public class SRMult
+        {
+            public ushort n_mult;  // 2 bytes
+            public uint[] a;
+            public uint[] r_plus_a;
+
+            public SRMult(ushort len = 0)
+            {
+                n_mult = len;
+                a = new uint[len];
+                r_plus_a = new uint[len];
+            }
+        }
+
+        RadReviewDataRec CreateRadReviewDataRec(DateTimeOffset rdt, SRData sr, SRMult mult)
+        {
+            RadReviewDataRec r = new RadReviewDataRec();
+            byte[] byterep = NCCTransfer.INCCKnew.StringSquish(rdt.ToString("yy.MM.dd"), NCCTransfer.INCC.DATE_TIME_LENGTH);
+            r.date = ToUInt64(byterep, 0);
+            byterep = NCCTransfer.INCCKnew.StringSquish(rdt.ToString("HH:mm:ss"), NCCTransfer.INCC.DATE_TIME_LENGTH);
+            r.time = ToUInt64(byterep, 0);
+            r.meas_time = (ushort)RunTime;
+            r.n_mult = mult.n_mult;
+            r.totals = sr.totals;
+            r.r_plus_a = sr.r_plus_a;
+            r.a = sr.a;
+            r.scaler1 = sr.scaler1;
+            r.scaler2 = sr.scaler2;
+            return r;
+        }
+
+        byte TranslateMeasOption // meas option byte is one of v,b,n V,B,N and r,c,p,i R,C,P,I
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(MeasOption))
+                    return BitConverter.GetBytes('V')[0];
+                else
+                    return BitConverter.GetBytes(MeasOption[0])[0];
+            }
+        }
+
+        FileStream _stream;
+        BinaryWriter _writer;
+
+        public bool StartNCCFile(ushort _pointCount)
+        {
+            bool result = false;
+            FileInfo fi;
+            FullPath = System.IO.Path.Combine(Path, Name);
+            //Logger.SendDetail("Prepping NCC file: " + FullPath);
+            try
+            {
+                fi = new FileInfo(FullPath);
+                _stream = fi.OpenWrite();
+                _writer = new BinaryWriter(_stream);
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Log?.TraceEvent(LogLevels.Warning, 999, "Error during file creation: " + ex.Message);
+                throw ex;
+            }
+            NumRuns = _pointCount;
+            if (string.IsNullOrEmpty(ItemId))
+                ItemId = EmptyItemId;
+            WriteHeader(_writer);
+            return result;
+        }
+
+        public void WriteBody()
+        {
+            int idx = 0;
+            foreach (RadReviewDataRec run in Runs)
+            {
+                WriteRunData(run, _writer);
+                SRMult mult = Mults[idx];
+                WriteMultplicity(mult, run.n_mult, _writer);
+                idx++;
+            }
+        }
+
+        public void EndNCCFile()
+        {
+            try
+            {
+                _writer.Flush();
+                _writer.Close();
+                _stream.Close();
+            }
+            catch (Exception ex)
+            {
+                Log?.TraceEvent(LogLevels.Warning, 999, "Cannot close file " + System.IO.Path.Combine(Path, Name));
+                Log?.TraceException(ex);
+            }
+        }
+
+        void WriteRunData(RadReviewDataRec run, BinaryWriter writer)
+        {
+            byte[] zb = GetBytes(run, 60);
+            writer.Write(zb);
+        }
+        void WriteMultplicity(SRMult mult, ushort n_mult, BinaryWriter writer)
+        {
+            for (int j = 0; j < n_mult && j < (NCCTransfer.INCC.SR_MAX_MULT * 2); j++)
+            {
+                writer.Write(mult.r_plus_a[j]); // r + a
+            }
+            for (int j = 0; j < n_mult && j < (NCCTransfer.INCC.SR_MAX_MULT * 2); j++)
+            {
+                writer.Write(mult.a[j]); // a
+            }
+        }
+        void WriteHeader(BinaryWriter writer)
+        {
+            writer.Write(NCCTransfer.INCC.INTEGRATED_REVIEW);
+            writer.Write(TranslateMeasOption);
+            byte[] byterep = Encoding.ASCII.GetBytes(DetectorId.PadRight(NCCTransfer.INCC.MAX_DETECTOR_ID_LENGTH).Substring(0, NCCTransfer.INCC.MAX_DETECTOR_ID_LENGTH - 1));
+            int msglen = byterep.Length;
+            writer.Write(byterep);
+
+            byterep = Encoding.ASCII.GetBytes(ItemId.PadRight(NCCTransfer.INCC.MAX_ITEM_ID_LENGTH).Substring(0, NCCTransfer.INCC.MAX_ITEM_ID_LENGTH - 1));
+            writer.Write(byterep);
+
+            byterep = NCCTransfer.INCCKnew.StringSquish(MeasStartDate.ToString("yy.MM.dd"), NCCTransfer.INCC.DATE_TIME_LENGTH - 1);
+            writer.Write(byterep);
+            byterep = NCCTransfer.INCCKnew.StringSquish(MeasStartDate.ToString("HH:mm:ss"), NCCTransfer.INCC.DATE_TIME_LENGTH - 1);
+            writer.Write(byterep);
+
+            writer.Write(NumRuns);
+        }
+
+        string RadReviewDataRecToString(RadReviewDataRec r) => $"{r.date} {r.time} {r.meas_time} {r.n_mult} {r.totals} {r.a} {r.r_plus_a} {r.scaler1} {r.scaler2}";
+
+
+        // binary packing utilities
+
+        static unsafe byte[] GetBytes(RadReviewDataRec run, int len)
+        {
+            return unchecked(GetBytes((byte*)&run, len));
+        }
+
+        private static unsafe byte[] GetBytes(byte* ptr, int len)
+        {
+            if (ptr == null)
+            {
+                throw new ArgumentException();
+            }
+            byte[] res = new byte[len];
+            for (int i = 0; i < len; i++)
+            {
+                res[i] = *ptr;
+                ptr += 1;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="startIndex"></param>
+        /// <returns></returns>
+        static ulong ToUInt64(byte[] value, int startIndex)
+        {
+            return unchecked((ulong)ToInt64(value, startIndex));
+        }
+
+        static unsafe long ToInt64(byte[] value, int startIndex)
+        {
+            fixed (byte* pbyte = &value[startIndex])  // little-endian
+            {
+                if (startIndex % 8 == 0)
+                {
+                    // data is aligned 
+                    return *(long*)pbyte;
+                }
+
+                int i1 = *pbyte | (*(pbyte + 1) << 8) | (*(pbyte + 2) << 16) | (*(pbyte + 3) << 24);
+                int i2 = *(pbyte + 4) | (*(pbyte + 5) << 8) | (*(pbyte + 6) << 16) | (*(pbyte + 7) << 24);
+                return (uint)i1 | ((long)i2 << 32);
+            }
+        }
+
+        protected bool Cancelled { get; set; }
+
+        public void Cancel()
+        {
+            Cancelled = true;
+        }
+
+        #region IDisposable
+        public virtual void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private bool _disposed;
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    //managed memory cleanup
+                    _writer?.Dispose();
+                    _stream?.Dispose();
+                }
+
+                //unmanaged memory cleanup
+
+                //dispose was already handled
+                _disposed = true;
+            }
+
+
+        }
+
+        ~NCCFileWriter()
+        {
+            Dispose(false);
+        }
+        #endregion
+    }
+
 
     #endregion specific file container classes
 

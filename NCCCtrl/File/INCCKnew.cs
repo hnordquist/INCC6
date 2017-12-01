@@ -793,7 +793,7 @@ namespace NCCTransfer
 			return list;
 		}
 
-		static byte[] StringSquish(string s, int len)
+		static public byte[] StringSquish(string s, int len)
         {
             byte[] b = new byte[len];
             if (s.Length > len)
