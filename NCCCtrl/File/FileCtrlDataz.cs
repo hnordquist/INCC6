@@ -282,7 +282,6 @@ namespace NCCFile
                             IntegrationHelpers.BuildMeasurement(newacq, curdet, mo);
                             meas = NC.App.Opstate.Measurement;
                             meas.MeasDate = newacq.MeasDateTime;
-                            meas.Persist();  // preserve the basic results record
                             meas.RequestedRepetitions = (ushort)pla.Num;
                             FireEvent(EventType.ActionInProgress, this);
                             switch ((DatazConversionTarget)NC.App.Config.Cur.DatazConvertType)
