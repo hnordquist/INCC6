@@ -75,11 +75,6 @@ namespace DB
         public enum DbsWeLove { 
             SQLite,
             SQLServerClient,
-            SQLCE4, //SQL Server CE 4
-            OleDB64, // for W 7 or x64, post Jet and MDAC
-            MDACJet, // 32bit XP, uses Jet and MDAC, from ye olden days of yore
-            SQLCE3_5, //SQL Server CE 3.5
-            Oracle,  // dev note: Version specific?
             Nom
         };
 
@@ -95,22 +90,6 @@ namespace DB
                     break;
                 case "SYSTEM.DATA.SQLCLIENT":
                     k = DbsWeLove.SQLServerClient;
-                    break;
-                case "SYSTEM.DATA.SQLSERVERCE.4.0":
-                    k = DbsWeLove.SQLCE4;
-                    break;
-                case "MICROSOFT.JET.OLEDB.4.0":
-                    k = DbsWeLove.MDACJet;
-                    break;
-                case "SYSTEM.DATA.OLEDB":   // dev note: unsure about this as a default
-                case "MICROSOFT.ACE.OLEDB.12.0":
-                    k = DbsWeLove.OleDB64;
-                    break;
-                case "MSDAORA":
-                    k = DbsWeLove.Oracle;
-                    break;
-                case "SYSTEM.DATA.SQLSERVERCE.3.5":
-                    k = DbsWeLove.SQLCE3_5;
                     break;
                 default:
                     k = DbsWeLove.SQLite;
@@ -166,84 +145,6 @@ namespace DB
             return conn;
         }
 
-        public static bool TryConnection(string ConxString, DbsWeLove type, string provider, string DBFileName)
-        {
-            DbProviderFactory fact = DbProviderFactories.GetFactory(provider);
-            DbConnection conn = fact.CreateConnection();
-            if (conn != null)
-            {
-                //Now, change persistence object for new DB.
-                pest.cfg.MyDBConnectionString = ConxString;
-                pest.cfg.MyProviderName = provider;
-                conn.Close();
-                return true;
-            }
-            return false;
-        }
-        public static bool SwitchDB(string dbfile)
-        {
-            DbsWeLove newDB = DbsWeLove.SQLite;
-            string provider = string.Empty;
-
-            switch (Path.GetExtension(dbfile))
-            {
-                case ".sqlite":
-                    newDB = DbsWeLove.SQLite;
-                    provider = "System.Data.SQLite";
-                    break;
-                //case ".sdf":
-                //    newDB = DbsWeLove.SQLServerClient;
-                //    provider = "System.Data.SqlClient";
-                //    break;
-                //case ".sqlce":
-                //    newDB = DbsWeLove.SQLCE4;
-                //    break;
-                //case ".mdb":
-                //    newDB = DbsWeLove.MDACJet;
-               //     break;
-                //todo: Figure out other db types.  Only do SQLite and SQL to begin with
-                //case "SYSTEM.DATA.OLEDB":   // dev note: unsure about this as a default
-                //case "MICROSOFT.ACE.OLEDB.12.0":
-                //    k = DbsWeLove.OleDB64;
-                //   break;
-                //case "MSDAORA":
-                //    k = DbsWeLove.Oracle;
-                //    break;
-                //case "SYSTEM.DATA.SQLSERVERCE.3.5":
-                //    k = DbsWeLove.SQLCE3_5;
-                //    break;
-                default:
-                    return false;
-            }
-            //Try to build new connection string and connect.
-            DbConnectionStringBuilder csb = new DbConnectionStringBuilder();
-            csb["Data Source"] = dbfile;
-            csb["Version"]="3";
-            csb["New"]="False";
-            csb["Compress"]="True";
-            csb["foreign_keys"] = "true";
-            return TryConnection(csb.ConnectionString, newDB, provider, dbfile);
-        }
-        public static string GetProviderStringFromEnum (DbsWeLove type)
-        {
-            string provider = String.Empty;
-            switch (type)
-            {
-                case DbsWeLove.SQLite:
-                    provider = "System.Data.SQLite";
-                    break;
-                case DbsWeLove.SQLServerClient:
-                    provider = "System.Data.SqlClient";
-                    break;
-                case DbsWeLove.SQLCE4:
-                    provider = "System.Data.SqlServerCe.4.0";
-                    break;
-                case DbsWeLove.MDACJet:
-                    provider = "System.Data.OleDb";
-                    break;
-            }
-            return provider;
-        }
         /// <summary>
         /// The current DBProvider factory creates the typed DbDataAdapter subclass
         /// </summary>

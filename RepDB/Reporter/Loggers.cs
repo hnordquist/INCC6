@@ -41,15 +41,15 @@ namespace NCCReporter
         Warning = TraceEventType.Warning, Info = TraceEventType.Information, Verbose = TraceEventType.Verbose
     };
 
-    //// Keep LMLoggers for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
-    //// Some non-core classes and methods were moved into the core project after the first division, no notice or reasons given
-    //public class Logging : LMLoggers
-    //{
-    //    public Logging(NCCConfig.Config cfg) : base(cfg)
-    //    {
+    /// Keep LMLoggers for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+    //// Some non-core classes and methods were moved into the core project after the first division in 2014
+    public class Logging : LMLoggers
+    {
+        public Logging(NCCConfig.Config cfg) : base(cfg)
+        {
 
-    //    }
-    //}
+        }
+    }
 
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
     // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
@@ -113,15 +113,15 @@ namespace NCCReporter
             }
         }
 
-        //// Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
-        //// Some non-core classes and methods were moved into the core project after the first division, no notice or reasons given
-        //public class Log : LognLM
-        //{
-        //    public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
-        //    {
+        // Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+        // Some non-core classes and methods were moved into the core project after the first division in 2014
+        public class Log : LognLM
+        {
+            public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+            {
 
-        //    }
-        //}
+            }
+        }
 
         public class LognLM
         {

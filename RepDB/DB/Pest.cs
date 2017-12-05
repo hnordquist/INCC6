@@ -52,23 +52,6 @@ namespace DB
             DBMain.pest = this;
         }
 
-        public bool SwitchDB(string dbFile)
-        {
-            return DBMain.SwitchDB(dbFile);
-        }
-        // initial prep of config and DB state, where DB could be flat file, XML file, web service, moon rock, real DB, or in-memory hard-coded values 
-
-        public string GetDBFileFromConxString()
-        {
-            Match m = Regex.Match(DBMain.ConnStr, "^Data\\sSource(\\s)*=(\\s)*(?<DataSourceName>([^;]*))", RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
-            char[] trimchars = new char[1] { '\"' };
-            if (m.Success)
-                return (m.Groups[3].Value.TrimStart(trimchars).TrimEnd(trimchars));
-            else
-                return string.Empty;
-        }
-        
-
         public DataTableReader GetADataTableReader(Pieces p, String did = null)
         {
             return new DataTableReader(GetACollection(p, did));

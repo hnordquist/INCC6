@@ -785,7 +785,7 @@ namespace NewUI
 
         private void ChangeDatabaseClick(object sender, RoutedEventArgs e)
         {
-            IDDDBPicker dbpick = new IDDDBPicker();
+            FormsHappyPlace.SelectSQLiteDB dbpick = new FormsHappyPlace.SelectSQLiteDB();
             dbpick.ShowDialog();
             //todo: decide if we need to allow on-the-fly DB changes or they just change the App.Config file with new DB name.
         }

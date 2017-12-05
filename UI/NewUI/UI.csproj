@@ -213,6 +213,12 @@
     <Compile Include="FormsHappyPlace\PrintForm.Designer.cs">
       <DependentUpon>PrintForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormsHappyPlace\SelectSQLiteDB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\SelectSQLiteDB.Designer.cs">
+      <DependentUpon>SelectSQLiteDB.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormsHappyPlace\Splash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -347,12 +353,6 @@
     </Compile>
     <Compile Include="FormsHappyPlace\IDDCuriumRatioCalibration.Designer.cs">
       <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDBPicker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormsHappyPlace\IDDDBPicker.Designer.cs">
-      <DependentUpon>IDDDBPicker.cs</DependentUpon>
     </Compile>
     <Compile Include="FormsHappyPlace\IDDDeleteMeas.cs">
       <SubType>Form</SubType>
@@ -1216,6 +1216,9 @@
     <EmbeddedResource Include="FormsHappyPlace\PrintForm.resx">
       <DependentUpon>PrintForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\SelectSQLiteDB.resx">
+      <DependentUpon>SelectSQLiteDB.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\Splash.resx">
       <DependentUpon>Splash.cs</DependentUpon>
     </EmbeddedResource>
@@ -1279,9 +1282,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDCuriumRatioCalibration.resx">
       <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FormsHappyPlace\IDDDBPicker.resx">
-      <DependentUpon>IDDDBPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormsHappyPlace\IDDDeleteMeas.resx">
       <DependentUpon>IDDDeleteMeas.cs</DependentUpon>

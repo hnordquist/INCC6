@@ -57,7 +57,7 @@ namespace NCCConfig
         sortPulseFile, filterLMOutliers, datazConvert, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
-        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
+        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString, DBDataSource,
 
 		reportSect, query, tau, Tee, datazConvertParams
     }
@@ -94,6 +94,7 @@ namespace NCCConfig
             { "assayTypeSuffix", "set false to use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
             { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
                                            s => app.ReportSectional = s},
+            { "DBDataSource", "use this SQLite data source in place of the configured data source", l => db.DBDataSource = l},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },

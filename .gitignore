@@ -4,6 +4,6 @@ obj
 *.pdb
 *.user
 *.VC.db
-/Help/inccuser/INCCelp.hnd
+/Help
 /.vs
 /packages

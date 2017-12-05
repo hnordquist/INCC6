@@ -70,7 +70,7 @@ namespace NewUI
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog();
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
-            RestoreFileDialog.DefaultExt = "ext";
+            RestoreFileDialog.DefaultExt = ext;
             RestoreFileDialog.Filter = name + " files (." + ext + ")|*." + ext;
             if (!String.IsNullOrEmpty(ext2))
             {
@@ -116,7 +116,7 @@ namespace NewUI
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog(); 
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
-            RestoreFileDialog.DefaultExt = "ext";
+            RestoreFileDialog.DefaultExt = ext;
             RestoreFileDialog.Filter = name + " files (." + ext + ")|*." + ext ;
             if (!String.IsNullOrEmpty(ext2))
             {

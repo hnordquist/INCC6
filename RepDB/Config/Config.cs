@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text.RegularExpressions;
 using NDesk.Options;
+using System.Text;
 
 namespace NCCConfig
 {
@@ -148,6 +149,27 @@ namespace NCCConfig
             _parms = ParameterBasis();  // alloc table
             db = new DBConfig(_parms);  // set up DB config
             ReadAppSettings(); // get the DB settings
+        }
+
+        public void BeforeDBSetup(string[] args)
+        {
+            // find the database overrride flag and apply it
+            foreach (string a in args)
+            {
+                if (a.Contains("DBDataSource"))
+                {
+                    string[] e = a.Split(new char[] { '=', ':' });
+                    if (e.Length > 1)
+                    {
+                        string res = DBConfig.ReplaceDataSourceInSQLiteConnectionString(e[1], db.MyDBConnectionString);
+                        if (!string.IsNullOrEmpty(res) && !res.Equals(db.MyDBConnectionString))
+                        {
+                            db.MyDBConnectionString = res;
+                            Console.WriteLine("Using database at " + db.DBDataSource);
+                        }
+                    }
+                }
+            }
         }
 
         public void AfterDBSetup(AppContextConfig appctx, string[] args)
@@ -929,7 +951,7 @@ namespace NCCConfig
 				return RootPath;
 		}
 
-		Match PathMatch(string path)
+        Match PathMatch(string path)
 		{ 
 			Match m = Regex.Match(path, "\\d{4}-\\d{4}$");
 			return m;			
@@ -1914,7 +1936,14 @@ namespace NCCConfig
         {
             this._parms = _parms;
             resetVal(NCCFlags.MyProviderName, "System.Data.SQLite", typeof(string));
-            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;foreign_keys=on;", typeof(string));
+            resetVal(NCCFlags.MyDBConnectionString, "Data Source=\".\\INCC6.SQLite\";Version=3;New=False;Compress=True;PRAGMA foreign_keys=on;", typeof(string));
+            resetVal(NCCFlags.DBDataSource,"", typeof(string), retain:false);
+        }
+
+        public string DBDataSource
+        {
+            get { return (string)getVal(NCCFlags.DBDataSource); }
+            set { setVal(NCCFlags.DBDataSource, value); }
         }
 
         public string MyProviderName
@@ -1948,10 +1977,40 @@ namespace NCCConfig
             return s;
         }
 
+            
+        public static string ReplaceDataSourceInSQLiteConnectionString(string _newpath, string cx)
+        {
+            bool go = false;
+            string[] s = cx.Split(';');
+            Regex rx = new Regex("Data\\sSource", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+            for (int i = 0; i < s.Length; i++)
+            {
+                string[] e = s[i].Split('=');
+                if ((e.Length == 2) && rx.IsMatch(e[0]))
+                {
+                    s[i] = "Data Source=\"" + Regex.Replace(_newpath, @"[\'""]", @"$0$0") + "\""; // must quote the unquoted path!
+                    go = true;
+                    break;
+                }
+            }
+            if (go)
+            {
+                StringBuilder newcx = new StringBuilder();
+                for (int i = 0; i < s.Length; i++)
+                {
+                    if (s[i].Length < 1) continue;
+                    newcx.Append(s[i]);
+                    newcx.Append(';');
+                }
+                string xnewx = newcx.ToString();
+                return xnewx;
+            }
+            return string.Empty;
+        }
 
     }
 
-	public class WPFEventArgs: EventArgs
+    public class WPFEventArgs: EventArgs
 	{
 		public bool value;
 

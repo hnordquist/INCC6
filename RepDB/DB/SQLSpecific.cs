@@ -60,7 +60,6 @@ namespace DB
                     case DBMain.DbsWeLove.SQLite:
                         s = "'" + s + "'";
                         break;
-                    case DBMain.DbsWeLove.SQLCE4:
                     case DBMain.DbsWeLove.SQLServerClient:
                         s = "N'" + s + "'";
                         break;
@@ -70,12 +69,6 @@ namespace DB
                 }
             }
             return s;
-        }
-
-        // fix this later
-        public static string Value(string s, string t)
-        {
-            return Value(s, !string.IsNullOrEmpty(t));
         }
 
         // shortcut canonical date format, works with SQLite, might work with everything else
@@ -107,15 +100,8 @@ namespace DB
             {
                 case DBMain.DbsWeLove.SQLite:
                     return "SELECT last_insert_rowid()";
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64:
-                    return "select @@Identity from " + table;
-                case DBMain.DbsWeLove.Oracle:
-                    return "DBMS_SQL.LAST_ROW_ID";
                 case DBMain.DbsWeLove.SQLServerClient:
                     return "SELECT IDENT_CURRENT ('" + table + "') AS Current_Identity";
-                case DBMain.DbsWeLove.SQLCE4:
-                    return "SELECT @@IDENTITY AS " + table; //?? placeholder
                 default:
                     return "";
             }
@@ -129,19 +115,10 @@ namespace DB
                 case DBMain.DbsWeLove.SQLite:
                     s= "'" + sDate + "'";
                     break;
-                case DBMain.DbsWeLove.MDACJet:
-                case DBMain.DbsWeLove.OleDB64: // todo: validate this is the same as Jet 4.0
-                    s= "'#" + sDate + "#'";
-                    break;
-                case DBMain.DbsWeLove.Oracle:
-                    s= "TO_DATE('" + Utils.ConverttoDateTimeString(sDate) + "','YYYYMMDD HH:MM:SS')";
-                    break;
                 case DBMain.DbsWeLove.SQLServerClient:
 					s= "'" + sDate + "'";
                     break;
-                case DBMain.DbsWeLove.SQLCE4:
-                    s = "Cast('" + sDate + "' as datetime)";
-                    break;
+
                 default:
                     s= "'" + sDate + "'";
                     break;
