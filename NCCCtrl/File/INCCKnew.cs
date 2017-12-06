@@ -669,7 +669,7 @@ namespace NCCTransfer
 				int indx = 0;
 				for (int i = 0; i < INCC.MAX_POISON_ROD_TYPES; i++)
 				{
-					if (string.IsNullOrEmpty(imr.collar.poison_rod_type[i]))
+					if (!string.IsNullOrEmpty(imr.collar.poison_rod_type[i]))
 					{
 						char[] aa = imr.collar.poison_rod_type[i].ToCharArray(0, Math.Min(imr.collar.poison_rod_type[i].Length, INCC.MAX_ROD_TYPE_LENGTH));
 						Encoding.ASCII.GetBytes(aa, 0, aa.Length, bb, indx);
