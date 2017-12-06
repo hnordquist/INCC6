@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace NCCTester
         //All the stuff we need to calculate
         
         public static List<MultiplicityCountingRes> mcrs = new List<MultiplicityCountingRes>();
-        public static List<Cycle> cycles = new List<Cycle>();
+        public static CycleList cycles = new CycleList();
         public static AcquireParameters acq;
         public static AnalysisDefs.TestParameters tp = new TestParameters();
         public static AnalysisDefs.NormParameters np = new NormParameters();
@@ -571,6 +572,7 @@ namespace NCCTester
                     {
                         c = cycleData.Match(line);
                         Int32.TryParse(c.Groups[1].Value, out idx);
+
                         mcrs.Add(new MultiplicityCountingRes());
                         cycles.Add(new Cycle(null));
                         if (c.Success)
@@ -592,7 +594,7 @@ namespace NCCTester
                             mcrs[idx-1].Scaler1.v = val;
                             double.TryParse(c.Groups[6].Value, out val);
                             mcrs[idx-1].Scaler2.v = val;
-                            QCTestStatus qcts = QCTestStatusExtensions.FromString(c.Groups[6].Value); 
+                            QCTestStatus qcts = QCTestStatusExtensions.FromString(c.Groups[6].Value);
                             line = sr.ReadLine();
                             lineCount++;
                         }
@@ -713,11 +715,13 @@ namespace NCCTester
         }
         public static void DoCycleProcessing()
         {
-
-            foreach (Cycle c in cycles)
+            foreach (Cycle c in testMeasurement.Cycles)
             {
-                AnalysisDefs.CycleProcessing.ApplyTheCycleConditioningSteps(c, testMeasurement);
+                testMeasurement.Add(c);
+                CycleProcessing.ApplyTheCycleConditioningSteps(c, testMeasurement);
+                testMeasurement.CycleStatusTerminationCheck(c);
             }
+            testMeasurement.CalculateMeasurementResults();
         }
         static void Main(string[] args)
         {
