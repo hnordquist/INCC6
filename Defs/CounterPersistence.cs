@@ -48,7 +48,7 @@ namespace ListModeDB
             {
                 LMINCCAppContext app = new LMINCCAppContext();
                 DB.AppContext db = new DB.AppContext();
-                DataTable dt = dt = db.GetAll();
+                DataTable dt = db.GetAll();
                 if (dt.Rows.Count < 1)
                 {
                     db.Update(app.ToDBElementList());  // creates if not found

@@ -2218,23 +2218,23 @@ namespace AnalysisDefs
             Step = hvp.Step;
         }
 
-        string results;
+        string _results;
         public string Results
         {
             get
             {
 				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && !string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))  // set specifically
 					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.Equals(results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
+				else if (string.Equals(_results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
 					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.IsNullOrEmpty(results))   // use the daily path if nothing is set
+				else if (string.IsNullOrEmpty(_results))   // use the daily path if nothing is set
                     return NCC.CentralizedState.App.AppContext.RootPathOverride();                
                 else if (NCC.CentralizedState.App.AppContext.DailyRootPath)  // if daily path set, check the current path for a match
                 {
                     string part = DateTime.Now.ToString("yyyy-MMdd");
-                    if (!results.EndsWith(part))  // it's not the current day
+                    if (!_results.EndsWith(part))  // it's not the current day
                     {
-                        Match m = Regex.Match(results, "\\d{4}-\\d{4}$");
+                        Match m = Regex.Match(_results, "\\d{4}-\\d{4}$");
                         if (m.Success)  // it is a pattern match meant to use the override daily path scheme, so use it
                         {
                             // strip and replace
@@ -2243,12 +2243,12 @@ namespace AnalysisDefs
                     }
                 }                
                 // else use the path exactly as user has specified, it is not overridden by the daily flag
-                return results;
+                return _results;
             }
             set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                results = warmed;
+            {               
+                string trimmedvalue = TrimCmdLineFlagpath(value);
+                _results = NCC.CentralizedState.App.AppContext.GetTempLocation(trimmedvalue);
             }
         }
 

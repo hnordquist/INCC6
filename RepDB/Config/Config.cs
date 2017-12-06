@@ -36,6 +36,7 @@ using System.Resources;
 using System.Text.RegularExpressions;
 using NDesk.Options;
 using System.Text;
+using System.Security.AccessControl;
 
 namespace NCCConfig
 {
@@ -607,12 +608,12 @@ namespace NCCConfig
     public class AppContextConfig : ConfigHelper
     {
         public const string AppName = AssemblyConstants.ShortAssemblyProduct;
-            
+
         public static string GetVersionString()
         {
-			Assembly a = Assembly.GetEntryAssembly();
+            Assembly a = Assembly.GetEntryAssembly();
             Version MyVersion = a.GetName().Version;
-			string result = MyVersion.ToString();
+            string result = MyVersion.ToString();
             string branch = GetVersionBranchString(a);
             if (!string.IsNullOrEmpty(branch))
                 result = result + " " + branch;
@@ -638,17 +639,17 @@ namespace NCCConfig
         }
 
         static public string EightCharConvert(DateTimeOffset dto)
-		{
-			char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-			string y = dto.ToString("yy");
-			char Y = y[y.Length-1];
-			string M = string.Format("{0:X1}", dto.Month);
-			char D = table[dto.Day];
-			char H = table[dto.Hour + 10];
-			string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
+        {
+            char[] table = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            string y = dto.ToString("yy");
+            char Y = y[y.Length - 1];
+            string M = string.Format("{0:X1}", dto.Month);
+            char D = table[dto.Day];
+            char H = table[dto.Hour + 10];
+            string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
 
-			return s;
-		}
+            return s;
+        }
 
 
         public AppContextConfig()
@@ -662,7 +663,7 @@ namespace NCCConfig
 
             resetVal(NCCFlags.root, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.dailyRootPath, false, typeof(bool));
- 
+
             resetVal(NCCFlags.logging, false, typeof(bool));
             resetVal(NCCFlags.quiet, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (int)TraceOptions.None, typeof(int));
@@ -678,7 +679,7 @@ namespace NCCConfig
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.logLocation, Config.DefaultPath + "\\6.log", typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
-          
+
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
             resetVal(NCCFlags.emulatorapp, Config.DefaultPath, typeof(string));
@@ -692,7 +693,7 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
             resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
-            resetVal(NCCFlags.datazConvert, false, typeof(bool), retain: false); 
+            resetVal(NCCFlags.datazConvert, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -730,7 +731,7 @@ namespace NCCConfig
             tracelevelmap.Add((ushort)5, /*LogLevels*/TraceEventType.Verbose);
         }
 
-        public List<string> FileInputList {get; set; }
+        public List<string> FileInputList { get; set; }
 
         public void ResetFileInput() { resetVal(NCCFlags.fileinput, Config.DefaultPath, typeof(string)); }
 
@@ -743,19 +744,19 @@ namespace NCCConfig
             get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || DatazFileAssay || PulseFileAssay || DBDataAssay); }
         }
 
-		private string overridepath(NCCFlags flag)
-		{
-			if (isSet(flag))
-				return (string)getVal(flag);
-			else
-				return RootLoc;
-		}
+        private string overridepath(NCCFlags flag)
+        {
+            if (isSet(flag))
+                return (string)getVal(flag);
+            else
+                return RootLoc;
+        }
 
-		public string FileInput
+        public string FileInput
         {
             get
             {
-				return overridepath(NCCFlags.fileinput);
+                return overridepath(NCCFlags.fileinput);
             }
             set
             {
@@ -797,7 +798,7 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.liveFileWrite); }
             set { setVal(NCCFlags.liveFileWrite, value); }
         }
-        
+
         public bool CreateINCC5TestDataFile
         {
             get { return (bool)getVal(NCCFlags.gen5TestDataFile); }
@@ -883,11 +884,11 @@ namespace NCCConfig
             set { MutuallyExclusiveFileActions(NCCFlags.datazConvert, true); }
         }
         public bool HasFileAction
-		{
+        {
             get { return IsFileActionSet(); }
-		}
+        }
 
-		public string LogFilePath
+        public string LogFilePath
         {
             get { return overridepath(NCCFlags.logFileLoc); }
             set { _setIfNotOverride(NCCFlags.logFileLoc, value); }
@@ -900,25 +901,57 @@ namespace NCCConfig
         }
         public string ResultsFilePath
         {
-            get { return  overridepath(NCCFlags.resultsFileLoc); }
+            get { return overridepath(NCCFlags.resultsFileLoc); }
             set { _setIfNotOverride(NCCFlags.resultsFileLoc, value); }
         }
 
-		private void _setIfNotOverride(NCCFlags flag, string path)
-		{
-			// do not set if it is the override value
-			Match m = PathMatch(path);
-			if (m.Success) // if it is a daily path match, do not save it
-				return;
-			// if not a daily path match and not the current root path, go ahead and save it
-			if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
-					setVal(flag, path);	
-		}
+        private void _setIfNotOverride(NCCFlags flag, string path)
+        {
+            // do not set if it is the override value
+            Match m = PathMatch(path);
+            if (m.Success) // if it is a daily path match, do not save it
+                return;
+            // if not a daily path match and not the current root path, go ahead and save it
+            if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
+                setVal(flag, path);
+        }
+
+        string GetDefaultTempPath => Path.Combine(Path.GetTempPath(), "I6");
+
+        const string TempLocationReplacementMarker = "*";
+
+        public string GetTempLocation(string s)
+        {
+            if (s == TempLocationReplacementMarker)
+               return GetDefaultTempPath;
+            else
+                return s;
+        }
 
         public string RootPath
         {
             get { return (string)getVal(NCCFlags.root); }
-            set { setVal(NCCFlags.root, value); }
+            set {
+                if (value == TempLocationReplacementMarker)
+                {
+                    setVal(NCCFlags.root, GetDefaultTempPath);
+                }
+                else
+                {
+                    try
+                    {
+                        DirectoryInfo di = new DirectoryInfo(value);
+                        if (di.Exists)
+                            setVal(NCCFlags.root, value);
+                        else
+                            setVal(NCCFlags.root, GetDefaultTempPath);
+                    }
+                    catch (Exception)
+                    {
+                        setVal(NCCFlags.root, GetDefaultTempPath);
+                    }
+                }
+            }
         }
 
 		public string RootPathOverride()
@@ -932,7 +965,6 @@ namespace NCCConfig
 				{
 					try
 					{
-
 						Match m = PathMatch(RootPath);
 						if (m.Success)
 						{

@@ -3682,6 +3682,7 @@ namespace AnalysisDefs
                     ap.lm.SaveOnTerminate = DB.Utils.DBBool(dr["saveOnTerminate"]);
                     if (!dr["results"].Equals(System.DBNull.Value))
                         ap.lm.Results = (string)(dr["results"]);
+
                     ap.lm.IncludeConfig = DB.Utils.DBBool(dr["includeConfig"]);
                     if (!dr["message"].Equals(System.DBNull.Value))
                         ap.lm.Message = (string)(dr["message"]);

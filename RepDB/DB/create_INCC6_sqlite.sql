@@ -2125,7 +2125,7 @@ INSERT INTO [LMNetComm] VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+INSERT INTO [LMINCCAppContext] VALUES('*',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
 GO
 INSERT INTO [detectors] VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO
@@ -2205,9 +2205,9 @@ INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL
 GO
 INSERT INTO [acquire_parms_rec] VALUES(2, 'XXXX','XXXX','XXXX','XXXX','JSR-15','Pu','','Default','Default','','','XXXX','XXXX','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1,0,40,2,'','',0,0,'2016-08-05T11:05:39.2729192-06:00','2016-08-05T16:28:15.4647845-06:00','JSR-15');
 GO
-INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
+INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'*',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO
-INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
+INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'*',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
 GO
 INSERT INTO [poison_rod_type_rec] VALUES(1,'G',0.647);
 GO
