@@ -56,7 +56,7 @@ namespace NCCCmd
                 if (System.IO.Directory.Exists(possiblepaths[2]))
                     N.App.AppContext.LogFilePath = possiblepaths[2];
             }
-            // check return bool and exit here on error
+            // check return bool and exit here on error, starts up the loggers
             bool initialized = N.App.Initialize(c);
 			if (!initialized)
 				return;
@@ -83,8 +83,9 @@ namespace NCCCmd
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
 				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
-				// These affect the current acquire state, so they occur here and not earlier in the initial processing sequence
-				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
+                applog.TraceEvent(LogLevels.Info, 16161, "==== Logging to " + LMLoggers.LognLM.CurrentLogFilePath);
+                // These affect the current acquire state, so they occur here and not earlier in the initial processing sequence
+                if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
 					goto end;

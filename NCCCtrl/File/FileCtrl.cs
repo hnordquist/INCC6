@@ -323,9 +323,8 @@ namespace NCCFile
 					{
 						FireEvent(EventType.ActionInProgress, new TransferEventArgs((int)(100.0 * (j / (float)xferlist.Count)), "Constructing measurement from " + System.IO.Path.GetFileName(bar.Path)));
 						INCCKnew k = new INCCKnew(ctrllog);
-						bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j);
 						j++;
-						if (!supercool)
+						if (!k.BuildMeasurement((INCCTransferFile)bar, j))
 							continue;
 						if (NC.App.AppContext.Replay)
 							Replay(k.Meas, ConstructedSource.INCCTransfer, System.IO.Path.GetFileName(bar.Path));

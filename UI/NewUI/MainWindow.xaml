@@ -168,7 +168,7 @@
                             ScrollViewer.HorizontalScrollBarVisibility="Visible"
                             ScrollViewer.VerticalScrollBarVisibility="Visible"
                             logging:AutoScrollBehavior.AutoScroll="True"
-                            xmlns:logging="clr-namespace:NewUI.Logging">
+                            xmlns:logging="clr-namespace:NewUI.Logging" MouseDoubleClick="OnMouseDblClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn

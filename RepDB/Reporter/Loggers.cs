@@ -180,7 +180,7 @@ namespace NCCReporter
                                 item.TraceOutputOptions |= cfg.App.LoggingDetailOptions;
 
                             if (string.IsNullOrEmpty(CurrentLogFilePath))
-                                CurrentLogFilePath = listener.FullLogFileName; //System.IO.Path.Combine(listener.CustomLocation, listener.BaseFileName + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
+                                CurrentLogFilePath = listener.FullLogFileName;
                         }
                         else
                         {

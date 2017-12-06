@@ -155,8 +155,8 @@ namespace NewUI
             NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
             if (!NC.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
 				return false;
-            c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line 
-            bool initialized = NC.App.Initialize(c);
+            c.AfterDBSetup(NC.App.AppContext, args);  // apply the cmd line, after database init
+            bool initialized = NC.App.Initialize(c); // starts up the loggers
             if (!initialized)
                 return false;
 
@@ -164,6 +164,8 @@ namespace NewUI
                 TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " " + NC.App.Config.VersionString);
             NC.App.AppLogger.
 				TraceInformation("==== DB " + NC.App.Pest.DBDescStr);
+            NC.App.AppLogger.
+                TraceEvent(LogLevels.Info, 16161, "==== Logging to "+ LMLoggers.LognLM.CurrentLogFilePath);
             return true;
         }
 

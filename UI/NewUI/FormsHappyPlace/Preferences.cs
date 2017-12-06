@@ -120,6 +120,7 @@ namespace NewUI
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            bool annclog = ((string)maybe[NCCFlags.logFileLoc] != NC.App.AppContext.LogFilePath);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.auxRatioReport] != NC.App.AppContext.AuxRatioReport);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.autoCreateMissing] !=NC.App.AppContext.AutoCreateMissing);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.root] !=NC.App.AppContext.RootLoc);
@@ -165,6 +166,10 @@ namespace NewUI
 			NC.App.AppContext.INCC5IniLoc = (string)maybe[NCCFlags.emulatorapp];
             NC.App.AppContext.UseINCC5Ini = (bool)maybe[NCCFlags.serveremulation];
             NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
+            if (annclog)
+            {
+                NC.App.AppLogger.TraceInformation("Restart INCC6 to enable the new log file location");
+            }
             Close();
         }
 

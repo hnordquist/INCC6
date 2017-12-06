@@ -923,5 +923,29 @@ namespace NewUI
         {
             MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
+        private void OnMouseDblClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var x = ((System.Windows.Controls.Primitives.Selector)sender).SelectedItem;
+            if (x != null)
+            {
+                Logging.TraceEvent t = (Logging.TraceEvent)x;  /// can be any other type? No
+                if (t.Id == 16161) // my magic marker
+                {
+                    string[] foo = t.Message.Split();
+                    if (foo.Length > 3)
+                    {
+                        string notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
+                        if (File.Exists(notepadPath))
+                            if (File.Exists(foo[3]))
+                            {
+                                NC.App.Loggers.Flush();
+                                System.Diagnostics.Process.Start(notepadPath, foo[3]);
+                            }
+                            else
+                                NC.App.AppLogger.TraceEvent(LogLevels.Error, 22222, "The file '" + foo[3] + "' cannot be accessed.");
+                    }
+                }
+            }
+        }
     }
 }
