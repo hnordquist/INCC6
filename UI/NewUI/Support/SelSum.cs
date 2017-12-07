@@ -214,8 +214,8 @@ namespace NewUI
 				break;
 			case Selections.Comments:
 				entries["Comment"] = m.AcquireState.comment;
-				if (m.INCCAnalysisResults.TradResultsRec.acq.ending_comment && 
-					!string.IsNullOrEmpty(m.INCCAnalysisResults.TradResultsRec.acq.ending_comment_str))
+				if (m.INCCAnalysisResults.TradResultsRec.acq.ending_comment || 
+					!string.IsNullOrEmpty(m.INCCAnalysisResults.TradResultsRec.acq.ending_comment_str))  // if it is there, show it
 					entries["End Comment"] = m.AcquireState.ending_comment_str;
 				break;
 			case Selections.MassAnalysisMethods:

@@ -411,10 +411,9 @@ namespace NewUI
 			if (acq.modified)
 			{
 				Measurement m = N.App.Opstate.Measurement;
-				INCCResults.results_rec re = m.INCCAnalysisResults.TradResultsRec;
 				DB.Results dbres = new DB.Results();
 				dbres.UpdateEndingComment(m.MeasurementId.UniqueId, acq.ending_comment_str);
-				 // save the comment in the existing measurement result_rec, in the database, it is a surgical insertion at this point because the process is complete
+				// save the comment in the existing measurement result_rec, in the database, it is a surgical insertion at this point because the process is complete
 			}
             Close();
         }

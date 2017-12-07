@@ -681,7 +681,7 @@ namespace NCCFile
                 acq.data_src = ConstructedSource.DatazFile;
                 if (!string.IsNullOrEmpty(msg))
                 {
-                    acq.ending_comment = true;
+                    //acq.ending_comment = true;  // comment is saved but no ending dialog pops up
                     acq.ending_comment_str = msg;
                 }
                 if (AcquistionChangeNeeded(acq, det.Id.DetectorName, mtl, fac, mba, interval))
