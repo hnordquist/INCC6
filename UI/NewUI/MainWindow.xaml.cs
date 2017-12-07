@@ -929,23 +929,37 @@ namespace NewUI
             if (x != null)
             {
                 Logging.TraceEvent t = (Logging.TraceEvent)x;  /// can be any other type? No
-                if (t.Id == 16161) // my magic marker
+                if (t.Id == 16161) // my magic marker for the log file entry
                 {
                     string[] foo = t.Message.Split();
                     if (foo.Length > 3)
                     {
-                        string notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");
-                        if (File.Exists(notepadPath))
-                            if (File.Exists(foo[3]))
-                            {
-                                NC.App.Loggers.Flush();
-                                System.Diagnostics.Process.Start(notepadPath, foo[3]);
-                            }
-                            else
-                                NC.App.AppLogger.TraceEvent(LogLevels.Error, 22222, "The file '" + foo[3] + "' cannot be accessed.");
+                        ShowTextFileInEditor(foo[3]);
+                    }
+                }
+                else if (t.Id == 111) // the marker used for text file creation statements, a filepath is in the message, file: is always the prefix
+                {
+                    int fi = t.Message.IndexOf(':');
+                    if (fi > 0)
+                    {
+                        ShowTextFileInEditor(t.Message.Remove(0, fi + 1).Trim());
                     }
                 }
             }
+        }
+
+        void ShowTextFileInEditor(string filepath)
+        {
+            string notepadPath = Path.Combine(Environment.SystemDirectory, "notepad.exe");  // dev note: can make into option later
+            if (File.Exists(notepadPath))
+                if (File.Exists(filepath))
+                {
+                    NC.App.Loggers.Flush();
+                    System.Diagnostics.Process.Start(notepadPath, filepath);
+                }
+                else
+                    NC.App.AppLogger.TraceEvent(LogLevels.Error, 22222, "The file '" + filepath + "' cannot be accessed.");
+
         }
     }
 }
