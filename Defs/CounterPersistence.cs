@@ -106,7 +106,10 @@ namespace ListModeDB
 					app.Results8Char = DB.Utils.DBBool(dr["results8Char"]);
                 if (existtest(dr, "assayTypeSuffix"))
 					app.AssayTypeSuffix = DB.Utils.DBBool(dr["assayTypeSuffix"]);
-               return app;
+                if (existtest(dr, "rootUserDoc") && DB.Utils.DBBool(dr["rootUserDoc"]))  // set only if not true
+                    app.UserDocumentRootFolder = true;
+
+                return app;
             }
 		}
         

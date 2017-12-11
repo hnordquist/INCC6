@@ -51,6 +51,14 @@ namespace NCCReporter
         }
     }
 
+    public class Log : LMLoggers.LognLM
+    {
+        public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+        {
+
+        }
+    }
+
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
     // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
     public class LMLoggers
@@ -87,7 +95,7 @@ namespace NCCReporter
 
             foreach (AppSection wp in a)
             {
-                LognLM l = new LognLM(wp.ToString(), cfg, pid);
+                Log l = new Log(wp.ToString(), cfg, pid);
                 reps.Add(wp, l);
             }
             DB.DBMain.ConsoleQuiet = cfg.App.Quiet;
@@ -97,7 +105,7 @@ namespace NCCReporter
         {
             foreach (AppSection a in Enum.GetValues(typeof(AppSection)))
             {
-                LognLM l = (LognLM)reps[a];
+                Log l = (Log)reps[a];
                 if (l != null)
                 {
                     l.TS.Flush();
@@ -107,21 +115,15 @@ namespace NCCReporter
 
         public void UpdateFilterLevel(ushort v)
         {
-            foreach (LognLM l in reps.Values)
+            foreach (Log l in reps.Values)
             {
                 l.TS.Switch.Level = cfg.App.Level();
             }
         }
 
-        // Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+        // Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Log' name
         // Some non-core classes and methods were moved into the core project after the first division in 2014
-        public class Log : LognLM
-        {
-            public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
-            {
 
-            }
-        }
 
         public class LognLM
         {
@@ -136,9 +138,11 @@ namespace NCCReporter
 
             public static string CurrentLogFilePath { get; set; }
 
+            static string _uniquename;
+
+
             public LognLM(string section, NCCConfig.Config cfg, int pid)
             {
-                FileLogTraceListener listener = null;
                 ts = new TraceSource(section);
 
                 if (cfg.App.Quiet)
@@ -148,13 +152,14 @@ namespace NCCReporter
 
                 try
                 {
+                    if (string.IsNullOrEmpty(_uniquename))
+                        _uniquename = string.Format("INCC6" + GetVersionBranchString() + DateTime.Now.TimeOfDay.Ticks.ToString());
                     foreach (TraceListener item in ts.Listeners)
                     {
-
                         // every file logger points to the same file and has the same attributes, they are really a merged logger set (for now, until we need something else)
                         if (item is FileLogTraceListener)
                         {
-                            listener = (FileLogTraceListener)item;
+                            FileLogTraceListener listener = (FileLogTraceListener)item;
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
@@ -171,7 +176,7 @@ namespace NCCReporter
                                     listener.CustomLocation = x;
                             }
                             else
-                                listener.BaseFileName = String.Format("I6[{0,4}]", pid); // add thread id here
+                                listener.BaseFileName = _uniquename;
                             listener.Append = true;
                             listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
@@ -201,6 +206,21 @@ namespace NCCReporter
                         ts.Switch.Level = cfg.App.Level();
                     }
                 }
+
+            }
+
+            static string GetVersionBranchString()
+            {
+                string result = string.Empty;
+                System.Reflection.Assembly entry = System.Reflection.Assembly.GetEntryAssembly();
+                object[] o = entry.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), true);
+                if (o != null && o.Length > 0)
+                {
+                    System.Reflection.AssemblyConfigurationAttribute aca = (System.Reflection.AssemblyConfigurationAttribute)o[0];
+                    if (!string.IsNullOrEmpty(aca.Configuration))
+                        result = aca.Configuration;
+                }
+                return result;
 
             }
 

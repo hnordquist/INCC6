@@ -23,6 +23,7 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using NDesk.Options;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,15 +34,13 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
-using System.Text.RegularExpressions;
-using NDesk.Options;
 using System.Text;
-using System.Security.AccessControl;
+using System.Text.RegularExpressions;
 
 namespace NCCConfig
 {
 
-	public partial class Config
+    public partial class Config
     {
 
         public AppContextConfig App
@@ -599,9 +598,7 @@ namespace NCCConfig
             if (string.IsNullOrEmpty(raw))
                 return "";
 			char[] charsToTrim = { '\"', '\'' };
-            //string thawed = raw.Trim();
-            string warmed = raw.Trim(charsToTrim);
-            return warmed;
+            return raw.Trim(charsToTrim);
         }
     }
 
@@ -617,7 +614,7 @@ namespace NCCConfig
             string branch = GetVersionBranchString(a);
             if (!string.IsNullOrEmpty(branch))
                 result = result + " " + branch;
-            return result;
+            return result + " UNVALIDATED!";
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }
@@ -634,7 +631,7 @@ namespace NCCConfig
                 if (!string.IsNullOrEmpty(aca.Configuration))
                     result = aca.Configuration;
             }
-            return result + " UNVALIDATED!";
+            return result;
 
         }
 
@@ -663,6 +660,7 @@ namespace NCCConfig
 
             resetVal(NCCFlags.root, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.dailyRootPath, false, typeof(bool));
+            resetVal(NCCFlags.rootUserDoc, false, typeof(bool), retain: true);
 
             resetVal(NCCFlags.logging, false, typeof(bool));
             resetVal(NCCFlags.quiet, false, typeof(bool));
@@ -754,23 +752,16 @@ namespace NCCConfig
 
         public string FileInput
         {
-            get
-            {
-                return overridepath(NCCFlags.fileinput);
-            }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.fileinput, warmed);
-            }
+            get { return overridepath(NCCFlags.fileinput); }
+            set { setVal(NCCFlags.fileinput, TrimCmdLineFlagpath(value)); }
         }
         public string FileInputDBSetter
         {
             set
             {
-                string warmed = TrimCmdLineFlagpath(value);
-                if (!string.IsNullOrEmpty(warmed))
-                    setVal(NCCFlags.fileinput, warmed);
+                string trimmed = TrimCmdLineFlagpath(value);
+                if (!string.IsNullOrEmpty(trimmed))
+                    setVal(NCCFlags.fileinput, trimmed);
             }
         }
         public bool Recurse
@@ -916,14 +907,33 @@ namespace NCCConfig
                 setVal(flag, path);
         }
 
-        string GetDefaultTempPath => Path.Combine(Path.GetTempPath(), "I6");
+        string GetDefaultTempPath => Path.Combine(Path.GetTempPath(), "INCC6" + GetVersionBranchString());
+        bool IsDefaultTempPath(string s) => s.StartsWith(GetDefaultTempPath, StringComparison.InvariantCultureIgnoreCase);
+
+        string GetUserDocumentsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.None), "INCC6" + GetVersionBranchString());
+        bool IsUserDocumentsPath(string s) => s.StartsWith(GetUserDocumentsPath, StringComparison.InvariantCultureIgnoreCase);
+        string DefinedRootLoc => UserDocumentRootFolder ? GetUserDocumentsPath : GetDefaultTempPath;
 
         const string TempLocationReplacementMarker = "*";
 
-        public string GetTempLocation(string s)
+        public bool ScanForTempPathModSwap(string s)  // signal need for root path change
         {
             if (s == TempLocationReplacementMarker)
-               return GetDefaultTempPath;
+                return true;
+
+            if (IsDefaultTempPath(s) && UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+                return true;
+            else if (IsUserDocumentsPath(s) && !UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+                return true;
+            else
+                return false;
+        }
+
+
+        public string GetTempLocation(string s)
+        {
+            if (ScanForTempPathModSwap(s))
+               return DefinedRootLoc;
             else
                 return s;
         }
@@ -932,9 +942,9 @@ namespace NCCConfig
         {
             get { return (string)getVal(NCCFlags.root); }
             set {
-                if (value == TempLocationReplacementMarker)
+                if (ScanForTempPathModSwap(value))
                 {
-                    setVal(NCCFlags.root, GetDefaultTempPath);
+                    setVal(NCCFlags.root, DefinedRootLoc);
                 }
                 else
                 {
@@ -944,11 +954,11 @@ namespace NCCConfig
                         if (di.Exists)
                             setVal(NCCFlags.root, value);
                         else
-                            setVal(NCCFlags.root, GetDefaultTempPath);
+                            setVal(NCCFlags.root, DefinedRootLoc);
                     }
                     catch (Exception)
                     {
-                        setVal(NCCFlags.root, GetDefaultTempPath);
+                        setVal(NCCFlags.root, DefinedRootLoc);
                     }
                 }
             }
@@ -959,10 +969,16 @@ namespace NCCConfig
 			if (DailyRootPath)
 			{
 				string part = DateTimeOffset.Now.ToString("yyyy-MMdd");
-				if (RootPath.EndsWith(part))
+				if (RootPath.EndsWith(part) && !UserDocumentRootFolderSet)
 					return RootPath;
 				else
 				{
+                    string rp = RootPath;
+                    if (UserDocumentRootFolderSet)
+                    {
+                        if (ScanForTempPathModSwap(RootPath))
+                            RootPath = DefinedRootLoc;
+                    }
 					try
 					{
 						Match m = PathMatch(RootPath);
@@ -1000,8 +1016,7 @@ namespace NCCConfig
             }
             set
             {
-                string warmed = TrimCmdLineFlagpath(value);
-                RootPath = value;
+                RootPath = TrimCmdLineFlagpath(value);
             }
         }
 
@@ -1009,6 +1024,17 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.dailyRootPath); }
             set { setVal(NCCFlags.dailyRootPath, value); }
+        }
+
+        public bool UserDocumentRootFolder
+        {
+            get { return (bool)getVal(NCCFlags.rootUserDoc); }
+            set { setVal(NCCFlags.rootUserDoc, value); }
+        }
+
+        public bool UserDocumentRootFolderSet
+        {
+            get { return isSet(NCCFlags.rootUserDoc); }
         }
 
         public bool Logging
@@ -1184,11 +1210,7 @@ namespace NCCConfig
         public string INCC5IniLoc
         {
             get { return (string)getVal(NCCFlags.emulatorapp); }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.emulatorapp, warmed);
-            }
+            set { setVal(NCCFlags.emulatorapp, TrimCmdLineFlagpath(value)); }
         }
 
         public void MutuallyExclusiveFileActions(NCCFlags flag, bool val)
@@ -1671,11 +1693,7 @@ namespace NCCConfig
         public string Raw
         {
             get { return (string)getVal(NCCFlags.raw); }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.raw, warmed);
-            }
+            set { setVal(NCCFlags.raw, TrimCmdLineFlagpath(value)); }
         }
         public int LM
         {

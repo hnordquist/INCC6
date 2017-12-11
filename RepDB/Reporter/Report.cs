@@ -88,7 +88,7 @@ namespace NCCReporter
             Separator = ',';
             GenColumns(et);
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.ControlLogger);
+            f = new ResultsOutputFile((Log)loggers.ControlLogger);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NCCReporter
             this.loggers = loggers;
             Separator = ',';
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.ControlLogger);
+            f = new ResultsOutputFile((Log)loggers.ControlLogger);
         }
 
         public void GenColumns(System.Type et)
@@ -144,7 +144,7 @@ namespace NCCReporter
             }
 			if (sendToLogFile || logToConsole)
             {
-                LMLoggers.LognLM log = loggers.AppLogger;
+                Log log = (Log)loggers.AppLogger;
 				if (log != null) log.TraceEvent(LogLevels.Info, 111, "Using output file: " + f.filename);
 			}
 
@@ -178,7 +178,7 @@ namespace NCCReporter
 
             if (sendToLogFile || logToConsole)
             {
-                LMLoggers.LognLM log = loggers.AppLogger;
+                Log log = (Log)loggers.AppLogger;
                 TraceEventCache tec = new TraceEventCache();
                 foreach (string ls in lines)
                 {
@@ -359,7 +359,7 @@ namespace NCCReporter
 
     public class ResultsOutputFile: IDisposable
     {
-        private LMLoggers.LognLM log;
+        private Log log;
 
         public string prefixPath;
         public string filename;
@@ -368,7 +368,7 @@ namespace NCCReporter
         public string name;
         string suffix;
 
-        public ResultsOutputFile(LMLoggers.LognLM logger)
+        public ResultsOutputFile(Log logger)
         {
             log = logger;
         }

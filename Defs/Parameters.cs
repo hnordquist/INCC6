@@ -2412,8 +2412,9 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("gen5RevDataFile", CreateINCC5TestDataFile));
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
             pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
-            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
-            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix)); 
+            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath));
+            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix));
+            pb.ps.Add(new DBParamEntry("rootUserDoc", UserDocumentRootFolder));
             pb.ps.Add(new DBParamEntry("results8Char", Results8Char)); 
         }
 

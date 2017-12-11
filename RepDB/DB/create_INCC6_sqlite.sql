@@ -931,7 +931,8 @@ CREATE TABLE LMINCCAppContext(
 	[resultsFilePath] nvarchar NULL, 
 	[logFilePath] nvarchar NULL,
 	[results8Char] int NULL,
-	[assayTypeSuffix] int NULL
+	[assayTypeSuffix] int NULL,
+	[rootUserDoc] int NULL
 );
 GO
 /* for Feynman, Rossi, Time, etc. */
@@ -2125,7 +2126,7 @@ INSERT INTO [LMNetComm] VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO [LMINCCAppContext] VALUES('*',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+INSERT INTO [LMINCCAppContext] VALUES('*',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1,0);
 GO
 INSERT INTO [detectors] VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO

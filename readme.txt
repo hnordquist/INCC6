@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Dec 7, 2017 (NDATest)
+6.18 Dec 12, 2017 (NDATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -138,12 +138,12 @@ Issues for production
 
 Closed issues
 
-6.18 Dec 7, 2017  ************
+6.18 Dec 12, 2017  ************
 ***  LANL: collar implementation, assorted minor changes
 ***  Basic IAEA Dataz file support added
 ***  iRAP integration support added, cmd line only
 ***  Cmd line and dlg for SQLite database switch
-***  Default daily log file location is now under user AppData\Local\Temp
+***  Default daily log file location is now in user Documents or AppData\Local\Temp, cmd line switch available
 ***  Log file name emitted on console and GUI log list view
 ***  Use notepad to open log and generated text files on double click in log list view
 

@@ -47,7 +47,7 @@ namespace NCCCmd
 			if (!N.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
 				return;
 			c.AfterDBSetup(N.App.AppContext, args);  // apply the cmd line, after database init
-            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.ControlLogger); // iRap: optional use of INCC5 ini file to find results and output paths
+            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.ControlLogger); // iRap: optional use of INCC5 ini file to find results and output paths, for older EC installations
             if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths
             {
                 N.App.AppContext.FileInput = possiblepaths[0];

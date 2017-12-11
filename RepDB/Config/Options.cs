@@ -34,7 +34,7 @@ namespace NCCConfig
     // a flat enum for now, this is a hack for the command line only, must be replaced with a full DB 
     public enum NCCFlags
     {
-        root, dailyRootPath,
+        root, dailyRootPath, rootUserDoc,
         serveremulation, emulatorapp,
         logging, level, quiet, logDetails, logFileLoc, logLocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
@@ -79,11 +79,12 @@ namespace NCCConfig
                                             l => {app.Logging = true; if (l != null) app.SetLevel(ushort.Parse(l)); }},
 
             { "quiet", "disable console logging", q => {app.Quiet = (q != null); }},
+            { "rootUserDoc", @"set false user AppData\Temp folder, true for user document folder", b => app.UserDocumentRootFolder = b != null},
             { "root=", "specify base {file location} for all input and output files", c => app.RootLoc = c},
   			{ "rootAutoPath",  "append a daily root file folder name to the current root file folder specification", 
                 b => { if (b != null) app.DailyRootPath = true;} },
 
-            { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
+            { "logLoc=", "specify base {file location} for log ffor iles, overrides root", l => app.LogFilePath = l},
             { "logLocation=", "specify base {file location} for log files, including file name, overrides root", l => app.LogFilePathAndName = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  

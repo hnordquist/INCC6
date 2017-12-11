@@ -37,6 +37,7 @@ namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
+    using Log = Logging.LognLM;
  
     public class HVControl
     {
