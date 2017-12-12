@@ -272,7 +272,7 @@ namespace NewUI
 		{
 			InitializeComponent();
 
-            NCC.IntegrationHelpers.GetCurrentAcquireDetectorPair(ref curacq, ref curdet);
+			Integ.GetCurrentAcquireDetectorPair(ref curacq, ref curdet);
 			LoadDetectors(true);
 			LoadCollarItems(true);
 			LoadItems(true);

@@ -46,20 +46,13 @@ namespace DB
         // e.g. app config values and logger handle
         // The hook to the outside context of the DB class 
         public static Persistence pest;
-        private static LMLoggers.LognLM Logger
-        {
-            get { if (pest != null) return pest.logger; else return null; }
-        }
 
         /// <summary>
-        /// Logs a message to the database logger.
-        /// If logger not defined, logs to the console.
+        /// Logs a message to the now defunct database logger.
+        /// Now just logs to the console.
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string message, bool forceconsole = false)
         {
-            if (!forceconsole && Logger != null)
-                Logger.TraceEvent(eventType, id, message);
-            else
                 Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(message));
         }
 
@@ -70,9 +63,6 @@ namespace DB
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string format, params object[] args)
         {
-            if (Logger != null)
-                Logger.TraceEvent(eventType, id, format, args);
-            else
                 Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
       }
 

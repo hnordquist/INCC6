@@ -89,7 +89,7 @@ namespace NCCReporter
             Separator = '\t';
             GenColumns(et);
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
+            f = new ResultsOutputFile(loggers.ControlLogger);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace NCCReporter
             this.loggers = loggers;
             Separator = '\t';
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile(loggers.Logger(LMLoggers.AppSection.Control));
+            f = new ResultsOutputFile(loggers.ControlLogger);
         }
 
         public void GenColumns(System.Type et)
@@ -145,7 +145,7 @@ namespace NCCReporter
             }
 			if (sendToLogFile || logToConsole)
             {
-                LMLoggers.LognLM log = loggers.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM log = loggers.AppLogger;
 				if (log != null) log.TraceEvent(LogLevels.Info, 111, "Using output file: " + f.filename);
 			}
 
@@ -179,7 +179,7 @@ namespace NCCReporter
 
             if (sendToLogFile || logToConsole)
             {
-                LMLoggers.LognLM log = loggers.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM log = loggers.AppLogger;
                 TraceEventCache tec = new TraceEventCache();
                 foreach (string ls in lines)
                 {

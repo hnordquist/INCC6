@@ -213,7 +213,7 @@ namespace NewUI
 				else
 					mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
 			}
-			ctrllog = N.App.Loggers.Logger(LMLoggers.AppSection.Control);
+			ctrllog = N.App.ControlLogger;
 			if (mlist.Count == 0)
 			{
 				string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det == null ? "any" : det.Id.DetectorId);

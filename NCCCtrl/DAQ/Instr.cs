@@ -443,8 +443,8 @@ namespace Instr
             if (RDT == null)
             {
                 RDT = new LMRawDataTransform();
-                RDT.Init(datalog == null ? NC.App.Loggers.Logger(LMLoggers.AppSection.Data) : datalog, 
-                    alog == null ? NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis) :  alog );
+                RDT.Init(datalog == null ? NC.App.DataLogger : datalog, 
+                    alog == null ? NC.App.AnalysisLogger : alog );
 
             }
         }
@@ -461,7 +461,7 @@ namespace Instr
             id = new DataSourceIdentifier(det.Id);
             lmstatus = new LMInstrStatus();
             file = new NCDFile();
-            file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
+            file.Log = NC.App.CollectLogger;
             Init(null,null);
 
         }
@@ -480,7 +480,7 @@ namespace Instr
             id.DetectorId = "new"; // always this special string, see IsNew
             id.SetSRType("LMMM"); // this constructor should only be called for LMMM ethernet enabled devices
             file = new NCDFile();
-            file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
+            file.Log = NC.App.CollectLogger;
             Init(null,null);
 
         }
@@ -586,8 +586,8 @@ namespace Instr
             if (RDT == null)
             {
                 RDT = new SRCycleDataTransform();  // only using the synch point for now
-                RDT.Init(datalog == null ? datalog : NC.App.Loggers.Logger(LMLoggers.AppSection.Data), 
-                    alog == null ? alog : NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
+                RDT.Init(datalog == null ? datalog : NC.App.DataLogger, 
+                    alog == null ? alog : NC.App.AnalysisLogger);
             }
         }
 

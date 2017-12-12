@@ -1580,7 +1580,7 @@ namespace NCCConfig
             resetVal(NCCFlags.step, 10, typeof(int));// volts
             resetVal(NCCFlags.hvduration, 5, typeof(int)); // seconds
             resetVal(NCCFlags.delay, 2, typeof(int)); // seconds
-            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progress and results (e.g. Excel)
+            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progess and results (e.g. Excel)
 
             resetVal(NCCFlags.saveOnTerminate, false, typeof(bool));
             //resetVal(LMFlags.resultsAutoPath, (bool)false, typeof(bool));

@@ -203,13 +203,13 @@ namespace NewUI
         private void ARadioButton_CheckedChanged(object sender, EventArgs e)
         {
 			if (ConventionalMultRadioButton.Checked)
-            mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT;
+				mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT;
 			else if (WeightedMultRadioButton.Checked)
-            mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED;
+				mult.solve_efficiency = INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED;
 			else if (DualEnergyModelRadioButton.Checked)
-            mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL;
+				mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL;
 			else if (KnownAlphaRadioButton.Checked)
-            mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_KNOWN_ALPHA;
+				mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_KNOWN_ALPHA;
 			else if (SolveForEfficiencyRadioButton.Checked)
 				mult.solve_efficiency = INCCAnalysisParams.MultChoice.MULT_SOLVE_EFFICIENCY;
         }

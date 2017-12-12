@@ -454,16 +454,14 @@ namespace NCC
                 cfg.CmdLineActionOverride(); // override default file input setting with active command action (if any) from cmd line
                 name = Config.AppName;
                 Opstate.Action = (NCCAction)cfg.Cur.Action;  // command line flag can set this, the override above makes sure the cmd line is the state
-
-                loggers = new LMLoggers(cfg);
-                pest.logger = Logger(LMLoggers.AppSection.DB);
+                                loggers = new LMLoggers(cfg);  // forces init
             }
             return good;
         }
 
         public bool LoadPersistenceConfig(DBConfig mynewdb)
         {
-            pest = new Persistence(Logger(LMLoggers.AppSection.DB), mynewdb);
+            pest = new Persistence(DBLogger, mynewdb);
             DB = new INCCDB();
             lmdb = new LMDB();
 			bool there = false;
@@ -488,12 +486,29 @@ namespace NCC
 			return there;
         }
 
-        public LMLoggers.LognLM Logger(LMLoggers.AppSection wp)
+		public LMLoggers.LognLM AppLogger
         {
-            if (loggers != null)
-                return loggers.Logger(wp);
-            else
-                return null;
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.App) : null; }
+		}
+		public LMLoggers.LognLM DataLogger
+		{
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Data) : null; }
+		}
+		public LMLoggers.LognLM AnalysisLogger
+		{
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Analysis) : null; }
+		}
+		public LMLoggers.LognLM ControlLogger
+		{
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Control) : null; }
+		}
+		public LMLoggers.LognLM CollectLogger
+		{
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Collect) : null; }
+		}
+		public LMLoggers.LognLM DBLogger
+		{
+			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.DB) : null; }
         }
 
         public OperationalState Opstate
@@ -667,7 +682,7 @@ namespace NCC
             det.Id.source = acq.data_src;  // set the detector overall data source value here
 
             // create the context holder for the measurement. Everything is rooted here ...
-            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.DataLogger);
 
             FillInMeasurementDetails(meas);
             // ready for insertion of methods and processing start
@@ -866,7 +881,7 @@ namespace NCC
             det.Id.source = acq.data_src;  // set the detector overall data source value here
 
             // create the context holder for the measurement. Everything is rooted here ...
-            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.DataLogger);
 
             CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
 
@@ -898,7 +913,7 @@ namespace NCC
             if (det == null || string.IsNullOrWhiteSpace(det.Id.DetectorName))
             {
                 det = new Detector();
-                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
+                CentralizedState.App.AppLogger.TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
             }
 			if (det.ListMode)
 				det.MultiplicityParams.FA = acq.lm.FADefault;
@@ -1007,7 +1022,7 @@ namespace NCC
             if (det == null)
 			{
 				exists = false;
-				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
+				CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
  				if (checkForExistence)
 					return false;			
 				else
@@ -1018,7 +1033,7 @@ namespace NCC
 			{
 				// change detector on current acquire parms state
 				if (!exists)
-					CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
+					CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
 				acq.detector_id = string.Copy(name);
 				acq.meas_detector_id = string.Copy(name);
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
@@ -1028,7 +1043,7 @@ namespace NCC
 			}
             else    // update existing entry
                 CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
+            CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
 
 			return true;
 		}
@@ -1042,7 +1057,7 @@ namespace NCC
             if (desc == null)
             {
                 exists = false;
-                CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
+                CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
                 if (checkForExistence)
                     return false;
                 else
@@ -1053,7 +1068,7 @@ namespace NCC
             {
                 // change material on current acquire parms state
                 if (!exists)
-                    CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
+                    CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
                 acq.item_type = string.Copy(name);
                 CentralizedState.App.DB.AddAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
                 if (!exists)
@@ -1061,7 +1076,7 @@ namespace NCC
             }
             else
                 CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
+            CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
 
             return true;
         }

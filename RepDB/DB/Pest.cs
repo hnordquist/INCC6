@@ -44,13 +44,13 @@ namespace DB
 
     public class Persistence
     {
-        public LMLoggers.LognLM logger;
+        //public LMLoggers.LognLM logger;
         public DBConfig cfg;
 
         public Persistence(LMLoggers.LognLM logger, DBConfig cfg)
         {
             this.cfg = cfg;
-            this.logger = logger;
+            //this.logger = logger;
             DBMain.pest = this;
         }
 

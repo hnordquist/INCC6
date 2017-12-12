@@ -51,7 +51,7 @@ namespace NCCTransfer
 
 		public static unsafe INCCInitialDataDetectorFile FromDetectors(List<Detector> dets)
 		{
-			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.ControlLogger, null);
 			foreach(Detector det in dets)
 			{
 				detector_rec dr = new detector_rec();
@@ -172,7 +172,7 @@ namespace NCCTransfer
 
 			foreach(Detector det in dets)
 			{
-                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.ControlLogger, null);
                 idcf.Name = det.Id.DetectorId;
                 foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
                 {
@@ -238,13 +238,13 @@ namespace NCCTransfer
 								}
 								catch (Exception e)
 								{
-									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 34102, "Collar xfer processing error {0} {1}", md.Item1.FullName(), e.Message);
+									NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34102, "Collar xfer processing error {0} {1}", md.Item1.FullName(), e.Message);
 								}
 								break;
 							case AnalysisMethod.COLLAR_SAVE_RESTORE:
 							case AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE:
 							case AnalysisMethod.COLLAR_K5_SAVE_RESTORE:
-									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
+									NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
 								break;
 							case AnalysisMethod.INCCNone:
 								break;
@@ -740,7 +740,7 @@ namespace NCCTransfer
 				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
 				while (iter.MoveNext())                     // for each mkey, a seperate xfer file should be emitted
 				{
-					INCCTransferFile itf = new INCCTransferFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+					INCCTransferFile itf = new INCCTransferFile(NC.App.ControlLogger, null);
 					itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
 					list.Add(itf);
 					itf.results_rec_list.Add(Result5.MoveResultsRec(m));

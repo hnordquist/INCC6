@@ -160,9 +160,9 @@ namespace NewUI
             if (!initialized)
                 return false;
 
-            NC.App.Logger(LMLoggers.AppSection.App).
+            NC.App.AppLogger.
                 TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " " + NC.App.Config.VersionString);
-            NC.App.Logger(LMLoggers.AppSection.App).
+            NC.App.AppLogger.
 				TraceInformation("==== DB " + NC.App.Pest.DBDescStr);
             return true;
         }
@@ -208,7 +208,7 @@ namespace NewUI
 
             procFctrl = new FCtrlBind();
             measFctrl = new FCtrlBind();
-            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+            LMLoggers.LognLM applog = NC.App.AppLogger;
 
             /* 
              * The action event handlers.
@@ -369,7 +369,7 @@ namespace NewUI
         {
             // DAQ
             daqbind = new DAQBind();
-            LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+            LMLoggers.LognLM applog = NC.App.AppLogger;
 
 
             daqbind.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
@@ -473,14 +473,14 @@ namespace NewUI
         public void UpdateGUIWithNewData(MainWindow df)
         {
             updateGUIWithNewData = true;
-            NC.App.Logger(LMLoggers.AppSection.App).TraceInformation("!!!!");
+            NC.App.AppLogger.TraceInformation("!!!!");
         }
 
         static LMLoggers.LognLM lawg;
         void UpdateGUIWithNewdata()
         {
             if (lawg == null)
-                lawg = NC.App.Logger(LMLoggers.AppSection.App);
+                lawg = NC.App.AppLogger;
             if (lawg.ShouldTrace(LogLevels.Verbose))
                 lawg.TS.TraceEvent((System.Diagnostics.TraceEventType)LogLevels.Verbose, 0, "$$$");
 
@@ -492,7 +492,7 @@ namespace NewUI
             if (NC.App.Config != null)
 			{
 				NC.App.Config.RetainChanges();
-		        LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+		        LMLoggers.LognLM applog = NC.App.AppLogger;
 	            applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
 				NC.App.Loggers.Flush();
 			}
@@ -580,7 +580,7 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM applog = NC.App.AppLogger;
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }
@@ -626,7 +626,7 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM applog = NC.App.AppLogger;
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }  
@@ -689,7 +689,7 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM applog = NC.App.AppLogger;
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
                 FireEvent(EventType.ActionFinished, this);
@@ -717,7 +717,7 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
+                LMLoggers.LognLM applog = NC.App.AppLogger;
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
             }

@@ -1230,7 +1230,7 @@ namespace NCCFile
             if (res)
             {
 				if (!SoloBinFile)
-                Channels.CreateForWriting();
+					Channels.CreateForWriting();
                 Events.WriteHeader(FirmwareIdent);
             }
             return res;
@@ -2531,7 +2531,7 @@ namespace NCCFile
         /// <param name="line"></param>
         /// <returns></returns>
         /// 
-        public void ParseLine(string line, ref Int32 chn, ref double time)
+        public void ParseLine(string line, ref int chn, ref double time)
         {
             string[] two = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries); // any and all whitespace separates
 
@@ -2539,22 +2539,22 @@ namespace NCCFile
             {
                 if (two.Length >= 2)
                 {
-                    bool ok = Int32.TryParse(two[0], out chn);
+                    bool ok = int.TryParse(two[0], out chn);
                     if (ok && chn >= 0 && chn < 32)
                         chn = (1 << chn);
-                    ok = Double.TryParse(two[1], out time);
+                    ok = double.TryParse(two[1], out time);
                 }
                 else if (two.Length == 1)
                 {
-                    bool ok = Double.TryParse(two[0], out time);
+                    bool ok = double.TryParse(two[0], out time);
                 }
             }
         }
 
         public LMPair ParseLinesToNCDPair(List<string> lines)
         {
-            Int32 chn = 0;
-            Double time = 0;
+            int chn = 0;
+            double time = 0;
 
             foreach (string line in lines)
             {
@@ -3537,7 +3537,7 @@ namespace NCCFile
 				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
 				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
 				T n = new T();
-				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				n.Log = NC.App.DataLogger;
 				n.Num = files.state.cur++;
 				n.Filename = f;
 				n.ExtractDateFromFilename();
@@ -3566,7 +3566,7 @@ namespace NCCFile
                 string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
                 log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
                 T n = new T();
-                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+                n.Log = NC.App.DataLogger;
                 n.Num = files.state.cur++;
                 n.Filename = f;
                 n.ExtractDateFromFilename();
