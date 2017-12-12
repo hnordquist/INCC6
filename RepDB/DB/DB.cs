@@ -57,7 +57,7 @@ namespace DB
         {
             if (ConsoleQuiet)
                 return;
-            Console.WriteLine(eventType.ToString() + " " + id + " " + Log.FlattenChars(message));
+            Console.WriteLine(eventType.ToString() + " " + id + " " + Logging.Log.FlattenChars(message));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace DB
         {
             if (ConsoleQuiet)
                 return;
-            Console.WriteLine(eventType.ToString() + " " + id + " " + Log.FlattenChars(string.Format(format, args)));
+            Console.WriteLine(eventType.ToString() + " " + id + " " + Logging.Log.FlattenChars(string.Format(format, args)));
       }
 
         public enum DbsWeLove { 
@@ -202,7 +202,7 @@ namespace DB
 
         public static string DBExceptionString(DbException dbx, string sql)
         {
-            return Log.FlattenChars(dbx.GetType().Name + "'" + dbx.Message + "' " + dbx.ErrorCode.ToString("x8") + "; " + sql);
+            return Logging.Log.FlattenChars(dbx.GetType().Name + "'" + dbx.Message + "' " + dbx.ErrorCode.ToString("x8") + "; " + sql);
         }
 
     }

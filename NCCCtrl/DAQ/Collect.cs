@@ -46,10 +46,6 @@ namespace DAQ
         // dev note: is this singleton thread-safe when we move to threads?
         static internal LMComm.TalkToLMMMM LMMMComm;
 
-        protected LMLoggers.LognLM collog;
-        protected LMLoggers.LognLM ctrllog;
-        protected LMLoggers.LognLM datalog;
-        protected LMLoggers.LognLM applog;
         public bool gui;
 
         public DAQControl(bool usingGui)
@@ -58,15 +54,10 @@ namespace DAQ
 
             gControl = this;
 
-            applog = NC.App.AppLogger;
-            collog = NC.App.CollectLogger;
-            ctrllog = NC.App.ControlLogger;
-            datalog = NC.App.DataLogger;
-
             // The state was set on cmd line prior to exec here, and it still is, so must upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
-            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton, modern syntax just for fun
+            LMMMComm = LMMMComm ?? new TalkToLMMMM();  // a singleton, modern syntax just for fun
 
             CurState.SOH = NCC.OperatingState.Starting;
 
@@ -76,14 +67,14 @@ namespace DAQ
         // controller has active control of processing through these three entry points
         public void CancelCurrentAction()
         {
-            ctrllog.TraceInformation("Cancelling the {0} action ({1} instrument{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
+            NC.App.ControlLogger.TraceInformation("Cancelling the {0} action ({1} instrument{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
             NC.App.Opstate.SOH = NCC.OperatingState.Cancelling;
             CurState.Cancel();
         }
 
         public void StopCurrentAction()
         {
-            ctrllog.TraceInformation("Stopping the {0} action ({1} instruments{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
+            NC.App.ControlLogger.TraceInformation("Stopping the {0} action ({1} instruments{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
             NC.App.Opstate.SOH = NCC.OperatingState.Stopping;
             CurState.Cancel();
         }
@@ -91,7 +82,7 @@ namespace DAQ
         public void StartAction()
         {
             NC.App.Opstate.ResetTokens();
-            ctrllog.TraceInformation("Starting the {0} action ({1} instrument{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
+            NC.App.ControlLogger.TraceInformation("Starting the {0} action ({1} instrument{2})", NC.App.Opstate.Action, Instruments.Active.Count, (Instruments.Active.Count == 1 ? String.Empty : "s"));
             NC.App.Opstate.SOH = NCC.OperatingState.Starting;
         }
 
@@ -140,7 +131,7 @@ namespace DAQ
                 return;
             SRInstrument sri = new SRInstrument(det);
             sri.selected = true;
-            sri.Init(datalog, NC.App.AnalysisLogger);
+            sri.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
             if (!Instruments.All.Contains(sri))
                 Instruments.All.Add(sri); // add to global runtime list 
         }
@@ -151,7 +142,7 @@ namespace DAQ
             string[] x = NCCConfig.Config.ShowCfgLines(NC.App.Config, NC.App.AppContext.Verbose() == System.Diagnostics.TraceEventType.Verbose, false);
             for (int i = 0; i < x.Length; i++)
             {
-                applog.TraceInformation(x[i]);
+                NC.App.AppLogger.TraceInformation(x[i]);
             }
         }
 
@@ -220,7 +211,7 @@ namespace DAQ
             bool some = (0 < StartLM_SRAssay());
             if (!some) // each active Active Instrument has its own wait handle, and it was set earlier, waiting point is in the caller
             {
-                collog.TraceInformation("No active instruments found, finished");
+                NC.App.CollectLogger.TraceInformation("No active instruments found, finished");
             }
             return some;
         }
@@ -304,7 +295,7 @@ namespace DAQ
         // dev note: does this need a progress timer? yes but only while waiting for a step/response, the response is a progress update in and of itself
         private void DoHVCalib()
         {
-            applog.TraceInformation("Starting High Voltage Calibration Plateau");
+            NC.App.AppLogger.TraceInformation("Starting High Voltage Calibration Plateau");
             FireEvent(EventType.ActionPrep, this);
             ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
@@ -318,11 +309,11 @@ namespace DAQ
                 }
                 catch (Exception ex)
                 {
-                    applog.TraceException(ex, true);
+                    NC.App.AppLogger.TraceException(ex, true);
                 }
                 DisconnectInstruments();
                 FireEvent(EventType.ActionStop, this);
-                applog.TraceInformation("Completed High Voltage Calibration Plateau");
+                NC.App.AppLogger.TraceInformation("Completed High Voltage Calibration Plateau");
             }
             else
             {
@@ -392,7 +383,7 @@ namespace DAQ
                         OutputResults(NCCAction.Assay);
                     }
 					else
-						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
+						NC.App.CollectLogger.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
                 }
                 NC.App.Opstate.ResetTokens();
             }
@@ -446,7 +437,7 @@ namespace DAQ
                         OutputResults(NCCAction.Assay);
                     }
 					else
-						collog.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
+						NC.App.CollectLogger.TraceEvent(LogLevels.Warning, 0x1A3E, "No reportable results for this measurement");
                 }
                 NC.App.Opstate.ResetTokens();
             }
@@ -465,7 +456,7 @@ namespace DAQ
         // self-threaded for console
         private void DoAnAssay()
         {
-            applog.TraceInformation("Starting " + CurState.Measurement.MeasOption.PrintName() + " Assay");
+            NC.App.AppLogger.TraceInformation("Starting " + CurState.Measurement.MeasOption.PrintName() + " Assay");
             ConnectWithRetries(true, 3);
             if (Instruments.Active.Count > 0)
             {
@@ -478,11 +469,11 @@ namespace DAQ
                 }
                 catch (Exception ex)
                 {
-                    applog.TraceException(ex, true);
+                    NC.App.AppLogger.TraceException(ex, true);
                 }
                 DisconnectInstruments();
                 FireEvent(EventType.ActionStop, this);
-                applog.TraceInformation("Completed Assay");
+                NC.App.AppLogger.TraceInformation("Completed Assay");
             }
             else
             {
@@ -528,14 +519,14 @@ namespace DAQ
                 case NCCAction.HVCalibration:
                     if (ctrlHVCalib != null)
 					{
-	                    collog.TraceInformation("Producing HV Calib results output file");
+	                    NC.App.CollectLogger.TraceInformation("Producing HV Calib results output file");
 						ctrlHVCalib.GenerateReport();
 					}
                     break;
 
                 case NCCAction.Assay:
-                    collog.TraceInformation("Producing Assay results output file");
-                    ReportMangler rm = new ReportMangler(ctrllog);
+                    NC.App.CollectLogger.TraceInformation("Producing Assay results output file");
+                    ReportMangler rm = new ReportMangler(NC.App.ControlLogger);
                     rm.GenerateReports(CurState.Measurement);
                     NC.App.DB.AddResultsFileNames(CurState.Measurement);
                     break;
@@ -543,7 +534,7 @@ namespace DAQ
         }
         public void ConnectInstruments()
         {
-            collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
+            NC.App.CollectLogger.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
             ConnectMCAInstruments();
 
             // for the LMMMs
@@ -568,7 +559,7 @@ namespace DAQ
 			LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
 			if (lmi.id.SRType != InstrType.MCA527)
 				return deviceInfos;
-			collog.TraceInformation("Broadcasting to MCA instruments. . .");
+			NC.App.CollectLogger.TraceInformation("Broadcasting to MCA instruments. . .");
 			try
 			{
 				deviceInfos = Device.MCADevice.QueryDevices();
@@ -580,10 +571,10 @@ namespace DAQ
 					{
 						string id = d.Serial.ToString("D5");
 						string s = string.Format("MCA-527#{0}  FW# {1}  HW# {2} on {3}", id, d.FirmwareVersion, d.HardwareVersion, d.Address);
-						collog.TraceInformation("Checking " + s);
+						NC.App.CollectLogger.TraceInformation("Checking " + s);
 						if (string.Equals(id, lmi.id.ElectronicsId, StringComparison.OrdinalIgnoreCase))
 						{
-							collog.TraceInformation("Connecting to " + s);
+							NC.App.CollectLogger.TraceInformation("Connecting to " + s);
 							thisone = d;
 							break;
 						}
@@ -596,11 +587,11 @@ namespace DAQ
 			} 
 			catch (AggregateException ex)
 			{
-				collog.TraceException(ex.InnerException);
+				NC.App.CollectLogger.TraceException(ex.InnerException);
 			}
 			catch (Exception e)
 			{
-				collog.TraceException(e);
+				NC.App.CollectLogger.TraceException(e);
 			}
 			return deviceInfos;
 		}
@@ -615,17 +606,17 @@ namespace DAQ
             // for the LMs
             // Start listening for instruments.
             StartLMDAQServer((LMConnectionInfo)lmi.id.FullConnInfo);   // NEXT: socket reset should occur here for robust restart and recovery            
-            collog.TraceInformation("Broadcasting to LMMM instruments. . .");
+            NC.App.CollectLogger.TraceInformation("Broadcasting to LMMM instruments. . .");
 
             // broadcast message to all subnet (configurable, defaulting to 169.254.x.x) addresses. This is the instrument group.
             // look for the number of requested instruments
             DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.broadcast);
-            collog.TraceInformation("Sent broadcast. Waiting for LMMM instruments to connect");
+            NC.App.CollectLogger.TraceInformation("Sent broadcast. Waiting for LMMM instruments to connect");
 
             // wait until enough time has elapsed to be sure live instruments can report back
             Thread.Sleep(lmi.id.FullConnInfo.Wait);  // todo: configure this with a unique wait parameter value
             if (!LMMMComm.LMServer.IsRunning)
-                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LMMM support running");
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LMMM support running");
         }
 
         public void ConnectPTR32Instruments()
@@ -642,13 +633,13 @@ namespace DAQ
                 {
                     if (instrument.id.SRType.IsUSBBasedLM())
                     {
-                        collog.TraceInformation("Connecting to " + instrument.id.DetectorId);
+                        NC.App.CollectLogger.TraceInformation("Connecting to " + instrument.id.DetectorId);
                         instrument.Connect();
                     }
                 }
                 catch (Exception ex)
                 {
-                    collog.TraceException(ex);
+                    NC.App.CollectLogger.TraceException(ex);
                 }
             }
         }
@@ -662,8 +653,8 @@ namespace DAQ
             DisconnectFromLMMMInstruments();
             DisconnectFromSRInstruments();
             Instruments.All.Clear();
-            collog.TraceInformation("Offline");
-            collog.TraceEvent(LogLevels.Info, 0, "Disconnected instruments");
+            NC.App.CollectLogger.TraceInformation("Offline");
+            NC.App.CollectLogger.TraceEvent(LogLevels.Info, 0, "Disconnected instruments");
         }
 
 		public void ApplyInstrumentSettings()
@@ -676,7 +667,7 @@ namespace DAQ
 				} 
 				catch (Exception ex)
 				{
-					collog.TraceException(ex);
+					NC.App.CollectLogger.TraceException(ex);
 				}
 			}
 
@@ -722,7 +713,7 @@ namespace DAQ
         protected void LiveDAQCtrlCHandler(object sender, ConsoleCancelEventArgs args)
         {
             //Announce that the event handler has been invoked.
-            ctrllog.TraceInformation("Interrupting the {0} action", NC.App.Opstate.Action);
+            NC.App.ControlLogger.TraceInformation("Interrupting the {0} action", NC.App.Opstate.Action);
             args.Cancel = true;  // Set the Cancel property to true to prevent the process from terminating
             NC.App.Opstate.SOH = NCC.OperatingState.Cancelling;
             CurState.Cancel();

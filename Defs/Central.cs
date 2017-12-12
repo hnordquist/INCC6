@@ -407,7 +407,7 @@ namespace NCC
             set { cfg = value; }
         }
 
-        public LMLoggers Loggers
+        public Logging Loggers
         {
             get { return loggers; }
             set { loggers = value; }
@@ -454,14 +454,14 @@ namespace NCC
                 cfg.CmdLineActionOverride(); // override default file input setting with active command action (if any) from cmd line
                 name = Config.AppName;
                 Opstate.Action = (NCCAction)cfg.Cur.Action;  // command line flag can set this, the override above makes sure the cmd line is the state
-                loggers = new LMLoggers(cfg);  // forces init
+                loggers = new Logging(cfg);  // forces init
             }
             return good;
         }
 
         public bool LoadPersistenceConfig(DBConfig mynewdb)
         {
-            pest = new Persistence(DBLogger, mynewdb);
+            pest = new Persistence(mynewdb);
             DB = new INCCDB();
             lmdb = new LMDB();
 			bool there = false;
@@ -485,27 +485,27 @@ namespace NCC
 			return there;
         }
 
-		public LMLoggers.LognLM AppLogger
+        public Logging.Log AppLogger
         {
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.App) : null; }
 		}
-		public LMLoggers.LognLM DataLogger
+        public Logging.Log DataLogger
 		{
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Data) : null; }
 		}
-		public LMLoggers.LognLM AnalysisLogger
+        public Logging.Log AnalysisLogger
 		{
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Analysis) : null; }
 		}
-		public LMLoggers.LognLM ControlLogger
+        public Logging.Log ControlLogger
 		{
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Control) : null; }
 		}
-		public LMLoggers.LognLM CollectLogger
+        public Logging.Log CollectLogger
 		{
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Collect) : null; }
 		}
-		public LMLoggers.LognLM DBLogger
+        public Logging.Log DBLogger
 		{
 			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.DB) : null; }
         }
@@ -526,7 +526,7 @@ namespace NCC
         static CentralizedState unitary;
 
         // you get just one each of these wonderful baubles for the entire app 
-        LMLoggers loggers;
+        Logging loggers;
         Config cfg;
         Persistence pest;
         INCCDB db;
@@ -805,9 +805,9 @@ namespace NCC
 					INCCResult result = meas.INCCAnalysisState.Lookup(mos);
 					result.CopyFrom(mcr);
 				}
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                    NCC.CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 4027, "PrepareINCCResults glitch: " + ex.Message);
                 }
             }
 

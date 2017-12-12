@@ -76,9 +76,9 @@ namespace LMComm
         private IPAddress subnet;
         private Byte[] subnetbytes;
 
-        private LMLoggers.LognLM logger;
+        private Logging.Log logger;
 
-        public LMLoggers.LognLM Logger
+        public Logging.Log Logger
         {
             get { return logger; }
             set { logger = value; }

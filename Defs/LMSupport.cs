@@ -92,7 +92,7 @@ namespace LMRawAnalysis
     {
         protected double ticSizeInSeconds;
 
-		public LMLoggers.LognLM Log {get; set; }
+        public Logging.Log Log {get; set; }
 
         public SDTMultiplicityCalculator(double theTicSizeInSeconds)
         {

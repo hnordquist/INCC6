@@ -40,7 +40,7 @@ namespace NewUI
        
         void ClipboardMonitor_OnClipboardChange(ClipboardFormat format, object data)
         {
-            m_log.TraceEvent(LogLevels.Verbose, 76543, "Clipboard changed ... format now: " + format.ToString());
+            NC.App.DataLogger.TraceEvent(LogLevels.Verbose, 76543, "Clipboard changed ... format now: " + format.ToString());
         }
 
         public AcquireHandlers AH {set {ah = value; } }
@@ -53,7 +53,6 @@ namespace NewUI
 
             ResetGrid();
 
-            m_log = NC.App.DataLogger;
             ClipboardMonitor.Start();
             ClipboardMonitor.OnClipboardChange += new ClipboardMonitor.OnClipboardChangeEventHandler(ClipboardMonitor_OnClipboardChange);
             cyclesGridView.AutoResizeColumn(0, DataGridViewAutoSizeColumnMode.AllCellsExceptHeader);
@@ -137,7 +136,7 @@ namespace NewUI
                 if (r.Cells == null || (r.Cells[1].Value == null) || r.Cells[1].Value.ToString() == string.Empty)
                     break;
                 
-                Cycle cycle = new Cycle(m_log);
+                Cycle cycle = new Cycle();
 
                 ulong tots = 0, r_acc = 0, acc = 0;
                 ulong.TryParse(r.Cells[1].Value.ToString(), out tots);
@@ -244,7 +243,6 @@ namespace NewUI
             LoadFromCurrentCycles();
         }
 
-        LMLoggers.LognLM m_log;
         const int MAX_MANUAL_ENTRIES = 200;
         AcquireHandlers ah;
         double m_counttime = 1.0;

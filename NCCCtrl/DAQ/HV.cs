@@ -37,14 +37,11 @@ namespace DAQ
 {
 
     using NC = NCC.CentralizedState;
-    using Log = Logging.LognLM;
  
     public class HVControl
     {
         string instId;
         DateTime time;
-
-        LMLoggers.LognLM ctrllog = null;
 
         // expose these as a struct for sampling by polling for status
         public int hvCalibPoint;  // last read or target value
@@ -74,14 +71,13 @@ namespace DAQ
             {
                 hvp.DelayMS = (hvp.HVDuration/1000) + 1000;
                 hvDelayms = hvp.DelayMS;
-                ctrllog.TraceEvent(LogLevels.Warning, 604, "HV delay modified to {0} milliseconds because the HV cycle duration ({1} sec) must be less than HV delay", hvp.DelayMS, hvp.HVDuration); 
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 604, "HV delay modified to {0} milliseconds because the HV cycle duration ({1} sec) must be less than HV delay", hvp.DelayMS, hvp.HVDuration); 
             }
             hvx = NC.App.Opstate.Measurement.AcquireState.lm.HVX; // excel monitor flag
         }
         public HVControl(DAQControl control)
         {
             this.control = control;
-            ctrllog = NC.App.ControlLogger;
         }
 
         public void AddStepData(HVStatus hvst)
@@ -102,7 +98,7 @@ namespace DAQ
             Instrument inst = Instruments.Active.FirstActive();
             if (inst == null)
             {
-                ctrllog.TraceInformation("No active instruments for HV calibration. . .");
+                NC.App.ControlLogger.TraceInformation("No active instruments for HV calibration. . .");
                 return false;
             }
 
@@ -112,7 +108,7 @@ namespace DAQ
             inst.PendingReset(); // mas importante LOL
             inst.DAQState = DAQInstrState.HVCalib;
 
-            ctrllog.TraceInformation("HV calibration starting");
+            NC.App.ControlLogger.TraceInformation("HV calibration starting");
             HVSteps = new List<HVStatus>(200);// a bit arbitrary, but performance here is not an issue
             time = DateTime.Now;
 
@@ -126,16 +122,16 @@ namespace DAQ
             Instrument inst = Instruments.Active.FirstActive();
             if (inst == null)
             {
-                ctrllog.TraceInformation("No active instruments for HV calibration. . .");
+                NC.App.ControlLogger.TraceInformation("No active instruments for HV calibration. . .");
                 return false;
             }
             if (hvx)
             {
                 if (xp == null)
                 {
-					if (ExcelPush.ExcelPresent(ctrllog))
+					if (ExcelPush.ExcelPresent(NC.App.ControlLogger))
 					{
-						xp = new HVExcel(ctrllog);
+						xp = new HVExcel(NC.App.ControlLogger);
 						xp.ShowWB();
 						xp.AddHeaderRow(typeof(SimpleHVReport.HVVals));
 					}
@@ -149,10 +145,10 @@ namespace DAQ
 				// todo: catch spurious exceptions and return false
                 if (DAQControl.CurState.IsQuitRequested) // leave and do not finish calibration
                 {
-                    ctrllog.TraceInformation("HV calibration cancelled");
+                    NC.App.ControlLogger.TraceInformation("HV calibration cancelled");
                     inst.DAQState = DAQInstrState.Online;
                     DAQControl.CurState.State = DAQInstrState.Online;
-                    ctrllog.Flush();
+                    NC.App.ControlLogger.Flush();
 					DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
 					inst.PendingComplete(); // each instr must complete for the waitall to move forward 
                 }
@@ -201,10 +197,10 @@ namespace DAQ
             }
             else // we are done
             {
-                ctrllog.TraceInformation("HV calibration complete. . .");
+                NC.App.ControlLogger.TraceInformation("HV calibration complete. . .");
                 inst.DAQState = DAQInstrState.Online;
                 DAQControl.CurState.State = DAQInstrState.Online;
-                ctrllog.Flush();
+                NC.App.ControlLogger.Flush();
                 DAQControl.gControl.MajorOperationCompleted();  // causes pending control thread caller to move forward
                 inst.PendingComplete(); // each instr must complete for the waitall to move forward 
             }
@@ -213,7 +209,7 @@ namespace DAQ
 
         public void GenerateReport()
         {
-            new SimpleHVReport(ctrllog).GenerateReport(hvp, HVSteps, time, instId);
+            new SimpleHVReport(NC.App.ControlLogger).GenerateReport(hvp, HVSteps, time, instId);
         }
 
 
@@ -281,11 +277,9 @@ namespace DAQ
         {
             MinHV, MaxHV, StepVolts, DurationSeconds, DelaySeconds
         };
-        NCCReporter.LMLoggers.LognLM ctrllog = null;
 
-        public SimpleHVReport(NCCReporter.LMLoggers.LognLM ctrllog)
+        public SimpleHVReport(NCCReporter.Logging.Log log)
         {
-            this.ctrllog = ctrllog;
         }
         public static Row CreateRow(AnalysisDefs.HVCalibrationParameters h, int i)
         {
@@ -350,7 +344,7 @@ namespace DAQ
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                NC.App.ControlLogger.TraceException(e);
             }
             finally
             {
@@ -364,12 +358,12 @@ namespace DAQ
     {
 
         // dev note: pre-define template somewhere, and use it, having the very nice graph already prepared for line by line updating here
-        public HVExcel(string existingWB, NCCReporter.LMLoggers.LognLM ctrllog) : base (existingWB, ctrllog)
+        public HVExcel(string existingWB, NCCReporter.Logging.Log log) : base (existingWB, log)
         {
         }
 
-        public HVExcel(NCCReporter.LMLoggers.LognLM ctrllog)
-            : base(ctrllog)
+        public HVExcel(NCCReporter.Logging.Log log)
+            : base(log)
         {
         }
 
@@ -390,7 +384,7 @@ namespace DAQ
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                NC.App.ControlLogger.TraceException(e);
             }
         }
     }

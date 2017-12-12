@@ -48,12 +48,12 @@ namespace NCCFile
             Measurement meas = NC.App.Opstate.Measurement;
             if (meas.AcquireState.run_count_time <= 0.0)
             {
-                ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0.");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 441, "Count time is <= 0.");
             }
             else
             if (meas.Cycles.GetUseableCycleCount() < 1)
             {
-                ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
             }
             else
             {
@@ -82,7 +82,7 @@ namespace NCCFile
         {
             List<string> exts = new List<string>() { ".dat", ".cnn" };
             FileList<TestDataFile> hdlr = new FileList<TestDataFile>();
-            hdlr.Init(exts, ctrllog);
+            hdlr.Init(exts);
             FileList<TestDataFile> files = null;
 
             // initialize operation timer here
@@ -99,7 +99,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Test data/Disk .dat or .cnn files found");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No usable Test data/Disk .dat or .cnn files found");
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace NCCFile
                         ushort.TryParse(l, out number_good_runs);
                         if (number_good_runs == 0)
                         {
-                            ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
                             continue;
                         }
                         /* run count time */
@@ -147,7 +147,7 @@ namespace NCCFile
                         double.TryParse(l, out run_count_time);
                         if (run_count_time <= 0.0)
                         {
-                            ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0.");
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Error, 441, "Count time is <= 0.");
                             continue;
                         }
                     }
@@ -189,12 +189,12 @@ namespace NCCFile
                             string l = td.reader.ReadLine();
                             if (td.reader.EndOfStream)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. AAS p" + n.ToString());
+                                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. AAS p" + n.ToString());
                             }
                             ushort.TryParse(l, out number_good_runs);
                             if (number_good_runs == 0)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. AAS p" + n.ToString());
+                                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles. AAS p" + n.ToString());
                                 continue;
                             }
                             /* run count time */
@@ -202,7 +202,7 @@ namespace NCCFile
                             double.TryParse(l, out run_count_time);
                             if (run_count_time <= 0.0)
                             {
-                                ctrllog.TraceEvent(LogLevels.Error, 441, "Count time is <= 0. AAS p" + n.ToString());
+                                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 441, "Count time is <= 0. AAS p" + n.ToString());
                                 continue;
                             }
                             /* read in run data */
@@ -221,8 +221,8 @@ namespace NCCFile
                 catch (Exception e)
                 {
                     NC.App.Opstate.SOH = OperatingState.Trouble;
-                    ctrllog.TraceException(e, true);
-                    ctrllog.TraceEvent(LogLevels.Error, 437, "Test data file processing stopped with error: '" + e.Message + "'");
+                    NC.App.ControlLogger.TraceException(e, true);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 437, "Test data file processing stopped with error: '" + e.Message + "'");
                 }
                 finally
                 {
@@ -264,7 +264,7 @@ namespace NCCFile
 
         void AddTestDataCycle(int run, uint run_seconds, double run_count_time, Measurement meas, TestDataFile td, string pivot = "", int cfindex = -1)
         {
-            Cycle cycle = new Cycle(datalog);
+            Cycle cycle = new Cycle();
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.CycleFile, meas.Detector.Id.SRType,
@@ -311,7 +311,7 @@ namespace NCCFile
                 ushort.TryParse(mv, out k);
                 if (k == 0)  // test data files require an entry with 1 bin set 0s for the absence of multiplicity, go figure
                 {
-                    ctrllog.TraceEvent(LogLevels.Error, 440, "This" + pivot + " cycle " + run.ToString() + " has no good multiplicity data.");
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "This" + pivot + " cycle " + run.ToString() + " has no good multiplicity data.");
                     return;
                 }
                 mcr.MinBins = mcr.MaxBins = k;
@@ -334,12 +334,12 @@ namespace NCCFile
                     mcr.RAMult[j] = (ulong)ve[0];
                     mcr.NormedAMult[j] = (ulong)ve[1];
                 }
-                ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + pivot + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + pivot + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
 
             }
             catch (Exception e)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, pivot + "cycle processing error {0} {1} {2}", run, e.Message, pivot);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, pivot + "cycle processing error {0} {1} {2}", run, e.Message, pivot);
             }
         }
 
@@ -347,10 +347,10 @@ namespace NCCFile
 		/// Extract root path from INCC5 incc.ini file, and use that path to construct 3 new paths for use by the iRAP software.
 		/// Assumes iRAP runtime directory structure (data and output directories).
 		/// </summary>
-		/// <param name="ctrllog">log handle for error output</param>
+		/// <param name="NC.App.ControlLogger">log handle for error output</param>
 		/// <returns>paths, non-null empty array if no INCC5 in file is used, or
 		///          an array of 3 paths, 0: common input path, 1: data path, 2: log file path</returns>
-		static public string[] ProcessINCC5IniFile(LMLoggers.LognLM ctrllog)
+		static public string[] ProcessINCC5IniFile(Logging.Log log)
 		{
 			string [] paths = new string[] { string.Empty };
 			if (!NC.App.AppContext.UseINCC5Ini)
@@ -358,8 +358,8 @@ namespace NCCFile
 			string filename = System.IO.Path.Combine(NC.App.AppContext.INCC5IniLoc, "incc.ini");
 			if (!System.IO.File.Exists(filename))
 			{
-				if (ctrllog != null)
-					ctrllog.TraceEvent(LogLevels.Warning, 112, "INCC5 ini file does not exist or cannot be opened: " + filename);
+				if (NC.App.ControlLogger != null)
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 112, "INCC5 ini file does not exist or cannot be opened: " + filename);
 				return paths;
 			}
 			string inputpath = string.Empty;
@@ -408,7 +408,7 @@ namespace NCCFile
             // first find and process and .NOP files 
             List<string> exts = new List<string>() { ".nop", ".cop" };
             FileList<CSVFile> hdlr = new FileList<CSVFile>();
-            hdlr.Init(exts, ctrllog);
+            hdlr.Init(exts);
             FileList<CSVFile> files = null;
 			OPFiles opfiles = new OPFiles();
 
@@ -421,13 +421,13 @@ namespace NCCFile
             {
 				// construct lists of isotopics and items from the NOP and COP files
 				opfiles.Process(files);
-	            ctrllog.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.Results.ItemIds.Count);
+	            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.Results.ItemIds.Count);
             }
 			else
-	            ctrllog.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, continuing with default values");
+	            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, continuing with default values");
 
             // process the NCC files only
-            INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo(ctrllog, "*.NCC");
+            INCCFileOrFolderInfo foo = new INCCFileOrFolderInfo("*.NCC");
             if (NC.App.AppContext.FileInputList == null)
                 foo.SetPath(NC.App.AppContext.FileInput);
             else
@@ -442,7 +442,7 @@ namespace NCCFile
                 if (tdk.Count < 1)
                 {
                     rf.skip = true;
-                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "No detector " + rf.detector + " defined, cannot complete processing NCC review file " + System.IO.Path.GetFileName(rf.Path));
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No detector " + rf.detector + " defined, cannot complete processing NCC review file " + System.IO.Path.GetFileName(rf.Path));
                 }
             }
             res.RemoveAll(rf => (rf as INCCReviewFile).skip);
@@ -456,7 +456,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No usable NCC review files found in " + System.IO.Path.GetFullPath(foo.GetPath()));
                 return;
             }
 
@@ -489,7 +489,7 @@ namespace NCCFile
                 if (already != null)
                 {
                     // URGENT: do the replacement as it says 
-                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "Replacing the matching {0} measurement, timestamp {1} (in a future release)", already.MeasOption.PrintName(), already.MeasDateTime.ToString());
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "Replacing the matching {0} measurement, timestamp {1} (in a future release)", already.MeasOption.PrintName(), already.MeasDateTime.ToString());
                 }
 
                 IntegrationHelpers.BuildMeasurement(newacq, curdet, mo);
@@ -498,7 +498,7 @@ namespace NCCFile
 
                 meas.Persist();  // preserve the basic results record
                 if (AssaySelector.ForMass(meas.MeasOption) && !meas.INCCAnalysisState.Methods.AnySelected())
-                    ctrllog.TraceEvent(LogLevels.Warning, 437, "No mass methods for " + meas.INCCAnalysisState.Methods.selector.ToString());
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 437, "No mass methods for " + meas.INCCAnalysisState.Methods.selector.ToString());
 
                 try
                 {
@@ -509,7 +509,7 @@ namespace NCCFile
 
                     if (irf.num_runs == 0)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "This measurement has no good cycles.");
                         continue;
                     }
                     if (meas.MeasOption == AssaySelector.MeasurementOption.holdup)
@@ -536,7 +536,7 @@ namespace NCCFile
                         meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource) &&
                         meas.AcquireState.well_config == WellConfiguration.Passive)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. AAS");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "No add-a-source data processed because the implementation is incomplete. AAS");
                         //AddASourceSetup aass = IntegrationHelpers.GetCurrentAASSParams(meas.Detector);
                         //for (int n = 1; n <= aass.number_positions; n++)
                         //{
@@ -544,7 +544,7 @@ namespace NCCFile
                         //    string l = td.reader.ReadLine();
                         //    if (td.reader.EndOfStream)
                         //    {
-                        //        ctrllog.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. " + "AAS p" + n.ToString());
+                        //        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 440, "No add-a-source data found in disk file. " + "AAS p" + n.ToString());
 
                         //    }
                         //}
@@ -553,8 +553,8 @@ namespace NCCFile
                 catch (Exception e)
                 {
                     NC.App.Opstate.SOH = OperatingState.Trouble;
-                    ctrllog.TraceException(e, true);
-                    ctrllog.TraceEvent(LogLevels.Error, 437, "NCC file processing stopped with error: '" + e.Message + "'");
+                    NC.App.ControlLogger.TraceException(e, true);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 437, "NCC file processing stopped with error: '" + e.Message + "'");
                 }
                 finally
                 {
@@ -592,7 +592,7 @@ namespace NCCFile
             ItemId iid = NC.App.DB.ItemIds.Get(irf.item);
             if (iid == null)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in Op. Review files or the database. Item type defaults to " + acq.item_type);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in Op. Review files or the database. Item type defaults to " + acq.item_type);
             }
             else
             {
@@ -623,7 +623,7 @@ namespace NCCFile
 
         unsafe void AddReviewFileCycle(int i, run_rec_ext run, INCCReviewFile.run_rec_ext_plus rrep, Measurement meas, string fn)
         {
-            Cycle cycle = new Cycle(datalog);
+            Cycle cycle = new Cycle();
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.ReviewFile, meas.Detector.Id.SRType,
@@ -671,25 +671,24 @@ namespace NCCFile
                     mcr.RAMult[j] = (ulong)run.run_mult_reals_plus_acc[j];
                     mcr.NormedAMult[j] = (ulong)run.run_mult_acc[j];
                 }
-                ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + (rrep.n_mult > 0 ? " n_:" + rrep.n_mult.ToString() + " max:" + mcr.MaxBins.ToString() : " *"));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + (rrep.n_mult > 0 ? " n_:" + rrep.n_mult.ToString() + " max:" + mcr.MaxBins.ToString() : " *"));
             }
             catch (Exception e)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run, e.Message);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run, e.Message);
             }
         }
 
 		static void GCCollect()
 		{
-			LMLoggers.LognLM log = NC.App.ControlLogger;
             long mem = GC.GetTotalMemory(false);
-            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-            log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4248, "GC now");
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
             mem = GC.GetTotalMemory(true);
-            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
 		}
         static void ResetMeasurement()
         {
@@ -704,16 +703,16 @@ namespace NCCFile
         void ComputeFromINCC5SRData(Measurement m)
         {
 			string pre = (m.AcquireState.data_src == ConstructedSource.Reanalysis ? "Rec" : "C");
-            ctrllog.TraceEvent(LogLevels.Info, 34071, pre + "omputing: '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
+            NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34071, pre + "omputing: '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
             if (m.Cycles.Count < 1)
             {
-                ctrllog.TraceEvent(LogLevels.Error, 34830, "Skipping, no cycles on '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 34830, "Skipping, no cycles on '" + m.MeasurementId.MeasDateTime.ToString() + ", " + m.MeasOption.PrintName() + "'");
                 return;
             }
 
             if (m.CountingAnalysisResults.Count < 1 || !m.CountingAnalysisResults.HasMultiplicity)
             {
-                ctrllog.TraceEvent(LogLevels.Error, 34831, "Bad match between detector and this file type." + (!m.CountingAnalysisResults.HasMultiplicity ? " No Multiplicity counter defined." : ""));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 34831, "Bad match between detector and this file type." + (!m.CountingAnalysisResults.HasMultiplicity ? " No Multiplicity counter defined." : ""));
                 return; //bad match between detector and this file type.
             }
 
@@ -740,7 +739,7 @@ namespace NCCFile
                 {
                     if (NC.App.Opstate.IsQuitRequested)  // exit via abort or quit/save, follow-on code decides to continue with processing
                     {
-                        ctrllog.TraceEvent(LogLevels.Warning, 430, "Cycle first-pass processing " + NC.App.Opstate.CancelStopAbortStateRep + " at sequence #" + cycle.seq + ", " + m.CurrentRepetition);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 430, "Cycle first-pass processing " + NC.App.Opstate.CancelStopAbortStateRep + " at sequence #" + cycle.seq + ", " + m.CurrentRepetition);
                         break;
                     }
                     m.CurrentRepetition++;
@@ -748,7 +747,7 @@ namespace NCCFile
                     m.SetQCStatus(cycle);
                     CycleProcessing.ApplyTheCycleConditioningSteps(cycle, m);
                     m.CycleStatusTerminationCheck(cycle);
-                    ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString());
                     if (m.CurrentRepetition % 8 == 0)
                         FireEvent(EventType.ActionInProgress, this);
                 }
@@ -759,8 +758,8 @@ namespace NCCFile
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                ctrllog.TraceException(e, true);
-                ctrllog.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
+                NC.App.ControlLogger.TraceException(e, true);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 430, "Processing stopped at cycle " + m.CurrentRepetition);
             }
             finally
             {
@@ -772,7 +771,7 @@ namespace NCCFile
                 if (m.HasReportableData)
 				{
 					m.CalculateMeasurementResults();
-					new ReportMangler(ctrllog).GenerateReports(m);
+					new ReportMangler(NC.App.ControlLogger).GenerateReports(m);
 					m.SaveMeasurementResults();
 				}
             }

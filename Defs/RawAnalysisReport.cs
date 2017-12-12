@@ -92,8 +92,8 @@ namespace AnalysisDefs
             C1
         };
 
-        public SimpleRawReport(NCCReporter.LMLoggers.LognLM ctrllog)
-            : base(ctrllog)
+        public SimpleRawReport(NCCReporter.Logging.Log log)
+            : base(log)
         {
             selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(ReportSections)).Length);
             foreach (ValueType v in System.Enum.GetValues(typeof(ReportSections)))
@@ -219,7 +219,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -247,7 +247,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -354,7 +354,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -689,7 +689,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
         }
 
@@ -901,8 +901,8 @@ namespace AnalysisDefs
         protected enum RawReportSections { HitsPerChn, RatePerChn, Feynman, Rossi, TimeInterval, CoincidenceMatrix };
         protected new Array selectedReportSections;
         public List<string> replines;
-        public RawAnalysisReport(NCCReporter.LMLoggers.LognLM ctrllog)
-            : base(ctrllog)
+        public RawAnalysisReport(NCCReporter.Logging.Log log)
+            : base(log)
         {
             selectedReportSections = Array.CreateInstance(typeof(bool), System.Enum.GetValues(typeof(RawReportSections)).Length);
             foreach (ValueType v in System.Enum.GetValues(typeof(RawReportSections)))
@@ -1023,7 +1023,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
 
             return sec;
@@ -1200,7 +1200,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
 
             return sec;
@@ -1624,7 +1624,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
 
             FinishReportGeneration();
@@ -1663,7 +1663,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
 
             t.CreateReport(0);

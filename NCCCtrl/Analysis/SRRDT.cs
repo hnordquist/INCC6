@@ -122,7 +122,7 @@ namespace Analysis
             state = new SRProcessingState();
         }
 
-        public override void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)
+        public override void Init(Logging.Log datalogger, Logging.Log alogger)
         {
             base.Init(datalogger, alogger);
         }

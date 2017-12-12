@@ -56,15 +56,10 @@ namespace LMComm
           get { return _LMServer; }
           set { _LMServer = value; }
         }
-        //Config cfg;
-       LMLoggers.LognLM commlog = null;
 
-        public TalkToLMMMM(LMLoggers.LognLM logger)
+        public TalkToLMMMM()
         {
             cmdprocessor = new LMMMLingo(); // same for cfg copy
-            
-            commlog = logger;
-            cmdprocessor.CommLog = logger;
         }
 
 
@@ -155,19 +150,19 @@ namespace LMComm
         {
             if (!Instruments.Active.HasLMMM())
             {
-                commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
+                NC.App.CollectLogger.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
                 return;
             }
             try
             {
                 if (CurrentLM == -1 && specificLMIndex == -1)  // all of them
                 {
-                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
+                    NC.App.CollectLogger.TraceInformation("Send " + Logging.Log.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
                     IEnumerator iter = Instruments.Active.GetLMEnumerator();
                     while (iter.MoveNext())
                     {
                         LMInstrument lmi = (LMInstrument)iter.Current;
-                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
+                        NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 360, "Send '" + Logging.Log.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent);
                     }
                 }
@@ -175,25 +170,25 @@ namespace LMComm
                 {
                     int index = specificLMIndex > -1 ? specificLMIndex : CurrentLM;  // index override from live call in main code, not from command line
                     // make sure the element is actually there
-                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
+                    NC.App.CollectLogger.TraceInformation("Send '" + Logging.Log.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
                     LMInstrument lmi = Instruments.Active.FindByIndexer(index);
                     if (lmi == null) // index must always be less than Count, the list is 0 based
-                        commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
+                        NC.App.CollectLogger.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
                     else
                         LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent); 
                 }
             }
             catch (ObjectDisposedException ex)
             {
-                commlog.TraceEvent(LogLevels.Error, 354, "LOST an instrument: " + ex.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 354, "LOST an instrument: " + ex.Message);
             }
             catch (SocketException se)
             {
-                commlog.TraceEvent(LogLevels.Error, 355, "TCP/IP send socket error: " + se.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 355, "TCP/IP send socket error: " + se.Message);
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 356, "TCP/IP send failed: " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 356, "TCP/IP send failed: " + e.Message);
             }
         }
 
@@ -222,21 +217,21 @@ namespace LMComm
 
                     IPEndPoint ep = new IPEndPoint(broadcast, net.NetComm.LMListeningPort);
                     s.SendTo(sendBuffer, ep);
-                    commlog.TraceEvent(LogLevels.Verbose, 361, "UDP send: '" + LMLoggers.LognLM.FlattenChars(cmds) + "'");
+                    NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 361, "UDP send: '" + Logging.Log.FlattenChars(cmds) + "'");
 
                 }
             }
             catch (ObjectDisposedException ex)
             {
-                commlog.TraceEvent(LogLevels.Error, 357, "LOST an instrument: " + ex.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 357, "LOST an instrument: " + ex.Message);
             }
             catch (SocketException se)
             {
-                commlog.TraceEvent(LogLevels.Error, 358, "UDP send socket error: " + se.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 358, "UDP send socket error: " + se.Message);
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 359, "UDP send cough: " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 359, "UDP send cough: " + e.Message);
             }
             return res;
         }
@@ -264,7 +259,7 @@ namespace LMComm
                 }
                 catch (Exception e)
                 {
-                    commlog.TraceEvent(LogLevels.Error, 354, "TCP send parse issue: " + e.Message);
+                    NC.App.CollectLogger.TraceEvent(LogLevels.Error, 354, "TCP send parse issue: " + e.Message);
                 }
             }
             return res;
@@ -298,7 +293,7 @@ namespace LMComm
                     }
                     catch (Exception e)
                     {
-                        commlog.TraceEvent(LogLevels.Error, 361, "Current instrument and measurement undefined or incomplete: " + e.Message);
+                        NC.App.CollectLogger.TraceEvent(LogLevels.Error, 361, "Current instrument and measurement undefined or incomplete: " + e.Message);
                     }
                     break;
                 case LMMMLingo.Tokens.help:
@@ -347,7 +342,7 @@ namespace LMComm
                     }
                     catch (Exception e)
                     {
-                        commlog.TraceEvent(LogLevels.Error, 360, "Current instrument and measurement undefined or incomplete: " + e.Message);
+                        NC.App.CollectLogger.TraceEvent(LogLevels.Error, 360, "Current instrument and measurement undefined or incomplete: " + e.Message);
                     }
                     break;
             }

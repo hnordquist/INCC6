@@ -36,24 +36,24 @@ namespace NCCReporter
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
     {
-        protected LMLoggers.LognLM ctrllog;
+        protected Logging.Log log;
 #if EXCEL
         protected Excel.Application target;
 #endif
 
         // dev note: pre-define template somewhere, and use it, having the very nice graph already prepared for line by line updating here
-        public ExcelPush(string existingWB, LMLoggers.LognLM ctrllog)
+        public ExcelPush(string existingWB, Logging.Log log)
         {
-            this.ctrllog = ctrllog;
+            this.log = log;
         }
 
-        public ExcelPush(LMLoggers.LognLM ctrllog)
+        public ExcelPush(Logging.Log log)
         {
-            this.ctrllog = ctrllog;
+            this.log = log;
         }
 
 
-        public static bool ExcelPresent(LMLoggers.LognLM optlog = null)
+        public static bool ExcelPresent(Logging.Log optlog = null)
         {
             try
             {
@@ -62,8 +62,7 @@ namespace NCCReporter
             }
             catch (Exception e)
             {
-                if (optlog != null)
-                    optlog.TraceException(e);
+                optlog?.TraceException(e);
             }
             return false;
         }
@@ -83,7 +82,7 @@ namespace NCCReporter
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                log.TraceException(e);
             }
         }
 

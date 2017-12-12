@@ -34,8 +34,10 @@ using System.Text;
 using NCCReporter;
 namespace NCCTransfer
 {
+    using N = NCC.CentralizedState;
 
-	public class DescriptorPair
+
+    public class DescriptorPair
     {
         public string id, desc;
 
@@ -112,13 +114,11 @@ namespace NCCTransfer
     // and then design for additional file types and additional processing approaches for those file types, need a generalized file class to undergird all file-based processing.
     public class INCCTransferBase
     {
-        protected LMLoggers.LognLM mlogger;
         public string Path;
 		public bool Select;  // for UI-based filtering
 
-        public INCCTransferBase(LMLoggers.LognLM logger, string mpath)
+        public INCCTransferBase(string mpath)
         {
-            mlogger = logger;
             Path = string.IsNullOrEmpty(mpath) ? string.Empty : string.Copy(mpath);
 			Select = true;
         }
@@ -164,8 +164,8 @@ namespace NCCTransfer
     
     public class INCCInitialDataDetectorFile : INCCTransferBase
     {
-        public INCCInitialDataDetectorFile(LMLoggers.LognLM logger, string mpath)
-            : base(logger, mpath)
+        public INCCInitialDataDetectorFile(string mpath)
+            : base(mpath)
         {
         }
 
@@ -200,7 +200,7 @@ namespace NCCTransfer
             BinaryReader reader;
             FileInfo fi;
 
-            mlogger.TraceEvent(LogLevels.Verbose, 33190, "Scanning the detector initial data file {0}", source_path_filename);
+            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33190, "Scanning the detector initial data file {0}", source_path_filename);
 
             try
             {
@@ -210,8 +210,8 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceException(e);
-                mlogger.TraceEvent(LogLevels.Warning, 33184, "Cannot open file {0}", source_path_filename);
+                N.App.ControlLogger.TraceException(e);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33184, "Cannot open file {0}", source_path_filename);
                 return result;
             }
             byte[] los_bytos = new byte[stream.Length];
@@ -240,7 +240,7 @@ namespace NCCTransfer
                         }
                     else
                     {
-                        mlogger.TraceEvent(LogLevels.Warning, 33193, "Detector rec not read", source_path_filename);
+                        N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33193, "Detector rec not read", source_path_filename);
                         return result;
                     }
                 }
@@ -257,7 +257,7 @@ namespace NCCTransfer
                         }
                     else
                     {
-                        mlogger.TraceEvent(LogLevels.Warning, 33193, "Old detector rec not read", source_path_filename);
+                        N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33193, "Old detector rec not read", source_path_filename);
                         return result;
                     }
                     TransferUtils.Copy(old_detector.detector_id, 0, detector.detector_id, 0, 12); // see struct dec
@@ -265,7 +265,7 @@ namespace NCCTransfer
                     TransferUtils.Copy(old_detector.electronics_id, 0, detector.electronics_id, 0, 9); // see struct dec
                 }
                 Detector.Add(detector);
-                mlogger.TraceEvent(LogLevels.Info, 33195, "Transferring detector '{0}' data, from {1}",
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33195, "Transferring detector '{0}' data, from {1}",
                                  TransferUtils.str(detector.detector_id, INCC.MAX_DETECTOR_ID_LENGTH), System.IO.Path.GetFileName(Path));
 
                 sz = Marshal.SizeOf(sr_parms);
@@ -341,12 +341,12 @@ namespace NCCTransfer
             }
             catch (TransferUtils.TransferParsingException tpe)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
                 result = false;
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
 
             try
@@ -355,7 +355,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
             return result;
         }
@@ -380,7 +380,7 @@ namespace NCCTransfer
 				WriteTMBKGParms(i, bw);
 				bw.Close();
 				bw.Dispose();
-				mlogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
+				N.App.ControlLogger.TraceInformation("{0} Transfer detector {1}, saved as {2}", i+1, detname, Path);
 			}
 
             return false;
@@ -512,8 +512,8 @@ namespace NCCTransfer
             }
         }
 
-        public INCCInitialDataCalibrationFile(LMLoggers.LognLM logger, string mpath)
-            : base(logger, mpath)
+        public INCCInitialDataCalibrationFile(string mpath)
+            : base(mpath)
         {
 
         }
@@ -531,7 +531,7 @@ namespace NCCTransfer
 			BinaryReader reader;
 			FileInfo fi;
 
-			mlogger.TraceEvent(LogLevels.Info, 33290, "Scanning the calibration initial data file {0}", System.IO.Path.GetFileName(source_path_filename));
+			N.App.ControlLogger.TraceEvent(LogLevels.Info, 33290, "Scanning the calibration initial data file {0}", System.IO.Path.GetFileName(source_path_filename));
 			try
 			{
 				fi = new System.IO.FileInfo(source_path_filename);
@@ -539,8 +539,8 @@ namespace NCCTransfer
 				reader = new BinaryReader(stream);
 			} catch (Exception e)
 			{
-				mlogger.TraceException(e);
-				mlogger.TraceEvent(LogLevels.Warning, 33284, "Cannot open file {0}", source_path_filename);
+				N.App.ControlLogger.TraceException(e);
+				N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33284, "Cannot open file {0}", source_path_filename);
 				return result;
 			}
 			byte[] los_bytos = new byte[stream.Length];
@@ -703,7 +703,7 @@ namespace NCCTransfer
 							TransferUtils.str(collar_detector.collar_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
 						current.extra = (short)(collar_detector.collar_detector_mode == 0 ? 0 : 1);
 						DetectorMaterialMethodParameters.Add(current, collar_detector);
-						mlogger.TraceEvent(LogLevels.Verbose, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}", current.detector_id, current.item_type, collar_detector.collar_detector_mode);
+						N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 103030, "Step 1 COLLAR_DETECTOR_SAVE_RESTORE {0} {1} {2}", current.detector_id, current.item_type, collar_detector.collar_detector_mode);
 						break;
 					case INCC.COLLAR_SAVE_RESTORE:
 						collar_rec collar = new collar_rec();
@@ -718,7 +718,7 @@ namespace NCCTransfer
 							TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
 						current.extra = (short)(collar.collar_mode == 0 ? 0 : 1);
 						DetectorMaterialMethodParameters.Add(current, collar);
-						mlogger.TraceEvent(LogLevels.Verbose, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar.collar_mode);
+						N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 103031, "Step 2 COLLAR_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar.collar_mode);
 						break;
 					case INCC.COLLAR_K5_SAVE_RESTORE: // this is third in the series
 						collar_k5_rec collar_k5 = new collar_k5_rec();
@@ -733,7 +733,7 @@ namespace NCCTransfer
 							TransferUtils.str(analysis_method_record.analysis_method_detector_id, INCC.MAX_DETECTOR_ID_LENGTH), current_analysis_method);
 						current.extra = (short)(collar_k5.collar_k5_mode == 0 ? 0 : 1);
 						DetectorMaterialMethodParameters.Add(current, collar_k5);
-						mlogger.TraceEvent(LogLevels.Verbose, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar_k5.collar_k5_mode);
+						N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 103031, "Step 3 COLLAR_K5_SAVE_RESTORE [{0}] {1} {2}", current.detector_id, current.item_type, collar_k5.collar_k5_mode);
 						break;
 					case INCC.METHOD_ADDASRC:
 						add_a_source_rec add_a_source = new add_a_source_rec();
@@ -779,7 +779,7 @@ namespace NCCTransfer
 						break;
 
 					default:
-						mlogger.TraceEvent(LogLevels.Warning, 33086, "Unhandled method value '{0:x8}'", current_analysis_method);
+						N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33086, "Unhandled method value '{0:x8}'", current_analysis_method);
 						break;
 					}
 
@@ -812,17 +812,17 @@ namespace NCCTransfer
 
 
 				result = true;
-				//    mlogger.BatchLogL("Successfully applied calibration parameters from %.256s", source_path_filename);
+				//    N.App.ControlLogger.BatchLogL("Successfully applied calibration parameters from %.256s", source_path_filename);
 
 
 			} catch (TransferUtils.TransferParsingException tpe)
 			{
-				mlogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
+				N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33086, "Detector data file processing incomplete", tpe.Message);
 				result = false;
 			} catch (Exception e)
 			{
-				if (mlogger != null)
-					mlogger.TraceException(e);
+				if (N.App.ControlLogger != null)
+					N.App.ControlLogger.TraceException(e);
 			}
 
 			try
@@ -830,8 +830,8 @@ namespace NCCTransfer
 				reader.Close();
 			} catch (Exception e)
 			{
-				if (mlogger != null)
-					mlogger.TraceException(e);
+				if (N.App.ControlLogger != null)
+					N.App.ControlLogger.TraceException(e);
 			}
 			return result;
 
@@ -840,7 +840,7 @@ namespace NCCTransfer
 		unsafe new public bool Save(string path)
 		{
 			List<string> l = DetectorMaterialMethodParameters.GetDetectors;
-			mlogger.TraceEvent(LogLevels.Verbose, 33154, "{0} calibration set{1} to save off", l.Count, (l.Count != 1 ? "s" : string.Empty));
+			N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33154, "{0} calibration set{1} to save off", l.Count, (l.Count != 1 ? "s" : string.Empty));
 			int i = 0; int count = 0;
             foreach (string det in l)
 			{
@@ -921,7 +921,7 @@ namespace NCCTransfer
                 }
                 bw.Close();
 				bw.Dispose();
-				mlogger.TraceInformation("{0} calibration parameters, saved to {1}", det, Path);
+				N.App.ControlLogger.TraceInformation("{0} calibration parameters, saved to {1}", det, Path);
 				i++;
 			}
 			return count > 0;
@@ -1082,8 +1082,8 @@ namespace NCCTransfer
 
     public class INCCTransferFile : INCCTransferBase
     {
-        public INCCTransferFile(LMLoggers.LognLM logger, string mpath)
-            : base(logger, mpath)
+        public INCCTransferFile(string mpath)
+            : base(mpath)
         {
 
         }
@@ -1093,7 +1093,7 @@ namespace NCCTransfer
 		unsafe new public bool Save(string path)  
 		{
 			Path = System.IO.Path.Combine(path, Name);
-			mlogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
+			N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33154, "Saving measurement to " + Path);
 
 			bool result = false;
 			FileStream stream = null;
@@ -1105,8 +1105,8 @@ namespace NCCTransfer
 				bw = new BinaryWriter(stream);
 			} catch (Exception e)
 			{
-				mlogger.TraceException(e);
-				mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot create file {0}", Path);
+				N.App.ControlLogger.TraceException(e);
+				N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33084, "Cannot create file {0}", Path);
 				return result;
 			}
 
@@ -1136,11 +1136,11 @@ namespace NCCTransfer
 				}
 				// devnote: not doing the WMV stuff at the end of the file
                 result = true;
-				mlogger.TraceInformation("Saved transfer file " + Path);
+				N.App.ControlLogger.TraceInformation("Saved transfer file " + Path);
 			} catch (Exception e)
 			{
-				if (mlogger != null)
-					mlogger.TraceException(e);
+				if (N.App.ControlLogger != null)
+					N.App.ControlLogger.TraceException(e);
 				result = false;
 			}
 			try
@@ -1148,8 +1148,8 @@ namespace NCCTransfer
 				bw.Close();
 			} catch (Exception e)
 			{
-				if (mlogger != null)
-					mlogger.TraceException(e);
+				if (N.App.ControlLogger != null)
+					N.App.ControlLogger.TraceException(e);
 				result = false;
 			}
 			return result;
@@ -1302,7 +1302,7 @@ namespace NCCTransfer
             INCC.SaveResultsMask results_status;
             item_id_entry_rec item_id_entry;
 
-            mlogger.TraceEvent(LogLevels.Verbose, 33090, "Scanning the measurement transfer file {0}", source_path_filename);
+            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33090, "Scanning the measurement transfer file {0}", source_path_filename);
 
             results_rec results = new results_rec();
             meas_id id = new meas_id();
@@ -1314,8 +1314,8 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceException(e);
-                mlogger.TraceEvent(LogLevels.Warning, 33084, "Cannot open file {0}", source_path_filename);
+                N.App.ControlLogger.TraceException(e);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33084, "Cannot open file {0}", source_path_filename);
                 return result;
             }
             int sz = Marshal.SizeOf(results);
@@ -1327,7 +1327,7 @@ namespace NCCTransfer
                 }
             else
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33093, "Results not read", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33093, "Results not read", source_path_filename);
                 return result;
             }
 
@@ -1347,7 +1347,7 @@ namespace NCCTransfer
                 {
                 }
                 // devnote: consider implementing this if old data still is of interest: convert_results (old_results, &results);
-                mlogger.TraceEvent(LogLevels.Warning, 33094, "Cannot use file {0}, not a version 5 result", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33094, "Cannot use file {0}, not a version 5 result", source_path_filename);
                 return result;
             }
 
@@ -1360,7 +1360,7 @@ namespace NCCTransfer
                 TransferUtils.Copy(results.results_detector_id, 0, id.results_detector_id, 0, INCC.MAX_DETECTOR_ID_LENGTH);
 
                 string fname = TransferUtils.str(id.filename, INCC.FILE_NAME_LENGTH);
-                mlogger.TraceEvent(LogLevels.Info, 33095, "Transferring {0} measurement for {1} {2}, from {3}",
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33095, "Transferring {0} measurement for {1} {2}, from {3}",
                                             System.IO.Path.GetExtension(fname),
                                             TransferUtils.str(id.results_detector_id, INCC.MAX_DETECTOR_ID_LENGTH),
                                             INCC.DateTimeFrom(TransferUtils.str(id.meas_date, INCC.DATE_TIME_LENGTH),
@@ -1692,7 +1692,7 @@ namespace NCCTransfer
                 if (results.meas_option != INCC.OPTION_HOLDUP)
                 {
                     number_runs = TransferUtils.ReadUInt16(reader, "number of runs");
-                    mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} INCC runs into cycles", number_runs);
+                    N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} INCC runs into cycles", number_runs);
                     run_rec run = new run_rec();
                     for (n = 0; n < number_runs; n++)
                     {
@@ -1719,7 +1719,7 @@ namespace NCCTransfer
                     for (int j = 0; j < INCC.MAX_ADDASRC_POSITIONS; j++)
                     {
                         number_runs = TransferUtils.ReadUInt16(reader, "number of AAS CF" + (j + 1).ToString() + " runs");
-                        mlogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
+                        N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33097, "Converting {0} AAS CF{1} INCC runs into cycles", number_runs, (j + 1));
                         run_rec run = new run_rec();
                         for (n = 0; n < number_runs; n++)
                         {
@@ -1801,7 +1801,7 @@ namespace NCCTransfer
                 //    }
                 //    else if (overwrite_type == IDC_PROMPT_OVERWRITE)
                 //    {
-                //        mlogger.TraceInformation(
+                //        N.App.ControlLogger.TraceInformation(
                 //            "Detector %s already exists.\r\nDo you want to overwrite all of its parameters?",
                 //            results.results_detector_id);
                 //        GUI_ACTION response = GUI_YES; //GetMsgBox()->AskOnce (msg, GUI_ICON_QUESTION, GUI_NOYES);
@@ -1812,17 +1812,17 @@ namespace NCCTransfer
                 //    }
 
                 result = true;
-                mlogger.TraceEvent(LogLevels.Verbose, 33098, "Intermediate results prepared for further processing");
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33098, "Intermediate results prepared for further processing");
 
             }
             catch (TransferUtils.TransferParsingException tpe)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33086, "Transfer file processing incomplete {0}", tpe.Message);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33086, "Transfer file processing incomplete {0}", tpe.Message);
                 result = false;
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
             try
             {
@@ -1830,7 +1830,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
             return result;
         }
@@ -1915,8 +1915,8 @@ namespace NCCTransfer
             public ushort n_mult;
         }
 
-        public INCCReviewFile(LMLoggers.LognLM logger, string mpath)
-            : base(logger, mpath)
+        public INCCReviewFile(string mpath)
+            : base(mpath)
         {
             runs = new List<run_rec_ext>();
             times = new List<run_rec_ext_plus>();
@@ -1929,7 +1929,7 @@ namespace NCCTransfer
             BinaryReader reader;
             FileInfo fi;
 
-            mlogger.TraceEvent(LogLevels.Verbose, 37100, "Scanning the Radiation Review Measurement Data file {0}", source_path_filename);
+            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 37100, "Scanning the Radiation Review Measurement Data file {0}", source_path_filename);
 
             try
             {
@@ -1939,8 +1939,8 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceException(e);
-                mlogger.TraceEvent(LogLevels.Warning, 37101, "Cannot open file {0}", source_path_filename);
+                N.App.ControlLogger.TraceException(e);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 37101, "Cannot open file {0}", source_path_filename);
                 return result;
             }
 
@@ -2020,7 +2020,7 @@ namespace NCCTransfer
                 {
                     INCC.raw_data_rec rd = new INCC.raw_data_rec();
                     int raw_data_rec_size = Marshal.SizeOf(rd); 
-                    mlogger.TraceEvent(LogLevels.Error, 33086, "Old Review data file processing unimplemented");
+                    N.App.ControlLogger.TraceEvent(LogLevels.Error, 33086, "Old Review data file processing unimplemented");
 
                     ///* read results date and time */
                     //fscanf(fp, "%8s %8s", results.meas_date, results.meas_time);
@@ -2035,11 +2035,11 @@ namespace NCCTransfer
             }
             catch (TransferUtils.TransferParsingException tpe)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33086, "Review data file processing incomplete", tpe.Message);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33086, "Review data file processing incomplete", tpe.Message);
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
 
             try
@@ -2048,7 +2048,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
             return result;
         }

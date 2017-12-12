@@ -54,7 +54,6 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
 			bool notify = true;
-			NCCReporter.LMLoggers.LognLM ctrllog = N.App.ControlLogger;
             foreach (ListViewItem lvi in MeasurementView.Items)
             {
                 if (lvi.Selected)
@@ -63,7 +62,7 @@ namespace NewUI
 					if (!int.TryParse(lvi.SubItems[5].Text, out lvIndex)) // 5 has the original mlist index of this sorted row element
 						continue;
 					MeasId mid = mlist[lvIndex].MeasurementId;
-					ctrllog.TraceEvent(NCCReporter.LogLevels.Info, 22222, 
+                    N.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Info, 22222, 
 						"Deleting " + mid.MeasOption.PrintName() + " " + mid.MeasDateTime.ToString("yy.MM.dd HH:mm:ss") + ", #" + mid.UniqueId + " for " + det.Id.DetectorId);
 					N.App.DB.DeleteMeasurement(mlist[lvIndex].MeasurementId);
 					notify = false;

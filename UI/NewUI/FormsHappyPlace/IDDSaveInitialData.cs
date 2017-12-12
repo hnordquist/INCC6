@@ -65,7 +65,6 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-			NCCReporter.LMLoggers.LognLM applog = NC.App.AppLogger;
 			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
 			if (string.IsNullOrEmpty(dest))
 				return;
@@ -87,7 +86,7 @@ namespace NewUI
 				List<INCCInitialDataCalibrationFile> lidcf = INCCKnew.CalibFromDetectors(l);
 				if (lidcf.Count > 0)
 					if (!lidcf[0].Save(dest))
-						applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + lidcf[0].Name);
+                        NC.App.AppLogger.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + lidcf[0].Name);
 
 			} else if (CalibrationAllRadioButton.Checked)
 			{
@@ -96,7 +95,7 @@ namespace NewUI
 				foreach (INCCInitialDataCalibrationFile idcf in lidcf)
 				{
 					if (!idcf.Save(dest))
-						applog.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + idcf.Name);
+                        NC.App.AppLogger.TraceEvent(NCCReporter.LogLevels.Warning, 33154, "No calibration parameters for " + idcf.Name);
 				}
 			}
 			Close();

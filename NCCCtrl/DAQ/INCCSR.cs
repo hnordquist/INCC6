@@ -44,7 +44,7 @@ namespace DAQ
     public class INCCSR
     {
 
-        public INCCSR(ShiftRegisterParameters sr, DataSourceIdentifier id, AcquireParameters acq, TestParameters test, LMLoggers.LognLM log)
+        public INCCSR(ShiftRegisterParameters sr, DataSourceIdentifier id, AcquireParameters acq, TestParameters test, Logging.Log log)
         {
             sr_parms = new ShiftRegisterParameters(sr);
             dsid = new DataSourceIdentifier(id);
@@ -60,7 +60,7 @@ namespace DAQ
         {
             set { lcts = value; }
         }
-        LMLoggers.LognLM log;
+        Logging.Log log;
         ShiftRegisterParameters sr_parms;
         DataSourceIdentifier dsid;
 

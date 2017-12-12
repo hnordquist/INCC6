@@ -1320,15 +1320,14 @@ namespace NewUI
             if (N.App.Opstate.Measurement != null)
             {
                 N.App.Opstate.Measurement = null;
-                LMLoggers.LognLM log = N.App.ControlLogger;
                 long mem = GC.GetTotalMemory(false);
-                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
-                log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4248, "GC now");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4284, "GC complete");
                 mem = GC.GetTotalMemory(true);
-                log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
             }
         }
 

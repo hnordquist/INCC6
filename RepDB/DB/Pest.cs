@@ -46,7 +46,7 @@ namespace DB
     {
         public DBConfig cfg;
 
-        public Persistence(LMLoggers.LognLM logger, DBConfig cfg)
+        public Persistence(DBConfig cfg)
         {
             this.cfg = cfg;
             DBMain.pest = this;

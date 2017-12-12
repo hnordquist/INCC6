@@ -290,7 +290,7 @@ namespace Instr
                 return false;
         }
 
-        public abstract void Init(LMLoggers.LognLM datalog, LMLoggers.LognLM alog);
+        public abstract void Init(Logging.Log datalog, Logging.Log alog);
 
         /// <summary>
         /// Connects to the instrument.
@@ -438,7 +438,7 @@ namespace Instr
 
         public INeutronDataFile file;  // output only
 
-        public override void Init(LMLoggers.LognLM datalog, LMLoggers.LognLM alog)
+        public override void Init(Logging.Log datalog, Logging.Log alog)
         {
             if (RDT == null)
             {
@@ -490,7 +490,7 @@ namespace Instr
         }
 
 
-        internal INeutronDataFile PrepOutputFile(string prefix, int idx, LMLoggers.LognLM collog)
+        internal INeutronDataFile PrepOutputFile(string prefix, int idx, Logging.Log log)
         {
             if (!NC.App.AppContext.LiveFileWrite)
                 return file;
@@ -581,7 +581,7 @@ namespace Instr
             DAQState = DAQInstrState.Offline;  // different scheme, we need to connect after the Instrument is known, rather than connect because the instrument is known
         }
 
-        public override void Init(LMLoggers.LognLM datalog, LMLoggers.LognLM alog)
+        public override void Init(Logging.Log datalog, Logging.Log alog)
         {
             if (RDT == null)
             {

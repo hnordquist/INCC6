@@ -38,6 +38,8 @@ using NCCReporter;
 /// </summary>
 namespace NCCTransfer
 {
+    using N = NCC.CentralizedState;
+
     public enum eFileType { eUnknown, eInitialDataDetector, eInitialDataCalibration, eTransfer, eNCC, eOldNCC, eZip, eFolder, eFileList }
 
 
@@ -47,7 +49,6 @@ namespace NCCTransfer
 
         protected string mpath;
         protected eFileType mft;
-        protected LMLoggers.LognLM mlogger;
 		public System.Threading.CancellationToken mct;
 
         public static readonly string INTEGRATED_REVIEW =  "IREV";
@@ -89,9 +90,8 @@ namespace NCCTransfer
             HIGH_VOLTAGE_EXT
         }
 
-        public INCCFileInfo(LMLoggers.LognLM logger)
+        public INCCFileInfo()
         {
-            mlogger = logger;
         }
 
         public void SetFilePath(string path)
@@ -112,7 +112,7 @@ namespace NCCTransfer
             {
                 case eFileType.eInitialDataDetector:
                     {
-                        INCCInitialDataDetectorFile idd = new INCCInitialDataDetectorFile(mlogger, mpath);
+                        INCCInitialDataDetectorFile idd = new INCCInitialDataDetectorFile(mpath);
                         bool good = idd.Restore(mpath);
                         if (good)
                             result = idd; // this now has the structs ready
@@ -120,7 +120,7 @@ namespace NCCTransfer
                     break;
                 case eFileType.eInitialDataCalibration:
                     {
-                        INCCInitialDataCalibrationFile idcal = new INCCInitialDataCalibrationFile(mlogger, mpath);
+                        INCCInitialDataCalibrationFile idcal = new INCCInitialDataCalibrationFile(mpath);
                         bool good = idcal.Restore(mpath);
                         if (good)
                             result = idcal; // this now has the structs ready
@@ -128,7 +128,7 @@ namespace NCCTransfer
                     break;
                 case eFileType.eTransfer:
                     {
-                        INCCTransferFile idt = new INCCTransferFile(mlogger, mpath);
+                        INCCTransferFile idt = new INCCTransferFile(mpath);
                         bool good = idt.Restore(mpath);
                         if (good)
                             result = idt; // this now has the structs ready
@@ -136,18 +136,18 @@ namespace NCCTransfer
                     break;
                 case eFileType.eNCC:
                     {
-                        INCCReviewFile irf = new INCCReviewFile(mlogger, mpath);
+                        INCCReviewFile irf = new INCCReviewFile(mpath);
                         bool good = irf.Restore(mpath);
                         if (good)
                             result = irf; // this now has the structs ready
                     }
                     break;
                 case eFileType.eUnknown:
-                    mlogger.TraceEvent(LogLevels.Info, 34007, "Skipping {0}", mpath);
+                    N.App.ControlLogger.TraceEvent(LogLevels.Info, 34007, "Skipping {0}", mpath);
                     break;
                 default:  // for future expansion
                     // dev note: NOP and COP files are just CSV or Tab-delimited text files, so no binary matching is needed, so I am moving the handling of these to another class (OPfiles)
-                    mlogger.TraceEvent(LogLevels.Info, 34008, "Not processing the unsupported file {0}", mpath);
+                    N.App.ControlLogger.TraceEvent(LogLevels.Info, 34008, "Not processing the unsupported file {0}", mpath);
                     break;
             };
 
@@ -158,10 +158,10 @@ namespace NCCTransfer
         unsafe protected eFileType DetermineFileType(string source_path_filename)
         {
             eFileType result = eFileType.eUnknown;
-            mlogger.TraceEvent(LogLevels.Verbose, 33001, "Determining file type of {0}", source_path_filename);
+            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33001, "Determining file type of {0}", source_path_filename);
             if (!File.Exists(source_path_filename)) // file is not there or no permissions
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33002, "Cannot access file {0}", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33002, "Cannot access file {0}", source_path_filename);
                 return result;
             }
 
@@ -172,14 +172,14 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
                 return result;
             }
             if (//(fi.Attributes & FileAttributes.Compressed) == FileAttributes.Compressed ||
                 fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
             {
                 result = eFileType.eZip;
-                mlogger.TraceEvent(LogLevels.Warning, 33039, "Compressed archive use is unavailable today {0}", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33039, "Compressed archive use is unavailable today {0}", source_path_filename);
                 return result;
             }
 
@@ -195,7 +195,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
                 return result;
             }
 
@@ -203,7 +203,7 @@ namespace NCCTransfer
             string str2, str2a,str2b;
             if (stream.Length < CALIBRATION_SAVE_RESTORE.Length)
             {
-                mlogger.TraceEvent(LogLevels.Info, 33003, "Skipping this tiny file");
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33003, "Skipping this tiny file");
                 reader.Close();
                 return result;
             }
@@ -220,7 +220,7 @@ namespace NCCTransfer
             }
             else
             {
-                mlogger.TraceEvent(LogLevels.Info, 33004, "Skipping this small file");
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33004, "Skipping this small file");
                 reader.Close();
                 return result;
             }
@@ -228,21 +228,21 @@ namespace NCCTransfer
             if (str2.Equals(DETECTOR_SAVE_RESTORE))
             {
                 result = eFileType.eInitialDataDetector;
-                mlogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is an initial data file with detector parameters", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is an initial data file with detector parameters", source_path_filename);
             }
             else if (str2a.Equals(INTEGRATED_REVIEW))
             {
                 result = eFileType.eNCC;
-                mlogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is a Radiation Review data file", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33009, "The file {0} is a Radiation Review data file", source_path_filename);
             }
             else if (str2b.Equals(OLD_REVIEW))
             {
                 result = eFileType.eOldNCC;
-                mlogger.TraceEvent(LogLevels.Info, 33009, "The file is an olde-style Radiation Review data file");
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33009, "The file is an olde-style Radiation Review data file");
             }
             else
             {
-                mlogger.TraceEvent(LogLevels.Verbose, 33010, "The file is not an initial data file with detector parameters, or an NCC file");
+                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33010, "The file is not an initial data file with detector parameters, or an NCC file");
                 stream.Seek(0, SeekOrigin.Begin);
                 bool found = false;
                 foreach (INCCFileExt fe in System.Enum.GetValues(typeof(INCCFileExt)))
@@ -254,14 +254,14 @@ namespace NCCTransfer
                     }
                 }
                 if (!found)
-                    mlogger.TraceEvent(LogLevels.Verbose, 33011, "The file is not an initial data calibration or transfer file, suffix mismatch");
+                    N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33011, "The file is not an initial data calibration or transfer file, suffix mismatch");
                 else
                 {
                     bool calSuffix = false;
                     calSuffix = Extensions[(int)INCCFileExt.CALIBRATION_EXT].Equals(fi.Extension.ToUpper());
                     if (calSuffix)
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 33012, "The file may be an initial data calibration or transfer file");
+                        N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33012, "The file may be an initial data calibration or transfer file");
                         thisread = reader.Read(buff, 0, CALIBRATION_SAVE_RESTORE.Length);
                         if (thisread > 0)
                         {
@@ -269,12 +269,12 @@ namespace NCCTransfer
                             if (str2.Equals(CALIBRATION_SAVE_RESTORE))
                             {
                                 result = eFileType.eInitialDataCalibration;
-                                mlogger.TraceEvent(LogLevels.Info, 33013, "The file {0} is an initial data calibration file", source_path_filename);
+                                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33013, "The file {0} is an initial data calibration file", source_path_filename);
                             }
                         }
                     }
                     else
-                        mlogger.TraceEvent(LogLevels.Verbose, 33014, "The file may be a transfer file");
+                        N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33014, "The file may be a transfer file");
 
 
                     if (result == eFileType.eUnknown) // check for transfer file now
@@ -292,7 +292,7 @@ namespace NCCTransfer
                             }
                         else
                         {
-                            mlogger.TraceEvent(LogLevels.Warning, 33096, "Results not read", source_path_filename);
+                            N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33096, "Results not read", source_path_filename);
                             reader.Close(); 
                             return result;
                         }
@@ -305,18 +305,18 @@ namespace NCCTransfer
                             los_bytos = TransferUtils.TryReadBytes(reader, sz);
                             if (los_bytos != null)
                             {
-                                mlogger.TraceEvent(LogLevels.Verbose, 33015, "The file may be an older transfer file, from an earlier INCC version");
-                                mlogger.TraceEvent(LogLevels.Warning, 33016, "Cannot use file {0}, not a version 5 result", source_path_filename);
+                                N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33015, "The file may be an older transfer file, from an earlier INCC version");
+                                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33016, "Cannot use file {0}, not a version 5 result", source_path_filename);
                             }
                             else
                             {
-                                mlogger.TraceEvent(LogLevels.Info, 33017, ("The file is not an older transfer file"));
+                                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33017, ("The file is not an older transfer file"));
                             }
                             reader.Close(); 
                             return result;
                         }
                         else
-                            mlogger.TraceEvent(LogLevels.Verbose, 33018, "The file may be a current INCC transfer file");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33018, "The file may be a current INCC transfer file");
 
                         string[] nums;
                         stream.Seek(0, SeekOrigin.Begin);
@@ -328,10 +328,10 @@ namespace NCCTransfer
                         if ((buff[8] == 0x0) && (nums.Length == 3))
                         {
                             result = eFileType.eTransfer;
-                            mlogger.TraceEvent(LogLevels.Verbose, 33019, "The file is a likely a transfer file");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33019, "The file is a likely a transfer file");
                         }
                         else
-                            mlogger.TraceEvent(LogLevels.Verbose, 33020, "The file is not a transfer file");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33020, "The file is not a transfer file");
                     }  // transfer file content check
                 }  // transfer file or ini data cal content check
             } // transfer file or ini data cal suffix check
@@ -342,7 +342,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                if (mlogger != null) mlogger.TraceException(e);
+                if (N.App.ControlLogger != null) N.App.ControlLogger.TraceException(e);
             }
             return result;
 
@@ -367,8 +367,8 @@ namespace NCCTransfer
 
         public event TransferEventHandler eh;
 
-        public INCCFileOrFolderInfo(LMLoggers.LognLM logger, string searchPattern = "")
-            : base(logger)
+        public INCCFileOrFolderInfo(string searchPattern = "")
+            : base()
         {
             this.searchPattern = searchPattern;
         }
@@ -405,7 +405,7 @@ namespace NCCTransfer
             if (IsZip() || IsFolder())
             {
                 // do the folder or zip extract, then individual restore
-                mlogger.TraceEvent(LogLevels.Info, 33020, "Use the folder content");
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33020, "Use the folder content");
                 if (IsFolder())
                 {
                     IEnumerable<string> effs = null;
@@ -417,14 +417,14 @@ namespace NCCTransfer
 					}
 					catch (Exception e)
 					{
-						mlogger.TraceEvent(LogLevels.Warning, 33021, e.Message);
+						N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33021, e.Message);
 					} 
 					finally
 					{
 						if (effs == null || (effs.Count() <= 0))					
-							mlogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);					
+							N.App.ControlLogger.TraceEvent(LogLevels.Info, 33021, "No files found in {0}, see ya . . .", fpath);					
 						else
-							mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
+							N.App.ControlLogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files in {1} for INCC review and transfer file processing", effs.Count(), fpath);
 					}
 					if (effs == null)
 						return results;
@@ -435,7 +435,7 @@ namespace NCCTransfer
                     {
                         j++;
                         string p = f.Substring(f.LastIndexOf("\\") + 1);
-                        mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
+                        N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
                         eh(this, new TransferEventArgs((int)(100.0 * (j / (float)fcount)),"Scanning " + p));
 						if (mct != null && mct.IsCancellationRequested)
 							break;
@@ -443,31 +443,31 @@ namespace NCCTransfer
                         INCCTransferBase itf = base.Restore();
                         if (itf == null)
                         {
-                            mlogger.TraceEvent(LogLevels.Verbose, 33024, "Unable to restore file {0}", f);
+                            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33024, "Unable to restore file {0}", f);
                         }
                         else
                         {
-                            results.Add(itf);//mlogger.TraceInformation("  R file %.256s", fullfilepath);
+                            results.Add(itf);//N.App.ControlLogger.TraceInformation("  R file %.256s", fullfilepath);
                         }
                     }
                     return results;
                 }
                 else if (IsZip())
                 {
-                    mlogger.TraceEvent(LogLevels.Warning, 33025, "Unable to restore compressed file {0}", fpath);
+                    N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33025, "Unable to restore compressed file {0}", fpath);
                 }
                 return results;
             }
             else if (mft == eFileType.eFileList)
             {
-                mlogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC review and transfer file processing", paths.Count());
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33022, "Examining {0} files for INCC review and transfer file processing", paths.Count());
                 int j = 0;
                 // Show files and build list
                 foreach (var f in paths)
                 {
                     j++;
                     string p = f.Substring(f.LastIndexOf("\\") + 1);
-                    mlogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
+                    N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33023, "  {0}", p);// Remove path information from string.
                     eh(this, new TransferEventArgs((int)(100.0 * (j / (float)paths.Count)), "Scanning " + p));
 					if (mct != null && mct.IsCancellationRequested)
 						break;
@@ -475,7 +475,7 @@ namespace NCCTransfer
                     INCCTransferBase itf = base.Restore();
                     if (itf == null)
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 33024, "Unable to restore file {0}", f);
+                        N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33024, "Unable to restore file {0}", f);
                     }
                     else
                     {
@@ -488,7 +488,7 @@ namespace NCCTransfer
                 INCCTransferBase itf = base.Restore();
                 if (itf == null)
                 {
-                    mlogger.TraceEvent(LogLevels.Verbose, 33026, "Unable to restore file {0}", base.GetFilePath());
+                    N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33026, "Unable to restore file {0}", base.GetFilePath());
                 }
                 else
                     results.Add(itf);
@@ -511,18 +511,18 @@ namespace NCCTransfer
         {
             eFileType result = eFileType.eUnknown;
 
-            mlogger.TraceEvent(LogLevels.Verbose, 33027, "Determining state of {0}", source_path_filename);
+            N.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33027, "Determining state of {0}", source_path_filename);
 
             bool isdir = Directory.Exists(source_path_filename);
             bool isfile = File.Exists(source_path_filename);
             if (!isdir && !isfile) // folder is not there or no permissions
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33028, "Cannot access {0}", source_path_filename);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 33028, "Cannot access {0}", source_path_filename);
                 return result;
             }
             if (isdir)
             {
-                mlogger.TraceEvent(LogLevels.Info, 33029, "Folder found");
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 33029, "Folder found");
                 result = eFileType.eFolder;
             }
             else
@@ -534,7 +534,7 @@ namespace NCCTransfer
 					                fi.Extension.ToLower().Equals(".zip") | fi.Extension.ToLower().Equals(".zipx") | fi.Extension.ToLower().Equals(".7z"))
                 {
                     result = eFileType.eZip;
-                    mlogger.TraceEvent(LogLevels.Info, 33030, "Compressed archive found");
+                    N.App.ControlLogger.TraceEvent(LogLevels.Info, 33030, "Compressed archive found");
                     // dev note:  System.IO.Compression.DeflateStream does not provide for zipped folders, only zipped single files (the lame losers!), so need to find a full implementation of zip/unzip and add it here
                 }
             }

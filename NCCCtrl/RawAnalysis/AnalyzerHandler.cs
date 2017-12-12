@@ -70,7 +70,7 @@ namespace LMRawAnalysis
 
         private UInt64 timeOfLastNeutronEvent;
 
-        private LMLoggers.LognLM log;
+        private Logging.Log AnaLogger;
         private bool verboseTrace;
 
         public long spinningWaitForInputTimeTotal;
@@ -121,12 +121,12 @@ namespace LMRawAnalysis
 			numCircuits = 0;
             timeOfLastNeutronEvent = 0;
 		}
-        public AnalyzerHandler(double theTicSizeInSeconds, LMLoggers.LognLM logger)
+        public AnalyzerHandler(double theTicSizeInSeconds, Logging.Log logger)
         {
 
             TickSizeInSeconds = theTicSizeInSeconds;
-            log = logger;
-            verboseTrace = log.ShouldTrace(LogLevels.Verbose);
+            AnaLogger = logger;
+            verboseTrace = AnaLogger.ShouldTrace(LogLevels.Verbose);
 			InitCounters();
 
 #if USE_SPINTIME
@@ -154,12 +154,12 @@ namespace LMRawAnalysis
                 //spin
             }
 
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler constructor started its thread.");
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler constructor started its thread.");
         }
 
         private void FireAnalysesCompletedEvent(string statusMessage)
         {
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalysesCompletedEvent: " + statusMessage);
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalysesCompletedEvent: " + statusMessage);
 
             if (OnAnalysesCompleted != null)
             {
@@ -169,7 +169,7 @@ namespace LMRawAnalysis
 
         private void FireNeutronOutOfSequenceErrorEvent(string statusMessage)
         {
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "NeutronOutOfSequenceErrorEvent: " + statusMessage);
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "NeutronOutOfSequenceErrorEvent: " + statusMessage);
 
             if (OnNeutronOutOfSequenceErrorEvent != null)
             {
@@ -179,7 +179,7 @@ namespace LMRawAnalysis
 
         private void FireBlockCountMismatchErrorEvent(string statusMessage)
         {
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "BlockCountMismatchErrorEvent: " + statusMessage);
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "BlockCountMismatchErrorEvent: " + statusMessage);
 
             if (OnBlockCountMismatchErrorEvent != null)
             {
@@ -194,19 +194,19 @@ namespace LMRawAnalysis
             if (count == 0)
             {
                 permissionToUseEndOfEvents.Release();
-                if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4239, "Released permissionToUseEndOfEvents ({0} -> {1}) {2}", count, permissionToUseEndOfEvents.CurrentCount, where);
+                if (verboseTrace) AnaLogger.TraceEvent(LogLevels.Verbose, 4239, "Released permissionToUseEndOfEvents ({0} -> {1}) {2}", count, permissionToUseEndOfEvents.CurrentCount, where);
             }
             else
             {
-                if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4238, "Caller tried to grant permissionToUseEndOfEvents again ({0} > 0) {1}", count, where);
+                if (verboseTrace) AnaLogger.TraceEvent(LogLevels.Verbose, 4238, "Caller tried to grant permissionToUseEndOfEvents again ({0} > 0) {1}", count, where);
             }
         }
 
         void PermissionToUseEndOfEventsWait()
         {
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4237, "Petitioning for the shared end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
+            if (verboseTrace) AnaLogger.TraceEvent(LogLevels.Verbose, 4237, "Petitioning for the shared end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
             permissionToUseEndOfEvents.Wait();
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4273, "Petition granted for end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
+            if (verboseTrace) AnaLogger.TraceEvent(LogLevels.Verbose, 4273, "Petition granted for end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
         }
 
         #region SpinTimeMethods
@@ -312,7 +312,7 @@ namespace LMRawAnalysis
 
                 waitingForEvent.Wait();  //wait for a neutron or other signal
 
-                log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Beginning processing a neutron or other signal.");
+                AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Beginning processing a neutron or other signal.");
 
 #if USE_SPINTIME
                 if (spinTimeReady)
@@ -341,7 +341,7 @@ namespace LMRawAnalysis
                             quittingAtEndOfList = true;
                             AHWorkerStopNow = true;
 
-                            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #1.");
+                            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #1.");
                         }
                         PermissionToUseEndOfEventsRelease("AH AHWorkerStopAtEndOfEvents");
                     }
@@ -577,7 +577,7 @@ namespace LMRawAnalysis
                             {
                                 AHWorkerStopNow = true;
 
-                                log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #2.");
+                                AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #2.");
                             }
                         }
 
@@ -588,11 +588,11 @@ namespace LMRawAnalysis
                 {
                     AHWorkerStopNow = true;
 
-                    log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #3.");
+                    AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler reached end of events and is setting flag to stop its background worker at location #3.");
                 }
             } //END of while (AHWorkerStopNow == false)
 
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler is exiting end of events and is waiting for Analyses to complete.");
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler is exiting end of events and is waiting for Analyses to complete.");
 
             //MAKE SURE all analyzers have finished with the last buffer of neutrons before ending this AHWorkerDoWork()
             //Don't have to check RateGateAnalyzers - these are single threaded and have been completed by this thread
@@ -709,7 +709,7 @@ namespace LMRawAnalysis
             }
             //FINISHED confirming all the analyzers have finished
 
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler has completed handling neutrons and is exiting.");
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler has completed handling neutrons and is exiting.");
         }  //END of AHWorkerDoWork()
 
         void AHWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -725,7 +725,7 @@ namespace LMRawAnalysis
             FeynmanGateAnalysis fa = new FeynmanGateAnalysis(gateWidthInTics);
             feynmanAnalyzers.Add(fa);
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created FeynmanAnalyzer with gate of " + gateWidthInTics + " tics.");
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created FeynmanAnalyzer with gate of " + gateWidthInTics + " tics.");
 
             return (true);
         }
@@ -735,7 +735,7 @@ namespace LMRawAnalysis
             EventSpacingAnalysis esa = new EventSpacingAnalysis(gateWidthInTics);
             eventSpacingAnalyzers.Add(esa);
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created EventSpacingAnalyzer with gate of " + gateWidthInTics + " tics.");
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created EventSpacingAnalyzer with gate of " + gateWidthInTics + " tics.");
 
             return (true);
         }
@@ -771,7 +771,7 @@ namespace LMRawAnalysis
                     fba = fastBackgroundAnalyzers[i];
                     i = fastBackgroundAnalyzers.Count;
 
-                    log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Already have a FastBackgroundAnalyzer with gate of " + gateWidthInTics + " tics and step of " + backgroundGateTimeStepInTics + " tics.");
+                    AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Already have a FastBackgroundAnalyzer with gate of " + gateWidthInTics + " tics and step of " + backgroundGateTimeStepInTics + " tics.");
                 }
             }
             if (fba == null)  //...then no previous analyzer, so make one...
@@ -779,7 +779,7 @@ namespace LMRawAnalysis
                 fba = new FastBackgroundAnalysis(gateWidthInTics * timeBaseConversion, backgroundGateTimeStepInTics * timeBaseConversion);
                 fastBackgroundAnalyzers.Add(fba);
 
-                log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a FastBackgroundAnalyzer with gate of " + gateWidthInTics + " tics and step of " + backgroundGateTimeStepInTics + " tics.");
+                AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a FastBackgroundAnalyzer with gate of " + gateWidthInTics + " tics and step of " + backgroundGateTimeStepInTics + " tics.");
             }
 
             //now make the "foreground" analyzer
@@ -790,10 +790,10 @@ namespace LMRawAnalysis
                                                         deadTimeCoefficientAinMicroSecs,
                                                         deadTimeCoefficientBinPicoSecs,
                                                         deadTimeCoefficientCinNanoSecs);
-			ma.Log = log;
+			ma.Log = AnaLogger;
             multiplicityFastBackgroundAnalyzers.Add(ma);
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicityFastBGAnalyzer with gate= " + gateWidthInTics
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicityFastBGAnalyzer with gate= " + gateWidthInTics
                                                                                              + " tics, predelay= " + preDelayInTics
                                                                                              + " tics, coeffT= " + deadTimeCoefficientTinNanoSecs
                                                                                              + " ns, coeffA= " + deadTimeCoefficientAinMicroSecs
@@ -828,10 +828,10 @@ namespace LMRawAnalysis
                                                         deadTimeCoefficientAinMicroSecs,
                                                         deadTimeCoefficientBinPicoSecs,
                                                         deadTimeCoefficientCinNanoSecs);
-			ma.Log = log;
+			ma.Log = AnaLogger;
             multiplicitySlowBackgroundAnalyzers.Add(ma);
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicitySlowBGAnalyzer with gate= " + gateWidthInTics
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a MultiplicitySlowBGAnalyzer with gate= " + gateWidthInTics
                                                                                               + " tics, predelay= " + preDelayInTics
                                                                                               + " tics, coeffT= " + deadTimeCoefficientTinNanoSecs
                                                                                               + " ns, coeffA= " + deadTimeCoefficientAinMicroSecs
@@ -859,7 +859,7 @@ namespace LMRawAnalysis
                 accidentalsGateDelayInTics, ticSizeInSeconds);
             coincidenceSlowBackgroundAnalyzers.Add(ca);
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a CoincidenceSlowBGAnalyzer with gate= " + gateWidthInTics
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a CoincidenceSlowBGAnalyzer with gate= " + gateWidthInTics
                                                                                               + " tics, predelay= " + preDelayInTics
                                                                                               + " tics, accidentalsDelay= " + accidentalsGateDelayInTics
                                                                                               + " tics");
@@ -885,12 +885,12 @@ namespace LMRawAnalysis
                 RateGateAnalysis ra = new RateGateAnalysis(gateWidthInTics);
                 rateAnalyzers.Add(ra);
 
-                log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a RateAnalyzer with gate= " + gateWidthInTics + " tics.");
+                AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a RateAnalyzer with gate= " + gateWidthInTics + " tics.");
             }
             else
             {
 
-                log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Could not create a RateAnalyzer with gate= " + gateWidthInTics + " tics.");
+                AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Could not create a RateAnalyzer with gate= " + gateWidthInTics + " tics.");
 
                 result = false;
             }
@@ -903,8 +903,8 @@ namespace LMRawAnalysis
             rossiAlphaAnalyzers.Add(ra);
             ra.csa = csa;
 
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a RossiAlphaAnalyzer with gate= " + gateWidthInTics + " tics.");
-            log.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "The number of RossiAlpha gates is= " + RawAnalysisProperties.numRAGatesPerWindow);
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "Created a RossiAlphaAnalyzer with gate= " + gateWidthInTics + " tics.");
+            AnaLogger.TraceEvent(LogLevels.Info, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "The number of RossiAlpha gates is= " + RawAnalysisProperties.numRAGatesPerWindow);
 
             return (true);
         }
@@ -973,7 +973,7 @@ namespace LMRawAnalysis
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot++;
 
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron event #"
+            if (verboseTrace) AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron event #"
                                                                                               + numNeutronEventsReceivedWhetherProcessedOrNot
                                                                                               + " at Time= " + timeOfNewEvent
                                                                                               + " Neutrons=0x" + String.Format("{0:X8}", neutronsOfNewEvent));
@@ -990,7 +990,7 @@ namespace LMRawAnalysis
 
                     FireNeutronOutOfSequenceErrorEvent(str);
 
-                    log.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, str);
+                    AnaLogger.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, str);
 
                     return;  //abort handling this neutron
                 }
@@ -1057,12 +1057,12 @@ namespace LMRawAnalysis
             {
                 String theProblem = "Array lengths unequal: time[" + timeOfNewEvents.Count + "] neutrons[" + neutronsOfNewEvents.Count + "]";
                 FireBlockCountMismatchErrorEvent(theProblem);
-                log.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, theProblem);
+                AnaLogger.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, theProblem);
                 return;
             }
             else if (timeOfNewEvents.Count < 1) // skip these
             {
-                log.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "skipping empty event buffer");
+                AnaLogger.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "skipping empty event buffer");
                 return;
             }
 
@@ -1071,7 +1071,7 @@ namespace LMRawAnalysis
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot += (UInt64)numEvents;
 
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron array with "
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron array with "
                                                                                                 + numEvents
                                                                                                 + " events. Time of first event="
                                                                                                 + timeOfNewEvents[0]);
@@ -1095,7 +1095,7 @@ namespace LMRawAnalysis
 
                         FireNeutronOutOfSequenceErrorEvent(str);
 
-                        log.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, str);
+                        AnaLogger.TraceEvent(LogLevels.Warning, (int)AnalyzerEventCode.AnalyzerHandlerEvent, str);
                     }
                 }
                 else //...add this neutron to the list...
@@ -1173,7 +1173,7 @@ namespace LMRawAnalysis
                 numEventsInCircularLinkedList += RawAnalysisProperties.circularListBlockIncrement;
 
 
-                log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler increasing CircularArraySize to "
+                AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler increasing CircularArraySize to "
                                                                                                     + numEventsInCircularLinkedList);
             }
         }
@@ -1194,7 +1194,7 @@ namespace LMRawAnalysis
                 numEventsInCircularLinkedList += num;
 				endOfNeutronEventList = anEvent;
 				startOfNeutronEventList = theEventCircularLinkedList;
-                log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler extending CircularArraySize by " + num + " to "
+                AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler extending CircularArraySize by " + num + " to "
                                                                                                     + numEventsInCircularLinkedList);
         }
         #endregion
@@ -1275,7 +1275,7 @@ namespace LMRawAnalysis
                 {
                     results.multiplicityFastBackgroundResults[i] = multiplicityFastBackgroundAnalyzers[i].GetResult();
                     foreach (string s in results.multiplicityFastBackgroundResults[i].warnings)
-                        log.TraceEvent(LogLevels.Warning, 8642, "(MFA " + i + ") " + s);
+                        AnaLogger.TraceEvent(LogLevels.Warning, 8642, "(MFA " + i + ") " + s);
                 }
             }
 
@@ -1286,7 +1286,7 @@ namespace LMRawAnalysis
                 {
                     results.multiplicitySlowBackgroundResults[i] = multiplicitySlowBackgroundAnalyzers[i].GetResult();
                     foreach (string s in results.multiplicitySlowBackgroundResults[i].warnings)
-                        log.TraceEvent(LogLevels.Warning, 8643, "(M " + i + ") " + s);
+                        AnaLogger.TraceEvent(LogLevels.Warning, 8643, "(M " + i + ") " + s);
                 }
             }
 
@@ -1305,7 +1305,7 @@ namespace LMRawAnalysis
                 results.rateResults = new AnalysisDefs.RateResult[results.numRateAnalyzers];
                 for (i = 0; i < results.numRateAnalyzers; i++)
                 {
-                    results.rateResults[i] = rateAnalyzers[i].GetResult(log);
+                    results.rateResults[i] = rateAnalyzers[i].GetResult(AnaLogger);
                 }
             }
 
@@ -1435,7 +1435,7 @@ namespace LMRawAnalysis
             AnalysisDefs.RateResult result;
             if (whichRateAnalyzer < rateAnalyzers.Count)
             {
-                result = rateAnalyzers[whichRateAnalyzer].GetResult(log);
+                result = rateAnalyzers[whichRateAnalyzer].GetResult(AnaLogger);
             }
             else
             {
@@ -1467,14 +1467,14 @@ namespace LMRawAnalysis
             AHWorkerStopNow = true;
             waitingForEvent.Set();
             PermissionToUseEndOfEventsRelease("EndAnalysisImmediately");  // LMKV-52: must release this too, but only once
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received instruction to stop immediately.");
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received instruction to stop immediately.");
         }
 
         public void EndAnalysisWhenFinishedWithPresentEventQueue()
         {
             AHWorkerStopAtEndOfEvents = true;
             waitingForEvent.Set();
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received instruction to stop at end of events.");
+            AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received instruction to stop at end of events.");
         }
         #endregion
 
@@ -1599,7 +1599,7 @@ namespace LMRawAnalysis
 				//endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
 				numEventsInCircularLinkedList = num;
 
-				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler new "
+				AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler new "
                                                                                                     + numEventsInCircularLinkedList);
 			}
 			else if (numEventsInCircularLinkedList < num) // extend
@@ -1623,7 +1623,7 @@ namespace LMRawAnalysis
 				endOfNeutronEventList.next = startOfNeutronEventList;  //close the circular linked list, joining the end to the beginning
 				//endOfNeutronEventList = startOfNeutronEventList;  //now both the start and end point to the first empty structure
 
-				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear "
+				AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear "
                                                              + numEventsInCircularLinkedList + " (remove " + (numEventsInCircularLinkedList - num) + ")");
 
 				numEventsInCircularLinkedList = num;
@@ -1637,7 +1637,7 @@ namespace LMRawAnalysis
 					ende.Set(i);
 					ende = ende.next;
 				}
-				log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear same size " + numEventsInCircularLinkedList);
+				AnaLogger.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler clear same size " + numEventsInCircularLinkedList);
 			}
             AHGCCollect();
         }
@@ -1649,13 +1649,13 @@ namespace LMRawAnalysis
         void AHGCCollect(long MbCeiling = 257)
         {
             long mem = GC.GetTotalMemory(false);
-            log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
+            AnaLogger.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory now {0:N0}Kb", mem / 1024L);
             if (mem > MbCeiling * (1024 * 1024)) // default is like a rabbit, pulled out of my hat and should be a config value
             {
-                log.TraceEvent(LogLevels.Verbose, 4248, "GC now");
+                AnaLogger.TraceEvent(LogLevels.Verbose, 4248, "GC now");
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                log.TraceEvent(LogLevels.Verbose, 4284, "GC complete {0:N0}Kb", GC.GetTotalMemory(true) / 1024L);
+                AnaLogger.TraceEvent(LogLevels.Verbose, 4284, "GC complete {0:N0}Kb", GC.GetTotalMemory(true) / 1024L);
             }
         }
 

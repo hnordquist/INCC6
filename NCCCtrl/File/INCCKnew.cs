@@ -39,19 +39,13 @@ namespace NCCTransfer
 	using NC = NCC.CentralizedState;
 	public class INCCKnew
     {
-        LMLoggers.LognLM mlogger;
 
         public INCCKnew()
         {
         }
-        public INCCKnew(LMLoggers.LognLM logger)
-        {
-            mlogger = logger;
-        }
-
 		public static unsafe INCCInitialDataDetectorFile FromDetectors(List<Detector> dets)
 		{
-			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.ControlLogger, null);
+			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(null);
 			foreach(Detector det in dets)
 			{
 				detector_rec dr = new detector_rec();
@@ -172,7 +166,7 @@ namespace NCCTransfer
 
 			foreach(Detector det in dets)
 			{
-                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.ControlLogger, null);
+                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(null);
                 idcf.Name = det.Id.DetectorId;
                 foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
                 {
@@ -739,7 +733,7 @@ namespace NCCTransfer
 				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
 				while (iter.MoveNext())                     // for each mkey, a seperate xfer file should be emitted
 				{
-					INCCTransferFile itf = new INCCTransferFile(NC.App.ControlLogger, null);
+					INCCTransferFile itf = new INCCTransferFile(null);
 					itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
 					list.Add(itf);
 					itf.results_rec_list.Add(Result5.MoveResultsRec(m));
@@ -1897,7 +1891,7 @@ namespace NCCTransfer
 
             bool overwrite = NC.App.AppContext.OverwriteImportedDefs;
 
-            mlogger.TraceEvent(LogLevels.Verbose, 34100, "Building '{0}' detector '{1}' from {2} {3}",
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Building '{0}' detector '{1}' from {2} {3}",
                                 srtype.ToString(),
                                 TransferUtils.str(d.detector_id, INCC.MAX_DETECTOR_ID_LENGTH),
                                 num, iddf.Path);
@@ -2055,7 +2049,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 34064, "Detector transfer processing error {0} {1} ({2})", det.Id.DetectorName, e.Message, System.IO.Path.GetFileName(iddf.Path));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34064, "Detector transfer processing error {0} {1} ({2})", det.Id.DetectorName, e.Message, System.IO.Path.GetFileName(iddf.Path));
             }
         }
 
@@ -2190,14 +2184,14 @@ namespace NCCTransfer
         public unsafe void BuildCalibration(INCCInitialDataCalibrationFile idcf, int num)
         {
 
-            mlogger.TraceEvent(LogLevels.Verbose, 34200, "Building calibration content from {0} {1}", num, idcf.Path);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34200, "Building calibration content from {0} {1}", num, idcf.Path);
             bool overwrite = NC.App.AppContext.OverwriteImportedDefs;
             IEnumerator iter = idcf.DetectorMaterialMethodParameters.GetDetectorMaterialEnumerator();
             while (iter.MoveNext())
             {
                 DetectorMaterialMethod mkey = ((KeyValuePair<DetectorMaterialMethod, object>)iter.Current).Key;
 
-                mlogger.TraceEvent(LogLevels.Verbose, 34210, "Constructing calibration for {0} {1}", mkey.detector_id, mkey.item_type);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34210, "Constructing calibration for {0} {1}", mkey.detector_id, mkey.item_type);
 
                 INCCDB.Descriptor desc = new INCCDB.Descriptor(mkey.item_type, "");
                 if (!NC.App.DB.Materials.Has(desc) || overwrite)
@@ -2212,7 +2206,7 @@ namespace NCCTransfer
                 if (det == null)
                 {
                     // old code punted if detector not found
-                    mlogger.TraceEvent(LogLevels.Warning, 34207, "Skipping detector {0}, pre-existing def not found", mkey.detector_id); // dev note: need flags to control this ehavior in a few more places
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34207, "Skipping detector {0}, pre-existing def not found", mkey.detector_id); // dev note: need flags to control this ehavior in a few more places
                     continue;
                 }
                 IEnumerator miter2 = idcf.DetectorMaterialMethodParameters.GetMethodEnumerator(mkey.detector_id, mkey.item_type);
@@ -2223,7 +2217,7 @@ namespace NCCTransfer
                 bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(sel, out am);
                 if (!found || am == null)
                 {
-                    am = new AnalysisMethods(mlogger);
+                    am = new AnalysisMethods();
                     am.modified = true;
                     NC.App.DB.DetectorMaterialAnalysisMethods.Add(sel, am);
                 }
@@ -2231,7 +2225,7 @@ namespace NCCTransfer
                 {
                     // use ref here, not copy so updates update the ref? nope, it;s a map, need to remove and replace
                     int cam = OldTypeToOldMethodId(miter2.Current);
-                    mlogger.TraceEvent(LogLevels.Verbose, 34211, "Converting {0} {1} method {2}", mkey.detector_id, mkey.item_type, OldToNewMethodId(cam).FullName());
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34211, "Converting {0} {1} method {2}", mkey.detector_id, mkey.item_type, OldToNewMethodId(cam).FullName());
 
                     // save the analysis method obtained here under the existing/new detector+material type pair                    
                     switch (cam)
@@ -2461,13 +2455,13 @@ namespace NCCTransfer
                             am.AddMethod(AnalysisMethod.ActivePassive, apr);
                             break;
                         case INCC.COLLAR_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34213, " Collar params entry for COLLAR_SAVE_RESTORE");							
+ 							NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34213, " Collar params entry for COLLAR_SAVE_RESTORE");							
 							break;					
                         case INCC.COLLAR_DETECTOR_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34212, " Main entry for COLLAR_DETECTOR_SAVE_RESTORE");
+ 							NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34212, " Main entry for COLLAR_DETECTOR_SAVE_RESTORE");
                             break;
                         case INCC.COLLAR_K5_SAVE_RESTORE:
- 							mlogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
+ 							NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34214, " K5 entry for COLLAR_K5_SAVE_RESTORE");
                             collar_k5_rec collar_k5 = (collar_k5_rec)miter2.Current;
 							INCCAnalysisParams.collar_combined_rec combined = CollarEntryProcesser(idcf, sel, collar_k5.collar_k5_mode);
                             //NEXT: What to do w/AmLi vs Cf here? hn 1/26/17
@@ -2486,7 +2480,7 @@ namespace NCCTransfer
                             am.AddMethod(AnalysisMethod.ActiveMultiplicity, acm);
                             break;
                         case INCC.WMV_CALIB_TOKEN:
-                            mlogger.TraceEvent(LogLevels.Warning, 34247, "Skipping calib token");  // todo: weighted multiplicity not fully implemented throughout
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34247, "Skipping calib token");  // todo: weighted multiplicity not fully implemented throughout
                             break;
                     }
                 }
@@ -2524,7 +2518,7 @@ namespace NCCTransfer
 			bool ok = idcf.DetectorMaterialMethodParameters.GetPair(m1, out k1);
 			if (!ok)
 			{
-				mlogger.TraceEvent(LogLevels.Verbose, 30811, "No collar detector values for " + m1.ToString());
+				NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 30811, "No collar detector values for " + m1.ToString());
 				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
 				if (ok)
 				{
@@ -2542,7 +2536,7 @@ namespace NCCTransfer
 				}
 				else
 				{
-					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
 					return null;
 				}
 			}
@@ -2551,14 +2545,14 @@ namespace NCCTransfer
 				ok = idcf.DetectorMaterialMethodParameters.GetPair(m2, out k2);
 				if (!ok)
 				{
-					mlogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
+					NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 30812, "No collar values for " + m2.ToString());
 					return null;
 				}
 			}
 			ok = idcf.DetectorMaterialMethodParameters.GetPair(m3, out k3);
 			if (!ok)
 			{
-				mlogger.TraceEvent(LogLevels.Verbose, 30813, "No k5 values for " + m3.ToString());
+				NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 30813, "No k5 values for " + m3.ToString());
 				return null;
 			}
 			collar_rec collar;
@@ -2601,7 +2595,7 @@ namespace NCCTransfer
 				int index = i * INCC.MAX_K5_LABEL_LENGTH;
 				combined.k5.k5_label[i] = TransferUtils.str(collar_k5.collar_k5_label + index, INCC.MAX_K5_LABEL_LENGTH);
 			}
-			mlogger.TraceEvent(LogLevels.Verbose, 34214, " -- Collar k5 has mode {0} and is ready to be bonked", combined.k5.k5_mode);
+			NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34214, " -- Collar k5 has mode {0} and is ready to be bonked", combined.k5.k5_mode);
 		}
 
 		unsafe void CollarDet(INCCAnalysisParams.collar_combined_rec combined, collar_detector_rec collar_detector, ushort bonk)
@@ -2610,7 +2604,7 @@ namespace NCCTransfer
             combined.collar_det.collar_mode = (CollarType)collar_detector.collar_detector_mode;
 			combined.collar_det.reference_date = INCC.DateFrom(TransferUtils.str(collar_detector.col_reference_date, INCC.DATE_TIME_LENGTH));
 			combined.collar_det.relative_doubles_rate = collar_detector.col_relative_doubles_rate;
-			mlogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
+			NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34212, " -- Collar det has mode {0} {1}",  combined.collar_det.collar_mode, bonk);
 		}
 
 		unsafe void CollarParm(INCCAnalysisParams.collar_combined_rec combined, collar_rec collar, ushort bonk)
@@ -2652,7 +2646,7 @@ namespace NCCTransfer
 				int index = i * INCC.MAX_ROD_TYPE_LENGTH;
 				combined.collar.poison_rod_type[i] = TransferUtils.str(collar.col_poison_rod_type + index, INCC.MAX_ROD_TYPE_LENGTH);
 			}
-			mlogger.TraceEvent(LogLevels.Verbose, 34213, " -- Collar params has mode {0} {1}", combined.collar.collar_mode, bonk);
+			NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34213, " -- Collar params has mode {0} {1}", combined.collar.collar_mode, bonk);
 		}
 
         internal static byte _collarTypeByteTransform(CollarType t)
@@ -2903,11 +2897,11 @@ namespace NCCTransfer
             Detector det = NC.App.DB.Detectors.GetItByDetectorId(detname);
             if (det == null)
             {
-                mlogger.TraceEvent(LogLevels.Error, 34087, "Unknown detector '{0}', not importing this measurement {1}", detname, dt.ToString("s"));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 34087, "Unknown detector '{0}', not importing this measurement {1}", detname, dt.ToString("s"));
                 return false;
             }
 
-            meas = new Measurement((AssaySelector.MeasurementOption)results.meas_option, mlogger);
+            meas = new Measurement((AssaySelector.MeasurementOption)results.meas_option);
    
             // TODO: update detector details from this meas result, since there could be a difference 
             meas.MeasurementId.MeasDateTime = dt;
@@ -2968,18 +2962,18 @@ namespace NCCTransfer
                 if (!NC.App.DB.Isotopics.Has(iso.id))
                 {
                     NC.App.DB.Isotopics.GetList().Add(iso);
-                    mlogger.TraceEvent(LogLevels.Info, 34021, "Identified new isotopics {0}", iso.id);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34021, "Identified new isotopics {0}", iso.id);
                 }
                 else
                 {
                     if (overwrite)
                     {
                         NC.App.DB.Isotopics.Replace(iso);
-                        mlogger.TraceEvent(LogLevels.Warning, 34022, "Replaced existing isotopics {0}", iso.id);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34022, "Replaced existing isotopics {0}", iso.id);
                     }
                     else
                     {
-                        mlogger.TraceEvent(LogLevels.Warning, 34022, "Not replacing existing isotopics {0}", iso.id);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34022, "Not replacing existing isotopics {0}", iso.id);
                     }
                 }
                 iso.modified = true;
@@ -3009,7 +3003,7 @@ namespace NCCTransfer
 			acq.well_config = (WellConfiguration)results.well_config;
 			acq.print = TransferUtils.ByteBool(results.results_print);
 
-            mlogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34000, "Building {0} measurement {1} '{2},{3}' from {2}", meas.MeasOption.PrintName(), num, acq.detector_id, acq.item_type, itf.Path);
 
             if (itf.facility_table.Count > 0)
                 meas.AcquireState.facility = new INCCDB.Descriptor(string.Copy(itf.facility_table[0].id), string.Copy(itf.facility_table[0].desc));
@@ -3109,15 +3103,15 @@ namespace NCCTransfer
             }
             else
             {
-                mlogger.TraceEvent(LogLevels.Error, 34063, "No analysis methods for {0}, (calibration information is missing), creating placeholders", sel.ToString()); // devnote: can get missing paramters from the meas results for calib and verif below, so need to visit this condition after results processing below (newres.methodParams!) and reconstruct the calib parameters. 
-                meas.INCCAnalysisState.Methods = new AnalysisMethods(mlogger);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 34063, "No analysis methods for {0}, (calibration information is missing), creating placeholders", sel.ToString()); // devnote: can get missing paramters from the meas results for calib and verif below, so need to visit this condition after results processing below (newres.methodParams!) and reconstruct the calib parameters. 
+                meas.INCCAnalysisState.Methods = new AnalysisMethods();
                 meas.INCCAnalysisState.Methods.selector = sel;
             }
             // prepare analyzer params from sr params above
             meas.AnalysisParams = new AnalysisDefs.CountingAnalysisParameters();
             meas.AnalysisParams.Add(det.MultiplicityParams);
 
-            mlogger.TraceEvent(LogLevels.Verbose, 34030, "Transferring the {0} cycles", itf.run_rec_list.Count);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34030, "Transferring the {0} cycles", itf.run_rec_list.Count);
             meas.InitializeContext();
             meas.PrepareINCCResults(); // prepares INCCResults objects
             ulong MaxBins = 0;
@@ -3234,7 +3228,7 @@ namespace NCCTransfer
             {
                 if (r is results_init_src_rec)
                 {
-                    mlogger.TraceEvent(LogLevels.Verbose, 34041, ("Transferring initial source results"));
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34041, ("Transferring initial source results"));
 
                     results_init_src_rec oldres = (results_init_src_rec)r;
 
@@ -3247,7 +3241,7 @@ namespace NCCTransfer
                 }
                 else if (r is results_bias_rec)
                 {
-                    mlogger.TraceEvent(LogLevels.Verbose, 34042, ("Transferring normalization results"));
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34042, ("Transferring normalization results"));
 
                     results_bias_rec oldres = (results_bias_rec)r;
                     INCCResults.results_bias_rec newres = (INCCResults.results_bias_rec)meas.INCCAnalysisState.Lookup(new MeasOptionSelector(meas.MeasOption, det.MultiplicityParams), typeof(INCCResults.results_bias_rec));
@@ -3273,7 +3267,7 @@ namespace NCCTransfer
                 }
                 else if (r is results_precision_rec)
                 {
-                    mlogger.TraceEvent(LogLevels.Verbose, 34043, ("Transferring precision results"));
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34043, ("Transferring precision results"));
 
                     results_precision_rec oldres = (results_precision_rec)r;
                     INCCResults.results_precision_rec newres = 
@@ -3291,7 +3285,7 @@ namespace NCCTransfer
                     if (r is results_cal_curve_rec)
                     {
                         // need to look up in existing map and see if it is there and then create and load it if not
-                        mlogger.TraceEvent(LogLevels.Verbose, 34050, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34050, ("Transferring method results for " + r.GetType().ToString()));
                         results_cal_curve_rec oldres = (results_cal_curve_rec)r;
                         INCCMethodResults.results_cal_curve_rec newres = 
                             (INCCMethodResults.results_cal_curve_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CalibrationCurve, true);
@@ -3332,7 +3326,7 @@ namespace NCCTransfer
                     else if (r is results_known_alpha_rec)
                     {
                         //  need to look up in existing map and see if it is there and then create and load it if not
-                        mlogger.TraceEvent(LogLevels.Verbose, 34051, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34051, ("Transferring method results for " + r.GetType().ToString()));
                         results_known_alpha_rec oldres = (results_known_alpha_rec)r;
                         INCCMethodResults.results_known_alpha_rec newres = 
                             (INCCMethodResults.results_known_alpha_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.KnownA, true);
@@ -3386,7 +3380,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_multiplicity_rec)
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34052, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34052, ("Transferring method results for " + r.GetType().ToString()));
                         results_multiplicity_rec oldres = (results_multiplicity_rec)r;
                         INCCMethodResults.results_multiplicity_rec newres = 
                             (INCCMethodResults.results_multiplicity_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.Multiplicity, true);
@@ -3421,7 +3415,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_truncated_mult_rec)
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34053, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34053, ("Transferring method results for " + r.GetType().ToString()));
                         results_truncated_mult_rec oldres = (results_truncated_mult_rec)r;
                         INCCMethodResults.results_truncated_mult_rec newres = 
                             (INCCMethodResults.results_truncated_mult_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.TruncatedMultiplicity, true);
@@ -3466,7 +3460,7 @@ namespace NCCTransfer
                     else if (r is results_known_m_rec)
                     {
                         // dev note: untested
-                        mlogger.TraceEvent(LogLevels.Verbose, 34054, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34054, ("Transferring method results for " + r.GetType().ToString()));
                         results_known_m_rec oldres = (results_known_m_rec)r;
                         INCCMethodResults.results_known_m_rec newres = 
                             (INCCMethodResults.results_known_m_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.KnownM, true);
@@ -3492,7 +3486,7 @@ namespace NCCTransfer
                     else if (r is results_add_a_source_rec)
                     {
                         // dev note: untested
-                        mlogger.TraceEvent(LogLevels.Verbose, 34055, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34055, ("Transferring method results for " + r.GetType().ToString()));
                         results_add_a_source_rec oldres = (results_add_a_source_rec)r;
                         INCCMethodResults.results_add_a_source_rec newres = 
                             (INCCMethodResults.results_add_a_source_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.KnownM, true);
@@ -3550,7 +3544,7 @@ namespace NCCTransfer
                     else if (r is results_curium_ratio_rec)
                     {
                         // dev note: untested
-                        mlogger.TraceEvent(LogLevels.Verbose, 34056, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34056, ("Transferring method results for " + r.GetType().ToString()));
                         results_curium_ratio_rec oldres = (results_curium_ratio_rec)r;
                         INCCMethodResults.results_curium_ratio_rec newres = (INCCMethodResults.results_curium_ratio_rec)
                         meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CuriumRatio, true);
@@ -3602,7 +3596,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_active_passive_rec) // NEXT: confusion with combined, it's the same as Active internally? expand and study
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34057, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34057, ("Transferring method results for " + r.GetType().ToString()));
                         results_active_passive_rec oldres = (results_active_passive_rec)r;
                         INCCMethodResults.results_active_passive_rec newres =
                             (INCCMethodResults.results_active_passive_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.ActivePassive, true);
@@ -3635,7 +3629,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_active_rec)
 					{
-                        mlogger.TraceEvent(LogLevels.Verbose, 34058, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34058, ("Transferring method results for " + r.GetType().ToString()));
                         results_active_rec oldres = (results_active_rec)r;
                         INCCMethodResults.results_active_rec newres =
                             (INCCMethodResults.results_active_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.Active, true);
@@ -3665,7 +3659,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_active_mult_rec) 
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34059, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34059, ("Transferring method results for " + r.GetType().ToString()));
                         results_active_mult_rec oldres = (results_active_mult_rec)r;
                         INCCMethodResults.results_active_mult_rec newres =
                             (INCCMethodResults.results_active_mult_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.ActiveMultiplicity, true);
@@ -3681,7 +3675,7 @@ namespace NCCTransfer
                      }
                     else if (r is results_collar_rec) 
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34060, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34060, ("Transferring method results for " + r.GetType().ToString()));
                         results_collar_rec oldres = (results_collar_rec)r;
                         INCCMethodResults.results_collar_rec newres =
                             (INCCMethodResults.results_collar_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.Collar, true);
@@ -3768,7 +3762,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_de_mult_rec) 
                     {
-                        mlogger.TraceEvent(LogLevels.Verbose, 34061, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34061, ("Transferring method results for " + r.GetType().ToString()));
                         results_de_mult_rec oldres = (results_de_mult_rec)r;
                         INCCMethodResults.results_de_mult_rec newres =
                             (INCCMethodResults.results_de_mult_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.DUAL_ENERGY_MULT_SAVE_RESTORE, true);
@@ -3784,7 +3778,7 @@ namespace NCCTransfer
                     }
                     else if (r is results_tm_bkg_rec)
                     {
-                        mlogger.TraceEvent(LogLevels.Warning, 34062, ("Transferring method results for " + r.GetType().ToString()));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34062, ("Transferring method results for " + r.GetType().ToString()));
                         results_tm_bkg_rec oldres = (results_tm_bkg_rec)r;  // todo: tm bkg handling design incomplete, these values are attached to bkg measurements when the truncated flag is enabled
 						INCCMethodResults.results_tm_bkg_rec newres =
 							(INCCMethodResults.results_tm_bkg_rec)meas.INCCAnalysisResults.LookupMethodResults(det.MultiplicityParams, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.None, true);
@@ -3799,7 +3793,7 @@ namespace NCCTransfer
 					}
 				    else 
                     {
-                        mlogger.TraceEvent(LogLevels.Warning, 34040, ("todo: Transferring method results for " + r.GetType().ToString())); // todo: complete the list
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34040, ("todo: Transferring method results for " + r.GetType().ToString())); // todo: complete the list
 					}
                 }
 
@@ -3875,7 +3869,7 @@ namespace NCCTransfer
                 {
                     case AssaySelector.MeasurementOption.background:
                         if (meas.Background.TMBkgParams.ComputeTMBkg)
-                            mlogger.TraceEvent(LogLevels.Warning, 82010, "Background truncated multiplicity"); // todo: present the tm bkg results on m.Background
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 82010, "Background truncated multiplicity"); // todo: present the tm bkg results on m.Background
                         break;
                     case AssaySelector.MeasurementOption.initial:
                     case AssaySelector.MeasurementOption.normalization:
@@ -3884,7 +3878,7 @@ namespace NCCTransfer
                             ElementList els = ir.ToDBElementList();
                             ParamsRelatedBackToMeasurement ar = new ParamsRelatedBackToMeasurement(ir.Table);
                             long resid = ar.Create(mid, els);
-                            mlogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34103, string.Format("Preserving {0} as {1}", ir.Table, resid));
                         }
                         break;
                     case AssaySelector.MeasurementOption.verification:
@@ -3915,16 +3909,16 @@ namespace NCCTransfer
 										do
 										{
 											long resmid = ar.CreateMethod(resid, mid, _imr.methodParams.ToDBElementList());
-											mlogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
+											NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34101, string.Format("Preserving {0} as {1},{2}", _imr.Table, resmid, resid));
 										} while (_imr.methodParams.Pump > 0);
 									} 
 									catch (Exception e)
 									{
-										mlogger.TraceEvent(LogLevels.Warning, 34102, "Results processing error {0} {1}", _imr.ToString(), e.Message);
+										NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34102, "Results processing error {0} {1}", _imr.ToString(), e.Message);
 									}
 								}
 							} else
-								mlogger.TraceEvent(LogLevels.Error, 34102, "Results missing for {0}", meas.INCCAnalysisState.Methods.selector.ToString());
+								NC.App.ControlLogger.TraceEvent(LogLevels.Error, 34102, "Results missing for {0}", meas.INCCAnalysisState.Methods.selector.ToString());
 
 						}
 					}
@@ -3969,7 +3963,7 @@ namespace NCCTransfer
 
         unsafe ulong AddToCycleList(run_rec run, Detector det, int cfindex = -1)  // cf index only for AAS positional cycles
         {
-            Cycle cycle = new Cycle(mlogger);
+            Cycle cycle = new Cycle();
             ulong MaxBins = 0;
             try
             {
@@ -3991,7 +3985,7 @@ namespace NCCTransfer
             }
             catch (Exception e)
             {
-                mlogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run.run_number, e.Message);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "Cycle processing error {0} {1}", run.run_number, e.Message);
             }
             return MaxBins;
         }

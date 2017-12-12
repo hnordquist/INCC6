@@ -88,7 +88,7 @@ namespace NCCReporter
             Separator = ',';
             GenColumns(et);
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile((Log)loggers.ControlLogger);
+            f = new ResultsOutputFile(loggers);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace NCCReporter
             this.loggers = loggers;
             Separator = ',';
             rows = new Row[0]; // non-null to start
-            f = new ResultsOutputFile((Log)loggers.ControlLogger);
+            f = new ResultsOutputFile(loggers);
         }
 
         public void GenColumns(System.Type et)
@@ -144,8 +144,7 @@ namespace NCCReporter
             }
 			if (sendToLogFile || logToConsole)
             {
-                Log log = (Log)loggers.AppLogger;
-				if (log != null) log.TraceEvent(LogLevels.Info, 111, "Using output file: " + f.filename);
+				if (loggers.AppLogger != null) loggers.AppLogger.TraceEvent(LogLevels.Info, 111, "Using output file: " + f.filename);
 			}
 
             lines = new List<string>(2 + rows.Length + 1);
@@ -178,16 +177,15 @@ namespace NCCReporter
 
             if (sendToLogFile || logToConsole)
             {
-                Log log = (Log)loggers.AppLogger;
                 TraceEventCache tec = new TraceEventCache();
                 foreach (string ls in lines)
                 {
                     if (sendToLogFile && logToConsole)
-                        log.TraceEvent(LogLevels.Verbose, 717, ls);
+                        loggers.AppLogger.TraceEvent(LogLevels.Verbose, 717, ls);
                     else if (logToConsole)
-                        log.TraceEventConsole(LogLevels.Verbose, 717, ls, tec);
+                        loggers.AppLogger.TraceEventConsole(LogLevels.Verbose, 717, ls, tec);
                     else
-                        log.TraceEventFileOnly(LogLevels.Verbose, 717, ls, tec);
+                        loggers.AppLogger.TraceEventFileOnly(LogLevels.Verbose, 717, ls, tec);
                 }
             }
         }
@@ -359,7 +357,7 @@ namespace NCCReporter
 
     public class ResultsOutputFile: IDisposable
     {
-        private Log log;
+        protected LMLoggers loggers;
 
         public string prefixPath;
         public string filename;
@@ -368,9 +366,9 @@ namespace NCCReporter
         public string name;
         string suffix;
 
-        public ResultsOutputFile(Log logger)
+        public ResultsOutputFile(LMLoggers log)
         {
-            log = logger;
+            loggers = log;
         }
 
         //  when encountering the same file name, create a file name with a index count addendum
@@ -385,7 +383,7 @@ namespace NCCReporter
                     i++;
                 }
 
-                if (log != null) log.TraceEvent(LogLevels.Info, 111, "Creating new output file: " + filename);
+                if (loggers.ControlLogger != null) loggers.ControlLogger.TraceEvent(LogLevels.Info, 111, "Creating new output file: " + filename);
 
                 string path = Path.GetDirectoryName(filename);
                 if (!Directory.Exists(path))
@@ -396,7 +394,7 @@ namespace NCCReporter
             }
             catch (Exception e)
             {
-                if (log != null) log.TraceException(e);
+                if (loggers.ControlLogger != null) loggers.ControlLogger.TraceException(e);
                 return false;
             }
         }
@@ -448,7 +446,7 @@ namespace NCCReporter
         }
         public void CloseWriter()
         {
-            log.TraceEvent(LogLevels.Verbose, 115, "Closing " + filename);
+            loggers.ControlLogger.TraceEvent(LogLevels.Verbose, 115, "Closing " + filename);
             try
             {
                 if (writer != null)
@@ -462,7 +460,7 @@ namespace NCCReporter
             }
             catch (Exception e)
             {
-                if (log != null) log.TraceException(e);
+                if (loggers.ControlLogger != null) loggers.ControlLogger.TraceException(e);
             }
         }
 

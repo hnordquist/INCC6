@@ -53,8 +53,8 @@ namespace DAQ
             set { meas = value; }
         }
 
-        private LMLoggers.LognLM logger;
-        public LMLoggers.LognLM Logger
+        private Logging.Log logger;
+        public Logging.Log Logger
         {
             get { return logger; }
             set { logger = value; }
@@ -65,7 +65,7 @@ namespace DAQ
 
         #region Constructors
 
-        public SRTakeDataHandler(LMLoggers.LognLM logger)
+        public SRTakeDataHandler(Logging.Log logger)
         {
             this.logger = logger;
             // this.pendingCompletion = new SemaphoreSlim(0, 1);
@@ -226,7 +226,7 @@ namespace DAQ
         public class SRControlThread : BackgroundWorker
         {
 
-            public SRControlThread(int count, LMLoggers.LognLM log, Measurement meas, Detector det)
+            public SRControlThread(int count, Logging.Log log, Measurement meas, Detector det)
             {
                 op = SROp.Nothing;
                 SRCtrl = new SRControl(count, log, meas, det);
@@ -382,7 +382,7 @@ namespace DAQ
             }
             catch (Exception caught)
             {
-                logger.TraceEvent(LogLevels.Error, 87258, LMLoggers.LognLM.FlattenChars("SR Thread reference '" + caught.Message + "' "));
+                logger.TraceEvent(LogLevels.Error, 87258, Logging.Log.FlattenChars("SR Thread reference '" + caught.Message + "' "));
                 res += (" -> " + caught.ToString());
             }
 
@@ -590,7 +590,7 @@ namespace DAQ
     {
 
         public bool SaveOnTerminate;
-        private LMLoggers.LognLM log;
+        private Logging.Log log;
         private Measurement meas;
         private Detector detector;
         private INCCSR sr;
@@ -603,7 +603,7 @@ namespace DAQ
         public int LastSRStatus;
         public int LastMeasStatus;
 
-        public LMLoggers.LognLM Log
+        public Logging.Log Log
         {
             get { return log; }
         }
@@ -684,7 +684,7 @@ namespace DAQ
         *  12/09/93	Bill Harker	created
         *  03/29/11 Frank Black reimplemented in C#
         *============================================================================*/
-        public SRControl(int identifyingNumber, LMLoggers.LognLM log, Measurement meas, Detector det)
+        public SRControl(int identifyingNumber, Logging.Log log, Measurement meas, Detector det)
         {
             this.log = log;
             this.identifyingNumber = identifyingNumber;

@@ -4447,7 +4447,7 @@ namespace AnalysisDefs
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
-                Cycle c = new Cycle(NC.App.DBLogger);
+                Cycle c = new Cycle();
                 cl.Add(c); c.seq = seq;
 
 				long lmid = AddSummaryToCycle(dr, c);
@@ -4494,7 +4494,7 @@ namespace AnalysisDefs
             foreach (DataRow dr in lmdt.Rows)
             {
     //            seq++;
-    //            Cycle c = new Cycle(NC.App.Pest.logger);
+    //            Cycle c = new Cycle();
     //            cl.Add(c); c.seq = seq;
 
 				//long lmid = AddSummaryToCycle(dr, c);

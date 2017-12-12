@@ -53,7 +53,7 @@ namespace NCCFile
         {
             List<string> exts = new List<string>() { ".dataz" };
             FileList<DatazFile> hdlr = new FileList<DatazFile>();
-            hdlr.Init(exts, ctrllog);
+            hdlr.Init(exts);
             FileList<DatazFile> files = null;
 
             // initialize operation timer here
@@ -70,7 +70,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Dataz files found");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No usable Dataz files found");
                 return;
             }
 
@@ -91,11 +91,11 @@ namespace NCCFile
                     mc.ProcessSections();
                     if (mc.Cycles.Count == 0)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
                     }
                     if (mc.Plateaux.Count == 0)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 404, $"This Dataz file has no defined sequences, over {mc.Cycles.Count} cycles.");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 404, $"This Dataz file has no defined sequences, over {mc.Cycles.Count} cycles.");
                     }
                     else
                     {
@@ -112,7 +112,7 @@ namespace NCCFile
                             }
                         }
 
-                        ctrllog.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
+                        NC.App.ControlLogger.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
                         System.Collections.IEnumerator iter = mc.GetSequences();
                         while (iter.MoveNext())
                         {
@@ -142,8 +142,8 @@ namespace NCCFile
                 catch (Exception e)
                 {
                     NC.App.Opstate.SOH = OperatingState.Trouble;
-                    ctrllog.TraceException(e, true);
-                    ctrllog.TraceEvent(LogLevels.Error, 437, "Dataz data file processing stopped with error: '" + e.Message + "'");
+                    NC.App.ControlLogger.TraceException(e, true);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 437, "Dataz data file processing stopped with error: '" + e.Message + "'");
                 }
                 finally
                 {
@@ -160,7 +160,7 @@ namespace NCCFile
 
         void AddMCSRDataCycle(int run, DatazFile.Cycle c, Measurement meas, string fname)
         {
-            Cycle cycle = new Cycle(datalog);
+            Cycle cycle = new Cycle();
             try
             {
                 cycle.UpdateDataSourceId(ConstructedSource.DatazFile, meas.Detector.Id.SRType, c.DTO, fname);
@@ -198,12 +198,12 @@ namespace NCCFile
                     mcr.RAMult[j] = c.MultRABins[j];
                     mcr.NormedAMult[j] = c.MultNormedAccBins[j];
                 }
-                ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
 
             }
             catch (Exception e)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "cycle processing error {0} {1}", run, e.Message);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "cycle processing error {0} {1}", run, e.Message);
             }
         }
 
@@ -212,7 +212,7 @@ namespace NCCFile
         {
             List<string> exts = new List<string>() { ".dataz" };
             FileList<DatazFile> hdlr = new FileList<DatazFile>();
-            hdlr.Init(exts, ctrllog);
+            hdlr.Init(exts);
             FileList<DatazFile> files = null;
 
             // initialize operation timer here
@@ -229,7 +229,7 @@ namespace NCCFile
                 NC.App.Opstate.StopTimer();
                 NC.App.Opstate.StampOperationStopTime();
                 FireEvent(EventType.ActionStop, this);
-                ctrllog.TraceEvent(LogLevels.Warning, 33085, "No usable Dataz files found");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No usable Dataz files found");
                 return;
             }
 
@@ -249,11 +249,11 @@ namespace NCCFile
                     mc.ProcessSections(analyze:true);
                     if (mc.Cycles.Count == 0)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 404, "This Dataz file has no good cycles.");
                     }
                     if (mc.Plateaux.Count == 0)
                     {
-                        ctrllog.TraceEvent(LogLevels.Error, 404, $"This Dataz file has no defined sequences, over {mc.Cycles.Count} cycles.");
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Error, 404, $"This Dataz file has no defined sequences, over {mc.Cycles.Count} cycles.");
                     }
                     else
                     {
@@ -270,7 +270,7 @@ namespace NCCFile
                                 LMRawAnalysis.SDTMultiplicityCalculator.SetAlphaBeta(abkey, curdet.AB);
                             }
                         }
-                        ctrllog.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
+                        NC.App.ControlLogger.TraceInformation($"{mc.Cycles.Count} cycles and {mc.Plateaux.Count} sequences encountered in Dataz file {mc.Filename}");
                         System.Collections.IEnumerator iter = mc.GetSequences();
                         while (iter.MoveNext())
                         {
@@ -289,7 +289,7 @@ namespace NCCFile
                                 case DatazConversionTarget.TestData:
                                     for (int i = 0; i < meas.RequestedRepetitions; i++)
                                         AddMCSRDataCycle(i, pla.Cycles[i], meas, mc.Filename);
-                                    AnalysisDefs.TestDataFile mdat = new AnalysisDefs.TestDataFile(ctrllog);
+                                    AnalysisDefs.TestDataFile mdat = new AnalysisDefs.TestDataFile(NC.App.ControlLogger);
                                     mdat.GenerateReport(meas);
                                     break;
                                 case DatazConversionTarget.NCC:
@@ -312,15 +312,15 @@ namespace NCCFile
                                             Path = meas.AcquireState.lm.Results,
                                             ItemId = meas.AcquireState.ItemId.item,
                                             MeasOption = "V", // todo: expand cmd line flags o include B,V,N, or add meas option to Dataz configuration section  meas.MeasOption.PrintName(),
-                                            Log = ctrllog,
+                                            Log = NC.App.ControlLogger,
                                             RunTime = meas.AcquireState.run_count_time
                                         };
 
-                                        ctrllog.TraceEvent(LogLevels.Info, 111, "Creating new output file: " + System.IO.Path.Combine(_NCC.Path, _NCC.Name));
+                                        NC.App.ControlLogger.TraceEvent(LogLevels.Info, 111, "Creating new output file: " + System.IO.Path.Combine(_NCC.Path, _NCC.Name));
                                         bool yes = _NCC.StartNCCFile((ushort)pla.Num); // yes it truncates
                                         if (!yes)
                                         {
-                                            ctrllog.TraceEvent(LogLevels.Warning, 33085, "NCC file initialization failed."); 
+                                            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "NCC file initialization failed."); 
                                             continue;
                                         }
                                         List<NCCFileWriter.NCCData> xfer = new List<NCCFileWriter.NCCData>();
@@ -358,10 +358,10 @@ namespace NCCFile
 
                                     break;
                                 case DatazConversionTarget.XFer:
-                                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz to Transfer file conversion not yet implemented, and may never be");
+                                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "Dataz to Transfer file conversion not yet implemented, and may never be");
                                     break;
                                 case DatazConversionTarget.InitialDataPair:
-                                    ctrllog.TraceEvent(LogLevels.Warning, 33085, "Dataz det/det.cal pair file conversion not yet implemented, and may never be");
+                                    NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "Dataz det/det.cal pair file conversion not yet implemented, and may never be");
                                     break;
                             }
                             FireEvent(EventType.ActionInProgress, this);
@@ -371,8 +371,8 @@ namespace NCCFile
                 catch (Exception e)
                 {
                     NC.App.Opstate.SOH = OperatingState.Trouble;
-                    ctrllog.TraceException(e, true);
-                    ctrllog.TraceEvent(LogLevels.Error, 437, "Dataz data file processing stopped with error: '" + e.Message + "'");
+                    NC.App.ControlLogger.TraceException(e, true);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 437, "Dataz data file processing stopped with error: '" + e.Message + "'");
                 }
                 finally
                 {

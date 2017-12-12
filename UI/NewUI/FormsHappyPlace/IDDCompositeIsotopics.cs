@@ -41,7 +41,6 @@ namespace NewUI
         {
             InitializeComponent();
             RefreshIsoCodeCombo();
-            applog = NC.App.AppLogger;
             acq = Integ.GetCurrentAcquireParams();
             if (string.IsNullOrEmpty(selected))
             {
@@ -150,7 +149,7 @@ namespace NewUI
                 long key = -1;
                 if ((key = NC.App.DB.CompositeIsotopics.Set(iso)) > 0)
                 {
-                    applog.TraceInformation("'" + iso.id + "' composite isotopics added");
+                    NC.App.AppLogger.TraceInformation("'" + iso.id + "' composite isotopics added");
                 }
             }
             int count = possibleCompIsoFilesToAttemptProcessingUpon.Results.CompIsoIsotopics.Count;
@@ -198,7 +197,7 @@ namespace NewUI
                     NC.App.DB.CompositeIsotopics.Revert(iso);  // revert originating selection on in-memory list back to DB values
                     NC.App.DB.CompositeIsotopics.GetList().Add(iso);				
 					// do not add to database until the OK or the Save set button is selected
-                    applog.TraceInformation("New composite isotopics " + iso.id + " (not saved to database)");
+                    NC.App.AppLogger.TraceInformation("New composite isotopics " + iso.id + " (not saved to database)");
                     IsotopicsIdComboBox.Items.Add(iso.id);
                     IsotopicsIdComboBox.SelectedItem = iso.id;  // force m_iso assignment in event handler
 					calcQ = true;
@@ -219,7 +218,7 @@ namespace NewUI
 			if (!GutCheck(calc: true))
 				return;
 			Isotopics newiso = null;
-			uint retcode = comp_iso.CombinedCalculation(out newiso, NC.App.AppContext.INCCParity, applog);
+			uint retcode = comp_iso.CombinedCalculation(out newiso, NC.App.AppContext.INCCParity, NC.App.AppLogger);
 			if (retcode == 36783)
 				MessageBox.Show("Unable to update isotopics, sum of Pu isotopes must be greater than zero");
 			else if (retcode == 36784)
@@ -233,7 +232,7 @@ namespace NewUI
 				foreach (CompositeIsotopics iso in list)
 				{
 					long pk = NC.App.DB.CompositeIsotopics.Set(iso);             // add to database 
-					applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " composite isotopics");
+					NC.App.AppLogger.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " composite isotopics");
 				}
 				comp_iso.modified = false;
                 LoadEntry(comp_iso);
@@ -250,13 +249,13 @@ namespace NewUI
 					{
 						NC.App.DB.Isotopics.GetList().Add(newiso);
 						long pk = NC.App.DB.Isotopics.Set(newiso);              // add to database 
-						applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + newiso.id + " isotopics");
+						NC.App.AppLogger.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + newiso.id + " isotopics");
 						if (pk >= 0)
 							NC.App.DB.Isotopics.Refresh();
 					} else
 					{
 						NC.App.DB.Isotopics.Replace(newiso);
-						applog.TraceInformation("Replaced " + newiso.id + " isotopics");
+						NC.App.AppLogger.TraceInformation("Replaced " + newiso.id + " isotopics");
 					}
 					calcQ = false;
 				}
@@ -285,7 +284,7 @@ namespace NewUI
 					foreach (CompositeIsotopics iso in list)
 					{
 						long pk = NC.App.DB.CompositeIsotopics.Set(iso);             // add to database 
-						applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
+						NC.App.AppLogger.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
 					}
 					modified = false;
 					calcQ = true;
@@ -306,7 +305,7 @@ namespace NewUI
                 {
                     IsotopicsIdComboBox.Items.Remove(oldId);
                     IsotopicsIdComboBox.Items.Add(m_comp_iso.id);
-                    applog.TraceInformation("Renamed " + oldId + " to " + m_comp_iso.id);
+                    NC.App.AppLogger.TraceInformation("Renamed " + oldId + " to " + m_comp_iso.id);
                     IsotopicsIdComboBox.SelectedItem = m_comp_iso.id;
 					calcQ = true;
                 }
@@ -321,11 +320,11 @@ namespace NewUI
             {
                 if (NC.App.DB.CompositeIsotopics.Delete(m_comp_iso)) // deletes from in-memory list and database
                 {
-                    applog.TraceInformation("Deleted " + m_comp_iso.id + " composite isotopics");
+                    NC.App.AppLogger.TraceInformation("Deleted " + m_comp_iso.id + " composite isotopics");
                     RefreshIdComboWithDefault(string.Empty);
                 }
                 else
-                    applog.TraceInformation("Unable to delete " + m_comp_iso.id + " composite isotopics");
+                    NC.App.AppLogger.TraceInformation("Unable to delete " + m_comp_iso.id + " composite isotopics");
             }
         }
 
@@ -446,7 +445,6 @@ namespace NewUI
         const double isomin = 99.7;
         const double isomax = 100.3;
         const double TOLERANCE = .00001;
-        NCCReporter.LMLoggers.LognLM applog;
         bool modified = false, calcQ = false;
 
         private void SelButton_Click(object sender, EventArgs e)

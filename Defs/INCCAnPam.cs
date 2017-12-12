@@ -122,12 +122,6 @@ namespace AnalysisDefs
             this.selector = new INCCSelector(sel);
         }
 
-        public AnalysisMethods(LMLoggers.LognLM logger)
-        {
-            mlogger = logger;
-            init();
-        }
-
         private void init()
         {
             choices = new bool[Enum.GetValues(typeof(AnalysisMethod)).Length];
@@ -135,8 +129,6 @@ namespace AnalysisDefs
             choices[(int)AnalysisMethod.INCCNone] = true;  // INCCNone
             methods = new INCCMethods();
         }
-
-        private LMLoggers.LognLM mlogger;
 
         public INCCSelector selector;
         public AnalysisMethod Normal;
@@ -274,7 +266,7 @@ namespace AnalysisDefs
                 methods.Add(am, surr);
             }
             else
-                if (mlogger != null) mlogger.TraceEvent(NCCReporter.LogLevels.Warning, 34901, "{0} method not updated or replaced", am.FullName());
+                NCC.CentralizedState.App.ControlLogger?.TraceEvent(LogLevels.Warning, 34901, "{0} method not updated or replaced", am.FullName());
                 
         }
 

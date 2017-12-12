@@ -291,7 +291,7 @@ namespace AnalysisDefs
         /// <returns>updated isotopics</returns>
         public static Isotopics update_isotopics(double PuMass, /* mass of item */
                                 DateTimeOffset ref_date, /* date to update to */
-                                Isotopics curiso, NCCReporter.LMLoggers.LognLM logger, bool INCCParity)
+                                Isotopics curiso, NCCReporter.Logging.Log logger, bool INCCParity)
         {
 
             double ref_days;
@@ -323,7 +323,7 @@ namespace AnalysisDefs
 
             if (isosum <= 0.0)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
+                NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
                 return null;
             }
             Isotopics newiso = new Isotopics();
@@ -381,11 +381,11 @@ namespace AnalysisDefs
 
             if (cur_mass_sum <= 0.0)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Warning, 36784, "Unable to update isotopics, mass sum must be greater than zero");
+                NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Warning, 36784, "Unable to update isotopics, mass sum must be greater than zero");
                 return (null);
             }
             else
-                logger.TraceEvent(NCCReporter.LogLevels.Verbose, 36722, "'update_isotopics' mass sum " + cur_mass_sum);
+                NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Verbose, 36722, "'update_isotopics' mass sum " + cur_mass_sum);
 
 
             newiso.pu_date = new DateTime(ref_date.Ticks);
@@ -424,7 +424,7 @@ namespace AnalysisDefs
 
             double iso_mass = 1.0;
             pu240e_ptr = 0.0;
-            Isotopics iso = update_isotopics(iso_mass, meas.MeasDate, this, meas.logger, NC.App.AppContext.INCCParity);
+            Isotopics iso = update_isotopics(iso_mass, meas.MeasDate, this, NC.App.ControlLogger, NC.App.AppContext.INCCParity);
             if (iso == null)
                 return;
 
@@ -696,7 +696,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("ci_pu_mass", pu_mass));
         }
 
-		public uint CombinedCalculation(out Isotopics newIsotopics, bool INCCParity, NCCReporter.LMLoggers.LognLM logger)
+		public uint CombinedCalculation(out Isotopics newIsotopics, bool INCCParity, NCCReporter.Logging.Log logger)
 		{
 			MassSum = 0;
 			uint res = 0;
@@ -712,8 +712,8 @@ namespace AnalysisDefs
 			if (res != 0) return res;
 			MassSum = CalculateMassSums();
 			if (MassSum <= 0)
-			{ 
-				logger.TraceEvent(NCCReporter.LogLevels.Error, 36784, "Sum of masses = 0.");
+			{
+                NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Error, 36784, "Sum of masses = 0.");
 				res = 36784;
 			}
 			else
@@ -782,7 +782,7 @@ namespace AnalysisDefs
 
 		internal  Tuple[] CurrentMass = Isotopics.MakeArray();
 
-		public uint CalculateDecayAndMass(DateTime ref_date, bool INCCParity, NCCReporter.LMLoggers.LognLM logger)
+		public uint CalculateDecayAndMass(DateTime ref_date, bool INCCParity, NCCReporter.Logging.Log logger)
 		{
 			double ref_days;
 			double pu_days;
@@ -804,7 +804,7 @@ namespace AnalysisDefs
 
 			if (isosum <= 0.0)
 			{
-				logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
+                NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
 				return 36783;
 			}
 			Tuple[] newiso = Isotopics.MakeArray();

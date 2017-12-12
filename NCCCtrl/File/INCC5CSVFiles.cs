@@ -153,8 +153,8 @@ namespace NCCFile
                     iso = GenIso(csv.Lines[0]);
                     if (isofile = (iso != null))
                     {
-                        Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
-                        Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
                         Results.IsoIsotopics.Add(iso);
                     }
                     else
@@ -162,7 +162,7 @@ namespace NCCFile
                         ciso = (CompositeIsotopics)CompositeIsotopics(csv.Lines[0], headtest: true);
                         if (ciso != null)  // got a header of a comp iso file, process the rest of the lines
                         {
-                            Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got a header of a comp iso file, process the rest of the lines " + System.IO.Path.GetFileName(l));
+                            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "got a header of a comp iso file, process the rest of the lines " + System.IO.Path.GetFileName(l));
                             Results.CompIsoIsotopics.Add(ciso);
                         }
                     }
@@ -174,11 +174,11 @@ namespace NCCFile
                             iso = GenIso(entry);
                             if (iso != null)
                             {
-                                Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
-                                Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
+                                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "got an iso file, process all the lines " + System.IO.Path.GetFileName(l));
+                                NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34100, "Processed " + iso.id + " from " + System.IO.Path.GetFileName(csv.Filename));
                                 Results.IsoIsotopics.Add(iso);
                             }
-                            else Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped non-iso token entry");
+                            else NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped non-iso token entry");
                         }
                         else
                         {
@@ -193,7 +193,7 @@ namespace NCCFile
 				} 
 				catch (MalformedLineException )  // not a CSV file
 				{
-					Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
+					NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(l));
 				}           
 
         }
@@ -277,7 +277,7 @@ namespace NCCFile
 				} 
 				catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -396,7 +396,7 @@ namespace NCCFile
 				} 
 				catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -659,7 +659,7 @@ namespace NCCFile
 				}
 			} catch (Microsoft.VisualBasic.FileIO.MalformedLineException)  // not a CSV file
 			{
-				Results.mlogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(file));
+				NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(file));
 			}
 			Results.ApplyContent();
 			Results.DoFacs();
@@ -714,7 +714,7 @@ SourceCodes
 					}
 				} catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
 					return;
 				}
 			}
@@ -807,7 +807,7 @@ SourceCodes
 					}
 				} catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -864,7 +864,7 @@ SourceCodes
 					}
 				} catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as item element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as item element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -948,7 +948,7 @@ SourceCodes
 					}
 				} catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as composite isotopics summary element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -1047,7 +1047,7 @@ SourceCodes
 
 				} catch (Exception ex)
 				{
-					Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as collar element " + op.ToString() + " " + ex.Message);
+					NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as collar element " + op.ToString() + " " + ex.Message);
 					return null;
 				}
 			}
@@ -1160,7 +1160,7 @@ SourceCodes
                     }
                     catch (Exception ex)
                     {
-                        Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as isotopics element " + op.ToString() + " " + ex.Message);
                     }
                 }
 
@@ -1221,7 +1221,7 @@ SourceCodes
                     }
                     catch (Exception ex)
                     {
-                        Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as item element " + op.ToString() + " " + ex.Message);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as item element " + op.ToString() + " " + ex.Message);
                     }
                 }
                 l.Add(iid);
@@ -1297,7 +1297,7 @@ SourceCodes
                     }
                     catch (Exception ex)
                     {
-                        Results.mlogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as CmPu ratio element " + op.ToString() + " " + ex.Message);
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as CmPu ratio element " + op.ToString() + " " + ex.Message);
                     }
                 }
                 l.Add(cpr);
@@ -1322,7 +1322,7 @@ SourceCodes
                     mPathToCOPFile.Add(csv.Filename, csv);
                 else continue;
                 csv.ProcessFile();  // split lines with scanner, construct istopics, item id and CmPu ratios
-                Results.mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + System.IO.Path.GetFileName(csv.Filename));
+                NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34100, "Processed " + System.IO.Path.GetFileName(csv.Filename));
             }
             foreach (CSVFile csv in mPathToNOPFile.Values)
             {
@@ -1400,7 +1400,6 @@ SourceCodes
 		public List<ItemId> ItemIds;
 		public List<string> Facilities, MBAs, ItemNames, Strata, InventoryChangeCodes, IOCodes, MaterialTypes, SourceCodes, ItemTypes;
         //  vars used for processing
-        public LMLoggers.LognLM mlogger;  
 
 		void Init()
 		{
@@ -1416,7 +1415,6 @@ SourceCodes
 			SourceCodes = new List<string>();
 			ItemTypes = new List<string>();
 			ItemNames = new List<string>();
-            mlogger = NC.App.ControlLogger;
 		}
 
 		static Regex yyyymmdd = new Regex("^\\d{4}\\d{2}\\d{2}$");
@@ -1633,7 +1631,7 @@ SourceCodes
 
 		public List<Isotopics> IsoIsotopics;  // for export
 		public CompositeIsotopics CompIsoIsotopics;
-        public LMLoggers.LognLM mlogger;  
+        public Logging.Log mlogger;  
         public CSVFile Output;
 
         void Init()
@@ -1748,7 +1746,7 @@ SourceCodes
             {
                 string s = CSVFile.EncodeAsCSVRow(sa);
                 writer.WriteLine(s);
-                mlogger.TraceInformation(sa[(int)IsoFiles.IsoCol.IsoId] + " isotopics written");
+                NC.App.ControlLogger.TraceInformation(sa[(int)IsoFiles.IsoCol.IsoId] + " isotopics written");
             }
         }  
 
@@ -1794,7 +1792,7 @@ SourceCodes
                 string s = CSVFile.EncodeAsCSVRow(sa);
                 writer.WriteLine(s);
             }
-            mlogger.TraceInformation(Output.Lines[0][(int)IsoFiles.CompIsCol.IsoId] + " composite isotopics written");
+            NC.App.ControlLogger.TraceInformation(Output.Lines[0][(int)IsoFiles.CompIsCol.IsoId] + " composite isotopics written");
         }
     }
 
@@ -1814,7 +1812,6 @@ SourceCodes
         {
             Strata = new List<INCCDB.StratumDescriptor>();
             Facilities_ = new List<INCCDB.Descriptor>();
-            mlogger = NC.App.ControlLogger;
         }
 
 
@@ -1898,7 +1895,7 @@ SourceCodes
             if (name.IndexOf('.') >= 0)
                 csv.ThisSuffix = name.Substring(name.IndexOf('.'));
             csv.ProcessFile();  // split lines with scanner
-            mlogger.TraceEvent(LogLevels.Info, 34100, "Processed " + System.IO.Path.GetFileName(csv.Filename));
+            NC.App.ControlLogger.TraceEvent(LogLevels.Info, 34100, "Processed " + Path.GetFileName(csv.Filename));
 
             GenerateStrata(csv);
             DoFacs();
@@ -1940,7 +1937,6 @@ SourceCodes
 
         public List<INCCDB.StratumDescriptor> Strata;
         public List<INCCDB.Descriptor> Facilities_;
-        public LMLoggers.LognLM mlogger;
 
     }
 }

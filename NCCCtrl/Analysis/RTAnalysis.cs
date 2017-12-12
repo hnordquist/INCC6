@@ -65,7 +65,7 @@ namespace Analysis
 		}
 		private double _TickSizeInSeconds;
 
-        LMLoggers.LognLM logger;
+        Logging.Log logger;
         RawAnalyzerHandler handler;
         RawResults results;
 
@@ -227,7 +227,7 @@ namespace Analysis
             set { status = value; }
         }
 
-        public void SetLogger(LMLoggers.LognLM analogger)
+        public void SetLogger(Logging.Log analogger)
         {
             logger = analogger;
         }

@@ -67,8 +67,8 @@ namespace AnalysisDefs
 
         public List<List<string>> INCCResultsReports;
 
-        public MethodResultsReport(LMLoggers.LognLM ctrllog)
-            : base(ctrllog)
+        public MethodResultsReport(Logging.Log log)
+            : base(log)
         {
             INCCResultsReports = new List<List<string>>();
 			SelectedReportSections = Array.CreateInstance(typeof(bool), Enum.GetValues(typeof(INCCReportSection)).Length);
@@ -164,7 +164,7 @@ namespace AnalysisDefs
                         {
                             case AssaySelector.MeasurementOption.background:
                                 if (meas.Background.TMBkgParams.ComputeTMBkg)
-                                    ctrllog.TraceEvent(LogLevels.Warning, 82010, "Background truncated multiplicity"); // todo: present the tm bkg results on m.Background
+                                    N.App.ControlLogger.TraceEvent(LogLevels.Warning, 82010, "Background truncated multiplicity"); // todo: present the tm bkg results on m.Background
                                 break;
                             case AssaySelector.MeasurementOption.initial:
                             case AssaySelector.MeasurementOption.normalization:
@@ -284,7 +284,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -319,12 +319,12 @@ namespace AnalysisDefs
                         {
                             sec = new INCCStyleSection(null, 1);
                             sec.SetFPCurrentFormatPrecision(4);
-                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, meas.logger, N.App.AppContext.INCCParity);
+                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, N.App.ControlLogger, N.App.AppContext.INCCParity);
                             if (curiso == null)
                             {
                                 curiso = new Isotopics();
                                 meas.Isotopics.CopyTo(curiso);
-                                ctrllog.TraceEvent(LogLevels.Warning, 82034,  "Using incorrect updated defaults for " + meas.Isotopics.id);
+                                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 82034,  "Using incorrect updated defaults for " + meas.Isotopics.id);
                             }
                             sec.AddTwo("Isotopics id: ", meas.Isotopics.id);
                             sec.AddTwo("Isotopics source code: ", meas.Isotopics.source_code.ToString());
@@ -439,7 +439,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -599,7 +599,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    ctrllog.TraceException(e);
+                    N.App.ControlLogger.TraceException(e);
                 }
 
                 FinishReportGeneration();
@@ -646,7 +646,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    ctrllog.TraceException(e);
+                    N.App.ControlLogger.TraceException(e);
                 }
 
                 t.CreateReport(0);
@@ -963,8 +963,8 @@ namespace AnalysisDefs
 
         public List<List<string>> INCCTestDataFiles;
 
-        public TestDataFile(NCCReporter.LMLoggers.LognLM ctrllog)
-            : base(ctrllog)
+        public TestDataFile(NCCReporter.Logging.Log log)
+            : base(log)
         {
             INCCTestDataFiles = new List<List<string>>();
         }
@@ -1017,7 +1017,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -1041,7 +1041,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                N.App.ControlLogger.TraceException(e);
             }
             return sec;
         }
@@ -1092,7 +1092,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    ctrllog.TraceException(e);
+                    N.App.ControlLogger.TraceException(e);
                 }
 
                 FinishReportGeneration();

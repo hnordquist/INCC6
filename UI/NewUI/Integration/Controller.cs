@@ -165,7 +165,7 @@ namespace NewUI
             NC.App.AppLogger.
 				TraceInformation("==== DB " + NC.App.Pest.DBDescStr);
             NC.App.AppLogger.
-                TraceEvent(LogLevels.Info, 16161, "==== Logging to "+ LMLoggers.LognLM.CurrentLogFilePath);
+                TraceEvent(LogLevels.Info, 16161, "==== Logging to " + NCCReporter.Logging.Log.CurrentLogFilePath);
             return true;
         }
 
@@ -210,7 +210,6 @@ namespace NewUI
 
             procFctrl = new FCtrlBind();
             measFctrl = new FCtrlBind();
-            LMLoggers.LognLM applog = NC.App.AppLogger;
 
             /* 
              * The action event handlers.
@@ -238,19 +237,19 @@ namespace NewUI
             /// and I reuse that string by posting it to the progress handler
             measFctrl.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, NC.App.AppLogger, LogLevels.Verbose, o);
                 measFctrl.mProgressTracker.ReportProgress(0, s);//  "...");
             });
 
             measFctrl.SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, NC.App.AppLogger, LogLevels.Verbose, o);
                 measFctrl.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
 
             measFctrl.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, NC.App.AppLogger, LogLevels.Verbose, o);
                 measFctrl.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
@@ -260,7 +259,7 @@ namespace NewUI
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
-                string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                string s2 = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionInProgress, NC.App.AppLogger, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
                 double sofar = 0;
@@ -276,19 +275,19 @@ namespace NewUI
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
+                    NC.App.AppLogger.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}				
             });
 
             measFctrl.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, NC.App.AppLogger, LogLevels.Warning, o);
                 measFctrl.mProgressTracker.ReportProgress(100, s);//"Stopping...");
             });
 
             measFctrl.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, NC.App.AppLogger, LogLevels.Warning, o);
                 measFctrl.mProgressTracker.ReportProgress(100, s);//"Cancelling...");
             });
 
@@ -307,7 +306,7 @@ namespace NewUI
 
                 NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
-                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
+                NC.App.AppLogger.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
 
                 // specialized updater for UI or file
                 measFctrl.mProgressTracker.ReportProgress(100, "Completed");
@@ -315,19 +314,19 @@ namespace NewUI
 
             procFctrl.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.PreAction, NC.App.AppLogger, LogLevels.Verbose, o);
                 procFctrl.mProgressTracker.ReportProgress(0, s);//  "...");
             });
 
             procFctrl.SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionPrep, NC.App.AppLogger, LogLevels.Verbose, o);
                 procFctrl.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
 
             procFctrl.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStart, NC.App.AppLogger, LogLevels.Verbose, o);
                 procFctrl.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
@@ -339,13 +338,13 @@ namespace NewUI
 
             procFctrl.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionStop, NC.App.AppLogger, LogLevels.Warning, o);
                 procFctrl.mProgressTracker.ReportProgress(100, s);//"Stopping...");
             });
 
             procFctrl.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
-                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = FileCtrl.LogAndSkimFileProcessingStatus(ActionEvents.EventType.ActionCancel, NC.App.AppLogger, LogLevels.Warning, o);
                 procFctrl.mProgressTracker.ReportProgress(100, s);//"Cancelling...");
             });
 
@@ -353,7 +352,7 @@ namespace NewUI
             {
                 NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
-                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished]);
+                NC.App.AppLogger.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished]);
 
                 // specialized updater for UI or file
                 procFctrl.mProgressTracker.ReportProgress(100, "Completed");
@@ -371,12 +370,9 @@ namespace NewUI
         {
             // DAQ
             daqbind = new DAQBind();
-            LMLoggers.LognLM applog = NC.App.AppLogger;
-
-
             daqbind.SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.PreAction, NC.App.AppLogger, LogLevels.Verbose, o);
 				daqbind.mProgressTracker.ReportProgress(0, s);//"...");
             });
 
@@ -385,12 +381,12 @@ namespace NewUI
                 string s = "Action Prep: ";
                 //can also look at active instrument list here LogLevels.Verbose,
                 s = s + Instr.Instruments.Active.Count + " devices found, [" + NC.App.Opstate.SOH + "] " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K");
-                applog.TraceEvent(LogLevels.Verbose, 0xABCE, "Action Prep: SOH " + o.ToString() + "'");
+                NC.App.AppLogger.TraceEvent(LogLevels.Verbose, 0xABCE, "Action Prep: SOH " + o.ToString() + "'");
 				daqbind.mProgressTracker.ReportProgress(0, s);//"Prep");
             });
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStart, NC.App.AppLogger, LogLevels.Verbose, o);
                 daqbind.mProgressTracker.ReportProgress(1, s);//"Starting...");
             });
 
@@ -400,7 +396,7 @@ namespace NewUI
                 measStatus.UpdateWithMeasurement();
                 measStatus.UpdateWithInstruments();
                 updateGUIWithChannelRatesData = true;
-                string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                string s2 = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionInProgress, NC.App.AppLogger, LogLevels.Verbose, o);
 				if (!string.IsNullOrEmpty(s2))
 					s2 = "(" + s2 + ")";
 				int per = 0;
@@ -427,19 +423,19 @@ namespace NewUI
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					applog.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
+                    NC.App.AppLogger.TraceEvent(LogLevels.Verbose, 58,  "{0} inconsistent", per);
 				}
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Info, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionStop, NC.App.AppLogger, LogLevels.Info, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
             daqbind.SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
             {
-                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionCancel, NC.App.AppLogger, LogLevels.Warning, o);
                 daqbind.mProgressTracker.ReportProgress(100, s);
             });
 
@@ -457,12 +453,12 @@ namespace NewUI
                 }
                 else
                 {
-                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
+                    s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred  " + DAQControl.LogAndSkimDAQProcessingStatus(ActionEvents.EventType.ActionFinished, NC.App.AppLogger, LogLevels.Verbose, o);
                 }
                 NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 // general logger: to the console, and/or listbox and/or log file or DB
                 daqbind.mProgressTracker.ReportProgress(100, s);
-                applog.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
+                NC.App.AppLogger.TraceEvent(LogLevels.Verbose, ActionEvents.logid[ActionEvents.EventType.ActionFinished], s);
                 // specialized updater for UI or file
                 daqbind.mProgressTracker.ReportProgress(100, s);
 
@@ -478,7 +474,7 @@ namespace NewUI
             NC.App.AppLogger.TraceInformation("!!!!");
         }
 
-        static LMLoggers.LognLM lawg;
+        static NCCReporter.Logging.Log lawg;
         void UpdateGUIWithNewdata()
         {
             if (lawg == null)
@@ -494,8 +490,7 @@ namespace NewUI
             if (NC.App.Config != null)
 			{
 				NC.App.Config.RetainChanges();
-		        LMLoggers.LognLM applog = NC.App.AppLogger;
-	            applog.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
+                NC.App.AppLogger.TraceInformation("==== Exiting " + DateTimeOffset.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " " + NC.App.Name + " . . .");
 				NC.App.Loggers.Flush();
 			}
         }
@@ -582,9 +577,8 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.AppLogger;
-                applog.TraceException(e, true);
-                applog.EmitFatalErrorMsg();
+                NC.App.AppLogger.TraceException(e, true);
+                NC.App.AppLogger.EmitFatalErrorMsg();
             }
             Cleanup();
         }
@@ -628,9 +622,8 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.AppLogger;
-                applog.TraceException(e, true);
-                applog.EmitFatalErrorMsg();
+                NC.App.AppLogger.TraceException(e, true);
+                NC.App.AppLogger.EmitFatalErrorMsg();
             }  
 			finally
 			{
@@ -691,9 +684,8 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.AppLogger;
-                applog.TraceException(e, true);
-                applog.EmitFatalErrorMsg();
+                NC.App.AppLogger.TraceException(e, true);
+                NC.App.AppLogger.EmitFatalErrorMsg();
                 FireEvent(EventType.ActionFinished, this);
             }
         }
@@ -719,9 +711,8 @@ namespace NewUI
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.AppLogger;
-                applog.TraceException(e, true);
-                applog.EmitFatalErrorMsg();
+                NC.App.AppLogger.TraceException(e, true);
+                NC.App.AppLogger.EmitFatalErrorMsg();
             }
 			Cleanup();
         }

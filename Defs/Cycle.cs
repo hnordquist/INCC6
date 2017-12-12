@@ -60,7 +60,6 @@ namespace AnalysisDefs
         private DataSourceIdentifier dsid;
         private CountingResults countresults;
         private CycleDAQStatus daqStatus;
-        private LMLoggers.LognLM logger;
 
         public double HighVoltage
         {
@@ -196,7 +195,7 @@ namespace AnalysisDefs
             set { dsid = value; }
         }
 
-        public Cycle(LMLoggers.LognLM logger)
+        public Cycle(Logging.Log logger)
         {
             // Raw counts aka totals
             singles = new VTuple();
@@ -204,7 +203,17 @@ namespace AnalysisDefs
             qcstatus = new QCStatusMap();
             countresults = new CountingResults();
             daqStatus = CycleDAQStatus.None;
-            this.logger = logger;
+            hitsPerChn = new double[NC.ChannelCount];
+        }
+
+        public Cycle()
+        {
+            // Raw counts aka totals
+            singles = new VTuple();
+            dsid = new DataSourceIdentifier();
+            qcstatus = new QCStatusMap();
+            countresults = new CountingResults();
+            daqStatus = CycleDAQStatus.None;
             hitsPerChn = new double[NC.ChannelCount];
         }
 
@@ -224,7 +233,7 @@ namespace AnalysisDefs
             {
                 ba.reason = "BaseRate transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87405, ba.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87405, ba.reason);
             }
             return res;
         }
@@ -247,7 +256,7 @@ namespace AnalysisDefs
             {
                 mup.reason = "Multiplicity transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87406,  mup.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87406,  mup.reason);
             }
             return res;
         }
@@ -267,7 +276,7 @@ namespace AnalysisDefs
             {
                 cop.reason = "Coincidence matrix transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87410, cop.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87410, cop.reason);
             }
             return res;
         }
@@ -287,7 +296,7 @@ namespace AnalysisDefs
             {
                 ryp.reason = "Feynman transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87407, ryp.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87407, ryp.reason);
             }
             return res;
         }
@@ -306,7 +315,7 @@ namespace AnalysisDefs
             {
                 rap.reason = "Rossi transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87408, rap.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87408, rap.reason);
             }
             return res;
         }
@@ -326,7 +335,7 @@ namespace AnalysisDefs
             {
                 esp.reason = "TimeInterval transfer " + e.Message;
                 res = false;
-                logger.TraceEvent(LogLevels.Error, 87409, esp.reason);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87409, esp.reason);
             }
             return res;
         }
@@ -354,7 +363,7 @@ namespace AnalysisDefs
                 {
                     x[j++] = string.Format("Channel hits (BaseA): {0}", rrm.NsChnImage());
                     x[j++] = string.Format("Channel hits (CyclC): {0}", NsChnImage());
-                    x[j++] = string.Format("Cycle status text: " + LMLoggers.LognLM.FlattenChars(Message));
+                    x[j++] = string.Format("Cycle status text: " + Logging.Log.FlattenChars(Message));
                     System.Collections.IEnumerator iter = countresults.GetATypedResultEnumerator(typeof(AnalysisDefs.Multiplicity));
                     while (iter.MoveNext())
                     {
@@ -368,7 +377,7 @@ namespace AnalysisDefs
                         }
                         catch (Exception ex)
                         {
-                            logger.TraceEvent(LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
+                            NC.App.DataLogger.TraceEvent(LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
                         }
                     }
                 }
@@ -382,7 +391,7 @@ namespace AnalysisDefs
             }
             catch (Exception ex2)
             {
-                logger.TraceEvent(LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
+                NC.App.DataLogger.TraceEvent(LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
             }
             return x;
         }
@@ -438,7 +447,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception) // mkey not found happens when a param is changed on a VSR that is not reflected back to the default [0] SR 
                 {
-                    logger.TraceEvent(LogLevels.Warning, 7832, "Cycle status not set in DB, mkey mismatch: " + mkey.ToString());
+                    NC.App.DataLogger.TraceEvent(LogLevels.Warning, 7832, "Cycle status not set in DB, mkey mismatch: " + mkey.ToString());
                 }
             if (pmcr == null)
                 pmcr = new MultiplicityCountingRes();  // null results 
@@ -502,7 +511,7 @@ namespace AnalysisDefs
                 // cycle was completed abnormally due to interruption or premature end of stream
                 daqStatus = CycleDAQStatus.UnspecifiedTruncation;
             //else if (String.IsNullOrEmpty(Message))
-            //    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 7832, "SetStatus on cycle {0}", daqStatus);
+            //    NC.App.ControlLogger.TraceEvent(NCCReporter.LogLevels.Verbose, 7832, "SetStatus on cycle {0}", daqStatus);
         }
 
     }

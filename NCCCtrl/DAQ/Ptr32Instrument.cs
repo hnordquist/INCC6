@@ -84,7 +84,7 @@ namespace Instr
         /// </summary>
         /// <param name="dataLog">The data log.</param>
         /// <param name="analysisLog">The analysis log.</param>
-        public override void Init(LMLoggers.LognLM dataLog, LMLoggers.LognLM analysisLog)
+        public override void Init(Logging.Log dataLog, Logging.Log analysisLog)
         {
             if (RDT == null) {
                 RDT = new Analysis.Ptr32RawDataTransform();
@@ -523,7 +523,7 @@ namespace Instr
 
         private CancellationTokenSource m_cancellationTokenSource;
         private Ptr32 m_device;
-        private LMLoggers.LognLM m_logger = NC.App.CollectLogger;
+        private Logging.Log m_logger = NC.App.CollectLogger;
         private object m_monitor = new object();
         private int m_voltage;
         private bool m_setvoltage;

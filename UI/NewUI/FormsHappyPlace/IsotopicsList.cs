@@ -62,7 +62,7 @@ namespace NewUI
 
         private List<Isotopics> ilist;
         private List<CompositeIsotopics> cilist;
-        protected LMLoggers.LognLM ctrllog;
+        protected NCCReporter.Logging.Log ctrllog;
         SortOrder[] cols;
         public bool bGood = false;
 

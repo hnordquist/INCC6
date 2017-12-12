@@ -1080,7 +1080,6 @@ namespace AnalysisDefs
 
 			if (ABCache.ContainsKey(abkey))
 			{
-				//ABKey.log.TraceEvent(NCCReporter.LogLevels.Info, 5439, "Got " + abkey.ToString());
 				AB = ABCache[abkey];
 			}
 

@@ -124,7 +124,7 @@ namespace LMRawAnalysis
             }
         }
 
-        public AnalysisDefs.RateResult GetResult(LMLoggers.LognLM log)
+        public AnalysisDefs.RateResult GetResult(Logging.Log log)
         {
             AnalysisDefs.RateResult result;
             RateAccumulator aBlock;

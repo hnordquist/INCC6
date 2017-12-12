@@ -75,7 +75,7 @@ namespace Analysis
 
     public abstract class ProcessingState
     {
-        public LMLoggers.LognLM logger;
+        public Logging.Log logger;
 
         protected UInt32 numValuesParsed; //number of neutron-event/time structures parsed from the current buffer
         public UInt32 NumValuesParsed
@@ -145,7 +145,7 @@ namespace Analysis
         }
 
         //protected Config cfg;
-        public LMLoggers.LognLM logger, analogger;
+        public Logging.Log logger, analogger;
 
         protected ProcessingState state;
         public ProcessingState State
@@ -175,7 +175,7 @@ namespace Analysis
                                     Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents, Cycle.TS.TotalSeconds));
         }
 
-        public virtual void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)
+        public virtual void Init(Logging.Log datalogger, Logging.Log alogger)
         {
             //cfg = config;
             logger = datalogger;

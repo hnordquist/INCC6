@@ -67,13 +67,6 @@ namespace LMComm
         private System.Collections.Hashtable LMMMOpOpDescMap;  // for fake use, e.g. thrift method calls to MLMEm
         private List<string> NonDataResponses;  // always a few stragglers in the model
 
-        LMLoggers.LognLM commlog = null;
-        public LMLoggers.LognLM CommLog
-        {
-            get { return commlog; }
-            set { commlog = value; }
-        }
-
         // love this C# anonymous function feature!
         public class ConfigInt32Value
         {
@@ -364,7 +357,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 888, "Unable to look up cmd in descriptor map:" + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 888, "Unable to look up cmd in descriptor map:" + e.Message);
             }
         }
 
@@ -411,10 +404,10 @@ namespace LMComm
                 byte[] b = { 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x0D, 0x0A };
                 // "Status\r\n" ASCII
 
-                if (commlog.ShouldTrace(LogLevels.Info))
+                if (NC.App.CollectLogger.ShouldTrace(LogLevels.Info))
                 {
-                    string temp = string.Format("Unaligned data =, 1st looked at '{0}', then looked at '{1}'", LMLoggers.LognLM.FlattenChars(s), LMLoggers.LognLM.FlattenChars(str_end));
-                    commlog.TraceEvent(LogLevels.Verbose, 771751, temp);
+                    string temp = string.Format("Unaligned data =, 1st looked at '{0}', then looked at '{1}'", Logging.Log.FlattenChars(s), Logging.Log.FlattenChars(str_end));
+                    NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 771751, temp);
                 }
                 for (int i = 0; i < (bytesTransferred - b.Length); i++)
                 {
@@ -430,10 +423,10 @@ namespace LMComm
                                                     if (buffer[i + 7 + offset] == b[7]) // gimme an '\n'
                                                     {
                                                         res = Tokens.statusdata;
-                                                        if (commlog.ShouldTrace(LogLevels.Info))
+                                                        if (NC.App.CollectLogger.ShouldTrace(LogLevels.Info))
                                                         {
                                                             string temp = string.Format("Found status marker at {0} into buffer", i + 0 + offset);
-                                                            commlog.TraceEvent(LogLevels.Verbose, 771757, temp);
+                                                            NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 771757, temp);
                                                         }
                                                         break;
                                                     }
@@ -510,7 +503,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 889, "SplitBroadcastResponse gagged on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 889, "SplitBroadcastResponse gagged on:" + received + "; " + e.Message);
             }
         }
 
@@ -550,7 +543,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 890, "SplitCStatusResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 890, "SplitCStatusResponse barfed on:" + received + "; " + e.Message);
             }
 
         }
@@ -564,7 +557,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 891, "SplitHVReadResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 891, "SplitHVReadResponse barfed on:" + received + "; " + e.Message);
             }
         }
 
@@ -576,7 +569,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 892, "SplitHVCalibResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 892, "SplitHVCalibResponse barfed on:" + received + "; " + e.Message);
             }
         }
         public void SplitPowerReadResponse(string received, ref Instr.PowerStatus p)
@@ -595,7 +588,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 892, "SplitPowerReadResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 892, "SplitPowerReadResponse barfed on:" + received + "; " + e.Message);
             }
         }
         public void SplitRatesReadResponse(string received, ref Instr.RatesStatus p)
@@ -614,7 +607,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 893, "SplitRatesReadResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 893, "SplitRatesReadResponse barfed on:" + received + "; " + e.Message);
             }
         }
         public void SplitLLDReadResponse(string received, ref int lld)
@@ -627,7 +620,7 @@ namespace LMComm
             }
             catch (Exception e)
             {
-                commlog.TraceEvent(LogLevels.Error, 894, "SplitLLDReadResponse barfed on:" + received + "; " + e.Message);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Error, 894, "SplitLLDReadResponse barfed on:" + received + "; " + e.Message);
             }
         }
         public void ParseStatusText()

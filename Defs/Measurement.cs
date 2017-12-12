@@ -592,7 +592,8 @@ namespace AnalysisDefs
         /// <summary>
         /// Logger handle
         /// </summary>
-        internal LMLoggers.LognLM logger;
+        internal Logging.Log logger;
+        //public Log Logger { get { return logger; } }
         public LMLoggers.LognLM Logger { get { return logger; } }
 
         /// <summary>
@@ -628,17 +629,17 @@ namespace AnalysisDefs
         public void AddErrorMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Error, id, s));
-            logger.TraceEvent(LogLevels.Error, id, s);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Error, id, s);
         }
         public void AddWarningMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Warning, id, s));
-            logger.TraceEvent(LogLevels.Warning, id, s);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, id, s);
         }
         public void AddDireMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Critical, id, s));
-            logger.TraceEvent(LogLevels.Critical, id, s);
+            NC.App.ControlLogger.TraceEvent(LogLevels.Critical, id, s);
         }
 
 
@@ -735,15 +736,14 @@ namespace AnalysisDefs
 		/// </summary>
 		/// <param name="at">The measurement method or goal</param>
 		/// <param name="logger">the logger handle</param>
-		public Measurement(AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
+		public Measurement(AssaySelector.MeasurementOption at)
         {
             mt = new MeasurementTuple();
-            this.logger = logger;
             mid = new MeasId(at);
             InitMisc();
         }
 
-        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
+        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, Logging.Log logger)
         {
             mt = newMT;
             this.logger = logger;
@@ -751,7 +751,7 @@ namespace AnalysisDefs
             InitMisc();
         }
 
-        public Measurement(MeasurementTuple newMT, LMLoggers.LognLM logger)
+        public Measurement(MeasurementTuple newMT, Logging.Log logger)
         {
             mt = newMT;
             this.logger = logger;
@@ -766,7 +766,7 @@ namespace AnalysisDefs
         /// <param name="meaId">Unique id for the measurement, from the results_rec fields</param>
         /// <param name="logger">logger handle</param>
         /// <returns>A new measurement</returns>
-        public Measurement (INCCResults.results_rec rec, MeasId meaId, LMLoggers.LognLM logger)
+        public Measurement (INCCResults.results_rec rec, MeasId meaId, Logging.Log logger)
         {
             HVCalibrationParameters hv = NCC.IntegrationHelpers.GetCurrentHVCalibrationParams(rec.det);
             MeasurementTuple mt = new MeasurementTuple(new DetectorList(rec.det), rec.tests, rec.norm, rec.bkg, rec.iso, rec.acq, hv);
@@ -889,7 +889,7 @@ namespace AnalysisDefs
 
         public void InitializeResultsSummarizers()
         {
-            logger.TraceEvent(LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
+            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
             countresults.Clear();
             try
             {
@@ -939,7 +939,7 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
             }
         }
         public void InitializeContext(bool clearCounterResults = true)
@@ -953,7 +953,7 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(LogLevels.Error, 4041, "Measurement context: " + ex.Message);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Error, 4041, "Measurement context: " + ex.Message);
             }
         }
 
@@ -1008,14 +1008,14 @@ namespace AnalysisDefs
                 {
                     existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
 					if (!existed) // it was created just now in PrepareINCCResults
-	                    logger.TraceEvent(LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
                     existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
  					if (!existed) // it was created just now in PrepareINCCMethodResults
-						logger.TraceEvent(LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
+                        NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)
                 {
-                    logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
                 }
             }
         }
@@ -1030,7 +1030,7 @@ namespace AnalysisDefs
         /// <returns>Unique database id of the measurement</returns>
         public long Persist()
         {
-            logger.TraceEvent(LogLevels.Verbose, 34001, "Preserving measurement ...");
+            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34001, "Preserving measurement ...");
             DB.Measurements dbm = new DB.Measurements();
             long mid = dbm.Add(name: Detector.Id.DetectorName,
                                 date: MeasDate,  // NEXT: file-based ops use the file date, but we want to replace with current time stamp 
@@ -1039,15 +1039,15 @@ namespace AnalysisDefs
                                 notes: "2016");
             if (mid < 0)
             {
-                logger.TraceEvent(LogLevels.Warning, 34001, "Measurement not saved");
+                NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34001, "Measurement not saved");
                 return mid;
             }
-            logger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
+            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34001, "Preserved measurement id {0}", mid);
 
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
             long rid = dbres.Create(mid, INCCAnalysisResults.TradResultsRec.ToDBElementList());
-            logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
+            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 
 			long c = dbm.CountOf(name: Detector.Id.DetectorName,
                                 dt: MeasDate, 

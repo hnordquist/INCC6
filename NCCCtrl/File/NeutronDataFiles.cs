@@ -74,7 +74,7 @@ namespace NCCFile
             get;
             set;
         }
-        LMLoggers.LognLM Log
+        Logging.Log Log
         {
             get;
             set;
@@ -116,7 +116,7 @@ namespace NCCFile
 
     public class NeutronDataFile : INeutronDataFile
     {
-        public LMLoggers.LognLM Log
+        public Logging.Log Log
         {
             get;
             set;
@@ -1170,7 +1170,7 @@ namespace NCCFile
             get;
             set;
         }
-        public LMLoggers.LognLM Log
+        public Logging.Log Log
         {
             get;
             set;
@@ -2570,7 +2570,7 @@ namespace NCCFile
 
     public class NCCFileWriter : IDisposable   // doesn't follow the neutron data file class hierarchy at all
     {
-        public LMLoggers.LognLM Log { set; get; }
+        public Logging.Log Log { set; get; }
 
         /// <summary>
         /// Name of NCC file
@@ -2921,7 +2921,7 @@ namespace NCCFile
     public static class ExternalMergeSort
     {
 
-        public static LMLoggers.LognLM Logger;
+        public static Logging.Log Logger;
 
         public static int sizeFromMB(int mb)
         {
@@ -3755,23 +3755,18 @@ namespace NCCFile
 
         List<string> Extensions;
 
-        LMLoggers.LognLM log;
-
-        public FileList(List<string> ext, LMLoggers.LognLM log)
-        {
-            this.log = log;
-            Extensions = new List<string>(ext);
-            state = new FileListState();
-        }
-
         public FileList()
         {
             Extensions = new List<string>();
             state = new FileListState();
         }
-        public void Init(List<string> ext, LMLoggers.LognLM log)
+        public FileList(List<string> ext)
         {
-            this.log = log;
+            Extensions = new List<string>(ext);
+            state = new FileListState();
+        }
+        public void Init(List<string> ext)
+        {
             Extensions = new List<string>(ext);
             state = new FileListState();
         }
@@ -3832,14 +3827,14 @@ namespace NCCFile
 						   select f;
 				//if (compressedPerhaps)
 				//{
-				//	log.TraceInformation(dir + " might be compressed, or not. The API is ambiguous");
+				//	.TraceInformation(dir + " might be compressed, or not. The API is ambiguous");
 				//}
 			}
 
 			FileList<T> files = null;
 			if (!folder && !singlefile)
 			{
-				log.TraceInformation(dir + " cannot be processed, folder or file not found");
+				NC.App.ControlLogger.TraceInformation(dir + " cannot be processed, folder or file not found");
 				none = true;
 			} else if (folder)
 			{
@@ -3848,24 +3843,24 @@ namespace NCCFile
 					string s = string.Empty;
 					Extensions.ForEach(i => s += i + ", ");
 					s = s.TrimEnd(new char[] { ' ', ',' });
-					log.TraceInformation("No {0} files found in {1}, . . .", s, dir);
+                    NC.App.ControlLogger.TraceInformation("No {0} files found in {1}, . . .", s, dir);
 					none = true;
 				}
 				if (!none)
 				{
 					if (recurse)
-						log.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
+                        NC.App.ControlLogger.TraceInformation("Processing {0} files from {1} and its subfolders", effs.Count(), dir);
 					else
-						log.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
+                        NC.App.ControlLogger.TraceInformation("Processing {0} files in {1}", effs.Count(), dir);
 				}
 			} else if (singlefile)
 			{
 				if (effs == null || (effs.Count() <= 0))
 				{
-					log.TraceInformation("{0} cannot be processed, . . .", dir);
+                    NC.App.ControlLogger.TraceInformation("{0} cannot be processed, . . .", dir);
 					none = true;
 				} else
-					log.TraceInformation("Processing {0}", dir);
+                    NC.App.ControlLogger.TraceInformation("Processing {0}", dir);
 			}
 
 			if (NC.App.Opstate.IsQuitRequested)  // cancellation allowed only in between files
@@ -3874,14 +3869,14 @@ namespace NCCFile
 			if (none)
 				return null;
 
-			files = new FileList<T>(Extensions, log);
+			files = new FileList<T>(Extensions);
 
 			files.state.cur = 0;
 			// Show files and build list
 			foreach (var f in effs)
 			{
 				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
-				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
 				T n = new T();
 				n.Log = NC.App.DataLogger;
 				n.Num = files.state.cur++;
@@ -3903,14 +3898,14 @@ namespace NCCFile
 		public List<T> BuildFileList(List<string> ufiles)
         {
 
-            FileList<T> files = new FileList<T>(Extensions, log);
+            FileList<T> files = new FileList<T>(Extensions);
 
             files.state.cur = 0;
             // Show files and build list
             foreach (string f in ufiles)
             {
                 string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
-                log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
                 T n = new T();
                 n.Log = NC.App.DataLogger;
                 n.Num = files.state.cur++;

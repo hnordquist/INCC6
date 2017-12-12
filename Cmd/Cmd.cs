@@ -77,13 +77,12 @@ namespace NCCCmd
 				return;
 			}
 
-            LMLoggers.LognLM applog = N.App.ControlLogger;
 			bool OpenResults = N.App.AppContext.OpenResults;
 			try
 			{
-				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
-				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
-                applog.TraceEvent(LogLevels.Info, 16161, "==== Logging to " + LMLoggers.LognLM.CurrentLogFilePath);
+                N.App.ControlLogger.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
+                N.App.ControlLogger.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
+                N.App.ControlLogger.TraceEvent(LogLevels.Info, 16161, "==== Logging to " + Logging.Log.CurrentLogFilePath);
                 // These affect the current acquire state, so they occur here and not earlier in the initial processing sequence
                 if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
@@ -158,15 +157,15 @@ namespace NCCCmd
 			} catch (Exception e)
 			{
 				N.App.Opstate.SOH = NCC.OperatingState.Trouble;
-				applog.TraceException(e, true);
-				applog.EmitFatalErrorMsg();
+                N.App.AppLogger.TraceException(e, true);
+                N.App.AppLogger.EmitFatalErrorMsg();
 			} finally
 			{
 				N.App.Opstate.SOH = NCC.OperatingState.Stopped;
 				N.App.Config.RetainChanges();
-				applog.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " . . .");
+                N.App.AppLogger.TraceInformation("==== Exiting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " . . .");
 				N.App.Loggers.Flush();  
-                if (OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), LMLoggers.LognLM.CurrentLogFilePath);
+                if (OpenResults) Process.Start(System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe"), Logging.Log.CurrentLogFilePath);
             }
 		}
 

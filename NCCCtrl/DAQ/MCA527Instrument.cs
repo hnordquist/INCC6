@@ -99,7 +99,7 @@ namespace Instr
         /// </summary>
         /// <param name="dataLog">The data log.</param>
         /// <param name="analysisLog">The analysis log.</param>
-        public override void Init(LMLoggers.LognLM dataLog, LMLoggers.LognLM analysisLog)
+        public override void Init(Logging.Log dataLog, Logging.Log analysisLog)
         {
             if (RDT == null) {
                 RDT = new MCA527RawDataTransform();
@@ -552,7 +552,7 @@ namespace Instr
 
 				/// begin TakeMeasurement
 				measurement.Cycles.Clear();
-				Cycle cycle = new Cycle(m_logger);
+				Cycle cycle = new Cycle();
                 cycle.UpdateDataSourceId(DetectorDefs.ConstructedSource.Live, DetectorDefs.InstrType.MCA527, DateTimeOffset.Now, string.Empty);
 				measurement.Add(cycle);
                 RDT.StartCycle(cycle);
@@ -781,7 +781,7 @@ namespace Instr
 
         private CancellationTokenSource m_cancellationTokenSource;
         private MCADevice m_device;
-        private LMLoggers.LognLM m_logger = NC.App.CollectLogger;
+        private Logging.Log m_logger = NC.App.CollectLogger;
         private object m_monitor = new object();
         private ushort m_voltage;
         private bool m_setvoltage;

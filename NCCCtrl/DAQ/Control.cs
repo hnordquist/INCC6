@@ -206,7 +206,7 @@ namespace DAQ
                 lmn = lmc.NetComm;
 
                 _SL = new Server(lmn.Port, lmn.NumConnections, lmn.ReceiveBufferSize, lmn.subnetip);
-                _SL.Logger = collog;
+                _SL.Logger = NC.App.CollectLogger;
                 LMMMComm.LMServer = _SL;  // server root visible to COMM class 
                 _SL.clientConnected += SL_ClientConnected;
                 _SL.DataReceived += SL_DataReceived;
@@ -214,7 +214,7 @@ namespace DAQ
 
             if (_SL.IsRunning)
             {
-                ctrllog.TraceEvent(LogLevels.Verbose, 123, "The LM DAQ Server is already running");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 123, "The LM DAQ Server is already running");
                 return;
             }
             else
@@ -268,7 +268,7 @@ namespace DAQ
 					{
 						if (!CheckCOMPortExistence(sri.id.SerialPort))  // if not found then emit error
 						{
-							collog.TraceInformation("The COM port {0} is no longer available. Instrument {1} cannot be connected. Please set a valid COM port.", sri.id.SerialPort.ToString(), sri.id.DetectorId);
+							NC.App.CollectLogger.TraceInformation("The COM port {0} is no longer available. Instrument {1} cannot be connected. Please set a valid COM port.", sri.id.SerialPort.ToString(), sri.id.DetectorId);
 							string[] ports = System.IO.Ports.SerialPort.GetPortNames(); // "COMnnn"
 							string ps = string.Empty;
 							if (ports.Length == 0)
@@ -281,14 +281,14 @@ namespace DAQ
 									ps += (" " + p + ",");
 								}
 							}
-							collog.TraceInformation(ps);
+							NC.App.CollectLogger.TraceInformation(ps);
 							sri.selected = false;
 						} else
 							found = true;
 					}
 				} catch (Exception ex)
 				{
-					collog.TraceException(ex);
+					NC.App.CollectLogger.TraceException(ex);
 				}
 				if (!found)
 				{
@@ -363,7 +363,7 @@ namespace DAQ
         /// <param name="removeCurLMDataFile">delete the current LM data files created for the current interval</param>
         private void StopLMCAssay(bool removeCurLMDataFile)
         {
-            collog.TraceEvent(LogLevels.Info, 0, "Stopping assay...");
+            NC.App.CollectLogger.TraceEvent(LogLevels.Info, 0, "Stopping assay...");
             CurState.State = DAQInstrState.Online;
 
             // stop each instrument in the active list
@@ -388,13 +388,13 @@ namespace DAQ
                 else if (active is SRInstrument)
                 {
                     // tell the SR thread handler to cancel it
-                    ctrllog.TraceInformation("Stop SR {0}", active.id.Identifier());
+                    NC.App.ControlLogger.TraceInformation("Stop SR {0}", active.id.Identifier());
                     SRWrangler.StopThread(active as SRInstrument, true);
                     active.DAQState = DAQInstrState.Offline;
                 }
             }
 
-            ctrllog.TraceInformation("Assay cancelled");
+            NC.App.ControlLogger.TraceInformation("Assay cancelled");
             NC.App.Loggers.Flush();
         }
 
@@ -431,7 +431,7 @@ namespace DAQ
         /// </summary>
         private int StartLM_SRAssay()
         {
-            collog.TraceEvent(LogLevels.Info, 0, "Starting assay...");
+            NC.App.CollectLogger.TraceEvent(LogLevels.Info, 0, "Starting assay...");
 
             CurState.Measurement.CurrentRepetition++;
             CurState.State = DAQInstrState.ReceivingData;
@@ -447,22 +447,22 @@ namespace DAQ
             {
                 if (active is SRInstrument)
                 {
-                    ctrllog.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.Identifier());
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 999333, "Got SR {0} here", (active as SRInstrument).id.Identifier());
                 }
                 active.DAQState = DAQInstrState.ReceivingData;
 
-                Cycle cycle = new Cycle(ctrllog);
+                Cycle cycle = new Cycle();
                 cycle.SetUpdatedDataSourceId(active.id); // where the cycle came from, but with updated timestamp
                 CurState.Measurement.Add(cycle);  // todo: this mixes the cycles from the different instruments onto one list, gotta change this now that we are at more than one instrument, well you can simply write iterators that select on specific instrument Ids, over the entire list, or use LINQ select * where dsid == whatever syntax on the list
-                ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0} init", cycle.seq);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0} init", cycle.seq);
 
                 // devnote: file writing is selectable via the UI, and raw analysis should be independently
                 // start the file capture
                 if (active is LMInstrument)
                 {
-                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
+                    NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), NC.App.CollectLogger);
                     active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for LMMM
-                    ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
+                    NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
                  }
                 else
                     active.RDT.StartCycle(cycle);
@@ -504,7 +504,7 @@ namespace DAQ
                     instrument.StartAssay(CurState.Measurement);
                 }
                 catch (Exception ex) {
-                    collog.TraceException(ex);
+                    NC.App.CollectLogger.TraceException(ex);
                 }
             }
 
@@ -556,12 +556,12 @@ namespace DAQ
             if (Instruments.Active.Count < 1)
             {
                 CurState.Measurement.CurrentRepetition--;
-                ctrllog.TraceEvent(LogLevels.Warning, 46, "No active instruments available now");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 46, "No active instruments available now");
             }
             else if (hasSR && !srgood)
             {
                 CurState.Measurement.CurrentRepetition--;
-                ctrllog.TraceEvent(LogLevels.Warning, 46, "No Shift Register is available now");
+                NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 46, "No Shift Register is available now");
             }
             else
             {
@@ -570,13 +570,13 @@ namespace DAQ
                     if (Instruments.Active.Count > 1)
                     {
                         if (Instruments.Active.Count != Instruments.All.Count)
-                            ctrllog.TraceInformation("Using " + Instruments.Active.Count + " of " + Instruments.All.Count + " instruments");
+                            NC.App.ControlLogger.TraceInformation("Using " + Instruments.Active.Count + " of " + Instruments.All.Count + " instruments");
                         else
-                            ctrllog.TraceInformation("Using " + Instruments.Active.Count + " instruments");
+                            NC.App.ControlLogger.TraceInformation("Using " + Instruments.Active.Count + " instruments");
                     }
                     else
                     {
-                        ctrllog.TraceInformation("Using one instrument");
+                        NC.App.ControlLogger.TraceInformation("Using one instrument");
                     }
                 }
 
@@ -585,12 +585,12 @@ namespace DAQ
                     str += "a continuous assay starting";
                 else
                     str += (CurState.Measurement.RequestedRepetitions + " cycles starting");
-                ctrllog.TraceInformation(str);
+                NC.App.ControlLogger.TraceInformation(str);
             }
             if (Instruments.Active.Count > 0)
             { 
                 FireEvent(EventType.ActionInProgress, this);
-                collog.TraceEvent(LogLevels.Verbose, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
+                NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 0, "Started assay with {0} instrument{1}", Instruments.Active.Count, (Instruments.Active.Count > 1 ? "s" : ""));
             }
             return Instruments.Active.Count;
         }
@@ -607,7 +607,7 @@ namespace DAQ
             return ms.ToString();
         }
 
-		public static string LogAndSkimDAQProcessingStatus(EventType EH, LMLoggers.LognLM log, LogLevels lvl, object o)
+		public static string LogAndSkimDAQProcessingStatus(EventType EH, Logging.Log log, LogLevels lvl, object o)
 		{
 			LoggableDAQProcessingStatus(EH,log,lvl,o);
 			return SuccinctDAQProcessingStatus(o);
@@ -632,7 +632,7 @@ namespace DAQ
             }
             return s;
 		}
-        public static string LoggableDAQProcessingStatus(EventType EH, LMLoggers.LognLM log, LogLevels lvl, object o)
+        public static string LoggableDAQProcessingStatus(EventType EH, Logging.Log log, LogLevels lvl, object o)
         {
             string s = String.Empty;
             if (o != null)

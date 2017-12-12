@@ -34,7 +34,7 @@ using NCCReporter;
 using NCCTransfer;
 namespace NewUI
 {
-	using N = NCC.CentralizedState;
+	
 	public partial class TransferList : Form
     {
 
@@ -50,7 +50,7 @@ namespace NewUI
 			LoadList();
         }
 
-        protected LMLoggers.LognLM ctrllog;
+        protected NCCReporter.Logging.Log ctrllog;
         SortOrder[] cols;
         public bool bGood = false;
 

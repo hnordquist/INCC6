@@ -86,7 +86,6 @@ namespace NewUI
         }
 
 		private List<Measurement> mlist;
-		protected LMLoggers.LognLM ctrllog;
 		SortOrder[] cols;
 
 		bool AllMeas = false; // true means all measurements, false means the specified option type
@@ -141,7 +140,6 @@ namespace NewUI
 				else
 					mlist.RemoveAll(EmptyINCC5File);  // cull those with traditional INCC5 results
 			}
-			ctrllog = N.App.ControlLogger;
 			if (mlist.Count == 0)
 			{
 				string msg = string.Format("No {0}measurements for {1} found.", TypeTextFragment(filter), det == null ? "any" : det.Id.DetectorId);
@@ -303,7 +301,7 @@ namespace NewUI
 							tx.WriteLine(entry);
 						}
 						tx.Close();
-						ctrllog.TraceInformation("Summary written to " + dlg.FileName);
+                        N.App.ControlLogger.TraceInformation("Summary written to " + dlg.FileName);
 					} catch (IOException ex)
 					{
 						MessageBox.Show(ex.Message, "Error on " + dlg.FileName);
@@ -331,9 +329,9 @@ namespace NewUI
 						if (File.Exists(path))
 							System.Diagnostics.Process.Start(notepadPath, path);
 						else if (!string.IsNullOrEmpty(path))
-							ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
 						else
-							ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Error, 22222, "No file path");
 					}
 					lvi.Selected = false;
 				}
@@ -356,16 +354,16 @@ namespace NewUI
                         m.ReportRecalc();
                     }
                     m.ResultsFiles.Reset();
-                    new ReportMangler(ctrllog).GenerateReports(m);
+                    new ReportMangler(N.App.ControlLogger).GenerateReports(m);
                     if (!N.App.AppContext.OpenResults && bNotepadHappensToBeThere)  // opened in GenerateReports if true flag App.AppContext.OpenResults
                     {
                         string path = GetMainFilePath(m.ResultsFiles, m.MeasOption, false);
                         if (File.Exists(path))
                             System.Diagnostics.Process.Start(notepadPath, path);
                         else if (!string.IsNullOrEmpty(path))
-                            ctrllog.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Error, 22222, "The file path '" + path + "' cannot be accessed.");
                         else
-                            ctrllog.TraceEvent(LogLevels.Error, 22222, "No file path");
+                            N.App.ControlLogger.TraceEvent(LogLevels.Error, 22222, "No file path");
                     }
                     lvi.Selected = false;
                 }

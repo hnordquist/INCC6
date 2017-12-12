@@ -34,14 +34,11 @@ namespace AnalysisDefs
 
     public class ReportMangler
     {
-        public ReportMangler(LMLoggers.LognLM ctrllog)
+        public ReportMangler(Logging.Log log)
         {
-            this.ctrllog = ctrllog;
             INCCResultsReports = new List<List<string>>();
             TestDataFiles = new List<List<string>>();
         }
-
-        LMLoggers.LognLM ctrllog;
 
         // list of reports preserved for use by UI
         public List<List<string>> INCCResultsReports;
@@ -56,11 +53,11 @@ namespace AnalysisDefs
         {
             if (m.Detector.ListMode) // generate list mode report if it is list mode, hey!
 			{
-				RawAnalysisReport rep = new RawAnalysisReport(ctrllog);
+				RawAnalysisReport rep = new RawAnalysisReport(NC.App.ControlLogger);
 				rep.GenerateReport(m);
 				ResultsReport = rep.replines;
 			}
-            MethodResultsReport mrep = new MethodResultsReport(ctrllog);
+            MethodResultsReport mrep = new MethodResultsReport(NC.App.ControlLogger);
 			mrep.ApplyReportSectionSelections(m.AcquireState.review.Selections);
             mrep.GenerateReport(m);
             foreach (List<string> r in mrep.INCCResultsReports)
@@ -69,7 +66,7 @@ namespace AnalysisDefs
             }
             if (NC.App.AppContext.CreateINCC5TestDataFile)
             { 
-                TestDataFile mdat = new TestDataFile(ctrllog);
+                TestDataFile mdat = new TestDataFile(NC.App.ControlLogger);
                 mdat.GenerateReport(m);
                 foreach (List<string> r in mdat.INCCTestDataFiles)
                 {
@@ -104,7 +101,7 @@ namespace AnalysisDefs
 			if (string.IsNullOrEmpty(notepadPath))
 			{
 				notepadPath = System.IO.Path.Combine(Environment.SystemDirectory, "notepad.exe");
-				bNotepadHappensToBeThere =  System.IO.File.Exists(notepadPath);
+				bNotepadHappensToBeThere = System.IO.File.Exists(notepadPath);
 			}
 		}
     }
@@ -113,12 +110,10 @@ namespace AnalysisDefs
     public class SimpleReport
     {
 
-        public SimpleReport(LMLoggers.LognLM ctrllog)
+        public SimpleReport(Logging.Log log)
         {
-            this.ctrllog = ctrllog;
         }
 
-        protected LMLoggers.LognLM ctrllog;
         protected TabularReport t;
         protected Measurement meas;
         protected List<Section> sections;
@@ -173,7 +168,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                NC.App.ControlLogger.TraceException(e);
             }
         }
 
@@ -193,7 +188,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                ctrllog.TraceException(e);
+                NC.App.ControlLogger.TraceException(e);
             }
             finally
             {

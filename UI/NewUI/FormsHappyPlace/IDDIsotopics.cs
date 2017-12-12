@@ -95,7 +95,6 @@ namespace NewUI
         public IDDIsotopics(string selected = "default")
         {
             InitializeComponent();
-            applog = NC.App.AppLogger;
             acq = Integ.GetCurrentAcquireParams();
             if (string.IsNullOrEmpty(selected) || string.Compare(selected, "default",true) == 0)
             {
@@ -399,7 +398,7 @@ namespace NewUI
 				iso.modified = true;
 				if (NC.App.DB.Isotopics.Set(iso) >= 0)
 				{
-					applog.TraceInformation("'" + iso.id + "' isotopics updated/added");
+                    NC.App.AppLogger.TraceInformation("'" + iso.id + "' isotopics updated/added");
 				}
 			}
 			int count = possibleIsoAndCompIsoFilesToAttemptProcessingUpon.Results.IsoIsotopics.Count;
@@ -446,9 +445,9 @@ namespace NewUI
                     NC.App.DB.Isotopics.Revert(m_iso);  // revert originating selection on in-memory list back to DB values
 
 					//PopulateWithSelectedItem();
-                    NC.App.DB.Isotopics.GetList().Add(iso);				
-					// do not add to database until the OK or the Save set button is selected NC.App.DB.Isotopics.Set(m_iso);
-                    applog.TraceInformation("New isotopics " + iso.id + " (not saved to database)");
+                    NC.App.DB.Isotopics.GetList().Add(iso);
+                    // do not add to database until the OK or the Save set button is selected NC.App.DB.Isotopics.Set(m_iso);
+                    NC.App.AppLogger.TraceInformation("New isotopics " + iso.id + " (not saved to database)");
                     IsotopicsIdComboBox.Items.Add(iso.id);
                     IsotopicsIdComboBox.SelectedItem = iso.id;  // force m_iso assignment in event handler
 				}
@@ -478,7 +477,7 @@ namespace NewUI
                     foreach (Isotopics iso in list)
                     {
                         long pk = NC.App.DB.Isotopics.Set(iso);				// add to database 
-                        applog.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
+                        NC.App.AppLogger.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
                     }
                     modified = false;
                 }
@@ -499,7 +498,7 @@ namespace NewUI
                 {
                     IsotopicsIdComboBox.Items.Remove(oldId);
                     IsotopicsIdComboBox.Items.Add(m_iso.id);
-                    applog.TraceInformation("Renamed " + oldId + " to " + m_iso.id);
+                    NC.App.AppLogger.TraceInformation("Renamed " + oldId + " to " + m_iso.id);
                     IsotopicsIdComboBox.SelectedItem = m_iso.id;
                     //PopulateWithSelectedItem();
                 }
@@ -514,11 +513,11 @@ namespace NewUI
             {
                 if (NC.App.DB.Isotopics.Delete(m_iso)) // deletes from in-memory list and database
                 {
-                    applog.TraceInformation("Deleted " + m_iso.id + " isotopics");
+                    NC.App.AppLogger.TraceInformation("Deleted " + m_iso.id + " isotopics");
                     RefreshIdComboWithDefaultOrSet();
                 }
                 else
-                    applog.TraceInformation("Unable to delete " + m_iso.id + " isotopics");
+                    NC.App.AppLogger.TraceInformation("Unable to delete " + m_iso.id + " isotopics");
             }
         }
 
@@ -555,7 +554,6 @@ namespace NewUI
 
 		Isotopics m_iso;
         AcquireParameters acq;
-        NCCReporter.LMLoggers.LognLM applog;
 
         const double isomin = 99.7;
         const double isomax = 100.3;

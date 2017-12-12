@@ -49,15 +49,16 @@ namespace NCCReporter
         {
 
         }
-    }
 
-    public class Log : LMLoggers.LognLM
-    {
-        public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+        public class Log : LognLM
         {
+            public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+            {
 
+            }
         }
     }
+
 
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
     // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
@@ -69,22 +70,22 @@ namespace NCCReporter
         Hashtable reps = null;
         NCCConfig.Config cfg = null;
 
-        public LognLM Logger(AppSection wp)
+        public Logging.Log Logger(AppSection wp)
         {
-            return (LognLM)reps[wp];
+            return (Logging.Log)reps[wp];
         }
 
-        public LognLM AppLogger
+        public Logging.Log AppLogger
         {
-            get { return (LognLM)reps[AppSection.App]; }
+            get { return (Logging.Log)reps[AppSection.App]; }
         }
-        public LognLM DataLogger
+        public Logging.Log DataLogger
         {
-            get { return (LognLM)reps[AppSection.Data]; }
+            get { return (Logging.Log)reps[AppSection.Data]; }
         }
-        public LognLM ControlLogger
+        public Logging.Log ControlLogger
         {
-            get { return (LognLM)reps[AppSection.Control]; }
+            get { return (Logging.Log)reps[AppSection.Control]; }
         }
         public LMLoggers(NCCConfig.Config cfg)
         {
@@ -95,7 +96,7 @@ namespace NCCReporter
 
             foreach (AppSection wp in a)
             {
-                Log l = new Log(wp.ToString(), cfg, pid);
+                Logging.Log l = new Logging.Log(wp.ToString(), cfg, pid);
                 reps.Add(wp, l);
             }
             DB.DBMain.ConsoleQuiet = cfg.App.Quiet;
@@ -105,7 +106,7 @@ namespace NCCReporter
         {
             foreach (AppSection a in Enum.GetValues(typeof(AppSection)))
             {
-                Log l = (Log)reps[a];
+                Logging.Log l = (Logging.Log)reps[a];
                 if (l != null)
                 {
                     l.TS.Flush();
@@ -115,7 +116,7 @@ namespace NCCReporter
 
         public void UpdateFilterLevel(ushort v)
         {
-            foreach (Log l in reps.Values)
+            foreach (Logging.Log l in reps.Values)
             {
                 l.TS.Switch.Level = cfg.App.Level();
             }
