@@ -146,6 +146,7 @@ Closed issues
 ***  Default daily log file location is now in user Documents or AppData\Local\Temp, cmd line switch available
 ***  Log file name emitted on console and GUI log list view
 ***  Use notepad to open log and generated text files on double click in log list view
+***  SQLite runtime upgrade to 1.0.6
 
 6.18 Mar 23, 2017  ************
 ***  Clean up logger API style

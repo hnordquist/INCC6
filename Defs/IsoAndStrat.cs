@@ -291,7 +291,7 @@ namespace AnalysisDefs
         /// <returns>updated isotopics</returns>
         public static Isotopics update_isotopics(double PuMass, /* mass of item */
                                 DateTimeOffset ref_date, /* date to update to */
-                                Isotopics curiso, NCCReporter.Logging.Log logger, bool INCCParity)
+                                Isotopics curiso, NCCReporter.LMLoggers.LognLM logger, bool INCCParity)
         {
 
             double ref_days;
