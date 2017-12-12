@@ -105,7 +105,7 @@ namespace NewUI
             {
                 string msg = string.Format("No '{0}' {1} {2} measurements found", Material, AnalysisMethod.FullName(), mopt.PrintName());
                 MessageBox.Show(msg, "Verification measurements", MessageBoxButtons.OK);
-                N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 3363, msg);
+                N.App.ControlLogger.TraceEvent(LogLevels.Warning, 3363, msg);
                 return false;
             }
             LoadList();

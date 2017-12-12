@@ -77,36 +77,35 @@ namespace NCCCmd
 
         public void SetupEventHandlers()
         {
-            LMLoggers.LognLM applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
             /// set up the 7 magic event handlers
             /// here I have a base handler that does the same thing for every event (writes a string to the log) 
             SetEventHandler(EventType.PreAction, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.PreAction, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.PreAction, NC.App.AppLogger, LogLevels.Verbose, o);
             });
             SetEventHandler(EventType.ActionPrep, (object o) =>
             {
-				string s = LogAndSkimDAQProcessingStatus(EventType.ActionPrep, applog, LogLevels.Verbose, o);
+				string s = LogAndSkimDAQProcessingStatus(EventType.ActionPrep, NC.App.AppLogger, LogLevels.Verbose, o);
             });
             SetEventHandler(EventType.ActionStart, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStart, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStart, NC.App.AppLogger, LogLevels.Verbose, o);
             });
             SetEventHandler(EventType.ActionInProgress, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionInProgress, NC.App.AppLogger, LogLevels.Verbose, o);
             });
             SetEventHandler(EventType.ActionStop, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStop, applog, LogLevels.Info, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionStop, NC.App.AppLogger, LogLevels.Info, o);
             });
             SetEventHandler(EventType.ActionCancel, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionCancel, applog, LogLevels.Warning, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionCancel, NC.App.AppLogger, LogLevels.Warning, o);
             });
             SetEventHandler(EventType.ActionFinished, (object o) =>
             {
-                string s = LogAndSkimDAQProcessingStatus(EventType.ActionFinished, applog, LogLevels.Info, o);
+                string s = LogAndSkimDAQProcessingStatus(EventType.ActionFinished, NC.App.AppLogger, LogLevels.Info, o);
                 NC.App.Opstate.SOH = OperatingState.Stopped;  // in case we got here after a Cancel
                 NC.App.Loggers.Flush();
             });

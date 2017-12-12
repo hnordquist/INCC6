@@ -23,6 +23,7 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+using NDesk.Options;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,13 +34,13 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using System.Resources;
+using System.Text;
 using System.Text.RegularExpressions;
-using NDesk.Options;
 
 namespace NCCConfig
 {
 
-	public partial class Config
+    public partial class Config
     {
 
         public AppContextConfig App
@@ -126,16 +127,16 @@ namespace NCCConfig
             get { return _defaultreportsectional; }
         }
 
-        public struct CmdParams { public object val; public bool set; public System.Type type; public bool sticky;}
+        public struct CmdParams { public object val; public bool set; public Type type; public bool sticky;}
 
         private Hashtable _parms;
         private string[] _args;
 
         public static Hashtable ParameterBasis()
         {
-            Hashtable x = new Hashtable(System.Enum.GetValues(typeof(NCCFlags)).Length);
+            Hashtable x = new Hashtable(Enum.GetValues(typeof(NCCFlags)).Length);
 
-            foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+            foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
             {
                 CmdParams f = new CmdParams();
                 x.Add(e, f);
@@ -154,6 +155,27 @@ namespace NCCConfig
             _parms = ParameterBasis();  // alloc table
             db = new DBConfig(_parms);  // set up DB config
             ReadAppSettings(); // get the DB settings
+        }
+
+        public void BeforeDBSetup(string[] args)
+        {
+            // find the database overrride flag and apply it
+            foreach (string a in args)
+            {
+                if (a.Contains("DBDataSource"))
+                {
+                    string[] e = a.Split(new char[] { '=', ':' });
+                    if (e.Length > 1)
+                    {
+                        string res = DBConfig.ReplaceDataSourceInSQLiteConnectionString(e[1], db.MyDBConnectionString);
+                        if (!string.IsNullOrEmpty(res) && !res.Equals(db.MyDBConnectionString))
+                        {
+                            db.MyDBConnectionString = res;
+                            Console.WriteLine("Using database at " + db.DBDataSource);
+                        }
+                    }
+                }
+            }
         }
 
         public void AfterDBSetup(AppContextConfig appctx, string[] args)
@@ -196,7 +218,7 @@ namespace NCCConfig
 
             string[] x = new string[500];
             int ix = 0;
-            System.Configuration.Configuration config =
+            Configuration config =
               ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             x[ix++] = "";
 
@@ -374,7 +396,7 @@ namespace NCCConfig
                 if (an.Name.Equals("RepDB") || an.Name.Equals("NCCCore") || an.Name.Equals("NCCCtrl") || an.Name.Equals("Defs") ||
                     an.Name.Equals("INCCCmd") || an.Name.Equals("INCC6"))  // todo: this hack needs redeeming: the list can and will change
                 {
-                    System.Reflection.AssemblyName[] ann = a.GetReferencedAssemblies();
+                    AssemblyName[] ann = a.GetReferencedAssemblies();
                     foreach (AssemblyName ns in ann)
                     {
                         fullset.Add(ns.FullName);
@@ -399,7 +421,7 @@ namespace NCCConfig
             try
             {
                 // save changed entries
-                foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+                foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
                 {
                     CmdParams f = (CmdParams)_parms[e];
                     if (f.set && f.sticky)
@@ -413,11 +435,11 @@ namespace NCCConfig
                 if (gottawrite)
                 {
                     // Get the application configuration file.
-                    System.Configuration.Configuration config =
+                    Configuration config =
                       ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
                     // do a remove and add only on those that actually change, not the entire damn thing
-                    foreach (NCCFlags e in System.Enum.GetValues(typeof(NCCFlags)))
+                    foreach (NCCFlags e in Enum.GetValues(typeof(NCCFlags)))
                     {
                         CmdParams f = (CmdParams)_parms[e];
                         if (f.set && f.sticky)
@@ -482,8 +504,8 @@ namespace NCCConfig
 
                 if (appSettings.Count <= 0)
                 {
-                    Assembly exa = System.Reflection.Assembly.GetExecutingAssembly();
-                    Assembly ena = System.Reflection.Assembly.GetEntryAssembly();
+                    Assembly exa = Assembly.GetExecutingAssembly();
+                    Assembly ena = Assembly.GetEntryAssembly();
                     ResourceManager rm = new ResourceManager("DB.Properties.Resources", exa);  // LMConfig
                     // now write the file using the exe name
                     string f2 = rm.GetString("AppConfig");
@@ -494,7 +516,7 @@ namespace NCCConfig
                         Console.WriteLine("No application configuration file found, creating the file {0}, retry your operation", f3);
 
                         // Create the file
-                        using (System.IO.StreamWriter sw = System.IO.File.CreateText(f3))
+                        using (StreamWriter sw = File.CreateText(f3))
                         {
                             sw.Write(f2);  // write the XML
                         }
@@ -511,22 +533,16 @@ namespace NCCConfig
                 {
 
                     NCCFlags t = (NCCFlags)i;
-                    Config.CmdParams x = ((Config.CmdParams)_parms[t]);
+                    CmdParams x = ((CmdParams)_parms[t]);
 
                     // dev note: funky type switch thang, must be a better way with reflection or something eh?
-                    string v = (string)appSettings[t.ToString()];
+                    string v = appSettings[t.ToString()];
                     if (v != null)
                     {
                         if (x.type == typeof(int))
                         {
-                            Int32 res = 0;
-                            Int32.TryParse(v, out res);
-                            x.val = res;
-                        }
-                        if (x.type == typeof(int))
-                        {
-                            Int32 res = 0;
-                            Int32.TryParse(v, out res);
+                            int res = 0;
+                            int.TryParse(v, out res);
                             x.val = res;
                         }
                         else if (x.type == typeof(bool))
@@ -541,17 +557,23 @@ namespace NCCConfig
                         }
                         else if (x.type == typeof(ushort))
                         {
-                            UInt16 res = 0;
-                            UInt16.TryParse(v, out res);
+                            ushort res = 0;
+                            ushort.TryParse(v, out res);
                             x.val = res;
                         }
                         else if (x.type == typeof(uint))
                         {
-                            UInt32 res = 0;
-                            UInt32.TryParse(v, out res);
+                            uint res = 0;
+                            uint.TryParse(v, out res);
                             x.val = res;
                         }
-                        else // dev note: oughta noughta evah get here
+                        else if (x.type == typeof(double))
+                        {
+                            double res = 0;
+                            double.TryParse(v, out res);
+                            x.val = res;
+                        }
+                        else // dev note: cannot get here
                             x.val = v;
                     }
                     x.set = false; _parms[t] = x;
@@ -595,7 +617,7 @@ namespace NCCConfig
         {
             return (Config.CmdParams)_parms[t];
         }
-        protected void resetVal(NCCFlags f, object c, System.Type t, bool retain = true)
+        protected void resetVal(NCCFlags f, object c, Type t, bool retain = true)
         {
             Config.CmdParams x = ((Config.CmdParams)_parms[f]);
             x.val = c; x.set = false; x.type = t; x.sticky = retain; _parms[f] = x;
@@ -614,25 +636,23 @@ namespace NCCConfig
             if (string.IsNullOrEmpty(raw))
                 return "";
 			char[] charsToTrim = { '\"', '\'' };
-            //string thawed = raw.Trim();
-            string warmed = raw.Trim(charsToTrim);
-            return warmed;
+            return raw.Trim(charsToTrim);
         }
     }
 
     public class AppContextConfig : ConfigHelper
     {
         public const string AppName = AssemblyConstants.ShortAssemblyProduct;
-            
+
         public static string GetVersionString()
         {
-			Assembly a = Assembly.GetEntryAssembly();
+            Assembly a = Assembly.GetEntryAssembly();
             Version MyVersion = a.GetName().Version;
-			string result = MyVersion.ToString();
+            string result = MyVersion.ToString();
             string branch = GetVersionBranchString(a);
             if (!string.IsNullOrEmpty(branch))
                 result = result + " " + branch;
-            return result;
+            return result + " UNVALIDATED!";
             // MyVersion.Build = days after 2000-01-01
             // MyVersion.Revision*2 = seconds after 0-hour  (NEVER daylight saving time)
         }
@@ -654,17 +674,17 @@ namespace NCCConfig
         }
 
         static public string EightCharConvert(DateTimeOffset dto)
-		{
-			char[] table = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-			string y = dto.ToString("yy");
-			char Y = y[y.Length-1];
-			string M = string.Format("{0:X1}", dto.Month);
-			char D = table[dto.Day];
-			char H = table[dto.Hour + 10];
-			string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
+        {
+            char[] table = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+            string y = dto.ToString("yy");
+            char Y = y[y.Length - 1];
+            string M = string.Format("{0:X1}", dto.Month);
+            char D = table[dto.Day];
+            char H = table[dto.Hour + 10];
+            string s = Y + M + D + H + dto.Minute.ToString("00") + dto.Second.ToString("00");
 
-			return s;
-		}
+            return s;
+        }
 
 
         public AppContextConfig()
@@ -678,9 +698,10 @@ namespace NCCConfig
 
             resetVal(NCCFlags.root, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.dailyRootPath, false, typeof(bool));
- 
+            resetVal(NCCFlags.rootUserDoc, false, typeof(bool), retain: true);
+
             resetVal(NCCFlags.logging, false, typeof(bool));
-            //resetVal(LMFlags.logAutoPath, false, typeof(bool));
+            resetVal(NCCFlags.quiet, false, typeof(bool));
             resetVal(NCCFlags.logDetails, (int)TraceOptions.None, typeof(int));
             resetVal(NCCFlags.level, (ushort)4, typeof(ushort));
             resetVal(NCCFlags.rolloverIntervalMin, 30, typeof(int));
@@ -692,8 +713,13 @@ namespace NCCConfig
             resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
+<<<<<<< HEAD
+            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
+=======
+            resetVal(NCCFlags.logLocation, Config.DefaultPath + "\\6.log", typeof(string));
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
-          
+
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
 
             resetVal(NCCFlags.emulatorapp, Config.DefaultPath, typeof(string));
@@ -706,6 +732,8 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCParity, true, typeof(bool), retain: true);
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.datazConvert, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -743,7 +771,7 @@ namespace NCCConfig
             tracelevelmap.Add((ushort)5, /*LogLevels*/TraceEventType.Verbose);
         }
 
-        public List<string> FileInputList {get; set; }
+        public List<string> FileInputList { get; set; }
 
         public void ResetFileInput() { resetVal(NCCFlags.fileinput, Config.DefaultPath, typeof(string)); }
 
@@ -753,36 +781,29 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || DatazFileAssay || PulseFileAssay || DBDataAssay); }
         }
 
-		private string overridepath(NCCFlags flag)
-		{
-			if (isSet(flag))
-				return (string)getVal(flag);
-			else
-				return RootLoc;
-		}
-
-		public string FileInput
+        private string overridepath(NCCFlags flag)
         {
-            get
-            {
-				return overridepath(NCCFlags.fileinput);
-            }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.fileinput, warmed);
-            }
+            if (isSet(flag))
+                return (string)getVal(flag);
+            else
+                return RootLoc;
+        }
+
+        public string FileInput
+        {
+            get { return overridepath(NCCFlags.fileinput); }
+            set { setVal(NCCFlags.fileinput, TrimCmdLineFlagpath(value)); }
         }
         public string FileInputDBSetter
         {
             set
             {
-                string warmed = TrimCmdLineFlagpath(value);
-                if (!string.IsNullOrEmpty(warmed))
-                    setVal(NCCFlags.fileinput, warmed);
+                string trimmed = TrimCmdLineFlagpath(value);
+                if (!string.IsNullOrEmpty(trimmed))
+                    setVal(NCCFlags.fileinput, trimmed);
             }
         }
         public bool Recurse
@@ -810,7 +831,7 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.liveFileWrite); }
             set { setVal(NCCFlags.liveFileWrite, value); }
         }
-        
+
         public bool CreateINCC5TestDataFile
         {
             get { return (bool)getVal(NCCFlags.gen5TestDataFile); }
@@ -875,44 +896,122 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.mcaFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
         }
+        public bool DatazFileAssay
+        {
+            get { return (bool)getVal(NCCFlags.datazFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazFileAssay, value); }
+        }
         public bool SortPulseFile
         {
             get { return (bool)getVal(NCCFlags.sortPulseFile); }
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
         }
-
-		public bool HasFileAction
-		{
+        public bool FilterLMOutliers
+        {
+            get { return (bool)getVal(NCCFlags.filterLMOutliers); }
+            set { MutuallyExclusiveFileActions(NCCFlags.filterLMOutliers, value); }
+        }
+        public bool DatazConvert
+        {
+            get { return (bool)getVal(NCCFlags.datazConvert); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazConvert, true); }
+        }
+        public bool HasFileAction
+        {
             get { return IsFileActionSet(); }
-		}
+        }
 
-		public string LogFilePath
+        public string LogFilePath
         {
             get { return overridepath(NCCFlags.logFileLoc); }
-            set { setIfNotOverride(NCCFlags.logFileLoc, value); }
+            set { _setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
-		public string ResultsFilePath
+        public string LogFilePathAndName
+<<<<<<< HEAD
         {
-            get { return  overridepath(NCCFlags.resultsFileLoc); }
-            set { setIfNotOverride(NCCFlags.resultsFileLoc, value); }
+            get { return overridepath(NCCFlags.loglocation); }
+            set { setIfNotOverride(NCCFlags.loglocation, value); }
+        }
+		public string ResultsFilePath
+=======
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+        {
+            get { return overridepath(NCCFlags.logLocation); }
+            set { _setIfNotOverride(NCCFlags.logLocation, value); }
+        }
+        public string ResultsFilePath
+        {
+            get { return overridepath(NCCFlags.resultsFileLoc); }
+            set { _setIfNotOverride(NCCFlags.resultsFileLoc, value); }
         }
 
-		private void setIfNotOverride(NCCFlags flag, string path)
-		{
-			// do not set if it is the override value
-			Match m = PathMatch(path);
-			if (m.Success) // if it is a daily path match, do not save it
-				return;
-			// if not a daily path match and not the current root path, go ahead and save it
-			if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
-					setVal(flag, path);	
-		}
+        private void _setIfNotOverride(NCCFlags flag, string path)
+        {
+            // do not set if it is the override value
+            Match m = PathMatch(path);
+            if (m.Success) // if it is a daily path match, do not save it
+                return;
+            // if not a daily path match and not the current root path, go ahead and save it
+            if (!path.Equals(RootPathOverride(), StringComparison.OrdinalIgnoreCase))
+                setVal(flag, path);
+        }
+
+        string GetDefaultTempPath => Path.Combine(Path.GetTempPath(), "INCC6" + GetVersionBranchString());
+        bool IsDefaultTempPath(string s) => s.StartsWith(GetDefaultTempPath, StringComparison.InvariantCultureIgnoreCase);
+
+        string GetUserDocumentsPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments, Environment.SpecialFolderOption.None), "INCC6" + GetVersionBranchString());
+        bool IsUserDocumentsPath(string s) => s.StartsWith(GetUserDocumentsPath, StringComparison.InvariantCultureIgnoreCase);
+        string DefinedRootLoc => UserDocumentRootFolder ? GetUserDocumentsPath : GetDefaultTempPath;
+
+        const string TempLocationReplacementMarker = "*";
+
+        public bool ScanForTempPathModSwap(string s)  // signal need for root path change
+        {
+            if (s == TempLocationReplacementMarker)
+                return true;
+
+            if (IsDefaultTempPath(s) && UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+                return true;
+            else if (IsUserDocumentsPath(s) && !UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+                return true;
+            else
+                return false;
+        }
+
+
+        public string GetTempLocation(string s)
+        {
+            if (ScanForTempPathModSwap(s))
+               return DefinedRootLoc;
+            else
+                return s;
+        }
 
         public string RootPath
         {
             get { return (string)getVal(NCCFlags.root); }
-            set { setVal(NCCFlags.root, value); }
+            set {
+                if (ScanForTempPathModSwap(value))
+                {
+                    setVal(NCCFlags.root, DefinedRootLoc);
+                }
+                else
+                {
+                    try
+                    {
+                        DirectoryInfo di = new DirectoryInfo(value);
+                        if (di.Exists)
+                            setVal(NCCFlags.root, value);
+                        else
+                            setVal(NCCFlags.root, DefinedRootLoc);
+                    }
+                    catch (Exception)
+                    {
+                        setVal(NCCFlags.root, DefinedRootLoc);
+                    }
+                }
+            }
         }
 
 		public string RootPathOverride()
@@ -920,13 +1019,18 @@ namespace NCCConfig
 			if (DailyRootPath)
 			{
 				string part = DateTimeOffset.Now.ToString("yyyy-MMdd");
-				if (RootPath.EndsWith(part))
+				if (RootPath.EndsWith(part) && !UserDocumentRootFolderSet)
 					return RootPath;
 				else
 				{
+                    string rp = RootPath;
+                    if (UserDocumentRootFolderSet)
+                    {
+                        if (ScanForTempPathModSwap(RootPath))
+                            RootPath = DefinedRootLoc;
+                    }
 					try
 					{
-
 						Match m = PathMatch(RootPath);
 						if (m.Success)
 						{
@@ -945,7 +1049,7 @@ namespace NCCConfig
 				return RootPath;
 		}
 
-		Match PathMatch(string path)
+        Match PathMatch(string path)
 		{ 
 			Match m = Regex.Match(path, "\\d{4}-\\d{4}$");
 			return m;			
@@ -962,8 +1066,7 @@ namespace NCCConfig
             }
             set
             {
-                string warmed = TrimCmdLineFlagpath(value);
-                RootPath = value;
+                RootPath = TrimCmdLineFlagpath(value);
             }
         }
 
@@ -973,12 +1076,29 @@ namespace NCCConfig
             set { setVal(NCCFlags.dailyRootPath, value); }
         }
 
+        public bool UserDocumentRootFolder
+        {
+            get { return (bool)getVal(NCCFlags.rootUserDoc); }
+            set { setVal(NCCFlags.rootUserDoc, value); }
+        }
+
+        public bool UserDocumentRootFolderSet
+        {
+            get { return isSet(NCCFlags.rootUserDoc); }
+        }
+
         public bool Logging
         {
             get { return (bool)getVal(NCCFlags.logging); }
             set { setVal(NCCFlags.logging, value); }
         }
 
+        public bool Quiet
+        {
+            get { return (bool)getVal(NCCFlags.quiet); }
+            set { setVal(NCCFlags.quiet, value); }
+        }
+        
         /// <summary>
         /// integer representation of enum TraceOptions bitmap flag  
         /// </summary>
@@ -1089,7 +1209,7 @@ namespace NCCConfig
 
         public SourceLevels Level()
         {
-            ushort l = System.Convert.ToUInt16(getVal(NCCFlags.level));
+            ushort l = Convert.ToUInt16(getVal(NCCFlags.level));
             if (l < srclevelmap.Count)
                 return (SourceLevels)srclevelmap[l];
             else
@@ -1140,11 +1260,7 @@ namespace NCCConfig
         public string INCC5IniLoc
         {
             get { return (string)getVal(NCCFlags.emulatorapp); }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.emulatorapp, warmed);
-            }
+            set { setVal(NCCFlags.emulatorapp, TrimCmdLineFlagpath(value)); }
         }
 
         public void MutuallyExclusiveFileActions(NCCFlags flag, bool val)
@@ -1153,12 +1269,15 @@ namespace NCCConfig
             {
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
+                setVal(NCCFlags.filterLMOutliers, false);
+                setVal(NCCFlags.datazConvert, false);
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
                 setVal(NCCFlags.mcaFileAssay, false);
+                setVal(NCCFlags.datazFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
@@ -1170,10 +1289,13 @@ namespace NCCConfig
 				(bool)getVal(NCCFlags.testDataFileAssay) ||
                 (bool)getVal(NCCFlags.reviewFileAssay) ||
                 (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.datazFileAssay) ||
                 (bool)getVal(NCCFlags.mcaFileAssay) ||
                 (bool)getVal(NCCFlags.dbDataAssay) ||
                 (bool)getVal(NCCFlags.INCCXfer) ||
                 (bool)getVal(NCCFlags.pulseFileAssay) ||
+                (bool)getVal(NCCFlags.filterLMOutliers) ||
+                (bool)getVal(NCCFlags.datazConvert) ||
                 (bool)getVal(NCCFlags.ncdFileAssay) ||
                 (bool)getVal(NCCFlags.sortPulseFile);
         }
@@ -1187,9 +1309,19 @@ namespace NCCConfig
                 x[ix++] = "  root: " + RootLoc;
             if (isSet(NCCFlags.dailyRootPath))
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
+<<<<<<< HEAD
 			if (isSet(NCCFlags.logFileLoc))
 				x[ix++] = "  log file path: " + LogFilePath;
+            if (isSet(NCCFlags.loglocation))
+                x[ix++] = "  log file name: " + LogFilePathAndName;
 			if (isSet(NCCFlags.resultsFileLoc))
+=======
+            if (isSet(NCCFlags.logFileLoc))
+                x[ix++] = "  log file path: " + LogFilePath;
+            if (isSet(NCCFlags.logLocation))
+                x[ix++] = "  log file name: " + LogFilePathAndName;
+            if (isSet(NCCFlags.resultsFileLoc))
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 				x[ix++] = "  results path: " + ResultsFilePath;
 
             x[ix++] = "  logging: " + Logging;
@@ -1206,9 +1338,9 @@ namespace NCCConfig
 
             if (isSet(NCCFlags.openResults))
                 x[ix++] = "  open results: " + OpenResults.ToString();
-            if (isSet(NCCFlags.assayTypeSuffix))
-                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
             if (isSet(NCCFlags.results8Char))
+                x[ix++] = "  INCC5 YMDHMMSS results: " + Results8Char.ToString();
+            if (isSet(NCCFlags.assayTypeSuffix))
                 x[ix++] = "  INCC5 suffix scheme: " + AssayTypeSuffix.ToString();
 
             x[ix++] = "  status update packet count: every " + StatusPacketCount + " receipts";
@@ -1228,7 +1360,9 @@ namespace NCCConfig
 				else if (TestDataFileAssay)
 					x[ix++] = ("  use sorted pulse files" + fis);
 				else if (ReviewFileAssay)
-					x[ix++] = ("  use sorted pulse files" + fis);
+					x[ix++] = ("  use NCC files" + fis);
+				else if (DatazFileAssay)
+					x[ix++] = ("  use Dataz (e.g. MCSR) files" + fis);
 				else if (NCDFileAssay)
 					x[ix++] = ("  use LMMM NCD files" + fis);
 				else
@@ -1547,34 +1681,37 @@ namespace NCCConfig
             this._parms = _parms;
             resetVal(NCCFlags.feedback, false, typeof(bool));
 
-            resetVal(NCCFlags.separation, (Int32)0, typeof(int));
-            resetVal(NCCFlags.interval, (Double)5, typeof(Double)); // seconds
-            resetVal(NCCFlags.cycles, (Int32)1, typeof(int));
+            resetVal(NCCFlags.separation, 0, typeof(int));
+            resetVal(NCCFlags.interval, 5.0d, typeof(double)); // seconds
+            resetVal(NCCFlags.cycles, 1, typeof(int));
 
-            resetVal(NCCFlags.minHV, (Int32)0, typeof(int)); // volts
-            resetVal(NCCFlags.maxHV, (Int32)2000, typeof(int)); // volts
-            resetVal(NCCFlags.step, (Int32)10, typeof(int));// volts
-            resetVal(NCCFlags.hvduration, (Int32)5, typeof(int)); // seconds
-            resetVal(NCCFlags.delay, (Int32)2, typeof(int)); // seconds
-            resetVal(NCCFlags.hvx, (bool)false, typeof(bool)); // uses external view for progess and results (e.g. Excel)
+            resetVal(NCCFlags.minHV, 0, typeof(int)); // volts
+            resetVal(NCCFlags.maxHV, 2000, typeof(int)); // volts
+            resetVal(NCCFlags.step, 10, typeof(int));// volts
+            resetVal(NCCFlags.hvduration, 5, typeof(int)); // seconds
+            resetVal(NCCFlags.delay, 2, typeof(int)); // seconds
+            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progress and results (e.g. Excel)
 
-            resetVal(NCCFlags.saveOnTerminate, (bool)false, typeof(bool));
+            resetVal(NCCFlags.saveOnTerminate, false, typeof(bool));
             //resetVal(LMFlags.resultsAutoPath, (bool)false, typeof(bool));
             //resetVal(LMFlags.results, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.includeConfig, (bool)false, typeof(bool), retain:false);
+            resetVal(NCCFlags.includeConfig, false, typeof(bool), retain:false);
             resetVal(NCCFlags.message, "", typeof(string), retain: false);
             resetVal(NCCFlags.assaytype, 0, typeof(int));
             resetVal(NCCFlags.raw, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.lm, (Int32)(-1), typeof(int));
+            resetVal(NCCFlags.lm, (-1), typeof(int));
 
             resetVal(NCCFlags.detector, "Default", typeof(string));
             resetVal(NCCFlags.item, "", typeof(string));
             resetVal(NCCFlags.material, "Pu", typeof(string));
 
+            resetVal(NCCFlags.tau, 140, typeof(int));
+            resetVal(NCCFlags.Tee, 4, typeof(int));
+            resetVal(NCCFlags.datazConvertParams, 0, typeof(ushort)); //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)
-        private Int32 action = 0;
+        private int action = 0;
 
         public bool IncludeConfig
         {
@@ -1606,7 +1743,7 @@ namespace NCCConfig
             set { setVal(NCCFlags.message, value); }
         }
 
-        public Int32 Action
+        public int Action
         {
             get { return action; }
             set { action = value; }
@@ -1614,15 +1751,11 @@ namespace NCCConfig
         public string Raw
         {
             get { return (string)getVal(NCCFlags.raw); }
-            set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                setVal(NCCFlags.raw, warmed);
-            }
+            set { setVal(NCCFlags.raw, TrimCmdLineFlagpath(value)); }
         }
-        public Int32 LM
+        public int LM
         {
-            get { return (Int32)getVal(NCCFlags.lm); }
+            get { return (int)getVal(NCCFlags.lm); }
             set { setVal(NCCFlags.lm, value); }
         }
 
@@ -1632,60 +1765,94 @@ namespace NCCConfig
             set { setVal(NCCFlags.feedback, value); }
         }
 
-        public Int32 Separation
+        public int Separation
         {
-            get { return (Int32)getVal(NCCFlags.separation); }
+            get { return (int)getVal(NCCFlags.separation); }
             set { setVal(NCCFlags.separation, value); }
         }
 
-        public Int32 Cycles
+        public int Cycles
         {
-            get { return (Int32)getVal(NCCFlags.cycles); }
+            get { return (int)getVal(NCCFlags.cycles); }
             set { setVal(NCCFlags.cycles, value); }
         }
-        public Double Interval
+        public double Interval
         {
-            get { return (Double)getVal(NCCFlags.interval); }
+            get { return (double)getVal(NCCFlags.interval); }
             set { setVal(NCCFlags.interval, value); }
         }
 
-        public Int32 MinHV
+        public int MinHV
         {
-            get { return (Int32)getVal(NCCFlags.minHV); }
+            get { return (int)getVal(NCCFlags.minHV); }
             set { setVal(NCCFlags.minHV, value); }
         }
 
-        public Int32 MaxHV
+        public int MaxHV
         {
-            get { return (Int32)getVal(NCCFlags.maxHV); }
+            get { return (int)getVal(NCCFlags.maxHV); }
             set { setVal(NCCFlags.maxHV, value); }
         }
 
-        public Int32 Step
+        public int Step
         {
             get { return (Int32)getVal(NCCFlags.step); }
             set { setVal(NCCFlags.step, value); }
         }
-        public Int32 HVDuration
+        public int HVDuration
         {
-            get { return (Int32)getVal(NCCFlags.hvduration); }
+            get { return (int)getVal(NCCFlags.hvduration); }
             set { setVal(NCCFlags.hvduration, value); }
         }
 
-        public Int32 Delay
+        public int Delay
         {
-            get { return (Int32)getVal(NCCFlags.delay); }
+            get { return (int)getVal(NCCFlags.delay); }
             set { setVal(NCCFlags.delay, value); }
         }
 
+		public int CullCountLevel
+        {
+            get { return (int)getVal(NCCFlags.Tee); }
+            set { if (value <= 1256 && value >= 0) setVal(NCCFlags.Tee, value); }
+        }
+
+        public int Tau
+        {
+            get { return (int)getVal(NCCFlags.tau); }
+            set { if (value <= 64256 && value >= 0) setVal(NCCFlags.tau, value); }
+        }
+
+
+        public ushort DatazConvertType
+        {
+            get { return (ushort)getVal(NCCFlags.datazConvertParams); }
+            set { if (value <= 4) setVal(NCCFlags.datazConvertParams, value); }
+        }
+
         // cmd line dual setters
+        public void LMFilterParams(string b, string s)
+        {
+            try
+            {
+                int tau, t;
+                int.TryParse(b, out tau);
+                int.TryParse(s, out t);
+                Tau = tau;
+                CullCountLevel = t;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         public void HVRange(string l, string h)
         {
             try
             {
-                Int32 il, ih;
+                int il, ih;
                 int.TryParse(l, out il);
-                Int32.TryParse(h, out ih);
+                int.TryParse(h, out ih);
                 MinHV = il;
                 MaxHV = ih;
             }
@@ -1697,9 +1864,9 @@ namespace NCCConfig
         {
             try
             {
-                Int32 idu, idl;
+                int idu, idl;
                 int.TryParse(b, out idu);
-                Int32.TryParse(s, out idl);
+                int.TryParse(s, out idl);
                 Delay = idl;
                 HVDuration = idu;
             }
@@ -1722,9 +1889,9 @@ namespace NCCConfig
             set { setVal(NCCFlags.saveOnTerminate, value); }
         }
 
-        public Int32 AssayType
+        public int AssayType
         {
-            get { return (Int32)getVal(NCCFlags.assaytype); }
+            get { return (int)getVal(NCCFlags.assaytype); }
             set { setVal(NCCFlags.assaytype, value); }
         }
 
@@ -1739,7 +1906,7 @@ namespace NCCConfig
         internal bool AssayTypeConv(string v, out int res)
         {
             res = 0;
-            bool ok = Int32.TryParse(v, out res);
+            bool ok = int.TryParse(v, out res);
             if (!ok)
             {
                 string lv = v.ToLower();
@@ -1747,7 +1914,7 @@ namespace NCCConfig
             }
             return ok;
         }
-        internal int Conv(Char MeasurementOption)
+        internal int Conv(char MeasurementOption)
         {
             int res = 0;
             switch (MeasurementOption)
@@ -1877,7 +2044,14 @@ namespace NCCConfig
         {
             this._parms = _parms;
             resetVal(NCCFlags.MyProviderName, "System.Data.SQLite", typeof(string));
-            resetVal(NCCFlags.MyDBConnectionString, "Data Source=.\\INCC6.SQLite;Version=3;New=False;Compress=True;foreign_keys=on;", typeof(string));
+            resetVal(NCCFlags.MyDBConnectionString, "Data Source=\".\\INCC6.SQLite\";Version=3;New=False;Compress=True;PRAGMA foreign_keys=on;", typeof(string));
+            resetVal(NCCFlags.DBDataSource,"", typeof(string), retain:false);
+        }
+
+        public string DBDataSource
+        {
+            get { return (string)getVal(NCCFlags.DBDataSource); }
+            set { setVal(NCCFlags.DBDataSource, value); }
         }
 
         public string MyProviderName
@@ -1911,10 +2085,40 @@ namespace NCCConfig
             return s;
         }
 
+            
+        public static string ReplaceDataSourceInSQLiteConnectionString(string _newpath, string cx)
+        {
+            bool go = false;
+            string[] s = cx.Split(';');
+            Regex rx = new Regex("Data\\sSource", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+            for (int i = 0; i < s.Length; i++)
+            {
+                string[] e = s[i].Split('=');
+                if ((e.Length == 2) && rx.IsMatch(e[0]))
+                {
+                    s[i] = "Data Source=\"" + Regex.Replace(_newpath, @"[\'""]", @"$0$0") + "\""; // must quote the unquoted path!
+                    go = true;
+                    break;
+                }
+            }
+            if (go)
+            {
+                StringBuilder newcx = new StringBuilder();
+                for (int i = 0; i < s.Length; i++)
+                {
+                    if (s[i].Length < 1) continue;
+                    newcx.Append(s[i]);
+                    newcx.Append(';');
+                }
+                string xnewx = newcx.ToString();
+                return xnewx;
+            }
+            return string.Empty;
+        }
 
     }
 
-	public class WPFEventArgs: EventArgs
+    public class WPFEventArgs: EventArgs
 	{
 		public bool value;
 

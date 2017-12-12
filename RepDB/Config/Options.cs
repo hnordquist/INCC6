@@ -34,9 +34,13 @@ namespace NCCConfig
     // a flat enum for now, this is a hack for the command line only, must be replaced with a full DB 
     public enum NCCFlags
     {
-        root, dailyRootPath,
+        root, dailyRootPath, rootUserDoc,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+<<<<<<< HEAD
+        logging, level, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+=======
+        logging, level, quiet, logDetails, logFileLoc, logLocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
@@ -54,12 +58,16 @@ namespace NCCConfig
         detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+<<<<<<< HEAD
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+=======
+        sortPulseFile, filterLMOutliers, datazConvert, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
         autoCreateMissing, auxRatioReport,
 
-        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
+        overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString, DBDataSource,
 
-		reportSect, query
+		reportSect, query, tau, Tee, datazConvertParams
     }
 
 	public partial class Config
@@ -78,25 +86,33 @@ namespace NCCConfig
             { "log:", "enable logging with filter {level} (see -v)",  
                                             l => {app.Logging = true; if (l != null) app.SetLevel(ushort.Parse(l)); }},
 
+            { "quiet", "disable console logging", q => {app.Quiet = (q != null); }},
+            { "rootUserDoc", @"set false user AppData\Temp folder, true for user document folder", b => app.UserDocumentRootFolder = b != null},
             { "root=", "specify base {file location} for all input and output files", c => app.RootLoc = c},
   			{ "rootAutoPath",  "append a daily root file folder name to the current root file folder specification", 
                 b => { if (b != null) app.DailyRootPath = true;} },
 
+<<<<<<< HEAD
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
+=======
+            { "logLoc=", "specify base {file location} for log ffor iles, overrides root", l => app.LogFilePath = l},
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+            { "logLocation=", "specify base {file location} for log files, including file name, overrides root", l => app.LogFilePathAndName = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
                                            (int n) => app.LoggingDetails = n},
             { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (ushort n) => app.LogResults = n},
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
             { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode results scheme", b => app.Results8Char = b != null},
-            { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
+            { "assayTypeSuffix", "set false to use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
             { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
                                            s => app.ReportSectional = s},
+            { "DBDataSource", "use this SQLite data source in place of the configured data source", l => db.DBDataSource = l},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },
 
-             // this is for LMMM DAQ control, the assumed input
+             // this is for LMMM DAQ control, originally assumed as the primary input instrument
             { "subnet=", "subnet {mask} for LM network, defaults to 169.254.255.255",  s => netcomm.Subnet = s },
             { "port=", "port {number} for this app's LM TCP/IP listener, defaults to 5011",  (int n) => netcomm.Port = n },
             { "wait=", "milliseconds to wait for response to broadcast command, default 500",  (int n) => netcomm.Wait = n },
@@ -143,7 +159,9 @@ namespace NCCConfig
             { "f|file|fileinput|datasource=", "start a file-based operation using the {location} for file input, all matching files in the folder will be used", 
                                             v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 6;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           
-            { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },                                                           
+            { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },
+            { "datazConvert", "convert dataz data file intervals to INCC5 useable data files", v => app.DatazConvert = v != null },
+            { "filterLMOutliers", "trim out certain outlier events in LM pulse trains", v => app.FilterLMOutliers = v != null },
             { "sortPulseFile", "sort and save pulse files, (line-delimited fixed-point strings, unsorted)", v => app.SortPulseFile = v != null },                                                           
             { "INCCXfer", "identify and process ye olde INCC Transfer files, (incomplete but worthy)",  v => app.INCCXfer = v != null },                                                           
             { "overwriteXfer", "replace existing definitions during each INCC Transfer operation",  v => app.OverwriteImportedDefs = v != null },                                                           
@@ -153,9 +171,15 @@ namespace NCCConfig
             { "ncdFileAssay", "use LMMM NCD files for input", v => app.NCDFileAssay = v != null }, 
             { "ptrFileAssay", "use PTR-32 dual file streams for input", v => app.PTRFileAssay = v != null }, 
             { "mcaFileAssay", "use MCA-527 file streams for input", v => app.MCA527FileAssay = v != null },
+            { "datazFileAssay", "use Dataz file streams for input", v => app.DatazFileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
-            { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input\r\n\r\nLMMM HV control ********************", v => app.ReviewFileAssay = v != null }, 
+            { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null },
+            { "datazConvertParams=", " 0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files",
+                                            (ushort n) => acq.DatazConvertType = n },
+            { "LMFilterParams=", "interval in µ-seconds (1-64256) and cutoff count level {µ-seconds:neutrons}, defaults to 140 µ-seconds and 4 neutrons\r\n\r\nLMMM HV control ********************", 
+                                            (b, s) => acq.LMFilterParams(b, s) },  
+
          
             // HV Calibration action and parameters
             { "hv|hvcalib:", "start an HV calibration using the current HV parameters", 

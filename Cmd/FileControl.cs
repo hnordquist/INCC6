@@ -65,37 +65,36 @@ namespace NCCCmd
 
         public void SetupEventHandlers()
         {
-            LMLoggers.LognLM applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
             /// set up the 7 magic event handlers
             /// here I have a base handler that does the same thing for every event (writes a string to the log) 
             SetEventHandler(ActionEvents.EventType.PreAction, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.PreAction, applog, LogLevels.Verbose, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.PreAction, NC.App.AppLogger, LogLevels.Verbose, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionPrep, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionPrep, applog, LogLevels.Verbose, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionPrep, NC.App.AppLogger, LogLevels.Verbose, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionStart, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionStart, applog, LogLevels.Verbose, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionStart, NC.App.AppLogger, LogLevels.Verbose, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionInProgress, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionInProgress, applog, LogLevels.Verbose, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionInProgress, NC.App.AppLogger, LogLevels.Verbose, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionStop, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionStop, applog, LogLevels.Warning, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionStop, NC.App.AppLogger, LogLevels.Warning, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionCancel, (object o) =>
              {
-                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionCancel, applog, LogLevels.Warning, o);
+                 string s = FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionCancel, NC.App.AppLogger, LogLevels.Warning, o);
              });
 
             SetEventHandler(ActionEvents.EventType.ActionFinished, (object o) =>
@@ -104,11 +103,11 @@ namespace NCCCmd
                  if (o == null)
                  {
                      String s = "Finished: SOH " + NC.App.Opstate.SOH + " but no processing occurred";
-                     applog.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
+                     NC.App.AppLogger.TraceEvent(LogLevels.Verbose, FileCtrl.logid[ActionEvents.EventType.ActionFinished], s);
                  }
                  else
                  {
-                     FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionFinished, applog, LogLevels.Verbose, o);
+                     FileCtrl.LoggableFileProcessingStatus(ActionEvents.EventType.ActionFinished, NC.App.AppLogger, LogLevels.Verbose, o);
                  }
                  NC.App.Opstate.SOH = NCC.OperatingState.Stopped;  // in case we got here after a Cancel
                  NC.App.Loggers.Flush();

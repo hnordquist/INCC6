@@ -96,7 +96,8 @@ namespace ListModeDB
 
                 if (existtest(dr, "dbDataAssay"))
                     app.DBDataAssay = DB.Utils.DBBool(dr["dbDataAssay"]);
-				
+                if (existtest(dr, "datazFileAssay"))
+                    app.DatazFileAssay = DB.Utils.DBBool(dr["datazFileAssay"]);
                 if (strvaluetest(dr, "resultsFilePath"))
                     app.ResultsFilePath = (string)(dr["resultsFilePath"]);
                 if (strvaluetest(dr, "logFilePath"))

@@ -307,14 +307,43 @@ namespace NewUI
                 modified = true;
             }
 
-            if (m_bgateTriggerTypeChange)
+            //Check for LM multiplicity records and update accordingly.
+            if (false && det.ListMode)  // TODO: IAEA check this for exepcted procedure steps
+            {
+                //Don't check for modification with LM, always set these defaults
+
+                //Otherwise, it will be added.
+                det.MultiplicityParams.gateWidthTics = (ulong)det.SRParams.gateLengthMS * 10;
+                //If we are collecting rates only for a LM device, set these hard-coded values for fast/slow.
+                if (det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                }
+                else
+                {
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                }
+                det.MultiplicityParams.FA = LMFA.Checked ? FAType.FAOn : FAType.FAOff;
+                modified = true;
+            }
+
+            if (m_bgateTriggerTypeChange)  // eliminate this choice?
             {
                 AcquireParameters acq = Integ.GetCurrentAcquireParamsFor(det);
                 acq.lm.FADefault = m_curGateTriggerType;
+<<<<<<< HEAD
                 det.SRParams.CopyValues(sr1);
                 NC.App.DB.UpdateDetectorParams(det);
                 NC.App.DB.UpdateAcquireParams(acq, isLM: true); // update it
                 modified = false;
+=======
+                //det.SRParams.CopyValues(sr1);
+                //NC.App.DB.UpdateDetectorParams(det);
+                NC.App.DB.UpdateAcquireParams(acq, isLM: true); // update it
+                //modified = false;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
             }
             if (det.Id.modified) // type changed only, so gotta save the change in the Detectors table, as well as the sr_parms table
             {
@@ -322,23 +351,24 @@ namespace NewUI
                     det.SRParams.CopyValues(sr1);
                 NC.App.DB.UpdateDetector(det); // also updates the params in one step
                 det.Id.modified = false;
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
             }
             else if (modified || mod)  // only SR params changed
             {
-                DialogResult = System.Windows.Forms.DialogResult.OK;
+                DialogResult = DialogResult.OK;
                 /* Update SR Params */
                 det.SRParams.CopyValues(sr1);
-                NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call
+                if (NC.App.DB.Detectors.GetItByDetectorId(det.Id.DetectorId) != null)
+                    NC.App.DB.UpdateDetectorParams(det); // detector must exist in DB prior to this call, if not present, the in-memory representation is saved by the caller later.
             }
             else
-                DialogResult = System.Windows.Forms.DialogResult.Ignore;
+                DialogResult = DialogResult.Ignore;
             this.Close();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
-            DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            DialogResult = DialogResult.Cancel;
             this.Close();
         }
 

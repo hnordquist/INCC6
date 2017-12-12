@@ -127,7 +127,7 @@ namespace DB
         {
             try
             {
-                if (sql_con == null)
+                if (sql_con != null)
                 {
                     sql_con.Close();
                 }
@@ -193,7 +193,8 @@ namespace DB
             catch (Exception caught)
             {
                 connAttempts++;
-                Console.WriteLine(caught.Message);
+                if (!DBMain.ConsoleQuiet)
+                    Console.WriteLine(caught.Message);
             }
             return false;
         }

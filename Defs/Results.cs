@@ -1188,6 +1188,7 @@ namespace AnalysisDefs
 
 
 
+<<<<<<< HEAD
 	public class MultiplicityCountingRes : ParameterBase, ICountingResult
     {
 
@@ -1643,6 +1644,445 @@ namespace AnalysisDefs
                 string[] x = new string[2];
                 int j = 0;
                 x[j++] = Name;
+=======
+	public class MultiplicityCountingRes : ParameterBase, ICountingResult
+    {
+
+        public TimeSpan TS;
+        public FAType FA;
+        public Rates rates;
+        public double mass; // computed in outlier passes when qc_test is true, and further computed in verification pass, error is not computed so no VTuple
+        public double efficiency, multiplication, multiAlpha; // computed in the same manner as mass but only in multiplicity analysis
+
+        public ulong accidentalsDelay;
+        public ulong[] RAMult, UnAMult, NormedAMult;
+        ulong maxBins, minBins;
+        AlphaBeta αβ;
+
+        public double singles_multi;  // these results are not actually used in INCC, WTF?
+        public double doubles_multi;
+        public double triples_multi;
+
+        public AlphaBeta AB
+        {
+            get { return αβ; } // αβ
+            set { αβ = value; }
+        }
+        public double[] alpha
+        {
+            get { return αβ.α; }
+        }
+        public double[] beta
+        {
+            get { return αβ.β; }
+        }
+        public double[] RAFactorialMoments;
+        public double[] AFactorialMoments;
+        public double AFactorialAlphaMoment1;
+        public double RAFactorialAlphaMoment1;
+        public double AFactorialBetaMoment2;
+        public double RAFactorialBetaMoment2;
+
+        double _RASum, _ASum, _UnASum, _S1Sum, _S2Sum;
+
+        public double Mass
+        {
+            get { return mass; }
+            set { mass = value; }
+        }
+
+        public ulong MaxBins
+        {
+            get { return maxBins; }
+            set { maxBins = value; }
+        }
+        public ulong MinBins
+        {
+            get { return minBins; }
+            set { minBins = value; }
+        }
+        public double RASum
+        {
+            get { return _RASum; }
+            set { _RASum = value; }
+        }
+        public double UnASum
+        {
+            get { return _UnASum; }
+            set { _UnASum = value; }
+        }
+        public double ASum
+        {
+            get { return _ASum; }
+            set { _ASum = value; }
+        }
+        public double S1Sum
+        {
+            get { return _S1Sum; }
+            set { _S1Sum = value; }
+        }
+        public double S2Sum
+        {
+            get { return _S2Sum; }
+            set { _S2Sum = value; }
+        }
+        // number of events, and hits per channel event
+        VTuple singles; // aka totals and run_singles in INCC
+        public double Totals
+        {
+            get { return (ulong)singles.v; }
+            set { singles.v = value; }
+        }
+
+        public int idx; // dev note: need a better identifier then just this number, oughta use detector id
+
+        // carried over from old INCC code, computed in CalcAveragesAndSums, used in CalculateMultiplicity
+        public double[] covariance_matrix;
+
+        VTuple scaler1, scaler2; // for backwards compatibility with old Shift Register measurement data
+        public VTuple Scaler1
+        {
+            get { return scaler1; }
+            set { scaler1 = value; }
+        }
+        public VTuple Scaler2
+        {
+            get { return scaler2; }
+            set { scaler2 = value; }
+        }
+        public VTuple Scaler1Rate
+        {
+            get { return rates[RatesAdjustments.Raw].Scaler1s; }
+        }
+        public VTuple Scaler2Rate
+        {
+            get { return rates[RatesAdjustments.Raw].Scaler2s; }
+        }
+        public VTuple RawSinglesRate
+        {
+            get { return rates[RatesAdjustments.Raw].Singles; }
+        }
+        public VTuple RawDoublesRate
+        {
+            get { return rates[RatesAdjustments.Raw].Doubles; }
+        }
+        public VTuple RawTriplesRate
+        {
+            get { return rates[RatesAdjustments.Raw].Triples; }
+        }
+        public VTuple DeadtimeCorrectedSinglesRate
+        {
+            get { return rates[RatesAdjustments.DeadtimeCorrected].Singles; }
+        }
+        public VTuple DeadtimeCorrectedDoublesRate
+        {
+            get { return rates[RatesAdjustments.DeadtimeCorrected].Doubles; }
+        }
+        public VTuple DeadtimeCorrectedTriplesRate
+        {
+            get { return rates[RatesAdjustments.DeadtimeCorrected].Triples; }
+        }
+        public VTuple DytlewskiCorrectedSinglesRate
+        {
+            get { return rates[RatesAdjustments.DytlewskiDeadtimeCorrected].Singles; }
+        }
+        public VTuple DytlewskiCorrectedDoublesRate
+        {
+            get { return rates[RatesAdjustments.DytlewskiDeadtimeCorrected].Doubles; }
+        }
+        public VTuple DytlewskiCorrectedTriplesRate
+        {
+            get { return rates[RatesAdjustments.DytlewskiDeadtimeCorrected].Triples; }
+        }
+        public StdRates DeadtimeCorrectedRates
+        {
+            get { return rates[RatesAdjustments.DeadtimeCorrected]; }
+        }
+        public StdRates DytlewskiDeadtimeCorrectedRates
+        {
+            get { return rates[RatesAdjustments.DytlewskiDeadtimeCorrected]; }
+        }
+
+        private Rates uncorrectedfrominccres;
+        public Rates SemiCorrectedRate
+        {
+            get { return uncorrectedfrominccres; }
+            set { uncorrectedfrominccres = value; }
+        }
+
+        public VTuple GetSemiCorrectedRate(RatesAdjustments choice, double val)
+        {
+            return uncorrectedfrominccres[choice].Doubles;
+        }
+        public void SetSemiCorrectedRate(RatesAdjustments choice, double val)
+        {
+            uncorrectedfrominccres[choice].Doubles.v = val;
+        }
+        public void SetSemiCorrectedRateErr(RatesAdjustments choice, double val)
+        {
+            uncorrectedfrominccres[choice].Doubles.err = val;
+        }
+
+        public void TransferIntermediates(MultiplicityCountingRes src)
+        {
+            αβ.TransferIntermediates(src.αβ);
+
+            Array.Resize(ref RAFactorialMoments, src.RAFactorialMoments.Length);
+            Array.Resize(ref AFactorialMoments, src.AFactorialMoments.Length);
+            Array.Copy(src.RAFactorialMoments, RAFactorialMoments, RAFactorialMoments.Length);
+            Array.Copy(src.AFactorialMoments, AFactorialMoments, AFactorialMoments.Length);
+        }
+
+        public void TransferSums(MultiplicityCountingRes src)
+        {
+            _RASum = src._RASum;
+            _ASum = src._ASum;
+            _UnASum = src._UnASum;
+            _S1Sum = src._S1Sum;
+            _S2Sum = src._S2Sum;
+        }
+        public void Resize(MultiplicityCountingRes src)
+        {
+            αβ.Resize(src.αβ);
+            Array.Resize(ref RAFactorialMoments, src.RAFactorialMoments.Length);
+            Array.Resize(ref AFactorialMoments, src.AFactorialMoments.Length);
+            Array.Resize(ref RAMult, src.RAMult.Length);
+            Array.Resize(ref UnAMult, src.UnAMult.Length);
+            Array.Resize(ref NormedAMult, src.NormedAMult.Length);
+            Array.Resize(ref covariance_matrix, src.covariance_matrix.Length);
+			MinBins = src.MinBins;
+			MaxBins = src.MaxBins;
+        }
+        public MultiplicityCountingRes(FAType FA, int i)
+        {
+            Init();
+            this.FA = FA;
+            idx = i;
+        }
+        public MultiplicityCountingRes(MultiplicityCountingRes src)
+        {
+            Init();
+			CopyFrom(src);
+        }
+        public MultiplicityCountingRes()
+        {
+            Init();
+            FA = FAType.FAOn;
+            idx = 0;
+        }
+        protected void Init()
+        {
+            RAMult = new ulong[0];
+            UnAMult = new ulong[0];
+            NormedAMult = new ulong[0];
+
+            αβ = new AlphaBeta();
+
+            rates = new Rates();
+            singles = new VTuple();
+            RAFactorialMoments = new double[4];
+            AFactorialMoments = new double[4];
+            multiplication = 1.0;
+            uncorrectedfrominccres = new Rates();
+            covariance_matrix = new double[3 * 3];
+            scaler1 = new VTuple();
+            scaler2 = new VTuple();
+            TS = new TimeSpan();
+        }
+		public void CopyFrom(MultiplicityCountingRes src)
+        {
+            FA = src.FA;
+            idx = src.idx;
+            Array.Resize(ref RAMult, src.RAMult.Length);
+            Array.Resize(ref UnAMult, src.UnAMult.Length);
+            Array.Resize(ref NormedAMult, src.NormedAMult.Length);
+            Array.Resize(ref covariance_matrix, src.covariance_matrix.Length);
+            Array.Copy(src.RAMult, RAMult, RAMult.Length);
+            Array.Copy(src.UnAMult, UnAMult, UnAMult.Length);
+            Array.Copy(src.NormedAMult, NormedAMult, NormedAMult.Length);
+            Array.Copy(src.covariance_matrix, covariance_matrix, covariance_matrix.Length);
+            TransferIntermediates(src);
+            singles = new VTuple(src.singles);
+            rates = new Rates(src.rates);
+            uncorrectedfrominccres = new Rates(src.uncorrectedfrominccres);
+            accidentalsDelay = src.accidentalsDelay;
+            multiplication = src.multiplication;
+
+            maxBins = src.maxBins;
+            minBins = src.minBins;
+            _RASum = src._RASum;
+            _ASum = src._ASum;
+            _UnASum = src._UnASum;
+            _S1Sum = src._S1Sum;
+            _S2Sum = src._S2Sum;
+            scaler1 = new VTuple(src.scaler1);
+            scaler2 = new VTuple(src.scaler2);
+
+            multiAlpha = src.multiAlpha;
+            mass = src.mass;
+            efficiency = src.efficiency;
+
+            TS = new TimeSpan(src.TS.Ticks);
+
+            singles_multi = src.singles_multi;
+            doubles_multi = src.doubles_multi;
+            triples_multi = src.triples_multi;
+        }
+
+
+        public void TransferRawResult(MultiplicityResult mr)
+        {
+            if (mr == null)
+                return;
+
+            accidentalsDelay = mr.accidentalsDelay;
+
+            RawSinglesRate.v = mr.singlesRatePerSecond;
+            RawDoublesRate.v = mr.doublesRatePerSecond;
+            RawTriplesRate.v = mr.triplesRatePerSecond;
+
+            DeadtimeCorrectedSinglesRate.v = mr.deadTimeCorrectedSinglesRate;
+            DeadtimeCorrectedDoublesRate.v = mr.deadTimeCorrectedDoublesRate;
+            DeadtimeCorrectedTriplesRate.v = mr.deadTimeCorrectedTriplesRate;
+
+            DytlewskiCorrectedSinglesRate.v = mr.dytlewskiDeadTimeCorrectedSinglesRate;
+            DytlewskiCorrectedDoublesRate.v = mr.dytlewskiDeadTimeCorrectedDoublesRate;
+            DytlewskiCorrectedTriplesRate.v = mr.dytlewskiDeadTimeCorrectedTriplesRate;
+
+            // dev note: these arrays can have up to 2 extra bins with 0s in them because the max bin numbers are larger than necessary for some conditions
+            RAMult = new ulong[mr.maxRABin + 1];  // dev note: hope it's not too large o.w. must code for compressed intervals (sans 0 entries) instead of assuming iso bin intervals (includes 0 entries)
+
+            // todo: check this: these copies are wrong! because non-zero entries are skipped in the dictionary
+            foreach (KeyValuePair<ulong, ulong> pair in mr.realPlusAccidentalDistribution)
+            {
+                RAMult[pair.Key] = pair.Value;
+            }
+            UnAMult = new ulong[mr.maxABin + 1];
+            foreach (KeyValuePair<ulong, ulong> pair in mr.accidentalDistribution)
+            {
+                UnAMult[pair.Key] = pair.Value;
+            }
+            NormedAMult = new ulong[mr.maxABin + 1];
+            foreach (KeyValuePair<ulong, ulong> pair in mr.normalizedAccidentalDistribution)
+            {
+                NormedAMult[pair.Key] = pair.Value;
+            }
+
+            maxBins = Math.Max(mr.maxRABin + 1, mr.maxABin + 1);
+            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);  
+
+            ComputeHitSums();
+
+            αβ = new AlphaBeta(mr.alpha, mr.beta);
+
+            RAFactorialMoments[0] = mr.RAfactorialMoment0;
+            RAFactorialMoments[1] = mr.RAfactorialMoment1;
+            RAFactorialMoments[2] = mr.RAfactorialMoment2;
+            RAFactorialMoments[3] = mr.RAfactorialMoment3;
+            AFactorialMoments[0] = mr.AfactorialMoment0;
+            AFactorialMoments[1] = mr.AfactorialMoment1;
+            AFactorialMoments[2] = mr.AfactorialMoment2;
+            AFactorialMoments[3] = mr.AfactorialMoment3;
+
+        }
+
+        public void ComputeHitSums()
+        {
+            double res = 0;
+            //According to Martyn, these are "hits", not sums.  hn 5.13.2015
+            // The term 'sums' for these values comes from the INCC5 source code.
+            // INCC5 terminology is retained throughout the ported code as much as possible, to assist with references to the originating source code
+            for (int i = 0; i < UnAMult.Length; i++)
+            {
+                res += (double)UnAMult[i] * i;
+            }
+            _UnASum = res;
+            res = 0;
+            for (int i = 0; i < NormedAMult.Length; i++)
+            {
+                res += (double)NormedAMult[i] * i;
+            }
+            _ASum = res;
+            res = 0;
+            for (int i = 0; i < RAMult.Length; i++)
+            {
+                res += (double) RAMult[i] * i;
+            }
+            _RASum = res;
+        }
+
+        public string Name
+        {
+            get { return ShortName(); }
+        }
+
+
+        public string ShortName()
+        {
+            string s = "";
+            if (FA == FAType.FAOn)
+            {
+                s += "FA ";
+            }
+            else
+            {
+                s += "A ";
+                s += Multiplicity.TimeUnitImage(accidentalsDelay);
+            }
+            return s;
+        }
+
+        public string[] StringifyCurrentMultiplicityDetails()
+        {
+
+            if (MaxBins > 1)
+            {
+                string[] x = new string[MaxBins + 11];
+                int j = 0;
+                x[j++] = Name;
+                x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}{3,-20}", "Mult","R+A", "A(Normed)", "A(Raw)");
+                for (uint i = 0; i < MinBins; i++)
+                {
+                    x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}\t{3,-20}", i, RAMult[i], NormedAMult[i], UnAMult[i]);
+                }
+                for (ulong i = MinBins; i < MaxBins; i++)
+                {
+                    double RA, A, UA;
+                    if ((ulong)RAMult.Length <= i)
+                        RA = 0;
+                    else
+                        RA = RAMult[i];
+                    if ((ulong)NormedAMult.Length <= i)
+                        A = 0;
+                    else
+                        A = NormedAMult[i];
+                    if ((ulong)UnAMult.Length <= i)
+                        UA = 0;
+                    else
+                        UA = UnAMult[i];
+                    x[j++] = string.Format("{0,10}\t{1,10}\t{2,10}\t{3,10}", i, RA, A, UA);
+                }
+                x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}\t{3,-20}", "Sums", "R+A", "A(Normed)", "A(Raw)");
+                x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}\t{3,-20}", "", RASum, ASum, UnASum);
+                x[j++] = string.Format("{0,-10}\t{1,-10}\t{2,-10}\t{3,-10}\t{4,-10}", "Moments", "0", "1", "2", "3");
+                x[j++] = string.Format("{0,-20}\t{1,-10}\t{2,-10}\t{3,-10}\t{4,-10}", "RA", RAFactorialMoments[0], RAFactorialMoments[1], RAFactorialMoments[2], RAFactorialMoments[3]);
+                x[j++] = string.Format("{0,-20}\t{1,-10}\t{2,-10}\t{3,-10}\t{4,-10}", "A", AFactorialMoments[0], AFactorialMoments[1], AFactorialMoments[2], AFactorialMoments[3]);
+                //string ast = "Alpha"; for (int i = 0; i < alpha.Length; i++) ast += string.Format("\t{0,8}", alpha[i]);
+                //x[j++] = ast;
+                //string bst = "Beta"; for (int i = 0; i < beta.Length; i++) bst += string.Format("\t{0,8}", beta[i]);
+                //x[j++] = bst;
+                // In verbose mode, print out raw rates also, but do not print raw triples. hn 11.5.2014
+                x[j++] = string.Format("Raw Rates: Singles: {0}, Doubles: {1}, Triples {2}", RawSinglesRate.v, RawDoublesRate.v, "------");
+                x[j++] = string.Format("DTC Rates: Singles: {0}, Doubles: {1}, Triples {2}", DeadtimeCorrectedSinglesRate.v, DeadtimeCorrectedDoublesRate.v, DeadtimeCorrectedTriplesRate.v);
+                x[j++] = string.Format("Scalers: {0}, {1}", Scaler1.v, Scaler2.v);
+                return x;
+            }
+            else
+            {
+                string[] x = new string[2];
+                int j = 0;
+                x[j++] = Name;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
                 //x[j++] = "No RA or A data";
                 x[j++] = string.Format("Raw Rates: Singles: {0}, Doubles: {1}", RawSinglesRate.v, RawDoublesRate.v);
                 x[j++] = string.Format("DTC Rates: Singles: {0}, Doubles: {1}", DeadtimeCorrectedSinglesRate.v, DeadtimeCorrectedDoublesRate.v);

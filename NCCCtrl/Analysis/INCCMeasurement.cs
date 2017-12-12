@@ -1044,7 +1044,7 @@ namespace AnalysisDefs
 
                 if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Collar))
                 {
-                    meas.AddWarningMessage("Collar mass results", 10153, mkey); // NEXT: Collar is incomplete, new design from IAEA is pending, this is a big task 
+                    meas.AddWarningMessage("Collar mass results", 10153, mkey); // new design from LANL
                     INCCAnalysis.CalculateCollar(mkey, results, meas, RatesAdjustments.DeadtimeCorrected);
                 }
 
@@ -1865,7 +1865,7 @@ namespace AnalysisDefs
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
             bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // APluralityOfMultiplicityAnalyzers: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
+            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
         }
 
 		/// <summary>

@@ -330,7 +330,7 @@ namespace AnalysisDefs
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 string h = string.Format("Normalization results for reference source: {0}", sourceId);
                 sec.AddHeader(h);  // section header
-                sec.AddNumericRow("Current normalization constant", m.Norm.currNormalizationConstant);
+                sec.AddNumericRow("Current normalization constant:", m.Norm.currNormalizationConstant);
 
                 if (mode == NormTest.AmLiSingles || mode == NormTest.Collar)
                 {
@@ -2234,14 +2234,14 @@ Cycle      Singles       Doubles       Triples          Mass  QC Tests
             public override List<NCCReporter.Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
-                sec.AddHeader("Do this next results (dual-energy multiplicity)");  // section header
+                sec.AddHeader("Do this next results (dual-energy multiplicity)");  // NEXT: finish this
                 return sec;
             }
 
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_de_mult_rec";
+                Table = "results_de_mult_rec";
                 ps.Add(new DBParamEntry("meas_ring_ratio", meas_ring_ratio));
                 ps.Add(new DBParamEntry("interpolated_neutron_energy", interpolated_neutron_energy));
                 ps.Add(new DBParamEntry("energy_corr_factor", energy_corr_factor));

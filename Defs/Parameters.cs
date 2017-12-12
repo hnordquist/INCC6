@@ -951,8 +951,12 @@ namespace AnalysisDefs
         public ErrorCalculationTechnique error_calc_method;
         public string inventory_change_code;
         public string io_code;
+<<<<<<< HEAD
         public int collar_mode;
         //CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
+=======
+        public CollarType collar_mode;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
         public double drum_empty_weight;
         protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;
@@ -985,7 +989,10 @@ namespace AnalysisDefs
             max_num_runs = 1000;
             meas_precision = 1.0;
             well_config = WellConfiguration.Passive;
+<<<<<<< HEAD
             //Default should be sample.
+=======
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
             error_calc_method = ErrorCalculationTechnique.Sample;
             inventory_change_code = string.Empty;
             io_code = string.Empty;
@@ -1141,7 +1148,7 @@ namespace AnalysisDefs
             this.ps.Add(new DBParamEntry("error_calc_method", (int)error_calc_method));
             this.ps.Add(new DBParamEntry("inventory_change_code", inventory_change_code));
             this.ps.Add(new DBParamEntry("io_code", io_code));
-            this.ps.Add(new DBParamEntry("collar_mode", collar_mode));
+            this.ps.Add(new DBParamEntry("collar_mode", (int)collar_mode));
             this.ps.Add(new DBParamEntry("drum_empty_weight", drum_empty_weight));
             this.ps.Add(new DBParamEntry("MeasDate", _MeasDateTime));
             this.ps.Add(new DBParamEntry("CheckDate", _CheckDateTime));
@@ -2220,23 +2227,23 @@ namespace AnalysisDefs
             Step = hvp.Step;
         }
 
-        string results;
+        string _results;
         public string Results
         {
             get
             {
 				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && !string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))  // set specifically
 					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.Equals(results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
+				else if (string.Equals(_results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
 					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.IsNullOrEmpty(results))   // use the daily path if nothing is set
+				else if (string.IsNullOrEmpty(_results))   // use the daily path if nothing is set
                     return NCC.CentralizedState.App.AppContext.RootPathOverride();                
                 else if (NCC.CentralizedState.App.AppContext.DailyRootPath)  // if daily path set, check the current path for a match
                 {
                     string part = DateTime.Now.ToString("yyyy-MMdd");
-                    if (!results.EndsWith(part))  // it's not the current day
+                    if (!_results.EndsWith(part))  // it's not the current day
                     {
-                        Match m = Regex.Match(results, "\\d{4}-\\d{4}$");
+                        Match m = Regex.Match(_results, "\\d{4}-\\d{4}$");
                         if (m.Success)  // it is a pattern match meant to use the override daily path scheme, so use it
                         {
                             // strip and replace
@@ -2245,12 +2252,12 @@ namespace AnalysisDefs
                     }
                 }                
                 // else use the path exactly as user has specified, it is not overridden by the daily flag
-                return results;
+                return _results;
             }
             set
-            {
-                string warmed = TrimCmdLineFlagpath(value);
-                results = warmed;
+            {               
+                string trimmedvalue = TrimCmdLineFlagpath(value);
+                _results = NCC.CentralizedState.App.AppContext.GetTempLocation(trimmedvalue);
             }
         }
 
@@ -2403,6 +2410,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
             pb.ps.Add(new DBParamEntry("dbDataAssay", DBDataAssay));
+            pb.ps.Add(new DBParamEntry("datazFileAssay", DatazFileAssay));
             pb.ps.Add(new DBParamEntry("reviewFileAssay", ReviewFileAssay));
             pb.ps.Add(new DBParamEntry("nilaFileAssay", MCA527FileAssay));
             pb.ps.Add(new DBParamEntry("opStatusPktInterval", StatusPacketCount));
@@ -2413,8 +2421,9 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("gen5RevDataFile", CreateINCC5TestDataFile));
             pb.ps.Add(new DBParamEntry("liveFileWrite", LiveFileWrite));
             pb.ps.Add(new DBParamEntry("resultsFilePath", ResultsFilePath)); 
-            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath)); 
-            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix)); 
+            pb.ps.Add(new DBParamEntry("logFilePath", LogFilePath));
+            pb.ps.Add(new DBParamEntry("assayTypeSuffix", AssayTypeSuffix));
+            pb.ps.Add(new DBParamEntry("rootUserDoc", UserDocumentRootFolder));
             pb.ps.Add(new DBParamEntry("results8Char", Results8Char)); 
         }
 
@@ -2531,8 +2540,12 @@ namespace AnalysisDefs
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
         }
 
-		public bool IsError { get { return lvl >= NCCReporter.LogLevels.Error; } }
+		public bool IsError { get { return lvl <= NCCReporter.LogLevels.Error; } }
+<<<<<<< HEAD
 		public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
+=======
+        public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 
 
         public override string ToString()

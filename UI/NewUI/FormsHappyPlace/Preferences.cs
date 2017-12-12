@@ -56,8 +56,9 @@ namespace NewUI
             maybe.Add(NCCFlags.opStatusTimeInterval, NC.App.AppContext.StatusTimerMilliseconds);
             maybe.Add(NCCFlags.overwriteImportedDefs, NC.App.AppContext.OverwriteImportedDefs);
             maybe.Add(NCCFlags.openResults, NC.App.AppContext.OpenResults);
-            maybe.Add(NCCFlags.gen5TestDataFile, NC.App.AppContext.CreateINCC5TestDataFile);    
-            maybe.Add(NCCFlags.results8Char, NC.App.AppContext.Results8Char);    
+            maybe.Add(NCCFlags.gen5TestDataFile, NC.App.AppContext.CreateINCC5TestDataFile);
+            maybe.Add(NCCFlags.results8Char, NC.App.AppContext.Results8Char);
+            maybe.Add(NCCFlags.rootUserDoc, NC.App.AppContext.UserDocumentRootFolder);
             maybe.Add(NCCFlags.assayTypeSuffix, NC.App.AppContext.AssayTypeSuffix);    
             maybe.Add(NCCFlags.serveremulation, NC.App.AppContext.UseINCC5Ini);    
             maybe.Add(NCCFlags.emulatorapp, NC.App.AppContext.INCC5IniLoc);    
@@ -83,6 +84,7 @@ namespace NewUI
 			UseINCC5Suffix.Tag = NCCFlags.assayTypeSuffix;
 			UseINCC5Ini.Tag = NCCFlags.serveremulation;
 			Incc5IniFileLoc.Tag = NCCFlags.emulatorapp;
+            UserDocFolder.Tag = NCCFlags.rootUserDoc;
 
             DailyF0lder.Checked = NC.App.AppContext.DailyRootPath;
             WorkingDirTextBox.Text = NC.App.AppContext.RootLoc;
@@ -104,9 +106,10 @@ namespace NewUI
 			Use8Char.Text = "Use INCC5 results file naming (" + AnalysisDefs.MethodResultsReport.EightCharConvert(DateTimeOffset.Now) + ")";
 			UseINCC5Ini.Checked = NC.App.AppContext.UseINCC5Ini;
 			Incc5IniFileLoc.Text = NC.App.AppContext.INCC5IniLoc;
+            UserDocFolder.Checked = NC.App.AppContext.UserDocumentRootFolder;
 
-			// hide these if the relevant flag is not set
-			UseINCC5IniLocLabel.Visible =  NC.App.AppContext.UseINCC5Ini;
+            // hide these if the relevant flag is not set
+            UseINCC5IniLocLabel.Visible =  NC.App.AppContext.UseINCC5Ini;
 			Incc5IniFileLoc.Visible =  NC.App.AppContext.UseINCC5Ini;
 			incc5IniLoc.Visible = NC.App.AppContext.UseINCC5Ini;
 
@@ -120,6 +123,8 @@ namespace NewUI
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            bool annclog = ((string)maybe[NCCFlags.logFileLoc] != NC.App.AppContext.LogFilePath) ||
+                             ((bool)maybe[NCCFlags.rootUserDoc] != NC.App.AppContext.UserDocumentRootFolder);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.auxRatioReport] != NC.App.AppContext.AuxRatioReport);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.autoCreateMissing] !=NC.App.AppContext.AutoCreateMissing);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.root] !=NC.App.AppContext.RootLoc);
@@ -139,6 +144,7 @@ namespace NewUI
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.assayTypeSuffix] != NC.App.AppContext.AssayTypeSuffix);
             NC.App.AppContext.modified |= ((string)maybe[NCCFlags.emulatorapp] != NC.App.AppContext.INCC5IniLoc);
             NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.serveremulation] != NC.App.AppContext.UseINCC5Ini);
+            NC.App.AppContext.modified |= ((bool)maybe[NCCFlags.rootUserDoc] != NC.App.AppContext.UserDocumentRootFolder);
             if (!NC.App.AppContext.modified)  // nothing 
             {
                 Close();
@@ -164,7 +170,12 @@ namespace NewUI
 			NC.App.AppContext.AssayTypeSuffix = (bool)maybe[NCCFlags.assayTypeSuffix];
 			NC.App.AppContext.INCC5IniLoc = (string)maybe[NCCFlags.emulatorapp];
             NC.App.AppContext.UseINCC5Ini = (bool)maybe[NCCFlags.serveremulation];
+            NC.App.AppContext.UserDocumentRootFolder = (bool)maybe[NCCFlags.rootUserDoc];
             NC.App.LMBD.UpdateLMINCCAppContext(); // out to the DB with you!
+            if (annclog)
+            {
+                NC.App.AppLogger.TraceInformation("Restart INCC6 to enable the new log file location");
+            }
             Close();
         }
 
@@ -356,7 +367,6 @@ namespace NewUI
 		private void Use8Char_CheckedChanged(object sender, EventArgs e)
 		{
             maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
-
 		}
 
 		private void UseINCC5Suffix_CheckedChanged(object sender, EventArgs e)
@@ -364,7 +374,12 @@ namespace NewUI
             maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
 		}
 
-		private void incc5IniLoc_Click(object sender, EventArgs e)
+        private void UserDocFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            maybe[(NCCFlags)((Control)sender).Tag] = ((CheckBox)sender).Checked;
+        }
+
+        private void incc5IniLoc_Click(object sender, EventArgs e)
 		{
 			string str = UIIntegration.GetUsersFolder("Data file folder location", (string)maybe[(NCCFlags)((Control)sender).Tag]);
             if (!string.IsNullOrEmpty(str))

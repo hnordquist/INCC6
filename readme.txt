@@ -1,7 +1,11 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
+<<<<<<< HEAD
 6.18 Dec 2, 2016
+=======
+6.18 Dec 12, 2017 (NDATest)
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -87,8 +91,8 @@ SQLite/SQL Server database schema and related files
 System.Data.SQLite.dll    ; SQLite .NET Interop assembly 1.0.94.0
 sqlite3.exe               ; SQLite database utility, for diagnostic use
 
-INCC6.sqlite              ; Empty database, created with reset.bat
-Default.sqlite            ; Empty database, created with reset.bat
+INCC6.sqlite              ; Empty database, (re)created with reset.bat
+Default.sqlite            ; Empty database
 drop_INCC6_sqlite.sql     ; INCC6 SQLite schema DROP table statements
 create_INCC6_sqlite.sql   ; INCC6 SQLite schema CREATE and INSERT statements
 reset.bat                 ; Uses sqlite3.exe on sql schema files to recreate a new empty INCC6 database
@@ -100,7 +104,7 @@ create_INCC6_sqlserver.sql ; INCC6 SQL Server schema CREATE and INSERT statement
 KNOWN ISSUES:
 
 Many dialogs and features from INCC 5.* are not fully implemented e.g.
-   Collar acquire and Poison Rod details, Holdup and glovebox features,
+   Holdup and glovebox features,
    Active/Passive paired measurements, Rad Review controlled import,
    truncated multiplicity and some multiplicity analyses are incomplete,
    some Add-a-src processing, miscellaneous little-used features
@@ -117,10 +121,9 @@ See https://github.com/hnordquist/INCC6/issues
 
 
 Issues for basic INCC5/6 feature COMPLETION
-#84  Implement Collar
 #35  Hold-up analysis required
 ***  Active/Passive paired measurements
-***  Truncated multiplicity and some multiplicity analyses are incomplete
+***  Truncated multiplicity and some multiplicity analyses, (e.g. dual-energy) are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
@@ -140,7 +143,26 @@ Issues for production
 
 Closed issues
 
+<<<<<<< HEAD
 6.18 Dec 2, 2016  ************
+=======
+6.18 Dec 12, 2017  ************
+***  LANL: collar implementation, assorted minor changes
+***  Basic IAEA Dataz file support added
+***  iRAP integration support added, cmd line only
+***  Cmd line and dlg for SQLite database switch
+***  Default daily log file location is now in user Documents or AppData\Local\Temp, cmd line switch available
+***  Log file name emitted on console and GUI log list view
+***  Use notepad to open log and generated text files on double click in log list view
+
+6.18 Mar 23, 2017  ************
+***  Clean up logger API style
+***  Finish Dual-energy multiplicity dialog, database and data structure design
+***  Supports XP again
+***  PTR-32 .bin single-channel list mode file cmd line peak filter tool added
+
+6.18 Dec 12, 2016  ************
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 ***  Retain name of each input file used for file-based LM analysis
 ***  Multiplicity analyzer cycle DTC rates recalculation on report operation
 86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence

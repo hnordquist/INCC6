@@ -78,10 +78,15 @@ namespace NewUI
 						CycleList cl = NC.App.DB.GetCycles(f.det, m.MeasurementId, m.AcquireState.data_src); // APluralityOfMultiplicityAnalyzers: // URGENT: get all the cycles associated with each analyzer, restoring into the correct key->result pair
                         m.Cycles.AddRange(cl);
 						// NEXT: m.CFCyles for AAS not used for INCC6 created measurements, only INCC5 transfer measurements have them m.Add(c, i);
+<<<<<<< HEAD
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId);
-                        m.ReportRecalc();
+						m.ReportRecalc(); // dev note: not strictly from INCC5, but based on usage complaint from LANL 
                     }
-
+=======
+						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
+						m.ReportRecalc(); // dev note: not strictly from INCC5, but based on usage complaint from LANL 
+					}
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
 					foreach (INCCTransferFile itd in itdl)
 					{

@@ -171,15 +171,15 @@ namespace Analysis
             Double CycleSinglesRate = 0;
             if (Cycle.Totals > 0 && Cycle.TS.TotalSeconds > 0.0)
                 CycleSinglesRate = Cycle.Totals / Cycle.TS.TotalSeconds;
-            logger.TraceEvent(LogLevels.Info, 153, String.Format("Cycle {0} complete, results {1}/sec, {2} hits, {3} triggers",
-                                    Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents));
+            logger.TraceEvent(LogLevels.Info, 153, string.Format("Cycle {0} complete, results {1}/sec, {2} hits, {3} triggers, {4:F3}s",
+                                    Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents, Cycle.TS.TotalSeconds));
         }
 
         public virtual void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)
         {
             //cfg = config;
-            this.logger = datalogger;
-            this.analogger = alogger;
+            logger = datalogger;
+            analogger = alogger;
             state.logger = datalogger;
         }
 

@@ -371,6 +371,7 @@ CREATE TABLE de_mult_rec(
 	[neutron_energy] nvarchar NULL,
 	[detector_efficiency] nvarchar NULL,
 	[inner_outer_ring_ratio] nvarchar NULL,
+	[relative_fission] nvarchar NULL,
 	[inner_ring_efficiency] float,
 	[outer_ring_efficiency] float,
 	FOREIGN KEY(item_type_id) REFERENCES material_types(id),
@@ -395,6 +396,7 @@ CREATE TABLE analysis_method_rec(
    [aux_method] int,
    [curium_ratio] int,
    [truncated_mult] int,
+   [spare1] int,
    [spare2] int,
    [spare3] int,
    [spare4] int,
@@ -574,7 +576,7 @@ CREATE TABLE CyclesMult(
 	[status] int NULL,
 	[mid] INTEGER NOT NULL,
 	FOREIGN KEY(cid) REFERENCES cycles(id) on DELETE CASCADE
-);  
+);
 GO
 CREATE TABLE CyclesFeyn(
 	[id] INTEGER Primary Key,
@@ -908,6 +910,7 @@ CREATE TABLE LMINCCAppContext(
 	[INCCParity] int NULL,
 	[INCCXfer] int NULL,
 	[sortPulseFile] int NULL,
+	[cullLMOutliers] int NULL,
 	[pulseFileNCD] int NULL,
 	[ptrFileNCD] int NULL,
 	[nilaFileNCD] int NULL,
@@ -915,6 +918,7 @@ CREATE TABLE LMINCCAppContext(
 	[reviewFileAssay] int NULL,
 	[pulseFileAssay] int NULL,
 	[ptrFileAssay] int NULL,
+	[datazFileAssay] int NULL,
 	[dbDataAssay] int NULL,
 	[nilaFileAssay] int NULL,
 	[opStatusPktInterval] int NULL, /* every 1Mb, or 128 8192Kb, socket packet receipts, get the status from the analyzes, */
@@ -927,7 +931,8 @@ CREATE TABLE LMINCCAppContext(
 	[resultsFilePath] nvarchar NULL, 
 	[logFilePath] nvarchar NULL,
 	[results8Char] int NULL,
-	[assayTypeSuffix] int NULL
+	[assayTypeSuffix] int NULL,
+	[rootUserDoc] int NULL
 );
 GO
 /* for Feynman, Rossi, Time, etc. */
@@ -1865,6 +1870,7 @@ CREATE TABLE de_mult_rec_m(
 	[neutron_energy] nvarchar NULL,
 	[detector_efficiency] nvarchar NULL,
 	[inner_outer_ring_ratio] nvarchar NULL,
+	[relative_fission] nvarchar NULL,
 	[inner_ring_efficiency] float,
 	[outer_ring_efficiency] float,
 	FOREIGN KEY(mid) REFERENCES measurements(id) on DELETE CASCADE,
@@ -1993,7 +1999,7 @@ INSERT INTO [HVCalibrationParams] ([detector_id],[minv],[maxv],[duration],[stepv
 GO
 INSERT INTO [analysis_method_rec] (id, item_type_id,[analysis_method_detector_id],[cal_curve],[known_alpha],
 [known_m],[multiplicity],[add_a_source],[active],[active_mult],
-[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0);
+[active_passive],[collar],[normal_method],[backup_method],[curium_ratio],[truncated_mult]) VALUES(1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0);
 GO
 INSERT INTO [sr_parms_rec]	(detector_id,[sr_detector_id],[sr_type],[sr_port_number],[predelay],[gate_length],[gate_length2],
 [high_voltage],[die_away_time],[efficiency], [multiplicity_deadtime],[coeff_a_deadtime],[coeff_b_deadtime],
@@ -2120,7 +2126,11 @@ INSERT INTO [LMNetComm] VALUES(2,1,5002,5201,'127.0.0.1',500,8,8192,50,1,1,1);
 Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
-INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+<<<<<<< HEAD
+INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+=======
+INSERT INTO [LMINCCAppContext] VALUES('*',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1,0);
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 GO
 INSERT INTO [detectors] VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO
@@ -2188,21 +2198,21 @@ INSERT INTO [known_alpha_rec] VALUES(1,2,1,0.0,0.0,2.166,0.0,1.0,0.0,0.0,0.0,0.0
 GO
 INSERT INTO [multiplicity_rec] VALUES(1,2,1,0,473.5,2.154,3.789,5.211,3.163,8.24,17.321,1.0,0.0,0.0,0.0,1.0,NULL,NULL,1.0);
 GO
-INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES(3,2,1,1,1,0,1,0,0,0,0,0,4,2,0,0,0,NULL,NULL,NULL,NULL);
 GO
 INSERT INTO [cal_curve_rec] VALUES(1,2,1,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0,0.0,0.0,0.0,-100000000.0,100000000.0,'0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0','0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0');
 GO
 INSERT INTO [acquire_parms_rec] VALUES(1, 'XXXX','XXXX','XXXX','XXXX','AS710','Pu','','Default','Default','','','','','','','0',         0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1.0,0,0.0,2,'','',0,0.0,'2014-11-25T13:18:10','2014-11-25T13:18:10', 'AS710');
 GO
-INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (4,1,5,1,0,0,0,0,0,0,0,0,1,0,1,0,0,NULL,NULL,NULL,NULL);
 GO
-INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL);
+INSERT INTO [analysis_method_rec] VALUES (5,2,5,0,0,0,0,0,0,0,0,1,9,0,0,0,0,NULL,NULL,NULL,NULL);
 GO
 INSERT INTO [acquire_parms_rec] VALUES(2, 'XXXX','XXXX','XXXX','XXXX','JSR-15','Pu','','Default','Default','','','XXXX','XXXX','','','0',0,1,0,1,1,1,0,0,1,0,0,100.0,0,3,3,10,1000,1,0,40,2,'','',0,0,'2016-08-05T11:05:39.2729192-06:00','2016-08-05T16:28:15.4647845-06:00','JSR-15');
 GO
-INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
+INSERT INTO [LMAcquireParams] VALUES(3,0,12,6,0,0,0,0,0,0,0,NULL,0,'*',0,'',0,0,'2014-11-25T15:23:08','Pu',1);
 GO
-INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'c:\temp',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
+INSERT INTO [LMAcquireParams] VALUES(4,0,12,6,0,0,0,0,0,0,0,NULL,0,'*',0,'',0,0,'2016-01-13T13:52:17','Pu',1);
 GO
 INSERT INTO [poison_rod_type_rec] VALUES(1,'G',0.647);
 GO

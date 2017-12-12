@@ -51,6 +51,7 @@
             this.UseINCC5Suffix = new System.Windows.Forms.CheckBox();
             this.Incc5IniFileLoc = new System.Windows.Forms.TextBox();
             this.UseINCC5Ini = new System.Windows.Forms.CheckBox();
+            this.UserDocFolder = new System.Windows.Forms.CheckBox();
             this.FPPrec = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.EnableAuxRatioReportingCheckBox = new System.Windows.Forms.CheckBox();
@@ -293,6 +294,20 @@
             this.UseINCC5Ini.UseVisualStyleBackColor = true;
             this.UseINCC5Ini.CheckedChanged += new System.EventHandler(this.UseINCC5Ini_CheckedChanged);
             // 
+            // UserDocFolder
+            // 
+            this.UserDocFolder.AutoSize = true;
+            this.UserDocFolder.Location = new System.Drawing.Point(406, 255);
+            this.UserDocFolder.Name = "UserDocFolder";
+            this.UserDocFolder.Size = new System.Drawing.Size(177, 17);
+            this.UserDocFolder.TabIndex = 55;
+            this.UserDocFolder.Text = "User doc folder for default paths";
+            this.toolTip1.SetToolTip(this.UserDocFolder, "User AppData\\Temp folder is default Log location, enable this to use user documen" +
+        "t folder");
+            this.UserDocFolder.UseVisualStyleBackColor = true;
+            this.UserDocFolder.CheckedChanged += new System.EventHandler(this.UserDocFolder_CheckedChanged);
+
+            // 
             // FPPrec
             // 
             this.FPPrec.FormattingEnabled = true;
@@ -315,7 +330,7 @@
             "16",
             "17",
             "18"});
-            this.FPPrec.Location = new System.Drawing.Point(389, 288);
+            this.FPPrec.Location = new System.Drawing.Point(310, 290);
             this.FPPrec.Name = "FPPrec";
             this.FPPrec.Size = new System.Drawing.Size(46, 21);
             this.FPPrec.TabIndex = 9;
@@ -324,7 +339,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(102, 291);
+            this.label1.Location = new System.Drawing.Point(19, 293);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(260, 13);
             this.label1.TabIndex = 10;
@@ -451,7 +466,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(610, 338);
+            this.ClientSize = new System.Drawing.Size(635, 338);
+            this.Controls.Add(this.UserDocFolder);
             this.Controls.Add(this.UseINCC5Ini);
             this.Controls.Add(this.incc5IniLoc);
             this.Controls.Add(this.Incc5IniFileLoc);
@@ -533,5 +549,6 @@
 		private System.Windows.Forms.TextBox Incc5IniFileLoc;
 		private System.Windows.Forms.Label UseINCC5IniLocLabel;
 		private System.Windows.Forms.CheckBox UseINCC5Ini;
-	}
+        private System.Windows.Forms.CheckBox UserDocFolder;
+    }
 }

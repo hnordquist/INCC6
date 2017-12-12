@@ -41,6 +41,24 @@ namespace NCCReporter
         Warning = TraceEventType.Warning, Info = TraceEventType.Information, Verbose = TraceEventType.Verbose
     };
 
+    /// Keep LMLoggers for LANL namespace visibility, change elsewhere to the clearer 'Logging' name
+    //// Some non-core classes and methods were moved into the core project after the first division in 2014
+    public class Logging : LMLoggers
+    {
+        public Logging(NCCConfig.Config cfg) : base(cfg)
+        {
+
+        }
+    }
+
+    public class Log : LMLoggers.LognLM
+    {
+        public Log(string section, NCCConfig.Config cfg, int pid) : base(section, cfg, pid)
+        {
+
+        }
+    }
+
     // dev note: the multiple loggers created here appear to each create a deferred procedure thread in the process, 
     // dev note: consider reducing the number of loggers after release testing for the multiple thread performance impact
     public class LMLoggers
@@ -67,7 +85,10 @@ namespace NCCReporter
         {
             get { return (LognLM)reps[AppSection.Data]; }
         }
-
+        public LognLM ControlLogger
+        {
+            get { return (LognLM)reps[AppSection.Control]; }
+        }
         public LMLoggers(NCCConfig.Config cfg)
         {
             this.cfg = cfg;
@@ -77,16 +98,17 @@ namespace NCCReporter
 
             foreach (AppSection wp in a)
             {
-                LognLM l = new LognLM(wp.ToString(), cfg, pid);
+                Log l = new Log(wp.ToString(), cfg, pid);
                 reps.Add(wp, l);
-             }
+            }
+            DB.DBMain.ConsoleQuiet = cfg.App.Quiet;
         }
 
         public void Flush()
         {
             foreach (AppSection a in Enum.GetValues(typeof(AppSection)))
             {
-                LognLM l = (LognLM)reps[a];
+                Log l = (Log)reps[a];
                 if (l != null)
                 {
                     l.TS.Flush();
@@ -96,10 +118,11 @@ namespace NCCReporter
 
         public void UpdateFilterLevel(ushort v)
         {
-            foreach (LognLM l in reps.Values)
+            foreach (Log l in reps.Values)
             {
                 l.TS.Switch.Level = cfg.App.Level();
             }
+<<<<<<< HEAD
         }
 
         /*public interface IINCCLog
@@ -126,6 +149,15 @@ namespace NCCReporter
         }*/
 
         public class LognLM//:IINCCLog
+=======
+        }
+
+        // Keep LognLM for LANL namespace visibility, change elsewhere to the clearer 'Log' name
+        // Some non-core classes and methods were moved into the core project after the first division in 2014
+
+
+        public class LognLM
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
         {
 
             TraceSource ts = null;
@@ -138,35 +170,74 @@ namespace NCCReporter
 
             public static string CurrentLogFilePath { get; set; }
 
+            static string _uniquename;
+
+
             public LognLM(string section, NCCConfig.Config cfg, int pid)
             {
-                FileLogTraceListener listener = null;
                 ts = new TraceSource(section);
+
+                if (cfg.App.Quiet)
+                {
+                    ts.Listeners.Remove("console");
+                }
 
                 try
                 {
+                    if (string.IsNullOrEmpty(_uniquename))
+                        _uniquename = string.Format("INCC6" + GetVersionBranchString() + DateTime.Now.TimeOfDay.Ticks.ToString());
                     foreach (TraceListener item in ts.Listeners)
                     {
-
                         // every file logger points to the same file and has the same attributes, they are really a merged logger set (for now, until we need something else)
                         if (item is FileLogTraceListener)
+<<<<<<< HEAD
                         {
                             listener = (FileLogTraceListener)item;
-                            listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
-                            listener.Append = true;
-                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
+=======
+                        {
+                            FileLogTraceListener listener = (FileLogTraceListener)item;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
                                 listener.CustomLocation = cfg.App.LogFilePath;
                             }
+<<<<<<< HEAD
+                            if (cfg.App.isSet(NCCConfig.NCCFlags.loglocation))
+                            {
+                                listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
+                                listener.Location = LogFileLocation.Custom;
+                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName); 
+                                if (string.IsNullOrEmpty(x) || NCCConfig.Config.isDefaultPath(x))
+                                    listener.CustomLocation = cfg.App.LogFilePath;
+                                else
+                                    listener.CustomLocation = x;
+                            }
+                            else
+                                listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
+=======
+                            if (cfg.App.isSet(NCCConfig.NCCFlags.logLocation))
+                            {
+                                listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
+                                listener.Location = LogFileLocation.Custom;
+                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName);
+                                if (string.IsNullOrEmpty(x) || NCCConfig.Config.isDefaultPath(x))
+                                    listener.CustomLocation = cfg.App.LogFilePath;
+                                else
+                                    listener.CustomLocation = x;
+                            }
+                            else
+                                listener.BaseFileName = _uniquename;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+                            listener.Append = true;
+                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
                             // logdetails cmd line flag crudely enables this option set, only because the App.Config sharedListeners and switch source sections do not permit setting this attribute.
                             if (cfg.App.isSet(NCCConfig.NCCFlags.logDetails))
                                 item.TraceOutputOptions |= cfg.App.LoggingDetailOptions;
 
                             if (string.IsNullOrEmpty(CurrentLogFilePath))
-                                CurrentLogFilePath = listener.FullLogFileName; //System.IO.Path.Combine(listener.CustomLocation, listener.BaseFileName + DateTime.Now.ToString("yyyy-MM-dd") + ".log");
+                                CurrentLogFilePath = listener.FullLogFileName;
                         }
                         else
                         {
@@ -174,7 +245,7 @@ namespace NCCReporter
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
@@ -190,8 +261,27 @@ namespace NCCReporter
 
             }
 
+<<<<<<< HEAD
             //This was dumb and misspelled. Fixed it. HN 04_26_2017
             readonly string colossalErrorMsg = "Fatal error encountered.";
+=======
+            static string GetVersionBranchString()
+            {
+                string result = string.Empty;
+                System.Reflection.Assembly entry = System.Reflection.Assembly.GetEntryAssembly();
+                object[] o = entry.GetCustomAttributes(typeof(System.Reflection.AssemblyConfigurationAttribute), true);
+                if (o != null && o.Length > 0)
+                {
+                    System.Reflection.AssemblyConfigurationAttribute aca = (System.Reflection.AssemblyConfigurationAttribute)o[0];
+                    if (!string.IsNullOrEmpty(aca.Configuration))
+                        result = aca.Configuration;
+                }
+                return result;
+
+            }
+
+            readonly string colossalErrorMsg = "Sometng whrong ihere";
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
             public void EmitFatalErrorMsg()
             {
                 TraceEvent(LogLevels.Error, 0x2A2A, colossalErrorMsg);
@@ -200,20 +290,6 @@ namespace NCCReporter
             {
                 ts.Flush();
             }
-
-            // todo: once performance of logging is understood, move to external string storage based on event ids for all logging statements      
-            public void Log(Int32 id)	// Writes an externally defined message to the application's log listeners.
-            {
-                TraceEventType t = TraceEventType.Information; // deduce or mask from id
-                ts.TraceEvent(t, id);  // id is index into external string source (a dll or flat file)
-            }
-            public void Log(Int32 id, params object[] args)	// Writes an externally defined message to the application's log listeners.
-            {
-                TraceEventType t = TraceEventType.Information; // deduce or mask from id
-                ts.TraceEvent(t, id, "{0} {1} &c;", args); // look up format from external source
-            }
-
-
 
             // use these pass-throughs for now
 
@@ -281,7 +357,7 @@ namespace NCCReporter
             [Conditional("TRACE")]
             public void TraceData(LogLevels eventType, int id, params object[] data)
             {
-				if (!ShouldTrace(eventType))
+                if (!ShouldTrace(eventType))
                     return;
                 ts.TraceData((TraceEventType)eventType, id, data);
             }
@@ -459,51 +535,10 @@ namespace NCCReporter
                     ts.TraceEvent(TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
             }
 
-            public void TraceExceptionButNotToUI(Exception ex, bool stack = false)
-            {
-                TraceEventCache tec = new TraceEventCache();
-                System.Diagnostics.TraceListener tl = ts.Listeners["FileLog"];
-                if (tl != null)
-                {
-                    tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 999, ex.Source + ":" + ex.Message);
-                    if (stack)
-                        tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-                }
-                tl = ts.Listeners["console"];
-                if (tl != null)
-                {
-                    tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 999, ex.Source + ":" + ex.Message);
-                    if (stack)
-                        tl.TraceEvent(tec, ts.Name, TraceEventType.Error, 998, FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-                }
-            }
-
-            static public void TraceExceptionConsole(Exception ex, bool stack = false)
-            {
-                    Console.WriteLine("App\tError\t999\t" + ex.Source + ":" + ex.Message);
-                    if (stack)
-                        Console.WriteLine("App\tError\t998\t" + FlattenChars(ex.StackTrace, '*', 0x269b)); // unicode atom symbol
-            } 
-
-            // don't use these after all
-            //void WriteEntry(string m, TraceEventType t)	//Writes a message to the application's log listeners.
-            //{
-            //}
-            //void WriteEntry(String m, TraceEventType t, Int32 id)	// Writes a message to the application's log listeners.
-            //{
-            //}
-
-            //void WriteException(Exception ex, TraceEventType t, String m)	// Writes exception information to the application's log listeners.
-            //{
-            //}
-            //void WriteException(Exception ex, TraceEventType t, String m, Int32 id) //
-            //{
-            //}
-
             // dev note: s = System.Text.RegularExpressions.Regex.Replace(s, @"[\r\n\\'""]", @"\$0");
             static public string FlattenChars(string s, char eolchar = '\\', int npchar = 46) // 46 is '.' //  unicode 0x26F7 is SKIER if your font has it LOL
             {
-                if (String.IsNullOrEmpty(s))  // null to empty string, callers may now relax
+                if (string.IsNullOrEmpty(s))  // null to empty string, callers may now relax
                     return "";
                 char[] ca = s.ToCharArray();
                 int i;

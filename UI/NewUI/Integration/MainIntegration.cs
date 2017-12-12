@@ -70,7 +70,7 @@ namespace NewUI
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog();
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
-            RestoreFileDialog.DefaultExt = "ext";
+            RestoreFileDialog.DefaultExt = ext;
             RestoreFileDialog.Filter = name + " files (." + ext + ")|*." + ext;
             if (!String.IsNullOrEmpty(ext2))
             {
@@ -116,7 +116,7 @@ namespace NewUI
             System.Windows.Forms.OpenFileDialog RestoreFileDialog = new System.Windows.Forms.OpenFileDialog(); 
             List<string> paths = new List<string>();
             RestoreFileDialog.CheckFileExists = false;
-            RestoreFileDialog.DefaultExt = "ext";
+            RestoreFileDialog.DefaultExt = ext;
             RestoreFileDialog.Filter = name + " files (." + ext + ")|*." + ext ;
             if (!String.IsNullOrEmpty(ext2))
             {
@@ -181,7 +181,7 @@ namespace NewUI
 
 				foreach (LMLoggers.AppSection source in Enum.GetValues(typeof(LMLoggers.AppSection)))
 				{
-					foreach (TraceListener l in NC.App.Logger(source).TS.Listeners)
+					foreach (TraceListener l in NC.App.Loggers.Logger(source).TS.Listeners)
 					{
 						if (l is WPFTraceListener)
 						{
