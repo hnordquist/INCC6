@@ -120,8 +120,10 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBuildEvent>
+    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)deployment"
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"
+copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

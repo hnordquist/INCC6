@@ -1,0 +1,1570 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <DefineConstants Condition=" !$(DefineConstants.Contains(';NET')) ">$(DefineConstants);$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+    <DefineConstants Condition=" $(DefineConstants.Contains(';NET')) ">$(DefineConstants.Remove($(DefineConstants.LastIndexOf(";NET"))));$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{295216F0-AD8B-448B-A41E-52456AB2DC38}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>UI</RootNamespace>
+    <AssemblyName>INCC6</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>default</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>rel.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Defs">
+      <HintPath>..\deployment\Defs.dll</HintPath>
+    </Reference>
+    <Reference Include="NCCCtrl">
+      <HintPath>..\deployment\NCCCtrl.dll</HintPath>
+    </Reference>
+    <Reference Include="RepDB">
+      <HintPath>..\deployment\RepDB.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.IO.Compression.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem">
+      <HintPath>..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.IO.Compression.FileSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="FormsHappyPlace\Ack.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Ack.Designer.cs">
+      <DependentUpon>Ack.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\ChooseBackgroundType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\ChooseBackgroundType.Designer.cs">
+      <DependentUpon>ChooseBackgroundType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\EqCoeffViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\EqCoeffViewer.Designer.cs">
+      <DependentUpon>EqCoeffViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\FileSel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\FileSel.Designer.cs">
+      <DependentUpon>FileSel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\FoldorFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\FoldorFile.Designer.cs">
+      <DependentUpon>FoldorFile.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs">
+      <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCal.Designer.cs">
+      <DependentUpon>IDDCollarCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCrossRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarCrossRef.Designer.cs">
+      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCorrectionFactors.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCorrectionFactors.Designer.cs">
+      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCurveType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCurveType.Designer.cs">
+      <DependentUpon>IDDCurveType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFit.Designer.cs">
+      <DependentUpon>IDDDemingFit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFitSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDemingFitSelect.Designer.cs">
+      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDK5CollarItemData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDK5CollarItemData.Designer.cs">
+      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKValSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKValSelector.Designer.cs">
+      <DependentUpon>IDDKValSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveInitialData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveInitialData.Designer.cs">
+      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IsotopicsList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IsotopicsList.Designer.cs">
+      <DependentUpon>IsotopicsList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\MeasSetup.xaml.cs">
+      <DependentUpon>MeasSetup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\MethodParam.cs" />
+    <Compile Include="FormsHappyPlace\PlotSDTChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotSDTChart.Designer.cs">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PrintForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PrintForm.Designer.cs">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\SelectSQLiteDB.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\SelectSQLiteDB.Designer.cs">
+      <DependentUpon>SelectSQLiteDB.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Splash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Splash.Designer.cs">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\TransferList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\TransferList.Designer.cs">
+      <DependentUpon>TransferList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NumericTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Progress\CancelCommand.cs" />
+    <Compile Include="Progress\ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Logging\AutoScrollBehavior.cs" />
+    <Compile Include="Logging\TraceEvent.cs" />
+    <Compile Include="Logging\WPFTraceListener.cs" />
+    <Compile Include="Progress\TaskProgress.cs" />
+    <Compile Include="Support\Clip.cs" />
+    <Compile Include="Support\Folder.cs" />
+    <Compile Include="Support\Format.cs" />
+    <Compile Include="Support\SelSum.cs" />
+    <Compile Include="FormsHappyPlace\IDDActiveCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDActiveCal.Designer.cs">
+      <DependentUpon>IDDActiveCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDActiveMultCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDActiveMultCal.Designer.cs">
+      <DependentUpon>IDDActiveMultCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDActivePassiveCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDActivePassiveCal.Designer.cs">
+      <DependentUpon>IDDActivePassiveCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAddASourceCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAddASourceCal.Designer.cs">
+      <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Overview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Overview.Designer.cs">
+      <DependentUpon>Overview.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDArchiveConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDArchiveConfig.Designer.cs">
+      <DependentUpon>IDDArchiveConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAssaySummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAssaySummary.Designer.cs">
+      <DependentUpon>IDDAssaySummary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCalibrationCurveCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCalibrationCurveCal.Designer.cs">
+      <DependentUpon>IDDCalibrationCurveCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDChangeDataDir.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDChangeDataDir.Designer.cs">
+      <DependentUpon>IDDChangeDataDir.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCmPuRatio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCmPuRatio.Designer.cs">
+      <DependentUpon>IDDCmPuRatio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDCmSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDCmSetup.Designer.cs">
+      <DependentUpon>IDDCmSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarAcquire.Designer.cs">
+      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarItemData.Designer.cs">
+      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDCollarK5.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDCollarK5.Designer.cs">
+      <DependentUpon>IDDCollarK5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDCollarManualAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDCollarManualAcquire.Designer.cs">
+      <DependentUpon>IDDCollarManualAcquire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarNormalization.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCollarNormalization.Designer.cs">
+      <DependentUpon>IDDCollarNormalization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCompositeIsotopics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCompositeIsotopics.Designer.cs">
+      <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCuriumRatioCalibration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCuriumRatioCalibration.Designer.cs">
+      <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDeleteMeas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDeleteMeas.Designer.cs">
+      <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDDiskAcqPathFilename.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDDiskAcqPathFilename.Designer.cs">
+      <DependentUpon>IDDDiskAcqPathFilename.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDDualEnergyMult.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDDualEnergyMult.Designer.cs">
+      <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDEndingComment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDEndingComment.Designer.cs">
+      <DependentUpon>IDDEndingComment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDErrorCalcMethod.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDErrorCalcMethod.Designer.cs">
+      <DependentUpon>IDDErrorCalcMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGlovebox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGlovebox.Designer.cs">
+      <DependentUpon>IDDGlovebox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxAdd.Designer.cs">
+      <DependentUpon>IDDGloveboxAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxDelete.Designer.cs">
+      <DependentUpon>IDDGloveboxDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDGloveboxEdit.Designer.cs">
+      <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDHeavyMetalItemData.Designer.cs">
+      <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDHighVoltagePlateau.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDHighVoltagePlateau.Designer.cs">
+      <DependentUpon>IDDHighVoltagePlateau.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDHoldupSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDHoldupSelect.Designer.cs">
+      <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKnownAlphaCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKnownAlphaCal.Designer.cs">
+      <DependentUpon>IDDKnownAlphaCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKnownMCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDKnownMCal.Designer.cs">
+      <DependentUpon>IDDKnownMCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDManualDataEntry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDManualDataEntry.Designer.cs">
+      <DependentUpon>IDDManualDataEntry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDManualSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDManualSetup.Designer.cs">
+      <DependentUpon>IDDManualSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMultiplicityCal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMultiplicityCal.Designer.cs">
+      <DependentUpon>IDDMultiplicityCal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDNewWellConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDNewWellConfig.Designer.cs">
+      <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPassword.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPassword.Designer.cs">
+      <DependentUpon>IDDPassword.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordAdd.Designer.cs">
+      <DependentUpon>IDDPasswordAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordDelete.Designer.cs">
+      <DependentUpon>IDDPasswordDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPasswordEdit.Designer.cs">
+      <DependentUpon>IDDPasswordEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPercentU235.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPercentU235.Designer.cs">
+      <DependentUpon>IDDPercentU235.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPLCSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPLCSetup.Designer.cs">
+      <DependentUpon>IDDPLCSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDPLCWaitMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDPLCWaitMsg.Designer.cs">
+      <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotAssayResults.Designer.cs">
+      <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotAssaySelect.Designer.cs">
+      <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotBiasMeasHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPlotBiasMeasHistory.Designer.cs">
+      <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodType.Designer.cs">
+      <DependentUpon>IDDPoisonRodType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeAdd.Designer.cs">
+      <DependentUpon>IDDPoisonRodTypeAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDPoisonRodTypeDelete.Designer.cs">
+      <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReanalysisAssay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReanalysisAssay.Designer.cs">
+      <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\PlotAssayChart.Designer.cs">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDReanalysisHoldup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDReanalysisHoldup.Designer.cs">
+      <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReanalyzeDBMeas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReanalyzeDBMeas.Designer.cs">
+      <DependentUpon>IDDReanalyzeDBMeas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDReimportMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDReimportMsg.Designer.cs">
+      <DependentUpon>IDDReimportMsg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewAll.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewAll.Designer.cs">
+      <DependentUpon>IDDReviewAll.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMeasurementList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMeasurementList.Designer.cs">
+      <DependentUpon>IDDMeasurementList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewAssay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewAssay.Designer.cs">
+      <DependentUpon>IDDReviewAssay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewBackground.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewBackground.Designer.cs">
+      <DependentUpon>IDDReviewBackground.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewNormalization.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewNormalization.Designer.cs">
+      <DependentUpon>IDDReviewNormalization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewCalibration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewCalibration.Designer.cs">
+      <DependentUpon>IDDReviewCalibration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDReviewExitMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDReviewExitMsg.Designer.cs">
+      <DependentUpon>IDDReviewExitMsg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewHoldup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewHoldup.Designer.cs">
+      <DependentUpon>IDDReviewHoldup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewInitSrc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewInitSrc.Designer.cs">
+      <DependentUpon>IDDReviewInitSrc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewPrecision.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewPrecision.Designer.cs">
+      <DependentUpon>IDDReviewPrecision.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewRatesOnly.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDReviewRatesOnly.Designer.cs">
+      <DependentUpon>IDDReviewRatesOnly.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDRotationTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDRotationTable.Designer.cs">
+      <DependentUpon>IDDRotationTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveCampaignId.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveCampaignId.Designer.cs">
+      <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveTransfer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSaveTransfer.Designer.cs">
+      <DependentUpon>IDDSaveTransfer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDScaling.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDScaling.Designer.cs">
+      <DependentUpon>IDDScaling.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDSelectDriverType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDSelectDriverType.Designer.cs">
+      <DependentUpon>IDDSelectDriverType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSelectPrimaryAM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSelectPrimaryAM.Designer.cs">
+      <DependentUpon>IDDSelectPrimaryAM.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVAssay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVAssay.Designer.cs">
+      <DependentUpon>IDDSRREVAssay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVBackground.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVBackground.Designer.cs">
+      <DependentUpon>IDDSRREVBackground.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVBias.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDSRREVBias.Designer.cs">
+      <DependentUpon>IDDSRREVBias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumLimits.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumLimits.Designer.cs">
+      <DependentUpon>IDDStratumLimits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDSweepFeature.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDSweepFeature.Designer.cs">
+      <DependentUpon>IDDSweepFeature.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDTakeDataWaitMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDTakeDataWaitMsg.Designer.cs">
+      <DependentUpon>IDDTakeDataWaitMsg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDTakeDataWaitMsg1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDTakeDataWaitMsg1.Designer.cs">
+      <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDTruncatedMultCalibration.Designer.cs">
+      <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unready\IDDWeightedMult.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Unready\IDDWeightedMult.Designer.cs">
+      <DependentUpon>IDDWeightedMult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\LMAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\LMAcquire.Designer.cs">
+      <DependentUpon>LMAcquire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WinPos.cs" />
+    <Page Include="FormsHappyPlace\MeasSetup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Progress\ProgressDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Integration\Controller.cs" />
+    <Compile Include="FormsHappyPlace\AcquireHandlers.cs" />
+    <Compile Include="FormsHappyPlace\IDDAcquireAssay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireAssay.Designer.cs">
+      <DependentUpon>IDDAcquireAssay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireBackground.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireBackground.Designer.cs">
+      <DependentUpon>IDDAcquireBackground.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireBias.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireBias.Designer.cs">
+      <DependentUpon>IDDAcquireBias.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireCalibration.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireCalibration.Designer.cs">
+      <DependentUpon>IDDAcquireCalibration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireDBMeas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireDBMeas.Designer.cs">
+      <DependentUpon>IDDAcquireDBMeas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireHoldup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireHoldup.Designer.cs">
+      <DependentUpon>IDDAcquireHoldup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireInitSrc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireInitSrc.Designer.cs">
+      <DependentUpon>IDDAcquireInitSrc.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquirePrecision.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquirePrecision.Designer.cs">
+      <DependentUpon>IDDAcquirePrecision.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireRatesOnly.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAcquireRatesOnly.Designer.cs">
+      <DependentUpon>IDDAcquireRatesOnly.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAmLiNormalization.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAmLiNormalization.Designer.cs">
+      <DependentUpon>IDDAmLiNormalization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAnalysisMethodsConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDAnalysisMethodsConfig.Designer.cs">
+      <DependentUpon>IDDAnalysisMethodsConfig.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDBackgroundSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDBackgroundSetup.Designer.cs">
+      <DependentUpon>IDDBackgroundSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCf252Normalization.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCf252Normalization.Designer.cs">
+      <DependentUpon>IDDCf252Normalization.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDCf252SinglesNorm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorAdd.Designer.cs">
+      <DependentUpon>IDDDetectorAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorDelete.Designer.cs">
+      <DependentUpon>IDDDetectorDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorEdit.Designer.cs">
+      <DependentUpon>IDDDetectorEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorIdSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDDetectorIdSelect.Designer.cs">
+      <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDEnterIsotopics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDEnterIsotopics.Designer.cs">
+      <DependentUpon>IDDEnterIsotopics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacility.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacility.Designer.cs">
+      <DependentUpon>IDDFacility.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityAdd.Designer.cs">
+      <DependentUpon>IDDFacilityAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityDelete.Designer.cs">
+      <DependentUpon>IDDFacilityDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDFacilityEdit.Designer.cs">
+      <DependentUpon>IDDFacilityEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopics.Designer.cs">
+      <DependentUpon>IDDIsotopics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopicsAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopicsAdd.Designer.cs">
+      <DependentUpon>IDDIsotopicsAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopicsEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDIsotopicsEdit.Designer.cs">
+      <DependentUpon>IDDIsotopicsEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemDataEntry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemDataEntry.Designer.cs">
+      <DependentUpon>IDDItemDataEntry.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemType.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemType.Designer.cs">
+      <DependentUpon>IDDItemType.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemTypeAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemTypeAdd.Designer.cs">
+      <DependentUpon>IDDItemTypeAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemTypeDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDItemTypeDelete.Designer.cs">
+      <DependentUpon>IDDItemTypeDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBAAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBAAdd.Designer.cs">
+      <DependentUpon>IDDMBAAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBADelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBADelete.Designer.cs">
+      <DependentUpon>IDDMBADelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBAEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDMBAEdit.Designer.cs">
+      <DependentUpon>IDDMBAEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDNormalizationSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDNormalizationSetup.Designer.cs">
+      <DependentUpon>IDDNormalizationSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDRestoreInitialData.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDRestoreInitialData.Designer.cs">
+      <DependentUpon>IDDRestoreInitialData.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDRestoreSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDRestoreSelect.Designer.cs">
+      <DependentUpon>IDDRestoreSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSetupUnattendedMeas.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDSetupUnattendedMeas.Designer.cs">
+      <DependentUpon>IDDSetupUnattendedMeas.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDShiftRegisterSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDShiftRegisterSetup.Designer.cs">
+      <DependentUpon>IDDShiftRegisterSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumId.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumId.Designer.cs">
+      <DependentUpon>IDDStratumId.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumIdAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumIdAdd.Designer.cs">
+      <DependentUpon>IDDStratumIdAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumIdDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDStratumIdDelete.Designer.cs">
+      <DependentUpon>IDDStratumIdDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDTestParametersSetup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\IDDTestParametersSetup.Designer.cs">
+      <DependentUpon>IDDTestParametersSetup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\LMConnectionParams.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\LMConnectionParams.Designer.cs">
+      <DependentUpon>LMConnectionParams.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Preferences.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormsHappyPlace\Preferences.Designer.cs">
+      <DependentUpon>Preferences.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Integration\MainIntegration.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="FormsHappyPlace\Ack.resx">
+      <DependentUpon>Ack.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\ChooseBackgroundType.resx">
+      <DependentUpon>ChooseBackgroundType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\EqCoeffViewer.resx">
+      <DependentUpon>EqCoeffViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\FileSel.resx">
+      <DependentUpon>FileSel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\FoldorFile.resx">
+      <DependentUpon>FoldorFile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireAssay.resx">
+      <DependentUpon>IDDAcquireAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireBackground.resx">
+      <DependentUpon>IDDAcquireBackground.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireBias.resx">
+      <DependentUpon>IDDAcquireBias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireCalibration.resx">
+      <DependentUpon>IDDAcquireCalibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireDBMeas.resx">
+      <DependentUpon>IDDAcquireDBMeas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireHoldup.resx">
+      <DependentUpon>IDDAcquireHoldup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireInitSrc.resx">
+      <DependentUpon>IDDAcquireInitSrc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquirePrecision.resx">
+      <DependentUpon>IDDAcquirePrecision.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAcquireRatesOnly.resx">
+      <DependentUpon>IDDAcquireRatesOnly.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAmLiNormalization.resx">
+      <DependentUpon>IDDAmLiNormalization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAnalysisMethodsConfig.resx">
+      <DependentUpon>IDDAnalysisMethodsConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDBackgroundSetup.resx">
+      <DependentUpon>IDDBackgroundSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCf252Normalization.resx">
+      <DependentUpon>IDDCf252Normalization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCf252SinglesNorm.resx">
+      <DependentUpon>IDDCf252SinglesNorm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarCal.resx">
+      <DependentUpon>IDDCollarCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarCrossRef.resx">
+      <DependentUpon>IDDCollarCrossRef.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCorrectionFactors.resx">
+      <DependentUpon>IDDCorrectionFactors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCurveType.resx">
+      <DependentUpon>IDDCurveType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDemingFit.resx">
+      <DependentUpon>IDDDemingFit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDemingFitSelect.resx">
+      <DependentUpon>IDDDemingFitSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorAdd.resx">
+      <DependentUpon>IDDDetectorAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorDelete.resx">
+      <DependentUpon>IDDDetectorDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorEdit.resx">
+      <DependentUpon>IDDDetectorEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDetectorIdSelect.resx">
+      <DependentUpon>IDDDetectorIdSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDEnterIsotopics.resx">
+      <DependentUpon>IDDEnterIsotopics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDFacility.resx">
+      <DependentUpon>IDDFacility.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDFacilityAdd.resx">
+      <DependentUpon>IDDFacilityAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDFacilityDelete.resx">
+      <DependentUpon>IDDFacilityDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDFacilityEdit.resx">
+      <DependentUpon>IDDFacilityEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDIsotopics.resx">
+      <DependentUpon>IDDIsotopics.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDIsotopicsAdd.resx">
+      <DependentUpon>IDDIsotopicsAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDIsotopicsEdit.resx">
+      <DependentUpon>IDDIsotopicsEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDItemDataEntry.resx">
+      <DependentUpon>IDDItemDataEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDItemType.resx">
+      <DependentUpon>IDDItemType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDItemTypeAdd.resx">
+      <DependentUpon>IDDItemTypeAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDItemTypeDelete.resx">
+      <DependentUpon>IDDItemTypeDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDK5CollarItemData.resx">
+      <DependentUpon>IDDK5CollarItemData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDKValSelector.resx">
+      <DependentUpon>IDDKValSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDMBAAdd.resx">
+      <DependentUpon>IDDMBAAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDMBADelete.resx">
+      <DependentUpon>IDDMBADelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDMBAEdit.resx">
+      <DependentUpon>IDDMBAEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDNormalizationSetup.resx">
+      <DependentUpon>IDDNormalizationSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDRestoreInitialData.resx">
+      <DependentUpon>IDDRestoreInitialData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDRestoreSelect.resx">
+      <DependentUpon>IDDRestoreSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveInitialData.resx">
+      <DependentUpon>IDDSaveInitialData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSetupUnattendedMeas.resx">
+      <DependentUpon>IDDSetupUnattendedMeas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDShiftRegisterSetup.resx">
+      <DependentUpon>IDDShiftRegisterSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDStratumId.resx">
+      <DependentUpon>IDDStratumId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDStratumIdAdd.resx">
+      <DependentUpon>IDDStratumIdAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDStratumIdDelete.resx">
+      <DependentUpon>IDDStratumIdDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDTestParametersSetup.resx">
+      <DependentUpon>IDDTestParametersSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IsotopicsList.resx">
+      <DependentUpon>IsotopicsList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\LMConnectionParams.resx">
+      <DependentUpon>LMConnectionParams.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotSDTChart.resx">
+      <DependentUpon>PlotSDTChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\Preferences.resx">
+      <DependentUpon>Preferences.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PrintForm.resx">
+      <DependentUpon>PrintForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\SelectSQLiteDB.resx">
+      <DependentUpon>SelectSQLiteDB.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\Splash.resx">
+      <DependentUpon>Splash.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\TransferList.resx">
+      <DependentUpon>TransferList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDActiveCal.resx">
+      <DependentUpon>IDDActiveCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDActiveMultCal.resx">
+      <DependentUpon>IDDActiveMultCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDActivePassiveCal.resx">
+      <DependentUpon>IDDActivePassiveCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAddASourceCal.resx">
+      <DependentUpon>IDDAddASourceCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\Overview.resx">
+      <DependentUpon>Overview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDArchiveConfig.resx">
+      <DependentUpon>IDDArchiveConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDAssaySummary.resx">
+      <DependentUpon>IDDAssaySummary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCalibrationCurveCal.resx">
+      <DependentUpon>IDDCalibrationCurveCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDChangeDataDir.resx">
+      <DependentUpon>IDDChangeDataDir.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCmPuRatio.resx">
+      <DependentUpon>IDDCmPuRatio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDCmSetup.resx">
+      <DependentUpon>IDDCmSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarAcquire.resx">
+      <DependentUpon>IDDCollarAcquire.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarItemData.resx">
+      <DependentUpon>IDDCollarItemData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDCollarK5.resx">
+      <DependentUpon>IDDCollarK5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDCollarManualAcquire.resx">
+      <DependentUpon>IDDCollarManualAcquire.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCollarNormalization.resx">
+      <DependentUpon>IDDCollarNormalization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCompositeIsotopics.resx">
+      <DependentUpon>IDDCompositeIsotopics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDCuriumRatioCalibration.resx">
+      <DependentUpon>IDDCuriumRatioCalibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDDeleteMeas.resx">
+      <DependentUpon>IDDDeleteMeas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDDiskAcqPathFilename.resx">
+      <DependentUpon>IDDDiskAcqPathFilename.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDDualEnergyMult.resx">
+      <DependentUpon>IDDDualEnergyMult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDEndingComment.resx">
+      <DependentUpon>IDDEndingComment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDErrorCalcMethod.resx">
+      <DependentUpon>IDDErrorCalcMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDGlovebox.resx">
+      <DependentUpon>IDDGlovebox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxAdd.resx">
+      <DependentUpon>IDDGloveboxAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxDelete.resx">
+      <DependentUpon>IDDGloveboxDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDGloveboxEdit.resx">
+      <DependentUpon>IDDGloveboxEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDHeavyMetalItemData.resx">
+      <DependentUpon>IDDHeavyMetalItemData.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDHighVoltagePlateau.resx">
+      <DependentUpon>IDDHighVoltagePlateau.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDHoldupSelect.resx">
+      <DependentUpon>IDDHoldupSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDKnownAlphaCal.resx">
+      <DependentUpon>IDDKnownAlphaCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDKnownMCal.resx">
+      <DependentUpon>IDDKnownMCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDManualDataEntry.resx">
+      <DependentUpon>IDDManualDataEntry.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDManualSetup.resx">
+      <DependentUpon>IDDManualSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDMultiplicityCal.resx">
+      <DependentUpon>IDDMultiplicityCal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDNewWellConfig.resx">
+      <DependentUpon>IDDNewWellConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPassword.resx">
+      <DependentUpon>IDDPassword.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPasswordAdd.resx">
+      <DependentUpon>IDDPasswordAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPasswordDelete.resx">
+      <DependentUpon>IDDPasswordDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPasswordEdit.resx">
+      <DependentUpon>IDDPasswordEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPercentU235.resx">
+      <DependentUpon>IDDPercentU235.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPLCSetup.resx">
+      <DependentUpon>IDDPLCSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDPLCWaitMsg.resx">
+      <DependentUpon>IDDPLCWaitMsg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssayResults.resx">
+      <DependentUpon>IDDPlotAssayResults.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotAssaySelect.resx">
+      <DependentUpon>IDDPlotAssaySelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPlotBiasMeasHistory.resx">
+      <DependentUpon>IDDPlotBiasMeasHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodType.resx">
+      <DependentUpon>IDDPoisonRodType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodTypeAdd.resx">
+      <DependentUpon>IDDPoisonRodTypeAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDPoisonRodTypeDelete.resx">
+      <DependentUpon>IDDPoisonRodTypeDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReanalysisAssay.resx">
+      <DependentUpon>IDDReanalysisAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\PlotAssayChart.resx">
+      <DependentUpon>PlotAssayChart.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDReanalysisHoldup.resx">
+      <DependentUpon>IDDReanalysisHoldup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReanalyzeDBMeas.resx">
+      <DependentUpon>IDDReanalyzeDBMeas.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDReimportMsg.resx">
+      <DependentUpon>IDDReimportMsg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewAll.resx">
+      <DependentUpon>IDDReviewAll.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDMeasurementList.resx">
+      <DependentUpon>IDDMeasurementList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewAssay.resx">
+      <DependentUpon>IDDReviewAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewBackground.resx">
+      <DependentUpon>IDDReviewBackground.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewNormalization.resx">
+      <DependentUpon>IDDReviewNormalization.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewCalibration.resx">
+      <DependentUpon>IDDReviewCalibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDReviewExitMsg.resx">
+      <DependentUpon>IDDReviewExitMsg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewHoldup.resx">
+      <DependentUpon>IDDReviewHoldup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewInitSrc.resx">
+      <DependentUpon>IDDReviewInitSrc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewPrecision.resx">
+      <DependentUpon>IDDReviewPrecision.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDReviewRatesOnly.resx">
+      <DependentUpon>IDDReviewRatesOnly.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDRotationTable.resx">
+      <DependentUpon>IDDRotationTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveCampaignId.resx">
+      <DependentUpon>IDDSaveCampaignId.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSaveTransfer.resx">
+      <DependentUpon>IDDSaveTransfer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDScaling.resx">
+      <DependentUpon>IDDScaling.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDSelectDriverType.resx">
+      <DependentUpon>IDDSelectDriverType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDSelectPrimaryAM.resx">
+      <DependentUpon>IDDSelectPrimaryAM.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDSRREVAssay.resx">
+      <DependentUpon>IDDSRREVAssay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDSRREVBackground.resx">
+      <DependentUpon>IDDSRREVBackground.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDSRREVBias.resx">
+      <DependentUpon>IDDSRREVBias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDStratumLimits.resx">
+      <DependentUpon>IDDStratumLimits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDSweepFeature.resx">
+      <DependentUpon>IDDSweepFeature.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDTakeDataWaitMsg.resx">
+      <DependentUpon>IDDTakeDataWaitMsg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDTakeDataWaitMsg1.resx">
+      <DependentUpon>IDDTakeDataWaitMsg1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\IDDTruncatedMultCalibration.resx">
+      <DependentUpon>IDDTruncatedMultCalibration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unready\IDDWeightedMult.resx">
+      <DependentUpon>IDDWeightedMult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormsHappyPlace\LMAcquire.resx">
+      <DependentUpon>LMAcquire.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CoincidenceMatrix.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\coincidence_matrix.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\coincidence_matrix_gatewidth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\coincidence_matrix_initdelay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\coincidence_matrix_longdelay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\feynman.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\feynman_gatewidth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\multiplicity_FA_clockwidth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\multiplicity_FA_gatewidth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\multiplicity_FA_initdelay.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\multiplicity_FA.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="rel.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DaveEclipseClip.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)deployment"
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"
+copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6.1')))) &gt;= 0">$(DefineConstants);NETFX_461</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6'))))   &gt;= 0">$(DefineConstants);NETFX_46</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.2')))) &gt;= 0">$(DefineConstants);NETFX_452</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5.1')))) &gt;= 0">$(DefineConstants);NETFX_451</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.5'))))   &gt;= 0">$(DefineConstants);NETFX_45</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.0'))))   &gt;= 0">$(DefineConstants);NETFX_40</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.5'))))   &gt;= 0">$(DefineConstants);NETFX_35</DefineConstants>
+    <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('3.0'))))   &gt;= 0">$(DefineConstants);NETFX_30</DefineConstants>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
