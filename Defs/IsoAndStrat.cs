@@ -144,6 +144,8 @@ namespace AnalysisDefs
         public double pu242_err { get { return this[Isotope.pu242].err; } }
         public double am241_err { get { return this[Isotope.am241].err; } }
 
+        public bool PuPlusAm { get;  set; }  // dev note: original entry approach
+
         public void SetPercentages(double Pu238, double Pu239, double Pu240, double Pu241, double Pu242, double Am241)
         {
             isotopes[1].v = Pu238;
@@ -510,6 +512,8 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("am_date", am_date.ToString("yyyy-MM-dd")));
             ps.Add(new DBParamEntry("isotopics_id", id));
             ps.Add(new DBParamEntry("isotopics_source_code", source_code.ToString()));
+           // ps.Add(new DBParamEntry("puandam", PuPlusAm));
+            
 
         }
     }

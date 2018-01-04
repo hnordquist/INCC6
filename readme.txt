@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Dec 12, 2017 (NDATest)
+6.18 Dec 26, 2017 (IAEATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -138,7 +138,7 @@ Issues for production
 
 Closed issues
 
-6.18 Dec 12, 2017  ************
+6.18 Dec 26, 2017  ************
 ***  LANL: collar implementation, assorted minor changes
 ***  Basic IAEA Dataz file support added
 ***  iRAP integration support added, cmd line only
@@ -147,6 +147,7 @@ Closed issues
 ***  Log file name emitted on console and GUI log list view
 ***  Use notepad to open log and generated text files on double click in log list view
 ***  SQLite runtime upgrade to 1.0.6
+***  WiX Installer for IAEA use
 
 6.18 Mar 23, 2017  ************
 ***  Clean up logger API style

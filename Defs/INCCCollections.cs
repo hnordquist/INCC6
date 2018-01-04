@@ -255,6 +255,7 @@ namespace AnalysisDefs
             iso.am_date = DB.Utils.DBDateTime(dr["am_date"]);
             Enum.TryParse(dr["isotopics_source_code"].ToString(), out iso.source_code);
             iso.id = dr["isotopics_id"].ToString();
+            //iso.PuPlusAm = DB.Utils.DBBool(dr["puandam"]);
             return iso;
         }
 

@@ -660,7 +660,7 @@ namespace NCCConfig
 
             resetVal(NCCFlags.root, Config.DefaultPath, typeof(string));
             resetVal(NCCFlags.dailyRootPath, false, typeof(bool));
-            resetVal(NCCFlags.rootUserDoc, false, typeof(bool), retain: true);
+            resetVal(NCCFlags.rootUserDoc, true, typeof(bool), retain: true);
 
             resetVal(NCCFlags.logging, false, typeof(bool));
             resetVal(NCCFlags.quiet, false, typeof(bool));
@@ -921,9 +921,9 @@ namespace NCCConfig
             if (s == TempLocationReplacementMarker)
                 return true;
 
-            if (IsDefaultTempPath(s) && UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+            if (IsDefaultTempPath(s) && !UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
                 return true;
-            else if (IsUserDocumentsPath(s) && !UserDocumentRootFolderSet && UserDocumentRootFolder) // swap
+            else if (IsUserDocumentsPath(s) && UserDocumentRootFolderSet && !UserDocumentRootFolder) // swap
                 return true;
             else
                 return false;

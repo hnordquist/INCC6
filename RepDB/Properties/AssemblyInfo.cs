@@ -8,7 +8,7 @@ using NCCConfig;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6 RepDB")]
 [assembly: AssemblyDescription("INCC6 database and reporting")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("(IAEATest)")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]
@@ -30,4 +30,4 @@ using NCCConfig;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("6.18.263.21075")]
+[assembly: AssemblyVersion("6.18.278.12990")]

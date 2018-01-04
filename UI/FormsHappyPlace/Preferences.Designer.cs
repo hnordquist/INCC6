@@ -302,11 +302,10 @@
             this.UserDocFolder.Size = new System.Drawing.Size(177, 17);
             this.UserDocFolder.TabIndex = 55;
             this.UserDocFolder.Text = "User doc folder for default paths";
-            this.toolTip1.SetToolTip(this.UserDocFolder, "User AppData\\Local\\Temp folder is default Log location, enable this to use user documen" +
-        "t folder");
+            this.toolTip1.SetToolTip(this.UserDocFolder, "Enable to use user Documents folder, disable to use user AppData\\Local\\Temp folde" +
+        "r ");
             this.UserDocFolder.UseVisualStyleBackColor = true;
             this.UserDocFolder.CheckedChanged += new System.EventHandler(this.UserDocFolder_CheckedChanged);
-
             // 
             // FPPrec
             // 

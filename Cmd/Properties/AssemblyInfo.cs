@@ -8,7 +8,7 @@ using NCCConfig;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6 command line")]
 [assembly: AssemblyDescription("Supports PTR-32, LMMM, SR DAQ, INCC5 processing, and LM data file analysis")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("(IAEATest)")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]
@@ -32,4 +32,4 @@ using NCCConfig;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("6.18.263.21075")]
+[assembly: AssemblyVersion("6.18.278.12990")]

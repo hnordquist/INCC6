@@ -7,7 +7,7 @@ using System.Windows;
 // associated with an assembly.
 [assembly: AssemblyTitle("INCC6")]
 [assembly: AssemblyDescription("Supports SR DAQ, INCC5 processing, PTR-32, MCA-527 and LMMM DAQ, with LM data analysis")]
-[assembly: AssemblyConfiguration("(NDATest)")]
+[assembly: AssemblyConfiguration("(IAEATest)")]
 [assembly: AssemblyCompany(AssemblyConstants.AssemblyCompany)]
 [assembly: AssemblyProduct(AssemblyConstants.AssemblyProduct)]
 [assembly: AssemblyCopyright(AssemblyConstants.AssemblyCopyright)]
@@ -48,4 +48,4 @@ using System.Windows;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("6.18.263.21075")]
+[assembly: AssemblyVersion("6.18.278.12990")]

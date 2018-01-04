@@ -1002,7 +1002,7 @@ namespace UI
  //         N.App.Opstate.Measurement.INCCAnalysisState.ClearINCCAnalysisResults();
  //         N.App.Opstate.Measurement.PrepareINCCResults();
         }
-        // NEXT: consider a pop-out report dialog with tabs for each report rather than the concatenated list  4 hrs 
+        // dev note: consider a pop-out report dialog with tabs for each report rather than the concatenated list  4 hrs 
         void ReportPreview()
         {
 

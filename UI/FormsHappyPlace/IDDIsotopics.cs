@@ -462,7 +462,7 @@ namespace UI
         {
             if (!GutCheck())
             {
-                // it's all ready the current iso m_iso = NC.App.DB.Isotopics.Get(x => 0 == string.Compare(x.id, m_iso.id, StringComparison.OrdinalIgnoreCase));
+                // it's already the current iso m_iso = NC.App.DB.Isotopics.Get(x => 0 == string.Compare(x.id, m_iso.id, StringComparison.OrdinalIgnoreCase));
                 PopulateWithSelectedItem();
                 return;
             }
@@ -476,6 +476,7 @@ namespace UI
                     List<Isotopics> list = NC.App.DB.Isotopics.GetMatch(i => i.modified);
                     foreach (Isotopics iso in list)
                     {
+                        iso.PuPlusAm = PuPlusAmRadioButton.Checked;
                         long pk = NC.App.DB.Isotopics.Set(iso);				// add to database 
                         NC.App.AppLogger.TraceInformation((pk >= 0 ? "Saved " : "Unable to save ") + iso.id + " isotopics");
                     }

@@ -97,9 +97,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Data.SQLite, Version=1.0.94.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deployment\System.Data.SQLite.dll</HintPath>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.106.0\lib\net40\System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
@@ -108,10 +107,10 @@
     <None Include="DB\Ye Olde\NCC_DB.SCH" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DB\create_INCC6_sqlite.sql" />
-    <Content Include="DB\create_INCC6_sqlserver.sql" />
-    <Content Include="DB\drop_INCC6_sqlite.sql" />
-    <Content Include="DB\drop_INCC6_sqlserver.sql" />
+    <Content Include="DB\SQLite\create_INCC6_sqlite.sql" />
+    <Content Include="DB\SQLServer\create_INCC6_sqlserver.sql" />
+    <Content Include="DB\SQLite\drop_INCC6_sqlite.sql" />
+    <Content Include="DB\SQLServer\drop_INCC6_sqlserver.sql" />
     <Content Include="DB\Ye Olde\ncc_db.h" />
   </ItemGroup>
   <ItemGroup>
@@ -120,10 +119,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)"
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)"
+copy /B /V /Y  "$(ProjectDir)"DB\SQLite\*.*        "$(SolutionDir)BuildArtifacts\$(ConfigurationName)"
+copy /B /V /Y  "$(ProjectDir)"DB\SQLServer\*.*        "$(SolutionDir)BuildArtifacts\$(ConfigurationName)"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

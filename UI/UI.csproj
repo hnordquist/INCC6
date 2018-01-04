@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <DefineConstants Condition=" !$(DefineConstants.Contains(';NET')) ">$(DefineConstants);$(TargetFrameworkVersion.Replace("v", "NET").Replace(".", ""))</DefineConstants>
@@ -65,15 +65,6 @@
     <ApplicationIcon>rel.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Defs">
-      <HintPath>..\deployment\Defs.dll</HintPath>
-    </Reference>
-    <Reference Include="NCCCtrl">
-      <HintPath>..\deployment\NCCCtrl.dll</HintPath>
-    </Reference>
-    <Reference Include="RepDB">
-      <HintPath>..\deployment\RepDB.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -1543,12 +1534,33 @@
   <ItemGroup>
     <None Include="Resources\DaveEclipseClip.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Defs\Defs.csproj">
+      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
+      <Name>Defs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NCCCtrl\NCCCtrl.csproj">
+      <Project>{c4393a93-abf7-448c-a3eb-4f0e5a1f7376}</Project>
+      <Name>NCCCtrl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RepDB\RepDB.csproj">
+      <Project>{15214429-93da-45c9-a0bc-30285c990a5d}</Project>
+      <Name>RepDB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>copy /B /V /Y  "$(TargetPath)" "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
+copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
+copy /B /V /Y  "$(TargetPath)".config "$(SolutionDir)BuildArtifacts\$(ConfigurationName)
+mkdir "$(SolutionDir)deployment"
+copy /B /V /Y  "$(SolutionDir)BuildArtifacts\$(ConfigurationName)\*" "$(SolutionDir)deployment"
+copy /B /V /Y  "$(SolutionDir)_External\DB\*" "$(SolutionDir)deployment"
+copy /B /V /Y  "$(SolutionDir)_External\LANL\*" "$(SolutionDir)deployment"
+
+"c:\program files\7-zip\7z.exe" a  "$(SolutionDir)\INCC6.zip" "$(SolutionDir)deployment\\"
+rem copy"$(SolutionDir)INCC6.zip c:\temp
+rem copy "$(SolutionDir)readme.txt c:\temp</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6.1')))) &gt;= 0">$(DefineConstants);NETFX_461</DefineConstants>
