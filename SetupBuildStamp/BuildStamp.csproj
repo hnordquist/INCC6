@@ -49,6 +49,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>$(TargetPath)  $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>$(TargetPath)  $(SolutionDir)  "C:\Users\longoj\Desktop\dev\tools\FileTimeManager"</PostBuildEvent>
   </PropertyGroup>
 </Project>

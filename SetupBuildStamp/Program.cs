@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 
 namespace BuildStamp
 {
@@ -12,6 +13,8 @@ namespace BuildStamp
             stamp.SetLastDT("Mar 23, 2017");  // from IAEA readme
             stamp.MinorVersion = 18;  // change this after a major release improvement 
             stamp.DevTreeRoot = args[0];
+            stamp.DoFileTimeUpdate(args[1]);
+            stamp.ProcessTheTimeFile();
             stamp.Process();
         }
     }
@@ -28,31 +31,93 @@ namespace BuildStamp
         public string DevTreeRoot { set; protected get; }
         public int MinorVersion { set; protected get; }
 
-        const string exclu = "AssemblyInfo.cs";
-        string[] projects = { "RepDB", "Defs", "NCCCtrl", "Cmd", "UI" };
-        string[] filetypes = { "*.cs", "*.txt", "*.config", "*.sql" };
+        public void DoFileTimeUpdate(string ftimeexe)
+        {
+            Console.WriteLine($"ftimeexe {DevTreeRoot}");
+            System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo(ftimeexe, DevTreeRoot);
+            psi.CreateNoWindow = true;
+            System.Diagnostics.Process p = System.Diagnostics.Process.Start(psi);
+            p.WaitForExit();
+        }
+
+
+        public struct ChristophsData
+        {
+            public string name;
+            public DateTime dt;
+            long ftime;
+            int size;
+            string hash;
+            public ChristophsData(string n, string t, string ft, string sz, string h)
+            {
+                name = n; hash = h;
+                dt = DateTime.Parse(t);
+                ftime = long.Parse(ft);
+                size = int.Parse(sz);
+            }
+
+            public static int Compare(ChristophsData x, ChristophsData y)
+            {
+                return DateTime.Compare(x.dt, y.dt);
+            }
+
+            static string[] projects = { "RepDB", "Defs", "NCCCtrl", "Cmd", "UI" };
+            static string[] filetypes = { ".cs", ".txt", ".config", ".sql" };
+            const string exclu = "AssemblyInfo.cs";
+
+
+            public static bool AssemblyVersionFiles(ChristophsData f)
+            {
+                return (f.name.EndsWith(exclu, StringComparison.InvariantCultureIgnoreCase));// || f.name.Contains("bin\\") || f.name.Contains("obj\\");
+            }
+            public static bool NotMyProjects(ChristophsData f)
+            {
+                bool res = true;
+                foreach (string s in projects)
+                {
+                    if (f.name.StartsWith(s))
+                    {
+                        res = false;
+                        break;
+                    }
+                }
+                return res;
+            }
+            public static bool NotMyFiles(ChristophsData f)
+            {
+                bool res = true;
+                foreach (string s in filetypes)
+                {
+                    if (f.name.EndsWith(s))
+                    {
+                        res = false;
+                        break;
+                    }
+                }
+                return res;
+            }
+        }
+        List<ChristophsData> Files = new List<ChristophsData>();
+        public void ProcessTheTimeFile()
+        {
+            XDocument doc = XDocument.Load(Path.Combine(DevTreeRoot, "FileTimes.ftm"));
+            foreach (XElement sectionElement in doc.Root.Elements("file"))
+                Files.Add(new ChristophsData(sectionElement.Attribute("name").Value, sectionElement.Attribute("time").Value, sectionElement.Attribute("filetime").Value, sectionElement.Attribute("size").Value, sectionElement.Attribute("hash").Value));
+            Files.RemoveAll(ChristophsData.NotMyProjects);
+            Files.RemoveAll(ChristophsData.NotMyFiles);
+            Files.RemoveAll(ChristophsData.AssemblyVersionFiles);
+            Files.Sort(ChristophsData.Compare);
+        }
+
         public void Process()
         {
-            List<string> list = new List<string>();
-            foreach (string p in projects)
-            {
-                foreach (string f in filetypes)
-                {
-                    IEnumerable<string> sublist = Directory.EnumerateFiles(Path.Combine(DevTreeRoot, p), f, SearchOption.AllDirectories);
-                    list.AddRange(sublist);
-                }
-            }
-            list.RemoveAll(Ignore);
-            List<Tuple<DateTime, string>> dtlist = new List<Tuple<DateTime, string>>();
-            foreach (string s in list)
-                dtlist.Add(Tuple.Create(Directory.GetLastWriteTimeUtc(s), s));
-            dtlist.Sort(Compare);
-            Console.WriteLine($"Last modified timestamp is {dtlist[dtlist.Count - 1].Item1} for file \r\n{dtlist[dtlist.Count - 1].Item2}");
+
+            Console.WriteLine($"Last modified timestamp is {Files[Files.Count - 1].dt} for file \r\n{Files[Files.Count - 1].name}");
 
             // calculate number of days since last release, and also get #of seconds in current day div 2
-            int seconds = (int)(Math.Round(dtlist[dtlist.Count - 1].Item1.TimeOfDay.TotalSeconds)) / 2;
-            TimeSpan ts = (dtlist[dtlist.Count - 1].Item1 - LastRelDT);
-            int days = (dtlist[dtlist.Count - 1].Item1 - LastRelDT).Days;
+            int seconds = (int)(Math.Round(Files[Files.Count - 1].dt.TimeOfDay.TotalSeconds)) / 2;
+            TimeSpan ts = (Files[Files.Count - 1].dt - LastRelDT);
+            int days = (Files[Files.Count - 1].dt - LastRelDT).Days;
 
             string stamp = $"[assembly: AssemblyVersion(\"6.{MinorVersion}.{days}.{seconds}\")]";
             bool updated = false;
@@ -84,17 +149,6 @@ namespace BuildStamp
             if (!updated)
                 Console.WriteLine($"AssemblyVersion 6.{MinorVersion}.{days}.{seconds} unchanged");
         }
-
-        static bool Ignore(string f)
-        {
-            return (f.EndsWith(exclu, StringComparison.InvariantCultureIgnoreCase)) || f.Contains("bin\\") || f.Contains("obj\\");
-        }
-
-        public static int Compare(Tuple<DateTime, string> x, Tuple<DateTime, string> y)
-        {
-            return DateTime.Compare(x.Item1, y.Item1);
-        }
-
 
     }
 
