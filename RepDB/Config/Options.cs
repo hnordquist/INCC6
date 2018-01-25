@@ -37,10 +37,14 @@ namespace NCCConfig
         root, dailyRootPath, rootUserDoc,
         serveremulation, emulatorapp,
 <<<<<<< HEAD
+<<<<<<< HEAD
         logging, level, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 =======
         logging, level, quiet, logDetails, logFileLoc, logLocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+        logging, level, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
@@ -59,15 +63,23 @@ namespace NCCConfig
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
 <<<<<<< HEAD
+<<<<<<< HEAD
         sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
 =======
         sortPulseFile, filterLMOutliers, datazConvert, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString, DBDataSource,
 
+<<<<<<< HEAD
 		reportSect, query, tau, Tee, datazConvertParams
+=======
+		reportSect, query, tau, Tee
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
     }
 
 	public partial class Config
@@ -94,9 +106,12 @@ namespace NCCConfig
 
 <<<<<<< HEAD
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
+<<<<<<< HEAD
 =======
             { "logLoc=", "specify base {file location} for log ffor iles, overrides root", l => app.LogFilePath = l},
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             { "logLocation=", "specify base {file location} for log files, including file name, overrides root", l => app.LogFilePathAndName = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
@@ -159,9 +174,14 @@ namespace NCCConfig
             { "f|file|fileinput|datasource=", "start a file-based operation using the {location} for file input, all matching files in the folder will be used", 
                                             v => { if (v != null) app.FileInput = v; else app.FileInput = RootLoc; if (acq.Action != 3) acq.Action = 6;} },
             { "r|recurse", "look for files in subdirectories", b => app.Recurse = b != null },                                                           
+<<<<<<< HEAD
             { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },
             { "datazConvert", "convert dataz data file intervals to INCC5 useable data files", v => app.DatazConvert = v != null },
             { "filterLMOutliers", "trim out certain outlier events in LM pulse trains", v => app.FilterLMOutliers = v != null },
+=======
+            { "gen2", "identify and process ye olde generation 2 NCD files, adds extra processing time", v => app.ParseGen2 = v != null },                                                           
+            { "filterLMOutliers", "trim out certain outlier events in LM pulse trains", v => app.FilterLMOutliers = v != null },                                                           
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             { "sortPulseFile", "sort and save pulse files, (line-delimited fixed-point strings, unsorted)", v => app.SortPulseFile = v != null },                                                           
             { "INCCXfer", "identify and process ye olde INCC Transfer files, (incomplete but worthy)",  v => app.INCCXfer = v != null },                                                           
             { "overwriteXfer", "replace existing definitions during each INCC Transfer operation",  v => app.OverwriteImportedDefs = v != null },                                                           
@@ -174,9 +194,13 @@ namespace NCCConfig
             { "datazFileAssay", "use Dataz file streams for input", v => app.DatazFileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
+<<<<<<< HEAD
             { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null },
             { "datazConvertParams=", " 0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files",
                                             (ushort n) => acq.DatazConvertType = n },
+=======
+            { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null }, 
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             { "LMFilterParams=", "interval in µ-seconds (1-64256) and cutoff count level {µ-seconds:neutrons}, defaults to 140 µ-seconds and 4 neutrons\r\n\r\nLMMM HV control ********************", 
                                             (b, s) => acq.LMFilterParams(b, s) },  
 

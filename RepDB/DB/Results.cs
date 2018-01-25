@@ -143,6 +143,7 @@ namespace DB
 		public DataTable ResultsForDetWithC(string name)
         {
             db.SetConnection();
+<<<<<<< HEAD
             string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.item_id FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
             return db.DT(sSQL);
         }
@@ -150,6 +151,9 @@ namespace DB
         {
             db.SetConnection();
             string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.item_id FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + " AND results_rec.item_id=" + SQLSpecific.QVal(item) + ")";
+=======
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid AND measurements.detector_id=" + SQLSpecific.QVal(name) + ")";
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             return db.DT(sSQL);
         }
         public DataTable ResultsForDetWithItem(string name, string item)
@@ -161,8 +165,16 @@ namespace DB
 		public DataTable ResultsSubset()
         {
             db.SetConnection();
+<<<<<<< HEAD
             string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
 
+=======
+<<<<<<< .mine
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
+=======
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,,results_rec.item_type,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
+>>>>>>> .theirs
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             return db.DT(sSQL);
         }
     }

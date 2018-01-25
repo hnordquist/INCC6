@@ -46,8 +46,11 @@ namespace DB
         // e.g. app config values and logger handle
         // The hook to the outside context of the DB class 
         public static Persistence pest;
+<<<<<<< HEAD
 
         public static bool ConsoleQuiet;
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 
         /// <summary>
         /// Logs a message to the now defunct database logger.
@@ -55,9 +58,13 @@ namespace DB
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string message, bool forceconsole = false)
         {
+<<<<<<< HEAD
             if (ConsoleQuiet)
                 return;
             Console.WriteLine(eventType.ToString() + " " + id + " " + Log.FlattenChars(message));
+=======
+                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(message));
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         }
 
         /// <summary>
@@ -67,9 +74,13 @@ namespace DB
         /// </summary>
         public static void AltLog(LogLevels eventType, int id, string format, params object[] args)
         {
+<<<<<<< HEAD
             if (ConsoleQuiet)
                 return;
             Console.WriteLine(eventType.ToString() + " " + id + " " + Log.FlattenChars(string.Format(format, args)));
+=======
+                Console.WriteLine(eventType.ToString() + " " + id + " " + LMLoggers.LognLM.FlattenChars(string.Format(format, args)));
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
       }
 
         public enum DbsWeLove { 

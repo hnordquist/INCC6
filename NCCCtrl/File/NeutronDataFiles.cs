@@ -266,7 +266,7 @@ namespace NCCFile
 
         public virtual void ExtractDateFromFilename()
         {
-            DTO = FromFilename(this.Filename);
+            DTO = FromFilename(Filename);
         }
 
         public string GeneratePathWithDTPrefix()
@@ -950,13 +950,13 @@ namespace NCCFile
 
         public BinaryWriter writer;
         public BinaryReader reader;
-        byte[] header;
+        internal byte[] header;
         public string headerstr;
         public int thisread;
         public long read, eventsectionlen;
         ulong mark;
 
-        public UInt16 CycleNumber;
+        public ushort CycleNumber;
         public const int HeaderLength = 0x1000;
         public int ReportedCountTimeSecs = 0;
 
@@ -973,23 +973,23 @@ namespace NCCFile
             read = thisread;
             eventsectionlen -= thisread;
             //count time is in here at 
-            headerstr = bytestoASCIIchars(header, 0x1000, thisread);
+            headerstr = BytestoASCIIchars(header, 0x1000, thisread);
             // This parses out the count time from the file header per Huzsti's definition. w/TryParse, should default to zero
             // Currently, no check at end is implemented. HN 10.16.2015
             Regex reg = new Regex("^@(\\d+).+@(\\d+)");
             if (reg.IsMatch (headerstr))
             {
-                Match m = reg.Match(headerstr);
+                Match m = reg.Match(headerstr);  // sometimes a 0 appears, which is wrong
                 ReportedCountTimeSecs = 0;
                 
-                Int32.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
+                int.TryParse(m.Groups[2].Value, out ReportedCountTimeSecs);
             }
             return thisread;
         }
 
         public int EventsYetToRead()
         {
-            return (int)(stream.Length - read) / sizeof(UInt32);
+            return (int)(stream.Length - read) / sizeof(uint);
         }
         public override bool OpenForReading(string filename = null)
         {
@@ -1029,8 +1029,8 @@ namespace NCCFile
         {
             header.Initialize();  // nulls, 
             string s = ("@0PulseTrainRecorder X7.?"); // todo: version, serial #, author, comment, etc. figure out what the text should say by examining files from various devices
-            Byte[] sa = Encoding.ASCII.GetBytes(s);
-            Byte[] sb = Encoding.ASCII.GetBytes(start);
+			byte[] sa = Encoding.ASCII.GetBytes(s);
+            byte[] sb = Encoding.ASCII.GetBytes(start);
             Array.Copy(sa, header, sa.Length);
             Array.Copy(sb, 0, header, 0x20, sb.Length); // start at 32 byte boundary for firmware string
             Write(header, 0, header.Length);
@@ -1049,7 +1049,7 @@ namespace NCCFile
             int i = 0;
             for (i = 0; i < count; i++) // convert back down to uint delta times
             {
-                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful);
+                ubuff = (uint)((buffer[index + i] - mark) & 0xfffffffful);
                 writer.Write(ubuff);
                 mark = buffer[index + i];
             }           
@@ -1062,7 +1062,7 @@ namespace NCCFile
             int i = 0;
             for (i = 0; i < count; i++) // convert back down to uint delta times
             {
-                ubuff = (uint)((buffer[index + i] - mark) & 0x0000fffful);
+                ubuff = (uint)((buffer[index + i] - mark) & 0xfffffffful);
                 writer.Write(ubuff);
                 mark = buffer[index + i];
             }
@@ -1088,7 +1088,7 @@ namespace NCCFile
             }
         }
 
-        public string bytestoASCIIchars(byte[] bdata, int len, int max)
+        public string BytestoASCIIchars(byte[] bdata, int len, int max)
         {
             int i;
             char dchar;
@@ -1103,7 +1103,7 @@ namespace NCCFile
                     dchar = '\\';
                 }
                 else
-                    if (Char.IsControl(dchar))
+                    if (char.IsControl(dchar))
                     {
                         dchar = '.';
                     }
@@ -1112,14 +1112,14 @@ namespace NCCFile
             return text.ToString();
         }
 
-        public int ReadUInt32Array(UInt32[] target, int startidx, int maxuints)
+        public int ReadUInt32Array(uint[] target, int startidx, int maxuints)
         {
             int i = 0;
             for (i = 0; i < maxuints; i++)
             {
                 target[startidx + i] = reader.ReadUInt32();
             }
-            return i * sizeof(UInt32);
+            return i * sizeof(uint);
         }
 
         public override void ExtractDateFromFilename()
@@ -1229,7 +1229,8 @@ namespace NCCFile
             bool res = Events.CreateForWriting();
             if (res)
             {
-                Channels.CreateForWriting();
+				if (!SoloBinFile)
+					Channels.CreateForWriting();
                 Events.WriteHeader(FirmwareIdent);
             }
             return res;
@@ -1246,6 +1247,7 @@ namespace NCCFile
         public void CloseWriter()
         {
             Events.CloseWriter();
+			if (!SoloBinFile)
             Channels.CloseWriter();
         }
 
@@ -1264,7 +1266,7 @@ namespace NCCFile
         public void ExtractDateFromFilename()
         {
             DateTimeOffset dt = DateTimeOffset.Now;
-            PTRFilePair.GetDateFromName(Filename, ref dt, ref CycleNumber);
+            GetDateFromName(Filename, ref dt, ref CycleNumber);
             DTO = dt;
         }
 
@@ -1273,7 +1275,7 @@ namespace NCCFile
 
             DateTimeOffset dt;
             string name = fname.Substring(fname.LastIndexOf("\\") + 1);
-            string[] split = name.Split(new Char[] { '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] split = name.Split(new char[] { '-', '_', '.' }, StringSplitOptions.RemoveEmptyEntries);
 
             //yyMMdd_HHmm-cycle #, where yyMMdd_HHmm is the measurement start time, and the trailing number is the cycle number
 
@@ -1302,7 +1304,6 @@ namespace NCCFile
                         tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
                         CycleNumber = Convert.ToUInt16(split[2]);
                         dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
-
                     }
                 }
                 catch (FormatException)
@@ -1313,7 +1314,175 @@ namespace NCCFile
             DTO = dt;
         }
 
+		static Regex wxreg;
+		public static bool MatchSuffixTimeStampStyle(string mark, string suffix, string fname)
+		{
+			if (wxreg== null)
+				wxreg = new Regex("("+ mark + "\\." + suffix + ")|(\\[\\d*\\])\\." + suffix + "$");
+			return wxreg.IsMatch(fname);
+		}
 
+
+    }
+
+	public class PTREventFileClone : NeutronDataFile
+    {
+
+        public BinaryWriter writer;
+        byte[] header;
+        ulong mark;
+
+        public ushort CycleNumber;
+        public int ReportedCountTimeSecs = 0;
+
+        public PTREventFileClone(PTREventFile src)
+        {
+			Init();
+			Log = src.Log;
+			CloneFilePathAndName(src);
+        }
+
+		void Init()
+		{
+			mark = 0;
+            header = new byte[PTREventFile.HeaderLength];
+		}
+
+        public PTREventFileClone()
+        {
+			Init();
+        }
+        public void CloneHeader(PTREventFile src)
+        {
+			Array.Copy(src.header, header, PTREventFile.HeaderLength);
+        }
+
+		void CloneFilePathAndName(PTREventFile src)
+        {
+			if (src.PrefixPath != null)
+				PrefixPath = string.Copy(src.PrefixPath);
+			Num = src.Num;
+			Filename = src.Filename;
+            int idx = Filename.LastIndexOf("_MM.bin");
+            if (idx < 0)
+				idx = Filename.LastIndexOf(".bin");
+            string loc = "";
+            if (idx > -1)
+			{
+                loc = Filename.Remove(idx); // Remove path information from string.
+				Filename = loc + "_MM.bin";
+			}
+
+		}
+
+        //  when encountering the same file name, create a file name with a very special signifier
+        public override bool CreateForWriting()
+        {
+			bool ok = false;
+            try
+            {
+                if (File.Exists(Filename))
+				{                    
+					string f = Path.GetFullPath(Filename);
+					int dot = f.LastIndexOf('.');
+					if (dot >= 0)
+					{
+		                string fsuffix = f.Substring(dot);
+						string s = string.Format("[{0}]{1}", DateTime.Now.Ticks.ToString().Substring(5,8), fsuffix);
+						Filename = string.Concat(f.Remove(dot), s);
+					}
+				}
+                if (Log != null) Log.TraceEvent(LogLevels.Info, 111, "Creating new file: " + Filename);
+                stream = File.Create(Filename);
+                ok = true;
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+
+			if (ok)
+                writer = new BinaryWriter(stream);
+            mark = 0;
+            return ok;
+        }
+
+        public override void ConstructFullPathName(string opt = "")
+        {
+            base.ConstructFullPathName(opt);
+        }
+
+        public void WriteHeader(string ignore = null)
+        {
+            Write(header, 0, header.Length);
+        }
+
+        public void Write(byte[] buffer, int index, int count)
+        {
+            if (writer != null)
+                writer.Write(buffer, index, count);
+        }
+        public void Write(ulong[] buffer, int index, int count)
+        {
+            if (writer == null)
+                return;
+            uint delta = 0; uint ubuffA = 0; uint ubuffB = 0;
+            int i = 0;
+			delta = ubuffA = (uint)((buffer[index + i] - mark));
+            writer.Write(delta);
+            for (i = 1; i < count; i++) // convert back down to uint delta times
+            {
+                ubuffB = (uint)((buffer[index + i] - mark) & 0xfffffffful);
+				delta = ubuffB - ubuffA;
+				ubuffA = ubuffB;
+                writer.Write(delta);
+                mark = buffer[index + i];
+            }           
+        }
+        public void Write(List<ulong> buffer, int index, int count)
+        {
+            if (writer == null)
+                return;
+            uint delta = 0; uint ubuffA = 0; uint ubuffB = 0;
+            int i = 0;
+			delta = ubuffA = (uint)((buffer[index + i] - mark));
+            writer.Write(delta);
+            for (i = 1; i < count; i++) // convert back down to uint delta times
+            {
+                ubuffB = (uint)((buffer[index + i] - mark) & 0xfffffffful);
+				delta = ubuffB - ubuffA;
+				ubuffA = ubuffB;
+                writer.Write(delta);
+                mark = buffer[index + i];
+            }  
+        }
+        public void Write(ulong onetimestamp)
+        {
+            if (writer == null)
+                return;
+            uint ubuff = (uint)(onetimestamp & 0xfffffffful);
+            writer.Write(ubuff);
+        }
+
+		public override void CloseWriter()
+        {
+            if (writer != null && Log != null) Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
+            try
+            {
+                if (writer != null)
+                {
+                    writer.Flush();
+                    writer.Close();
+                }
+                CloseStream();
+				writer = null;
+				stream = null;
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+        }
     }
 
 	public class TimestampOverflowException : Exception { }
@@ -1341,7 +1510,7 @@ namespace NCCFile
 				{
 					try
 					{
-						timestamp = (ulong)ReadVariableLengthUInt(br, bytes);
+						timestamp = ReadVariableLengthUInt(br, bytes);
 					}
 					catch (SometingWrongHierException /*ex*/)
 					{
@@ -1374,7 +1543,7 @@ namespace NCCFile
 				bool usePreviousTimestamp = false;
 				ulong previousTimestamp = 0;
 				while (br.BaseStream.Position < startPosition + fileBlockSize) {
-					ulong timestamp = (ulong)br.ReadByte();
+					ulong timestamp = br.ReadByte();
 					if (timestamp == 0xff) {
 						previousTimestamp += timestamp;
 						usePreviousTimestamp = true;
@@ -1397,7 +1566,7 @@ namespace NCCFile
 				bool usePreviousTimestamp = false;
 				ulong previousTimestamp = 0;
 				while (br.BaseStream.Position < startPosition + fileBlockSize) {
-					ulong timestamp = (ulong)br.ReadUInt16();
+					ulong timestamp = br.ReadUInt16();
 					if (timestamp == 0xffff) {
 						previousTimestamp += timestamp;
 						usePreviousTimestamp = true;
@@ -1439,7 +1608,7 @@ namespace NCCFile
 				if (bytesRead != 1) { throw new SometingWrongHierException("R1"); }
 				// if the value is less than 192, we are done
 				if (bytes[0] < 0xC0) {
-					return (uint)bytes[0];
+					return bytes[0];
 				}
 				if (bytes[0] < 0xF0) {
 					// two bytes
@@ -1452,13 +1621,13 @@ namespace NCCFile
 					bytesRead = br.Read(bytes, 1, 2);
 					if (bytesRead != 2) { throw new SometingWrongHierException("R3");}
 					// 0b00001111 => 0x0f
-					return (((((uint)bytes[0]) & 0x0f) << 16) | (((uint)bytes[1]) << 8) | ((uint)bytes[2])) + 0x30C0;
+					return (((((uint)bytes[0]) & 0x0f) << 16) | (((uint)bytes[1]) << 8) | bytes[2]) + 0x30C0;
 				} else {
 					// four bytes
 					bytesRead = br.Read(bytes, 1, 3);
 					if (bytesRead != 3) { throw new SometingWrongHierException("R4"); }
 					// 0b00000011 => 0x03
-					return (((((uint)bytes[0]) & 0x03) << 24) | (((uint)bytes[1]) << 16) | (((uint)bytes[2]) << 8) | ((uint)bytes[3])) + 0x0C30C0;
+					return (((((uint)bytes[0]) & 0x03) << 24) | (((uint)bytes[1]) << 16) | (((uint)bytes[2]) << 8) | bytes[3]) + 0x0C30C0;
 				}
 			}
 		}
@@ -2103,7 +2272,7 @@ namespace NCCFile
 		Analysis.StreamStatusBlock sb;
 		public void CustomStatusBlock(string HW, string devicename, string source, string message)
 		{
-			double durationTics = (double)(LastTimeInTics - FirstEventTimeInTics);
+			double durationTics = LastTimeInTics - FirstEventTimeInTics;
 			if (durationTics <= 0)
 				durationTics = 1;
 
@@ -2129,7 +2298,7 @@ namespace NCCFile
 			byte[] bytes = null;
 			try {
 				bytes = r.ReadBytes(count);
-				return System.Text.Encoding.UTF8.GetString(bytes);
+				return Encoding.UTF8.GetString(bytes);
 			} catch (Exception) {
 			}
 			return string.Empty;
@@ -2255,18 +2424,18 @@ namespace NCCFile
 
     public class LMPair
     {
-        public LMPair(UInt32 chn, Double time)
+        public LMPair(uint chn, double time)
         {
             ChannelMask = chn;
             Time = time;
         }
 
-        public UInt32 ChannelMask
+        public uint ChannelMask
         {
             get;
             set;
         }
-        public Double Time
+        public double Time
         {
             get;
             set;
@@ -2362,7 +2531,7 @@ namespace NCCFile
         /// <param name="line"></param>
         /// <returns></returns>
         /// 
-        public void ParseLine(string line, ref Int32 chn, ref double time)
+        public void ParseLine(string line, ref int chn, ref double time)
         {
             string[] two = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries); // any and all whitespace separates
 
@@ -2370,22 +2539,22 @@ namespace NCCFile
             {
                 if (two.Length >= 2)
                 {
-                    bool ok = Int32.TryParse(two[0], out chn);
+                    bool ok = int.TryParse(two[0], out chn);
                     if (ok && chn >= 0 && chn < 32)
                         chn = (1 << chn);
-                    ok = Double.TryParse(two[1], out time);
+                    ok = double.TryParse(two[1], out time);
                 }
                 else if (two.Length == 1)
                 {
-                    bool ok = Double.TryParse(two[0], out time);
+                    bool ok = double.TryParse(two[0], out time);
                 }
             }
         }
 
         public LMPair ParseLinesToNCDPair(List<string> lines)
         {
-            Int32 chn = 0;
-            Double time = 0;
+            int chn = 0;
+            double time = 0;
 
             foreach (string line in lines)
             {
@@ -3368,7 +3537,7 @@ namespace NCCFile
 				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
 				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
 				T n = new T();
-				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+				n.Log = NC.App.DataLogger;
 				n.Num = files.state.cur++;
 				n.Filename = f;
 				n.ExtractDateFromFilename();
@@ -3397,7 +3566,7 @@ namespace NCCFile
                 string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
                 log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
                 T n = new T();
-                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+                n.Log = NC.App.DataLogger;
                 n.Num = files.state.cur++;
                 n.Filename = f;
                 n.ExtractDateFromFilename();

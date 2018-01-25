@@ -2542,6 +2542,9 @@ namespace AnalysisDefs
 
 		public bool IsError { get { return lvl <= NCCReporter.LogLevels.Error; } }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 		public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
 =======
         public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }

@@ -2127,10 +2127,14 @@ Go
 INSERT INTO [LMHWParams] VALUES(2,1,0,0,1705,600,30);
 Go
 <<<<<<< HEAD
+<<<<<<< HEAD
 INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
 =======
 INSERT INTO [LMINCCAppContext] VALUES('*',1,1,0,4,30,50,0,3,0,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1,0);
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+INSERT INTO [LMINCCAppContext] VALUES('c:\temp',1,1,0,4,30,50,0,3,1,2,'./',0,'./',0,0,0,1,NULL,0,0,0,0,0,0,0,0,0,0,0,0,128,1000,0,0,1,0,0,'','',1,1);
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 GO
 INSERT INTO [detectors] VALUES(3,'AS710',15,'PTR-32HV','N026','AS710-PTR32');
 GO

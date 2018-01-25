@@ -56,6 +56,7 @@ namespace AnalysisDefs
         protected enum ReportSections { SofwareContext, DescriptiveSummary, MeasurementDetails, DetectorCalibration, RawAndMultSums, ComputedMultiplicityIntermediates, CycleSource, ChannelCounts, ChannelRates, MultiplicityDistributions, RawCycles, RateCycles, DTCRateCycles, RepResults, RepDytlewskiResults }
 
         enum DescriptiveSummary { Facility, MBA, MeasDate, ItemID, ResultsFileName, InspNum, InspName, Comment, EndingComment }
+<<<<<<< HEAD
 =======
 using NCCReporter;
 namespace AnalysisDefs
@@ -84,6 +85,8 @@ namespace AnalysisDefs
 
         enum DescriptiveSummary { Facility, MBA, MeasDate, ItemID, ResultsFileName, InspNum, InspName, Comment, EndingComment }
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         enum MeasurementDetails { MeasType, DetectorConfig, DataSource, QCTests, ErrorCalc, AccidentalsMethod, CycleCount, TotalCountTime }
         enum BaseDetectorCalibration
         {

@@ -1507,6 +1507,7 @@ namespace NCCTransfer
         public byte backup_method;
         public byte curium_ratio;
         public byte truncated_mult;
+        public byte analysis_method_spare1;
         public byte analysis_method_spare2;
         public byte analysis_method_spare3;
         public byte analysis_method_spare4;
@@ -1610,7 +1611,7 @@ namespace NCCTransfer
         fixed double collar_spares[INCC.NUMBER_COL_SPARES];
         public fixed byte collar_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
         //Change to int to hold Enum CollarType
-        public int collar_mode;
+        public byte collar_mode;
         public double col_lower_mass_limit;
         public double col_upper_mass_limit;
     };
@@ -1621,7 +1622,7 @@ namespace NCCTransfer
     {
         public fixed byte collar_detector_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
         //Changed to reflect new CollarType enum
-        public int collar_detector_mode;
+        public byte collar_detector_mode;
         public fixed byte collar_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public fixed byte col_reference_date[INCC.DATE_TIME_LENGTH];
         public double col_relative_doubles_rate;

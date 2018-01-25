@@ -193,16 +193,22 @@ namespace NCCReporter
 <<<<<<< HEAD
                         {
                             listener = (FileLogTraceListener)item;
+<<<<<<< HEAD
 =======
                         {
                             FileLogTraceListener listener = (FileLogTraceListener)item;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
                                 listener.CustomLocation = cfg.App.LogFilePath;
                             }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                             if (cfg.App.isSet(NCCConfig.NCCFlags.loglocation))
                             {
                                 listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
@@ -215,6 +221,7 @@ namespace NCCReporter
                             }
                             else
                                 listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
+<<<<<<< HEAD
 =======
                             if (cfg.App.isSet(NCCConfig.NCCFlags.logLocation))
                             {
@@ -229,6 +236,8 @@ namespace NCCReporter
                             else
                                 listener.BaseFileName = _uniquename;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                             listener.Append = true;
                             listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;

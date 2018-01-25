@@ -342,7 +342,7 @@ namespace NewUI
                     {
                         SRInstrument sri = new SRInstrument(det);
                         sri.selected = true;
-                        sri.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
+                        sri.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
                         if (!Instruments.All.Contains(sri))
                             Instruments.All.Add(sri); // add to global runtime list 
                         dr = DialogResult.OK;
@@ -359,7 +359,7 @@ namespace NewUI
                         {
 							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
-                            NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
+                            NC.App.AppLogger.TraceEvent(LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
@@ -401,6 +401,12 @@ namespace NewUI
                     NC.App.AppContext.ReviewFileAssay = true;
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");
+                    break;
+                case ConstructedSource.DatazFile:
+                    Integ.BuildMeasurementMinimal(ap, det, mo);  
+                    NC.App.AppContext.DatazFileAssay = true;
+                    UIIntegration.Controller.file = true;
+                    dr = UIIntegration.GetUsersFile("Select a Dataz file", NC.App.AppContext.FileInput, "IAEA Dataz", "dataz");
                     break;
                 case ConstructedSource.NCDFile:
 					Integ.BuildMeasurement(ap, det, mo);

@@ -82,11 +82,14 @@ namespace NewUI
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId);
 						m.ReportRecalc(); // dev note: not strictly from INCC5, but based on usage complaint from LANL 
                     }
+<<<<<<< HEAD
 =======
 						m.INCCAnalysisResults.TradResultsRec = NC.App.DB.ResultsRecFor(m.MeasurementId); 
 						m.ReportRecalc(); // dev note: not strictly from INCC5, but based on usage complaint from LANL 
 					}
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 					List<INCCTransferFile> itdl = INCCKnew.XFerFromMeasurements(mlist);
 					foreach (INCCTransferFile itd in itdl)
 					{

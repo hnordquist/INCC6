@@ -44,11 +44,19 @@ namespace DB
 
     public class Persistence
     {
+<<<<<<< HEAD
+=======
+        //public LMLoggers.LognLM logger;
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         public DBConfig cfg;
 
         public Persistence(LMLoggers.LognLM logger, DBConfig cfg)
         {
             this.cfg = cfg;
+<<<<<<< HEAD
+=======
+            //this.logger = logger;
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             DBMain.pest = this;
         }
 

@@ -77,6 +77,10 @@ namespace NCCCmd
 
         public void SetupEventHandlers()
         {
+<<<<<<< HEAD
+=======
+            LMLoggers.LognLM applog = NC.App.AppLogger;
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             /// set up the 7 magic event handlers
             /// here I have a base handler that does the same thing for every event (writes a string to the log) 
             SetEventHandler(EventType.PreAction, (object o) =>

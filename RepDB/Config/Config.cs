@@ -714,10 +714,14 @@ namespace NCCConfig
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
 <<<<<<< HEAD
+<<<<<<< HEAD
             resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
 =======
             resetVal(NCCFlags.logLocation, Config.DefaultPath + "\\6.log", typeof(string));
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
 
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
@@ -733,7 +737,10 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
             resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
+<<<<<<< HEAD
             resetVal(NCCFlags.datazConvert, false, typeof(bool), retain: false);
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -911,6 +918,7 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.filterLMOutliers); }
             set { MutuallyExclusiveFileActions(NCCFlags.filterLMOutliers, value); }
         }
+<<<<<<< HEAD
         public bool DatazConvert
         {
             get { return (bool)getVal(NCCFlags.datazConvert); }
@@ -918,6 +926,10 @@ namespace NCCConfig
         }
         public bool HasFileAction
         {
+=======
+		public bool HasFileAction
+		{
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             get { return IsFileActionSet(); }
         }
 
@@ -929,6 +941,9 @@ namespace NCCConfig
 
         public string LogFilePathAndName
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         {
             get { return overridepath(NCCFlags.loglocation); }
             set { setIfNotOverride(NCCFlags.loglocation, value); }
@@ -1270,7 +1285,10 @@ namespace NCCConfig
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
                 setVal(NCCFlags.filterLMOutliers, false);
+<<<<<<< HEAD
                 setVal(NCCFlags.datazConvert, false);
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
@@ -1295,7 +1313,10 @@ namespace NCCConfig
                 (bool)getVal(NCCFlags.INCCXfer) ||
                 (bool)getVal(NCCFlags.pulseFileAssay) ||
                 (bool)getVal(NCCFlags.filterLMOutliers) ||
+<<<<<<< HEAD
                 (bool)getVal(NCCFlags.datazConvert) ||
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 (bool)getVal(NCCFlags.ncdFileAssay) ||
                 (bool)getVal(NCCFlags.sortPulseFile);
         }
@@ -1690,7 +1711,11 @@ namespace NCCConfig
             resetVal(NCCFlags.step, 10, typeof(int));// volts
             resetVal(NCCFlags.hvduration, 5, typeof(int)); // seconds
             resetVal(NCCFlags.delay, 2, typeof(int)); // seconds
+<<<<<<< HEAD
             resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progress and results (e.g. Excel)
+=======
+            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progess and results (e.g. Excel)
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 
             resetVal(NCCFlags.saveOnTerminate, false, typeof(bool));
             //resetVal(LMFlags.resultsAutoPath, (bool)false, typeof(bool));
@@ -1707,7 +1732,10 @@ namespace NCCConfig
 
             resetVal(NCCFlags.tau, 140, typeof(int));
             resetVal(NCCFlags.Tee, 4, typeof(int));
+<<<<<<< HEAD
             resetVal(NCCFlags.datazConvertParams, 0, typeof(ushort)); //  0 INCC5 test data file, 1 NCC Review file, 2 INCC5 xfer file, 3 INCC5 ini data detector and calibration files
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)
@@ -1823,6 +1851,7 @@ namespace NCCConfig
             set { if (value <= 64256 && value >= 0) setVal(NCCFlags.tau, value); }
         }
 
+<<<<<<< HEAD
 
         public ushort DatazConvertType
         {
@@ -1832,6 +1861,10 @@ namespace NCCConfig
 
         // cmd line dual setters
         public void LMFilterParams(string b, string s)
+=======
+        // cmd line dual setters
+		public void LMFilterParams(string b, string s)
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
         {
             try
             {

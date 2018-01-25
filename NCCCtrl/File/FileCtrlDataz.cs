@@ -196,12 +196,17 @@ namespace NCCFile
                 for (ushort j = 0; j < c.BinLen; j++)
                 {
 <<<<<<< HEAD
+<<<<<<< HEAD
                     mcr.RAMult[j] = c.MultBins[j];
                     mcr.NormedAMult[j] = c.MultAccBins[j];
 =======
                     mcr.RAMult[j] = c.MultRABins[j];
                     mcr.NormedAMult[j] = c.MultNormedAccBins[j];
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                    mcr.RAMult[j] = c.MultBins[j];
+                    mcr.NormedAMult[j] = c.MultAccBins[j];
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 }
                 ctrllog.TraceEvent(LogLevels.Verbose, 5439, "Cycle " + cycle.seq.ToString() + ((mcr.RAMult[0] + mcr.NormedAMult[0]) > 0 ? " max:" + mcr.MaxBins.ToString() : " *"));
 
@@ -212,6 +217,7 @@ namespace NCCFile
             }
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
         enum DatazConversionTarget : ushort { TestData, NCC, XFer, InitialDataPair }
@@ -396,6 +402,8 @@ namespace NCCFile
 
         }
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 
 
         public class DatazFile : NeutronDataFile   // NEXT: this is only the MCSR specific variant, expand class definitions later
@@ -469,9 +477,12 @@ namespace NCCFile
                 public int Num;
                 public double Avg;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                 public double CycleInterval;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 public Cycle[] Cycles;
 
                 public Plateau()
@@ -489,11 +500,15 @@ namespace NCCFile
                     for (int i = p.StartIdx, j = 0; i <= p.EndIdx; i++, j++)  // use GetRange and ToArray you silly person
                         p.Cycles[j] = clist[i];
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     return p;
                 }
             }
 
             public void ProcessSections()
+<<<<<<< HEAD
 =======
                     if (clist != null && clist.Count > 0)
                         p.CycleInterval = clist[0].Duration.TotalSeconds;
@@ -508,6 +523,8 @@ namespace NCCFile
 
             public void ProcessSections(bool analyze = true)
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             {
                 AcquistionStateChanged = false;
                 ExtractTimeZone();
@@ -532,10 +549,14 @@ namespace NCCFile
                         Plateaux.Add(Plateau.Parse(s, Cycles));
                 }
 <<<<<<< HEAD
+<<<<<<< HEAD
                 if (Plateaux.Count > 0)
 =======
                 if (Plateaux.Count > 0 && analyze)  // set the current runtime state only if it will be used
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                if (Plateaux.Count > 0)
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     SetCurrentAcquireStateFromZFile();
             }
 
@@ -566,10 +587,14 @@ namespace NCCFile
                 if (string.IsNullOrEmpty(a))
                 {
 <<<<<<< HEAD
+<<<<<<< HEAD
                     NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "No detector name specified, using current detecor for analysis");
 =======
                     NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "No detector name specified, using current detector for analysis");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                    NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "No detector name specified, using current detecor for analysis");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     return;
                 }
 
@@ -626,10 +651,13 @@ namespace NCCFile
                 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
                 string item = string.Empty;
                 Configuration[SecondaryTag.INCC].TryGetValue("ItemId", out item);
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 a = string.Empty;
                 Configuration[SecondaryTag.INCC].TryGetValue("MaterialType", out a);
                 string fac = string.Empty;
@@ -641,11 +669,15 @@ namespace NCCFile
 
                 // if det exists in DB then switch to that one, else add it to DB and switch to it, same for facility, system/mba, item type
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 SetNewAcquireState(_candidate, a, fac, mba, msg);
             }
 
 
             bool SetNewAcquireState(Detector det0, string mtl, string fac, string mba, string msg)
+<<<<<<< HEAD
 =======
                 SetNewAcquireState(_candidate, a, fac, mba, msg, Plateaux[0].CycleInterval);
             }
@@ -653,6 +685,8 @@ namespace NCCFile
 
             bool SetNewAcquireState(Detector det0, string mtl, string fac, string mba, string msg, double interval)
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             {
                 AcquireParameters acq = NC.App.DB.LastAcquire();
                 Detector det = NC.App.DB.Detectors.GetItByDetectorId(det0.Id.DetectorName);
@@ -660,10 +694,14 @@ namespace NCCFile
                 {
                     det = det0;
 <<<<<<< HEAD
+<<<<<<< HEAD
                     NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating new detector " + det.Id.DetectorName + " now");
 =======
                     NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating new detector " + det.Id.DetectorName + " now");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                    NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating new detector " + det.Id.DetectorName + " now");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     // add fresh param instances to in-memory maps
                     NC.App.DB.NormParameters.Map.Add(det, new NormParameters());
                     NC.App.DB.UnattendedParameters.Map.Add(det, new UnattendedParameters());
@@ -680,10 +718,14 @@ namespace NCCFile
                     if (SRParamUpdateNeeded(det.MultiplicityParams, det0.MultiplicityParams))
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, $"Modifying detector {det.Id.DetectorName} SR params");
 =======
                         NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, $"Modifying detector {det.Id.DetectorName} SR params");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                        NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, $"Modifying detector {det.Id.DetectorName} SR params");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                         det.SRParams.highVoltage = det0.SRParams.highVoltage;
                         det.SRParams.predelayMS = det0.SRParams.predelayMS;
                         det.SRParams.gateLengthMS = det0.SRParams.gateLengthMS;
@@ -697,10 +739,14 @@ namespace NCCFile
                     if (facdesc == null)
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + fac + " facility");
 =======
                         NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + fac + " facility");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                        NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + fac + " facility");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                         facdesc = new INCCDB.Descriptor(fac, "Dataz creation source");
                         NC.App.DB.Facilities.Update(facdesc);
                     }
@@ -711,10 +757,14 @@ namespace NCCFile
                     if (mbadesc == null)
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mba + " MBA");
 =======
                         NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mba + " MBA");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                        NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mba + " MBA");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                         mbadesc = new INCCDB.Descriptor(mba, "Dataz creation source");
                         NC.App.DB.MBAs.Update(mbadesc);
                     }
@@ -725,10 +775,14 @@ namespace NCCFile
                     if (mtldesc == null)
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mtl + " material type");
 =======
                         NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mtl + " material type");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                        NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Creating " + mtl + " material type");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                         mtldesc = new INCCDB.Descriptor(mtl, "Dataz creation source");
                         NC.App.DB.Materials.Update(mtldesc);
                     }
@@ -740,11 +794,15 @@ namespace NCCFile
                 if (!string.IsNullOrEmpty(msg))
                 {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     acq.ending_comment = true;
                     acq.ending_comment_str = msg;
                 }
                 if (AcquistionChangeNeeded(acq, det.Id.DetectorName, mtl, fac, mba))
                 {
+<<<<<<< HEAD
 =======
                     //acq.ending_comment = true;  // comment is saved but no ending dialog pops up
                     acq.ending_comment_str = msg;
@@ -753,6 +811,8 @@ namespace NCCFile
                 {
                     acq.run_count_time = interval;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     acq.detector_id = string.Copy(det.Id.DetectorName);
                     acq.meas_detector_id = string.Copy(det.Id.DetectorName);
                     if (!string.IsNullOrEmpty(mtl))
@@ -770,10 +830,14 @@ namespace NCCFile
                 AcquistionStateChanged = true;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Info, 32444, $"The current detector/material now {acq.detector_id},{acq.item_type}");
 =======
                 NC.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, $"The current detector/material now {acq.detector_id},{acq.item_type}");
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                NC.App.Loggers.ControlLogger.TraceEvent(LogLevels.Info, 32444, $"The current detector/material now {acq.detector_id},{acq.item_type}");
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                 return true;
             }
 
@@ -783,21 +847,29 @@ namespace NCCFile
             }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
             static bool AcquistionChangeNeeded(AcquireParameters acq, string det, string mtl, string fac, string mba)
 =======
             static bool AcquistionChangeNeeded(AcquireParameters acq, string det, string mtl, string fac, string mba, double interval)
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+            static bool AcquistionChangeNeeded(AcquireParameters acq, string det, string mtl, string fac, string mba)
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             {
                 return !acq.detector_id.Equals(det, StringComparison.OrdinalIgnoreCase) ||
                        !acq.meas_detector_id.Equals(det, StringComparison.OrdinalIgnoreCase) ||
                     (!string.IsNullOrEmpty(fac) && !acq.facility.Name.Equals(fac, StringComparison.OrdinalIgnoreCase)) ||
                     (!string.IsNullOrEmpty(mba) && !acq.mba.Name.Equals(mba, StringComparison.OrdinalIgnoreCase)) ||
 <<<<<<< HEAD
+<<<<<<< HEAD
                     (!string.IsNullOrEmpty(mtl) && !acq.item_type.Equals(mtl, StringComparison.OrdinalIgnoreCase));
 =======
                     (!string.IsNullOrEmpty(mtl) && !acq.item_type.Equals(mtl, StringComparison.OrdinalIgnoreCase)) ||
                     interval != acq.run_count_time;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                    (!string.IsNullOrEmpty(mtl) && !acq.item_type.Equals(mtl, StringComparison.OrdinalIgnoreCase));
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             }
 
             public bool AcquistionStateChanged { get; private set; }
@@ -819,10 +891,14 @@ namespace NCCFile
                     multChannelsIdx,  // max mult bin count index
                     multIdx, // first index of multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
 <<<<<<< HEAD
+<<<<<<< HEAD
                     multAccIdx; // first index of mult+acc multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
 =======
                     multNormAccIdx; // first index of mult+acc multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                    multAccIdx; // first index of mult+acc multiplicity bins, assumes Mult0..n, MultAcc0 ..n appears AFTER multChannelsIdx
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
             }
             Indexes dataIndices;
 
@@ -898,12 +974,17 @@ namespace NCCFile
                 public ulong[] Totals;  // 8 used of 32 possible
                 public uint BinLen;
 <<<<<<< HEAD
+<<<<<<< HEAD
                 public ulong[] MultAccBins;
                 public ulong[] MultBins;
 =======
                 public ulong[] MultNormedAccBins;
                 public ulong[] MultRABins;
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                public ulong[] MultAccBins;
+                public ulong[] MultBins;
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 
                 static public Cycle Parse(string[] s, Indexes ind, TimeSpan tz)
                 {
@@ -940,6 +1021,9 @@ namespace NCCFile
 
                     uint.TryParse(s[ind.multChannelsIdx], out c.BinLen);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                     c.MultBins = new ulong[c.BinLen];
                     c.MultAccBins = new ulong[c.BinLen];
                     for (int i = ind.multIdx + 1; i < (ind.multIdx + c.BinLen); i++)
@@ -947,6 +1031,7 @@ namespace NCCFile
                     ind.multAccIdx = ind.multIdx + 1 + (int)c.BinLen;
                     for (int i = ind.multAccIdx; i < (ind.multAccIdx + c.BinLen); i++)
                         ulong.TryParse(s[i], out c.MultAccBins[i - (ind.multAccIdx)]);
+<<<<<<< HEAD
 =======
                     c.MultRABins = new ulong[c.BinLen];
                     c.MultNormedAccBins = new ulong[c.BinLen];
@@ -956,15 +1041,21 @@ namespace NCCFile
                     for (int i = ind.multNormAccIdx; i < (ind.multNormAccIdx + c.BinLen); i++)
                         ulong.TryParse(s[i], out c.MultNormedAccBins[i - (ind.multNormAccIdx)]);
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
 
                     int idx = 0;
                     for (idx = (int)(c.BinLen - 1); idx > 0; idx--)
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         if (c.MultBins[idx] != 0 || c.MultAccBins[idx] != 0)
 =======
                         if (c.MultRABins[idx] != 0 || c.MultNormedAccBins[idx] != 0)
 >>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
+=======
+                        if (c.MultBins[idx] != 0 || c.MultAccBins[idx] != 0)
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
                             break;
                     }
                     if (idx < (c.BinLen-1))

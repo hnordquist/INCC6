@@ -95,7 +95,7 @@ namespace DAQ
             while (srct != null & srct.IsBusy & wait & counter < 10)
             {
                 counter++;
-                NC.App.Logger(LMLoggers.AppSection.Collect).TraceEvent(LogLevels.Verbose, 87233, "Waiting for thread {0} to terminate", srct.SRCtrl.identifyingNumber);
+                NC.App.CollectLogger.TraceEvent(LogLevels.Verbose, 87233, "Waiting for thread {0} to terminate", srct.SRCtrl.identifyingNumber);
                 Thread.Sleep(500);
             }
         }
@@ -559,7 +559,7 @@ namespace DAQ
 
     /*
      *  Sample driver code, Mar. 31, 2011, successfully controlled a JSR-12 with the ported DLLs and C# wrapper code using this set of statements 
-     * LMSR.take_data td = new LMSR.take_data(NC.App.Logger(LMLoggers.AppSection.Collect));
+     * LMSR.take_data td = new LMSR.take_data(NC.App.CollectLogger);
      * m.AcquireState.num_runs = 3;
      * m.AcquireState.run_count_time = 10.0;
      * m.MeasurementId.SetSRType("JSR12");

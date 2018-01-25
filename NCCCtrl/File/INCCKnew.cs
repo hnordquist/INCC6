@@ -51,7 +51,7 @@ namespace NCCTransfer
 
 		public static unsafe INCCInitialDataDetectorFile FromDetectors(List<Detector> dets)
 		{
-			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+			INCCInitialDataDetectorFile iddf = new INCCInitialDataDetectorFile(NC.App.ControlLogger, null);
 			foreach(Detector det in dets)
 			{
 				detector_rec dr = new detector_rec();
@@ -172,7 +172,7 @@ namespace NCCTransfer
 
 			foreach(Detector det in dets)
 			{
-                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+                INCCInitialDataCalibrationFile idcf = new INCCInitialDataCalibrationFile(NC.App.ControlLogger, null);
                 idcf.Name = det.Id.DetectorId;
                 foreach (INCCDB.Descriptor desc in NC.App.DB.Materials.GetList())
                 {
@@ -238,13 +238,13 @@ namespace NCCTransfer
 								}
 								catch (Exception e)
 								{
-									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 34102, "Collar xfer processing error {0} {1}", md.Item1.FullName(), e.Message);
+									NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34102, "Collar xfer processing error {0} {1}", md.Item1.FullName(), e.Message);
 								}
 								break;
 							case AnalysisMethod.COLLAR_SAVE_RESTORE:
 							case AnalysisMethod.COLLAR_DETECTOR_SAVE_RESTORE:
 							case AnalysisMethod.COLLAR_K5_SAVE_RESTORE:
-									NC.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
+									NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Got '{0}' ", md.Item1.FullName());
 								break;
 							case AnalysisMethod.INCCNone:
 								break;
@@ -621,7 +621,7 @@ namespace NCCTransfer
 				a = se.material.ToCharArray(0, Math.Min(se.material.Length, INCC.MAX_ITEM_TYPE_LENGTH));
 				Encoding.ASCII.GetBytes(a, 0, a.Length, b, 0);
 				TransferUtils.Copy(b, m.collar_detector_item_type);
-				m.collar_detector_mode = (int)imr.collar_det.collar_mode;
+				m.collar_detector_mode = (byte)imr.collar_det.collar_mode;
 
 				b = new byte[INCC.DATE_TIME_LENGTH];
 				a = imr.collar_det.reference_date.ToString("yy.MM.dd").ToCharArray();
@@ -664,7 +664,7 @@ namespace NCCTransfer
 				m.col_u_mass_corr_fact_a_err = imr.collar.u_mass_corr_fact_a.err;
 				m.col_u_mass_corr_fact_b = imr.collar.u_mass_corr_fact_b.v;
 				m.col_u_mass_corr_fact_b_err = imr.collar.u_mass_corr_fact_b.err;
-				m.collar_mode = imr.collar.collar_mode;
+				m.collar_mode = (byte)imr.collar.collar_mode;
 
 				byte[] bb = new byte[INCC.MAX_POISON_ROD_TYPES * INCC.MAX_ROD_TYPE_LENGTH];
 				int indx = 0;
@@ -740,7 +740,7 @@ namespace NCCTransfer
 				IEnumerator iter = m.CountingAnalysisResults.GetMultiplicityEnumerator();
 				while (iter.MoveNext())                     // for each mkey, a seperate xfer file should be emitted
 				{
-					INCCTransferFile itf = new INCCTransferFile(NC.App.Loggers.Logger(LMLoggers.AppSection.Control), null);
+					INCCTransferFile itf = new INCCTransferFile(NC.App.ControlLogger, null);
 					itf.Name = MethodResultsReport.EightCharConvert(m.MeasDate) + "." + m.MeasOption.INCC5Suffix();
 					list.Add(itf);
 					itf.results_rec_list.Add(Result5.MoveResultsRec(m));

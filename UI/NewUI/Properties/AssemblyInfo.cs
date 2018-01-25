@@ -48,4 +48,8 @@ using System.Windows;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
+<<<<<<< HEAD
 [assembly: AssemblyVersion("6.18.258.14381")]
+=======
+[assembly: AssemblyVersion("6.18.142.16774")]
+>>>>>>> c355399f558aa7a1290b63f16147ca7a85a453b0
