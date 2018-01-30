@@ -28,9 +28,12 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 
 namespace NCCReporter
-{
+#if EXCEL
+    using Excel = Microsoft.Office.Interop.Excel;
+=======
  #if EXCEL
 	using Excel = Microsoft.Office.Interop.Excel;
+>>>>>>> 94570003551df64daeee65be0d76211f950d9ac5
 #endif
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
@@ -106,4 +109,4 @@ namespace NCCReporter
         }
 
     }
-}
+
