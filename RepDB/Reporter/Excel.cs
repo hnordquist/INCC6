@@ -29,8 +29,13 @@ using System;
 
 namespace NCCReporter
 {
+
+<<<<<<< HEAD
 #if EXCEL
     using Excel = Microsoft.Office.Interop.Excel;
+=======
+ #if EXCEL
+	using Excel = Microsoft.Office.Interop.Excel;
 #endif
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
@@ -56,8 +61,8 @@ namespace NCCReporter
         {
             try
             {
-                if (Type.GetTypeFromProgID("Excel.Application") != null)
-                    return true;
+				if (Type.GetTypeFromProgID("Excel.Application") != null)
+					return true;
             }
             catch (Exception e)
             {
@@ -86,7 +91,7 @@ namespace NCCReporter
             }
         }
 
-
+        
         public void AddHeaderRow(System.Type myenumtype)
         {
             //if (target == null)
@@ -106,5 +111,4 @@ namespace NCCReporter
         }
 
     }
-}
 
