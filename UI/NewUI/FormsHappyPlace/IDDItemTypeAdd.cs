@@ -41,8 +41,9 @@ namespace NewUI
             {
                 CurrentMaterialTypesComboBox.Items.Add(d.Name);
             }
-            if (CurrentMaterialTypesComboBox.Items.Count >=1)
-                CurrentMaterialTypesComboBox.SelectedIndex = 0;
+            CurrentMaterialTypesComboBox.SelectedIndex = -1;
+            CurrentMaterialTypesComboBox.Refresh();
+            this.Update();
         }
 
         public IDDItemTypeAdd()
@@ -59,11 +60,13 @@ namespace NewUI
                 INCCDB.Descriptor d = new INCCDB.Descriptor(MaterialTypeTextBox.Text, MaterialTypeTextBox.Text);
                 if (NC.App.DB.Materials.Has(d))  // it is already there, nothing to do, user must select cancel (INCC5-style) to close
                 {
+                    MessageBox.Show("Material type already exists.", "WARNING");
                     return;
                 }
                 else 
                 { 
-                    NC.App.DB.Materials.Update(d); // update in-memory list and database table
+                    if (NC.App.DB.Materials.Update(d)) // update in-memory list and database table
+                        MessageBox.Show("Material type" + d.Name + " added.", "SUCCESS");
                     DialogResult = System.Windows.Forms.DialogResult.OK;
                     RefreshCombo();
                 }

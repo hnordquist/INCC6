@@ -454,19 +454,22 @@ namespace NCC
                 cfg.CmdLineActionOverride(); // override default file input setting with active command action (if any) from cmd line
                 name = Config.AppName;
                 Opstate.Action = (NCCAction)cfg.Cur.Action;  // command line flag can set this, the override above makes sure the cmd line is the state
-                                loggers = new LMLoggers(cfg);  // forces init
+
+                loggers = new LMLoggers(cfg);
+                pest.logger = Logger(LMLoggers.AppSection.DB);
             }
             return good;
         }
 
         public bool LoadPersistenceConfig(DBConfig mynewdb)
         {
-            pest = new Persistence(DBLogger, mynewdb);
+            pest = new Persistence(Logger(LMLoggers.AppSection.DB), mynewdb);
             DB = new INCCDB();
             lmdb = new LMDB();
 			bool there = false;
 			try
 			{
+                
 				there = pest.IsItThere;
 				if (!there)
 				{
@@ -485,29 +488,12 @@ namespace NCC
 			return there;
         }
 
-		public LMLoggers.LognLM AppLogger
+        public LMLoggers.LognLM Logger(LMLoggers.AppSection wp)
         {
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.App) : null; }
-		}
-		public LMLoggers.LognLM DataLogger
-		{
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Data) : null; }
-		}
-		public LMLoggers.LognLM AnalysisLogger
-		{
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Analysis) : null; }
-		}
-		public LMLoggers.LognLM ControlLogger
-		{
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Control) : null; }
-		}
-		public LMLoggers.LognLM CollectLogger
-		{
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.Collect) : null; }
-		}
-		public LMLoggers.LognLM DBLogger
-		{
-			get { return (loggers != null) ? loggers.Logger(LMLoggers.AppSection.DB) : null; }
+            if (loggers != null)
+                return loggers.Logger(wp);
+            else
+                return null;
         }
 
         public OperationalState Opstate
@@ -681,23 +667,63 @@ namespace NCC
             det.Id.source = acq.data_src;  // set the detector overall data source value here
 
             // create the context holder for the measurement. Everything is rooted here ...
-            Measurement meas = new Measurement(mt, mo, CentralizedState.App.DataLogger);
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
 
             FillInMeasurementDetails(meas);
             // ready for insertion of methods and processing start
 
         }
+        public static Measurement BuildMeasurementTemp(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo)
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    CentralizedState.App.DB.TestParameters.Get(),
+                                    GetCurrentNormParams(det),
+                                    GetCurrentBackgroundParams(det),
+                                    GetAcquireIsotopics(acq),
+                                    acq,
+                                    GetCurrentHVCalibrationParams(det));
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
 
-		/// <summary>
-		/// Prepare measurement instance content for analysis
-		/// Populate calibration and counting parameters maps
-		/// Create general results and specific results dictionary map entries
-		/// Set up stratum details
-		/// </summary>
-		/// <param name="meas">The partially initialized measurement instance</param>
-		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
-		///                                 skipped if Reanalysis prepared the details from database measurement results
-		/// </param>
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+
+            FillInMeasurementDetails(meas);
+            // ready for insertion of methods and processing start
+            return meas;
+
+        }
+        public static Measurement BuildMeasurementTemp(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo, TestParameters tp, BackgroundParameters bkg, NormParameters np, AnalysisDefs.Isotopics iso, HVCalibrationParameters hvp )
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    tp,
+                                    np,
+                                    bkg,
+                                    iso,
+                                    acq,
+                                    hvp);
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
+
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo);
+
+            FillInMeasurementDetails(meas);
+            // ready for insertion of methods and processing start
+            return meas;
+
+        }
+
+        /// <summary>
+        /// Prepare measurement instance content for analysis
+        /// Populate calibration and counting parameters maps
+        /// Create general results and specific results dictionary map entries
+        /// Set up stratum details
+        /// </summary>
+        /// <param name="meas">The partially initialized measurement instance</param>
+        /// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
+        ///                                 skipped if Reanalysis prepared the details from database measurement results
+        /// </param>
         static public void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
         {
             if (meas.Detector.ListMode)
@@ -840,7 +866,7 @@ namespace NCC
             det.Id.source = acq.data_src;  // set the detector overall data source value here
 
             // create the context holder for the measurement. Everything is rooted here ...
-            Measurement meas = new Measurement(mt, mo, CentralizedState.App.DataLogger);
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
 
             CentralizedState.App.Opstate.Measurement = meas;   // put the measurement definition on the global state
 
@@ -872,7 +898,7 @@ namespace NCC
             if (det == null || string.IsNullOrWhiteSpace(det.Id.DetectorName))
             {
                 det = new Detector();
-                CentralizedState.App.AppLogger.TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
+                CentralizedState.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Warning, 32443, "Detector " + curdet + " is not defined in the database");
             }
 			if (det.ListMode)
 				det.MultiplicityParams.FA = acq.lm.FADefault;
@@ -981,7 +1007,7 @@ namespace NCC
             if (det == null)
 			{
 				exists = false;
-				CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
+				CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Detector " + name + " undefined");
  				if (checkForExistence)
 					return false;			
 				else
@@ -992,7 +1018,7 @@ namespace NCC
 			{
 				// change detector on current acquire parms state
 				if (!exists)
-					CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
+					CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary detector definition for missing detector " + name + " created");				
 				acq.detector_id = string.Copy(name);
 				acq.meas_detector_id = string.Copy(name);
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime);
@@ -1002,7 +1028,7 @@ namespace NCC
 			}
             else    // update existing entry
                 CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-            CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
+            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current detector is now " + name);
 
 			return true;
 		}
@@ -1016,7 +1042,7 @@ namespace NCC
             if (desc == null)
             {
                 exists = false;
-                CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
+                CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32441, "Material " + name + " undefined");
                 if (checkForExistence)
                     return false;
                 else
@@ -1027,7 +1053,7 @@ namespace NCC
             {
                 // change material on current acquire parms state
                 if (!exists)
-                    CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
+                    CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 32442, "Temporary material definition " + name + " created");
                 acq.item_type = string.Copy(name);
                 CentralizedState.App.DB.AddAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
                 if (!exists)
@@ -1035,7 +1061,7 @@ namespace NCC
             }
             else
                 CentralizedState.App.DB.UpdateAcquireParams(acq, det.ListMode);
-            CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
+            CentralizedState.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current material is now " + name);
 
             return true;
         }

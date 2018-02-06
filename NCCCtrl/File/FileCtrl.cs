@@ -39,7 +39,7 @@ using Instr;
 namespace NCCFile
 {
 
-    using NC = CentralizedState;
+    using NC = NCC.CentralizedState;
 
     public partial class FileCtrl : ActionEvents, IActionControl//, IActionStatus
     {
@@ -51,9 +51,9 @@ namespace NCCFile
 
         public FileCtrl(bool usingGui)
         {
-            ctrllog = NC.App.ControlLogger;
-            datalog = NC.App.DataLogger;
-            NC.App.Opstate.SOH = OperatingState.Starting;
+            ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+            datalog = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
+            NC.App.Opstate.SOH = NCC.OperatingState.Starting;
             gui = usingGui;
         }
 
@@ -80,6 +80,8 @@ namespace NCCFile
                             TestDataAssay();
                         else if (NC.App.AppContext.ReviewFileAssay)
                             INCCReviewFileProcessing();
+                        else if (NC.App.AppContext.DatazFileAssay)
+                            DatazFileAssay();
                         else if (NC.App.AppContext.DBDataAssay)
                             DBDataAssay();
                         else
@@ -117,7 +119,7 @@ namespace NCCFile
             catch (Exception e)
             {
                 NC.App.Opstate.SOH = OperatingState.Trouble;
-                LMLoggers.LognLM applog = NC.App.AppLogger;
+                LMLoggers.LognLM applog = NC.App.Logger(LMLoggers.AppSection.App);
                 applog.TraceException(e, true);
                 applog.EmitFatalErrorMsg();
                 FireEvent(EventType.ActionFinished, this);
@@ -585,12 +587,12 @@ enditall:
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, 4); // 4 bytes per event, contrast with 8 bytes contiguous for LMMM
             PTRFileProcessingState c = new PTRFileProcessingState(rdt.State.maxValuesInBuffer, (LMProcessingState)PseudoInstrument.RDT.State);
             PseudoInstrument.RDT.State = c;
-            rdt.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+            rdt.Init(NC.App.Loggers.DataLogger, NC.App.Logger(LMLoggers.AppSection.Analysis));
 
             NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
             rdt.State.Sup.TickSizeInSeconds = did.source.TimeBase(did.SRType); // 1e-8 expected here
-            rdt.State.Sup.SetLogger(NC.App.AnalysisLogger);
+            rdt.State.Sup.SetLogger(NC.App.Logger(LMLoggers.AppSection.Analysis));
 
 
             meas.AcquireState.lm.Cycles = meas.AcquireState.num_runs = (ushort)files.Count(); // RequestedRepetitions
@@ -843,7 +845,7 @@ enditall:
 		internal static NCDFile PrepNCDFile(string opath, NeutronDataFile spf, int idx)
         {
             NCDFile file = new NCDFile();
-            file.Log = NC.App.DataLogger;
+            file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 
             file.Filename = opath + "\\stub";  // will change to ncd in the next steps
             file.DTO = new DateTimeOffset(spf.DTO.Ticks, spf.DTO.Offset);
@@ -901,7 +903,7 @@ enditall:
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, 4); // 4 bytes per event, contrast with 8 bytes contiguous for LMMM
             PTRFileProcessingState c = new PTRFileProcessingState(rdt.State.maxValuesInBuffer, (LMProcessingState)PseudoInstrument.RDT.State);
             PseudoInstrument.RDT.State = c;
-            rdt.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+            rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
 
             NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
@@ -984,7 +986,7 @@ enditall:
                     //read the header from the BIN file
                     ptrFile.Events.ReadHeader();
                     ShakeTime = 0;
-					cycle.TS = TimeSpan.FromSeconds(ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
+					cycle.TS = TimeSpan.FromSeconds (ptrFile.Events.ReportedCountTimeSecs);  // requested or specified time in seconds
 					ctrllog.TraceEvent(LogLevels.Info, 3340, "The bin file header reported assay interval is {0} seconds", cycle.TS.TotalSeconds);
                     //Add this as check. We should have this count - big T as final count rate
                     pps.PTRReportedCountTime += ptrFile.Events.ReportedCountTimeSecs;
@@ -1110,9 +1112,10 @@ enditall:
 
 					NC.App.Opstate.StopTimer();
 					FireEvent(EventType.ActionInProgress, this);
-
-                    new ReportMangler(ctrllog).GenerateReports(meas);
+                    //Generating report before saving results? Brilliant. 
                     meas.SaveMeasurementResults();
+                    new ReportMangler(ctrllog).GenerateReports(meas);
+
 				}
             }
 
@@ -1164,7 +1167,7 @@ enditall:
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm, 4);
             MCA527FileProcessingState fps = new MCA527FileProcessingState(rdt.State.maxValuesInBuffer, (LMProcessingState)PseudoInstrument.RDT.State);
             PseudoInstrument.RDT.State = fps;
-            rdt.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+            rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
 
             NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);
             DataSourceIdentifier did = meas.Detector.Id;
@@ -1401,7 +1404,7 @@ enditall:
             PulseProcessingState c = new PulseProcessingState(rdt.State.maxValuesInBuffer);
             PseudoInstrument.RDT.State = null;
             PseudoInstrument.RDT.State = c;
-            rdt.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+            rdt.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
             rdt.SetLMState(((LMConnectionInfo)(PseudoInstrument.id.FullConnInfo)).NetComm);
 
             NC.App.Opstate.ResetTimer(neutronCountingPrep, 0, 170, (int)NC.App.AppContext.StatusTimerMilliseconds / 4);

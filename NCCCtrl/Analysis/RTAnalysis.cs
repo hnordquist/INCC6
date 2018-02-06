@@ -54,7 +54,7 @@ namespace Analysis
             results = null;
         }
 
-		public double TickSizeInSeconds {
+		public double TickSizeInSeconds {   // for PTR32 culling tool, no handler is set, so get tick interval here
 			get {
 					if (Handler != null)
 						return Handler.ticSizeInSeconds;

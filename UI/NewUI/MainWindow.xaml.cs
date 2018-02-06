@@ -34,6 +34,7 @@ using AnalysisDefs;
 using DetectorDefs;
 using Instr;
 using NCCReporter;
+using System.Windows.Forms;
 
 namespace NewUI
 {
@@ -124,11 +125,11 @@ namespace NewUI
 
         private void SetupCollarItemDataEntryClick(object sender, RoutedEventArgs e)
         {
-            IDDCollarData f = new IDDCollarData();
+            IDDCollarItemData f = new IDDCollarItemData();
             f.ShowDialog();
-			if (f.DialogResult == System.Windows.Forms.DialogResult.OK && f.EditItem)
+			if (f.DialogResult == System.Windows.Forms.DialogResult.OK)
 			{
-				MessageBox.Show("The Item Id Entry dialogbox will now be displayed for you to enter\r\n" + 
+				System.Windows.Forms.MessageBox.Show("The Item Id Entry dialogbox will now be displayed for you to enter\r\n" + 
 								"the item data needed for the collar data you just entered", Integ.GetAppTitle());
 				IDDItemDataEntry g = new IDDItemDataEntry();
 				g.ShowDialog();
@@ -206,12 +207,8 @@ namespace NewUI
         private void MaintainCollarClick(object sender, RoutedEventArgs e)
         {
             //HN -- Cross ref shown first, next button takes you to IDDCollarCal
-            IDDCollarCrossRef f = new IDDCollarCrossRef(); 
-            WinPos childPos = main.GetChildPos(f.Height, f.Width);
-            f.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            if (childPos.height < f.Height || childPos.width < f.Width) // Resize if it will go off screen.
-                f.Size = new System.Drawing.Size((int)childPos.width, (int)childPos.height);
-            f.Location = new System.Drawing.Point((int)childPos.left, (int)childPos.top);
+            IDDCollarCrossRef f = new IDDCollarCrossRef(Integ.GetCurrentAcquireParams().collar_mode,false);
+            f.StartPosition = FormStartPosition.CenterScreen;
 
             f.ShowDialog();
         }
@@ -361,7 +358,7 @@ namespace NewUI
                     f.ShowDialog();
                     break;
                 case NormTest.Collar:
-                    MessageBox.Show("Initial source measurements cannot be done when the normalization type is collar.");
+                    System.Windows.Forms.MessageBox.Show("Initial source measurements cannot be done when the normalization type is collar.");
                     break;
             }
 
@@ -373,13 +370,13 @@ namespace NewUI
 	        /* if an Initial source measurement has not been done for this detector, do not allow a bias test to be performed. */
 	        if ((f.np.biasMode== NormTest.AmLiSingles) &&
 		        (f.np.amliRefSinglesRate <= 0.0))
-                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
+                System.Windows.Forms.MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
 	        else if ((f.np.biasMode== NormTest.Cf252Doubles) &&
 		        (f.np.cf252RefDoublesRate.v <= 0.0))
-                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference doubles rate and date are entered manually.", f.Acq.detector_id));
+                System.Windows.Forms.MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference doubles rate and date are entered manually.", f.Acq.detector_id));
 	        else if ((f.np.biasMode== NormTest.Cf252Singles) &&
 		        (f.np.cf252RefDoublesRate.v <= 0.0))
-                MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
+                System.Windows.Forms.MessageBox.Show(string.Format("Normalization measurements for detector {0} cannot be done until an Initial Source measurement has been made, or the reference singles rate and date are entered manually.", f.Acq.detector_id));
             else
                 f.ShowDialog();
         }
@@ -392,8 +389,53 @@ namespace NewUI
 
         private void AcquireVerificationClick(object sender, RoutedEventArgs e)
         {
-            IDDAcquireAssay f = new IDDAcquireAssay();
-            f.ShowDialog();
+            AcquireParameters ap = Integ.GetCurrentAcquireParams();
+
+            Detector det = new Detector();
+            INCCAnalysisParams.collar_combined_rec parms = new INCCAnalysisParams.collar_combined_rec();
+
+            Integ.GetCurrentAcquireDetectorPair(ref ap, ref det);
+            NormParameters npp = Integ.GetCurrentNormParams(det);
+            AnalysisMethods am = Integ.GetMethodSelections(ap);
+            if (am != null)
+            {
+                if (Integ.GetMethodSelections(det.Id.DetectorId, ap.ItemId.material).Has(AnalysisMethod.CollarAmLi))
+                {
+                    IDDAcquireAssay f = new IDDAcquireAssay();
+                    DialogResult result = f.ShowDialog();
+                    f.Close();
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        IDDCollarItemData data = new IDDCollarItemData();
+                        result = data.ShowDialog();
+                        data.Close();
+                    }
+
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+
+                        IDDK5CollarItemData k5 = new IDDK5CollarItemData(parms, true);
+                        result = k5.ShowDialog();
+                        k5.Close();
+                    }
+                    if (result == System.Windows.Forms.DialogResult.OK)
+                    {
+                        IDDCollarAcquire dlg = new IDDCollarAcquire(npp);
+                        dlg.ShowDialog();
+                    }
+
+                }
+                else
+                {
+                    IDDAcquireAssay f = new IDDAcquireAssay();
+                    f.ShowDialog();
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("You must define at least one analysis method.", "ERROR");
+            }
+
         }
 
         private void AcquireCalMeasClick(object sender, RoutedEventArgs e)
@@ -513,7 +555,7 @@ namespace NewUI
         {
             IDDPlotBiasMeasHistory h = new IDDPlotBiasMeasHistory();
             if (h.irlist.Count < 1)
-                MessageBox.Show("No normalization data to plot.", "WARNING");
+                System.Windows.Forms.MessageBox.Show("No normalization data to plot.", "WARNING");
             else
                h.ShowDialog();
         }
@@ -566,7 +608,7 @@ namespace NewUI
             Integ.GetCurrentAcquireDetectorPair(ref acq, ref det);
             if (!det.ListMode)
             {
-                MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
+                System.Windows.Forms.MessageBox.Show("'" + det.ToString() + "' is not a List Mode detector,\r\ncreate or select a List Mode detector\r\n with Setup > Facility/Inspection...", "List Mode Acquire");
                 return;
             }
 			LMAcquire a = new LMAcquire(acq, det);
@@ -593,7 +635,7 @@ namespace NewUI
                                 Ptr32Instrument instrument = new Ptr32Instrument(NC.App.Opstate.Measurement.Detector);
                                 instrument.DAQState = DAQInstrState.Offline;
                                 instrument.selected = true;
-                                instrument.Init(NC.App.DataLogger, NC.App.AnalysisLogger);  // redundant now
+                                instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));  // redundant now
 								instrument.RDT.ResetRawDataBuffer();
 								instrument.RDT.SetLMStateFlags(((LMConnectionInfo)(instrument.id.FullConnInfo)).NetComm);
                                 if (!Instruments.Active.Contains(instrument))
@@ -604,7 +646,7 @@ namespace NewUI
                                 MCA527Instrument mca = new MCA527Instrument(NC.App.Opstate.Measurement.Detector);
                                 mca.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                                 mca.selected = true;
-								mca.Init(NC.App.DataLogger, NC.App.AnalysisLogger); // redundant now?
+								mca.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis)); // redundant now?
                                 if (!Instruments.Active.Contains(mca))
                                     Instruments.Active.Add(mca);                                
                             } 
@@ -621,7 +663,7 @@ namespace NewUI
                         {
                             SRInstrument sri = new SRInstrument(NC.App.Opstate.Measurement.Detector);
                             sri.selected = true;
-                            sri.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+                            sri.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
                             if (!Instruments.All.Contains(sri))
                                 Instruments.All.Add(sri); // add to global runtime list 
                         }
@@ -645,7 +687,7 @@ namespace NewUI
                         }
                         SRInstrument sri2 = new SRInstrument(NC.App.Opstate.Measurement.Detector);
                         sri2.selected = true;
-                        sri2.Init(NC.App.Loggers.DataLogger, NC.App.AnalysisLogger);
+                        sri2.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
                         if (!Instruments.All.Contains(sri2))
                             Instruments.All.Add(sri2); // add to global runtime list 
                         break;
@@ -726,7 +768,7 @@ namespace NewUI
 
         private void logLevels_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ushort idx = (ushort)((ComboBox)sender).SelectedIndex;
+            ushort idx = (ushort)((System.Windows.Controls.ComboBox)sender).SelectedIndex;
             if (NC.App.AppContext.LevelAsUInt16 != idx)
             {
                 if (idx >= 0)
@@ -740,9 +782,9 @@ namespace NewUI
 
         private void logResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (NC.App.AppContext.LogResults != (ushort)((ComboBox)sender).SelectedIndex)
+            if (NC.App.AppContext.LogResults != (ushort)((System.Windows.Controls.ComboBox)sender).SelectedIndex)
             {
-                NC.App.AppContext.LogResults = (ushort)((ComboBox)sender).SelectedIndex;
+                NC.App.AppContext.LogResults = (ushort)((System.Windows.Controls.ComboBox)sender).SelectedIndex;
                 NC.App.AppContext.modified = true;
             }
         }
@@ -769,12 +811,12 @@ namespace NewUI
 
         private void PSALogsheetOutClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            System.Windows.Forms.MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void PerformanceMonitoringFileOutClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            System.Windows.Forms.MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void InitialDataOutClick(object sender, RoutedEventArgs e)
@@ -827,70 +869,78 @@ namespace NewUI
 
         private void BackupAllDataClick(object sender, RoutedEventArgs e)
         {
-			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
-			if (!string.IsNullOrEmpty(dest))
-			{
-				//Path to sql or sqlite files
-				string destFileName;
-				destFileName = string.Format("INCC-{0}.zip", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss"));
-				using (FileStream zipToOpen = new FileStream(Path.Combine(dest, destFileName), FileMode.OpenOrCreate))
-				{
-					using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
-					{
-						// Cannot archive connected DB or cfg, copy, archive, then delete.
-						// TODO: is this all that we want to save? HN 7/27/2016
-						string DBFolder = Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
-						string DBFile = Path.GetFullPath(NC.App.Pest.GetDBFileFromConxString());
-						string DBFileName = Path.GetFileName(NC.App.Pest.GetDBFileFromConxString());
-						string CfgPath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
+            string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
+            if (!string.IsNullOrEmpty(dest))
+            {
+                //Path to sql or sqlite files
+                string destFileName;
+                destFileName = string.Format("INCC-{0}.zip", DateTime.Now.ToString ("yyyy-MM-dd-HH-mm-ss"));
+                using (FileStream zipToOpen = new FileStream(Path.Combine (dest,destFileName), FileMode.OpenOrCreate))
+                {
+                    using (ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update))
+                    {
+                        // Cannot archive connected DB or cfg, copy, archive, then delete.
+                        // TODO: is this all that we want to save? HN 7/27/2016
+                        string DBFolder = Path.GetDirectoryName(NC.App.Pest.GetDBFileFromConxString());
+                        string DBFile = Path.GetFullPath(NC.App.Pest.GetDBFileFromConxString());
+                        string DBFileName = Path.GetFileName(NC.App.Pest.GetDBFileFromConxString());
+                        string CfgPath = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 
-						File.Copy(Path.Combine(DBFolder, DBFile), Path.Combine(dest, DBFileName), true);
-						File.Copy(CfgPath, Path.Combine(dest, Path.GetFileName(CfgPath)), true);
+                        File.Copy(Path.Combine(DBFolder,DBFile), Path.Combine(dest,DBFileName),true);
+                        File.Copy(CfgPath, Path.Combine (dest, Path.GetFileName(CfgPath)), true);
 
-						ZipArchiveEntry dbFile = archive.CreateEntryFromFile(Path.Combine(dest, DBFileName), DBFileName);
-						ZipArchiveEntry cfgFile = archive.CreateEntryFromFile(Path.Combine(dest, Path.GetFileName(CfgPath)), Path.GetFileName(CfgPath));
-						NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 1111, String.Format("Zip file containing database and config created: {0}", Path.Combine(dest, destFileName)));
-						File.Delete(Path.Combine(dest, DBFileName));
-						File.Delete(Path.Combine(dest, Path.GetFileName(CfgPath)));
+                        ZipArchiveEntry dbFile = archive.CreateEntryFromFile(Path.Combine(dest,DBFileName),DBFileName);
+                        ZipArchiveEntry cfgFile = archive.CreateEntryFromFile(Path.Combine(dest, Path.GetFileName(CfgPath)), Path.GetFileName(CfgPath));
+                        NC.App.Loggers.AppLogger.TraceEvent(LogLevels.Info, 1111, String.Format("Zip file containing database and config created: {0}", Path.Combine(dest, destFileName)));
+                        File.Delete(Path.Combine(dest, DBFileName));
+                        File.Delete(Path.Combine(dest, Path.GetFileName(CfgPath)));
 
-					}
-				}
+                    }
+                }
 
-			} else
-				MessageBox.Show("The destination folder could not be created", "ERROR");
-		}
+            }
+            else
+                System.Windows.Forms.MessageBox.Show("The destination folder could not be created", "ERROR");
+        }
 
         private void RestoreAllDataClick(object sender, RoutedEventArgs e)
         {
-			System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 
-			openFileDialog1.InitialDirectory = Path.GetTempPath();
-			openFileDialog1.Filter = "archive files (*.zip)|*.7z|All files (*.*)|*.*";
-			openFileDialog1.FilterIndex = 2;
-			openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.InitialDirectory = Path.GetTempPath();
+            openFileDialog1.Filter = "archive files (*.zip)|*.7z|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
 
-			if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				using (ZipArchive archive = new ZipArchive(openFileDialog1.OpenFile()))
-				{
-					// TODO: What does restore mean? Right now, just extracts to temp. 
-					// would have to do some somersaults to switch DB and change app context to stored config.
-					foreach (ZipArchiveEntry entry in archive.Entries)
-					{
-						entry.ExtractToFile(Path.Combine(Path.GetTempPath(), entry.FullName), true);
-					}
-				}
-			}
-		}
+            if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                try
+                {
+                    using (ZipArchive archive = new ZipArchive(openFileDialog1.OpenFile()))
+                    {
+                        // TODO: What does restore mean? Right now, just extracts to temp. 
+                        // would have to do some somersaults to switch DB and change app context to stored config.
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            entry.ExtractToFile(Path.Combine(Path.GetTempPath(), entry.FullName), true);
+                        }
+                    }
+                }
+                catch
+                {
+                    System.Windows.Forms.MessageBox.Show("Cannot access zip file.", "ERROR");
+                }
+            }
+        }
 
         private void BatchAnalysisClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            System.Windows.Forms.MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
 
         private void SetupPrinterClick(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
+            System.Windows.Forms.MessageBox.Show("This functionality is not implemented yet.", "DOING NOTHING NOW");
         }
     }
 }

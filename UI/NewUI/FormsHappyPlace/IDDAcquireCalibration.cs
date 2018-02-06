@@ -125,6 +125,40 @@ namespace NewUI
 		}
         private void OKBtn_Click(object sender, EventArgs e)
         {
+            if (DeclaredMassTextBox.Value != ah.ap.mass)
+            {
+                ah.ap.mass = DeclaredMassTextBox.Value; ah.ap.modified = true;
+            }
+            if (CountTimeTextBox.Value != ah.ap.run_count_time)
+            {
+                ah.ap.run_count_time = CountTimeTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)NumCyclesTextBox.Value != ah.ap.num_runs)
+            {
+                ah.ap.num_runs = (ushort)NumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if (MeasPrecisionTextBox.Value != ah.ap.meas_precision)
+            {
+                ah.ap.meas_precision = MeasPrecisionTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)MinNumCyclesTextBox.Value != ah.ap.min_num_runs)
+            {
+                ah.ap.min_num_runs = (ushort)MinNumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if ((ushort)MaxNumCyclesTextBox.Value != ah.ap.max_num_runs)
+            {
+                ah.ap.max_num_runs = (ushort)MaxNumCyclesTextBox.Value; ah.ap.modified = true;
+            }
+            if (ah.ap.modified)
+                NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.ap);
+            if (ah.det.ListMode)
+            {
+                CreateMultiplicityAnalyzer();
+            }
+
+            // save/update item id changes only when user selects OK
+            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
+            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list
             DialogResult res = DialogResult.Cancel;
             /* build message to warn user about selected analysis methods and requirements for calibration of known alpha. */
             AnalysisMethods am = Integ.GetMethodSelections(ah.ap);
@@ -152,43 +186,51 @@ namespace NewUI
             if (res != DialogResult.OK)
                 return;
 
-            if (DeclaredMassTextBox.Value != ah.ap.mass)
-            {
-                ah.ap.mass = DeclaredMassTextBox.Value; ah.ap.modified = true;
-            }
-            if (CountTimeTextBox.Value != ah.ap.run_count_time)
-            {
-                ah.ap.run_count_time = CountTimeTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)NumCyclesTextBox.Value != ah.ap.num_runs)
-            {
-                ah.ap.num_runs = (ushort)NumCyclesTextBox.Value; ah.ap.modified = true;
-            }
-            if (MeasPrecisionTextBox.Value != ah.ap.meas_precision)
-            {
-                ah.ap.meas_precision = MeasPrecisionTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)MinNumCyclesTextBox.Value != ah.ap.min_num_runs)
-            {
-                ah.ap.min_num_runs = (ushort)MinNumCyclesTextBox.Value; ah.ap.modified = true;
-            }
-            if ((ushort)MaxNumCyclesTextBox.Value != ah.ap.max_num_runs)
-            {
-                ah.ap.max_num_runs = (ushort)MaxNumCyclesTextBox.Value; ah.ap.modified = true;
-            }
+            
 
-            // save/update item id changes only when user selects OK
-            NC.App.DB.ItemIds.Set();  // writes any new or modified item ids to the DB
-            NC.App.DB.ItemIds.Refresh();    // save and update the in-memory item list
             if (ah.OKButton_Click(sender, e) == System.Windows.Forms.DialogResult.OK)
             {
                 //user can cancel in here during LM set-up, account for it.
+
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
                 Close();
             }
         }
 
+        private void CreateMultiplicityAnalyzer()
+        {
+            //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
+            ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
+            if (ah.det.MultiplicityParams.FA == FAType.FAOn)
+            {
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+            }
+            else
+            {
+                //Default long delay = 4096 for slow.
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+            }
+            // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
+            CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
+            foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
+            {
+                existing.Active = false;
+            }
+            if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
+            {
+                AnalysisParams.Insert(0, ah.det.MultiplicityParams);
+            }
+            SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
+            currentParms.Active = true;
+            currentParms.Rank = 0;
+            NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
+            NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
+            NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+
+        }
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             Close();

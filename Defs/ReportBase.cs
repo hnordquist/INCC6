@@ -177,7 +177,7 @@ namespace AnalysisDefs
             }
         }
 
-        public virtual void StartReportGeneration(Measurement m, string pretext, char separator = ',', string suffixoverride = null)
+        public virtual void StartReportGeneration(Measurement m, string pretext, char separator = '\t', string suffixoverride = null)
         {
             PrepForReportGeneration(m, separator);
 

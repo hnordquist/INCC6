@@ -240,6 +240,8 @@ namespace NCCFile
 			FireEvent(EventType.ActionFinished, this);
         }
 
+        const string SourceFilePrefixComment = "Original file name";
+
         AcquireParameters ConfigureAcquireState(Detector det, AcquireParameters def, DateTimeOffset dto, ushort runs, string path)
         {
             AcquireParameters acq = NC.App.DB.LastAcquireFor(det, def.item_type);
@@ -249,12 +251,12 @@ namespace NCCFile
             acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
             acq.num_runs = runs;
-            int tx = def.comment.IndexOf(" (Original file name");
+            int tx = def.comment.IndexOf(SourceFilePrefixComment);
             if (tx >= 0)
                 acq.comment = def.comment.Substring(0, tx);
             else
                 acq.comment = def.comment;
-            acq.comment += " (Original file name " + System.IO.Path.GetFileName(path) + ")";
+            acq.comment += (SourceFilePrefixComment + " " + System.IO.Path.GetFileName(path));
             INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, acq.item_type, dto);
             NC.App.DB.ReplaceAcquireParams(sel, acq);             // only one allowed, same for actual measurement
             return acq;
@@ -577,12 +579,12 @@ namespace NCCFile
                 acq = new AcquireParameters(def);
             acq.MeasDateTime = irf.dt; acq.lm.TimeStamp = irf.dt;
             acq.lm.Cycles = acq.num_runs = irf.num_runs; // RequestedRepetitions
-            int tx = def.comment.IndexOf(" (Original file name");
+            int tx = def.comment.IndexOf(SourceFilePrefixComment);
             if (tx >= 0)
                 acq.comment = def.comment.Substring(0, tx);
             else
                 acq.comment = def.comment;
-            acq.comment += " (Original file name " + System.IO.Path.GetFileName(irf.Path) + ")";
+            acq.comment += (SourceFilePrefixComment + " " + System.IO.Path.GetFileName(irf.Path));
             acq.detector_id = string.Copy(det.Id.DetectorId);
             acq.meas_detector_id = string.Copy(acq.detector_id);
 
@@ -590,7 +592,7 @@ namespace NCCFile
             ItemId iid = NC.App.DB.ItemIds.Get(irf.item);
             if (iid == null)
             {
-                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in op. rev. files or the database. Item type will default to " + acq.item_type);
+                ctrllog.TraceEvent(LogLevels.Warning, 5439, "Item id '" + irf.item + "' is referenced by the Review file measurement data, but is not found in Op. Review files or the database. Item type defaults to " + acq.item_type);
             }
             else
             {
@@ -679,7 +681,7 @@ namespace NCCFile
 
 		static void GCCollect()
 		{
-			LMLoggers.LognLM log = NC.App.ControlLogger;
+			LMLoggers.LognLM log = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
             long mem = GC.GetTotalMemory(false);
             log.TraceEvent(LogLevels.Verbose, 4255, "Total GC Memory is {0:N0}Kb", mem / 1024L);
             log.TraceEvent(LogLevels.Verbose, 4248, "GC now");

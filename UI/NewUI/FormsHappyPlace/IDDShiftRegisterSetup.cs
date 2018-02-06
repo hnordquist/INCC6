@@ -164,6 +164,7 @@ namespace NewUI
             EfficiencyTextBox.NumberFormat = NumericTextBox.Formatter.F4;
             EfficiencyTextBox.Value = det.SRParams.efficiency;
             EfficiencyTextBox.Min = 0;
+            EfficiencyTextBox.Max = 1;
 
             HighVoltageTextBox.ToValidate = NumericTextBox.ValidateType.Integer;
             HighVoltageTextBox.NumStyles = System.Globalization.NumberStyles.Integer;
@@ -281,7 +282,30 @@ namespace NewUI
             ShiftRegisterParameters sr1 = new ShiftRegisterParameters((ulong)pd,(ulong)gl,HighVoltageTextBox.Value,DieAwayTimeTextBox.Value*10,
                 EfficiencyTextBox.Value,DoublesGateFractionTextBox.Value,TriplesGateFractionTextBox.Value, 
                 DeadtimeCoefficientATextBox.Value,DeadtimeCoefficientBTextBox.Value, DeadtimeCoefficientCTextBox.Value,MultiplicityDeadtimeTextBox.Value);
+            // Multiplicity parms related to LM not stored here.
             bool modified = sr1.CompareTo(det.SRParams) != 0;
+            
+            //Check for LM multiplicity records and update accordingly.
+            if (det.ListMode)
+            {
+                //Don't check for modification with LM, always set these defaults
+
+                //Otherwise, it will be added.
+                det.MultiplicityParams.gateWidthTics = (ulong)det.SRParams.gateLengthMS * 10;
+                //If we are collecting rates only for a LM device, set these hard-coded values for fast/slow.
+                if (det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                }
+                else
+                {
+                    det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                    det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                }
+                det.MultiplicityParams.FA = LMFA.Checked ? FAType.FAOn : FAType.FAOff;
+                modified = true;
+            }
 
             if (m_bgateTriggerTypeChange)
             {

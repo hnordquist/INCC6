@@ -62,7 +62,7 @@ namespace NewUI
 			{
 				InitSort();
                 mopt = mo;
-                mlist = N.App.DB.MeasurementsFor(DetectorId, mopt);
+                mlist = N.App.DB.MeasurementsFor(DetectorId, mopt,"");
 				bGood = PrepList(DetectorId);
 			} finally
 			{
@@ -96,7 +96,7 @@ namespace NewUI
 			{
 				string msg = string.Format("No '{0}' {1} {2} measurements found", Material, AnalysisMethod.FullName(), mopt.PrintName());
 				MessageBox.Show(msg, "Calibration measurements", MessageBoxButtons.OK);
-				N.App.ControlLogger.TraceEvent(LogLevels.Warning, 3363, msg);
+				N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Warning, 3363, msg);
 				return false;
 			}
 			LoadList();
@@ -191,7 +191,7 @@ namespace NewUI
 						tx.WriteLine(entry);
 					}
 					tx.Close();
-					N.App.ControlLogger.TraceInformation("Fitting data written to " + dlg.FileName);
+					N.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceInformation("Fitting data written to " + dlg.FileName);
 				} catch (IOException ex)
 				{
 					MessageBox.Show(ex.Message, "Error on " + dlg.FileName);

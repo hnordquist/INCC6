@@ -38,7 +38,8 @@ namespace AnalysisDefs
     {
         public CountingResults()
         {
-        }       
+        }
+
     }
 
     public enum CycleDAQStatus { None, Completed, Cancelled, UnspecifiedTruncation, Rates };  // could make these a bit mask to mark cycles as failing multiple tests

@@ -973,7 +973,7 @@ namespace NCCFile
             read = thisread;
             eventsectionlen -= thisread;
             //count time is in here at 
-            headerstr = bytestoASCIIchars(header, 0x1000, thisread);
+            headerstr = BytestoASCIIchars(header, 0x1000, thisread);
             // This parses out the count time from the file header per Huzsti's definition. w/TryParse, should default to zero
             // Currently, no check at end is implemented. HN 10.16.2015
             Regex reg = new Regex("^@(\\d+).+@(\\d+)");
@@ -1088,7 +1088,7 @@ namespace NCCFile
             }
         }
 
-        public string bytestoASCIIchars(byte[] bdata, int len, int max)
+        public string BytestoASCIIchars(byte[] bdata, int len, int max)
         {
             int i;
             char dchar;
@@ -1230,7 +1230,7 @@ namespace NCCFile
             if (res)
             {
 				if (!SoloBinFile)
-					Channels.CreateForWriting();
+                Channels.CreateForWriting();
                 Events.WriteHeader(FirmwareIdent);
             }
             return res;
@@ -1288,10 +1288,23 @@ namespace NCCFile
             {
                 try
                 {
-                    DateTime dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
-                    TimeSpan tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
-                    CycleNumber = Convert.ToUInt16(split[2]);
-                    dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
+                    DateTime dtyyMMdd;
+                    TimeSpan tsHHmmsss;
+                    //Daniela had files like this. It has a prefix on it, no time, just cycle #s.
+                    if (!DateTime.TryParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture,
+                                     System.Globalization.DateTimeStyles.None, out dtyyMMdd))
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[1], "MMddyyyy", System.Globalization.CultureInfo.InvariantCulture);
+                        CycleNumber = Convert.ToUInt16(split[2]);
+                        dt = File.GetLastWriteTime(fname);
+                    }
+                    else
+                    {
+                        dtyyMMdd = DateTime.ParseExact(split[0], "yyMMdd", System.Globalization.CultureInfo.InvariantCulture);
+                        tsHHmmsss = TimeSpan.ParseExact(split[1], "hhmm", System.Globalization.CultureInfo.InvariantCulture);
+                        CycleNumber = Convert.ToUInt16(split[2]);
+                        dt = new DateTime(dtyyMMdd.Ticks + tsHHmmsss.Ticks);
+                    }
                 }
                 catch (FormatException)
                 {
@@ -2518,7 +2531,7 @@ namespace NCCFile
         /// <param name="line"></param>
         /// <returns></returns>
         /// 
-        public void ParseLine(string line, ref int chn, ref double time)
+        public void ParseLine(string line, ref Int32 chn, ref double time)
         {
             string[] two = line.Split((char[])null, StringSplitOptions.RemoveEmptyEntries); // any and all whitespace separates
 
@@ -2526,22 +2539,22 @@ namespace NCCFile
             {
                 if (two.Length >= 2)
                 {
-                    bool ok = int.TryParse(two[0], out chn);
+                    bool ok = Int32.TryParse(two[0], out chn);
                     if (ok && chn >= 0 && chn < 32)
                         chn = (1 << chn);
-                    ok = double.TryParse(two[1], out time);
+                    ok = Double.TryParse(two[1], out time);
                 }
                 else if (two.Length == 1)
                 {
-                    bool ok = double.TryParse(two[0], out time);
+                    bool ok = Double.TryParse(two[0], out time);
                 }
             }
         }
 
         public LMPair ParseLinesToNCDPair(List<string> lines)
         {
-            int chn = 0;
-            double time = 0;
+            Int32 chn = 0;
+            Double time = 0;
 
             foreach (string line in lines)
             {
@@ -3524,7 +3537,7 @@ namespace NCCFile
 				string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
 				log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
 				T n = new T();
-				n.Log = NC.App.DataLogger;
+				n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 				n.Num = files.state.cur++;
 				n.Filename = f;
 				n.ExtractDateFromFilename();
@@ -3553,7 +3566,7 @@ namespace NCCFile
                 string name = f.Substring(f.LastIndexOf("\\") + 1); // Remove path information from string
                 log.TraceEvent(LogLevels.Verbose, 406, "  {0}", name);
                 T n = new T();
-                n.Log = NC.App.DataLogger;
+                n.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
                 n.Num = files.state.cur++;
                 n.Filename = f;
                 n.ExtractDateFromFilename();

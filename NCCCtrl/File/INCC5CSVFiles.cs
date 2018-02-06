@@ -141,7 +141,7 @@ namespace NCCFile
 				{
 					CSVFile csv = new CSVFile();
 					string name = l.Substring(l.LastIndexOf("\\") + 1); // Remove path information from string
-	                csv.Log = NC.App.DataLogger;
+	                csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 	                csv.Filename = l;
 		            csv.ExtractDateFromFilename();
 					if (name.IndexOf('.') >= 0)
@@ -464,7 +464,7 @@ namespace NCCFile
 			{
 				CSVFile csv = new CSVFile();
 				string name = file.Substring(file.LastIndexOf("\\") + 1); // Remove path information from string
-				csv.Log = NC.App.DataLogger;
+				csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 				csv.Filename = file;
 				csv.ExtractDateFromFilename();
 				if (name.IndexOf('.') >= 0)
@@ -472,7 +472,7 @@ namespace NCCFile
 				csv.ProcessFile();  // split lines with scanner
 				if (csv.Lines.Count < 3)
 				{
-					NC.App.DataLogger.TraceEvent(LogLevels.Warning, 34100, "Skipped incomplete " + System.IO.Path.GetFileName(file));
+					NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Warning, 34100, "Skipped incomplete " + System.IO.Path.GetFileName(file));
 					return;
 				}
 				// line 1
@@ -480,7 +480,7 @@ namespace NCCFile
 				int lines = coeffnum + 2;
 				if (csv.Lines.Count != lines)
 				{
-					NC.App.DataLogger.TraceEvent(LogLevels.Warning, 34100, "Expecting {0} lines, found {1}, skipping {2}", lines, csv.Lines.Count, System.IO.Path.GetFileName(file));
+					NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Warning, 34100, "Expecting {0} lines, found {1}, skipping {2}", lines, csv.Lines.Count, System.IO.Path.GetFileName(file));
 					return;
 				}
 				Coefficients.a = GetDouble(csv.Lines[0][0]);
@@ -530,10 +530,10 @@ namespace NCCFile
 				}
 			} catch (MalformedLineException)  // not a CSV file
 			{
-				NC.App.DataLogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + Path.GetFileName(file));
+				NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(file));
 			} catch (Exception e)  // not good
 			{
-				NC.App.DataLogger.TraceEvent(LogLevels.Verbose, 34100, e.Message + " - Wrongness experienced " + Path.GetFileName(file));
+				NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 34100, e.Message + " - Wrongness experienced " + System.IO.Path.GetFileName(file));
 			}
 
 		}
@@ -618,7 +618,7 @@ namespace NCCFile
 			{
 				CSVFile csv = new CSVFile();
 				string name = file.Substring(file.LastIndexOf("\\") + 1); // Remove path information from string
-				csv.Log = NC.App.DataLogger;
+				csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 				csv.Filename = file;
 				csv.ExtractDateFromFilename();
 				if (name.IndexOf('.') >= 0)
@@ -1416,7 +1416,7 @@ SourceCodes
 			SourceCodes = new List<string>();
 			ItemTypes = new List<string>();
 			ItemNames = new List<string>();
-            mlogger = NC.App.ControlLogger;
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
 		}
 
 		static Regex yyyymmdd = new Regex("^\\d{4}\\d{2}\\d{2}$");
@@ -1640,7 +1640,7 @@ SourceCodes
 		{
 			IsoIsotopics = new List<Isotopics>();
             CompIsoIsotopics = null;
-            mlogger = NC.App.ControlLogger;
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
             Output = new CSVFile();
             Output.Log = mlogger;
         }
@@ -1814,7 +1814,7 @@ SourceCodes
         {
             Strata = new List<INCCDB.StratumDescriptor>();
             Facilities_ = new List<INCCDB.Descriptor>();
-            mlogger = NC.App.ControlLogger;
+            mlogger = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
         }
 
 
@@ -1892,7 +1892,7 @@ SourceCodes
                 return;
             CSVFile csv = new CSVFile();
             string name = path.Substring(path.LastIndexOf("\\") + 1); // Remove path information from string
-            csv.Log = NC.App.DataLogger;
+            csv.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
             csv.Filename = path;
             csv.ExtractDateFromFilename();
             if (name.IndexOf('.') >= 0)

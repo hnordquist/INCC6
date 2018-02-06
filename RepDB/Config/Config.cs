@@ -143,6 +143,12 @@ namespace NCCConfig
             return x;
         }
 
+        public Config(String settingsFile)
+        {
+            _parms = ParameterBasis();  // alloc table
+            db = new DBConfig(_parms);  // set up DB config
+            ReadAppSettings(settingsFile); // get the DB settings
+        }
         public Config()
         {
             _parms = ParameterBasis();  // alloc table
@@ -431,11 +437,43 @@ namespace NCCConfig
             }
         }
 
+        public void ReadAppSettings(String FullConfigFilePathAndName)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(FullConfigFilePathAndName);
+
+            try
+            {
+                // Get the AppSettings section and store DB info.
+                System.Configuration.AppSettingsSection appSettings =
+                    (System.Configuration.AppSettingsSection)config.AppSettings;
+                foreach (var key in appSettings.Settings.AllKeys)
+                {
+                    Console.WriteLine("Key: {0} Value: {1}", key, appSettings.Settings[key]);
+                    switch (key)
+                    {
+                        case "MyProviderName":
+                            this.DB.MyProviderName = config.AppSettings.Settings[key].Value;
+                            break;
+                        case "MyDBConnectionString":
+                            this.DB.MyDBConnectionString = config.AppSettings.Settings[key].Value;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (ConfigurationErrorsException e)
+            {
+                Console.WriteLine("[ReadAppSettings: {0}]",
+                    e.ToString());
+            }
+        }
+
         // Get the AppSettings section.        
         // This function uses the AppSettings property to read the appSettings configuration section.
         // The values are loaded into an internal params array with type markers.
         // All subsequent configuration set/get is through this in-memory parameter array.
-        void ReadAppSettings()
+        public void ReadAppSettings()
         {
             try
             {
@@ -654,6 +692,7 @@ namespace NCCConfig
             resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
@@ -716,7 +755,7 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || DatazFileAssay || PulseFileAssay || DBDataAssay); }
         }
 
 		private string overridepath(NCCFlags flag)
@@ -838,6 +877,11 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.mcaFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
         }
+        public bool DatazFileAssay
+        {
+            get { return (bool)getVal(NCCFlags.datazFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazFileAssay, value); }
+        }
         public bool SortPulseFile
         {
             get { return (bool)getVal(NCCFlags.sortPulseFile); }
@@ -859,6 +903,11 @@ namespace NCCConfig
             set { setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
+        public string LogFilePathAndName
+        {
+            get { return overridepath(NCCFlags.loglocation); }
+            set { setIfNotOverride(NCCFlags.loglocation, value); }
+        }
 		public string ResultsFilePath
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
@@ -1127,6 +1176,7 @@ namespace NCCConfig
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
                 setVal(NCCFlags.mcaFileAssay, false);
+                setVal(NCCFlags.datazFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
@@ -1138,6 +1188,7 @@ namespace NCCConfig
 				(bool)getVal(NCCFlags.testDataFileAssay) ||
                 (bool)getVal(NCCFlags.reviewFileAssay) ||
                 (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.datazFileAssay) ||
                 (bool)getVal(NCCFlags.mcaFileAssay) ||
                 (bool)getVal(NCCFlags.dbDataAssay) ||
                 (bool)getVal(NCCFlags.INCCXfer) ||
@@ -1158,6 +1209,8 @@ namespace NCCConfig
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
 			if (isSet(NCCFlags.logFileLoc))
 				x[ix++] = "  log file path: " + LogFilePath;
+            if (isSet(NCCFlags.loglocation))
+                x[ix++] = "  log file name: " + LogFilePathAndName;
 			if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
 
@@ -1197,7 +1250,9 @@ namespace NCCConfig
 				else if (TestDataFileAssay)
 					x[ix++] = ("  use sorted pulse files" + fis);
 				else if (ReviewFileAssay)
-					x[ix++] = ("  use sorted pulse files" + fis);
+					x[ix++] = ("  use NCC files" + fis);
+				else if (DatazFileAssay)
+					x[ix++] = ("  use Dataz (e.g. MCSR) files" + fis);
 				else if (NCDFileAssay)
 					x[ix++] = ("  use LMMM NCD files" + fis);
 				else
@@ -1525,7 +1580,7 @@ namespace NCCConfig
             resetVal(NCCFlags.step, 10, typeof(int));// volts
             resetVal(NCCFlags.hvduration, 5, typeof(int)); // seconds
             resetVal(NCCFlags.delay, 2, typeof(int)); // seconds
-            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progess and results (e.g. Excel)
+            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progress and results (e.g. Excel)
 
             resetVal(NCCFlags.saveOnTerminate, false, typeof(bool));
             //resetVal(LMFlags.resultsAutoPath, (bool)false, typeof(bool));

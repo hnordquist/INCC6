@@ -55,7 +55,8 @@ namespace NewUI
             CurrentDetectorsComboBox.Items.Clear();
             foreach (Detector d in NC.App.DB.Detectors)
             {
-                    CurrentDetectorsComboBox.Items.Add(d);
+                CurrentDetectorsComboBox.Items.Add(d);
+                CloneSourceCombo.Items.Add(d);
             }
         }
 
@@ -78,6 +79,9 @@ namespace NewUI
                     LMTypes.Items.Add(dty);
             }
             LMTypes.SelectedItem = InstrType.MCA527;
+
+            CloneCheckbox.Checked = false;
+            CloneSourceCombo.Enabled = false;
         }
 
         private void CurrentDetectorsComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -88,6 +92,16 @@ namespace NewUI
 
         private void OKButton_Click(object sender, EventArgs e)
         {
+            //Check for cloning.
+            if (CloneCheckbox.Checked)
+            {
+                //Make sure they selected a clone source
+                if (CloneSourceCombo.SelectedIndex != -1)
+                {
+                    //We have a valid sourc
+                    Detector from = (Detector)CloneSourceCombo.SelectedItem;
+                }
+            }
             if (String.IsNullOrEmpty(DetectorIdTextBox.Text))
             {
                 DialogResult = DialogResult.Cancel;
@@ -166,6 +180,16 @@ namespace NewUI
                 srtype = false;
             }
 
+        }
+
+        private void CloneCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((CheckBox)sender).Checked)
+            {
+                CloneSourceCombo.Enabled = true;
+            }
+            else
+                CloneSourceCombo.Enabled = false;
         }
     }
 }

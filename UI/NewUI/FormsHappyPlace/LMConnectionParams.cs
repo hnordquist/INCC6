@@ -643,7 +643,8 @@ namespace NewUI
 					MCAComboBox.Visible = false;
 			} catch (Exception e)
 			{
-				NC.App.ControlLogger.TraceException(e);
+				NCCReporter.LMLoggers.LognLM log = NC.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
+				log.TraceException(e);
 			}
 		}
 

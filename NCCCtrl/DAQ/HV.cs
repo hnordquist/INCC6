@@ -80,7 +80,7 @@ namespace DAQ
         public HVControl(DAQControl control)
         {
             this.control = control;
-            ctrllog = NC.App.ControlLogger;
+            ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
         }
 
         public void AddStepData(HVStatus hvst)

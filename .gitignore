@@ -5,3 +5,53 @@ obj
 *.user
 *.VC.db
 /Help/inccuser/INCCelp.hnd
+/Collar test data/Collar Cf-252 sample measurement/71QM0238.VER
+/Collar test data/Collar Cf-252 sample measurement/Collar results.xlsx
+/Collar test data/Collar Cf-252 sample measurement/INCC setup for collar measurement.docx
+/data/ptr32hv Rates 20161220151013_01.csv
+/data/ptr32hv Rates 20161219130052.csv
+/data/6CKP1013_01.RTS
+/data/6CJN0052.RTS
+/data/2016_12_19_130538_0.chn
+/data/2016_12_19_130538_0.bin
+/data/2016_12_19_130518_0.chn
+/data/2016_12_19_130518_0.bin
+/data/2016_12_19_130458_0.chn
+/data/2016_12_19_130458_0.bin
+/data/2016_12_19_130437_0.chn
+/data/2016_12_19_130437_0.bin
+/data/2016_12_19_130416_0.chn
+/data/2016_12_19_130416_0.bin
+/data/2016_12_19_130356_0.chn
+/data/2016_12_19_130356_0.bin
+/data/2016_12_19_130336_0.chn
+/data/2016_12_19_130336_0.bin
+/data/2016_12_19_130315_0.chn
+/data/2016_12_19_130315_0.bin
+/data/2016_12_19_130255_0.chn
+/data/2016_12_19_130255_0.bin
+/data/2016_12_19_130235_0.chn
+/data/2016_12_19_130235_0.bin
+/data/2016_12_19_130215_0.chn
+/data/2016_12_19_130215_0.bin
+/data/2016_12_19_130154_0.chn
+/data/2016_12_19_130154_0.bin
+/data/2016_12_19_130134_0.chn
+/data/2016_12_19_130134_0.bin
+/data/2016_12_19_130114_0.chn
+/data/2016_12_19_130114_0.bin
+/data/2016_12_19_130052_0.chn
+/data/2016_12_19_130052_0.bin
+/NCCCtrl/DAQServer/UMSR.cs
+/INCC6.smp
+/data/Collar test data/Collar Cf-252 sample measurement/Collar results.xlsx
+/data/Collar test data/Collar Cf-252 sample measurement/INCC setup for collar measurement.docx
+/data/Collar test data/Collar Cf-252 sample measurement/71QM0238.VER
+/Complexity/INCCAlgs.smproj
+/deployment/incc6-2017-03-16.log
+/packages/Castle.Core.4.0.0
+/data/Collar test data
+/.vs/INCC6
+/.vs
+/*.psess
+

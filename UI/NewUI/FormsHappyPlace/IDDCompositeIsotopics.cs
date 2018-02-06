@@ -41,7 +41,7 @@ namespace NewUI
         {
             InitializeComponent();
             RefreshIsoCodeCombo();
-            applog = NC.App.AppLogger;
+            applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
             acq = Integ.GetCurrentAcquireParams();
             if (string.IsNullOrEmpty(selected))
             {

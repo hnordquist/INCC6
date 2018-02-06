@@ -526,7 +526,8 @@ struct collar_rec {
 
 struct collar_detector_rec {
    char collar_detector_item_type[MAX_ITEM_TYPE_LENGTH];
-   unsigned char collar_detector_mode;
+   //Change to int, can now hold CollarType
+   int collar_detector_mode;
    char collar_detector_id[MAX_DETECTOR_ID_LENGTH];
    char col_reference_date[DATE_TIME_LENGTH];
    double col_relative_doubles_rate;

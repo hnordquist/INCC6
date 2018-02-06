@@ -166,7 +166,7 @@ namespace NewUI
 				}
 				instrument.DAQState = DAQInstrState.Offline;
 				instrument.selected = true;
-				instrument.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+				instrument.Init(NC.App.Logger(LMLoggers.AppSection.Data), NC.App.Logger(LMLoggers.AppSection.Analysis));
 				if (!Instruments.Active.Exists(i => instrument.id.Equals(i.id)))
 					Instruments.Active.Add(instrument);
 			} 

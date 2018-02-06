@@ -36,7 +36,7 @@ namespace NCCConfig
     {
         root, dailyRootPath,
         serveremulation, emulatorapp,
-        logging, level, logDetails, logFileLoc, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
+        logging, level, logDetails, logFileLoc, loglocation, logResults, resultsFileLoc, openResults, results8Char, assayTypeSuffix, 
 		rolloverSizeMB, rolloverIntervalMin, fpPrec,
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
@@ -54,7 +54,7 @@ namespace NCCConfig
         detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
@@ -83,20 +83,21 @@ namespace NCCConfig
                 b => { if (b != null) app.DailyRootPath = true;} },
 
             { "logLoc=", "specify base {file location} for log files, overrides root", l => app.LogFilePath = l},
+            { "logLocation=", "specify base {file location} for log files, including file name, overrides root", l => app.LogFilePathAndName = l},
             { "resultsLoc=", "specify base {file location} for results files, overrides root", r => app.ResultsFilePath = r},
             { "logDetails=", "integer flag specifying additional logging content details: for thread id use 16, (see System.Diagnostics.TraceOptions)",  
                                            (int n) => app.LoggingDetails = n},
             { "logResults=", "integer flag specifying results logging details: 0 none, 1 file only, 2 console/UI only, 3 all log listeners", (ushort n) => app.LogResults = n},
             { "openResults", "set true to open results files in notepad and Excel", b => app.OpenResults = b != null},
             { "results8Char", "set true to use the INCC5 YMDHMMSS results file naming scheme, false uses list mode results scheme", b => app.Results8Char = b != null},
-            { "assayTypeSuffix", "set false for use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
+            { "assayTypeSuffix", "set false to use .txt, true for the INCC5 file suffix style, e.g .VER for verification results...", b => app.AssayTypeSuffix = b != null},
             { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
                                            s => app.ReportSectional = s},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
             { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },
 
-             // this is for LMMM DAQ control, the assumed input
+             // this is for LMMM DAQ control, originally assumed as the primary input instrument
             { "subnet=", "subnet {mask} for LM network, defaults to 169.254.255.255",  s => netcomm.Subnet = s },
             { "port=", "port {number} for this app's LM TCP/IP listener, defaults to 5011",  (int n) => netcomm.Port = n },
             { "wait=", "milliseconds to wait for response to broadcast command, default 500",  (int n) => netcomm.Wait = n },
@@ -154,6 +155,7 @@ namespace NCCConfig
             { "ncdFileAssay", "use LMMM NCD files for input", v => app.NCDFileAssay = v != null }, 
             { "ptrFileAssay", "use PTR-32 dual file streams for input", v => app.PTRFileAssay = v != null }, 
             { "mcaFileAssay", "use MCA-527 file streams for input", v => app.MCA527FileAssay = v != null },
+            { "datazFileAssay", "use Dataz file streams for input", v => app.DatazFileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
             { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null }, 

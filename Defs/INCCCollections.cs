@@ -313,7 +313,7 @@ namespace AnalysisDefs
                 if (isodb == null)
                     isodb = new DB.Isotopics();
                 id = isodb.Update(iso.id, iso.ToDBElementList());
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, id);
                 if (id >= 0) iso.modified = false;                
             }
             return id;
@@ -334,8 +334,8 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "Iso update punted out.");
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "Iso update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
                 isotopics = vals;
@@ -347,7 +347,7 @@ namespace AnalysisDefs
                 if (isotopics == null)
                 {
                     int count = GetList().Count;
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34036, "{0} isotopics read initially from DB", count);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} isotopics read initially from DB", count);
 					return res; // nothing to write
                 }               
 
@@ -358,7 +358,7 @@ namespace AnalysisDefs
                         if (iso.modified)
                         {
                             res = isodb.Update(iso.id, iso.ToDBElementList());
-                            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created isotopics {0} ({1})", iso.id, res);
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created isotopics {0} ({1})", iso.id, res);
                             if (res >= 0) 
 							{
 								res++; iso.modified = false;
@@ -368,8 +368,8 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "Iso update punted out.");
-                    NC.App.DBLogger.TraceException(e, false);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "Iso update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
                 }
                 return res;
             }
@@ -548,7 +548,7 @@ namespace AnalysisDefs
                 success = compisodb.Update(iso.id, iso.ToDBElementList());
                 if (success >= 0) AddComposites(iso.isotopicComponents, success);
 				if (success >= 0) iso.modified = false;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created an Isotopics Id {0} ({1})", iso.id, success);
             }
             return success;
         }
@@ -559,7 +559,7 @@ namespace AnalysisDefs
             if (comp_isotopics == null)
             {
                 int count = GetList().Count;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34036, "{0} composite isotopics read initially from DB", count);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} composite isotopics read initially from DB", count);
             }
             DB.CompositeIsotopics comp_isodb = new DB.CompositeIsotopics();
 
@@ -570,7 +570,7 @@ namespace AnalysisDefs
                     if (iso.modified)
                     {
                         res = comp_isodb.Update(iso.id, iso.ToDBElementList());
-                        NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created composite isotopics {0} ({1})", iso.id, res);
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created composite isotopics {0} ({1})", iso.id, res);
                         if (res >= 0) iso.modified = false;
 						if (res >= 0) AddComposites(iso.isotopicComponents, res);
 
@@ -579,8 +579,8 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "Composite Iso update punted out.");
-                NC.App.DBLogger.TraceException(e, false);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "Composite Iso update punted out.");
+                NC.App.Pest.logger.TraceException(e, false);
             }
             return res;
         }
@@ -789,7 +789,7 @@ namespace AnalysisDefs
                     itodb = new DB.CollarItems();
                 id = itodb.Update(ito.item_id, ito.ToDBElementList());
                 ito.modified = false;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34025, "Updated/created CollarItem Id {0} {1}", ito.item_id, id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34025, "Updated/created CollarItem Id {0} {1}", ito.item_id, id);
             }
             return id;
         }
@@ -800,7 +800,7 @@ namespace AnalysisDefs
             if (items == null)
             {
                 int count = GetList().Count;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34024, "{0}  items read initially from DB", count);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34024, "{0}  items read initially from DB", count);
             }
             if (itodb == null)
                 itodb = new DB.CollarItems();
@@ -813,8 +813,8 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Error, 34023, "Item update punted out.");
-                NC.App.DBLogger.TraceException(e, false);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34023, "Item update punted out.");
+                NC.App.Pest.logger.TraceException(e, false);
             }
             return res;
         }
@@ -993,7 +993,7 @@ namespace AnalysisDefs
                     itodb = new DB.Items();
                 id = itodb.Update(ito.item, ito.ToDBElementList());
                 ito.modified = false;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34025, "Updated or created Item Id {0} ({1})", ito.item, id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34025, "Updated or created Item Id {0} ({1})", ito.item, id);
             }
             return id;
         }
@@ -1011,7 +1011,7 @@ namespace AnalysisDefs
             if (items == null)
             {
                 int count = GetList().Count;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34024, "{0}  items read initially from DB", count);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34024, "{0}  items read initially from DB", count);
             }
             if (itodb == null)
                 itodb = new DB.Items();
@@ -1024,8 +1024,8 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Error, 34023, "Item update punted out.");
-                NC.App.DBLogger.TraceException(e, false);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34023, "Item update punted out.");
+                NC.App.Pest.logger.TraceException(e, false);
             }
             return res;
         }
@@ -1131,12 +1131,12 @@ namespace AnalysisDefs
                 if (!there) // test not there, so add it
                 {
                     long l = t.Create(saParams);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeIdFrag(l) + " new test params");
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeIdFrag(l) + " new test params");
                 }
                 else
                 {
                     bool b = t.Update(saParams);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " test params");
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " test params");
                 }
             }
         }
@@ -1247,7 +1247,7 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
                 testParameters.ListChanged += new ListChangedEventHandler(TestParametersSet_ListChanged);
@@ -1418,7 +1418,7 @@ namespace AnalysisDefs
                 if (hcdb == null)
                     hcdb = new DB.holdup_config_rec();
                 id = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a holdup_config_rec Id {0} ({1})", hc.glovebox_id, id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a holdup_config_rec Id {0} ({1})", hc.glovebox_id, id);
                 if (id >= 0) hc.modified = false;                
             }
             return id;
@@ -1438,8 +1438,8 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
                 holdup_config = vals;
@@ -1451,7 +1451,7 @@ namespace AnalysisDefs
                 if (holdup_config == null)
                 {
                     int count = GetList().Count;
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34036, "{0} holdup_config initially from DB", count);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} holdup_config initially from DB", count);
 					return res; // nothing to write
                 }               
 
@@ -1462,7 +1462,7 @@ namespace AnalysisDefs
                         if (hc.modified)
                         {
                             res = hcdb.Update(hc.glovebox_id, hc.ToDBElementList());
-                            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created holdup_config_rec {0} ({1})", hc.glovebox_id, res);
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created holdup_config_rec {0} ({1})", hc.glovebox_id, res);
                             if (res >= 0) 
 							{
 								res++; hc.modified = false;
@@ -1472,8 +1472,8 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
-                    NC.App.DBLogger.TraceException(e, false);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "HC update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
                 }
                 return res;
             }
@@ -1664,7 +1664,7 @@ namespace AnalysisDefs
                 if (prdb == null)
                     prdb = new DB.poison_rod_type_rec();
                 id = prdb.Update(pr.rod_type, pr.ToDBElementList());
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a poison_rod_type_rec Id {0} ({1})", pr.rod_type, id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created a poison_rod_type_rec Id {0} ({1})", pr.rod_type, id);
                 if (id >= 0) pr.modified = false;
             }
             return id;
@@ -1684,8 +1684,8 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
                 poison_rod_types = vals;
@@ -1697,7 +1697,7 @@ namespace AnalysisDefs
                 if (poison_rod_types == null)
                 {
                     int count = GetList().Count;
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34036, "{0} poison_rod_types initially from DB", count);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34036, "{0} poison_rod_types initially from DB", count);
                     return res; // nothing to write
                 }
 
@@ -1708,7 +1708,7 @@ namespace AnalysisDefs
                         if (pr.modified)
                         {
                             res = prdb.Update(pr.rod_type, pr.ToDBElementList());
-                            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created poison_rod_types {0} ({1})", pr.rod_type, res);
+                            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34037, "Updated or created poison_rod_types {0} ({1})", pr.rod_type, res);
                             if (res >= 0)
                             {
                                 res++; pr.modified = false;
@@ -1718,8 +1718,8 @@ namespace AnalysisDefs
                 }
                 catch (Exception e)
                 {
-                    NC.App.DBLogger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
-                    NC.App.DBLogger.TraceException(e, false);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34044, "PR update punted out.");
+                    NC.App.Pest.logger.TraceException(e, false);
                 }
                 return res;
             }
@@ -1832,12 +1832,12 @@ namespace AnalysisDefs
                 if (!there) // item not there, so add it
                 {
                     long l = t.Create(saParams);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeIdFrag(l) + " new cm_pu_ratio params");
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeIdFrag(l) + " new cm_pu_ratio params");
                 }
                 else
                 {
                     bool b = t.Update(saParams);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " cm_pu_ratio params");
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " cm_pu_ratio params");
                 }
             }
         }
@@ -1936,7 +1936,7 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
                 cm_pu_ratio.ListChanged += new ListChangedEventHandler(cm_pu_ratioSet_ListChanged);
@@ -2092,7 +2092,7 @@ namespace AnalysisDefs
                     }
                     catch (Exception e)
                     {
-                        NC.App.DBLogger.TraceException(e, false);
+                        NC.App.Pest.logger.TraceException(e, false);
                     }
                 }
             }
@@ -2143,13 +2143,13 @@ namespace AnalysisDefs
             if (!there) // item not there, so add it
             {
                 bool b = npdb.Create(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeFrag(b) + " new norm param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.MakeFrag(b) + " new norm param state for {0}", detname);
                 if (b) res = 0;
             }
             else
             {
                 bool b = npdb.Update(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " norm param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34005, INCCDB.UpdateFrag(b) + " norm param state for {0}", detname);
                 if (b) res = 0;
             }
             return res;
@@ -2475,13 +2475,13 @@ namespace AnalysisDefs
             if (!there) // item not there, so add it
             {
                 bool b = updb.Create(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34027, INCCDB.MakeFrag(b) + " new unattended param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34027, INCCDB.MakeFrag(b) + " new unattended param state for {0}", detname);
                 if (b) res = 0;
             }
             else
             {
                 bool b = updb.Update(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34028, INCCDB.UpdateFrag(b) + " unattended param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34028, INCCDB.UpdateFrag(b) + " unattended param state for {0}", detname);
                 if (b) res = 0;
             }
             return res;
@@ -2707,13 +2707,13 @@ namespace AnalysisDefs
             if (!bpThere) // item not there, so add it
             {
                 bool b = bp.Create(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new bkg param for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new bkg param for {0}", detname);
                 if (b) res = 0;
             }
             else
             {
                 bool b = bp.Update(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " bkg param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " bkg param state for {0}", detname);
                 if (b) res = 0;
             }
             return res;
@@ -2905,13 +2905,13 @@ namespace AnalysisDefs
             if (!bpThere) // AddASourceSetup not there, so add it
             {
                 bool b = bp.Create(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new AAS setup param for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new AAS setup param for {0}", detname);
                 if (b) res = 0;
             }
             else
             {
                 bool b = bp.Update(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " AAS setup param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " AAS setup param state for {0}", detname);
                 if (b) res = 0;
             }
             return res;
@@ -3086,13 +3086,13 @@ namespace AnalysisDefs
             if (!bpThere) // not there, so add it
             {
                 bool b = bp.Create(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new HV param for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34004, INCCDB.MakeFrag(b) + " new HV param for {0}", detname);
                 if (b) res = 0;
             }
             else
             {
                 bool b = bp.Update(detname, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " HV param state for {0}", detname);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34003, INCCDB.UpdateFrag(b) + " HV param state for {0}", detname);
                 if (b) res = 0;
             }
             return res;
@@ -3235,10 +3235,10 @@ namespace AnalysisDefs
             bool b = db.Update(desc.Name, desc.Desc);  // create or update
             long id = db.PrimaryKey(desc.Name);
             if (has)
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34032, INCCDB.UpdateIdFrag(id) + " for " + desc.Name + " in " + table);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34032, INCCDB.UpdateIdFrag(id) + " for " + desc.Name + " in " + table);
             else
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34032, INCCDB.MakeIdFrag(id) + " for " + desc.Name + " in " + table);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34032, INCCDB.MakeIdFrag(id) + " for " + desc.Name + " in " + table);
                 descs.Add(desc);
             }
             return b;
@@ -3255,7 +3255,7 @@ namespace AnalysisDefs
             bool b = false;
             b = db.Update(desc.Name, desc.Desc);  // update or create in here, return long id
             long id = db.PrimaryKey(desc.Name);
-            NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34032, "Updated/created " + table + " with {0} ({1})", desc.Name, id);
+            NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34032, "Updated/created " + table + " with {0} ({1})", desc.Name, id);
             return id;
         }
 
@@ -3265,7 +3265,7 @@ namespace AnalysisDefs
             if (db.Delete(desc.Name))
             {
                 b = descs.Remove(desc);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34032, (b ? "Removed" : "Failed to remove") + desc.Name + " from " + table);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34032, (b ? "Removed" : "Failed to remove") + desc.Name + " from " + table);
             }
             return b;
         }
@@ -3293,7 +3293,7 @@ namespace AnalysisDefs
             if (descs == null)
             {
                 int count = GetList().Count;
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34031, "{0} " + table + " read initially from DB", count);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34031, "{0} " + table + " read initially from DB", count);
             }
             try
             {
@@ -3304,8 +3304,8 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Error, 34033, table + " update punted out.");
-                NC.App.DBLogger.TraceException(e, false);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Error, 34033, table + " update punted out.");
+                NC.App.Pest.logger.TraceException(e, false);
             }
             return res;
         }
@@ -3611,7 +3611,7 @@ namespace AnalysisDefs
             ap.campaign_id = dr["campaign_id"].ToString();
             ap.item_id = dr["item_id"].ToString(); // same id in results_rec and acquire_parms_rec after all
             ap.stratum_id = new Descriptor(dr["stratum_id"].ToString(), dr["stratum_id_description"].ToString());
-            ap.collar_mode = DB.Utils.DBBool(dr["collar_mode"].ToString());
+            ap.collar_mode = DB.Utils.DBInt32(dr["collar_mode"].ToString());
             ap.inventory_change_code = dr["inventory_change_code"].ToString();
             ap.io_code = dr["io_code"].ToString();
             ap.well_config = (WellConfiguration)(DB.Utils.DBInt32(dr["well_config"].ToString()));
@@ -3626,11 +3626,13 @@ namespace AnalysisDefs
 			{
                 ap.detector_id = dr["detector_name"].ToString();
 				ap.meas_detector_id = ap.detector_id;  // only one is captured in the results rec, but the other must match
+                ap.ending_comment = !string.IsNullOrEmpty(dr["ending_comment"].ToString());  // non-null entry in results_rec here means the ending comment was enabled and generated
 			}
             else
 			{
                 ap.detector_id = dr["detector_id"].ToString();
 				ap.meas_detector_id = dr["meas_detector_id"].ToString();  // make sure both are written correctly to the DB
+                ap.ending_comment = DB.Utils.DBBool(dr["ending_comment"]);  // it was and is a bool/int flag field in the acq record
 			}
             det = ap.detector_id;
 
@@ -4224,6 +4226,7 @@ namespace AnalysisDefs
 			public	string Detector;
 			public	string Material;
 			public	string Option;
+            public string ItemId;
 			public	long Mid, Rid;
             public DateTimeOffset DateTime;
 		}
@@ -4250,7 +4253,7 @@ namespace AnalysisDefs
 						ir.Material = dr["item_type"].ToString();
 						ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 						ir.Rid = DB.Utils.DBInt64(dr["id"]);
-						ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+						ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);							       ir.ItemId = dr["item_id"].ToString();
 						res.Add(ir);
 					}
 				}
@@ -4258,6 +4261,36 @@ namespace AnalysisDefs
 			return res;
 		}
 
+       public List<IndexedResults> IndexedResultsForDetWithItem(string det, string option, string item)
+        {
+            List<IndexedResults> res = new List<IndexedResults>();
+
+            DB.Results r = new DB.Results();
+            DataTable dt = r.ResultsForDetWithItem(det, item);
+            foreach (DataRow dr in dt.Rows)
+            {
+                string s = dr["item_id"].ToString();
+                if ((!string.IsNullOrEmpty(item) && (string.Compare(item, s, true) == 0)))
+                {
+                    string o = dr["meas_option"].ToString();
+                    if (string.IsNullOrEmpty(option) ||
+                        string.Compare(option, o) == 0)
+                    {
+                        IndexedResults ir = new IndexedResults();
+                        ir.Campaign = dr["campaign_id"].ToString();
+                        ir.Option = dr["meas_option"].ToString();
+                        ir.Detector = det;
+                        ir.Material = dr["item_type"].ToString();
+                        ir.Mid = DB.Utils.DBInt64(dr["mid"]);
+                        ir.Rid = DB.Utils.DBInt64(dr["id"]);
+                        ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                        ir.ItemId = s;
+                        res.Add(ir);
+                    }
+                }
+            }
+            return res;
+        }
 
 		public List<IndexedResults> IndexedResultsFor(string option)
         {
@@ -4279,6 +4312,7 @@ namespace AnalysisDefs
 					ir.Mid = DB.Utils.DBInt64(dr["mid"]);
 					ir.Rid = DB.Utils.DBInt64(dr["id"]);
                     ir.DateTime = DB.Utils.DBDateTimeOffset(dr["DateTime"]);
+                    ir.ItemId = dr["item_id"].ToString();
                     res.Add(ir);
 				}
 			}
@@ -4302,7 +4336,7 @@ namespace AnalysisDefs
 					INCCResults.results_rec rec = ResultsRecs.Get(MeaId.UniqueId, mdb.db);
 					if (rec == null)
 						continue;
-					Measurement m = new Measurement(rec, MeaId, NC.App.DBLogger);
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
 					if (m.ResultsFiles != null)   // it is never null
@@ -4319,8 +4353,8 @@ namespace AnalysisDefs
 			}
 			return ms;
 		}
- 
-        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, string insnum = "")
+
+        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option, string insnum = "")
         {
             List<Measurement> ms = new List<Measurement>();
             DataTable dt_meas;
@@ -4348,7 +4382,7 @@ namespace AnalysisDefs
                 INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
 				if (rec != null)
 				{
-					Measurement m = new Measurement(rec, MeaId, NC.App.DBLogger);
+					Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
 					MeaId.Item.Copy(rec.item);
 					ms.Add(m);
 					if (m.ResultsFiles != null)      // it is never null
@@ -4367,7 +4401,76 @@ namespace AnalysisDefs
             return ms;
         }
 
-		public bool DeleteMeasurement(MeasId id)
+
+        public List<Measurement> MeasurementsFor(string DetName, AssaySelector.MeasurementOption option = AssaySelector.MeasurementOption.unspecified, ItemId id = null)
+        {
+            List<Measurement> ms = new List<Measurement>();
+            DataTable dt_meas;
+            ResultsRecs recs = new ResultsRecs();
+
+            dt_meas = NC.App.Pest.GetACollection(DB.Pieces.Measurements, DetName);
+
+            foreach (DataRow dr in dt_meas.Rows)
+            {
+                AssaySelector.MeasurementOption thisopt;
+                if (!option.IsWildCard())
+                {
+                    thisopt = AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString());
+                    if (thisopt != option)
+                        continue; // skip this one, better to do this at the select level because the resultrecs above are relatively big objects to process 
+                }
+
+                // create the measurement id from the measurements table, augment with item id later
+                MeasId MeaId = new MeasId(
+                    AssaySelectorExtensions.SrcToEnum(dr["Type"].ToString()),
+                    DB.Utils.DBDateTimeOffset(dr["DateTime"]),
+                    dr["FileName"].ToString(), DB.Utils.DBInt64(dr["id"])); // db table key actually
+
+                // get the traditional results rec that matches the measurement id 
+                INCCResults.results_rec rec = recs.Get(MeaId.UniqueId);
+                if (rec != null)
+                {
+                    if (id == null)//Rates only
+                    {
+                        Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+                        ms.Add(m);
+                        if (m.ResultsFiles != null)      // it is never null Yes it is for rates.
+                        {
+                            bool LMOnly = option.IsListMode();
+                            if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+                                m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+                            List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+                            foreach (string rfpath in lrfpaths)
+                                m.ResultsFiles.Add(LMOnly, rfpath);
+                        }
+                        IngestAnalysisMethodResultsFromDB(m);
+                    }
+                    else if (id.item == rec.item.item)
+                    {
+                        Measurement m = new Measurement(rec, MeaId, NC.App.Pest.logger);
+                        MeaId.Item.Copy(rec.item);
+                        ms.Add(m);
+                        if (m.ResultsFiles != null)      // it is never null
+                        {
+                            bool LMOnly = option.IsListMode();
+                            if (!string.IsNullOrEmpty(dr["FileName"].ToString()))
+                                m.ResultsFiles.Add(LMOnly, dr["FileName"].ToString());
+                            List<string> lrfpaths = NC.App.DB.GetResultFiles(MeaId);
+                            foreach (string rfpath in lrfpaths)
+                                m.ResultsFiles.Add(LMOnly, rfpath);
+                        }
+                        IngestAnalysisMethodResultsFromDB(m);
+                    }
+                    else
+                        //Not the item we are looking for.
+                        continue;
+                }
+                // for Reanalysis, and Assay summary: cycles restored elsewhere, trad results not yet, etc 
+            }
+            return ms;
+        }
+
+        public bool DeleteMeasurement(MeasId id)
 		{
 			DB.Measurements mdb = new DB.Measurements();
 			return mdb.Delete(id.UniqueId);
@@ -4410,7 +4513,7 @@ namespace AnalysisDefs
             foreach (DataRow dr in dt.Rows)
             {
                 seq++;
-                Cycle c = new Cycle(NC.App.DBLogger);
+                Cycle c = new Cycle(NC.App.Pest.logger);
                 cl.Add(c); c.seq = seq;
 
 				long lmid = AddSummaryToCycle(dr, c);
@@ -4709,7 +4812,7 @@ namespace AnalysisDefs
 				long cid = db.AddCycleRetId(mid, els);
 				AddLMCycleResults(mid, cid, c, primary ? key: null, db);
 			}
-			NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 30008, "Inserted {0} LM cycles, {1}", cl.Count, key.ToString());
+			NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30008, "Inserted {0} LM cycles, {1}", cl.Count, key.ToString());
 
 			return true;
 		}
@@ -4740,7 +4843,7 @@ namespace AnalysisDefs
                     els.Add(new DB.Element("mid", mid));
 					els.Add(new DB.Element("cid", cid));
 					db.AddOneCycle(_table, els);
-					//NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
+					//NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 30007, "Add more LM results to the {0} cycles, {1}", cl.Count, cur.Value.ToString());
 				}
 			}
 		}
@@ -4776,7 +4879,7 @@ namespace AnalysisDefs
                 return false;
             DB.Measurements ms = new DB.Measurements();
             int count = ms.GetCycleCount(mid);  // this specific measurement id's cycles
-			NC.App.DBLogger.TraceEvent(LogLevels.Info, 30006, "Deleting {0} cycles", count);
+			NC.App.Pest.logger.TraceEvent(LogLevels.Info, 30006, "Deleting {0} cycles", count);
 			return ms.DeleteCycles(mid);
 
 		}
@@ -4913,12 +5016,12 @@ namespace AnalysisDefs
             if (!acqThere) // acq not there, so add it
             {
                 ok = aqdb.Create(saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34011, MakeFrag(ok) + " new acquisition state {0} {1}", acq.MeasDateTime, acq.detector_id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34011, MakeFrag(ok) + " new acquisition state {0} {1}", acq.MeasDateTime, acq.detector_id);
             }
             else
             {
                 ok = aqdb.Update(acq.MeasDateTime, acq.detector_id, acq.item_type, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34011, UpdateFrag(ok) + " acquisition state for {0} {1}", acq.MeasDateTime, acq.detector_id);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34011, UpdateFrag(ok) + " acquisition state for {0} {1}", acq.MeasDateTime, acq.detector_id);
             }
             if (ok)
                 acq.modified = false;
@@ -4933,12 +5036,12 @@ namespace AnalysisDefs
                 if (!lmaqdb.Has(acq.MeasDateTime, acq.detector_id, acq.item_type)) // item not there, so add it
                 {
                     ok = lmaqdb.Create(acq.MeasDateTime, acq.detector_id, els);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34038, MakeFrag(ok) + " LM acq state {0} {1}", acq.MeasDateTime, acq.detector_id);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34038, MakeFrag(ok) + " LM acq state {0} {1}", acq.MeasDateTime, acq.detector_id);
                 }
                 else
                 {
                     ok = lmaqdb.Update(acq.detector_id, acq.item_type, els);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34039, UpdateFrag(ok) + " LM acq state for {0} {1}", acq.MeasDateTime, acq.detector_id);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34039, UpdateFrag(ok) + " LM acq state for {0} {1}", acq.MeasDateTime, acq.detector_id);
                 }
             }
         }
@@ -4953,12 +5056,12 @@ namespace AnalysisDefs
             if (!therehtere) // not there, so add it
             {
                 bool a = αβ.Create(dr.Id.DetectorId, αβparams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34009, MakeFrag(a) + " detector αβ for {0}", dr.Id.DetectorId);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34009, MakeFrag(a) + " detector αβ for {0}", dr.Id.DetectorId);
             }
             else
             {
                 bool a = αβ.Update(dr.Id.DetectorId, αβparams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34009, UpdateFrag(a) + " detector αβ for {0}", dr.Id.DetectorId);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34009, UpdateFrag(a) + " detector αβ for {0}", dr.Id.DetectorId);
             }
             // todo: then do multiplicity, if required, (study it)
         }
@@ -4975,10 +5078,12 @@ namespace AnalysisDefs
             if (db == null) db = new DB.Detectors();
 
             DB.ElementList els = dr.SRParams.ToDBElementList();
+            //Store SR parms to multiplicity also
+            
             long l = db.PrimaryKey(dr.Id.DetectorId);
             if (l < 0)
             {
-                NC.App.DBLogger.TraceEvent(LogLevels.Warning, 34035, "No detector '{0}' found in the database, create it first", dr.Id.DetectorId);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Warning, 34035, "No detector '{0}' found in the database, create it first", dr.Id.DetectorId);
                 return;
             }
             els.Add(new DB.Element("detector_id", l));
@@ -4996,7 +5101,7 @@ namespace AnalysisDefs
             if (!therehtere) // not there, so add it
             {
                 bool a = sr.Create(dr.Id.DetectorId, (Int32)(dr.Id.SRType), els);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34009, MakeFrag(a) + " detector SR params for {0}", dr.Id.DetectorId);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34009, MakeFrag(a) + " detector SR params for {0}", dr.Id.DetectorId);
             }
             else
             {
@@ -5004,7 +5109,7 @@ namespace AnalysisDefs
                 // This fails when this record exist but was inserted without a parent detector record (id = -1)
 
                 bool a = sr.Update(dr.Id.DetectorId, (Int32)(dr.Id.SRType), els);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34009, UpdateFrag(a) + " detector SR params for {0}", dr.Id.DetectorId);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34009, UpdateFrag(a) + " detector SR params for {0}", dr.Id.DetectorId);
             }
             if (dr.Id.SRType.IsListMode())
             {
@@ -5016,16 +5121,18 @@ namespace AnalysisDefs
                 {
                     long a = lnnc.CreateNetComm(l, lmparams, db.db);
                     a = lnnc.CreateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34034, MakeIdFrag(a) + " detector LM params for {0}", dr.Id.DetectorId);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34034, MakeIdFrag(a) + " detector LM params for {0}", dr.Id.DetectorId);
                 }
                 else
                 {
                     bool b = lnnc.UpdateNetComm(l, lmparams, db.db);
                     b = lnnc.UpdateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
-                    NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34035, UpdateFrag(b) + " detector LM params for {0}", dr.Id.DetectorId);
+                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34035, UpdateFrag(b) + " detector LM params for {0}", dr.Id.DetectorId);
                 }
+
             }
-            // todo: then multiplicity, but ... values may already be preserved for LMMM, and not needed for SR, analyze
+         
+
         }
 
 
@@ -5036,21 +5143,22 @@ namespace AnalysisDefs
             DB.ElementList els = null;
             els = new DB.ElementList();
             els.Add(new DB.Element("detector_name",det.Id.DetectorName)); 
-            
+
             if (!db.DefinitionExists(els))
             {
                 long id = db.Insert(det.Id.DetectorId, det.Id.Identifier(), (Int32)det.Id.SRType, det.Id.ElectronicsId, det.Id.Type);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34013, MakeIdFrag(id) + " for detector {0}", det.Id.DetectorName);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34013, MakeIdFrag(id) + " for detector {0}", det.Id.DetectorName);
             }
             else
             {
                 DB.ElementList full = det.Id.ToDBElementList();
                 bool b = db.Update(det.Id.DetectorName, full);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
 
 			UpdateDetectorParams(det, db);  // inserting the related sr_parms_rec maintains the complete detector and param record set in the database.
 			UpdateDetectorαβ(det, db);
+            
         }
 
 		
@@ -5066,7 +5174,7 @@ namespace AnalysisDefs
             {
                 DB.ElementList full = det.Id.ToDBElementList();
                 b = db.Update(det.Id.DetectorName, full);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34014, UpdateFrag(b) + " for detector {0}", det.Id.DetectorName);
             }
 			return b;
         }
@@ -5082,7 +5190,7 @@ namespace AnalysisDefs
                 UpdateDetector(dr, db);
                 UpdateDetectorParams(dr, db);  // this is required to complete a new detector update from INCC5 initial data import 
             }
-            NC.App.DBLogger.TraceInformation("Detectors updated");
+            NC.App.Pest.logger.TraceInformation("Detectors updated");
         }
         // todo: have added deletes for norm, unattended and sr, however since detector_id is a foreign key for EVERYTHING, DELETE call blows.
         public bool DeleteDetector(Detector det)
@@ -5092,7 +5200,7 @@ namespace AnalysisDefs
             {
                 string name = det.Id.DetectorName;
                 bool b = Detectors.Remove(det);
-                NC.App.DBLogger.TraceEvent(LogLevels.Info, 34008, (b ? "Deleted detector {0}" : "Failed to delete {0}"), name);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Info, 34008, (b ? "Deleted detector {0}" : "Failed to delete {0}"), name);
                 return b;
             }
             else
@@ -5114,12 +5222,12 @@ namespace AnalysisDefs
             {
                 long l = srt.Create(saParams);
                 rsult = (l > 0);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34010, MakeIdFrag(l) + " stratum {0}",  d.Name);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34010, MakeIdFrag(l) + " stratum {0}",  d.Name);
             }
             else
             {
                 rsult = srt.Update(d.Name, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34010, UpdateFrag(rsult) + "  stratum {0}", d.Name);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34010, UpdateFrag(rsult) + "  stratum {0}", d.Name);
             }
             return rsult;
         }
@@ -5143,12 +5251,12 @@ namespace AnalysisDefs
             if (!stratthere)
             {
                 bool b = srt.Create(det.Id.DetectorName, saParams);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34012, MakeFrag(b) + " stratum and stratum detector association for {0} {1}", det.Id.DetectorName, d.Name);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34012, MakeFrag(b) + " stratum and stratum detector association for {0} {1}", det.Id.DetectorName, d.Name);
             }
             else if (!there)
             {
                 bool b = srt.Associate(det.Id.DetectorName, d.Name);
-                NC.App.DBLogger.TraceEvent(LogLevels.Verbose, 34012, MakeFrag(b) + " stratum detector association for {0} {1}", det.Id.DetectorName, d.Name);
+                NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34012, MakeFrag(b) + " stratum detector association for {0} {1}", det.Id.DetectorName, d.Name);
             }   
             
         }

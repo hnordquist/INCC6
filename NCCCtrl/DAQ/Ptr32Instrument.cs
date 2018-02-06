@@ -57,7 +57,7 @@ namespace Instr
             m_setvoltage = ((lm.LEDs == 2) || (lm.LEDs == 0)) ? false : true;
             m_voltage = (int)detector.MultiplicityParams.SR.highVoltage;
             file = new PTRFilePair();
-            file.Log = NC.App.CollectLogger;
+            file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             MaxSetVoltageTime = TimeSpan.FromSeconds(((DetectorDefs.LMConnectionInfo)(detector.Id.FullConnInfo)).DeviceConfig.HVTimeout);
             VoltageTolerance = lm.LLD;
         }
@@ -89,8 +89,8 @@ namespace Instr
             if (RDT == null) {
                 RDT = new Analysis.Ptr32RawDataTransform();
                 RDT.Init(
-                    (dataLog != null) ? dataLog : NC.App.DataLogger,
-                    (analysisLog != null) ? analysisLog : NC.App.AnalysisLogger);
+                    (dataLog != null) ? dataLog : NC.App.Logger(LMLoggers.AppSection.Data),
+                    (analysisLog != null) ? analysisLog : NC.App.Logger(LMLoggers.AppSection.Analysis));
             }
         }
 
@@ -523,7 +523,7 @@ namespace Instr
 
         private CancellationTokenSource m_cancellationTokenSource;
         private Ptr32 m_device;
-        private LMLoggers.LognLM m_logger = NC.App.CollectLogger;
+        private LMLoggers.LognLM m_logger = NC.App.Logger(LMLoggers.AppSection.Collect);
         private object m_monitor = new object();
         private int m_voltage;
         private bool m_setvoltage;

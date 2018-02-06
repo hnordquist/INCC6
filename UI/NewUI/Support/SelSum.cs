@@ -359,7 +359,6 @@ namespace NewUI
 				}
 				break;
 			case Selections.CollarAmLi:
-            case Selections.CollarCf:
                 INCCMethodResults.results_collar_rec rcres = (INCCMethodResults.results_collar_rec)
                         m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarAmLi, false);
 				if (rcres != null)
@@ -374,7 +373,22 @@ namespace NewUI
 					entries["Collar Status"] = rcres.pass ? "Pass": ""; //	"Collar - measurement status"
 				}
 				break;
-			default:
+                case Selections.CollarCf:
+                    rcres = (INCCMethodResults.results_collar_rec)
+                            m.INCCAnalysisResults.LookupMethodResults(m.Detector.MultiplicityParams, m.INCCAnalysisState.Methods.selector, AnalysisMethod.CollarCf, false);
+                    if (rcres != null)
+                    {
+                        entries["Collar Dbls Rate"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar - corrected doubles rate"
+                        entries["Collar Dbls Rate Err"] = rcres.total_corr_fact.v.ToString("F2"); //	Collar -- corrected doubles rate error"
+                        entries["Collar Dcl Mass"] = rcres.dcl_total_u235.v.ToString("F2"); //	Collar - declared mass"
+                        entries["Collar Mass"] = rcres.u235_mass.v.ToString("F2");  //	"Collar - mass"
+                        entries["Collar Mass Err"] = rcres.u235_mass.err.ToString("F3"); //	"Collar - mass error"
+                        entries["Collar Dcl-Asy"] = rcres.dcl_minus_asy_u235_mass.v.ToString("F2"); //	"Collar - declared minus assay"
+                        entries["Collar Dcl-Asy %"] = rcres.dcl_minus_asy_u235_mass_pct.ToString("F2"); //	"Collar - declared minus assay %"
+                        entries["Collar Status"] = rcres.pass ? "Pass" : ""; //	"Collar - measurement status"
+                    }
+                    break;
+                default:
 				break;
 			}
 			return entries;

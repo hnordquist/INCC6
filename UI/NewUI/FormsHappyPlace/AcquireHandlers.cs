@@ -143,6 +143,13 @@ namespace NewUI
             // Auto-format or reset the textbox value, depending on whether the entered value was different/valid
             ((TextBox)sender).Text = Format.Rend(ap.max_num_runs);
         }
+        public void FastCheckbox_Leave(object sender, EventArgs e)
+        {
+            if (((CheckBox)sender).Checked && det.MultiplicityParams.FA != FAType.FAOn) ap.modified = true;
+            det.MultiplicityParams.FA = ((CheckBox)sender).Checked ? FAType.FAOn : FAType.FAOff;
+            NC.App.DB.UpdateAcquireParams(ap); //update it again
+            NC.App.DB.UpdateDetector(det);
+        }
 
         public void DeclaredMassTextBox_Leave(object sender, EventArgs e)
         {
@@ -335,7 +342,7 @@ namespace NewUI
                     {
                         SRInstrument sri = new SRInstrument(det);
                         sri.selected = true;
-                        sri.Init(NC.App.DataLogger, NC.App.AnalysisLogger);
+                        sri.Init(NC.App.Loggers.Logger(LMLoggers.AppSection.Data), NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
                         if (!Instruments.All.Contains(sri))
                             Instruments.All.Add(sri); // add to global runtime list 
                         dr = DialogResult.OK;
@@ -352,7 +359,7 @@ namespace NewUI
                         {
 							Integ.BuildMeasurement(ap, det, mo);
                             DateTimeOffset dto = dbdlg.measurementId.MeasDateTime;
-                            NC.App.AppLogger.TraceEvent(LogLevels.Info, 87654,
+                            NC.App.Logger(LMLoggers.AppSection.App).TraceEvent(LogLevels.Info, 87654,
                                     "Using " + dto.ToString("MMM dd yyy HH:mm:ss.ff K"));							
 							NC.App.Opstate.Measurement.MeasDate = dto;
                             // get the cycles for the selected measurement from the database, and add them to the current measurement
@@ -362,6 +369,8 @@ namespace NewUI
 							if (cl.Count > 0)
 								NC.App.Opstate.Measurement.AcquireState.lm.Interval = NC.App.Opstate.Measurement.AcquireState.run_count_time
 									= cl[0].TS.TotalSeconds;
+                            //Was not populating the total count time
+                            NC.App.Opstate.Measurement.CountTimeInSeconds = (double)(cl.Count * cl[0].TS.TotalSeconds);
                             NC.App.DB.UpdateAcquireParams(ap); //update it again
                         }
                     }
@@ -393,6 +402,12 @@ namespace NewUI
                     UIIntegration.Controller.file = true;
                     dr = UIIntegration.GetUsersFile("Select an NCC file", NC.App.AppContext.FileInput, "INCC5 Review", "NCC");
                     break;
+                case ConstructedSource.DatazFile:
+                    Integ.BuildMeasurementMinimal(ap, det, mo);  
+                    NC.App.AppContext.DatazFileAssay = true;
+                    UIIntegration.Controller.file = true;
+                    dr = UIIntegration.GetUsersFile("Select a Dataz file", NC.App.AppContext.FileInput, "IAEA Dataz", "dataz");
+                    break;
                 case ConstructedSource.NCDFile:
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.NCDFileAssay = true;
@@ -423,7 +438,7 @@ namespace NewUI
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PTRFileAssay = true;
                     UIIntegration.Controller.file = true;
-                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    if ((det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())&& !mo.HasFlag (AssaySelector.MeasurementOption.rates))
                     {
                         dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
                     }

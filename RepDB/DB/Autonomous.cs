@@ -275,6 +275,126 @@ namespace DB
 
     }
 
+    // This will get all the pieces of the collar_combined_rec HN 5/3/2017
+
+    public class collar_combined_rec
+    {
+        public collar_combined_rec()
+        {
+            db = new DB(false);
+        }
+
+        DB db;
+
+        public bool Has() // has at least one
+        {
+            DataTable dt = GetCollar();
+            return dt.Rows.Count > 0;
+        }
+
+        public long Create(ElementList collar, ElementList collar_det, ElementList k5)
+        {
+            long success = 0;
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            // The collar is made of three records. One is in collar_rec, one in collar_detector, and one in collar_k5
+            string sSQL = "Insert into collar_rec ";
+            sSQL += collar.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_rec"));
+            success = db.ExecuteTransactionID(sqlList);
+
+            sqlList = new ArrayList();
+            // The collar is made of three records. One is in collar_rec, one in collar_detector, and one in collar_k5
+            sSQL = "Insert into collar_detector_rec ";
+            sSQL += collar_det.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_detector_rec"));
+            if (success != -1) //Catch failure at each sql statement
+                success = db.ExecuteTransactionID(sqlList);
+
+            sqlList = new ArrayList();
+            // The collar is made of three records. One is in collar_rec, one in collar_detector, and one in collar_k5
+            sSQL = "Insert into collar_k5_rec ";
+            sSQL += k5.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_k5_rec"));
+            if (success != -1) //Catch failure at each sql statement
+                success = db.ExecuteTransactionID(sqlList);
+
+            return success;
+        }
+
+        public bool Update(ElementList collar, ElementList collar_det, ElementList k5)
+        {
+
+            bool success = false;
+            db.SetConnection();
+            ArrayList sqlList = new ArrayList();
+            string sSQL = "UPDATE collar_rec SET ";
+            sSQL += collar.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_rec"));
+            success = db.Execute(sqlList)==-1?false:true;
+
+            sqlList = new ArrayList();
+            // The collar is made of three records. One is in collar_rec, one in collar_detector, and one in collar_k5
+            sSQL = "UPDATE collar_detector_rec SET ";
+            sSQL += collar_det.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_detector_rec"));
+            success = success || db.Execute(sqlList) == -1 ? false : true;
+
+            sqlList = new ArrayList();
+            // The collar is made of three records. One is in collar_rec, one in collar_detector, and one in collar_k5
+            sSQL = "UPDATE collar_k5_rec SET";
+            sSQL += k5.ColumnsValues;
+            sqlList.Add(sSQL);
+            sqlList.Add(SQLSpecific.getLastID("collar_k5_rec"));
+            success = success || db.Execute(sqlList) == -1 ? false : true;
+
+            return success;
+
+        }
+
+        public DataTable GetCollar() // all of them
+        {
+            db.SetConnection();
+            string sSQL = "Select * FROM collar_rec";
+            DataTable dt = db.DT(sSQL);
+            return dt;
+        }
+        public DataTable GetCollarDet() // all of them
+        {
+            db.SetConnection();
+            string sSQL = "Select * FROM collar_detector_rec";
+            DataTable dt = db.DT(sSQL);
+            return dt;
+        }
+        public DataTable GetK5() // all of them
+        {
+            db.SetConnection();
+            string sSQL = "Select * FROM collar_k5_rec";
+            DataTable dt = db.DT(sSQL);
+            return dt;
+        }
+
+        public bool Delete(string Id)
+        {
+            bool success = false;
+            if (string.IsNullOrEmpty(Id))
+                return false;
+            db.SetConnection();
+            string s = "DELETE FROM collar_rec where collar_id=" + SQLSpecific.QVal(Id);
+            success = db.Execute(s);
+            s = "DELETE FROM collar_combined_detector_rec where collar_id=" + SQLSpecific.QVal(Id);
+            success = success || db.Execute(s);
+            s = "DELETE FROM collar_k5_rec where collar_id=" + SQLSpecific.QVal(Id);
+            success = success || db.Execute(s);
+
+            return success;
+        }
+    }
     /// <summary>
     /// Summary description for CollarItems.
     /// </summary>
@@ -359,7 +479,6 @@ namespace DB
             if (dt.Rows.Count > 0) return dt;
             else return null;
         }
-
 
         public DataRow UniqueRow(string ItemName)
         {

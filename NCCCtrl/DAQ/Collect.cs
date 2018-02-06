@@ -58,10 +58,10 @@ namespace DAQ
 
             gControl = this;
 
-            applog = NC.App.AppLogger;
-            collog = NC.App.CollectLogger;
-            ctrllog = NC.App.ControlLogger;
-            datalog = NC.App.DataLogger;
+            applog = NC.App.Loggers.Logger(LMLoggers.AppSection.App);
+            collog = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
+            ctrllog = NC.App.Loggers.Logger(LMLoggers.AppSection.Control);
+            datalog = NC.App.Loggers.Logger(LMLoggers.AppSection.Data);
 
             // The state was set on cmd line prior to exec here, and it still is, so must upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
@@ -140,7 +140,7 @@ namespace DAQ
                 return;
             SRInstrument sri = new SRInstrument(det);
             sri.selected = true;
-            sri.Init(datalog, NC.App.AnalysisLogger);
+            sri.Init(datalog, NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
             if (!Instruments.All.Contains(sri))
                 Instruments.All.Add(sri); // add to global runtime list 
         }

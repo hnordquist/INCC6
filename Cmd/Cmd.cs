@@ -46,7 +46,7 @@ namespace NCCCmd
 			if (!N.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext
 				return;
 			c.AfterDBSetup(N.App.AppContext, args);  // apply the cmd line 
-            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.ControlLogger); // iRap: optional use of INCC5 ini file to find results and output paths
+            string[] possiblepaths = NCCFile.FileCtrl.ProcessINCC5IniFile(N.App.Logger(LMLoggers.AppSection.Control)); // iRap: optional use of INCC5 ini file to find results and output paths
             if (possiblepaths.Length > 2)  // use the iRAP defined input, results and log file paths
             {
                 N.App.AppContext.FileInput = possiblepaths[0];
@@ -76,13 +76,13 @@ namespace NCCCmd
 				return;
 			}
 
-			LMLoggers.LognLM applog = N.App.ControlLogger;
+			LMLoggers.LognLM applog = N.App.Logger(LMLoggers.AppSection.App);
 			bool OpenResults = N.App.AppContext.OpenResults;
 			try
 			{
 				applog.TraceInformation("==== Starting " + DateTime.Now.ToString("MMM dd yyy HH:mm:ss.ff K") + " [Cmd] " + N.App.Name + " " + N.App.Config.VersionString);
 				applog.TraceInformation("==== DB " + N.App.Pest.DBDescStr);
-				// These affect the current acquire state, so they occur here and not earlier in the inital processing sequence
+				// These affect the current acquire state, so they occur here and not earlier in the initial processing sequence
 				if (!string.IsNullOrEmpty(c.Cur.Detector) && !c.Cur.Detector.Equals("Default")) // command line set the value
 					initialized = Integ.SetNewCurrentDetector(c.Cur.Detector, true);
 				if (!initialized)
@@ -106,7 +106,7 @@ namespace NCCCmd
 					acq.review.Scan(N.App.AppContext.ReportSectional);
 					acq.MeasDateTime = DateTime.Now;
 	                N.App.DB.UpdateAcquireParams(acq, det.ListMode);
-					N.App.ControlLogger.TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
+					N.App.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Info, 32444, "The current report sections are now " + N.App.AppContext.ReportSectional);
 				}
 				if (N.App.Config.App.UsingFileInput || N.App.Opstate.Action == NCC.NCCAction.File)
 				{

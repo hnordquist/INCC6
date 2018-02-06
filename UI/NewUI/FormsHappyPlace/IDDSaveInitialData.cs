@@ -65,7 +65,7 @@ namespace NewUI
 
 		private void OKBtn_Click(object sender, EventArgs e)
 		{
-			NCCReporter.LMLoggers.LognLM applog = NC.App.AppLogger;
+			NCCReporter.LMLoggers.LognLM applog = NC.App.Logger(NCCReporter.LMLoggers.AppSection.App);
 			string dest = UIIntegration.GetUsersFolder("Select Destination", string.Empty);
 			if (string.IsNullOrEmpty(dest))
 				return;

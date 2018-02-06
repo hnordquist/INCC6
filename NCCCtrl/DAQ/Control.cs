@@ -164,7 +164,7 @@ namespace DAQ
                 if (_sr == null)
                 {
                     // you will need to assign your current measurement object to the handler before performing an assay 
-                    _sr = new SRTakeDataHandler(NC.App.CollectLogger);
+                    _sr = new SRTakeDataHandler(NC.App.Logger(LMLoggers.AppSection.Collect));
                     _sr.Meas = CurState.Measurement;
                 }
                 return _sr;

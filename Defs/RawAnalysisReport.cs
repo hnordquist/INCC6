@@ -54,7 +54,7 @@ namespace AnalysisDefs
 
         protected enum ReportSections { SofwareContext, DescriptiveSummary, MeasurementDetails, DetectorCalibration, RawAndMultSums, ComputedMultiplicityIntermediates, CycleSource, ChannelCounts, ChannelRates, MultiplicityDistributions, RawCycles, RateCycles, DTCRateCycles, RepResults, RepDytlewskiResults }
 
-        enum DescriptiveSummary { Facility, MBA, MeasDate, ResultsFileName, InspNum, InspName, Comment }
+        enum DescriptiveSummary { Facility, MBA, MeasDate, ItemID, ResultsFileName, InspNum, InspName, Comment, EndingComment }
         enum MeasurementDetails { MeasType, DetectorConfig, DataSource, QCTests, ErrorCalc, AccidentalsMethod, CycleCount, TotalCountTime }
         enum BaseDetectorCalibration
         {
@@ -76,13 +76,13 @@ namespace AnalysisDefs
         enum CycleSource { Source, Identifier, DateTime }
         enum DistributionsAndAlphaBeta { RA, A, Alpha, Beta }
         enum eMultiplicityDistributions { RA, A }
-        enum ComputedMultiplicityIntermediates { RAMoments, AMoments }
+        enum ComputedMultiplicityIntermediates { RAMoments, AMoments, RAAlphaMoments, AAlphaMoments, RABetaMoments, ABetaMoments }
 
         enum INCCCycles { Singles, RA, A, Scaler1, Scaler2, QCTests }
         enum RawCycles { Singles, RA, A, QCTests }
         enum RateCycles { Singles, Doubles, Triples, Mass, QCTests }
         enum DTCRateCycles { Singles = RateCycles.Singles, Doubles = RateCycles.Doubles, Triples = RateCycles.Triples, Mass = RateCycles.Mass, QCTests = RateCycles.QCTests }
-        enum RepResults { Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
+        enum RepResults { GateWidth, Predelay, Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
         enum ChannelCounts
         {
             C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27, C28, C29, C30, C31, C32
@@ -107,10 +107,11 @@ namespace AnalysisDefs
         protected FAType FASelector;
 
 
+        //Various units totally stupid. Attempt to put all in " µSec"
         string DetectorCalibrationHeader(ValueType e)
         {
-            string s = e.ToString();
-            switch ((DetectorCalibration)e)
+            string s = e.ToString() + " µSec";
+            /*switch ((DetectorCalibration)e)
             {
                 case DetectorCalibration.LongDelay:
                 case DetectorCalibration.Predelay:
@@ -121,12 +122,12 @@ namespace AnalysisDefs
                     break;
                 case DetectorCalibration.DTCoeffT:
                 case DetectorCalibration.DTCoeffC:
-                    s += " nSec";
+                    s += " µSec";
                     break;
                 case DetectorCalibration.DTCoeffB:
-                    s += " pSec";
+                    s += " µSec";
                     break;
-            }
+            }*/
             return s;
         }
 
@@ -175,7 +176,8 @@ namespace AnalysisDefs
                             while (iter.MoveNext())
                             {
                                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                                sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
+                                if (mkey.Active)
+                                    sec.Add(GenDetectorCalibrationRow(meas.Detector, mkey));
                             }
                         }
                         else
@@ -394,10 +396,13 @@ namespace AnalysisDefs
             row.Add((int)DescriptiveSummary.Facility, meas.AcquireState.facility.ToString());
             row.Add((int)DescriptiveSummary.MBA, meas.AcquireState.mba.ToString());
             row.Add((int)DescriptiveSummary.MeasDate, meas.MeasDate.ToString());
+            row.Add((int)DescriptiveSummary.ItemID, meas.MeasurementId.Item.item);
             row.Add((int)DescriptiveSummary.ResultsFileName, meas.ResultsFiles.CSVResultsFileName.Path);
             row.Add((int)DescriptiveSummary.InspNum, "");
             row.Add((int)DescriptiveSummary.InspName, "");
             row.Add((int)DescriptiveSummary.Comment, meas.AcquireState.comment);
+            if (meas.AcquireState.ending_comment || !string.IsNullOrEmpty(meas.AcquireState.ending_comment_str))
+                row.Add((int)DescriptiveSummary.EndingComment, meas.AcquireState.ending_comment_str);
             return row;
         }
         Row GenMeasurementDetailsRow(bool hasMultiplicity)
@@ -439,17 +444,26 @@ namespace AnalysisDefs
             row.Add((int)DetectorCalibration.DetectorType, det.Id.SRType.ToString());
             row.Add((int)DetectorCalibration.DetectorId, det.Id.DetectorId);
             row.Add((int)DetectorCalibration.ElectronicsId, det.Id.ElectronicsId);
+            //Modify to print all in microseconds
             if (mkey != null)
             {
-                row.Add((int)DetectorCalibration.Predelay, (sr.predelay * 1e-1).ToString());
-                row.Add((int)DetectorCalibration.GateLength, (sr.gateLength * 1e-1).ToString());
+                if (det.ListMode)
+                {
+                    row.Add((int)DetectorCalibration.Predelay, (mkey.sr.predelayMS).ToString());
+                    row.Add((int)DetectorCalibration.GateLength, (mkey.gateWidthTics/10).ToString());
+                }
+                else
+                {
+                    row.Add((int)DetectorCalibration.Predelay, (sr.predelay/10).ToString());
+                    row.Add((int)DetectorCalibration.GateLength, (sr.gateLength/10).ToString());
+                }
                 row.Add((int)DetectorCalibration.HighVoltage, sr.highVoltage.ToString());
                 row.Add((int)DetectorCalibration.DieAwayTime, (sr.dieAwayTime * 1e-1).ToString());
                 row.Add((int)DetectorCalibration.Efficiency, sr.efficiency.ToString());
-                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs/1000).ToString());
                 row.Add((int)DetectorCalibration.DTCoeffA, (sr.deadTimeCoefficientAinMicroSecs).ToString());
-                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs).ToString());
-                row.Add((int)DetectorCalibration.DTCoeffC, (sr.deadTimeCoefficientCinNanoSecs).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs/1000000).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffC, (sr.deadTimeCoefficientCinNanoSecs/1000).ToString());
                 row.Add((int)DetectorCalibration.DoublesGateFraction, sr.doublesGateFraction.ToString());
                 row.Add((int)DetectorCalibration.TriplesGateFraction, sr.triplesGateFraction.ToString());
 
@@ -457,7 +471,7 @@ namespace AnalysisDefs
                 if (det.Id.SRType.IsListMode()) // Only add long delay for LM instruments hn 9.21.2015
                 {
                     row.Add((int)DetectorCalibration.FA, mkey.FA.ToString());
-                    row.Add((int)DetectorCalibration.LongDelay, (mkey.FA == FAType.FAOn ? mkey.BackgroundGateTimeStepInTics * 1e-1 : mkey.AccidentalsGateDelayInTics * 1e-1).ToString());
+                    row.Add((int)DetectorCalibration.LongDelay, (mkey.FA == FAType.FAOn ? mkey.AccidentalsGateDelayInTics * 1e-1 : mkey.AccidentalsGateDelayInTics * 1e-1).ToString());
                 }
                 else
                 {
@@ -472,8 +486,7 @@ namespace AnalysisDefs
         Row[] GenMultiplicityIntermediatesRow(CountingResultsMap map, Cycle c = null)
         {
             Row[] rows = new Row[4] { new Row(), new Row(), new Row(), new Row() };  // four moments, 1 row for each
-            //row.Add((int)ComputedMultiplicityIntermediates.Alpha, "");
-            //row.Add((int)ComputedMultiplicityIntermediates.Beta, "");
+
             IEnumerator iter = map.GetATypedResultEnumerator(typeof(AnalysisDefs.Multiplicity));
             int ecount = System.Enum.GetValues(typeof(ComputedMultiplicityIntermediates)).Length;
             int i = 0, repeat = 0, r = 0;
@@ -493,6 +506,27 @@ namespace AnalysisDefs
                 {
                     rows[r].Add((int)ComputedMultiplicityIntermediates.RAMoments + repeat, mcr.RAFactorialMoments[r].ToString());
                     rows[r].Add((int)ComputedMultiplicityIntermediates.AMoments + repeat, mcr.AFactorialMoments[r].ToString());
+                    if (r == 1)
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RAAlphaMoments + repeat, mcr.RAFactorialAlphaMoment1.ToString());
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.AAlphaMoments + repeat, mcr.AFactorialAlphaMoment1.ToString());
+                    }
+                    else
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RAAlphaMoments + repeat, "--");
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.AAlphaMoments + repeat, "--");
+                    }
+                    if (r==2)
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RABetaMoments + repeat, mcr.RAFactorialBetaMoment2.ToString());
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.ABetaMoments + repeat, mcr.AFactorialBetaMoment2.ToString());
+                    }
+                    else
+                    {
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.RABetaMoments + repeat, "--");
+                        rows[r].Add((int)ComputedMultiplicityIntermediates.ABetaMoments + repeat, "--");
+                    }
+
                 }
                 i++;
             }
@@ -976,7 +1010,8 @@ namespace AnalysisDefs
                             if (sec == null) sec = new Section(typeof(Rossi), 1);
                             temp = GenRossiRows(rar);
                             Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
-                            sec.AddLabelAndColumn(r);
+                            sec.Add(GenRossiParamsRow(rar));
+                            //sec.AddLabelAndColumn(r);
                             sec.AddRange(temp);
                             i++;
                         }
@@ -1133,12 +1168,18 @@ namespace AnalysisDefs
                             SpecificCountingAnalyzerParams sap = (SpecificCountingAnalyzerParams)iter.Current;
                             Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
                             sec.AddLabelAndColumn(r, "Cycle");
+                            bool labeled = false;
                             foreach (Cycle cyc in cycles)
                             {
                                 Object obj;
                                 bool there = cyc.CountingAnalysisResults.TryGetValue(sap, out obj);
                                 if (!there)
                                     continue;
+                                if (!labeled)
+                                {
+                                    sec.Add(GenRossiParamsRow((RossiAlphaResultExt)obj));
+                                    labeled = true;
+                                }
                                 temp = GenRossiRows((RossiAlphaResultExt)obj, cyc);
                                 sec.AddRange(temp);
                             }
@@ -1227,9 +1268,9 @@ namespace AnalysisDefs
 
         Row[] GenRossiRows(RossiAlphaResultExt rar, Cycle c = null)
         {
-            Row[] rows = new Row[2];
-            rows[0] = GenRossiParamsRow(rar, c);
-            rows[1] = GenRossiDataRow(rar, c);
+            Row[] rows = new Row[1];
+
+            rows[0] = GenRossiDataRow(rar, c);
             return rows;
         }
         Row[] GenTimeIntervalRows(TimeIntervalResult esr, Cycle c = null)
@@ -1281,15 +1322,14 @@ namespace AnalysisDefs
         Row GenRossiParamsRow(RossiAlphaResultExt rar, Cycle c = null)
         {
             Row row = new Row();
-            int shift = 0;
-            if (c != null)
+            for (ulong i = 0; i < (ulong)rar.gateData.Length; i++)
             {
-                row.Add(0, c.seq.ToString());
-                shift = 1;
+                // Change the "bins" for Rossi Alpha display
+                float slice = rar.gateWidth / (ulong)rar.gateData.Length;
+                float bin = i * slice;
+                row.Add((int)i, bin.ToString("F4"));
             }
-
-            row.Add((int)Rossi.GateWidth + shift, rar.gateWidth.ToString());
-            row.Add((int)Rossi.Numgates + shift, rar.gateData.Length.ToString());
+            
             return row;
         }
 
@@ -1313,7 +1353,7 @@ namespace AnalysisDefs
                     break;
                 }
             }
-            //happy dad!
+
             if (i == 0) // rolled all the way to the start ofthe array and found all 0s, empty bins!
             {
                 maxindex = 0; // not 1000 and not -1
@@ -1511,7 +1551,7 @@ namespace AnalysisDefs
             return rows;
         }
 
-        public override void StartReportGeneration(Measurement m, string pretext, char separator = ',', string suffixoverride = null)  // space char as separator forces text report generation
+        public override void StartReportGeneration(Measurement m, string pretext, char separator = '\t', string suffixoverride = null)  // space char as separator forces text report generation
         {
             base.StartReportGeneration(m, pretext, separator);
 

@@ -92,7 +92,7 @@ namespace NewUI
 				if (File.Exists(path))
 					System.Diagnostics.Process.Start(notepadPath, path);
 				else 
-					NCC.CentralizedState.App.ControlLogger.TraceEvent(LogLevels.Error, 22222, "The file '" + path + "' cannot be accessed.");
+					NCC.CentralizedState.App.Loggers.Logger(LMLoggers.AppSection.Control).TraceEvent(LogLevels.Error, 22222, "The file '" + path + "' cannot be accessed.");
 			}
 		}
 	}

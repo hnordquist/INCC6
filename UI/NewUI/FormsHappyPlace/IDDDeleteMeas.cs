@@ -54,7 +54,7 @@ namespace NewUI
         private void OKBtn_Click(object sender, EventArgs e)
         {
 			bool notify = true;
-			NCCReporter.LMLoggers.LognLM ctrllog = N.App.ControlLogger;
+			NCCReporter.LMLoggers.LognLM ctrllog = N.App.Loggers.Logger(NCCReporter.LMLoggers.AppSection.Control);
             foreach (ListViewItem lvi in MeasurementView.Items)
             {
                 if (lvi.Selected)

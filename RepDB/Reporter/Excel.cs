@@ -30,12 +30,8 @@ using System;
 namespace NCCReporter
 {
 
-<<<<<<< HEAD
 #if EXCEL
     using Excel = Microsoft.Office.Interop.Excel;
-=======
- #if EXCEL
-	using Excel = Microsoft.Office.Interop.Excel;
 #endif
     // open bare worksheet, add rows one-by-one as they are added by the client to the log, the output file or the console
     public class ExcelPush
@@ -111,4 +107,4 @@ namespace NCCReporter
         }
 
     }
-
+}

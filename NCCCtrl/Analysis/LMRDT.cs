@@ -33,15 +33,15 @@ using NCCConfig;
 using NCCReporter;
 namespace Analysis
 {
-	using NC = NCC.CentralizedState;
-	using RawAnalyzerHandler = LMRawAnalysis.AnalyzerHandler;
-	using RawStatus = LMRawAnalysis.AnalyzerHandlerStatus;
+    using NC = NCC.CentralizedState;
+    using RawAnalyzerHandler = LMRawAnalysis.AnalyzerHandler;
+    using RawStatus = LMRawAnalysis.AnalyzerHandlerStatus;
 
-	public class LMProcessingState : ProcessingState
+    public class LMProcessingState : ProcessingState
     {
         internal LMProcessingState()
         {
-            hitsPerChn = new double[NC.ChannelCount];
+            hitsPerChn = new Double[NC.ChannelCount];
             StartCycle(null);
             assayPending = new ManualResetEventSlim(false);
             chnmask = new uint[NC.ChannelCount];
@@ -97,10 +97,10 @@ namespace Analysis
         internal uint[] chnmask;
 
 
-        internal double[] hitsPerChn;  // so we can accumulate huge counts above UInt64.MaxValue  18,446,744,073,709,551,615 v. 1.7976931348623157E+308
+        internal Double[] hitsPerChn;  // so we can accumulate huge counts above UInt64.MaxValue  18,446,744,073,709,551,615 v. 1.7976931348623157E+308
 
-        internal const int stdlen = 1024 * 1024 * 50;  // this is a tunable config value 'parseBuffSize'
-        internal uint eventBufferLength = stdlen;
+        internal const Int32 stdlen = 1024 * 1024 * 50;  // this is a tunable config value 'parseBuffSize'
+        internal UInt32 eventBufferLength = stdlen;
 
         // processing flags
         internal bool usingStreamRawAnalysis, useAsynch, includingGen2;
@@ -113,10 +113,10 @@ namespace Analysis
         internal byte[] rawDataBuff;
 
         // accumulators across buffer transform calls, xfer to results for cycle at end of streaming 
-        internal uint maxValuesInBuffer;  //upper bound to number of structures in the array, based on buffer length
+        internal UInt32 maxValuesInBuffer;  //upper bound to number of structures in the array, based on buffer length
 
-        internal uint lastValue;
-        internal ulong wraparoundOffset;
+        internal UInt32 lastValue;
+        internal UInt64 wraparoundOffset;
 
         // Wrapper code over the virtual SR counting processor
         private Supporter sup;
@@ -211,11 +211,21 @@ namespace Analysis
 		public override void AccumulateCycleSummary()
 		{
 			base.AccumulateCycleSummary();
-			if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
+            //OK, there is version of PTR that shows wrong time in header. This may break other things, but we
+            //want calculated time for PTR. HN
+            double timebase = 1e-8;
+            if (sup.Handler != null)
+                timebase = sup.Handler.ticSizeInSeconds;
+            else
+                timebase = sup.TickSizeInSeconds; // for PTR32 culling tool, no handler is set
+            if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
+                if (numValuesParsed > 0)
+                    cycle.TS = TimeSpan.FromTicks((long)(timeArray[(int)numValuesParsed - 1] / 10));
+
+            if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
 			{
-				if (cycle.TS.Ticks == 0L)
+                if (cycle.TS.Ticks == 0L)
 				{
-					double timebase = sup.TickSizeInSeconds;
 					long tiks = 0;
 					// convert to a TimeSpan
 					if (timebase == 1e-7)  // LMMM NCD 
@@ -233,8 +243,8 @@ namespace Analysis
 		// non-null StatusBlock returned when end of data encountered during processing
 		public override StreamStatusBlock ConvertDataBuffer(int bytecount)
         {
-            uint[] uintHolder1 = new uint[1];
-            uint[] uintHolder2 = new uint[1];
+            UInt32[] uintHolder1 = new UInt32[1];
+            UInt32[] uintHolder2 = new UInt32[1];
             int index = 0;  //index into the active buffer of bytes from the last read 
             StreamStatusBlock res = null;
 
@@ -285,7 +295,7 @@ namespace Analysis
                 }
                 else  //should have a valid pair of UInt32s.  Swap byte order for first value, and read and swap bytes for next value.
                 {
-                    uint aValue, swapped;
+                    UInt32 aValue, swapped;
 
                     //swap endianness of neutron event, already parsed from array...
                     aValue = uintHolder1[0];
@@ -317,7 +327,7 @@ namespace Analysis
                     lastValue = swapped;
 
                     //store the time in the array, adding the wraparoundOffset in case the UInt32 has overflowed (which it will every 429.4967... seconds)
-                    timeArray[(int)NumValuesParsed] = wraparoundOffset + ((ulong)swapped);
+                    timeArray[(int)NumValuesParsed] = wraparoundOffset + ((UInt64)swapped);
 
                     if (!usingStreamRawAnalysis) // drop them in, one by one
                         Sup.HandleANeutronEvent(timeArray[(int)NumValuesParsed], neutronEventArray[(int)NumValuesParsed]);
@@ -332,7 +342,7 @@ namespace Analysis
         private StreamStatusBlock ExtractStatusBlock(ref int index, int bytecount)
         {
             int statusindex = index + 4;
-            uint[] messagelength = new uint[1];
+            UInt32[] messagelength = new UInt32[1];
             Buffer.BlockCopy(rawDataBuff, index, messagelength, 0, 4);  // get length bytes
 
             uint len = messagelength[0];
@@ -346,7 +356,7 @@ namespace Analysis
             res.msglen = (int)len;
             res.index = statusindex;
 
-            index = bytecount;  // set index to length of buffer, so loop will exit.
+            index = (int)bytecount;  // set index to length of buffer, so loop will exit.
             return res;
         }
     }
@@ -363,12 +373,12 @@ namespace Analysis
         {
             get { return state as LMProcessingState; }
         }
-        public int Stdlen
+        public Int32 Stdlen
         {
             get { return LMProcessingState.stdlen; }
         }
 
-        public uint CurEventBuffLen
+        public UInt32 CurEventBuffLen
         {
             get { return State.eventBufferLength; }
         }
@@ -382,8 +392,8 @@ namespace Analysis
             set { state.cycle = value; }
         }
 
-        private uint statusCheckCount;
-        public uint StatusCheckCount
+        private UInt32 statusCheckCount;
+        public UInt32 StatusCheckCount
         {
             get { return statusCheckCount; }
         }
@@ -711,7 +721,7 @@ namespace Analysis
             StreamStatusBlock endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
 			if (State.usingStreamRawAnalysis)
-				State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
+			    State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
             return endofdata;
         }
 
@@ -733,7 +743,7 @@ namespace Analysis
             if (sb != null)
             {
                 sb.Decode(State.rawDataBuff);
-                if (!string.IsNullOrEmpty(sb.msg))  // dev note: this needs expansion to support other data stream end conditions, not just the orignal LMMM
+                if (!String.IsNullOrEmpty(sb.msg))  // dev note: this needs expansion to support other data stream end conditions, not just the orignal LMMM
                 {
                     if (text.StartsWith("Assay Cancelled."))  // dev note: string constants that should live in the LMMMLingo class.
                         stat = CycleDAQStatus.Cancelled;
@@ -881,16 +891,16 @@ namespace Analysis
 
         public string PrepRawStreams(ulong num, byte[] chnbytes, bool combineDuplicateHits = false)
         {
-            ulong ROllOverShakes = ulong.MaxValue;
+            UInt64 ROllOverShakes = UInt64.MaxValue;
 
-            string issue = string.Empty;
+            string issue = String.Empty;
             ulong dups = 0, events = 0;
             uint channels = NCCFile.ByteArray.ToUInt32(chnbytes);
 
 
-            double lasttime = 0;
-            ulong timeUI8B4 = 0;
-            ulong timeUI8Shakes = 0, circuits = 0;
+            Double lasttime = 0;
+            UInt64 timeUI8B4 = 0;
+            UInt64 timeUI8Shakes = 0, circuits = 0;
             double firstread = 0;
 
             try
@@ -920,7 +930,7 @@ namespace Analysis
                     }
                     if (lasttime > time) // ooops! 
                     {
-                        throw new Exception(string.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeUI8B4, timeUI8Shakes));
+                        throw new Exception(String.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeUI8B4, timeUI8Shakes));
                     }
                     else if (timeUI8B4 == timeUI8Shakes) // a duplicate ! 
                     {
@@ -983,20 +993,20 @@ namespace Analysis
 
     public class PTRFileProcessingState : LMProcessingState
     {
-        public uint[] channels;
-        public double[] times;
-        public byte[] chnInBuffer;
-        public uint[] timeInBuffer;
+        public UInt32[] channels;
+        public Double[] times;
+        public Byte[] chnInBuffer;
+        public UInt32[] timeInBuffer;
         public bool mergeDuplicatesTimeChannelHits = true; // dev note: create external flag to toggle the use of this
         //New variable to track the reported count time in PTR file. HN 10.15.2015
-        public long PTRReportedCountTime = 0;
+        public int PTRReportedCountTime = 0;
         internal PTRFileProcessingState(uint Max, LMProcessingState src)
         {
             NC.App.Loggers.Logger(LMLoggers.AppSection.Data).TraceEvent(LogLevels.Verbose, 3337, "Max is {0} in PTRFileProcessingState; allocating {1} bytes", Max, (Max * 4) + Max + (Max * 8) + (Max * 4));
-            channels = new uint[Max];
-            times = new double[Max];
-            chnInBuffer = new byte[Max];
-            timeInBuffer = new uint[Max];
+            channels = new UInt32[Max];
+            times = new Double[Max];
+            chnInBuffer = new Byte[Max];
+            timeInBuffer = new UInt32[Max];
             Reset();
 
             // shallow copy src state vars
@@ -1044,21 +1054,21 @@ namespace Analysis
             FirstEventTimeInShakes = 0; TotalDups = 0; TotalEvents = 0; LastTimeInShakes = 0;
         }
 
-        public ulong FirstEventTimeInShakes;
-        public ulong TotalDups;
-        public ulong TotalEvents;
-        public ulong LastTimeInShakes;
+        public UInt64 FirstEventTimeInShakes;
+        public UInt64 TotalDups;
+        public UInt64 TotalEvents;
+        public UInt64 LastTimeInShakes;
 
         public string PrepRawStreams(ulong num, bool combineDuplicateHits = false)
         {
-            const ulong RollOverShakes = ulong.MaxValue;
+            const UInt64 RollOverShakes = UInt64.MaxValue;
 
-            string issue = string.Empty;
+            string issue = String.Empty;
             ulong dups = 0, events = 0;
 
-            double lasttime = 0;
-            ulong timeUI8B4 = 0;
-            ulong timeUI8Shakes = 0, circuits = 0;
+            Double lasttime = 0;
+            UInt64 timeUI8B4 = 0;
+            UInt64 timeUI8Shakes = 0, circuits = 0;
             double firstread = 0;
 
             try
@@ -1089,7 +1099,7 @@ namespace Analysis
                     }
                     if (lasttime > time) // ooops! 
                     {
-                        throw new Exception(string.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeUI8B4, timeUI8Shakes));
+                        throw new Exception(String.Format("{0}, {1} ({2}, {3}) out-of-order, you forgot to sort", lasttime, time, timeUI8B4, timeUI8Shakes));
                     }
                     else if (timeUI8B4 == timeUI8Shakes) // found a duplicate! 
                     {
@@ -1212,14 +1222,14 @@ public class MCA527FileProcessingState : LMProcessingState
             FirstEventTimeInShakes = 0; TotalDups = 0; TotalEvents = 0; LastTimeInShakes = 0;
         }
 
-        public ulong FirstEventTimeInShakes;
-        public ulong TotalDups;
-        public ulong TotalEvents;
-        public ulong LastTimeInShakes;
+        public UInt64 FirstEventTimeInShakes;
+        public UInt64 TotalDups;
+        public UInt64 TotalEvents;
+        public UInt64 LastTimeInShakes;
 
         public string PrepRawStreams(ulong num, bool combineDuplicateHits = false)
         {
-            string issue = string.Empty;
+            string issue = String.Empty;
             ulong dups = 0, events = 0;
             ulong lasttime = 0;
             double firstread = 0;

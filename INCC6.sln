@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.25302.0
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepDB", "RepDB\RepDB.csproj", "{15214429-93DA-45C9-A0BC-30285C990A5D}"
 EndProject
@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		clean.cmd = clean.cmd
 		readme.txt = readme.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCCTester", "NCCTester\NCCTester.csproj", "{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,7 @@ Global
 		{56B09DAC-7DA7-4925-9057-54B736BB82B8}.Release|Win32.ActiveCfg = Release|Any CPU
 		{56B09DAC-7DA7-4925-9057-54B736BB82B8}.Release|x86.ActiveCfg = Release|Any CPU
 		{295216F0-AD8B-448B-A41E-52456AB2DC38}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{295216F0-AD8B-448B-A41E-52456AB2DC38}.Debug|Any CPU.Build.0 = Debug|x86
 		{295216F0-AD8B-448B-A41E-52456AB2DC38}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{295216F0-AD8B-448B-A41E-52456AB2DC38}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{295216F0-AD8B-448B-A41E-52456AB2DC38}.Debug|Win32.ActiveCfg = Debug|x86
@@ -130,8 +133,30 @@ Global
 		{00572805-E746-49F5-AA40-25313E3A87E3}.Release|Win32.Build.0 = Release|x86
 		{00572805-E746-49F5-AA40-25313E3A87E3}.Release|x86.ActiveCfg = Release|x86
 		{00572805-E746-49F5-AA40-25313E3A87E3}.Release|x86.Build.0 = Release|x86
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|Win32.Build.0 = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Debug|x86.Build.0 = Debug|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Win32.ActiveCfg = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|Win32.Build.0 = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|x86.ActiveCfg = Release|Any CPU
+		{C90E7BB8-7DA4-4138-9574-B34A3CF78A36}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7B5D76F-339F-42F8-8200-B0AEB3EEDE9A}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

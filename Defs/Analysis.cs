@@ -84,7 +84,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("rank", Rank));
         }
 
-		public const long Select = -99;  // values < 0 used for sorting and selection
+		public const long Select = 0;  // values < 0 used for sorting and selection
     }
 
     public class SpecificCountingAnalyzerParamsEqualityComparer : IEqualityComparer<SpecificCountingAnalyzerParams>
@@ -210,19 +210,20 @@ namespace AnalysisDefs
                 accidentalsGateDelayInTics = src.accidentalsGateDelayInTics;
                 SR = new ShiftRegisterParameters(src.SR);
                 reason = string.Copy(src.reason);
+                Rank = src.Rank;
             }
             else
             {
                 //10240 NOT a reasonable default value for FA analysis per Martyn. HN 6.24.2015
                 if (FA == FAType.FAOn)
                 {
-                    backgroundGateTimeStepInTics = 2;
-                    accidentalsGateDelayInTics = 2;
+                    backgroundGateTimeStepInTics = 10;
+                    accidentalsGateDelayInTics = 10; // 1Mhz
                 }
                 else
                 {
-                    backgroundGateTimeStepInTics = 10240;
-                    accidentalsGateDelayInTics = 10240; // 10240 matches some traditional HW, larger values produce more accurate results, but slow down the processing
+                    backgroundGateTimeStepInTics = 40960;//Not used for slow? HN
+                    accidentalsGateDelayInTics = 40960; // Per Daniela
                 }
                 SR = new ShiftRegisterParameters();
             }
@@ -237,6 +238,7 @@ namespace AnalysisDefs
             accidentalsGateDelayInTics = mul.accidentalsGateDelayInTics;
             SR = new ShiftRegisterParameters(mul.SR);
             reason = string.Copy(mul.reason);
+            Rank = mul.Rank;
         }
         public bool Equals(Multiplicity other)
         {
@@ -244,6 +246,7 @@ namespace AnalysisDefs
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
+                /*Rank == other.Rank &&*/
                 SR.Equals(other.SR))
             {
                 return true;
@@ -260,6 +263,7 @@ namespace AnalysisDefs
 				FA == other.FA && gateWidthTics == other.gateWidthTics && 
                 AccidentalsGateDelayInTics == other.AccidentalsGateDelayInTics && 
                 BackgroundGateTimeStepInTics == other.BackgroundGateTimeStepInTics &&
+                Rank == other.Rank &&
                 EqualsButForLMValues(other.SR))
             {
                 return true;
@@ -292,24 +296,25 @@ namespace AnalysisDefs
 
         public override int GetHashCode()
         {
-            int hCode = FA.GetHashCode() ^ gateWidthTics.GetHashCode() ^ //suspect.GetHashCode() ^
+            int hCode = FA.GetHashCode() ^ gateWidthTics.GetHashCode() ^ suspect.GetHashCode() ^
                 accidentalsGateDelayInTics.GetHashCode() ^ backgroundGateTimeStepInTics.GetHashCode();
-            hCode ^= sr.GetHashCode();
+            hCode ^= sr.GetHashCode() ;
             return hCode.GetHashCode();
         }
         public static string TimeUnitImage(ulong t, bool withunitsspace = false)
         {
             string s;
-            if (t <= 10)  // tics
-                s = t.ToString();
-            else
+            //Everything in microseconds
+            //if (t <= 10)  // tics
+            //    s = t.ToString();
+            //else
                 s = (t / 10).ToString();
 
             string unit;
-            if (t <= 10)  // tics
-                unit = "tics";
-            else  // ms
-                unit = "ms";
+            //if (t <= 10)  // tics
+            //    unit = " tics";
+            //else  // ms
+                unit = " μs";
             if (withunitsspace)
                 s += " ";
             s += unit;
@@ -320,11 +325,11 @@ namespace AnalysisDefs
             string s = "";
             if (FA == FAType.FAOn)
             {
-                s += "FA " + TimeUnitImage(backgroundGateTimeStepInTics);
+                s += "FA " + TimeUnitImage(gateWidthTics);
             }
             else
             {
-                s += "A " + TimeUnitImage(accidentalsGateDelayInTics);
+                s += "A " + TimeUnitImage(gateWidthTics);
             }
             return s;
         }
@@ -334,9 +339,9 @@ namespace AnalysisDefs
             if (FA == FAType.FAOn)
             {
                 s += " fast acc.,   gate ";
-                s += SR.gateLength.ToString();
+                s += SR.gateLengthMS.ToString();
 				s += ", with internal gate ";
-                s += TimeUnitImage(backgroundGateTimeStepInTics, withunitsspace: true);
+                s += TimeUnitImage(accidentalsGateDelayInTics, withunitsspace: true);
             }
             else
             {
@@ -366,6 +371,8 @@ namespace AnalysisDefs
                 res = x.backgroundGateTimeStepInTics.CompareTo(y.backgroundGateTimeStepInTics);
             if (res == 0)
                 res = x.suspect.CompareTo(y.suspect);
+            //if (res == 0)
+            //    res = x.Rank.CompareTo(y.Rank);
             if (res == 0)
                 res = x.SR.CompareTo(y.SR);
 
@@ -385,6 +392,7 @@ namespace AnalysisDefs
             ps.Add(new DBParamEntry("backgroundgatewidth", BackgroundGateTimeStepInTics));
             ps.Add(new DBParamEntry("accidentalsgatewidth", AccidentalsGateDelayInTics));
             ps.Add(new DBParamEntry("FA", FA == FAType.FAOn));
+            ps.Add(new DBParamEntry("rank", Rank));
         }
     }
 
@@ -744,6 +752,7 @@ namespace AnalysisDefs
 			// 3: mark for display in GUI
 			match.Rank = SpecificCountingAnalyzerParams.Select; // values < 0 flag uses for UI sorting and selection
             return anew;
+            //OK, you were trying to do same thing I've done here. URGH. HN
 		}
 	}
 

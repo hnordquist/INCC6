@@ -956,7 +956,8 @@ namespace AnalysisDefs
         public ErrorCalculationTechnique error_calc_method;
         public string inventory_change_code;
         public string io_code;
-        public bool collar_mode;
+        public int collar_mode;
+        //CollarType { AmLiThermal = 0, AmLiFast = 1, CfThermal = 2, CfFast = 3 }
         public double drum_empty_weight;
         protected DateTimeOffset _MeasDateTime, _CheckDateTime;
         public string meas_detector_id;
@@ -989,7 +990,8 @@ namespace AnalysisDefs
             max_num_runs = 1000;
             meas_precision = 1.0;
             well_config = WellConfiguration.Passive;
-            error_calc_method = ErrorCalculationTechnique.Theoretical;
+            //Default should be sample.
+            error_calc_method = ErrorCalculationTechnique.Sample;
             inventory_change_code = string.Empty;
             io_code = string.Empty;
 			ending_comment_str = string.Empty;
@@ -2406,6 +2408,7 @@ namespace AnalysisDefs
             pb.ps.Add(new DBParamEntry("ptrFileAssay", PTRFileAssay));
             pb.ps.Add(new DBParamEntry("testDataFileAssay", TestDataFileAssay));
             pb.ps.Add(new DBParamEntry("dbDataAssay", DBDataAssay));
+            pb.ps.Add(new DBParamEntry("datazFileAssay", DatazFileAssay));
             pb.ps.Add(new DBParamEntry("reviewFileAssay", ReviewFileAssay));
             pb.ps.Add(new DBParamEntry("nilaFileAssay", MCA527FileAssay));
             pb.ps.Add(new DBParamEntry("opStatusPktInterval", StatusPacketCount));
@@ -2534,7 +2537,7 @@ namespace AnalysisDefs
             dt = new DateTimeOffset(_dt.Ticks, _dt.Offset);
         }
 
-		public bool IsError { get { return lvl >= NCCReporter.LogLevels.Error; } }
+		public bool IsError { get { return lvl <= NCCReporter.LogLevels.Error; } }
 		public bool IsWarning { get { return lvl == NCCReporter.LogLevels.Warning; } }
 
 

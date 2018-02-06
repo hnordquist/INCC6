@@ -1,13 +1,13 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Mar 23, 2017
+6.18 Dec 2, 2016
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
 Safeguards Division; and the U.S. Department of Energy, Office of Safeguards and Security.
 
-Copyright 2017, Los Alamos National Security, LLC. This software application and associated
+Copyright 2016, Los Alamos National Security, LLC. This software application and associated
 material ("The Software") was prepared by the Los Alamos National Security, LLC. (LANS), under
 Contract DE-AC52-06NA25396 with the U.S. Department of Energy (DOE). All rights in the software
 application and associated material are reserved by DOE on behalf of the Government and LANS
@@ -120,7 +120,7 @@ Issues for basic INCC5/6 feature COMPLETION
 #84  Implement Collar
 #35  Hold-up analysis required
 ***  Active/Passive paired measurements
-***  Truncated multiplicity and some multiplicity analyses, (e.g. dual-energy) are incomplete
+***  Truncated multiplicity and some multiplicity analyses are incomplete
 
 Issues for basic INCC6 function and performance
 #45  calc_alpha_beta performance and efficiency
@@ -132,6 +132,7 @@ Issues for basic INCC6 List mode
 ***  SDTMultiplicityCalculator shift to BigInteger
 ***  Various List mode features and improvements, see #69 and the APluralityOfMultiplicityAnalyzers tag
 100  Rossi processing too slow on "big" data files
+133  List Mode not working in newer version of INCC6
 
 Issues for production
 #95  Just say yes to updated and complete documentation
@@ -139,19 +140,13 @@ Issues for production
 
 Closed issues
 
-6.18 Mar 23, 2017  ************
-***  Clean up logger API style
-***  Finish Dual-energy multiplicity dialog, database abd data structure design
-***  Does not support XP
-**   PTR-32 .bin single-channel list mode file cmd line peak filter tool added
-
-6.18 Dec 12, 2016  ************
+6.18 Dec 2, 2016  ************
 ***  Retain name of each input file used for file-based LM analysis
 ***  Multiplicity analyzer cycle DTC rates recalculation on report operation
 86   List mode results database persistence, need db table save for Feynman, Rossi, Event, Coincidence
      (! still working on restore) 
 ***  List Mode Acquire DAQ settings not preserved
-133  List Mode not working in newer version of INCC6
+
 
 6.17 (6.0.17) Oct 31, 2016  ************
 79   Plot Norm, Plot Ver, Plot SDT diagnostic tools

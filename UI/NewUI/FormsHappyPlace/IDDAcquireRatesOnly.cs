@@ -54,6 +54,33 @@ namespace NewUI
             MeasPrecisionTextBox.Text = ah.ap.meas_precision.ToString("F2");
             MinNumCyclesTextBox.Text = Format.Rend(ah.ap.min_num_runs);
             MaxNumCyclesTextBox.Text = Format.Rend(ah.ap.max_num_runs);
+            if (ah.det.ListMode)
+            {
+                //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
+                ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
+                if (ah.det.MultiplicityParams.FA == FAType.FAOn)
+                {
+                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+                }
+                else
+                    ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+                // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
+                CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
+                foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
+                {
+                    existing.Active = false;
+                }
+                if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
+                {
+                    AnalysisParams.Insert(0, ah.det.MultiplicityParams);
+                }
+                SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
+                currentParms.Active = true;
+                currentParms.Rank = 0;
+                NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
+                NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
+                NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+            }
 
             DataSourceComboBox.Items.Clear();
             foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
@@ -163,12 +190,48 @@ namespace NewUI
             {
                 //user can cancel in here during LM set-up, account for it.
                 Visible = false;
+                if (ah.det.ListMode)
+                    CreateMultiplicityAnalyzer();
                 UIIntegration.Controller.SetAssay();  // tell the controller to do an assay operation using the current measurement state
                 UIIntegration.Controller.Perform();  // start the measurement file or DAQ thread
                 Close();
             }
         }
 
+
+        private void CreateMultiplicityAnalyzer()
+        {
+            //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
+            ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
+            if (ah.det.MultiplicityParams.FA == FAType.FAOn)
+            {
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 10;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 10;
+            }
+            else
+            {
+                //Default long delay = 4096 for slow.
+                ah.det.MultiplicityParams.BackgroundGateTimeStepInTics = 40960;
+                ah.det.MultiplicityParams.AccidentalsGateDelayInTics = 40960;
+            }
+            // prepare analyzer params from detector SR params and only activate the SRParms analyzer for rates only
+            CountingAnalysisParameters AnalysisParams = NCC.CentralizedState.App.LMBD.CountingParameters(ah.det, true);
+            foreach (SpecificCountingAnalyzerParams existing in AnalysisParams)
+            {
+                existing.Active = false;
+            }
+            if (!AnalysisParams.Exists(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); }))
+            {
+                AnalysisParams.Insert(0, ah.det.MultiplicityParams);
+            }
+            SpecificCountingAnalyzerParams currentParms = AnalysisParams.Find(w => { return (w is Multiplicity) && (w as Multiplicity).Equals(ah.det.MultiplicityParams); });
+            currentParms.Active = true;
+            currentParms.Rank = 0;
+            NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
+            NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
+            NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
+
+        }
         private void CancelButton_Click(object sender, EventArgs e)
         {
             Close();
@@ -309,5 +372,6 @@ namespace NewUI
         {
             ah.MaxNumCyclesTextBox_Leave(sender, e);
         }
+
     }
 }

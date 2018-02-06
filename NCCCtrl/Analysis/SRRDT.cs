@@ -154,9 +154,16 @@ namespace Analysis
 
             try
             {
+
+                //HV Plateau does not have a cycle to do this with. HN 3/15/2017
+                if (NC.App.Opstate.Action.Equals(NCC.NCCAction.HVCalibration))
+                {
+                    state.cycle = new Cycle(NC.App.Loggers.AppLogger);
+                }
                 // not much for this subclass
                 happyfun = state.TransferResults(meas.AnalysisParams);
                 Cycle.CountingAnalysisResults.Add(SRCtrl.Det.MultiplicityParams, SRCtrl.TransformedResults);
+
             }
             catch (System.Exception ex)
             {
@@ -176,7 +183,8 @@ namespace Analysis
             try
             {
                 state.cycle.SetDatastreamEndStatus();
-                CycleProcessing.ApplyTheCycleConditioningSteps(state.cycle, meas);
+                if (!NC.App.Opstate.Action.Equals(NCC.NCCAction.HVCalibration))
+                    CycleProcessing.ApplyTheCycleConditioningSteps(state.cycle, meas);
                 meas.CycleStatusTerminationCheck(state.cycle);
                 FlushCycleSummaryResults();
             }
