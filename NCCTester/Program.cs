@@ -83,7 +83,7 @@ namespace NCCTester
             testMeasurement.ResultsFiles = new ResultFiles();
             state = new INCCAnalysisState();
             testMeasurement.INCCAnalysisState = state;
-            testFile = "C:\\CODE\\INCC6 Test Suite\\Test INCCAlgorithms\\data\\713P0048.VER";
+            testFile = "C:\\CODE\\INCC6 Test Suite\\Test Data\\713P0048.VER";
 
         }
         public static void LoadMeasurementFromFile(string fileName)
@@ -141,6 +141,7 @@ namespace NCCTester
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
 
             }
         }
@@ -549,15 +550,16 @@ namespace NCCTester
         }
         public static void ReadActiveCycleData()
         {
-            line = sr.ReadLine();
+            line = sr.ReadLine();//blank
+            line = sr.ReadLine();//Count time
             Match m = labelValue.Match(line);//Count time
             long countTime = 0;
-            Int64.TryParse(m.Groups[1].Value, out countTime);
+            Int64.TryParse(m.Groups[2].Value, out countTime);
             line = sr.ReadLine();//Blank
             line = sr.ReadLine();//header
             line = sr.ReadLine();//data
-            line = sr.ReadLine();//data
-            lineCount += 4;
+
+            lineCount += 3;
             //First raw
             {
                 while (line != "")
@@ -722,13 +724,12 @@ namespace NCCTester
         static void Main(string[] args)
         {
             Setup();
-            LoadMeasurementFromFile("C:\\CODE\\INCC6 Test Suite\\Test INCCAlgorithms\\data\\713P0048.VER");
+            LoadMeasurementFromFile("C:\\CODE\\INCC6 Test Suite\\Test Data\\713P0048.VER");
             testMeasurement.Detector = det;
             testMeasurement.Detector.MultiplicityParams = mult;
             testMeasurement.AnalysisParams = new CountingAnalysisParameters();
-            testMeasurement.AnalysisParams.Add(spec);
+            testMeasurement.AnalysisParams.Add(spec); //Cycles and mult dist are now populated.
 
-            DoCycleProcessing();
         }
 
     }
