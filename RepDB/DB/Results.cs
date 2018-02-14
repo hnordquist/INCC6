@@ -155,7 +155,7 @@ namespace DB
 		public DataTable ResultsSubset()
         {
             db.SetConnection();
-            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.detector_name FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
+            string sSQL = "SELECT measurements.DateTime, results_rec.id,results_rec.mid,results_rec.campaign_id,results_rec.meas_option,results_rec.item_type,results_rec.detector_name,results_rec.item_id FROM results_rec INNER JOIN measurements ON (measurements.id=results_rec.mid)";
             return db.DT(sSQL);
         }
     }
