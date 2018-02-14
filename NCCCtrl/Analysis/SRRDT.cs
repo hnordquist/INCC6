@@ -28,6 +28,10 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System.Threading;
 using AnalysisDefs;
 using NCCReporter;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+
 namespace Analysis
 {
 
@@ -39,10 +43,14 @@ namespace Analysis
 
         public DAQ.SRControl SRCtrl;
 
+
         internal SRProcessingState()
         {
             StartCycle(null);
             assayPending = new ManualResetEventSlim(false);
+
+                
+
         }
 
         public override void StartCycle(Cycle cycle, object param = null)
@@ -91,7 +99,7 @@ namespace Analysis
 
     public class SRCycleDataTransform : RDTBase
     {
-
+        private UdpClient sender;
         public new ProcessingState State
         {
             get { return state as ProcessingState; }
@@ -125,6 +133,7 @@ namespace Analysis
         public override void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)
         {
             base.Init(datalogger, alogger);
+
         }
 
 
@@ -186,6 +195,13 @@ namespace Analysis
                 if (!NC.App.Opstate.Action.Equals(NCC.NCCAction.HVCalibration))
                     CycleProcessing.ApplyTheCycleConditioningSteps(state.cycle, meas);
                 meas.CycleStatusTerminationCheck(state.cycle);
+
+                using (sender = new UdpClient(19999))
+                {
+                    string s = "Singles: " + state.cycle.SinglesRate + "Doubles: " + state.cycle.SinglesRate + "\r\n";
+                    sender.Send(Encoding.ASCII.GetBytes(s), s.Length, "localhost", 20000);
+                }
+                sender.Close();
                 FlushCycleSummaryResults();
             }
             catch (System.Exception ex)

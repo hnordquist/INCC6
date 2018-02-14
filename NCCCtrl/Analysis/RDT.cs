@@ -30,6 +30,7 @@ using System.Threading;
 using AnalysisDefs;
 using NCCReporter;
 using System.Threading.Tasks;
+
 namespace Analysis
 {
 
@@ -173,6 +174,8 @@ namespace Analysis
                 CycleSinglesRate = Cycle.Totals / Cycle.TS.TotalSeconds;
             logger.TraceEvent(LogLevels.Info, 153, String.Format("Cycle {0} complete, results {1}/sec, {2} hits, {3} triggers",
                                     Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents));
+
+
         }
 
         public virtual void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)
