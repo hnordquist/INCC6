@@ -197,16 +197,20 @@ namespace AnalysisDefs
 
         public Cycle(Logging.Log logger)
         {
-            // Raw counts aka totals
-            singles = new VTuple();
-            dsid = new DataSourceIdentifier();
-            qcstatus = new QCStatusMap();
-            countresults = new CountingResults();
-            daqStatus = CycleDAQStatus.None;
-            hitsPerChn = new double[NC.ChannelCount];
+            InitLocals();
         }
 
         public Cycle()
+        {
+            InitLocals();
+        }
+
+        public Cycle(Logging.LognLM logger)
+        {
+            InitLocals();
+        }
+
+        void InitLocals()
         {
             // Raw counts aka totals
             singles = new VTuple();
@@ -216,7 +220,6 @@ namespace AnalysisDefs
             daqStatus = CycleDAQStatus.None;
             hitsPerChn = new double[NC.ChannelCount];
         }
-
         public bool Transfer(BaseRate ba, RateResult rates)
         {
             if (rates == null)
