@@ -1,4 +1,4 @@
-<filetimes time="2018-02-15T14:40:43.7139195" filetime="636543024437139195" version="4.1.0.4" git="1">
+<filetimes time="2018-03-29T13:18:44.7882251" filetime="636579263247882251" version="4.1.0.4" git="1">
   <file name=".gitignore" time="2018-01-02T12:36:10.8238308" filetime="636504933708238308" size="496" hash="WU06DO4btmPLblgIHXMX/A==" />
   <file name="clean.cmd" time="2017-10-10T23:11:56.3843875" filetime="636432739163843875" size="282" hash="RaAR1+yiwke+oByq1eA6XQ==" />
   <dir name="Cmd" time="2017-12-17T17:17:40.4988000" filetime="636491278604988000" hash="EnoqxOmpvmUrXPKrNYvS2g==" />
@@ -8,7 +8,7 @@
   <file name="Cmd\DAQControl.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="6850" hash="QkrQifWgYAdwqBuKQ1mhAw==" />
   <file name="Cmd\FileControl.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="6927" hash="sYF+rlCmg+7FgLOEQJmCIw==" />
   <dir name="Cmd\Properties" time="2017-12-29T19:37:22.4064000" filetime="636501730424064000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="Cmd\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.4835272" filetime="636542179094835272" size="1528" hash="FAcznYTqA9f/09QAwU58SA==" />
+  <file name="Cmd\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8087553" filetime="636579245818087553" size="1528" hash="zkMqHJASUs96lNdgIE+tFg==" />
   <file name="Cmd\rel.ico" time="2017-10-10T23:10:59.8445405" filetime="636432738598445405" size="309326" hash="gGZbNCbUccKqSQCe/yvgaQ==" />
   <dir name="Defs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" hash="/fwsxT8F8enFaOmd9QFV2w==" />
   <file name="Defs\Analysis.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="29350" hash="oAOp/gyPFHor1Wr8Rm2Esw==" />
@@ -33,7 +33,7 @@
   <file name="Defs\MethodResultsReport.cs" time="2017-12-12T09:37:06.0449403" filetime="636486682260449403" size="56826" hash="lFKgCfexJm/K2/5hCmhsIg==" />
   <file name="Defs\Parameters.cs" time="2017-12-11T13:50:45.6997519" filetime="636485970456997519" size="130895" hash="i8gd3bgFo/HT5+HqzrUiPQ==" />
   <dir name="Defs\Properties" time="2017-12-29T19:37:22.3764000" filetime="636501730423764000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="Defs\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.4855272" filetime="636542179094855272" size="1483" hash="yUNln0Oq1pwSipkj2/jMWg==" />
+  <file name="Defs\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8087553" filetime="636579245818087553" size="1483" hash="VahMkLS7D67YsyWp6SgbAw==" />
   <file name="Defs\RawAnalysisReport.cs" time="2017-12-11T20:10:01.4008000" filetime="636486198014008000" size="78942" hash="rTjBtBKXau9/kjn3QLgwCQ==" />
   <file name="Defs\ReportBase.cs" time="2017-12-11T20:03:22.2808000" filetime="636486194022808000" size="8482" hash="iVRFHiX/BLgLUaWTVUV32w==" />
   <file name="Defs\ReportSectional.cs" time="2017-10-10T23:11:01.2882766" filetime="636432738612882766" size="6708" hash="dn6CKzAfnQXFr/Zco4EcYg==" />
@@ -97,14 +97,14 @@
   <file name="NCCCtrl\Device\Ptr32RateCounter.cs" time="2017-10-10T23:11:31.5165771" filetime="636432738915165771" size="8016" hash="61sqstlpN9DwbzCE3YxErw==" />
   <dir name="NCCCtrl\File" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" hash="rMAWiS9h0Qjicd1MLoPX5Q==" />
   <file name="NCCCtrl\File\FileCtrl.cs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" size="103349" hash="fBqSeeAG9b3vLVg55U2RyA==" />
-  <file name="NCCCtrl\File\FileCtrlDataz.cs" time="2017-12-12T09:44:40.8999403" filetime="636486686808999403" size="51760" hash="mgSy5v52/bBbB7vKA4A2mA==" />
+  <file name="NCCCtrl\File\FileCtrlDataz.cs" time="2018-03-29T12:54:21.0534935" filetime="636579248610534935" size="51761" hash="ssGHMql596vF+WRkYMIj9A==" />
   <file name="NCCCtrl\File\FileCtrlINCC5.cs" time="2017-12-12T09:44:40.9099403" filetime="636486686809099403" size="41470" hash="J9rShDzcB+nK+yebLxguOg==" />
   <file name="NCCCtrl\File\INCC5CSVFiles.cs" time="2017-12-12T09:13:15.5119403" filetime="636486667955119403" size="73826" hash="9z8cGsU9aXQV8KVJuOZPhw==" />
   <file name="NCCCtrl\File\INCCKnew.cs" time="2017-12-12T09:44:40.9289403" filetime="636486686809289403" size="233635" hash="v7km6w8wWWasCWpR2IFjLQ==" />
   <file name="NCCCtrl\File\NeutronDataFiles.cs" time="2017-12-12T08:46:28.4809403" filetime="636486651884809403" size="137541" hash="aDx43TLwrRpLaF3IHSkZ2Q==" />
   <file name="NCCCtrl\NCCCtrl.csproj" time="2017-12-17T17:22:25.9438000" filetime="636491281459438000" size="9028" hash="NQmL4Av30YWDQUXyFTRQNg==" />
   <dir name="NCCCtrl\Properties" time="2017-12-29T19:37:22.3864000" filetime="636501730423864000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="NCCCtrl\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.4895272" filetime="636542179094895272" size="1485" hash="IxFlVbPE5s9QtabMd2RYKw==" />
+  <file name="NCCCtrl\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8187550" filetime="636579245818187550" size="1485" hash="033niee2bnuqkg0xB4PUgA==" />
   <dir name="NCCCtrl\RawAnalysis" time="2017-12-12T09:53:42.0839403" filetime="636486692220839403" hash="ok20rmc0xlLBQodl82sEXw==" />
   <file name="NCCCtrl\RawAnalysis\AnalyzerEventCode.cs" time="2017-10-10T23:11:31.9600174" filetime="636432738919600174" size="2769" hash="KoW5HMnFZxYB8sF7yEiiYA==" />
   <file name="NCCCtrl\RawAnalysis\AnalyzerHandler.cs" time="2017-12-12T09:53:42.0689403" filetime="636486692220689403" size="84800" hash="EOjYd2oeg/D64x61VKsmbg==" />
@@ -127,15 +127,15 @@
   <dir name="NCCCtrl\Utils" time="2017-12-11T14:39:07.8508395" filetime="636485999478508395" hash="PT/luGYDxEdUQ5oSrsqWkw==" />
   <file name="NCCCtrl\Utils\ProgressTracker.cs" time="2017-10-10T23:11:32.7051193" filetime="636432738927051193" size="4678" hash="xFZlW5HXWjYNSBgWWs2hzA==" />
   <file name="NCCCtrl\Utils\Status.cs" time="2017-12-07T07:04:21.7216543" filetime="636482270617216543" size="19454" hash="JWX1+DnBUETWFQPCyIMgkA==" />
-  <file name="readme.txt" time="2018-02-14T15:16:33.3485272" filetime="636542181933485272" size="18102" hash="RTRnsBxHRY6sL1xOD6+8mA==" />
+  <file name="readme.txt" time="2018-02-23T10:15:52.9165012" filetime="636549777529165012" size="18102" hash="voUSmbA+5+OLrBo7UHuTWw==" />
   <dir name="RepDB" time="2017-12-17T17:17:40.5388000" filetime="636491278605388000" hash="lPoTw7RTJBBeytYpwiutxA==" />
   <dir name="RepDB\Config" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" hash="QXEXjXyGGhzLUg5WS6Uqvg==" />
   <file name="RepDB\Config\App.Config" time="2017-10-10T23:11:32.9443014" filetime="636432738929443014" size="8757" hash="PLikZq9+LuBpXpPuU7LTGQ==" />
-  <file name="RepDB\Config\Config.cs" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="79000" hash="jfzajZ0+ncl/p3g9d2swKA==" />
+  <file name="RepDB\Config\Config.cs" time="2018-03-29T12:49:14.7235044" filetime="636579245547235044" size="78407" hash="nU611KpvUG4kmKc3golyJQ==" />
   <file name="RepDB\Config\Constants.cs" time="2017-10-10T23:11:33.0113492" filetime="636432738930113492" size="456" hash="7Lr1OtBOo77oMT5USndPsw==" />
   <dir name="RepDB\Config\NDesk" time="2017-12-11T14:39:07.8708387" filetime="636485999478708387" hash="Fqjo3Gt3a4iBA2iEIQ96/A==" />
   <file name="RepDB\Config\NDesk\Options.cs" time="2017-12-07T07:04:21.7216543" filetime="636482270617216543" size="33101" hash="XLZTyovyxBroJx51u8jqng==" />
-  <file name="RepDB\Config\Options.cs" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="17560" hash="zBRGpXneh5UvpWrTiLW9dg==" />
+  <file name="RepDB\Config\Options.cs" time="2018-03-29T12:49:14.7335041" filetime="636579245547335041" size="17560" hash="g2QsX2jiy0y6dq31Bq9fKw==" />
   <dir name="RepDB\DB" time="2017-12-17T17:17:40.3188000" filetime="636491278603188000" hash="tJRTeSNP9HCIjHnL19E15g==" />
   <file name="RepDB\DB\acq.cs" time="2017-10-10T23:11:34.0476565" filetime="636432738940476565" size="7167" hash="jnVGiT32iAqOo+uFoEYbGw==" />
   <file name="RepDB\DB\AnalysisMethods.cs" time="2017-12-07T07:04:21.7316542" filetime="636482270617316542" size="11044" hash="Wwe8svGKAgF27Aebh+NUkA==" />
@@ -168,7 +168,7 @@
   <file name="RepDB\DB\Ye Olde\NCC_DB.SCH" time="2017-11-09T16:39:49.1685070" filetime="636458423891685070" size="78006" hash="8RO7FlV/9DLZ0t5FpH+vmg==" />
   <file name="RepDB\packages.config" time="2017-12-17T17:17:40.5388000" filetime="636491278605388000" size="161" hash="ef3c+xQvZ1BncFsr/R5vWw==" />
   <dir name="RepDB\Properties" time="2017-12-29T19:37:22.3964000" filetime="636501730423964000" hash="GlFXd13uy4pHaLmasXfe+Q==" />
-  <file name="RepDB\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.4955272" filetime="636542179094955272" size="1352" hash="4PZqsEcdcN31Hb0yx8xxDw==" />
+  <file name="RepDB\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8287547" filetime="636579245818287547" size="1352" hash="wM90+jiQY2lWZ7kWtcRR9g==" />
   <file name="RepDB\Properties\Resources.Designer.cs" time="2017-10-10T23:11:34.1908388" filetime="636432738941908388" size="3912" hash="wgZlsaIe41FFnBZ+3nUDRw==" />
   <file name="RepDB\Properties\Resources.resx" time="2017-10-10T23:11:34.2248406" filetime="636432738942248406" size="6198" hash="x1KEG9cq/aCPEs0dXqOw/w==" />
   <file name="RepDB\RepDB.csproj" time="2017-12-17T17:31:31.6408000" filetime="636491286916408000" size="5967" hash="3Q4CaiLgukkXKYYad5F0Wg==" />
@@ -182,7 +182,7 @@
   <file name="SetupBuildStamp\BuildStamp.csproj" time="2018-01-04T16:11:15.5385376" filetime="636506790755385376" size="2388" hash="MMLgVPYz2ebVD/B9rBXn+A==" />
   <file name="SetupBuildStamp\Program.cs" time="2018-01-04T16:07:45.5395376" filetime="636506788655395376" size="5924" hash="qBDDRlxTfIgBxSkmdC+7fQ==" />
   <dir name="SetupBuildStamp\Properties" time="2017-12-18T17:32:53.1674000" filetime="636492151731674000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="SetupBuildStamp\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.4975272" filetime="636542179094975272" size="1463" hash="o6gxCuXfbssnfVVxZDDkNA==" />
+  <file name="SetupBuildStamp\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8387544" filetime="636579245818387544" size="1463" hash="tTUT/5tyTpeuN6Iy41bpiQ==" />
   <dir name="UI" time="2018-01-04T09:25:08.6751017" filetime="636506547086751017" hash="Vkgumxpg8mVUvPlqF7MLDw==" />
   <file name="UI\app.config" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="6415" hash="KjBvjpMaiuLSNQCAHh7iyQ==" />
   <file name="UI\App.xaml" time="2017-12-17T17:17:40.5988000" filetime="636491278605988000" size="316" hash="qb1RCHP7GLW/AN0yO1R13Q==" />
@@ -549,7 +549,7 @@
   <file name="UI\Logging\TraceEvent.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="5325" hash="vireAn6F9mDFHviDQKmIIg==" />
   <file name="UI\Logging\WPFTraceListener.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="11165" hash="Dfz4nGaL1OOIYO/1IUZs3w==" />
   <file name="UI\MainWindow.xaml" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="17203" hash="YFYM1Q+/flGJkCOfTWG48w==" />
-  <file name="UI\MainWindow.xaml.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="40597" hash="AJ3p3Pqy+M/1GirjdlRfTg==" />
+  <file name="UI\MainWindow.xaml.cs" time="2018-02-23T10:20:09.4665012" filetime="636549780094665012" size="40775" hash="UEc0c27yI/y4Xwd5ZBIvAQ==" />
   <file name="UI\NumericTextBox.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="5917" hash="TVUVgNrHgkRFnKHlgzomwQ==" />
   <dir name="UI\Progress" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" hash="ilECmO5MZu55DldKSzz+LQ==" />
   <file name="UI\Progress\CancelCommand.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="5136" hash="z+qivgxnMQdiUjtdn3FDUQ==" />
@@ -558,7 +558,7 @@
   <file name="UI\Progress\TaskProgress.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="8080" hash="ok13NAy5VdQ+trC548gRNA==" />
   <dir name="UI\Properties" time="2017-12-29T19:37:22.3564000" filetime="636501730423564000" hash="f43fJTmIgjYXWbUDVghlsQ==" />
   <file name="UI\Properties\app.manifest" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="3097" hash="v3FmbvZ60bBKiqoykviAgw==" />
-  <file name="UI\Properties\AssemblyInfo.cs" time="2018-02-14T15:11:49.5025272" filetime="636542179095025272" size="2462" hash="YRp+1b6YVBa666mC+LdD4w==" />
+  <file name="UI\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8487541" filetime="636579245818487541" size="2462" hash="Rv0KXKiTJR8aBUXwJtW7WA==" />
   <file name="UI\Properties\Resources.Designer.cs" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="7654" hash="QJQyojS2PMIlk8Fq1xtzYg==" />
   <file name="UI\Properties\Resources.resx" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="9195" hash="GZJ31EorfN3zv71YUfmiCQ==" />
   <file name="UI\Properties\Settings.Designer.cs" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="1083" hash="ZWgU5R4Nl1ExtfI1A6bRMw==" />

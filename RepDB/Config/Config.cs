@@ -43,55 +43,23 @@ namespace NCCConfig
     public partial class Config
     {
 
-        public AppContextConfig App
-        {
-            get { return app; }
-        }
-        public DBConfig DB
-        {
-            get { return db; }
-            set { db = value; }
-        }
+        public AppContextConfig App { get; private set; }
+        public DBConfig DB { get; set; }
 
         // Currently exposes the cmd line action override var only
         // rename this
         // carries LM runtime spec LMAcquireParams, as well as a few unrelated global flags
-        public LMAcquireConfig Cur
-        {
-            get { return acq; }
-            set { acq = value; }
-        }
+        public LMAcquireConfig Cur { get; set; }
 
 
         // exposes console string ops independent of rest of program
-        public CmdConfig Cmd
-        {
-            get { return cmd; }
-            set { cmd = value; }
-        }
+        public CmdConfig Cmd { get; set; }
 
         // cmd line overrides of default LM params, used to replace DB defaults for new LM definitions generated from cmd line only
         // the code has LM HW and Conn defaults used to create new LM detector defs. These values replace the code defaults.
-        protected LMMMNetComm NetComm
-        {
-            get { return netcomm; }
-            set { netcomm = value; }
-        }
+        protected LMMMNetComm NetComm { get; set; }
 
-        protected LMMMConfig LMMM
-        {
-            get { return lmmm; }
-            set { lmmm = value; }
-        }
-
-
-
-        private CmdConfig cmd;
-        LMMMNetComm netcomm;
-        LMAcquireConfig acq;
-        AppContextConfig app;
-        LMMMConfig lmmm;
-        DBConfig db;
+        protected LMMMConfig LMMM { get; set; }
 
         public string AppName
         {
@@ -147,7 +115,7 @@ namespace NCCConfig
         public Config()
         {
             _parms = ParameterBasis();  // alloc table
-            db = new DBConfig(_parms);  // set up DB config
+            DB = new DBConfig(_parms);  // set up DB config
             ReadAppSettings(); // get the DB settings
         }
 
@@ -161,11 +129,11 @@ namespace NCCConfig
                     string[] e = a.Split(new char[] { '=', ':' });
                     if (e.Length > 1)
                     {
-                        string res = DBConfig.ReplaceDataSourceInSQLiteConnectionString(e[1], db.MyDBConnectionString);
-                        if (!string.IsNullOrEmpty(res) && !res.Equals(db.MyDBConnectionString))
+                        string res = DBConfig.ReplaceDataSourceInSQLiteConnectionString(e[1], DB.MyDBConnectionString);
+                        if (!string.IsNullOrEmpty(res) && !res.Equals(DB.MyDBConnectionString))
                         {
-                            db.MyDBConnectionString = res;
-                            Console.WriteLine("Using database at " + db.DBDataSource);
+                            DB.MyDBConnectionString = res;
+                            Console.WriteLine("Using database at " + DB.DBDataSource);
                         }
                     }
                 }
@@ -176,11 +144,11 @@ namespace NCCConfig
         {
             _args = args;
             // sets hardcoded defaults for all values
-            app = appctx;
-            acq = new LMAcquireConfig(_parms);
-            netcomm = new LMMMNetComm(_parms);
-            lmmm = new LMMMConfig(_parms);
-            cmd = new CmdConfig(_parms);            
+            App = appctx;
+            Cur = new LMAcquireConfig(_parms);
+            NetComm = new LMMMNetComm(_parms);
+            LMMM = new LMMMConfig(_parms);
+            Cmd = new CmdConfig(_parms);            
         }
 
 
@@ -192,13 +160,13 @@ namespace NCCConfig
             switch (Cur.Action)
             {
                 case 3:
-                    if (!app.AssayFromFiles)
-                        app.ResetFileInput();
+                    if (!App.AssayFromFiles)
+                        App.ResetFileInput();
                     break;
                 case 1:
                 case 2:
                 case 4:
-                    app.ResetFileInput();
+                    App.ResetFileInput();
                     break;
                 default:
                     break;
@@ -256,7 +224,7 @@ namespace NCCConfig
 
 			string[] a = new string[0];
 			string[] b = new string[0];
-			bool richcontent = (cfg.acq.IncludeConfig || cfg.cmd.Showcfg);
+			bool richcontent = (cfg.Cur.IncludeConfig || cfg.Cmd.Showcfg);
 			Configuration config =
 			  ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 			if (config.HasFile)
@@ -294,22 +262,22 @@ namespace NCCConfig
 
             string[] a;
 
-            a = LMAcquireConfig.ToLines(cfg, cfg.acq);
+            a = LMAcquireConfig.ToLines(cfg, cfg.Cur);
             for (int i = 0; i < a.Length; i++)
                 x[ix++] = a[i];
             x[ix++] = "";
 
-            a = cfg.app.ToLines();
+            a = cfg.App.ToLines();
             for (int i = 0; i < a.Length; i++)
                 x[ix++] = a[i];
             x[ix++] = "";
 
-            a = cfg.netcomm.ToLines();
+            a = cfg.NetComm.ToLines();
             for (int i = 0; i < a.Length; i++)
                 x[ix++] = a[i];
             x[ix++] = "";
 
-            a = cfg.db.ToLines();
+            a = cfg.DB.ToLines();
             for (int i = 0; i < a.Length; i++)
                 x[ix++] = a[i];
             x[ix++] = "";

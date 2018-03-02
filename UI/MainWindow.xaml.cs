@@ -934,7 +934,10 @@ namespace UI
                     string[] foo = t.Message.Split();
                     if (foo.Length > 3)
                     {
-                        ShowTextFileInEditor(foo[3]);
+                        string recombined = foo[3];
+                        for (int i = 4; i < foo.Length; i++)
+                            recombined += (" " + foo[i]);
+                        ShowTextFileInEditor(recombined);
                     }
                 }
                 else if (t.Id == 111) // the marker used for text file creation statements, a filepath is in the message, file: is always the prefix

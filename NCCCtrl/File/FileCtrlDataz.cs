@@ -311,7 +311,7 @@ namespace NCCFile
                                             Name = name,
                                             Path = meas.AcquireState.lm.Results,
                                             ItemId = meas.AcquireState.ItemId.item,
-                                            MeasOption = "V", // todo: expand cmd line flags o include B,V,N, or add meas option to Dataz configuration section  meas.MeasOption.PrintName(),
+                                            MeasOption = "V", // todo: expand cmd line flags to include B,V,N, or add meas option to Dataz configuration section  meas.MeasOption.PrintName(),
                                             Log = NC.App.ControlLogger,
                                             RunTime = meas.AcquireState.run_count_time
                                         };
