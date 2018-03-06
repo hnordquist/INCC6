@@ -87,9 +87,13 @@
             this.AnalyzerGridView = new System.Windows.Forms.DataGridView();
             this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.APCancel = new System.Windows.Forms.Button();
             this.Step3SaveExit = new System.Windows.Forms.Button();
             this.ReviewAndGo = new System.Windows.Forms.TabPage();
+            this.DataSource = new System.Windows.Forms.ComboBox();
             this.ReportView = new System.Windows.Forms.ListView();
             this.Lines = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.DataSrcLabel = new System.Windows.Forms.Label();
@@ -101,11 +105,7 @@
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DataSource = new System.Windows.Forms.ComboBox();
             this.LiveSettings.SuspendLayout();
             this.FileSettings.SuspendLayout();
             this.InputFileTypeGroupBox.SuspendLayout();
@@ -140,7 +140,7 @@
             // Comment
             // 
             this.Comment.Location = new System.Drawing.Point(57, 6);
-            this.Comment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Comment.Margin = new System.Windows.Forms.Padding(2);
             this.Comment.Name = "Comment";
             this.Comment.Size = new System.Drawing.Size(334, 20);
             this.Comment.TabIndex = 33;
@@ -149,7 +149,7 @@
             // LiveInputDescription
             // 
             this.LiveInputDescription.Location = new System.Drawing.Point(10, 187);
-            this.LiveInputDescription.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LiveInputDescription.Margin = new System.Windows.Forms.Padding(2);
             this.LiveInputDescription.Name = "LiveInputDescription";
             this.LiveInputDescription.Size = new System.Drawing.Size(381, 80);
             this.LiveInputDescription.TabIndex = 36;
@@ -159,7 +159,7 @@
             // ResultsLocation
             // 
             this.ResultsLocation.Location = new System.Drawing.Point(57, 28);
-            this.ResultsLocation.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ResultsLocation.Margin = new System.Windows.Forms.Padding(2);
             this.ResultsLocation.Name = "ResultsLocation";
             this.ResultsLocation.Size = new System.Drawing.Size(334, 20);
             this.ResultsLocation.TabIndex = 38;
@@ -174,7 +174,7 @@
             this.FileInputsView.FullRowSelect = true;
             this.FileInputsView.GridLines = true;
             this.FileInputsView.Location = new System.Drawing.Point(9, 187);
-            this.FileInputsView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FileInputsView.Margin = new System.Windows.Forms.Padding(2);
             this.FileInputsView.MultiSelect = false;
             this.FileInputsView.Name = "FileInputsView";
             this.FileInputsView.Size = new System.Drawing.Size(396, 96);
@@ -265,10 +265,10 @@
             this.LiveSettings.Controls.Add(this.label2);
             this.LiveSettings.Controls.Add(this.Step2BDetectorComboBox);
             this.LiveSettings.Location = new System.Drawing.Point(4, 22);
-            this.LiveSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.LiveSettings.Margin = new System.Windows.Forms.Padding(2);
             this.LiveSettings.Name = "LiveSettings";
-            this.LiveSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.LiveSettings.Size = new System.Drawing.Size(418, 326);
+            this.LiveSettings.Padding = new System.Windows.Forms.Padding(2);
+            this.LiveSettings.Size = new System.Drawing.Size(418, 449);
             this.LiveSettings.TabIndex = 1;
             this.LiveSettings.Text = "DAQ Settings";
             this.LiveSettings.UseVisualStyleBackColor = true;
@@ -314,7 +314,7 @@
             // Step2BCancelButton
             // 
             this.Step2BCancelButton.Location = new System.Drawing.Point(304, 282);
-            this.Step2BCancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step2BCancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.Step2BCancelButton.Name = "Step2BCancelButton";
             this.Step2BCancelButton.Size = new System.Drawing.Size(102, 40);
             this.Step2BCancelButton.TabIndex = 58;
@@ -325,7 +325,7 @@
             // Step2BSaveExit
             // 
             this.Step2BSaveExit.Location = new System.Drawing.Point(16, 282);
-            this.Step2BSaveExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step2BSaveExit.Margin = new System.Windows.Forms.Padding(2);
             this.Step2BSaveExit.Name = "Step2BSaveExit";
             this.Step2BSaveExit.Size = new System.Drawing.Size(104, 40);
             this.Step2BSaveExit.TabIndex = 57;
@@ -460,9 +460,9 @@
             this.FileSettings.Controls.Add(this.Step2RecurseCheckBox);
             this.FileSettings.Controls.Add(this.Step2BrowseBtn);
             this.FileSettings.Location = new System.Drawing.Point(4, 22);
-            this.FileSettings.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FileSettings.Margin = new System.Windows.Forms.Padding(2);
             this.FileSettings.Name = "FileSettings";
-            this.FileSettings.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.FileSettings.Padding = new System.Windows.Forms.Padding(2);
             this.FileSettings.Size = new System.Drawing.Size(418, 449);
             this.FileSettings.TabIndex = 0;
             this.FileSettings.Text = "File Settings";
@@ -491,7 +491,7 @@
             // Step2ACancel
             // 
             this.Step2ACancel.Location = new System.Drawing.Point(300, 390);
-            this.Step2ACancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step2ACancel.Margin = new System.Windows.Forms.Padding(2);
             this.Step2ACancel.Name = "Step2ACancel";
             this.Step2ACancel.Size = new System.Drawing.Size(102, 40);
             this.Step2ACancel.TabIndex = 56;
@@ -502,7 +502,7 @@
             // Step2ASaveExit
             // 
             this.Step2ASaveExit.Location = new System.Drawing.Point(12, 390);
-            this.Step2ASaveExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step2ASaveExit.Margin = new System.Windows.Forms.Padding(2);
             this.Step2ASaveExit.Name = "Step2ASaveExit";
             this.Step2ASaveExit.Size = new System.Drawing.Size(104, 40);
             this.Step2ASaveExit.TabIndex = 55;
@@ -658,7 +658,7 @@
             this.tabControl1.Controls.Add(this.AnalysisParams);
             this.tabControl1.Controls.Add(this.ReviewAndGo);
             this.tabControl1.Location = new System.Drawing.Point(16, 3);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(426, 475);
@@ -674,10 +674,10 @@
             this.AnalysisParams.Controls.Add(this.APCancel);
             this.AnalysisParams.Controls.Add(this.Step3SaveExit);
             this.AnalysisParams.Location = new System.Drawing.Point(4, 22);
-            this.AnalysisParams.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalysisParams.Margin = new System.Windows.Forms.Padding(2);
             this.AnalysisParams.Name = "AnalysisParams";
-            this.AnalysisParams.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.AnalysisParams.Size = new System.Drawing.Size(418, 326);
+            this.AnalysisParams.Padding = new System.Windows.Forms.Padding(2);
+            this.AnalysisParams.Size = new System.Drawing.Size(418, 449);
             this.AnalysisParams.TabIndex = 3;
             this.AnalysisParams.Text = "Analysis Params";
             this.AnalysisParams.UseVisualStyleBackColor = true;
@@ -723,13 +723,14 @@
             this.Predelay,
             this.Long});
             this.AnalyzerGridView.Location = new System.Drawing.Point(2, 5);
-            this.AnalyzerGridView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.AnalyzerGridView.Margin = new System.Windows.Forms.Padding(2);
             this.AnalyzerGridView.Name = "AnalyzerGridView";
             this.AnalyzerGridView.RowHeadersVisible = false;
             this.AnalyzerGridView.RowTemplate.Height = 24;
             this.AnalyzerGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.AnalyzerGridView.Size = new System.Drawing.Size(416, 192);
             this.AnalyzerGridView.TabIndex = 61;
+            this.AnalyzerGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_CellContentClick);
             this.AnalyzerGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_CellEndEdit);
             this.AnalyzerGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.AnalyzerGridView_CellFormatting);
             this.AnalyzerGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.AnalyzerGridView_EditingControlShowing);
@@ -749,10 +750,28 @@
             this.Type.Name = "Type";
             this.Type.Width = 140;
             // 
+            // Gatewidth
+            // 
+            this.Gatewidth.HeaderText = "Gate width";
+            this.Gatewidth.Name = "Gatewidth";
+            this.Gatewidth.Width = 110;
+            // 
+            // Predelay
+            // 
+            this.Predelay.HeaderText = "-";
+            this.Predelay.Name = "Predelay";
+            this.Predelay.Width = 80;
+            // 
+            // Long
+            // 
+            this.Long.HeaderText = "-";
+            this.Long.Name = "Long";
+            this.Long.Width = 130;
+            // 
             // APCancel
             // 
             this.APCancel.Location = new System.Drawing.Point(304, 282);
-            this.APCancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.APCancel.Margin = new System.Windows.Forms.Padding(2);
             this.APCancel.Name = "APCancel";
             this.APCancel.Size = new System.Drawing.Size(102, 40);
             this.APCancel.TabIndex = 60;
@@ -763,7 +782,7 @@
             // Step3SaveExit
             // 
             this.Step3SaveExit.Location = new System.Drawing.Point(16, 282);
-            this.Step3SaveExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step3SaveExit.Margin = new System.Windows.Forms.Padding(2);
             this.Step3SaveExit.Name = "Step3SaveExit";
             this.Step3SaveExit.Size = new System.Drawing.Size(104, 40);
             this.Step3SaveExit.TabIndex = 59;
@@ -786,13 +805,24 @@
             this.ReviewAndGo.Controls.Add(this.FileInputsView);
             this.ReviewAndGo.Controls.Add(this.label3);
             this.ReviewAndGo.Location = new System.Drawing.Point(4, 22);
-            this.ReviewAndGo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ReviewAndGo.Margin = new System.Windows.Forms.Padding(2);
             this.ReviewAndGo.Name = "ReviewAndGo";
-            this.ReviewAndGo.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ReviewAndGo.Padding = new System.Windows.Forms.Padding(2);
             this.ReviewAndGo.Size = new System.Drawing.Size(418, 449);
             this.ReviewAndGo.TabIndex = 2;
             this.ReviewAndGo.Text = "Review and Go";
             this.ReviewAndGo.UseVisualStyleBackColor = true;
+            // 
+            // DataSource
+            // 
+            this.DataSource.FormattingEnabled = true;
+            this.DataSource.Items.AddRange(new object[] {
+            "List Mode Device",
+            "Pulse/Pair files (*.bin & *.chn)"});
+            this.DataSource.Location = new System.Drawing.Point(172, 67);
+            this.DataSource.Name = "DataSource";
+            this.DataSource.Size = new System.Drawing.Size(175, 21);
+            this.DataSource.TabIndex = 46;
             // 
             // ReportView
             // 
@@ -835,7 +865,7 @@
             // Cancel
             // 
             this.Cancel.Location = new System.Drawing.Point(304, 404);
-            this.Cancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Cancel.Margin = new System.Windows.Forms.Padding(2);
             this.Cancel.Name = "Cancel";
             this.Cancel.Size = new System.Drawing.Size(102, 41);
             this.Cancel.TabIndex = 43;
@@ -846,7 +876,7 @@
             // OK
             // 
             this.OK.Location = new System.Drawing.Point(196, 404);
-            this.OK.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.OK.Margin = new System.Windows.Forms.Padding(2);
             this.OK.Name = "OK";
             this.OK.Size = new System.Drawing.Size(104, 41);
             this.OK.TabIndex = 42;
@@ -857,7 +887,7 @@
             // Step4SaveExit
             // 
             this.Step4SaveExit.Location = new System.Drawing.Point(16, 404);
-            this.Step4SaveExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Step4SaveExit.Margin = new System.Windows.Forms.Padding(2);
             this.Step4SaveExit.Name = "Step4SaveExit";
             this.Step4SaveExit.Size = new System.Drawing.Size(104, 41);
             this.Step4SaveExit.TabIndex = 41;
@@ -893,39 +923,10 @@
             this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             this.dataGridViewTextBoxColumn3.Width = 130;
             // 
-            // Gatewidth
-            // 
-            this.Gatewidth.HeaderText = "Gate width";
-            this.Gatewidth.Name = "Gatewidth";
-            this.Gatewidth.Width = 110;
-            // 
-            // Predelay
-            // 
-            this.Predelay.HeaderText = "-";
-            this.Predelay.Name = "Predelay";
-            this.Predelay.Width = 80;
-            // 
-            // Long
-            // 
-            this.Long.HeaderText = "-";
-            this.Long.Name = "Long";
-            this.Long.Width = 130;
-            // 
             // dataGridViewTextBoxColumn4
             // 
             this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-            // 
-            // DataSource
-            // 
-            this.DataSource.FormattingEnabled = true;
-            this.DataSource.Items.AddRange(new object[] {
-            "List Mode Device",
-            "Pulse/Pair files (*.bin & *.chn)"});
-            this.DataSource.Location = new System.Drawing.Point(172, 67);
-            this.DataSource.Name = "DataSource";
-            this.DataSource.Size = new System.Drawing.Size(175, 21);
-            this.DataSource.TabIndex = 46;
             // 
             // LMAcquire
             // 
@@ -934,7 +935,7 @@
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(454, 489);
             this.Controls.Add(this.tabControl1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "LMAcquire";
             this.Text = "List mode data collection and analysis for ";
             this.LiveSettings.ResumeLayout(false);

@@ -99,7 +99,6 @@ namespace Analysis
 
     public class SRCycleDataTransform : RDTBase
     {
-        private UdpClient sender;
         public new ProcessingState State
         {
             get { return state as ProcessingState; }
@@ -196,12 +195,6 @@ namespace Analysis
                     CycleProcessing.ApplyTheCycleConditioningSteps(state.cycle, meas);
                 meas.CycleStatusTerminationCheck(state.cycle);
 
-                using (sender = new UdpClient(19999))
-                {
-                    string s = "Singles: " + state.cycle.SinglesRate + "Doubles: " + state.cycle.SinglesRate + "\r\n";
-                    sender.Send(Encoding.ASCII.GetBytes(s), s.Length, "localhost", 20000);
-                }
-                sender.Close();
                 FlushCycleSummaryResults();
             }
             catch (System.Exception ex)

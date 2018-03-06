@@ -1294,7 +1294,12 @@ namespace NewUI
             BeginInvoke(new MethodInvoker(EndEdit));
         }
 
-		void EndEdit()
+        private void AnalyzerGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        void EndEdit()
         {
             // Change the content of appropriate cell when selected index changes
             if (cbm != null)

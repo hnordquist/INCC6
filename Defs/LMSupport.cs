@@ -340,7 +340,7 @@ namespace LMRawAnalysis
                 }
                 else
                 {
-                    alpha[n] = 1.0;
+                    alpha[n] = n; // Per Daniela 2.22.2018
                 }
             }
 
@@ -405,8 +405,8 @@ namespace LMRawAnalysis
                 }
                 else
                 {
-                    beta[n] = 0.0;
-                }
+                    beta[n] = (n * (n - 1) / 2);// Per Daniela 2.22.2018
+        }
             }
 
             //store the alpha and beta coefficients
