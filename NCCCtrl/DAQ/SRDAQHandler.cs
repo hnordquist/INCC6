@@ -36,6 +36,8 @@ using LMSR;
 using NCCReporter;
 using NCCTransfer;
 using Instr;
+using System.Net.Sockets;
+using System.Text;
 namespace DAQ
 {
     
@@ -987,6 +989,16 @@ namespace DAQ
             mcr.RASum = run.run_reals_plus_acc;
             mcr.ASum = run.run_acc;
             mcr.AB.Resize((int)mcr.MaxBins);
+
+            // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+            // Send UDP packets to Omniscient
+            UdpClient UDPSender = new UdpClient(19429);
+            string message = "Sender: INCC\r\nStartTime: " + cycle.DataSourceId.dt.Ticks.ToString() +
+                "\r\nTotals: " + run.run_singles.ToString() + "\r\nScaler1: " + run.run_scaler1.ToString() + "\r\nScaler2: " +
+                run.run_scaler2.ToString() + "\r\nR+A: " + run.run_reals_plus_acc.ToString() + "\r\nA: " + run.run_acc.ToString();
+            UDPSender.Send(Encoding.ASCII.GetBytes(message), message.Length, "localhost", 19430);
+            UDPSender.Close();
+            // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
         }
 
 
