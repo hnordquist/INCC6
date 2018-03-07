@@ -165,9 +165,16 @@ namespace Instr
                 m_logger.Flush();
 
                 if (m_setvoltage)
-                    SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
-            
-				if (RDT.State.rawDataBuff == null)
+                    try
+                    {
+                        SetVoltage(m_voltage, MaxSetVoltageTime, CancellationToken.None);
+                    }
+                    catch (Exception e)
+                    {
+                        m_logger.TraceEvent(LogLevels.Info, 0, "PTR-32[{0}]: Could not set HV", e.Message);
+                    }
+
+                if (RDT.State.rawDataBuff == null)
 					throw new Exception("Runtime buffer initialization error");
 
 				Stopwatch stopwatch = new Stopwatch();
@@ -193,6 +200,17 @@ namespace Instr
                 }
 
                 stopwatch.Stop();
+                m_device.Wait();
+                if (m_device.Available > 0)
+                {
+                    int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+
+                    if (bytesRead > 0)
+                    {
+                        RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
+                        total += bytesRead;
+                    }
+                }
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());
 
                 lock (m_monitor) {

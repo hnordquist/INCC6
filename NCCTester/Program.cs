@@ -741,8 +741,70 @@ namespace NCCTester
             foreach (Cycle c in testMeasurement.Cycles)
             {
                 Cycle raw = new Cycle(TestLogger);
-                raw.Transfer(c.MultiplicityResults(mult)., new MultiplicityResult(), mult);
-                newResultMeasurement.Cycles.Add (raw);
+                raw.seq = c.seq;
+                raw.TS = c.TS;  // is not always whole seconds hn 10-1.
+
+                raw.Totals = c.Totals;
+                raw.SinglesRate = (double)c.Totals / c.TS.Seconds;
+
+                // table lookup on the strings, so test status is correct
+                QCTestStatus qcts = QCTestStatusExtensions.FromString(c.QCStatus (mult).ToString());
+
+                raw.SetQCStatus(mult, qcts); // creates entry if not found
+
+                mcrs[0].Totals = c.Totals;
+                mcrs[0].TS = c.TS;
+                /*
+                mcrs[0].DeadtimeCorrectedSinglesRate.v = c.SinglesRate;
+                mcrs[0].DeadtimeCorrectedDoublesRate.v = ;
+                mcrs[0].DeadtimeCorrectedTriplesRate.v = 0;
+
+                mcr.RASum = (ulong)run.run_reals_plus_acc;
+                mcr.ASum = (ulong)run.run_acc;
+
+                mcr.efficiency = run.run_multiplicity_efficiency;
+                mcr.mass = run.run_mass;
+                mcr.multiAlpha = run.run_multiplicity_alpha;
+                mcr.multiplication = run.run_multiplicity_mult;
+                cycle.HighVoltage = run.run_high_voltage;
+
+                // assign the hits to a single channel (0)
+                cycle.HitsPerChannel[0] = run.run_singles;
+                mcr.RawSinglesRate.v = run.run_singles_rate;
+                mcr.RawDoublesRate.v = run.run_doubles_rate;
+                mcr.RawTriplesRate.v = run.run_triples_rate;
+
+                mcr.Scaler1.v = run.run_scaler1;
+                mcr.Scaler2.v = run.run_scaler2;
+                mcr.Scaler1Rate.v = run.run_scaler1_rate;
+                mcr.Scaler2Rate.v = run.run_scaler2_rate;
+
+                long index = 0;
+                for (ulong i = 0; i < INCC.SR_EX_MAX_MULT; i++)
+                {
+                    if (run.run_mult_acc[i] > 0 || run.run_mult_reals_plus_acc[i] > 0)
+                    {
+                        index = (long)i;
+                    }
+                }
+
+                mcr.MaxBins = (ulong)index + 1;
+                mcr.MinBins = (ulong)index + 1;
+
+                mcr.NormedAMult = new ulong[mcr.MaxBins];
+                mcr.RAMult = new ulong[mcr.MaxBins];
+                mcr.UnAMult = new ulong[mcr.MaxBins];
+
+                // was not setting these to the right values hn 10-2
+                for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
+                {
+                    mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i];
+                    mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
+                }
+                mcr.RASum = run.run_reals_plus_acc;
+                mcr.ASum = run.run_acc;
+                mcr.AB.Resize((int)mcr.MaxBins);*/
+
             }
             //TODO: clear all the DT corrected rates and summarizers to reanalyze. hn 2/27/2018
             newResultMeasurement.InitializeResultsSummarizers(); //Delete results
