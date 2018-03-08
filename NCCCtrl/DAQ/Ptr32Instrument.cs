@@ -200,7 +200,6 @@ namespace Instr
                 }
 
                 stopwatch.Stop();
-                m_device.Wait();
                 if (m_device.Available > 0)
                 {
                     int bytesRead = m_device.Read(buffer, 0, buffer.Length);
