@@ -301,6 +301,11 @@ namespace Device
             }
         }
 
+        public void Wait()
+        {
+            Ptr32Error error;
+            DpcWaitForTransaction(m_handle, IntPtr.Zero, out error);
+        }
         /// <summary>
         /// Resets the device.
         /// </summary>
@@ -598,6 +603,9 @@ namespace Device
 
         [DllImport(m_dpcFileName, CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe bool DpcGetRegRepeat(IntPtr hif, byte bAddr, byte* rgbData, int cbData, out Ptr32Error perc, IntPtr ptrid);
+
+        [DllImport(m_dpcFileName, CallingConvention = CallingConvention.Cdecl)]
+        private static extern unsafe bool DpcWaitForTransaction(IntPtr hif, IntPtr trid, out Ptr32Error perc);
 
         [DllImport(m_dpcFileName, CallingConvention = CallingConvention.Cdecl)]
         private static extern int DvmgGetDevCount(out Ptr32Error perc);
