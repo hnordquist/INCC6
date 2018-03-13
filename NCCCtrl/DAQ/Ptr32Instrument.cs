@@ -147,7 +147,10 @@ namespace Instr
             }
 
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
-            Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
+            //Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
+            Task t = PerformAssay(measurement, cta);
+            t.Start();
+
         }
 
         /// <summary>
@@ -156,7 +159,7 @@ namespace Instr
         /// <param name="measurement">The measurement.</param>
         /// <param name="cancellationToken">The cancellation token to observe.</param>
         /// <exception cref="Ptr32Exception">An error occurred communicating with the device.</exception>
-        protected void PerformAssay(Measurement measurement, CancellationToken cancellationToken)
+        protected async Task PerformAssay(Measurement measurement, CancellationToken cancellationToken)
         {
 			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             try
@@ -184,11 +187,12 @@ namespace Instr
 
                 m_device.Reset();
                 stopwatch.Start();
+
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
 
-                while (stopwatch.Elapsed < duration) {
+                while (stopwatch.Elapsed < duration.Add(new TimeSpan(0,0,1)) && RDT.Cycle.TS <=duration) {
                     cancellationToken.ThrowIfCancellationRequested();
-
+                    await Task.Delay(10);
                     if (m_device.Available > 0) {
                         int bytesRead = m_device.Read(buffer, 0, buffer.Length);
 
@@ -200,16 +204,7 @@ namespace Instr
                 }
 
                 stopwatch.Stop();
-                if (m_device.Available > 0)
-                {
-                    int bytesRead = m_device.Read(buffer, 0, buffer.Length);
 
-                    if (bytesRead > 0)
-                    {
-                        RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
-                        total += bytesRead;
-                    }
-                }
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());
 
                 lock (m_monitor) {
