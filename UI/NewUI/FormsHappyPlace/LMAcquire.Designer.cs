@@ -708,9 +708,9 @@
             this.label4.Location = new System.Drawing.Point(148, 218);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(120, 13);
+            this.label4.Size = new System.Drawing.Size(80, 13);
             this.label4.TabIndex = 62;
-            this.label4.Text = " Units are in ticks: 1e-7s";
+            this.label4.Text = " Units are in μs.";
             // 
             // AnalyzerGridView
             // 
