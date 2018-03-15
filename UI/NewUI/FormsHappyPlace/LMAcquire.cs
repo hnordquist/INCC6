@@ -75,9 +75,13 @@ namespace NewUI
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
 
-            //Set default to live acquisition.
+            //Set source to measurement parm default and set QC and comment to SR parms
             DataSource.SelectedIndex = 0;
-            ap.data_src = ConstructedSource.Live;
+            ap.data_src = _ap.data_src;
+            ap.qc_tests = _ap.qc_tests;
+            ap.print = _ap.print;
+            ap.ending_comment = _ap.ending_comment;
+                
 		}
 
 		void BuildAnalyzerCombo()
@@ -274,7 +278,8 @@ namespace NewUI
         {
             if (ap.lm.SaveOnTerminate != ((CheckBox)sender).Checked)
             {
-                ap.lm.modified = true; ap.lm.SaveOnTerminate = ((CheckBox)sender).Checked; LMParamUpdate = true;
+
+
             }
         }
 		
@@ -415,11 +420,13 @@ namespace NewUI
 		}
 		bool CheckedChanged(DataGridViewRow row)
 		{
-			if (row == null || row.Cells[0].Tag == null)
+            PreserveAnalyzerChanges = true;
+            if (row == null || row.Cells[0].Tag == null)
 				return false;
 			bool origValue = (bool)row.Cells[0].Tag;
 			return origValue != CheckedRow(row);
-		}
+
+        }
         string[] ToSimpleValueArray(SpecificCountingAnalyzerParams s)
 		{
 			Type t = s.GetType();
@@ -429,8 +436,8 @@ namespace NewUI
 			{
 				vals[1] = TNameMap(t, FAType.FAOff);
 				vals[2] = (s.gateWidthTics / 10.0).ToString();
-				vals[3] = string.Empty;
-				vals[4] = string.Empty;
+				vals[3] = "N/A";
+				vals[4] = "N/A";
 			}
 			else if (t.Equals(typeof(Multiplicity)))
 			{
@@ -625,12 +632,15 @@ namespace NewUI
                     continue;
                 SpecificCountingAnalyzerParams s = (SpecificCountingAnalyzerParams)row.Tag; // or index 0
                 s.reason = "del";
-            }                
-            foreach (DataGridViewRow row in AnalyzerGridView.SelectedRows)
+            }
+            if (AnalyzerGridView.Rows.Count > 1)
             {
-                int idx = AnalyzerGridView.Rows.IndexOf(row);
-                AnalyzerGridView.Rows.RemoveAt(idx);
-				PreserveAnalyzerChanges = true;
+                foreach (DataGridViewRow row in AnalyzerGridView.SelectedRows)
+                {
+                    int idx = AnalyzerGridView.Rows.IndexOf(row);
+                    AnalyzerGridView.Rows.RemoveAt(idx);
+                    PreserveAnalyzerChanges = true;
+                }
             }
             AnalyzerGridView.Refresh();
         }
@@ -756,7 +766,8 @@ namespace NewUI
 			row.Cells[2].Value = (s.gateWidthTics / 10.0).ToString();	
 			row.Tag = s;
 			SetRODetails(row, t);
-		}
+            PreserveAnalyzerChanges = true;
+        }
 
 		void ConstructNewRow(DataGridViewRow row, Type t, FAType FA)
 		{
@@ -806,7 +817,9 @@ namespace NewUI
 			row.Cells[2].Tag = s.gateWidthTics;
 			row.Cells[2].Value = (s.gateWidthTics / 10.0).ToString();	
 			row.Tag = s;
-			SetRODetails(row, t);		
+			SetRODetails(row, t);
+            PreserveAnalyzerChanges = true;
+            
 		}
 		void ReconstructRow(DataGridViewRow row, SpecificCountingAnalyzerParams s, Type t, FAType FA)
 		{

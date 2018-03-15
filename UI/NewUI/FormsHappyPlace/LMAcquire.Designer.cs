@@ -106,6 +106,9 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.QCTestsOn = new System.Windows.Forms.CheckBox();
+            this.PrintResultsEnabled = new System.Windows.Forms.CheckBox();
+            this.CommentEnabled = new System.Windows.Forms.CheckBox();
             this.LiveSettings.SuspendLayout();
             this.FileSettings.SuspendLayout();
             this.InputFileTypeGroupBox.SuspendLayout();
@@ -792,6 +795,9 @@
             // 
             // ReviewAndGo
             // 
+            this.ReviewAndGo.Controls.Add(this.CommentEnabled);
+            this.ReviewAndGo.Controls.Add(this.PrintResultsEnabled);
+            this.ReviewAndGo.Controls.Add(this.QCTestsOn);
             this.ReviewAndGo.Controls.Add(this.DataSource);
             this.ReviewAndGo.Controls.Add(this.ReportView);
             this.ReviewAndGo.Controls.Add(this.DataSrcLabel);
@@ -928,6 +934,36 @@
             this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             // 
+            // QCTestsOn
+            // 
+            this.QCTestsOn.AutoSize = true;
+            this.QCTestsOn.Location = new System.Drawing.Point(172, 108);
+            this.QCTestsOn.Name = "QCTestsOn";
+            this.QCTestsOn.Size = new System.Drawing.Size(70, 17);
+            this.QCTestsOn.TabIndex = 47;
+            this.QCTestsOn.Text = "QC Tests";
+            this.QCTestsOn.UseVisualStyleBackColor = true;
+            // 
+            // PrintResultsEnabled
+            // 
+            this.PrintResultsEnabled.AutoSize = true;
+            this.PrintResultsEnabled.Location = new System.Drawing.Point(172, 131);
+            this.PrintResultsEnabled.Name = "PrintResultsEnabled";
+            this.PrintResultsEnabled.Size = new System.Drawing.Size(85, 17);
+            this.PrintResultsEnabled.TabIndex = 48;
+            this.PrintResultsEnabled.Text = "Print Results";
+            this.PrintResultsEnabled.UseVisualStyleBackColor = true;
+            // 
+            // CommentEnabled
+            // 
+            this.CommentEnabled.AutoSize = true;
+            this.CommentEnabled.Location = new System.Drawing.Point(172, 154);
+            this.CommentEnabled.Name = "CommentEnabled";
+            this.CommentEnabled.Size = new System.Drawing.Size(181, 17);
+            this.CommentEnabled.TabIndex = 49;
+            this.CommentEnabled.Text = "Comment at end of measurement";
+            this.CommentEnabled.UseVisualStyleBackColor = true;
+            // 
             // LMAcquire
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1032,5 +1068,8 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
 		private System.Windows.Forms.DataGridViewTextBoxColumn Long;
         private System.Windows.Forms.ComboBox DataSource;
+        private System.Windows.Forms.CheckBox CommentEnabled;
+        private System.Windows.Forms.CheckBox PrintResultsEnabled;
+        private System.Windows.Forms.CheckBox QCTestsOn;
     }
 }

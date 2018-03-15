@@ -246,6 +246,7 @@ namespace AnalysisDefs
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
+                //Check this What is Rank? Sometimes this seems to compare and other times not. HN 3/15/2018
                 /*Rank == other.Rank &&*/
                 SR.Equals(other.SR))
             {
