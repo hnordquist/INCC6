@@ -44,3 +44,14 @@ obj
 /data/2016_12_19_130052_0.bin
 /NCCCtrl/DAQServer/UMSR.cs
 /INCC6.smp
+/data/Collar test data/Collar Cf-252 sample measurement/Collar results.xlsx
+/data/Collar test data/Collar Cf-252 sample measurement/INCC setup for collar measurement.docx
+/data/Collar test data/Collar Cf-252 sample measurement/71QM0238.VER
+/Complexity/INCCAlgs.smproj
+/deployment/incc6-2017-03-16.log
+/packages/Castle.Core.4.0.0
+/data/Collar test data
+/.vs/INCC6
+/.vs
+/*.psess
+/packages

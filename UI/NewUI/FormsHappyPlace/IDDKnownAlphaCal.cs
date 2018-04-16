@@ -83,6 +83,11 @@ namespace NewUI
         {
             InitializeComponent();
             mp = new MethodParamFormFields(AnalysisMethod.KnownA);
+            if (mp.cev == null)
+            {
+                mp.cev = new INCCAnalysisParams.CurveEquationVals();
+            }
+
             Integ.GetCurrentAcquireDetectorPair(ref mp.acq, ref mp.det);
             this.Text += " for " + mp.det.Id.DetectorName;
 

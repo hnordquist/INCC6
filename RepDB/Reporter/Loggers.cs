@@ -46,7 +46,7 @@ namespace NCCReporter
     public class LMLoggers
     {
 
-        public enum AppSection { App, Data, Analysis, Control, Collect, DB };
+        public enum AppSection { App, Data, Analysis, Control, Collect, DB ,Test};
 
         Hashtable reps = null;
         NCCConfig.Config cfg = null;
@@ -55,7 +55,10 @@ namespace NCCReporter
         {
             return (LognLM)reps[wp];
         }
-
+        public LognLM TestLogger
+        {
+            get { return (LognLM)reps[AppSection.Test]; }
+        }
         public LognLM AppLogger
         {
             get { return (LognLM)reps[AppSection.App]; }
@@ -64,7 +67,10 @@ namespace NCCReporter
         {
             get { return (LognLM)reps[AppSection.Data]; }
         }
-
+        public LognLM ControlLogger
+        {
+            get { return (LognLM)reps[AppSection.Control]; }
+        }
         public LMLoggers(NCCConfig.Config cfg)
         {
             this.cfg = cfg;
@@ -99,7 +105,30 @@ namespace NCCReporter
             }
         }
 
-        public class LognLM
+        /*public interface IINCCLog
+        {
+            void EmitFatalErrorMsg();
+            void Flush();
+            // todo: once performance of logging is understood, move to external string storage based on event ids for all logging statements      
+            void Log(Int32 id);	// Writes an externally defined message to the application's log listeners.
+            void Log(Int32 id, params object[] args);	// Writes an externally defined message to the application's log listeners.
+            bool ShouldTrace(LogLevels eventType);
+            void TraceData(LogLevels eventType, int id, object data);
+            void TraceData(LogLevels eventType, int id, params object[] data);
+            void TraceEvent(LogLevels eventType, int id);
+            void TraceEvent(LogLevels eventType, int id, string message);
+            void TraceEventConsole(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventConsoleUI(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventFileOnly(LogLevels eventType, int id, string message, TraceEventCache tec);
+            void TraceEventButNotToUI(LogLevels eventType, int id, string message, TraceEventCache tec = null);
+            void TraceEvent(LogLevels eventType, int id, string format, params object[] args);
+            void TraceInformation(string message);
+            void TraceInformation(string format, params object[] args);
+            void TraceException(Exception ex, bool stack = false);	// Writes exception information to the application's log listeners.
+            void TraceExceptionButNotToUI(Exception ex, bool stack = false);
+        }*/
+
+        public class LognLM//:IINCCLog
         {
 
             TraceSource ts = null;
@@ -112,9 +141,22 @@ namespace NCCReporter
 
             public static string CurrentLogFilePath { get; set; }
 
+            //New logger for testing.
+            public LognLM(string section)
+            {
+                FileLogTraceListener listener = new FileLogTraceListener();
+                listener.CustomLocation = "c:\\temp\\test\\";
+                listener.BaseFileName = "NCC6Test"; // add thread id here
+                listener.Location = LogFileLocation.Custom;
+                listener.Append = true;
+                listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
+                listener.MaxFileSize = 20 * 1024 * 1024;
+                ts = new TraceSource(section);
+            }
             public LognLM(string section, NCCConfig.Config cfg, int pid)
             {
                 FileLogTraceListener listener = null;
+
                 ts = new TraceSource(section);
 
                 try
@@ -126,14 +168,25 @@ namespace NCCReporter
                         if (item is FileLogTraceListener)
                         {
                             listener = (FileLogTraceListener)item;
-                            listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
-                            listener.Append = true;
-                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             if (!NCCConfig.Config.isDefaultPath(cfg.App.RootLoc))
                             {
                                 listener.Location = LogFileLocation.Custom;
                                 listener.CustomLocation = cfg.App.LogFilePath;
                             }
+                            if (cfg.App.isSet(NCCConfig.NCCFlags.loglocation))
+                            {
+                                listener.BaseFileName = System.IO.Path.GetFileName(cfg.App.LogFilePathAndName);
+                                listener.Location = LogFileLocation.Custom;
+                                string x = System.IO.Path.GetDirectoryName(cfg.App.LogFilePathAndName); 
+                                if (string.IsNullOrEmpty(x) || NCCConfig.Config.isDefaultPath(x))
+                                    listener.CustomLocation = cfg.App.LogFilePath;
+                                else
+                                    listener.CustomLocation = x;
+                            }
+                            else
+                                listener.BaseFileName = String.Format("NCC6[{0,4}]", pid); // add thread id here
+                            listener.Append = true;
+                            listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
                             listener.MaxFileSize = cfg.App.RolloverSizeMB * 1024 * 1024;
                             // logdetails cmd line flag crudely enables this option set, only because the App.Config sharedListeners and switch source sections do not permit setting this attribute.
                             if (cfg.App.isSet(NCCConfig.NCCFlags.logDetails))
@@ -164,7 +217,8 @@ namespace NCCReporter
 
             }
 
-            readonly string colossalErrorMsg = "Sometng whrong ihere";
+            //This was dumb and misspelled. Fixed it. HN 04_26_2017
+            readonly string colossalErrorMsg = "Fatal error encountered.";
             public void EmitFatalErrorMsg()
             {
                 TraceEvent(LogLevels.Error, 0x2A2A, colossalErrorMsg);

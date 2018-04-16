@@ -301,6 +301,7 @@ namespace Device
             }
         }
 
+
         /// <summary>
         /// Resets the device.
         /// </summary>

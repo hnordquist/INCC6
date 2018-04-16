@@ -40,30 +40,32 @@ namespace NewUI
 
         protected  void FieldFiller(INCCAnalysisParams.CurveEquationVals cev)
         {
-            LowerMassLimitTextBox.Text = cev.lower_mass_limit.ToString("N3");
-            UpperMassLimitTextBox.Text = cev.upper_mass_limit.ToString("N3");
-            ATextBox.Text = cev.a.ToString("E6");
-            BTextBox.Text = cev.b.ToString("E6");
-            CTextBox.Text = cev.c.ToString("E6");
-            DTextBox.Text = cev.d.ToString("E6");
-            VarianceATextBox.Text = cev.var_a.ToString("E6");
-            VarianceBTextBox.Text = cev.var_b.ToString("E6");
-            VarianceCTextBox.Text = cev.var_c.ToString("E6");
-            VarianceDTextBox.Text = cev.var_d.ToString("E6");
-            CovarianceABTextBox.Text = cev.covar(Coeff.a, Coeff.b).ToString("E6");
-            CovarianceACTextBox.Text = cev.covar(Coeff.a, Coeff.c).ToString("E6");
-            CovarianceADTextBox.Text = cev.covar(Coeff.a, Coeff.d).ToString("E6");
-            CovarianceBCTextBox.Text = cev.covar(Coeff.b, Coeff.c).ToString("E6");
-            CovarianceBDTextBox.Text = cev.covar(Coeff.b, Coeff.d).ToString("E6");
-            CovarianceCDTextBox.Text = cev.covar(Coeff.c, Coeff.d).ToString("E6");
+            //Now using NumericTextBox
+            LowerMassLimitTextBox.Value = cev.lower_mass_limit;
+            UpperMassLimitTextBox.Value = cev.upper_mass_limit;
+            ATextBox.Value = cev.a;
+            BTextBox.Value = cev.b;
+            CTextBox.Value = cev.c;
+            DTextBox.Value = cev.d;
+            VarianceATextBox.Value = cev.var_a;
+            VarianceBTextBox.Value = cev.var_b;
+            VarianceCTextBox.Value = cev.var_c;
+            VarianceDTextBox.Value = cev.var_d;
+            CovarianceABTextBox.Value = cev.covar(Coeff.a, Coeff.b);
+            CovarianceACTextBox.Value = cev.covar(Coeff.a, Coeff.c);
+            CovarianceADTextBox.Value = cev.covar(Coeff.a, Coeff.d);
+            CovarianceBCTextBox.Value = cev.covar(Coeff.b, Coeff.c);
+            CovarianceBDTextBox.Value = cev.covar(Coeff.b, Coeff.d);
+            CovarianceCDTextBox.Value = cev.covar(Coeff.c, Coeff.d);
             SigmaXTextBox.Text = cev.sigma_x.ToString("E6");
+            FieldFiller();
         }
 
         protected void FieldFiller()
         {
-            HvyMetalRefTextBox.Text = cal_curve.heavy_metal_reference.ToString("E6");
-            HvyMetalWeightingTextBox.Text = cal_curve.heavy_metal_corr_factor.ToString("E6");
-            U235PercentTextBox.Text = cal_curve.percent_u235.ToString("E3");
+            HvyMetalRefTextBox.Value = cal_curve.heavy_metal_reference;
+            HvyMetalWeightingTextBox.Value = cal_curve.heavy_metal_corr_factor;
+            U235PercentTextBox.Value = cal_curve.percent_u235;
 
             if (cal_curve.CalCurveType == INCCAnalysisParams.CalCurveType.STD)
                 ConventionalRadioButton.Checked = true;
@@ -94,7 +96,6 @@ namespace NewUI
             mp.RefreshCurveEqComboBox(CurveTypeComboBox);
 
             FieldFiller(cal_curve.cev);
-            FieldFiller();
         }
 
         private void MaterialTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -166,21 +167,6 @@ namespace NewUI
             TextBoxEnablementProcessingMethodOfFineness();
         }
 
-        private void HvyMetalRefTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.DblTextBox_Leave(((TextBox)sender), ref cal_curve.heavy_metal_reference);
-        }
-
-        private void HvyMetalWeightingTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.DblTextBox_Leave(((TextBox)sender), ref cal_curve.heavy_metal_corr_factor);
-        }
-
-        private void U235PercentTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.PctTextBox_Leave(((TextBox)sender), ref cal_curve.percent_u235);
-        }
-
         private void CurveTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             //Now take string, find enum value
@@ -191,94 +177,54 @@ namespace NewUI
                 mp.imd.modified = true;
             }
         }
-
-        private void ATextBox_Leave(object sender, EventArgs e)
+        private void SaveChanges()
         {
-            mp.ATextBox_Leave(((TextBox)sender));
-        }
+            //Now using NumericTextBox
+            //Save every time.
+            mp.imd.modified = true;
+            mp.cev.modified = true;
+            mp.cev.lower_mass_limit = LowerMassLimitTextBox.Value;
+            mp.cev.upper_mass_limit = UpperMassLimitTextBox.Value;
+            mp.cev.a = ATextBox.Value;
+            mp.cev.b = BTextBox.Value;
+            mp.cev.c = CTextBox.Value;
+            mp.cev.d = DTextBox.Value;
+            mp.cev.var_a = VarianceATextBox.Value;
+            mp.cev.var_b = VarianceBTextBox.Value;
+            mp.cev.var_c = VarianceCTextBox.Value;
+            mp.cev.var_d = VarianceDTextBox.Value;
+            mp.cev.setcovar(Coeff.a,Coeff.b,CovarianceABTextBox.Value);
+            mp.cev.setcovar(Coeff.a, Coeff.c, CovarianceACTextBox.Value);
+            mp.cev.setcovar(Coeff.a, Coeff.d, CovarianceADTextBox.Value);
+            mp.cev.setcovar(Coeff.b, Coeff.c, CovarianceBCTextBox.Value);
+            mp.cev.setcovar(Coeff.b, Coeff.d, CovarianceBDTextBox.Value);
+            mp.cev.setcovar(Coeff.c, Coeff.d, CovarianceCDTextBox.Value);
+            mp.cev.sigma_x = SigmaXTextBox.Value;
+            mp.cev.lower_mass_limit = LowerMassLimitTextBox.Value;
+            mp.cev.upper_mass_limit = UpperMassLimitTextBox.Value;
+            mp.cev.useSingles = SinglesForMassRadioButton.Checked;
+            mp.cev.cal_curve_equation = (INCCAnalysisParams.CurveEquation) CurveTypeComboBox.SelectedIndex;
 
-        private void BTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.BTextBox_Leave(((TextBox)sender));
+            if (HeavyMetalRadioButton.Checked)
+            {
+                cal_curve.heavy_metal_corr_factor = HvyMetalWeightingTextBox.Value;
+                cal_curve.heavy_metal_reference = HvyMetalRefTextBox.Value;
+                cal_curve.CalCurveType = INCCAnalysisParams.CalCurveType.HM;
+            }
+            else if (PassiveUraniumRadioButton.Checked)
+            {
+                cal_curve.CalCurveType = INCCAnalysisParams.CalCurveType.U;
+                cal_curve.percent_u235 = U235PercentTextBox.Value;
+            }
+            else
+            {
+                cal_curve.CalCurveType = INCCAnalysisParams.CalCurveType.STD;
+            }
+            mp.Persist();
         }
-
-        private void CTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CTextBox_Leave(((TextBox)sender));
-        }
-
-        private void DTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.DTextBox_Leave(((TextBox)sender));
-        }
-
-        private void VarianceATextBox_Leave(object sender, EventArgs e)
-        {
-            mp.VarianceATextBox_Leave(((TextBox)sender));
-        }
-
-        private void VarianceBTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.VarianceBTextBox_Leave(((TextBox)sender));
-        }
-
-        private void VarianceCTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.VarianceCTextBox_Leave(((TextBox)sender));
-        }
-
-        private void VarianceDTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.VarianceDTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceABTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceABTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceACTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceACTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceADTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceADTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceBCTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceBCTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceBDTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceBDTextBox_Leave(((TextBox)sender));
-        }
-
-        private void CovarianceCDTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.CovarianceCDTextBox_Leave(((TextBox)sender));
-        }
-
-        private void SigmaXTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.SigmaXTextBox_Leave(((TextBox)sender));
-        }
-
-        private void LowerMassLimitTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.LowerMassLimitTextBox_Leave(((TextBox)sender));
-
-        }
-        private void UpperMassLimitTextBox_Leave(object sender, EventArgs e)
-        {
-            mp.UpperMassLimitTextBox_Leave(((TextBox)sender));
-        }
-
         private void PrintBtn_Click(object sender, EventArgs e)
         {
+            SaveChanges();
             NCCReporter.Section sec = new NCCReporter.Section(null,0,0,0);
             List<NCCReporter.Row> rows = new List<NCCReporter.Row>();
             rows = cal_curve.ToLines(null);
@@ -298,9 +244,12 @@ namespace NewUI
 
         private void OKBtn_Click(object sender, EventArgs e)
         {
+
             if (cct != cal_curve.CalCurveType)
                 mp.imd.modified = true;
-            mp.Persist();
+            //Was not storing the changed values.HN
+            //todo: use numerictextbox instead. Can check ranges. HN 9/22/2017
+            SaveChanges();
             this.Close();
         }
 

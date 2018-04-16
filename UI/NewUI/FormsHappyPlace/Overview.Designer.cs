@@ -29,18 +29,18 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Acquisition State");
-			System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Detectors");
-			System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("QC and Tests");
-			System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Items");
-			System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Materials");
-			System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Isotopics");
-			System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Strata");
-			System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Collar Items");
-			System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Composite Isotopics");
-			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Facilities");
-			System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("MBAs");
-			System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Methods");
+			System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Acquisition State");
+			System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Detectors");
+			System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("QC and Tests");
+			System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Items");
+			System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Materials");
+			System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Isotopics");
+			System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Strata");
+			System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Collar Items");
+			System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Composite Isotopics");
+			System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Facilities");
+			System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("MBAs");
+			System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Methods");
 			this.treeView1 = new System.Windows.Forms.TreeView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
@@ -65,43 +65,43 @@
 			this.treeView1.Location = new System.Drawing.Point(0, 0);
 			this.treeView1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.treeView1.Name = "treeView1";
-			treeNode13.Name = "Acquisition State";
-			treeNode13.Text = "Acquisition State";
-			treeNode14.Name = "Detectors";
-			treeNode14.Text = "Detectors";
-			treeNode15.Name = "QC and Tests";
-			treeNode15.Text = "QC and Tests";
-			treeNode16.Name = "Items";
-			treeNode16.Text = "Items";
-			treeNode17.Name = "Materials";
-			treeNode17.Text = "Materials";
-			treeNode18.Name = "Isotopics";
-			treeNode18.Text = "Isotopics";
-			treeNode19.Name = "Strata";
-			treeNode19.Text = "Strata";
-			treeNode20.Name = "Collar Items";
-			treeNode20.Text = "Collar Items";
-			treeNode21.Name = "Composite Isotopics";
-			treeNode21.Text = "Composite Isotopics";
-			treeNode22.Name = "Facilities";
-			treeNode22.Text = "Facilities";
-			treeNode23.Name = "MBAs";
-			treeNode23.Text = "MBAs";
-			treeNode24.Name = "Methods";
-			treeNode24.Text = "Methods";
+			treeNode1.Name = "Acquisition State";
+			treeNode1.Text = "Acquisition State";
+			treeNode2.Name = "Detectors";
+			treeNode2.Text = "Detectors";
+			treeNode3.Name = "QC and Tests";
+			treeNode3.Text = "QC and Tests";
+			treeNode4.Name = "Items";
+			treeNode4.Text = "Items";
+			treeNode5.Name = "Materials";
+			treeNode5.Text = "Materials";
+			treeNode6.Name = "Isotopics";
+			treeNode6.Text = "Isotopics";
+			treeNode7.Name = "Strata";
+			treeNode7.Text = "Strata";
+			treeNode8.Name = "Collar Items";
+			treeNode8.Text = "Collar Items";
+			treeNode9.Name = "Composite Isotopics";
+			treeNode9.Text = "Composite Isotopics";
+			treeNode10.Name = "Facilities";
+			treeNode10.Text = "Facilities";
+			treeNode11.Name = "MBAs";
+			treeNode11.Text = "MBAs";
+			treeNode12.Name = "Methods";
+			treeNode12.Text = "Methods";
 			this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode13,
-            treeNode14,
-            treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20,
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24});
+            treeNode1,
+            treeNode2,
+            treeNode3,
+            treeNode4,
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12});
 			this.treeView1.Size = new System.Drawing.Size(162, 377);
 			this.treeView1.TabIndex = 0;
 			this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeExpand);
@@ -175,13 +175,13 @@
             this.dFac,
             this.setAsCurrentDetectorToolStripMenuItem});
 			this.DetsCtx.Name = "detCtx";
-			this.DetsCtx.Size = new System.Drawing.Size(293, 96);
+			this.DetsCtx.Size = new System.Drawing.Size(293, 68);
 			this.DetsCtx.Opening += new System.ComponentModel.CancelEventHandler(this.DetsCtx_Opening);
 			// 
 			// dFac
 			// 
 			this.dFac.Name = "dFac";
-			this.dFac.Size = new System.Drawing.Size(261, 32);
+			this.dFac.Size = new System.Drawing.Size(292, 32);
 			this.dFac.Text = "Facility/Inspection...";
 			this.dFac.Click += new System.EventHandler(this.dFac_Click);
 			// 

@@ -62,7 +62,7 @@ namespace NewUI
 			{
 				InitSort();
                 mopt = mo;
-                mlist = N.App.DB.MeasurementsFor(DetectorId, mopt);
+                mlist = N.App.DB.MeasurementsFor(DetectorId, mopt,"");
 				bGood = PrepList(DetectorId);
 			} finally
 			{

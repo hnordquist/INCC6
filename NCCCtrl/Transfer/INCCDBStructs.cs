@@ -1,4 +1,4 @@
-ï»¿/*
+/*
 Copyright (c) 2015, Los Alamos National Security, LLC
 All rights reserved.
 Copyright 2015. Los Alamos National Security, LLC. This software was produced under U.S. Government contract 
@@ -10,11 +10,11 @@ such modified software should be clearly marked, so as not to confuse it with th
 
 Additionally, redistribution and use in source and binary forms, with or without modification, are permitted provided 
 that the following conditions are met:
-â€¢	Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
+•	Redistributions of source code must retain the above copyright notice, this list of conditions and the following 
 disclaimer. 
-â€¢	Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following 
+•	Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following 
 disclaimer in the documentation and/or other materials provided with the distribution. 
-â€¢	Neither the name of Los Alamos National Security, LLC, Los Alamos National Laboratory, LANL, the U.S. Government, 
+•	Neither the name of Los Alamos National Security, LLC, Los Alamos National Laboratory, LANL, the U.S. Government, 
 nor the names of its contributors may be used to endorse or promote products derived from this software without specific 
 prior written permission. 
 THIS SOFTWARE IS PROVIDED BY LOS ALAMOS NATIONAL SECURITY, LLC AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED 
@@ -1502,12 +1502,12 @@ namespace NCCTransfer
         public byte active;
         public byte active_mult;
         public byte active_passive;
-        public byte collaramli;
+        public byte collar;
         public byte normal_method;
         public byte backup_method;
         public byte curium_ratio;
         public byte truncated_mult;
-        public byte collarcf;
+	  public byte analysis_method_spare1;
         public byte analysis_method_spare2;
         public byte analysis_method_spare3;
         public byte analysis_method_spare4;
@@ -1610,16 +1610,19 @@ namespace NCCTransfer
         public double col_sample_corr_fact_err;
         fixed double collar_spares[INCC.NUMBER_COL_SPARES];
         public fixed byte collar_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_mode;
+        //Change to int to hold Enum CollarType
+        public int collar_mode;
         public double col_lower_mass_limit;
         public double col_upper_mass_limit;
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
     unsafe public struct collar_detector_rec
     {
         public fixed byte collar_detector_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_detector_mode;
+        //Changed to reflect new CollarType enum
+        public int collar_detector_mode;
         public fixed byte collar_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public fixed byte col_reference_date[INCC.DATE_TIME_LENGTH];
         public double col_relative_doubles_rate;
@@ -1633,7 +1636,7 @@ namespace NCCTransfer
         public fixed double collar_k5[INCC.MAX_COLLAR_K5_PARAMETERS];
         public fixed double collar_k5_err[INCC.MAX_COLLAR_K5_PARAMETERS];
         public fixed byte collar_k5_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte collar_k5_mode;
+        public int collar_k5_mode;
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -1841,7 +1844,7 @@ namespace NCCTransfer
         public fixed byte results_campaign_id[INCC.MAX_CAMPAIGN_ID_LENGTH];
         public fixed byte results_inspection_number[INCC.MAX_CAMPAIGN_ID_LENGTH];
         public fixed byte results_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte results_collar_mode;
+        public int results_collar_mode;
         public fixed byte results_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public fixed byte results_detector_type[INCC.DETECTOR_TYPE_LENGTH];
         public fixed byte results_electronics_id[INCC.ELECTRONICS_ID_LENGTH];
@@ -2295,7 +2298,7 @@ namespace NCCTransfer
         public fixed byte col_pass_fail[INCC.PASS_FAIL_LENGTH];
         fixed double col_spares[INCC.NUMBER_COL_RESULTS_SPARES];
         public fixed byte col_collar_item_type[INCC.MAX_ITEM_TYPE_LENGTH];
-        public byte col_collar_mode;
+        public int col_collar_mode;
         public fixed byte col_collar_detector_id[INCC.MAX_DETECTOR_ID_LENGTH];
         public byte col_collar_equation;
         public double col_a_res;
@@ -2403,7 +2406,7 @@ namespace NCCTransfer
     };
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    unsafe struct results_active_mult_rec : iresultsbase
+    public unsafe struct results_active_mult_rec : iresultsbase
     {
         public double am_mult;
         public double am_mult_err;

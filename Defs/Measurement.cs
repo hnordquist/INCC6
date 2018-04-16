@@ -62,6 +62,13 @@ namespace AnalysisDefs
         {
         }
 
+        public Detector(Detector src, string ID, string typedescr, string elec_id, InstrType inst)
+            : base(new DataSourceIdentifier(src.Item1), new Multiplicity(src.Item2), new AlphaBeta(src.Item3))
+        {
+            this.Item1.SetIdDetails(ID,elec_id,typedescr,inst);
+
+        }
+
         public Detector(DataSourceIdentifier dsid, Multiplicity mul, AlphaBeta ab)
             : base(new DataSourceIdentifier(dsid), new Multiplicity(mul), new AlphaBeta(ab))
         {
@@ -75,6 +82,7 @@ namespace AnalysisDefs
         public Multiplicity MultiplicityParams
         {
             get { return Item2; }
+            set { Item2.CopyValues(value); }
         }
 
         public DataSourceIdentifier Id
@@ -517,6 +525,7 @@ namespace AnalysisDefs
 		public Detector Detector
         {
             get { return mt.Detectors[0]; }
+            set { mt.Detectors.Add(value); }
         }
 
         /// <summary>
@@ -743,7 +752,14 @@ namespace AnalysisDefs
             InitMisc();
         }
 
-        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger)
+        public Measurement(AssaySelector.MeasurementOption at)
+        {
+            mt = new MeasurementTuple();
+            this.logger = null;
+            mid = new MeasId(at);
+            InitMisc();
+        }
+        public Measurement(MeasurementTuple newMT, AssaySelector.MeasurementOption at, LMLoggers.LognLM logger= null)
         {
             mt = newMT;
             this.logger = logger;
@@ -1046,6 +1062,8 @@ namespace AnalysisDefs
 
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
+            if (INCCAnalysisResults.TradResultsRec == null)//Happens when using rates only measurement....
+                INCCAnalysisResults.TradResultsRec = new INCCResults.results_rec(this);
             long rid = dbres.Create(mid, INCCAnalysisResults.TradResultsRec.ToDBElementList());
             logger.TraceEvent(LogLevels.Verbose, 34045, "Preserved summary results with id {0}", rid);
 

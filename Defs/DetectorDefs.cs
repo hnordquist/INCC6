@@ -175,7 +175,7 @@ namespace DetectorDefs
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
         NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
-        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ /*, SRDayFile  experimental value */
+        INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ , DatazFile
     };  // sources of data: file, DAQ, DB
 
 
@@ -188,7 +188,7 @@ namespace DetectorDefs
         }
         public static bool AcquireChoices(this ConstructedSource src)
         {
-            return src >= ConstructedSource.Live && src <= ConstructedSource.ReviewFile;
+            return (src >= ConstructedSource.Live && src <= ConstructedSource.ReviewFile) || src == ConstructedSource.DatazFile;
         }
         public static bool INCC5FileData(this ConstructedSource src)
         {
@@ -196,7 +196,7 @@ namespace DetectorDefs
         }
         public static bool INCCTransferData(this ConstructedSource src)
         {
-            return src == ConstructedSource.INCCTransferCopy || src == ConstructedSource.INCCTransfer;
+            return src == ConstructedSource.INCCTransferCopy || src == ConstructedSource.INCCTransfer || src == ConstructedSource.DatazFile;
         }
         public static bool SRDAQ(this ConstructedSource src, InstrType device)
         {
@@ -275,6 +275,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
                 PrettyName.Add(ConstructedSource.Unknown, "Unknown");
                 PrettyName.Add(ConstructedSource.Reanalysis, "Reanalysis");
+                PrettyName.Add(ConstructedSource.DatazFile, "IAEA Dataz file");
             }
 		}
 
@@ -552,6 +553,9 @@ namespace DetectorDefs
 			case ConstructedSource.ReviewFile:
 				l += " (INCC Rad Review measurement data file)";
 				break;
+			case ConstructedSource.DatazFile:
+				l += " (IAEA dataz data file)";
+				break;
 			case ConstructedSource.DB:
 				l = "DB Acquire";
 				break;
@@ -593,6 +597,9 @@ namespace DetectorDefs
 					break;
 				case ConstructedSource.ReviewFile:
 					l = filename + " (INCC Rad Review measurement data file)";
+					break;
+				case ConstructedSource.DatazFile:
+					l = filename + " (IAEA dataz data file)";
 					break;
 				case ConstructedSource.Manual:
 					l = "Manual";

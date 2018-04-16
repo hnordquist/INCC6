@@ -40,7 +40,7 @@ namespace DB
     /// Static class for single point access to the database 
     /// See DB.CreateConnection for typical use
     /// </summary>
-    internal static class DBMain
+    public static class DBMain
     {
         // single point of access to get application global state 
         // e.g. app config values and logger handle

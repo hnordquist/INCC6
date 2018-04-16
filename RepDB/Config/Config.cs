@@ -143,6 +143,12 @@ namespace NCCConfig
             return x;
         }
 
+        public Config(String settingsFile)
+        {
+            _parms = ParameterBasis();  // alloc table
+            db = new DBConfig(_parms);  // set up DB config
+            ReadAppSettings(settingsFile); // get the DB settings
+        }
         public Config()
         {
             _parms = ParameterBasis();  // alloc table
@@ -431,11 +437,43 @@ namespace NCCConfig
             }
         }
 
+        public void ReadAppSettings(String FullConfigFilePathAndName)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(FullConfigFilePathAndName);
+
+            try
+            {
+                // Get the AppSettings section and store DB info.
+                System.Configuration.AppSettingsSection appSettings =
+                    (System.Configuration.AppSettingsSection)config.AppSettings;
+                foreach (var key in appSettings.Settings.AllKeys)
+                {
+                    Console.WriteLine("Key: {0} Value: {1}", key, appSettings.Settings[key]);
+                    switch (key)
+                    {
+                        case "MyProviderName":
+                            this.DB.MyProviderName = config.AppSettings.Settings[key].Value;
+                            break;
+                        case "MyDBConnectionString":
+                            this.DB.MyDBConnectionString = config.AppSettings.Settings[key].Value;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            catch (ConfigurationErrorsException e)
+            {
+                Console.WriteLine("[ReadAppSettings: {0}]",
+                    e.ToString());
+            }
+        }
+
         // Get the AppSettings section.        
         // This function uses the AppSettings property to read the appSettings configuration section.
         // The values are loaded into an internal params array with type markers.
         // All subsequent configuration set/get is through this in-memory parameter array.
-        void ReadAppSettings()
+        public void ReadAppSettings()
         {
             try
             {
@@ -654,6 +692,7 @@ namespace NCCConfig
             resetVal(NCCFlags.reportSect, Config.DefaultReportSectional, typeof(string));
             resetVal(NCCFlags.assayTypeSuffix, true, typeof(bool));
             resetVal(NCCFlags.logFileLoc, Config.DefaultPath, typeof(string));
+            resetVal(NCCFlags.loglocation, Config.DefaultPath + "\\6.log", typeof(string));
             resetVal(NCCFlags.resultsFileLoc, Config.DefaultPath, typeof(string));
           
             resetVal(NCCFlags.verbose, (ushort)4, typeof(ushort));
@@ -668,6 +707,7 @@ namespace NCCConfig
             resetVal(NCCFlags.INCCParity, true, typeof(bool), retain: true);
             resetVal(NCCFlags.INCCXfer, false, typeof(bool), retain: false);
             resetVal(NCCFlags.sortPulseFile, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.filterLMOutliers, false, typeof(bool), retain: false);
             resetVal(NCCFlags.pulseFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ptrFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.mcaFileAssay, false, typeof(bool), retain: false);
@@ -715,7 +755,7 @@ namespace NCCConfig
         }
         public bool AssayFromFiles
         {
-            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || PulseFileAssay || DBDataAssay); }
+            get { return UsingFileInput && (TestDataFileAssay || ReviewFileAssay || NCDFileAssay || MCA527FileAssay || PTRFileAssay || DatazFileAssay || PulseFileAssay || DBDataAssay); }
         }
 
 		private string overridepath(NCCFlags flag)
@@ -837,12 +877,21 @@ namespace NCCConfig
             get { return (bool)getVal(NCCFlags.mcaFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.mcaFileAssay, value); }
         }
+        public bool DatazFileAssay
+        {
+            get { return (bool)getVal(NCCFlags.datazFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.datazFileAssay, value); }
+        }
         public bool SortPulseFile
         {
             get { return (bool)getVal(NCCFlags.sortPulseFile); }
             set { MutuallyExclusiveFileActions(NCCFlags.sortPulseFile, value); }
         }
-
+        public bool FilterLMOutliers
+        {
+            get { return (bool)getVal(NCCFlags.filterLMOutliers); }
+            set { MutuallyExclusiveFileActions(NCCFlags.filterLMOutliers, value); }
+        }
 		public bool HasFileAction
 		{
             get { return IsFileActionSet(); }
@@ -854,6 +903,11 @@ namespace NCCConfig
             set { setIfNotOverride(NCCFlags.logFileLoc, value); }
         }
 
+        public string LogFilePathAndName
+        {
+            get { return overridepath(NCCFlags.loglocation); }
+            set { setIfNotOverride(NCCFlags.loglocation, value); }
+        }
 		public string ResultsFilePath
         {
             get { return  overridepath(NCCFlags.resultsFileLoc); }
@@ -1115,12 +1169,14 @@ namespace NCCConfig
             {
                 setVal(NCCFlags.ncdFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
+                setVal(NCCFlags.filterLMOutliers, false);
                 setVal(NCCFlags.INCCXfer, false);
                 setVal(NCCFlags.testDataFileAssay, false);
                 setVal(NCCFlags.reviewFileAssay, false);
                 setVal(NCCFlags.pulseFileAssay, false);
                 setVal(NCCFlags.ptrFileAssay, false);
                 setVal(NCCFlags.mcaFileAssay, false);
+                setVal(NCCFlags.datazFileAssay, false);
                 setVal(NCCFlags.dbDataAssay, false);
             }
             setVal(flag, val);
@@ -1132,10 +1188,12 @@ namespace NCCConfig
 				(bool)getVal(NCCFlags.testDataFileAssay) ||
                 (bool)getVal(NCCFlags.reviewFileAssay) ||
                 (bool)getVal(NCCFlags.ptrFileAssay) ||
+                (bool)getVal(NCCFlags.datazFileAssay) ||
                 (bool)getVal(NCCFlags.mcaFileAssay) ||
                 (bool)getVal(NCCFlags.dbDataAssay) ||
                 (bool)getVal(NCCFlags.INCCXfer) ||
                 (bool)getVal(NCCFlags.pulseFileAssay) ||
+                (bool)getVal(NCCFlags.filterLMOutliers) ||
                 (bool)getVal(NCCFlags.ncdFileAssay) ||
                 (bool)getVal(NCCFlags.sortPulseFile);
         }
@@ -1151,6 +1209,8 @@ namespace NCCConfig
                 x[ix++] = "  daily root path in use: " + DailyRootPath.ToString();
 			if (isSet(NCCFlags.logFileLoc))
 				x[ix++] = "  log file path: " + LogFilePath;
+            if (isSet(NCCFlags.loglocation))
+                x[ix++] = "  log file name: " + LogFilePathAndName;
 			if (isSet(NCCFlags.resultsFileLoc))
 				x[ix++] = "  results path: " + ResultsFilePath;
 
@@ -1190,7 +1250,9 @@ namespace NCCConfig
 				else if (TestDataFileAssay)
 					x[ix++] = ("  use sorted pulse files" + fis);
 				else if (ReviewFileAssay)
-					x[ix++] = ("  use sorted pulse files" + fis);
+					x[ix++] = ("  use NCC files" + fis);
+				else if (DatazFileAssay)
+					x[ix++] = ("  use Dataz (e.g. MCSR) files" + fis);
 				else if (NCDFileAssay)
 					x[ix++] = ("  use LMMM NCD files" + fis);
 				else
@@ -1509,34 +1571,36 @@ namespace NCCConfig
             this._parms = _parms;
             resetVal(NCCFlags.feedback, false, typeof(bool));
 
-            resetVal(NCCFlags.separation, (Int32)0, typeof(int));
-            resetVal(NCCFlags.interval, (Double)5, typeof(Double)); // seconds
-            resetVal(NCCFlags.cycles, (Int32)1, typeof(int));
+            resetVal(NCCFlags.separation, 0, typeof(int));
+            resetVal(NCCFlags.interval, 5.0d, typeof(double)); // seconds
+            resetVal(NCCFlags.cycles, 1, typeof(int));
 
-            resetVal(NCCFlags.minHV, (Int32)0, typeof(int)); // volts
-            resetVal(NCCFlags.maxHV, (Int32)2000, typeof(int)); // volts
-            resetVal(NCCFlags.step, (Int32)10, typeof(int));// volts
-            resetVal(NCCFlags.hvduration, (Int32)5, typeof(int)); // seconds
-            resetVal(NCCFlags.delay, (Int32)2, typeof(int)); // seconds
-            resetVal(NCCFlags.hvx, (bool)false, typeof(bool)); // uses external view for progess and results (e.g. Excel)
+            resetVal(NCCFlags.minHV, 0, typeof(int)); // volts
+            resetVal(NCCFlags.maxHV, 2000, typeof(int)); // volts
+            resetVal(NCCFlags.step, 10, typeof(int));// volts
+            resetVal(NCCFlags.hvduration, 5, typeof(int)); // seconds
+            resetVal(NCCFlags.delay, 2, typeof(int)); // seconds
+            resetVal(NCCFlags.hvx, false, typeof(bool)); // uses external view for progress and results (e.g. Excel)
 
-            resetVal(NCCFlags.saveOnTerminate, (bool)false, typeof(bool));
+            resetVal(NCCFlags.saveOnTerminate, false, typeof(bool));
             //resetVal(LMFlags.resultsAutoPath, (bool)false, typeof(bool));
             //resetVal(LMFlags.results, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.includeConfig, (bool)false, typeof(bool), retain:false);
+            resetVal(NCCFlags.includeConfig, false, typeof(bool), retain:false);
             resetVal(NCCFlags.message, "", typeof(string), retain: false);
             resetVal(NCCFlags.assaytype, 0, typeof(int));
             resetVal(NCCFlags.raw, Config.DefaultPath, typeof(string));
-            resetVal(NCCFlags.lm, (Int32)(-1), typeof(int));
+            resetVal(NCCFlags.lm, (-1), typeof(int));
 
             resetVal(NCCFlags.detector, "Default", typeof(string));
             resetVal(NCCFlags.item, "", typeof(string));
             resetVal(NCCFlags.material, "Pu", typeof(string));
 
+            resetVal(NCCFlags.tau, 140, typeof(int));
+            resetVal(NCCFlags.Tee, 4, typeof(int));
         }
 
         // dev note: the action itself is not preserved in the config state, but rather inferred from the presence of a required flag (-prompt, -discover, -assay, -hvcalib)
-        private Int32 action = 0;
+        private int action = 0;
 
         public bool IncludeConfig
         {
@@ -1568,7 +1632,7 @@ namespace NCCConfig
             set { setVal(NCCFlags.message, value); }
         }
 
-        public Int32 Action
+        public int Action
         {
             get { return action; }
             set { action = value; }
@@ -1582,9 +1646,9 @@ namespace NCCConfig
                 setVal(NCCFlags.raw, warmed);
             }
         }
-        public Int32 LM
+        public int LM
         {
-            get { return (Int32)getVal(NCCFlags.lm); }
+            get { return (int)getVal(NCCFlags.lm); }
             set { setVal(NCCFlags.lm, value); }
         }
 
@@ -1594,60 +1658,87 @@ namespace NCCConfig
             set { setVal(NCCFlags.feedback, value); }
         }
 
-        public Int32 Separation
+        public int Separation
         {
-            get { return (Int32)getVal(NCCFlags.separation); }
+            get { return (int)getVal(NCCFlags.separation); }
             set { setVal(NCCFlags.separation, value); }
         }
 
-        public Int32 Cycles
+        public int Cycles
         {
-            get { return (Int32)getVal(NCCFlags.cycles); }
+            get { return (int)getVal(NCCFlags.cycles); }
             set { setVal(NCCFlags.cycles, value); }
         }
-        public Double Interval
+        public double Interval
         {
-            get { return (Double)getVal(NCCFlags.interval); }
+            get { return (double)getVal(NCCFlags.interval); }
             set { setVal(NCCFlags.interval, value); }
         }
 
-        public Int32 MinHV
+        public int MinHV
         {
-            get { return (Int32)getVal(NCCFlags.minHV); }
+            get { return (int)getVal(NCCFlags.minHV); }
             set { setVal(NCCFlags.minHV, value); }
         }
 
-        public Int32 MaxHV
+        public int MaxHV
         {
-            get { return (Int32)getVal(NCCFlags.maxHV); }
+            get { return (int)getVal(NCCFlags.maxHV); }
             set { setVal(NCCFlags.maxHV, value); }
         }
 
-        public Int32 Step
+        public int Step
         {
             get { return (Int32)getVal(NCCFlags.step); }
             set { setVal(NCCFlags.step, value); }
         }
-        public Int32 HVDuration
+        public int HVDuration
         {
-            get { return (Int32)getVal(NCCFlags.hvduration); }
+            get { return (int)getVal(NCCFlags.hvduration); }
             set { setVal(NCCFlags.hvduration, value); }
         }
 
-        public Int32 Delay
+        public int Delay
         {
-            get { return (Int32)getVal(NCCFlags.delay); }
+            get { return (int)getVal(NCCFlags.delay); }
             set { setVal(NCCFlags.delay, value); }
         }
 
+		public int CullCountLevel
+        {
+            get { return (int)getVal(NCCFlags.Tee); }
+            set { if (value <= 1256 && value >= 0) setVal(NCCFlags.Tee, value); }
+        }
+
+        public int Tau
+        {
+            get { return (int)getVal(NCCFlags.tau); }
+            set { if (value <= 64256 && value >= 0) setVal(NCCFlags.tau, value); }
+        }
+
         // cmd line dual setters
+		public void LMFilterParams(string b, string s)
+        {
+            try
+            {
+                int tau, t;
+                int.TryParse(b, out tau);
+                int.TryParse(s, out t);
+                Tau = tau;
+                CullCountLevel = t;
+            }
+            catch (Exception)
+            {
+            }
+        }
+
         public void HVRange(string l, string h)
         {
             try
             {
-                Int32 il, ih;
+                int il, ih;
                 int.TryParse(l, out il);
-                Int32.TryParse(h, out ih);
+                int.TryParse(h, out ih);
                 MinHV = il;
                 MaxHV = ih;
             }
@@ -1659,9 +1750,9 @@ namespace NCCConfig
         {
             try
             {
-                Int32 idu, idl;
+                int idu, idl;
                 int.TryParse(b, out idu);
-                Int32.TryParse(s, out idl);
+                int.TryParse(s, out idl);
                 Delay = idl;
                 HVDuration = idu;
             }
@@ -1684,9 +1775,9 @@ namespace NCCConfig
             set { setVal(NCCFlags.saveOnTerminate, value); }
         }
 
-        public Int32 AssayType
+        public int AssayType
         {
-            get { return (Int32)getVal(NCCFlags.assaytype); }
+            get { return (int)getVal(NCCFlags.assaytype); }
             set { setVal(NCCFlags.assaytype, value); }
         }
 
@@ -1701,7 +1792,7 @@ namespace NCCConfig
         internal bool AssayTypeConv(string v, out int res)
         {
             res = 0;
-            bool ok = Int32.TryParse(v, out res);
+            bool ok = int.TryParse(v, out res);
             if (!ok)
             {
                 string lv = v.ToLower();
@@ -1709,7 +1800,7 @@ namespace NCCConfig
             }
             return ok;
         }
-        internal int Conv(Char MeasurementOption)
+        internal int Conv(char MeasurementOption)
         {
             int res = 0;
             switch (MeasurementOption)

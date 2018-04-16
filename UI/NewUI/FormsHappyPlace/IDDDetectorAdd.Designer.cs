@@ -43,6 +43,9 @@
             this.LM = new System.Windows.Forms.RadioButton();
             this.SR = new System.Windows.Forms.RadioButton();
             this.LMTypes = new System.Windows.Forms.ComboBox();
+            this.CloneCheckbox = new System.Windows.Forms.CheckBox();
+            this.CloneSourceLabel = new System.Windows.Forms.Label();
+            this.CloneSourceCombo = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // OKButton
@@ -188,11 +191,42 @@
             this.LMTypes.TabIndex = 14;
             this.LMTypes.Visible = false;
             // 
+            // CloneCheckbox
+            // 
+            this.CloneCheckbox.AutoSize = true;
+            this.CloneCheckbox.Location = new System.Drawing.Point(20, 185);
+            this.CloneCheckbox.Name = "CloneCheckbox";
+            this.CloneCheckbox.Size = new System.Drawing.Size(115, 17);
+            this.CloneCheckbox.TabIndex = 15;
+            this.CloneCheckbox.Text = "Clone from Existing";
+            this.CloneCheckbox.UseVisualStyleBackColor = true;
+            this.CloneCheckbox.CheckedChanged += new System.EventHandler(this.CloneCheckbox_CheckedChanged);
+            // 
+            // CloneSourceLabel
+            // 
+            this.CloneSourceLabel.AutoSize = true;
+            this.CloneSourceLabel.Location = new System.Drawing.Point(62, 218);
+            this.CloneSourceLabel.Name = "CloneSourceLabel";
+            this.CloneSourceLabel.Size = new System.Drawing.Size(99, 13);
+            this.CloneSourceLabel.TabIndex = 17;
+            this.CloneSourceLabel.Text = "Clone from detector";
+            // 
+            // CloneSourceCombo
+            // 
+            this.CloneSourceCombo.FormattingEnabled = true;
+            this.CloneSourceCombo.Location = new System.Drawing.Point(167, 215);
+            this.CloneSourceCombo.Name = "CloneSourceCombo";
+            this.CloneSourceCombo.Size = new System.Drawing.Size(129, 21);
+            this.CloneSourceCombo.TabIndex = 16;
+            // 
             // IDDDetectorAdd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(377, 183);
+            this.ClientSize = new System.Drawing.Size(386, 240);
+            this.Controls.Add(this.CloneSourceLabel);
+            this.Controls.Add(this.CloneSourceCombo);
+            this.Controls.Add(this.CloneCheckbox);
             this.Controls.Add(this.LMTypes);
             this.Controls.Add(this.SR);
             this.Controls.Add(this.LM);
@@ -233,5 +267,8 @@
         private System.Windows.Forms.RadioButton LM;
         private System.Windows.Forms.RadioButton SR;
         private System.Windows.Forms.ComboBox LMTypes;
+        private System.Windows.Forms.CheckBox CloneCheckbox;
+        private System.Windows.Forms.Label CloneSourceLabel;
+        private System.Windows.Forms.ComboBox CloneSourceCombo;
     }
 }

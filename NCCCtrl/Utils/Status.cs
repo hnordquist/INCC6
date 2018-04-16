@@ -318,6 +318,7 @@ namespace NCC
 				min = DAQControl.gControl.ctrlHVCalib.hvMinCalibPoint;
             }
             // last status plus stepping placement 
+            
         }
 
         // 1c1 For Assay operation:  buffer count, buffer rotation count, events count

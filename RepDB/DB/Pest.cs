@@ -37,7 +37,7 @@ namespace DB
     public enum Pieces { IOCodes, InvChangeCodes, 
         Measurements, HVResults,
         Detectors, TestParams, NormParams, BackgroundParams, AASSetupParams, Facilities, MBAs, Materials, Items, Isotopics, DetectorTypes, CollarItems,
-        Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams,
+        Strata, StrataWithAssoc, AcquireParams, UnattendedParams, CmPuRatioParams, CollarParams, CollarDetectorParams, CollarK5Params,
         AnalysisMethodSpecifiers,
         CountingAnalyzers, AppContext, LMParams, LMMultParams, HVParams, Results, CompositeIsotopics, HoldupConfigs, PoisonRods
     }
@@ -199,6 +199,18 @@ namespace DB
                     case Pieces.CmPuRatioParams:
                         cm_pu_ratio_rec cpu = new cm_pu_ratio_rec();
                         dt = cpu.Get();
+                        break;
+                    case Pieces.CollarParams:
+                        collar_combined_rec combine = new collar_combined_rec();
+                        dt = combine.GetCollar();
+                        break;
+                    case Pieces.CollarDetectorParams:
+                        combine = new collar_combined_rec();
+                        dt = combine.GetCollarDet();
+                        break;
+                    case Pieces.CollarK5Params:
+                        combine = new collar_combined_rec();
+                        dt = combine.GetK5();
                         break;
                     case Pieces.Results:
                         Results rr = new Results();

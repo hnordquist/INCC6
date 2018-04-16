@@ -211,11 +211,21 @@ namespace Analysis
 		public override void AccumulateCycleSummary()
 		{
 			base.AccumulateCycleSummary();
-			if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
+            //OK, there is version of PTR that shows wrong time in header. This may break other things, but we
+            //want calculated time for PTR. HN
+            double timebase = 1e-8;
+            if (sup.Handler != null)
+                timebase = sup.Handler.ticSizeInSeconds;
+            else
+                timebase = sup.TickSizeInSeconds; // for PTR32 culling tool, no handler is set
+            if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
+                if (numValuesParsed > 0)
+                    cycle.TS = TimeSpan.FromTicks((long)(timeArray[(int)numValuesParsed - 1] / 10));
+
+            if (base.numValuesParsed > 0 && numValuesParsed <= timeArray.Count)  // devnote: semantic change to list usage, was // reset in StartNewBuffer, so if == 0 then previous counts have already been accumulated on this cycle, or  pathological case: 0 values parsed => a file with no data but with a summary block at the end.
 			{
-				if (cycle.TS.Ticks == 0L)
+                if (cycle.TS.Ticks == 0L)
 				{
-					double timebase = sup.Handler.ticSizeInSeconds;
 					long tiks = 0;
 					// convert to a TimeSpan
 					if (timebase == 1e-7)  // LMMM NCD 
@@ -708,12 +718,10 @@ namespace Analysis
         /// <returns></returns>
         public StreamStatusBlock PassBufferToTheCounters(int count)
         {
-            StreamStatusBlock endofdata = null;
-
-            endofdata = state.ConvertDataBuffer(count);
+            StreamStatusBlock endofdata = state.ConvertDataBuffer(count);
             if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
-			State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
-         
+			if (State.usingStreamRawAnalysis)
+			    State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
             return endofdata;
         }
 
@@ -752,6 +760,99 @@ namespace Analysis
             cycle.DaqStatus = stat;
             cycle.Message = text;
         }
+
+
+		public void CullAndWrite(int lvl,  // neutron sum min/max
+						  int intervalinMicroSecs, // 10e-6s
+						  NCCFile.PTREventFileClone f) // the output file
+		{
+			int i = 0, j = 0;
+			int sum = 0; ulong sumofsums = 0;
+			ulong t = (ulong)intervalinMicroSecs * 100ul; // interval in 10e-8
+			ulong stake = State.timeArray[i];
+			ulong skipdelta = 0;
+            logger.TraceEvent(LogLevels.Verbose, 13413, "{0} to {1} (> {2} over {3} tics)", stake, State.timeArray[(int)State.NumValuesParsed-1], lvl, t);
+
+			while (i < State.NumValuesParsed)
+			{
+				if ((State.timeArray[i] - stake) < t)
+				{
+					sum++;  // count in the interval
+				} 
+				else
+				{
+					if (sum >= lvl)  // the interval had more than specified, so skip j to i 
+					{
+						// cull the values from j to i;
+			            logger.TraceEvent(LogLevels.Verbose, 8787, "{0} - {1} [{2}] {3} neutrons in {4} tics ({5}-{6}) skipped", j, i, (i-j), sum, (State.timeArray[i] - stake), stake, State.timeArray[i]);
+						sumofsums += (ulong)sum;
+						skipdelta = State.timeArray[i] - State.timeArray[j];
+					}
+					else
+					{
+						for (int ii = j; ii < i; ii++)
+						{
+							if (ii == 0)
+								f.Write(State.timeArray[ii]); // write the first time
+							else
+							{
+								if (ii == j && skipdelta > 0)
+								{
+									f.Write(skipdelta); // write the new delta
+									skipdelta = 0;
+								}
+								else
+									f.Write(State.timeArray[ii] - State.timeArray[ii-1]); // write the neutron deltas that passed the check
+							}
+						}
+					}
+					sum = 0;					
+					stake = State.timeArray[i];
+					j = i;
+				}
+				i++;					
+			}
+			if (sum == 0)
+			{
+				f.Write(State.timeArray[i-1] - State.timeArray[i-2]); // write the last neutron delta
+			}
+
+			logger.TraceEvent(LogLevels.Info, 3335, "{0} neutrons removed", sumofsums);
+		}
+
+		public void Cull2(int lvl,  // neutron sum min/max
+						  int intervalinMicroSecs) // 10e-6s	
+		{
+			int i = 0, j = 0, start = 0;
+			ulong stake = State.timeArray[i];
+			int sum = 0;
+			ulong t = (ulong)intervalinMicroSecs * 100ul; // interval in 10e-8
+            logger.TraceEvent(LogLevels.Verbose, 13413, "{0} to {1} (> {2} over {3} tics)", stake, State.timeArray[(int)State.NumValuesParsed-1], lvl, t);
+			List<Tuple<int, int>> shlices = new List<Tuple<int, int>>();
+			Tuple<int, int> test = Tuple.Create(0,0);
+			foreach (ulong tm in State.timeArray)
+			{
+				if ((tm - stake) < t)
+				{
+					sum++;
+					j = i;
+				} 
+				else
+				{
+					if (sum >= lvl)
+					{
+						// cull the values from idx to i;
+						shlices.Add(Tuple.Create(start, j));
+						// logger.TraceEvent(LogLevels.Verbose, 3232, "{0} neutrons in {1} ({2} - {3}) sliced out", sum, (State.timeArray[i] - stake), stake, State.timeArray[i]);
+						// start
+					}
+					sum = 0;	
+					start = i;				
+					stake = State.timeArray[i];
+				}
+				i++;					
+			}
+		}
 
     } // LMRawDataTransform
 
@@ -944,8 +1045,6 @@ namespace Analysis
             else if (times.Length > timeArray.Count)
                 timeArray.AddRange(new ulong[times.Length - timeArray.Count]);
 
-            //Array.Resize(ref neutronEventArray, channels.Length);
-            //Array.Resize(ref timeArray, times.Length);
             string msg = PrepRawStreams(num: (ulong)bytecount, combineDuplicateHits: mergeDuplicatesTimeChannelHits);
             return ssb;
         }

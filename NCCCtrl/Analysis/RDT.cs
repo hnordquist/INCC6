@@ -30,6 +30,7 @@ using System.Threading;
 using AnalysisDefs;
 using NCCReporter;
 using System.Threading.Tasks;
+
 namespace Analysis
 {
 
@@ -171,8 +172,14 @@ namespace Analysis
             Double CycleSinglesRate = 0;
             if (Cycle.Totals > 0 && Cycle.TS.TotalSeconds > 0.0)
                 CycleSinglesRate = Cycle.Totals / Cycle.TS.TotalSeconds;
+
+            double singles = Cycle.CountingAnalysisResults.GetFirstMultiplicity.RawSinglesRate.v;
+            double doubles = Cycle.CountingAnalysisResults.GetFirstMultiplicity.RawDoublesRate.v;
+            double triples = Cycle.CountingAnalysisResults.GetFirstMultiplicity.RawTriplesRate.v;
             logger.TraceEvent(LogLevels.Info, 153, String.Format("Cycle {0} complete, results {1}/sec, {2} hits, {3} triggers",
                                     Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents));
+            logger.TraceEvent(LogLevels.Info, 2018001, String.Format("Cycle {0,-3}     Singles: {1,14:N3}     Doubles: {2,14:N3}     Triples: {3,14:N3}",
+                                    Cycle.seq, singles, doubles, triples));
         }
 
         public virtual void Init(LMLoggers.LognLM datalogger, LMLoggers.LognLM alogger)

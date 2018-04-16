@@ -397,7 +397,7 @@
             this.toolTip.SetToolTip(this.KnownAlphaRadioButton, "Check this box to assume that alpha is known and solve for Pu240 effective, multi" +
         "plication and efficiency.");
             this.KnownAlphaRadioButton.UseVisualStyleBackColor = true;
-            this.KnownAlphaRadioButton.CheckedChanged += new System.EventHandler(this.KnownAlphaRadioButton_CheckedChanged);
+            this.KnownAlphaRadioButton.CheckedChanged += new System.EventHandler(this.ARadioButton_CheckedChanged);
             // 
             // DualEnergyModelRadioButton
             // 
@@ -412,7 +412,7 @@
         "ergy point model, one energy for fission neutrons and one energy for the average" +
         " energy of the (alpha,n) neutrons.");
             this.DualEnergyModelRadioButton.UseVisualStyleBackColor = true;
-            this.DualEnergyModelRadioButton.CheckedChanged += new System.EventHandler(this.DualEnergyModelRadioButton_CheckedChanged);
+            this.DualEnergyModelRadioButton.CheckedChanged += new System.EventHandler(this.ARadioButton_CheckedChanged);
             // 
             // SolveForEfficiencyRadioButton
             // 
@@ -426,7 +426,7 @@
             this.toolTip.SetToolTip(this.SolveForEfficiencyRadioButton, "Check this box if you want to set the multiplication to one and solve for efficie" +
         "ncy. Used primarily for waste measurements.");
             this.SolveForEfficiencyRadioButton.UseVisualStyleBackColor = true;
-            this.SolveForEfficiencyRadioButton.CheckedChanged += new System.EventHandler(this.SolveForEfficiencyRadioButton_CheckedChanged);
+            this.SolveForEfficiencyRadioButton.CheckedChanged += new System.EventHandler(this.ARadioButton_CheckedChanged);
             // 
             // WeightedMultRadioButton
             // 
@@ -440,7 +440,7 @@
             this.toolTip.SetToolTip(this.WeightedMultRadioButton, "Check this box to use the Weighted Multiplicity Assay. Based on conventional mult" +
         "iplicity, but with weighted terms in the relevant equations.");
             this.WeightedMultRadioButton.UseVisualStyleBackColor = true;
-            this.WeightedMultRadioButton.CheckedChanged += new System.EventHandler(this.WeightedMultRadioButton_CheckedChanged);
+            this.WeightedMultRadioButton.CheckedChanged += new System.EventHandler(this.ARadioButton_CheckedChanged);
             // 
             // ConventionalMultRadioButton
             // 
@@ -455,7 +455,7 @@
         "n, and alpha from the singles, doubles and triples rates. The monoenergetic poin" +
         "t model is used.");
             this.ConventionalMultRadioButton.UseVisualStyleBackColor = true;
-            this.ConventionalMultRadioButton.CheckedChanged += new System.EventHandler(this.ConventionalMultRadioButton_CheckedChanged);
+            this.ConventionalMultRadioButton.CheckedChanged += new System.EventHandler(this.ARadioButton_CheckedChanged);
             // 
             // IDDMultiplicityCal
             // 

@@ -469,6 +469,7 @@ namespace NCC
 			bool there = false;
 			try
 			{
+                
 				there = pest.IsItThere;
 				if (!there)
 				{
@@ -672,17 +673,57 @@ namespace NCC
             // ready for insertion of methods and processing start
 
         }
+        public static Measurement BuildMeasurementTemp(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo)
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    CentralizedState.App.DB.TestParameters.Get(),
+                                    GetCurrentNormParams(det),
+                                    GetCurrentBackgroundParams(det),
+                                    GetAcquireIsotopics(acq),
+                                    acq,
+                                    GetCurrentHVCalibrationParams(det));
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
 
-		/// <summary>
-		/// Prepare measurement instance content for analysis
-		/// Populate calibration and counting parameters maps
-		/// Create general results and specific results dictionary map entries
-		/// Set up stratum details
-		/// </summary>
-		/// <param name="meas">The partially initialized measurement instance</param>
-		/// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
-		///                                 skipped if Reanalysis prepared the details from database measurement results
-		/// </param>
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo, CentralizedState.App.Logger(LMLoggers.AppSection.Data));
+
+            FillInMeasurementDetails(meas);
+            // ready for insertion of methods and processing start
+            return meas;
+
+        }
+        public static Measurement BuildMeasurementTemp(AcquireParameters acq, Detector det, AssaySelector.MeasurementOption mo, TestParameters tp, BackgroundParameters bkg, NormParameters np, AnalysisDefs.Isotopics iso, HVCalibrationParameters hvp )
+        {
+            // gather it all together
+            MeasurementTuple mt = new MeasurementTuple(new DetectorList(det),
+                                    tp,
+                                    np,
+                                    bkg,
+                                    iso,
+                                    acq,
+                                    hvp);
+            det.Id.source = acq.data_src;  // set the detector overall data source value here
+
+            // create the context holder for the measurement. Everything is rooted here ...
+            Measurement meas = new Measurement(mt, mo);
+
+            FillInMeasurementDetails(meas);
+            // ready for insertion of methods and processing start
+            return meas;
+
+        }
+
+        /// <summary>
+        /// Prepare measurement instance content for analysis
+        /// Populate calibration and counting parameters maps
+        /// Create general results and specific results dictionary map entries
+        /// Set up stratum details
+        /// </summary>
+        /// <param name="meas">The partially initialized measurement instance</param>
+        /// <param name="useCurCalibParams">Default behavior is to use active method and other calibration parameters;
+        ///                                 skipped if Reanalysis prepared the details from database measurement results
+        /// </param>
         static public void FillInMeasurementDetails(Measurement meas, bool useCurCalibParams = true)
         {
             if (meas.Detector.ListMode)
@@ -839,7 +880,7 @@ namespace NCC
         {
             if (meas.AnalysisParams.HasMultiplicity()) // devnote: override default detector settings 
             {
-                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, lame, shoud be using closest match
+                Multiplicity mkey = meas.AnalysisParams.GetFirstMultiplicityAnalyzer();  // APluralityOfMultiplicityAnalyzers: just using the first one found, should be using closest match
                 meas.Detector.MultiplicityParams.CopyValues(mkey);
             }
         }

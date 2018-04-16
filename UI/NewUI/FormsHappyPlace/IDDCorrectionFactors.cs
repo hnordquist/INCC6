@@ -52,7 +52,8 @@ namespace NewUI
             
             col = c;
             MaterialLabel.Text = mp.acq.item_type;
-            ModeLabel.Text = col.collar.collar_mode ? "Fast(Cd)" : "Thermal (no Cd)";
+
+            ModeLabel.Text = col.GetCollarModeString();
             DetectorLabel.Text = mp.det.Id.DetectorName;
 
             ATextBox.NumberFormat = NumericTextBox.Formatter.E6;
@@ -82,15 +83,16 @@ namespace NewUI
                 list.Add(poison[i].rod_type);
             }
 
-            for (int j = 0; j < list.Count; j++)
-            {
+            //For now, only one row.
+            //for (int j = 0; j < list.Count; j++)
+            //{
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(dataGridView1);
                 DataGridCell combo = new DataGridCell();
                 combo.ColumnNumber = 0;
-                combo.RowNumber = j;
+                combo.RowNumber = 0;
                 DataGridViewComboBoxCell cel = new DataGridViewComboBoxCell();
-
+                int j = 0;
                 foreach (string s in list)
                 {
                     cel.Items.Add(s);
@@ -117,8 +119,9 @@ namespace NewUI
                 row.Cells[8].ValueType = typeof(double);
                 row.Cells[8].Value = col.collar.poison_rod_c[j].err;
                 dataGridView1.Rows.Add(row);
-            }
-            for (int k = list.Count; k < 10; k++)
+                StoreChanges();
+            //}
+            /*for (int k = list.Count; k < 10; k++)
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(dataGridView1);
@@ -149,7 +152,7 @@ namespace NewUI
                 row.Cells[8].Value = 0;
                 dataGridView1.Rows.Add(row);
 
-            }
+            }*/
             SetHelp();
         }
 
@@ -189,6 +192,7 @@ namespace NewUI
         {
             StoreChanges();
             IDDK5CollarItemData k5 = new IDDK5CollarItemData(col, modified);
+            k5.StartPosition = FormStartPosition.CenterScreen;
             k5.Show();
             this.Close();
         }
@@ -215,6 +219,7 @@ namespace NewUI
         {
             StoreChanges();
             IDDCollarCal calib = new IDDCollarCal(col, modified);
+            calib.StartPosition = FormStartPosition.CenterScreen;
             calib.Show();
             this.Close();
         }
@@ -244,9 +249,9 @@ namespace NewUI
                 modified = true;
                 col.collar.u_mass_corr_fact_b.err = BErrorTextBox.Value;
             }
-
-            for (int i = 0; i < list.Count; i ++)
-            {
+            int i = 0;
+            //for (int i = 0; i < list.Count; i ++)
+            //{
                 double temp = 0;
                 Double.TryParse(dataGridView1.Rows[i].Cells[2].Value.ToString(), out temp);
                 if (col.collar.poison_rod_a[i].v != temp)
@@ -284,7 +289,7 @@ namespace NewUI
                     modified = true;
                     col.collar.poison_rod_c[i].err = temp;
                 }
-            }
+            //}
         }
 
         private void dataGridView1_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
@@ -391,7 +396,7 @@ namespace NewUI
                     case 4:
                         display = "Enter the error of coefficient a in the poison rod correction factor k3 = 1\r\n" +
                             "+ a * n * N0/ N * [1 - exp(-lambda * Gd)] * (b - c * E); see LA-11965-MS, pp 25-30.\r\n" +
-                            "For PWR and BWR fuel the recommended values for sigma (a) are 0.0.000532 and 0.000143, respectively.";
+                            "For PWR and BWR fuel the recommended values for sigma (a) are 0.0000532 and 0.000143, respectively.";
                         cell.ToolTipText = display;
                         break;
                     case 5:
