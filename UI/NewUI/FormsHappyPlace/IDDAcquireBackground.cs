@@ -177,6 +177,7 @@ namespace NewUI
 
         private void CreateMultiplicityAnalyzer()
         {
+
             //Make sure we have a default analyzer for the LM instrument with parms as set in measurement parameters.
             ah.det.MultiplicityParams.gateWidthTics = (ulong)ah.det.SRParams.gateLengthMS * 10;
             if (ah.det.MultiplicityParams.FA == FAType.FAOn)
@@ -206,7 +207,6 @@ namespace NewUI
             NCC.CentralizedState.App.DB.UpdateDetectorParams(ah.det);
             NCC.CentralizedState.App.DB.UpdateAcquireParams(ah.det);
             NCC.CentralizedState.App.LMBD.UpdateCounters(ah.det, AnalysisParams);
-
         }
         private void CancelBtn_Click(object sender, EventArgs e)
         {
