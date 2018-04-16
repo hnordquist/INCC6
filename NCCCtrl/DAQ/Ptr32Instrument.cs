@@ -25,17 +25,16 @@ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRU
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-
 using AnalysisDefs;
+using DAQ;
 using Device;
 using NCC;
 using NCCFile;
 using NCCReporter;
-using DAQ;
+using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 namespace Instr
 {
 
@@ -149,8 +148,9 @@ namespace Instr
             CancellationToken cta = NC.App.Opstate.CancelStopAbort.NewLinkedCancelStopAbortAndClientToken(m_cancellationTokenSource.Token);
             //Task.Factory.StartNew(() => PerformAssay(measurement, cta), cta);
             Task t = PerformAssay(measurement, cta);
-            t.Start();
-
+            t.Wait();
+            if (t.IsFaulted)
+                m_logger.TraceData(LogLevels.Info, 000003, t.Exception);
         }
 
         /// <summary>
@@ -189,12 +189,25 @@ namespace Instr
                 stopwatch.Start();
 
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} start", DateTime.Now.ToString());
+                //m_device.Available = 1;
 
-                while (stopwatch.Elapsed < duration.Add(new TimeSpan(0,0,1)) && RDT.Cycle.TS <=duration) {
+                //
+                System.IO.BinaryReader reader = m_device.GetRegisterReader(2);
+                int mainBufferCount; // = reader.ReadInt32();
+                int splitterBufferCount; // = reader.ReadInt32();
+                int available;
+                
+                //
+                while (stopwatch.Elapsed < duration) {
                     cancellationToken.ThrowIfCancellationRequested();
                     await Task.Delay(10);
-                    if (m_device.Available > 0) {
-                        int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+                    reader = m_device.GetRegisterReader(2);
+                    mainBufferCount = reader.ReadInt32();
+                    splitterBufferCount = reader.ReadInt32();
+                    available = Math.Max(0, mainBufferCount + splitterBufferCount - 4);
+
+                    if (available > 0) {
+                        int bytesRead = m_device.Read(buffer, 0, available);
 
                         if (bytesRead > 0) {
                             RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
@@ -202,9 +215,25 @@ namespace Instr
                         }
                     }
                 }
-
+                //m_device.Available = 2;
                 stopwatch.Stop();
+                //await Task.Delay(300);
 
+                /*
+                int a = 0;
+                while(a <= 0) a = m_device.Available;
+
+                if (a > 0)
+                {
+                    int bytesRead = m_device.Read(buffer, 0, buffer.Length);
+
+                    if (bytesRead > 0)
+                    {
+                        RDT.PassBufferToTheCounters(buffer, 0, bytesRead);
+                        total += bytesRead;
+                    }
+                }
+                */
                 m_logger.TraceEvent(LogLevels.Verbose, 11901, "{0} stop", DateTime.Now.ToString());
 
                 lock (m_monitor) {

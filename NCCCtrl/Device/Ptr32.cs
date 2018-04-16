@@ -52,7 +52,7 @@ namespace Device
         /// The maximum voltage in volts (V).
         /// </summary>
         public const int MaxVoltage = 2000;
-
+        private byte regnum = 2;
         /// <summary>
         /// Initializes static members of the <see cref="Ptr32"/> class.
         /// </summary>
@@ -131,7 +131,7 @@ namespace Device
         /// </summary>
         /// <exception cref="ObjectDisposedException">The device has been closed.</exception>
         /// <exception cref="Ptr32Exception">An error occurred communicating with the device.</exception>
-        public int Available
+        public int Available 
         {
             get
             {
@@ -139,8 +139,8 @@ namespace Device
                 const int SplitterBufferSize = 1 << 11;
 
                 CheckDisposed();
-                BinaryReader reader = GetRegisterReader(2);
-
+                BinaryReader reader = GetRegisterReader(regnum);
+                
                 if (m_firmwareVersion[18] <= '2')
                 {
                     // V2 or lower
@@ -163,6 +163,10 @@ namespace Device
 
                     return Math.Max(0, mainBufferCount + splitterBufferCount - 4);
                 }
+            }
+            set
+            {
+                regnum = (byte)value;
             }
         }
 
@@ -348,7 +352,7 @@ namespace Device
         /// </summary>
         /// <param name="register">The device register to read from.</param>
         /// <returns>A <see cref="BinaryReader"/> that reads from the specified device register.</returns>
-        protected BinaryReader GetRegisterReader(byte register)
+        public BinaryReader GetRegisterReader(byte register)
         {
             BinaryReader reader;
 

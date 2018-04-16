@@ -548,6 +548,7 @@ namespace NewUI
                     UseDoublesRadioButton.Enabled = false;
                     UseTriplesRadioButton.Enabled = false;
                     UsePu240eRadioButton.Enabled = false;
+                    //CommentAtEndCheckBox.Checked = false; //For DB, disallow comment? HN 4/16/2018
                     CommentAtEndCheckBox.Enabled = false;
                     //PrintResultsCheckbox.Enabled = false;
                     break;

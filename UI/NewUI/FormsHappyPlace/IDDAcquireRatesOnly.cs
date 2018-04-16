@@ -335,7 +335,13 @@ namespace NewUI
                 default:
                     CommentAtEndCheckBox.Enabled = false;
                     //PrintResultsCheckbox.Enabled = false;
-                    break;
+                    break;   
+            }
+            if (CommentAtEndCheckBox.Enabled == false)
+            {
+                CommentAtEndCheckBox.Checked = false;
+                //Don't check it and then not allow change. Are we really not allowing comments for all these?
+                //TODO: HN 4/16/2018
             }
         }
         private void NumCyclesTextBox_Leave(object sender, EventArgs e)

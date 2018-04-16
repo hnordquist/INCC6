@@ -186,6 +186,11 @@ namespace DetectorDefs
         {
             return (src == ConstructedSource.Live);
         }
+
+        public static bool IsDB (this ConstructedSource src)
+        {
+            return (src == ConstructedSource.DB);
+        }
         public static bool AcquireChoices(this ConstructedSource src)
         {
             return (src >= ConstructedSource.Live && src <= ConstructedSource.ReviewFile) || src == ConstructedSource.DatazFile;

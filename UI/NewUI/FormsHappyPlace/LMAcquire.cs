@@ -56,8 +56,6 @@ namespace NewUI
 
 		public enum LMSteps { FileBased, DAQBased, AnalysisSpec, Go };
 
-
-
 		public LMAcquire(AcquireParameters _ap, Detector _det, bool fromINCC5Acq = false)
 		{
 			InitializeComponent();
@@ -75,9 +73,29 @@ namespace NewUI
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
 
-            //Set default to live acquisition.
-            DataSource.SelectedIndex = 0;
-            ap.data_src = ConstructedSource.Live;
+            //Set whether live or file-based.
+            DataSource.SelectedIndex = ap.data_src.Live() ? 0: 1;
+            if (!ap.data_src.Live())
+
+            {   //TODO: handle MCA and LMMM here hn 4/16/2018
+                //Anything else is file based
+                ap.data_src = ConstructedSource.PTRFile;
+            }
+            QC.Checked = ap.qc_tests;
+            PrintResults.Checked = ap.print;
+            //To make this consistend, disable comment if anything but a live acquisition.
+            // Why only comment if live? HN 4/16/2018
+            if (ap.data_src.Live())
+            {
+                CommentBox.Checked = ap.ending_comment;
+            }
+            else
+            {
+                CommentBox.Checked = false;
+                Comment.Enabled = false;
+                ap.ending_comment = false;
+                ap.modified = true;
+            }
 		}
 
 		void BuildAnalyzerCombo()
@@ -1225,7 +1243,8 @@ namespace NewUI
 
 		void SelectTheBestINCC5AcquireVSRRow()
 		{
-			int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == SpecificCountingAnalyzerParams.Select);
+            //TODO: This is probably cause of dups. HN 4/16/2018
+            int idx = N.App.Opstate.Measurement.AnalysisParams.FindIndex(g => g.Rank == SpecificCountingAnalyzerParams.Select);
 			if (idx < 0)
 				return;
 			LoadParams(LMSteps.AnalysisSpec);  // this will be the initial load
@@ -1297,6 +1316,24 @@ namespace NewUI
         private void AnalyzerGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void QC_CheckedChanged(object sender, EventArgs e)
+        {
+            ap.qc_tests = ((CheckBox)sender).Checked;
+            ap.modified = ap.lm.modified = true;
+        }
+
+        private void PrintResults_CheckedChanged(object sender, EventArgs e)
+        {
+            ap.print = ((CheckBox)sender).Checked;
+            ap.modified = ap.lm.modified = true;
+        }
+
+        private void CommentBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ap.ending_comment = ((CheckBox)sender).Checked;
+            ap.modified = ap.lm.modified = true;
         }
 
         void EndEdit()
