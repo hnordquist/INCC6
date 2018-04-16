@@ -895,7 +895,7 @@
             this.DataSource.FormattingEnabled = true;
             this.DataSource.Items.AddRange(new object[] {
             "List Mode Device",
-            "Pulse/Pair files (*.bin & *.chn)"});
+            "PTR32 pulse pair files (*.bin & *.chn)"});
             this.DataSource.Location = new System.Drawing.Point(229, 82);
             this.DataSource.Margin = new System.Windows.Forms.Padding(4);
             this.DataSource.Name = "DataSource";

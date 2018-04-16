@@ -72,7 +72,14 @@ namespace NewUI
 			BuildAnalyzerCombo();
 			Swap(ap.data_src.Live());
 			SelectTheBestINCC5AcquireVSRRow();
-
+            DataSource.Items.Clear();
+            foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
+            {
+                if (cs.LMFiles(det.Id.SRType) || cs.Live())
+                {
+                    DataSource.Items.Add(cs.NameForViewing(det.Id.SRType));
+                }
+            }
             //Set whether live or file-based.
             DataSource.SelectedIndex = ap.data_src.Live() ? 0: 1;
             if (!ap.data_src.Live())
@@ -83,7 +90,7 @@ namespace NewUI
             }
             QC.Checked = ap.qc_tests;
             PrintResults.Checked = ap.print;
-            //To make this consistend, disable comment if anything but a live acquisition.
+            //To make this consistent, disable comment if anything but a live acquisition.
             // Why only comment if live? HN 4/16/2018
             if (ap.data_src.Live())
             {
