@@ -749,9 +749,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(197, 268);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(160, 17);
+            this.label4.Size = new System.Drawing.Size(80, 13);
             this.label4.TabIndex = 62;
-            this.label4.Text = " Units are in ticks: 1e-7s";
+            this.label4.Text = " Units are in μs.";
             // 
             // AnalyzerGridView
             // 
@@ -901,6 +901,7 @@
             this.DataSource.Name = "DataSource";
             this.DataSource.Size = new System.Drawing.Size(232, 24);
             this.DataSource.TabIndex = 46;
+            this.DataSource.SelectedIndexChanged += new System.EventHandler(this.DataSource_SelectedIndexChanged);
             // 
             // ReportView
             // 

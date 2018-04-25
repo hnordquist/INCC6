@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AnalysisDefs;
+using INCCCore;
 using NCCTransfer;
 using NCCReporter;
 using System.Globalization;
@@ -14,6 +15,7 @@ namespace NCCTester
 {
     class Program
     {
+        
         private static LMLoggers.LognLM TestLogger;
         public static String testFile;
 
@@ -22,7 +24,6 @@ namespace NCCTester
         public static DetectorDefs.DataSourceIdentifier dsid;
         public static Multiplicity mult;
         public static Measurement testMeasurement;
-        public static Measurement newResultMeasurement;
         public static MeasId measID;
         public static HVCalibrationParameters hv;
         public static AnalysisMethod am;
@@ -33,7 +34,6 @@ namespace NCCTester
         public static INCCMethodResult TestVersionMethodResult = new INCCMethodResult();
         public static INCCAnalysisParams.active_mult_rec active_mult_params = new INCCAnalysisParams.active_mult_rec();
         public static NCCTransfer.results_active_mult_rec active_mult_results = new results_active_mult_rec();
-        public static SpecificCountingAnalyzerParams spec = new SpecificCountingAnalyzerParams();
 
         //INCC6 Results
         public static INCCResult InputResult = new INCCResult();
@@ -70,7 +70,7 @@ namespace NCCTester
         public static Regex ThreeNums = new Regex("^\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)");
         //cycle table
         public static Regex cycleData = new Regex("^\\s*(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\w)+");
-        public static Regex ratesData = new Regex("^\\s*(\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(\\w)+");
+        public static Regex ratesData = new Regex("^\\s*(\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(-?\\d+.\\d+)\\s+(\\w+)");
         //Distribution
         public static Regex cycleDistHeader = new Regex("^Cycle (\\d+)*");
 
@@ -89,7 +89,7 @@ namespace NCCTester
             testMeasurement.ResultsFiles = new ResultFiles();
             state = new INCCAnalysisState();
             testMeasurement.INCCAnalysisState = state;
-            testFile = "C:\\CODE\\INCC6 Test Suite\\Test Data\\713P0048.VER";
+            testFile = "C:\\CODE\\INCC7\\TestData\\ActiveMultiplicity\\713P0048.VER";
 
         }
         public static void LoadMeasurementFromFile(string fileName)
@@ -129,6 +129,7 @@ namespace NCCTester
                                 INCCAnalysisParams.INCCMethodDescriptor imd = new INCCAnalysisParams.INCCMethodDescriptor();
                                 state.Methods = new AnalysisMethods();
                                 state.Methods.AddMethod(am, imd);
+                                state.Methods.Normal = am;
                                 ReadActiveMultiplicityCalibration();
                                 break;
                             case "Active cycle data":
@@ -262,7 +263,6 @@ namespace NCCTester
                         Double.TryParse(m.Groups[2].Value, out val);
                         mult.gateWidthTics = (ulong)val * 10;
                         mult.sr.gateLengthMS = val;
-                        spec.gateWidthTics = mult.gateWidthTics;
                         break;
                     case "2nd gate length"://What is this?
                         Double.TryParse(m.Groups[2].Value, out val);
@@ -380,11 +380,11 @@ namespace NCCTester
                     case "Shift register reals + accidentals sum":
                         Double.TryParse(m.Groups[2].Value, out val);
                         InputResult.RASum = val;
-
                         break;
                     case "Shift register accidentals sum":
                         Double.TryParse(m.Groups[2].Value, out val);
                         InputResult.ASum = val;
+                        InputResult.UnASum = val;
                         break;
                     case "Shift register 1st scaler sum":
                         Double.TryParse(m.Groups[2].Value, out val);
@@ -570,13 +570,12 @@ namespace NCCTester
             {
                 while (line != "")
                 {
-                    String QC = "";
-                    double mass = 0.0;
                     int idx = 0;
                     Match c;
                     
                     while (line != "")
                     {
+                        //Cycle totals
                         c = cycleData.Match(line);
                         Int32.TryParse(c.Groups[1].Value, out idx);
                         mcrs.Add(new MultiplicityCountingRes());
@@ -588,8 +587,6 @@ namespace NCCTester
                             Double.TryParse(c.Groups[2].Value, out val);
                             mcrs[idx-1].Totals = val;
                             cycles[idx - 1].Totals = (ulong)val;
-                            mcrs[idx - 1].RawSinglesRate.v = val/countTime;
-                            cycles[idx - 1].SinglesRate = mcrs[idx - 1].RawSinglesRate.v;
                             mcrs[idx-1].TS = cycles[idx - 1].TS;
                             mcrs[idx - 1].DeadtimeCorrectedSinglesRate.v = mcrs[idx - 1].RawSinglesRate.v;
                             Double.TryParse(c.Groups[3].Value, out val);
@@ -600,7 +597,7 @@ namespace NCCTester
                             mcrs[idx-1].Scaler1.v = val;
                             double.TryParse(c.Groups[6].Value, out val);
                             mcrs[idx-1].Scaler2.v = val;
-                            QCTestStatus qcts = QCTestStatusExtensions.FromString(c.Groups[6].Value); 
+
                             line = sr.ReadLine();
                             lineCount++;
                         }
@@ -609,75 +606,31 @@ namespace NCCTester
                     line = sr.ReadLine();
                     while (line != "")
                     {
+                        //Cycle rates -- set DTC corrected to raw for now.
                         c = ratesData.Match(line);
                         Int32.TryParse(c.Groups[1].Value, out idx);
                         if (c.Success)
                         {
                             Double.TryParse(c.Groups[2].Value, out val);
-                            mcrs[idx - 1].rates.RawRates.SinglesRate = val;
+                            mcrs[idx - 1].DeadtimeCorrectedSinglesRate.v = val;
+                            cycles[idx - 1].SinglesRate = val;
                             Double.TryParse(c.Groups[3].Value, out val);
-                            mcrs[idx - 1].rates.RawRates.DoublesRate = val;
+                            mcrs[idx - 1].rates.DeadtimeCorrectedRates.DoublesRate = val;
                             Double.TryParse(c.Groups[4].Value, out val);
-                            mcrs[idx - 1].rates.RawRates.TriplesRate = val;
+                            mcrs[idx - 1].rates.DeadtimeCorrectedRates.TriplesRate = val;
                             Double.TryParse(c.Groups[5].Value, out val);
                             mcrs[idx-1].mass = val;
+                            cycles[idx-1].SetQCStatus(mult,QCTestStatusExtensions.FromString(c.Groups[6].Value));
                         }
                         line = sr.ReadLine();
                         lineCount++;
                     }
-                    testMeasurement.CountingAnalysisResults.Add(spec, mcrs[0]);
+
+                    testMeasurement.CountingAnalysisResults.Add(mult, mcrs[0]);
                     for (int i = 0; i < cycles.Count; i++ )
                     {
-                        cycles[i].CountingAnalysisResults.Add (spec,mcrs[i]);
+                        cycles[i].CountingAnalysisResults.Add (mult,mcrs[i]);
                         testMeasurement.Cycles.Add(cycles[i]);
-
-
-                       /* mcr.DeadtimeCorrectedDoublesRate.v = run.run_doubles_rate;
-                        mcr.DeadtimeCorrectedTriplesRate.v = run.run_triples_rate;
-
-                        mcr.efficiency = run.run_multiplicity_efficiency;
-                        mcr.multiAlpha = run.run_multiplicity_alpha;
-                        mcr.multiplication = run.run_multiplicity_mult;
-                        cycle.HighVoltage = run.run_high_voltage;
-
-                        // assign the hits to a single channel (0)
-                        cycle.HitsPerChannel[0] = run.run_singles;
-                        mcr.RawSinglesRate.v = run.run_singles_rate;
-                        mcr.RawDoublesRate.v = run.run_doubles_rate;
-                        mcr.RawTriplesRate.v = run.run_triples_rate;
-
-                        mcr.Scaler1.v = run.run_scaler1;
-                        mcr.Scaler2.v = run.run_scaler2;
-                        mcr.Scaler1Rate.v = run.run_scaler1_rate;
-                        mcr.Scaler2Rate.v = run.run_scaler2_rate;
-
-                        long index = 0;
-                        for (ulong i = 0; i < INCC.SR_EX_MAX_MULT; i++)
-                        {
-                            if (run.run_mult_acc[i] > 0 || run.run_mult_reals_plus_acc[i] > 0)
-                            {
-                                index = (long)i;
-                            }
-                        }
-
-                        mcr.MaxBins = (ulong)index + 1;
-                        mcr.MinBins = (ulong)index + 1;
-
-                        mcr.NormedAMult = new ulong[mcr.MaxBins];
-                        mcr.RAMult = new ulong[mcr.MaxBins];
-                        mcr.UnAMult = new ulong[mcr.MaxBins];
-
-                        // was not setting these to the right values hn 10-2
-                        for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
-                        {
-                            mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i];
-                            mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
-                        }
-                        mcr.RASum = run.run_reals_plus_acc;
-                        mcr.ASum = run.run_acc;
-                        mcr.AB.Resize((int)mcr.MaxBins);*/
-
-
                     }
                 }
             }
@@ -702,7 +655,7 @@ namespace NCCTester
                     numbers.Add(line);
                     line = sr.ReadLine();
                 }
-                MultiplicityCountingRes mcr1 = (MultiplicityCountingRes)testMeasurement.Cycles[i].CountingAnalysisResults[spec];
+                MultiplicityCountingRes mcr1 = (MultiplicityCountingRes)testMeasurement.Cycles[i].CountingAnalysisResults[mult];
                 ulong[] RA = new ulong[numbers.Count];
                 ulong[] A = new ulong[numbers.Count];
                 for (int j = 0; j < numbers.Count; j++)
@@ -730,87 +683,59 @@ namespace NCCTester
         static void Main(string[] args)
         {
             Setup();
-            LoadMeasurementFromFile("C:\\CODE\\INCC6 Test Suite\\Test Data\\713P0048.VER");
+            //TestLogger = new LMLoggers.LognLM("Test");
+            Console.WriteLine("loading test file " + testFile);
+            LoadMeasurementFromFile(testFile);
             testMeasurement.Detector = det;
             testMeasurement.Detector.MultiplicityParams = mult;
             testMeasurement.AnalysisParams = new CountingAnalysisParameters();
-            testMeasurement.AnalysisParams.Add(spec); //Cycles and mult dist are now populated from file.
-            TestLogger = new LMLoggers.LognLM("Test");
-            Measurement newResultMeasurement = BuildMeasurement(testMeasurement);
-            newResultMeasurement.Cycles = new CycleList();
-            foreach (Cycle c in testMeasurement.Cycles)
+            testMeasurement.AnalysisParams.Add(mult); //Cycles and mult dist are now populated from file.
+            //NEXT: Check this. The results file gives us DTC rates. Must be sure to start from raw if recalculating HN 4/16/2018
+
+            //Copy to new measurement for comparison
+            Console.WriteLine("now calculating new measurement for test comparison");
+            //Measurement newResultMeasurement = BuildMeasurement(testMeasurement);
+            // Geez, will I ever get all the inner stuff dependent on INCC app cleared out? HN 4/16/2018
+           /* if (newResultMeasurement.Cycles.GetValidCycleCount() > 0) // INCC5 Pu mass calcs
             {
-                Cycle raw = new Cycle(TestLogger);
-                raw.seq = c.seq;
-                raw.TS = c.TS;  // is not always whole seconds hn 10-1.
-
-                raw.Totals = c.Totals;
-                raw.SinglesRate = (double)c.Totals / c.TS.Seconds;
-
-                // table lookup on the strings, so test status is correct
-                QCTestStatus qcts = QCTestStatusExtensions.FromString(c.QCStatus (mult).ToString());
-
-                raw.SetQCStatus(mult, qcts); // creates entry if not found
-
-                mcrs[0].Totals = c.Totals;
-                mcrs[0].TS = c.TS;
-                /*
-                mcrs[0].DeadtimeCorrectedSinglesRate.v = c.SinglesRate;
-                mcrs[0].DeadtimeCorrectedDoublesRate.v = ;
-                mcrs[0].DeadtimeCorrectedTriplesRate.v = 0;
-
-                mcr.RASum = (ulong)run.run_reals_plus_acc;
-                mcr.ASum = (ulong)run.run_acc;
-
-                mcr.efficiency = run.run_multiplicity_efficiency;
-                mcr.mass = run.run_mass;
-                mcr.multiAlpha = run.run_multiplicity_alpha;
-                mcr.multiplication = run.run_multiplicity_mult;
-                cycle.HighVoltage = run.run_high_voltage;
-
-                // assign the hits to a single channel (0)
-                cycle.HitsPerChannel[0] = run.run_singles;
-                mcr.RawSinglesRate.v = run.run_singles_rate;
-                mcr.RawDoublesRate.v = run.run_doubles_rate;
-                mcr.RawTriplesRate.v = run.run_triples_rate;
-
-                mcr.Scaler1.v = run.run_scaler1;
-                mcr.Scaler2.v = run.run_scaler2;
-                mcr.Scaler1Rate.v = run.run_scaler1_rate;
-                mcr.Scaler2Rate.v = run.run_scaler2_rate;
-
-                long index = 0;
-                for (ulong i = 0; i < INCC.SR_EX_MAX_MULT; i++)
-                {
-                    if (run.run_mult_acc[i] > 0 || run.run_mult_reals_plus_acc[i] > 0)
-                    {
-                        index = (long)i;
-                    }
-                }
-
-                mcr.MaxBins = (ulong)index + 1;
-                mcr.MinBins = (ulong)index + 1;
-
-                mcr.NormedAMult = new ulong[mcr.MaxBins];
-                mcr.RAMult = new ulong[mcr.MaxBins];
-                mcr.UnAMult = new ulong[mcr.MaxBins];
-
-                // was not setting these to the right values hn 10-2
-                for (ulong i = 0; i < (ulong)mcr.MaxBins; i++)
-                {
-                    mcr.RAMult[i] = (ulong)run.run_mult_reals_plus_acc[i];
-                    mcr.NormedAMult[i] = (ulong)run.run_mult_acc[i];
-                }
-                mcr.RASum = run.run_reals_plus_acc;
-                mcr.ASum = run.run_acc;
-                mcr.AB.Resize((int)mcr.MaxBins);*/
-
+                newResultMeasurement.OutlierProcessing(); // summary pass at the end of all the cycles
+                newResultMeasurement.GenerateCycleCountingSummaries(ignoreSuspectResults: false);
+                newResultMeasurement.CalcAvgAndSums();
+                newResultMeasurement.CalculateResults();
             }
-            //TODO: clear all the DT corrected rates and summarizers to reanalyze. hn 2/27/2018
-            newResultMeasurement.InitializeResultsSummarizers(); //Delete results
-            //Now ready to run through analysis.
+            else // everything else
+                newResultMeasurement.GenerateCycleCountingSummaries(ignoreSuspectResults: false);
+            Console.WriteLine("comparing results for " + testFile);
+            newResultMeasurement.CalculateMeasurementResults();*/
+            
+            //bool TestSuccess = CompareResults(testMeasurement, newResultMeasurement);
         }
 
+        static bool CompareResults(Measurement original, Measurement recalculated)
+        {
+            CompareParameters(original, recalculated);
+            //CompareRates();
+            //CompareMultiplicityDistrubutions();
+            //CompareMeasurementResults();
+            return true;
+        }
+        static bool CompareParameters (Measurement original, Measurement recalculated)
+        {
+            bool same = true;
+            Console.WriteLine("comparing detector info");
+            same = original.Detector.CompareTo(recalculated.Detector)==0;
+            Console.WriteLine(same ? "detectors same" : "detector mismatch");
+            Console.WriteLine("comparing methods");
+            same = original.INCCAnalysisState.Methods.Equals (recalculated.INCCAnalysisState.Methods);
+            Console.WriteLine(same ? "methods same" : "methods mismatch");
+            Console.WriteLine("comparing each method parameter set");
+            IEnumerator iter =  original.INCCAnalysisState.Methods.GetMethodEnumerator();
+            while (iter.MoveNext())
+            {
+                Console.WriteLine("comparing method parameter details for " );
+            }
+            return same;
+        }
         //Build a measurement fresh from existing. No DB or "internal lameness" required.
         //Copy all but results.
         static Measurement BuildMeasurement (Measurement meas)
@@ -832,9 +757,12 @@ namespace NCCTester
             copied.INCCAnalysisState = meas.INCCAnalysisState;
             copied.INCCAnalysisState.Methods = meas.INCCAnalysisState.Methods;
             copied.InitializeResultsSummarizers();
-            copied.CountingAnalysisResults.Add(spec, meas.CountingAnalysisResults);
             copied.InitializeContext(clearCounterResults: true);
             copied.PrepareINCCResults();
+            foreach (Cycle c in meas.Cycles)
+                copied.Cycles.Add(c);
+            copied.CountingAnalysisResults.Remove(mult);
+            copied.CountingAnalysisResults.Add(mult, meas.CountingAnalysisResults[mult]);
 
             copied.Stratum = new Stratum();
             copied.Stratum.CopyFrom(meas.Stratum);

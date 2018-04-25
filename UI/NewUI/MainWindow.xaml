@@ -150,6 +150,7 @@
                                 <ComboBoxItem Content="Warning" />
                                 <ComboBoxItem Content="Information" />
                                 <ComboBoxItem Content="Verbose" />
+                                
                             </ComboBox>
                             <CheckBox Content="Logging" Name="EnableLog" Margin="21,8,513.2,3" Checked="EnableLog_Checked" ToolTip="Enable/disable logging" Unchecked="EnableLog_Unchecked" FlowDirection="RightToLeft" />
                             <ComboBox Height="Auto" Name="logResults" Width="75" ToolTip="Select how results are logged" IsEnabled="False" Margin="268,5,276,8" SelectionChanged="logResults_SelectionChanged" Visibility="Hidden">

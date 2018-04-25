@@ -51,7 +51,7 @@ namespace NewUI.Progress
         /// <param name="cancellationTokenSource">The cancellation token source that cancels the task.</param>
         /// <param name="progressTracker">The progress tracker that tracks the task's progress.</param>
         /// <exception cref="ArgumentNullException"><paramref name="description"/> or <paramref name="task"/> is <c>null</c>.</exception>
-        public TaskProgress(string title, string description, Task task, CancelStopAbort cancelStopAbortTokensSource, ProgressTracker progressTracker, bool isAssay)
+        public TaskProgress(string title, string description, Task task, CancelStopAbort cancelStopAbortTokensSource, ProgressTracker progressTracker, bool isAssay/*, string rates*/)
         {
             if (description == null || task == null) {
                 throw new ArgumentNullException();
@@ -68,6 +68,7 @@ namespace NewUI.Progress
             m_task = task;
             m_title = title;
             m_isAssay = isAssay;
+            //m_rates = rates;
 
             if (m_progressTracker != null) {
                 m_progressTracker.ProgressChanged += (sender, e) => {
@@ -116,6 +117,12 @@ namespace NewUI.Progress
         {
             get { return m_title; }
         }
+
+        /*public string Rates
+        {
+            get { return m_rates; }
+            set { m_rates = value; OnPropertyChanged(new PropertyChangedEventArgs("CycleRates")); }
+        }*/
 
         public string CancelContent
         {
@@ -185,5 +192,6 @@ namespace NewUI.Progress
         private int m_progress;
         private ProgressTracker m_progressTracker;
         private Task m_task;
+        //private string m_rates;
     }
 }

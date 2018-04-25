@@ -406,7 +406,7 @@ namespace LMRawAnalysis
                 else
                 {
                     beta[n] = (n * (n - 1) / 2);// Per Daniela 2.22.2018
-        }
+                }
             }
 
             //store the alpha and beta coefficients

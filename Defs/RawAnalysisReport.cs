@@ -82,7 +82,7 @@ namespace AnalysisDefs
         enum RawCycles { Singles, RA, A, QCTests }
         enum RateCycles { Singles, Doubles, Triples, Mass, QCTests }
         enum DTCRateCycles { Singles = RateCycles.Singles, Doubles = RateCycles.Doubles, Triples = RateCycles.Triples, Mass = RateCycles.Mass, QCTests = RateCycles.QCTests }
-        enum RepResults { GateWidth, Predelay, Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
+        enum RepResults { FAType, GateWidth, Predelay, Singles, SinglesSigma, Doubles, DoublesSigma, Triples, TripleSigmas } //,, Quads, QuadsSigma }; //, Scaler1, Scaler1Sigma, Scaler2, Scaler2Sigma }
         enum ChannelCounts
         {
             C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16, C17, C18, C19, C20, C21, C22, C23, C24, C25, C26, C27, C28, C29, C30, C31, C32
@@ -147,6 +147,12 @@ namespace AnalysisDefs
                 Row[] temp;
                 switch (section)
                 {
+                    case ReportSections.RepResults:
+                        sec = DoAverageRatesByMult("Averaged Corrected Rates");
+                        break;
+                    case ReportSections.RepDytlewskiResults:
+                        sec = DoDylewskiRatesByMult("Averaged Dytlewski Rates");
+                        break;
                     case ReportSections.SofwareContext:
                         temp = GenSoftwareConfigRows();
                         sec = new Section(null, 1, 1, temp.Length);
@@ -216,34 +222,6 @@ namespace AnalysisDefs
                             sec.AddRange(sec2);
                             sec.AddRange(temp);
                         }
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                ctrllog.TraceException(e);
-            }
-            return sec;
-        }
-
-        protected Section ConstructReportSection(ReportSections section, Multiplicity mu, MultiplicityCountingRes mcr)
-        {
-            Section sec = null;
-            if (!(bool)selectedReportSections.GetValue((int)section))
-                return sec;
-            try
-            {
-                switch (section)
-                {
-                    case ReportSections.RepResults:
-                        sec = new Section(typeof(RepResults), 1, 1, 1);
-                        sec[1].Add(0, "Corrected rates for SR " + mu.ShortName());
-                        sec.Add(GenResultsRow(mcr));
-                        break;
-                    case ReportSections.RepDytlewskiResults:
-                        sec = new Section(typeof(RepResults), 1, 1, 1);
-                        sec[1].Add(0, "Dytlewski rates for SR " + mu.ShortName());
-                        sec.Add(GenDytlewskiResultsRow(mcr));
                         break;
                 }
             }
@@ -361,6 +339,83 @@ namespace AnalysisDefs
             return sec;
         }
 
+        protected Section DoAverageRatesByMult(String title)
+        {
+            Section sec = null;
+            sec = new Section(typeof(RepResults), 1, 1, 1);
+            sec[1].Add(0, title);
+            int rep = meas.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity));
+            if (rep < 1)
+            {
+                return sec;
+            }
+
+            IEnumerator iter = meas.CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
+
+            while (iter.MoveNext())
+            {
+                //rep = 1 + cyccol + (ecount * i);
+                Multiplicity mu = (Multiplicity)iter.Current;
+                INCCResult ir = meas.INCCAnalysisResults[new MeasOptionSelector (AssaySelector.MeasurementOption.rates,mu)];
+                Row row = new Row();
+                row.Add ((int)RepResults.FAType, mu.FA == FAType.FAOff ? "Slow" : "Fast");
+                row.Add((int)RepResults.GateWidth, (mu.gateWidthTics / 10.0).ToString());
+                row.Add((int)RepResults.Predelay, (mu.sr.predelay / 10.0).ToString());
+                row.Add((int)RepResults.Singles, ir.DeadtimeCorrectedSinglesRate.v.ToString()); // todo: move to results list entry processing scope
+                row.Add((int)RepResults.SinglesSigma, ir.DeadtimeCorrectedSinglesRate.err.ToString());
+                row.Add((int)RepResults.Doubles, ir.DeadtimeCorrectedDoublesRate.v.ToString());
+                row.Add((int)RepResults.DoublesSigma, ir.DeadtimeCorrectedDoublesRate.err.ToString());
+                if (!meas.AcquireState.data_src.ToString().Equals("Shift Register"))
+                {
+                    row.Add((int)RepResults.Triples, ir.DeadtimeCorrectedTriplesRate.v.ToString());
+                    row.Add((int)RepResults.TripleSigmas, ir.DeadtimeCorrectedTriplesRate.err.ToString());
+                }
+                //row.Add((int)RepResults.Quads, "");
+                //row.Add((int)RepResults.QuadsSigma, "");
+                sec.Add(row);
+
+            }
+            return sec;
+        }
+
+        protected Section DoDylewskiRatesByMult(String title)
+        {
+            Section sec = null;
+            sec = new Section(typeof(RepResults), 1, 1, 1);
+            sec[1].Add(0, title);
+            int rep = meas.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity));
+            if (rep < 1)
+            {
+                return sec;
+            }
+
+            IEnumerator iter = meas.CountingAnalysisResults.GetATypedParameterEnumerator(typeof(AnalysisDefs.Multiplicity));
+            while (iter.MoveNext())
+            {
+                //rep = 1 + cyccol + (ecount * i);
+                Multiplicity mu = (Multiplicity)iter.Current;
+                MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mu];
+
+                Row row = new Row();
+                row.Add((int)RepResults.FAType, mu.FA == FAType.FAOff ? "Slow" : "Fast");
+                row.Add((int)RepResults.GateWidth, (mu.gateWidthTics / 10.0).ToString());
+                row.Add((int)RepResults.Predelay, (mu.sr.predelay / 10.0).ToString());
+                row.Add((int)RepResults.Singles, mcr.DytlewskiCorrectedSinglesRate.v.ToString()); // todo: move to results list entry processing scope
+                row.Add((int)RepResults.SinglesSigma, mcr.DytlewskiCorrectedSinglesRate.err.ToString());
+                row.Add((int)RepResults.Doubles, mcr.DytlewskiCorrectedDoublesRate.v.ToString());
+                row.Add((int)RepResults.DoublesSigma, mcr.DytlewskiCorrectedDoublesRate.err.ToString());
+                if (!meas.AcquireState.data_src.ToString().Equals("Shift Register"))
+                {
+                    row.Add((int)RepResults.Triples, mcr.DytlewskiCorrectedTriplesRate.v.ToString());
+                    row.Add((int)RepResults.TripleSigmas, mcr.DytlewskiCorrectedTriplesRate.err.ToString());
+                }
+                //row.Add((int)RepResults.Quads, "");
+                //row.Add((int)RepResults.QuadsSigma, "");
+                sec.Add(row);
+
+            }
+            return sec;
+        }
         protected Section DoAcrossForManyMults(String title, Type column, bool cyclecolumn)
         {
             Section sec = null;
@@ -1573,15 +1628,8 @@ namespace AnalysisDefs
                 sections.Add(ConstructReportSection(ReportSections.MeasurementDetails));
                 sections.Add(ConstructReportSection(ReportSections.DetectorCalibration));
 
-                IEnumerator iter = m.INCCAnalysisResults.GetMeasSelectorResultsEnumerator();
-                while (iter.MoveNext())
-                {
-                    MeasOptionSelector moskey = (MeasOptionSelector)iter.Current;
-                    INCCResult ir = m.INCCAnalysisResults[moskey];
-                    Multiplicity mu = moskey.MultiplicityParams;
-                    sections.Add(ConstructReportSection(ReportSections.RepResults, mu, ir));
-                    // add back later sections.Add(ConstructReportSection(ReportSections.RepDytlewskiResults, mu, ir));
-                }
+                sections.Add(ConstructReportSection(ReportSections.RepResults));
+
                 sections.Add(ConstructReportSection(ReportSections.ChannelCounts)); // from RateInterval or m.cycles.HitsPerChannel
                 sections.Add(ConstructReportSection(ReportSections.ChannelRates)); // from RateInterval and/or  m.cycles.HitsPerChannel
                 sections.Add(ConstructReportSection(ReportSections.ComputedMultiplicityIntermediates));

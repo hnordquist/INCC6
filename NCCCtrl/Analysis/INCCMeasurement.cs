@@ -182,7 +182,7 @@ namespace AnalysisDefs
          //</summary>
         public static void GenerateCycleCountingSummaries(this Measurement meas, bool ignoreSuspectResults = true)
         {
-            if (NC.App.Opstate.IsAbortRequested)
+            if (NC.App != null && NC.App.Opstate.IsAbortRequested)
                 return;
 
             uint validMultCyclesCount = meas.CycleSummary(ignoreSuspectResults);  // APluralityOfMultiplicityAnalyzers: this may need to summarize across analyzers, as well as the single value on the measurement
@@ -357,7 +357,7 @@ namespace AnalysisDefs
             while (iter.MoveNext())
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                if (NC.App.Opstate.IsAbortRequested)
+                if (NC.App != null && NC.App.Opstate.IsAbortRequested)
                     return;
 
                 INCCResult results;
@@ -1621,7 +1621,7 @@ namespace AnalysisDefs
         public static void OutlierProcessing(this Measurement meas)
         {
             AssaySelector.MeasurementOption at = meas.MeasurementId.MeasOption;
-            if (NC.App.Opstate.IsAbortRequested)
+            if (NC.App != null && NC.App.Opstate.IsAbortRequested)
                 return;
             if (!CycleProcessing.ConductStep(CycleProcessing.CycleStep.Outlier, at, meas.AcquireState.qc_tests))
                 return;
@@ -1646,7 +1646,7 @@ namespace AnalysisDefs
         {
             RatesAdjustments dtchoice = RatesAdjustments.DeadtimeCorrected;
 
-            if (NC.App.Opstate.IsAbortRequested)
+            if (NC.App != null && NC.App.Opstate.IsAbortRequested)
                 return;
 
             IEnumerator iter = meas.CountingAnalysisResults.GetMultiplicityEnumerator();

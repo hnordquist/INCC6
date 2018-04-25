@@ -131,6 +131,12 @@ namespace AnalysisDefs
             init();
         }
 
+        public override bool Equals(object obj)
+        {
+            AnalysisMethods ams = (AnalysisMethods)obj;
+            return choices.Equals(ams.choices);
+        }
+
         private void init()
         {
             choices = new bool[Enum.GetValues(typeof(AnalysisMethod)).Length];

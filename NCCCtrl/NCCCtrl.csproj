@@ -23,7 +23,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\deployment\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,23 +45,14 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Defs">
-      <HintPath>..\deployment\Defs.dll</HintPath>
-    </Reference>
     <Reference Include="LMSR">
-      <HintPath>..\..\INCC6\deployment\LMSR.dll</HintPath>
+      <HintPath>..\deployment\LMSR.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
-    <Reference Include="NCCCore">
-      <HintPath>..\deployment\NCCCore.dll</HintPath>
-    </Reference>
-    <Reference Include="RepDB">
-      <HintPath>..\deployment\RepDB.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -129,10 +120,27 @@
     <Compile Include="Transfer\INCCFileInfo.cs" />
     <Compile Include="Utils\ProgressTracker.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NCCCore\NCCCore.csproj">
+      <Project>{00572805-e746-49f5-aa40-25313e3a87e3}</Project>
+      <Name>NCCCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Defs\Defs.csproj">
+      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
+      <Name>Defs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RepDB\RepDB.csproj">
+      <Project>{15214429-93da-45c9-a0bc-30285c990a5d}</Project>
+      <Name>RepDB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /B /V /Y "$(TargetPath)" "$(SolutionDir)deployment"
-copy /B /V /Y  "$(TargetDir)"$(TargetName).pdb "$(SolutionDir)deployment"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants Condition="$([System.Version]::Parse('$(TargetFrameworkVersion.Substring(1))').CompareTo($([System.Version]::Parse('4.6.1')))) &gt;= 0">$(DefineConstants);NETFX_461</DefineConstants>

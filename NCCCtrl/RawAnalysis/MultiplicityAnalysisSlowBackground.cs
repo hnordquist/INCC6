@@ -29,6 +29,9 @@ using System;
 using System.ComponentModel;
 using System.Threading;
 
+using System.IO;
+using System.Collections.Generic;
+
 namespace LMRawAnalysis
 {
     sealed public class MultiplicityAnalysisSlowBackground : SDTMultiplicityCalculator
@@ -205,6 +208,10 @@ namespace LMRawAnalysis
                     UInt32 totalNeutronsInGate;
                     UInt32 totalInAccidentalsGate;
 
+                    ///////////////////////////////////////////////////////////
+                    List<String> fileLines = new List<string>();
+                    ///////////////////////////////////////////////////////////
+
                     for (j = 0; j < numEventsThisBlock; j++)
                     {
                         eventTime = inputEventTime[j];
@@ -311,8 +318,25 @@ namespace LMRawAnalysis
                             totalMeasurementTime = ((double)(startOfList.eventTime + realsWindow)) * ticSizeInSeconds;
                             //expire this now-too-old event, and continue until all expiring events are handled...
                             startOfList = startOfList.next;
+                            ///////////////////////////////////////////////////
+                            fileLines.Add(j.ToString() + "," + lastEvent.eventTime.ToString() + ","
+                                + startOfList.eventTime.ToString() + ","
+                                + totalNeutronsInGate.ToString() + ","
+                                + totalInAccidentalsGate.ToString() + ","
+                                + multiplicity[totalNeutronsInGate].ToString() + ","
+                                + accidentals[totalNeutronsInGate].ToString() + ","
+                                + totalMeasurementTime.ToString() + ","
+                                + anEvent.serialNumber.ToString() + ","
+                                + endOfList.serialNumber.ToString() + ","
+                                + anEvent.eventTime.ToString() + ","
+                                );
+                            ///////////////////////////////////////////////////
                         }
                     } //END of handling this NeutronEvent in this block
+
+                    ///////////////////////////////////////////////////////////
+                    File.WriteAllLines("MultiplicityAnalysisSlowBackground.csv", fileLines.ToArray());
+                    ///////////////////////////////////////////////////////////
 
                     //prepare this thread's wait condition so will wait for a message 
                     //before telling master thread this thread's analysis is complete

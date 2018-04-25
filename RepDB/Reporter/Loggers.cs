@@ -141,22 +141,9 @@ namespace NCCReporter
 
             public static string CurrentLogFilePath { get; set; }
 
-            //New logger for testing.
-            public LognLM(string section)
-            {
-                FileLogTraceListener listener = new FileLogTraceListener();
-                listener.CustomLocation = "c:\\temp\\test\\";
-                listener.BaseFileName = "NCC6Test"; // add thread id here
-                listener.Location = LogFileLocation.Custom;
-                listener.Append = true;
-                listener.AutoFlush = false; // dev note: expose a setter for this property, to set true for critical passages
-                listener.MaxFileSize = 20 * 1024 * 1024;
-                ts = new TraceSource(section);
-            }
             public LognLM(string section, NCCConfig.Config cfg, int pid)
             {
                 FileLogTraceListener listener = null;
-
                 ts = new TraceSource(section);
 
                 try

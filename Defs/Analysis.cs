@@ -242,12 +242,12 @@ namespace AnalysisDefs
         }
         public bool Equals(Multiplicity other)
         {
+            //TODO: verify that Rank does what we think it does. Is it not being set somewhere?
             if (FA == other.FA & gateWidthTics == other.gateWidthTics & 
                 suspect == other.suspect &&
                 accidentalsGateDelayInTics == other.accidentalsGateDelayInTics && 
                 backgroundGateTimeStepInTics == other.backgroundGateTimeStepInTics &&
-                //Check this What is Rank? Sometimes this seems to compare and other times not. HN 3/15/2018
-                /*Rank == other.Rank &&*/
+                Rank == other.Rank &&
                 SR.Equals(other.SR))
             {
                 return true;
@@ -347,7 +347,7 @@ namespace AnalysisDefs
             else
             {
                 s += " conventional, gate ";
-                s += SR.gateLength.ToString();
+                s += SR.gateLengthMS.ToString();
                 s += ", delay internal gate ";
                 s += TimeUnitImage(accidentalsGateDelayInTics, withunitsspace: true);
             }

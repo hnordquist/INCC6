@@ -66,11 +66,12 @@ namespace NewUI
 			if (!FromINCC5Acquire)  // reset and build occurs in the INCC5 acquire handler code
 			{
 				ResetMeasurement();
-				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
+				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
 			}
 			PreserveAnalyzerChanges = AnalyzersLoaded = LMParamUpdate = AcqParamUpdate = false;
 			BuildAnalyzerCombo();
 			Swap(ap.data_src.Live());
+
 			SelectTheBestINCC5AcquireVSRRow();
             DataSource.Items.Clear();
             foreach (ConstructedSource cs in Enum.GetValues(typeof(ConstructedSource)))
@@ -81,7 +82,7 @@ namespace NewUI
                 }
             }
             //Set whether live or file-based.
-            DataSource.SelectedIndex = ap.data_src.Live() ? 0: 1;
+            DataSource.SelectedIndex = DataSource.FindString (ap.data_src.HappyFunName());
             if (!ap.data_src.Live())
 
             {   //TODO: handle MCA and LMMM here hn 4/16/2018
@@ -119,7 +120,17 @@ namespace NewUI
 
 		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			TabControl t = (TabControl)sender;
+            // TODO: Fix overkill
+            // Save the changed params if tab view is changed.
+            // Yes, this is overkill.
+            PreserveNewState();
+            SaveAcqStateChanges();
+
+
+            ResetMeasurement();
+            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
+
+            TabControl t = (TabControl)sender;
 			if (t.SelectedIndex == 0)
 				LoadParams(LMSteps.FileBased);
 			else if (t.SelectedIndex == 1)
@@ -451,31 +462,31 @@ namespace NewUI
 			if (t.Equals(typeof(Rossi)) || t.Equals(typeof(TimeInterval)) || t.Equals(typeof(Feynman)))
 			{
 				vals[1] = TNameMap(t, FAType.FAOff);
-				vals[2] = s.gateWidthTics.ToString();
+				vals[2] = (s.gateWidthTics/10.0).ToString();
 				vals[3] = string.Empty;
 				vals[4] = string.Empty;
 			}
 			else if (t.Equals(typeof(Multiplicity)))
 			{
 				vals[1] = TNameMap(t, ((Multiplicity)s).FA);
-				vals[2] = s.gateWidthTics.ToString();
-				vals[3] = ((Multiplicity)s).SR.predelay.ToString();
-				if (((Multiplicity)s).FA == FAType.FAOn)
+				vals[2] = (s.gateWidthTics / 10.0).ToString();
+				vals[3] = (((Multiplicity)s).SR.predelay / 10.0).ToString();
+                if (((Multiplicity)s).FA == FAType.FAOn)
 				{
-					vals[4] = ((Multiplicity)s).BackgroundGateTimeStepInTics.ToString();
-				}
+					vals[4] = (((Multiplicity)s).BackgroundGateTimeStepInTics / 10.0).ToString();
+                }
 				else
 				{				
-					vals[4] = ((Multiplicity)s).AccidentalsGateDelayInTics.ToString();
-				}
+					vals[4] = (((Multiplicity)s).AccidentalsGateDelayInTics / 10.0).ToString();
+                }
 			}
 			else if (t.Equals(typeof(Coincidence)))
 			{
 				vals[1] = TNameMap(t, FAType.FAOff);
-				vals[2] = s.gateWidthTics.ToString();
-				vals[3] = ((Coincidence)s).SR.predelay.ToString();
-				vals[4] = ((Coincidence)s).AccidentalsGateDelayInTics.ToString();
-			}
+				vals[2] = (s.gateWidthTics / 10.0).ToString();
+                vals[3] = (((Coincidence)s).SR.predelay / 10.0).ToString();
+                vals[4] = (((Coincidence)s).AccidentalsGateDelayInTics / 10.0).ToString();
+            }
 			return vals;
 		}
 
@@ -611,14 +622,14 @@ namespace NewUI
                         break;
                     case 2:
 						if (string.IsNullOrEmpty(display))
-	                        display = "Gate width (in 1e-7s ticks)";
+                            display = "Gate width (in μs)";
                         cell.ToolTipText = display;
                         break;
                     case 3:
 						if (cell.ReadOnly)
 							display = "Unused";
 						else
-							display = "Detector predelay (in 1e-7s ticks)";
+							display = "Detector predelay (in μs)";
                         cell.ToolTipText = display;
                         break;
                     case 4:
@@ -629,10 +640,10 @@ namespace NewUI
 							Type t; FAType FA;
 							TTypeMap((string)AnalyzerGridView.Rows[e.RowIndex].Cells[1].Value, out t, out FA);
 							if (FA == FAType.FAOn)
-								display = "Background gate width (in 1e-7s ticks)";
-							else
-								display = "Accidentals gate width (long delay, in 1e-7s ticks)";
-						}
+                                display = "Background gate width (in μs)";
+                            else
+                                display = "Accidentals gate width (long delay, in μs)";
+                        }
                         cell.ToolTipText = display;
                         break;
                 }
@@ -672,13 +683,13 @@ namespace NewUI
                 s = new Multiplicity(FA);
                 //Start with stuff from main SR params
                 ((Multiplicity)s).sr.CopyValues(det.SRParams);
-                ((Multiplicity)s).SR.predelay = Construct(row.Cells[3]);
-                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2]);
-                ((Multiplicity)s).SR.gateLengthMS = Construct(row.Cells[2])/10;
+                ((Multiplicity)s).SR.predelay = (Construct(row.Cells[3]))*10;
+                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2])*10;
+                ((Multiplicity)s).SR.gateLengthMS = Construct(row.Cells[2]);
                 if (FA == FAType.FAOn)
-					((Multiplicity)s).BackgroundGateTimeStepInTics = Construct(row.Cells[4]);
+					((Multiplicity)s).BackgroundGateTimeStepInTics = (Construct(row.Cells[4]))*10;
 				else
-					((Multiplicity)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
+					((Multiplicity)s).AccidentalsGateDelayInTics = (Construct(row.Cells[4]))*10;
 
             }
 			else if (t.Equals(typeof(Feynman)))
@@ -696,10 +707,10 @@ namespace NewUI
 			else if (t.Equals(typeof(Coincidence)))
 			{
 				s = new Coincidence();
-				((Coincidence)s).SR.predelay = Construct(row.Cells[3]);
-				((Coincidence)s).AccidentalsGateDelayInTics = Construct(row.Cells[4]);
+				((Coincidence)s).SR.predelay = (Construct(row.Cells[3]))*10;
+				((Coincidence)s).AccidentalsGateDelayInTics = (Construct(row.Cells[4]))*10;
 			}
-			s.gateWidthTics = Construct(row.Cells[2]);
+			s.gateWidthTics = (Construct(row.Cells[2]))*10;
 			s.Active = CheckedRow(row);
 			return s;
 		}
@@ -748,26 +759,26 @@ namespace NewUI
 					Multiplicity x = new Multiplicity(FA);
 					if (FA == FAType.FAOn)
 					{
-						row.Cells[4].Value = x.BackgroundGateTimeStepInTics.ToString();
-						row.Cells[4].Tag = x.BackgroundGateTimeStepInTics;
+						row.Cells[4].Value = (x.BackgroundGateTimeStepInTics / 10.0).ToString();
+                        row.Cells[4].Tag = x.BackgroundGateTimeStepInTics;
 					}
 					else
 					{
-						row.Cells[4].Value = x.AccidentalsGateDelayInTics.ToString();
-						row.Cells[4].Tag = x.AccidentalsGateDelayInTics;
+						row.Cells[4].Value = (x.AccidentalsGateDelayInTics / 10.0).ToString();
+                        row.Cells[4].Tag = x.AccidentalsGateDelayInTics;
 					}
 				}
 				else
 				{
 					if (FA == FAType.FAOn)
 					{
-						row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
-						row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+						row.Cells[4].Value = (m.BackgroundGateTimeStepInTics / 10.0).ToString();
+                        row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
 					}
 					else
 					{
-						row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
-						row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+						row.Cells[4].Value = (m.AccidentalsGateDelayInTics / 10.0).ToString();
+                        row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
 					}
 				}
 			}
@@ -776,7 +787,7 @@ namespace NewUI
 				ReconstructRow(row, s, t, FA);
 			}
 			row.Cells[2].Tag = s.gateWidthTics;
-			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			row.Cells[2].Value = (s.gateWidthTics/10.0).ToString();	
 			row.Tag = s;
 			SetRODetails(row, t);
 		}
@@ -791,13 +802,13 @@ namespace NewUI
 				row.Cells[3].Tag = det.SRParams.predelay;
 				if (FA == FAType.FAOn)
 				{
-					row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
-					row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
+					row.Cells[4].Value = (m.BackgroundGateTimeStepInTics / 10.0).ToString();
+                    row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
 				}
 				else
 				{
-					row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
-					row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
+					row.Cells[4].Value = (m.AccidentalsGateDelayInTics / 10.0).ToString();
+                    row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
 				}
 				m.gateWidthTics = det.SRParams.gateLength;
 				s = m;
@@ -817,9 +828,9 @@ namespace NewUI
 			else if (t.Equals(typeof(Coincidence)))
 			{
 				Coincidence c = new Coincidence();
-				row.Cells[3].Value = det.SRParams.predelay.ToString();
+				row.Cells[3].Value = (det.SRParams.predelay/10.0).ToString();
 				row.Cells[3].Tag = det.SRParams.predelay;
-				row.Cells[4].Value = c.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Value = (c.AccidentalsGateDelayInTics/10.0).ToString();
 				row.Cells[4].Tag = c.AccidentalsGateDelayInTics;
 				c.gateWidthTics = det.SRParams.gateLength;
 				s = c;
@@ -827,7 +838,7 @@ namespace NewUI
 
 			row.Cells[0].Tag = s.Active;
 			row.Cells[2].Tag = s.gateWidthTics;
-			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			row.Cells[2].Value = (s.gateWidthTics/10.0).ToString();	
 			row.Tag = s;
 			SetRODetails(row, t);		
 		}
@@ -836,16 +847,16 @@ namespace NewUI
 			if (t.Equals(typeof(Multiplicity)))
 			{
 				Multiplicity m = (Multiplicity)s;
-				row.Cells[3].Value = m.SR.predelay.ToString();
+				row.Cells[3].Value = (m.SR.predelay/10.0).ToString();
 				row.Cells[3].Tag = m.SR.predelay;
 				if (FA == FAType.FAOn)
 				{
-					row.Cells[4].Value = m.BackgroundGateTimeStepInTics.ToString();
+					row.Cells[4].Value = (m.BackgroundGateTimeStepInTics/10.0).ToString();
 					row.Cells[4].Tag = m.BackgroundGateTimeStepInTics;
 				}
 				else
 				{
-					row.Cells[4].Value = m.AccidentalsGateDelayInTics.ToString();
+					row.Cells[4].Value = (m.AccidentalsGateDelayInTics/10.0).ToString();
 					row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
 				}
 			}
@@ -861,15 +872,15 @@ namespace NewUI
 			else if (t.Equals(typeof(Coincidence)))
 			{
 				Coincidence c = (Coincidence)s;
-				row.Cells[3].Value = c.SR.predelay.ToString();
+				row.Cells[3].Value = (c.SR.predelay/10.0).ToString();
 				row.Cells[3].Tag = c.SR.predelay;
-				row.Cells[4].Value = c.AccidentalsGateDelayInTics.ToString();
+				row.Cells[4].Value = (c.AccidentalsGateDelayInTics/10.0).ToString();
 				row.Cells[4].Tag = c.AccidentalsGateDelayInTics;
 			}
 
 			row.Cells[0].Tag = s.Active;
 			row.Cells[2].Tag = s.gateWidthTics;
-			row.Cells[2].Value = s.gateWidthTics.ToString();	
+			row.Cells[2].Value = (s.gateWidthTics/10.0).ToString();	
 			SetRODetails(row, t);		
 		}
 
@@ -953,18 +964,23 @@ namespace NewUI
 
 		private void Step2ASaveExit_Click(object sender, EventArgs e)
 		{
-			Step2BSaveExit_Click(sender, e);
+            PreserveNewState();
+            SaveAcqStateChanges();
+            Step2BSaveExit_Click(sender, e);
 		}
 		private void Step3SaveExit_Click(object sender, EventArgs e)
 		{
-			Step4SaveExit_Click(sender, e);
+            PreserveNewState();
+            SaveAcqStateChanges();
+            Step4SaveExit_Click(sender, e);
 		}
         void SaveAcqStateChanges()
         {
-			if (!FromINCC5Acquire && ap.qc_tests)
+			//WTAF??
+            /*if (!FromINCC5Acquire && ap.qc_tests)
 			{
 				ap.qc_tests = false; ap.modified = true;
-			}
+			}*/
             if (ap.modified || ap.lm.modified)
             {
 				Measurement meas = N.App.Opstate.Measurement;
@@ -1040,7 +1056,7 @@ namespace NewUI
             N.App.Opstate.Measurement.PrepareINCCResults();
 
             ResetMeasurement();
-            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
+            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
 
 
         }
@@ -1341,6 +1357,12 @@ namespace NewUI
         {
             ap.ending_comment = ((CheckBox)sender).Checked;
             ap.modified = ap.lm.modified = true;
+        }
+
+        private void DataSource_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ap.data_src = ConstructedSourceExtensions.SrcToEnum(((ComboBox)sender).SelectedText);
+            ap.modified = true;
         }
 
         void EndEdit()

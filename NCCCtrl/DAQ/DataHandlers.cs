@@ -75,7 +75,7 @@ namespace DAQ
                     if (CurState.IsQuitRequested)
                         throw new AnalysisDefs.CancellationRequestedException();
                     else if ((e.BytesTransferred % 2) == 0) // EVEN messages are data.
-                    {
+             {
                         // dev note: file writing is controlled via LiveFileWrite
                         (activeInstr.file as NCCFile.NCDFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
 

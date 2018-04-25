@@ -26,6 +26,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING N
 IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 using System;
+using System.Globalization;
 using System.Threading;
 using AnalysisDefs;
 using NCCReporter;
@@ -178,7 +179,7 @@ namespace Analysis
             double triples = Cycle.CountingAnalysisResults.GetFirstMultiplicity.RawTriplesRate.v;
             logger.TraceEvent(LogLevels.Info, 153, String.Format("Cycle {0} complete, results {1}/sec, {2} hits, {3} triggers",
                                     Cycle.seq, CycleSinglesRate, Cycle.Totals, Cycle.TotalEvents));
-            logger.TraceEvent(LogLevels.Info, 2018001, String.Format("Cycle {0,-3}     Singles: {1,14:N3}     Doubles: {2,14:N3}     Triples: {3,14:N3}",
+            logger.TraceEvent(LogLevels.Info, 2018001, String.Format("Cycle {0,-3}     Singles: {1,14:F3}     Doubles: {2,14:F3}     Triples: {3,14:F3}",
                                     Cycle.seq, singles, doubles, triples));
         }
 
