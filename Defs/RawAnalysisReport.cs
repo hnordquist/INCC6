@@ -280,9 +280,10 @@ namespace AnalysisDefs
                         sec = DoAcrossForManyMults("Cycle rate data", typeof(RateCycles), true);
                         break;
                     case ReportSections.RepResults:
+                        sec = DoAverageRatesByMult("Average Corrected Rates");
                         break;
                     case ReportSections.RepDytlewskiResults:
-
+                        sec = DoDylewskiRatesByMult("Dytlewski Rates");
                         break;
                 }
                 if (sec == null) // no mult-based data
@@ -323,7 +324,7 @@ namespace AnalysisDefs
                             sec.Add(GenRateCycleRow(cyc));
                             break;
                         case ReportSections.RepResults:
-                            //    sec.Add(GenResultsCycleRow(cyc));
+                                //sec.Add(DoAverageRatesByMult("Average Corrected Rates"));
                             break;
                         case ReportSections.RepDytlewskiResults:
                             //    sec.Add(GenDytlewskiResultsCycleRow(cyc));
@@ -358,7 +359,9 @@ namespace AnalysisDefs
             {
                 //rep = 1 + cyccol + (ecount * i);
                 Multiplicity mu = (Multiplicity)iter.Current;
-                INCCResult ir = meas.INCCAnalysisResults[new MeasOptionSelector (AssaySelector.MeasurementOption.rates,mu)];
+                //INCCResult ir = meas.INCCAnalysisResults[new MeasOptionSelector (AssaySelector.MeasurementOption.rates,mu)];
+                MeasOptionSelector ar = new MeasOptionSelector(meas.MeasOption, mu);
+                INCCResult ir = meas.INCCAnalysisResults[ar];
                 Row row = new Row();
                 row.Add ((int)RepResults.FAType, mu.FA == FAType.FAOff ? "Slow" : "Fast");
                 row.Add((int)RepResults.GateWidth, (mu.gateWidthTics / 10.0).ToString());
@@ -1630,7 +1633,8 @@ namespace AnalysisDefs
                 sections.Add(ConstructReportSection(ReportSections.MeasurementDetails));
                 sections.Add(ConstructReportSection(ReportSections.DetectorCalibration));
 
-                sections.Add(ConstructReportSection(ReportSections.RepResults));
+                if (m.AnalysisParams.HasMultiplicity())
+                    sections.Add(ConstructReportSection(ReportSections.RepResults));
 
                 sections.Add(ConstructReportSection(ReportSections.ChannelCounts)); // from RateInterval or m.cycles.HitsPerChannel
                 sections.Add(ConstructReportSection(ReportSections.ChannelRates)); // from RateInterval and/or  m.cycles.HitsPerChannel

@@ -126,7 +126,6 @@ namespace NewUI
             PreserveNewState();
             SaveAcqStateChanges();
 
-
             ResetMeasurement();
             Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 
@@ -216,6 +215,7 @@ namespace NewUI
         private void Step2FilenameTextBox_Leave(object sender, EventArgs e)
         {
             N.App.AppContext.FileInput = ((TextBox)(sender)).Text;
+            N.App.AppContext.modified = true;
         }
 
 		private void Step2BrowseBtn_Click(object sender, EventArgs e)

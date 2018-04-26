@@ -352,7 +352,8 @@ namespace AnalysisDefs
                             sec.AddNumericRow("Normalization constant:", meas.Norm.currNormalizationConstant);
                             sec.SetFPCurrentFormatPrecision(push);
                         }
-                        if (AssaySelector.UsesBackground(meas.MeasOption))
+                        //Need background for LM (.unspecified) when we have multiplicity HN 4/26/2018
+                        if (AssaySelector.UsesBackground(meas.MeasOption) || (meas.Detector.ListMode && meas.CountingAnalysisResults.HasMultiplicity))
                         {
                             sec.AddNumericRow("Passive singles bkgrnd:", meas.Background.DeadtimeCorrectedSinglesRate);
                             sec.AddNumericRow("Passive doubles bkgrnd:", meas.Background.DeadtimeCorrectedDoublesRate);
