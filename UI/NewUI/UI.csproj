@@ -65,10 +65,6 @@
     <ApplicationIcon>rel.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NCCCore, Version=6.0.1.15, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\deployment\NCCCore.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -1539,6 +1535,10 @@
     <None Include="Resources\DaveEclipseClip.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\NCCCore\NCCCore.csproj">
+      <Project>{00572805-e746-49f5-aa40-25313e3a87e3}</Project>
+      <Name>NCCCore</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Defs\Defs.csproj">
       <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
       <Name>Defs</Name>

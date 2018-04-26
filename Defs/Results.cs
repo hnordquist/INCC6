@@ -1192,6 +1192,7 @@ namespace AnalysisDefs
     {
 
         public TimeSpan TS;
+        public TimeSpan[] LMTS;
         public FAType FA;
         public Rates rates;
         public double mass; // computed in outlier passes when qc_test is true, and further computed in verification pass, error is not computed so no VTuple
@@ -1378,6 +1379,8 @@ namespace AnalysisDefs
             RAFactorialAlphaMoment1 = src.RAFactorialAlphaMoment1;
             AFactorialBetaMoment2 = src.AFactorialBetaMoment2;
             RAFactorialBetaMoment2 = src.RAFactorialBetaMoment2;
+            FA = src.FA;
+
         }
 
         public void TransferSums(MultiplicityCountingRes src)
@@ -1439,6 +1442,7 @@ namespace AnalysisDefs
             scaler1 = new VTuple();
             scaler2 = new VTuple();
             TS = new TimeSpan();
+            LMTS = new TimeSpan[2];
         }
 		public void CopyFrom(MultiplicityCountingRes src)
         {
@@ -1480,7 +1484,8 @@ namespace AnalysisDefs
             efficiency = src.efficiency;
 
             TS = new TimeSpan(src.TS.Ticks);
-
+            LMTS[0] = new TimeSpan(src.LMTS[0].Ticks);//Fast
+            LMTS[1] = new TimeSpan(src.LMTS[1].Ticks);//Slow
             singles_multi = src.singles_multi;
             doubles_multi = src.doubles_multi;
             triples_multi = src.triples_multi;
@@ -1545,6 +1550,10 @@ namespace AnalysisDefs
             RAFactorialAlphaMoment1 = mr.RAfactorialAlphaMoment1;
             AFactorialBetaMoment2 = mr.AfactorialBetaMoment2;
             RAFactorialBetaMoment2 = mr.RAfactorialBetaMoment2;
+            if (mr.isSlowBackground)
+                LMTS[1] = TimeSpan.FromTicks((long)mr.TotalMeasurementTics);
+            else
+                LMTS[0] = TimeSpan.FromTicks((long)mr.TotalMeasurementTics);
         }
 
         public void ComputeHitSums()

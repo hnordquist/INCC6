@@ -128,7 +128,8 @@ namespace AnalysisDefs
         public double AfactorialMoment0, AfactorialMoment1, AfactorialMoment2, AfactorialMoment3;
         public double AfactorialAlphaMoment1, RAfactorialAlphaMoment1;
         public double AfactorialBetaMoment2, RAfactorialBetaMoment2;
-
+        public double TotalMeasurementTime;
+        public double TotalMeasurementTics;
         public List<string> warnings = new List<string>();
 
     }

@@ -243,6 +243,11 @@ namespace AnalysisDefs
                 lmcs.Totals = Totals;
                 lmcs.TransferRawResult(mr);
                 lmcs.TS = new TimeSpan(TS.Ticks);
+                if (dsid.SRType.IsListMode() && lmcs.FA == FAType.FAOff)
+                    lmcs.LMTS[1] = TimeSpan.FromTicks((long)mr.TotalMeasurementTics);//Slow
+                else if (dsid.SRType.IsListMode() && lmcs.FA == FAType.FAOn)
+                    lmcs.LMTS[0] = TimeSpan.FromTicks((long)mr.TotalMeasurementTics);//Slow
+
             }
             catch (OutOfMemoryException e)
             {

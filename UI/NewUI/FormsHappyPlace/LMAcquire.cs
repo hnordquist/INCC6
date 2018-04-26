@@ -66,7 +66,7 @@ namespace NewUI
 			if (!FromINCC5Acquire)  // reset and build occurs in the INCC5 acquire handler code
 			{
 				ResetMeasurement();
-				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
+				Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 			}
 			PreserveAnalyzerChanges = AnalyzersLoaded = LMParamUpdate = AcqParamUpdate = false;
 			BuildAnalyzerCombo();
@@ -128,7 +128,7 @@ namespace NewUI
 
 
             ResetMeasurement();
-            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
+            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 
             TabControl t = (TabControl)sender;
 			if (t.SelectedIndex == 0)
@@ -212,11 +212,6 @@ namespace NewUI
                 ap.lm.Results = s; LMParamUpdate = true;
 			}
 		}
-
-		private void Step2FilenameTextBox_TextChanged(object sender, EventArgs e)
-        {
-            //this.Step2ANextBtn.Enabled = true;
-        }
 
         private void Step2FilenameTextBox_Leave(object sender, EventArgs e)
         {
@@ -543,66 +538,66 @@ namespace NewUI
 
 
         void LoadAnalyzerRows()
-		{
-			if (!AnalyzersLoaded)
-			{
-				CountingAnalysisParameters alt = CountingAnalysisParameters.Copy(N.App.Opstate.Measurement.AnalysisParams);
-				foreach (SpecificCountingAnalyzerParams s in alt)
-				{
-					if (s.suspect)
-						continue;
-					string[] a = ToSimpleValueArray(s);
-					int i = AnalyzerGridView.Rows.Add(a);
-					SetRowDetails(AnalyzerGridView.Rows[i], s);
-				}
-				AnalyzersLoaded = true;
-			}
-		}
+        {
+            if (!AnalyzersLoaded)
+            {
+                CountingAnalysisParameters alt = CountingAnalysisParameters.Copy(N.App.Opstate.Measurement.AnalysisParams);
+                foreach (SpecificCountingAnalyzerParams s in alt)
+                {
+                    if (s.suspect)
+                        continue;
+                    string[] a = ToSimpleValueArray(s);
+                    int i = AnalyzerGridView.Rows.Add(a);
+                    SetRowDetails(AnalyzerGridView.Rows[i], s);
+                }
+                AnalyzersLoaded = true;
+            }
+        }
 
-		void SelectTheRankedRow()
-		{
-			for(int i = 0; i < AnalyzerGridView.Rows.Count; i++)
-			{
-				DataGridViewRow row = AnalyzerGridView.Rows[i];
-				if (row == null) // empty row, so just skip it
-					continue;
-				SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
-				if (r == null) // empty row, so just skip it
-					continue;
-				if (r.Rank == SpecificCountingAnalyzerParams.Select && !r.suspect)
-				{
-					AnalyzerGridView.CurrentCell = row.Cells[0];
-					break;
-				}
-			}
-		}
+        void SelectTheRankedRow()
+        {
+            for (int i = 0; i < AnalyzerGridView.Rows.Count; i++)
+            {
+                DataGridViewRow row = AnalyzerGridView.Rows[i];
+                if (row == null) // empty row, so just skip it
+                    continue;
+                SpecificCountingAnalyzerParams r = (SpecificCountingAnalyzerParams)row.Tag;
+                if (r == null) // empty row, so just skip it
+                    continue;
+                if (r.Rank == SpecificCountingAnalyzerParams.Select && !r.suspect)
+                {
+                    AnalyzerGridView.CurrentCell = row.Cells[0];
+                    break;
+                }
+            }
+        }
 
         private void AnalyzerGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-		{
-			if (cbm != null)
+        {
+            if (cbm != null)
             {
                 // remove the subscription for the selected index changed event
                 cbm.SelectedIndexChanged -= new EventHandler(cbm_SelectedIndexChanged);
             }
             if (e.ColumnIndex > 1)
             {
-				DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
-				DataGridViewCell cell = row.Cells[e.ColumnIndex];
+                DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
+                DataGridViewCell cell = row.Cells[e.ColumnIndex];
                 ulong x = (cell.Tag == null ? 100ul : (ulong)cell.Tag);
                 bool mod = (Format.ToNN((string)cell.Value, ref x));
                 if (mod)
                 {
                     cell.Tag = x;
-					PreserveAnalyzerChanges = true;
+                    PreserveAnalyzerChanges = true;
                     ap.modified = true;
                 }
                 else
                     cell.Value = x.ToString();
-				row.ErrorText = string.Empty;
+                row.ErrorText = string.Empty;
             }
-		} 
+        }
 
-		private void AnalyzerGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void AnalyzerGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             if (e.Value != null)
             {
@@ -1056,7 +1051,7 @@ namespace NewUI
             N.App.Opstate.Measurement.PrepareINCCResults();
 
             ResetMeasurement();
-            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.rates);
+            Integ.BuildMeasurement(ap, det, AssaySelector.MeasurementOption.unspecified);
 
 
         }
@@ -1336,10 +1331,6 @@ namespace NewUI
             BeginInvoke(new MethodInvoker(EndEdit));
         }
 
-        private void AnalyzerGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
 
         private void QC_CheckedChanged(object sender, EventArgs e)
         {
@@ -1362,6 +1353,15 @@ namespace NewUI
         private void DataSource_SelectedIndexChanged(object sender, EventArgs e)
         {
             ap.data_src = ConstructedSourceExtensions.SrcToEnum(((ComboBox)sender).SelectedText);
+            ap.modified = true;
+        }
+
+        private void IntervalTextBox_TextChanged(object sender, EventArgs e)
+        {
+            double count = 0;
+            if (Double.TryParse((((TextBox)sender).Text), out count))
+                ap.run_count_time = count;
+            
             ap.modified = true;
         }
 

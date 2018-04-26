@@ -41,7 +41,7 @@ namespace LMRawAnalysis
         //use a C# array to keep track of num gates having num neutrons.
         //For array, numNeutrons is the Index and numOccurances is the Value.
         public UInt64[] multiplicity = new UInt64[RawAnalysisProperties.maxNeutronsPerMultiplicityGate];
-        private double totalMeasurementTime;
+        public double totalMeasurementTime;
 
         public NeutronEvent theEventCircularLinkedList;
         public NeutronEvent startOfList;
@@ -279,6 +279,7 @@ namespace LMRawAnalysis
 
                             //record the time of this expiring event; this is the total measurement time
                             totalMeasurementTime = ((double)(startOfList.eventTime + totalWindow)) * ticSizeInSeconds;
+                            
                             //expire this now-too-old event, and continue until all expiring events are handled...
                             startOfList = startOfList.next;
                         }

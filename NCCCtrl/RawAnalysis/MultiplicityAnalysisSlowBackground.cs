@@ -46,8 +46,7 @@ namespace LMRawAnalysis
         //For array, numNeutrons is the Index and numOccurances is the Value.
         public UInt64[] multiplicity = new UInt64[RawAnalysisProperties.maxNeutronsPerMultiplicityGate];
         public UInt64[] accidentals  = new UInt64[RawAnalysisProperties.maxNeutronsPerMultiplicityGate];
-        private double totalMeasurementTime;
-
+        public double totalMeasurementTime;
         public NeutronEvent theEventCircularLinkedList;
         public NeutronEvent startOfList;
         public NeutronEvent endOfList;

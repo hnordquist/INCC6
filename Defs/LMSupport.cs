@@ -637,10 +637,13 @@ namespace LMRawAnalysis
                 PTtriplesDTCorrected = 0.0;
             }
 
+            result.TotalMeasurementTime = totalMeasurementTime;
+            result.TotalMeasurementTics = totalMeasurementTime * 10000000;
             //store the SDT rates
             result.singlesRatePerSecond = PTsingles;
             result.doublesRatePerSecond = PTdoubles;
             result.triplesRatePerSecond = PTtriples;
+
 
             //now that rates are calculated, calculate the dead-time corrections
 

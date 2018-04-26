@@ -823,7 +823,7 @@ namespace LMRawAnalysis
             //now make the "foreground" analyzer
             ma = new MultiplicityAnalysisSlowBackground(ticSizeInSeconds,
                                                         gateWidthInTics * timeBaseConversion, preDelayInTics * timeBaseConversion,
-                                                        accidentalsGateDelayInTics,
+                                                        accidentalsGateDelayInTics * timeBaseConversion, // Fix per Daniela
                                                         deadTimeCoefficientTinNanoSecs,
                                                         deadTimeCoefficientAinMicroSecs,
                                                         deadTimeCoefficientBinPicoSecs,
@@ -1326,7 +1326,6 @@ namespace LMRawAnalysis
                     results.eventSpacingResults[i] = eventSpacingAnalyzers[i].GetResult();
                 }
             }
-
             return (results);
         }
 

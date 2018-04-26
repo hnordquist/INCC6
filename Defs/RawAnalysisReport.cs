@@ -110,7 +110,9 @@ namespace AnalysisDefs
         //Various units totally stupid. Attempt to put all in " µSec"
         string DetectorCalibrationHeader(ValueType e)
         {
-            string s = e.ToString() + " µSec";
+            string s = e.ToString();
+            if (s.Equals("Predelay") || s.Equals("GateLength") || s.Equals("DieAwayTime") || s.Equals("LongDelay"))
+                s += " µSec";
             /*switch ((DetectorCalibration)e)
             {
                 case DetectorCalibration.LongDelay:
