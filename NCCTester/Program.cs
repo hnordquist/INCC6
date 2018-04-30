@@ -696,11 +696,10 @@ namespace NCCTester
             Console.WriteLine("now calculating new measurement for test comparison");
             //Measurement newResultMeasurement = BuildMeasurement(testMeasurement);
             // Geez, will I ever get all the inner stuff dependent on INCC app cleared out? HN 4/16/2018
-           /* if (newResultMeasurement.Cycles.GetValidCycleCount() > 0) // INCC5 Pu mass calcs
+            /*if (newResultMeasurement.Cycles.GetValidCycleCount() > 0) // INCC5 Pu mass calcs
             {
-                newResultMeasurement.OutlierProcessing(); // summary pass at the end of all the cycles
+                INCCAnalysis.OutlierProcessing (mult,newResultMeasurement); // summary pass at the end of all the cycles
                 newResultMeasurement.GenerateCycleCountingSummaries(ignoreSuspectResults: false);
-                newResultMeasurement.CalcAvgAndSums();
                 newResultMeasurement.CalculateResults();
             }
             else // everything else
@@ -708,7 +707,7 @@ namespace NCCTester
             Console.WriteLine("comparing results for " + testFile);
             newResultMeasurement.CalculateMeasurementResults();*/
             
-            //bool TestSuccess = CompareResults(testMeasurement, newResultMeasurement);
+            //ol TestSuccess = CompareResults(testMeasurement, newResultMeasurement);
         }
 
         static bool CompareResults(Measurement original, Measurement recalculated)

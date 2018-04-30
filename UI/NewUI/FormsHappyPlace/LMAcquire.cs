@@ -793,7 +793,7 @@ namespace NewUI
 			if (t.Equals(typeof(Multiplicity)))
 			{
 				Multiplicity m = new Multiplicity(FA);
-				row.Cells[3].Value = det.SRParams.predelay.ToString();
+				row.Cells[3].Value = ((det.SRParams.predelay)/10.0).ToString();
 				row.Cells[3].Tag = det.SRParams.predelay;
 				if (FA == FAType.FAOn)
 				{
@@ -806,8 +806,13 @@ namespace NewUI
                     row.Cells[4].Tag = m.AccidentalsGateDelayInTics;
 				}
 				m.gateWidthTics = det.SRParams.gateLength;
+
+                row.Cells[0].Value = "yes";
 				s = m;
-			}
+                s.Active = true;
+                PreserveAnalyzerChanges = true;
+                ap.modified = true;
+            }
 			else if (t.Equals(typeof(Feynman)))
 			{
 				s = new Feynman();
