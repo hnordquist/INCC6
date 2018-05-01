@@ -192,16 +192,6 @@ namespace NewUI
             }
         }
 
-        private void Step2OutputDirectoryTextBox_Leave(object sender, EventArgs e)
-        {
-            string s = ap.lm.Results;
-            ap.lm.modified = Format.Changed(((TextBox)sender).Text, ref s);
-            if (ap.lm.modified)
-			{
-                ap.lm.Results = s; LMParamUpdate = true;
-			}
-        }
-
         private void Step2BOutputDirectoryTextBox_Leave(object sender, EventArgs e)
         {
             string s = ap.lm.Results;
@@ -211,12 +201,6 @@ namespace NewUI
                 ap.lm.Results = s; LMParamUpdate = true;
 			}
 		}
-
-        private void Step2FilenameTextBox_Leave(object sender, EventArgs e)
-        {
-            N.App.AppContext.FileInput = ((TextBox)(sender)).Text;
-            N.App.AppContext.modified = true;
-        }
 
 		private void Step2BrowseBtn_Click(object sender, EventArgs e)
         {
@@ -358,20 +342,20 @@ namespace NewUI
                     //RefreshDetectorCombo(Step2ADetCB);
                     break;
                 case LMSteps.DAQBased:
-                    Step2BAutoOpenCheckBox.CheckState = (N.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
-                    Step2BIncludeConfigCheckBox.CheckState = (ap.lm.IncludeConfig ? CheckState.Checked : CheckState.Unchecked);
-                    Step2BSaveEarlyTermCheckBox.CheckState = (ap.lm.SaveOnTerminate ? CheckState.Checked : CheckState.Unchecked);
+                    Step2AutoOpenCheckBox.CheckState = (N.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
+                    Step2IncludeConfigCheckBox.CheckState = (ap.lm.IncludeConfig ? CheckState.Checked : CheckState.Unchecked);
+                    Step2SaveEarlyTermCheckBox.CheckState = (ap.lm.SaveOnTerminate ? CheckState.Checked : CheckState.Unchecked);
                     if (FromINCC5Acquire)
                         IntervalTextBox.Text = ap.run_count_time.ToString();
                     else
                         IntervalTextBox.Text = ap.lm.Interval.ToString();
-                    Step2BOutputDirectoryTextBox.Text = ap.lm.Results;
+                    Step2OutputDirectoryTextBox.Text = ap.lm.Results;
                     if (FromINCC5Acquire)
                         CycleNumTextBox.Text = ap.num_runs.ToString();
                     else
                         CycleNumTextBox.Text = ap.lm.Cycles.ToString();
-                    Step2BAutoOpenCheckBox.CheckState = (N.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
-                    Step2BWriteDataFiles.CheckState = (N.App.AppContext.LiveFileWrite ? CheckState.Checked : CheckState.Unchecked);
+                    Step2AutoOpenCheckBox.CheckState = (N.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
+                    Step2SavePulseDataFiles.CheckState = (N.App.AppContext.LiveFileWrite ? CheckState.Checked : CheckState.Unchecked);
 
                     RefreshDetectorCombo(Step2BDetectorComboBox);
 					Step2BDetectorComboBox.SelectedItem = det;
@@ -437,7 +421,13 @@ namespace NewUI
 			return ul;
 		}
 
-		bool CheckedRow(DataGridViewRow row)
+        double ConstructDouble (DataGridViewCell c)
+        {
+            double d = 0;
+            double.TryParse((string)(c.Value), out d);
+            return d *=10;
+        }
+        bool CheckedRow(DataGridViewRow row)
 		{
 			string s = (string)row.Cells[0].Value;
 			return !string.IsNullOrEmpty(s) && (string.Compare(s,"yes") == 0);
@@ -583,16 +573,20 @@ namespace NewUI
             {
                 DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
                 DataGridViewCell cell = row.Cells[e.ColumnIndex];
-                ulong x = (cell.Tag == null ? 100ul : (ulong)cell.Tag);
-                bool mod = (Format.ToNN((string)cell.Value, ref x));
+                //Need to grab as double, multiply to tics, then compare;
+                ulong x = (ulong)cell.Tag;
+                double y = 0;
+                double.TryParse((string)cell.Value, out y);
+                y *= 10;
+                bool mod = !(y.Equals(x));
                 if (mod)
                 {
-                    cell.Tag = x;
+                    cell.Tag = y;
                     PreserveAnalyzerChanges = true;
                     ap.modified = true;
                 }
                 else
-                    cell.Value = x.ToString();
+                    cell.Value = (x/10.0).ToString();
                 row.ErrorText = string.Empty;
             }
         }
@@ -678,13 +672,13 @@ namespace NewUI
                 s = new Multiplicity(FA);
                 //Start with stuff from main SR params
                 ((Multiplicity)s).sr.CopyValues(det.SRParams);
-                ((Multiplicity)s).SR.predelay = (Construct(row.Cells[3]))*10;
-                ((Multiplicity)s).SR.gateLength = Construct(row.Cells[2])*10;
-                ((Multiplicity)s).SR.gateLengthMS = Construct(row.Cells[2]);
+                ((Multiplicity)s).SR.predelay = (ulong)(ConstructDouble(row.Cells[3]));
+                ((Multiplicity)s).SR.gateLength = (ulong)ConstructDouble(row.Cells[2]);
+                ((Multiplicity)s).SR.gateLengthMS = ConstructDouble(row.Cells[2])/10.0;
                 if (FA == FAType.FAOn)
-					((Multiplicity)s).BackgroundGateTimeStepInTics = (Construct(row.Cells[4]))*10;
+					((Multiplicity)s).BackgroundGateTimeStepInTics = (ulong)(ConstructDouble(row.Cells[4]));
 				else
-					((Multiplicity)s).AccidentalsGateDelayInTics = (Construct(row.Cells[4]))*10;
+					((Multiplicity)s).AccidentalsGateDelayInTics = (ulong)(ConstructDouble(row.Cells[4]));
 
             }
 			else if (t.Equals(typeof(Feynman)))
@@ -1174,6 +1168,8 @@ namespace NewUI
         private void Step2BDetectorComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             det = (Detector)((ComboBox)sender).SelectedItem;
+            ap.detector_id = det.Id.DetectorName;
+            ap.modified = true;
         }
         private void CycleNumTextBox_Leave(object sender, EventArgs e)
         {
@@ -1352,6 +1348,13 @@ namespace NewUI
         private void CommentBox_CheckedChanged(object sender, EventArgs e)
         {
             ap.ending_comment = ((CheckBox)sender).Checked;
+            if (ap.ending_comment)
+                Comment.Enabled = true;
+            else
+            {
+                Comment.Text = "";
+                Comment.Enabled = false;
+            }
             ap.modified = ap.lm.modified = true;
         }
 
@@ -1367,6 +1370,57 @@ namespace NewUI
             if (Double.TryParse((((TextBox)sender).Text), out count))
                 ap.run_count_time = count;
             
+            ap.modified = true;
+        }
+
+        private void Step2InputDirectoryTextBox_TextChanged(object sender, EventArgs e)
+        {
+            N.App.AppContext.FileInput = ((TextBox)(sender)).Text;
+            N.App.AppContext.modified = true;
+
+        }
+
+        private void Step2OutputDirectoryTextBox_TextChanged(object sender, EventArgs e)
+        {
+            string s = ap.lm.Results;
+            ap.lm.modified = Format.Changed(((TextBox)sender).Text, ref s);
+            if (ap.lm.modified)
+            {
+                ap.lm.Results = s; LMParamUpdate = true;
+            }
+        }
+
+        private void Step2BOutputDirectoryTextBox_TextChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void CycleNumTextBox_TextChanged(object sender, EventArgs e)
+        {
+            ushort runs = 0;
+            bool success = ushort.TryParse((((TextBox)sender).Text), out runs);
+
+            if (success)
+            {
+                ap.num_runs = runs;
+                ap.modified = true;
+            }
+
+          
+        }
+
+        private void Step2SavePulseDataFiles_CheckedChanged(object sender, EventArgs e)
+        {
+            if (N.App.AppContext.LiveFileWrite != ((CheckBox)sender).Checked)
+            {
+                N.App.AppContext.modified = true; N.App.AppContext.LiveFileWrite = ((CheckBox)sender).Checked;
+            }
+        }
+
+        private void Comment_TextChanged(object sender, EventArgs e)
+        {
+            if (ap.ending_comment)
+                ap.ending_comment_str = (((TextBox)sender).Text);
             ap.modified = true;
         }
 

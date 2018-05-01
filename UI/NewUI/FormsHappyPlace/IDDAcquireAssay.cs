@@ -651,5 +651,11 @@ namespace NewUI
                 }
             }
         }
+
+        private void ItemIdComboBox_TextChanged(object sender, EventArgs e)
+        {
+            //If user types in an ID, this does weird stuff with isotopics. Fix 5/1/2018  HN
+            
+        }
     }
 }

@@ -334,9 +334,9 @@ namespace LMRawAnalysis
                     } //END of handling this NeutronEvent in this block
 
                     ///////////////////////////////////////////////////////////
-                    File.WriteAllLines("MultiplicityAnalysisSlowBackground.csv", fileLines.ToArray());
+                    //File.WriteAllLines("MultiplicityAnalysisSlowBackground.csv", fileLines.ToArray());
                     ///////////////////////////////////////////////////////////
-
+                    //This was blowing chunks. HN 5/1/2018
                     //prepare this thread's wait condition so will wait for a message 
                     //before telling master thread this thread's analysis is complete
                     waitingForMessage.Reset();

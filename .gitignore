@@ -55,3 +55,4 @@ obj
 /.vs
 /*.psess
 
+/deployment/*.csv

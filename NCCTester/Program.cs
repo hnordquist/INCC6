@@ -16,7 +16,7 @@ namespace NCCTester
     class Program
     {
         
-        private static LMLoggers.LognLM TestLogger;
+        //private static LMLoggers.LognLM TestLogger;
         public static String testFile;
 
         public static String version;
@@ -750,7 +750,7 @@ namespace NCCTester
             det.Id.source = det.Id.source;  // set the detector overall data source value here
 
             // create the context holder for the measurement. Everything is rooted here ...
-            Measurement copied = new Measurement(mt, meas.MeasOption, TestLogger);
+            Measurement copied = new Measurement(mt, meas.MeasOption, null);
             copied.Detector = meas.Detector;
             copied.AnalysisParams = meas.AnalysisParams;
             copied.INCCAnalysisState = meas.INCCAnalysisState;
