@@ -187,7 +187,7 @@ namespace AnalysisDefs
         /// </summary>
         /// <param name="am"></param>
         /// <returns></returns>
-        private Type GetMethodType(AnalysisMethod am)
+        public Type GetMethodType(AnalysisMethod am)
         {
             Type res = null;
             switch (am)
@@ -640,6 +640,34 @@ namespace AnalysisDefs
 
         // the method params used to calculate these results: retain results and input values used to calculate 
         public INCCAnalysisParams.INCCMethodDescriptor methodParams, methodParams2;
+
+        public override bool Equals (object o)
+        {
+            string s = o.GetType().ToString();
+            bool step = true;
+            bool overall = true;
+            switch (s)
+            {
+                case "AnalysisDefs.INCCMethodResults+results_active_mult_rec":
+                    INCCMethodResults.results_active_mult_rec act_rec = (INCCMethodResults.results_active_mult_rec)o;
+                    step = this.Equals(act_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_cal_curve_rec":
+                    INCCMethodResults.results_cal_curve_rec cal_rec = (INCCMethodResults.results_cal_curve_rec)o;
+                    step = this.Equals(cal_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_multiplicity_rec":
+                    INCCMethodResults.results_multiplicity_rec mult_rec = (INCCMethodResults.results_multiplicity_rec)o;
+                    step = this.Equals(mult_rec);
+                    overall = step && overall;
+                    break;
+                default:
+                    break;
+            }
+            return overall;
+        }
       
     }
 
@@ -1036,6 +1064,20 @@ namespace AnalysisDefs
 
                 ps.Add(new DBParamEntry("pass", pass));
             }
+            public override bool Equals (object o)
+            {
+                /*                public Tuple mult;
+                 public Tuple alphaK;
+                 public Tuple corr_factor;
+                 public Tuple efficiencyComputed;
+                 public Tuple pu240e_mass;
+                 public Tuple pu_mass;
+                 public double dcl_pu240e_mass;
+                 public double dcl_pu_mass;
+                 public Tuple dcl_minus_asy_pu_mass;
+                 public double dcl_minus_asy_pu_mass_pct;*/
+                return true;
+             }
         }
 
         public class results_cal_curve_rec : INCCMethodResult
@@ -1167,6 +1209,42 @@ namespace AnalysisDefs
                 ps.AddRange(DBParamList.TuplePair(heavy_metal_corr_singles, "heavy_metal_corr_singles"));
                 ps.AddRange(DBParamList.TuplePair(heavy_metal_corr_doubles, "heavy_metal_corr_doubles"));
             }
+
+            public override bool Equals(object o)
+            {
+                bool step = true;
+                bool overall = true;
+                results_cal_curve_rec other = (results_cal_curve_rec)o;
+                step = CompareTools.DoublesTupleCompares(this.pu240e_mass, other.pu240e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.pu_mass, other.pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu240e_mass, other.dcl_pu240e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu_mass, other.dcl_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.dcl_minus_asy_pu_mass, other.dcl_minus_asy_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_minus_asy_pu_mass_pct, other.dcl_minus_asy_pu_mass_pct);
+                overall = step && overall;
+                step = this.pass == other.pass;
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_u_mass, other.dcl_u_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.length, other.length);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.heavy_metal_content, other.heavy_metal_content);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.heavy_metal_correction, other.heavy_metal_correction);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.heavy_metal_corr_singles, other.heavy_metal_corr_singles);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.heavy_metal_corr_doubles, other.heavy_metal_corr_doubles);
+                overall = step && overall;
+
+                return overall;
+            }
+            
         }
 
         public class results_known_m_rec : INCCMethodResult
@@ -1405,6 +1483,11 @@ namespace AnalysisDefs
                 base.GenParamList();
                 this.Table = "results_active_mult_rec";
                 ps.AddRange(TuplePair(mult, "mult"));
+            }
+            public override bool Equals (object o)
+            {
+                results_active_mult_rec other = (results_active_mult_rec)o;
+                return CompareTools.DoublesTupleCompares(this.mult, other.mult);
             }
         }
 

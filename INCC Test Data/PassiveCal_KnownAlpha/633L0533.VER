@@ -1,0 +1,302 @@
+INCC 5.1.2
+
+                   Facility:  TA-35 B27
+      Material balance area:  XXXX
+              Detector type:  
+                Detector id:  IPCAS
+             Electronics id:  AMSR
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  16.03.03  11:05:33
+          Results file name:  633L0533.VER
+          Inspection number:  
+                    Item id:  gvb18-#21
+                 Stratum id:  XXXX
+           Bias uncertainty:  0.0000
+         Random uncertainty:  0.0000
+     Systematic uncertainty:  0.0000
+     Relative std deviation:  0.0000
+              Material type:  PUOX
+     Original declared mass:  57.794
+         Measurement option:  Verification
+                Data source:  Shift register
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Measured
+             Inspector name:  
+            Passive comment:  
+
+               Isotopics id:  gvb18-#21
+      Isotopics source code:  OD
+                      Pu238:    0.1999 +-   0.0000      0.1760 +-   0.0000
+                      Pu239:   80.6438 +-   0.0000     81.1815 +-   0.0000
+                      Pu240:   17.2963 +-   0.0000     17.3889 +-   0.0000
+                      Pu241:    1.0981 +-   0.0000      0.4863 +-   0.0000
+                      Pu242:    0.7619 +-   0.0000      0.7673 +-   0.0000
+                    Pu date:  99.03.01                16.03.03
+                      Am241:    2.4052 +-   0.0000      2.9676 +-   0.0000
+                    Am date:  99.03.01                16.03.03
+
+                   Predelay:      3.00
+                Gate length:     24.00
+            2nd gate length:     64.00
+               High voltage:   1720
+              Die away time:     20.2000
+                 Efficiency:      0.0719
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.2065
+     Coefficient B deadtime:      0.0426
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:     39.481 +-     0.133
+ Passive doubles background:      3.294 +-     0.094
+ Passive triples background:      1.812 +-     0.120
+ Passive scaler1 background:      1.021
+ Passive scaler2 background:      2.513
+
+Warning messages
+
+Passive calibration curve: failed stratum rejection limits
+Known alpha: failed stratum rejection limits
+
+Passive summed raw data
+
+                 Number of good cycles:               15
+                      Total count time:              300
+            Shift register singles sum:           525966
+Shift register reals + accidentals sum:            33395
+        Shift register accidentals sum:            22076
+         Shift register 1st scaler sum:            22393
+         Shift register 2nd scaler sum:            41838
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0      494282       504676
+   1       30158        20538
+   2        1433          723
+   3          84           27
+   4          14            0
+   5           5            1
+   6           4            1
+   7           2            0
+
+Results
+
+       Singles:       1713.897 +-     2.374
+       Doubles:         34.450 +-     0.965
+       Triples:          0.244 +-     0.276
+         Quads:          0.797 +-     0.309
+ Quads/Triples:          0.205 +-     0.596
+      Scaler 1:         73.622 +-     0.570
+      Scaler 2:        136.947 +-     0.568
+
+ Passive calibration curve results
+
+                  Pu240e mass (g):         11.031 +-     0.298
+                       Pu240e (%):         19.121
+                      Pu mass (g):         57.688 +-     1.557
+         Declared Pu240e mass (g):         10.973
+             Declared Pu mass (g):         57.383
+     Declared - assay Pu mass (g):         -0.305 +-     1.557
+     Declared - assay Pu mass (%):         -0.532 +-     2.714
+
+Passive calibration curve calibration parameters
+
+                         Equation:  D = a + b * m + c * m^2 + d * m^3
+                                a:   0.000000e+000
+                                b:   3.006460e+000
+                                c:   1.056637e-002
+                                d:   0.000000e+000
+                       variance a:   0.000000e+000
+                       variance b:   0.000000e+000
+                       variance c:   0.000000e+000
+                       variance d:   0.000000e+000
+                    covariance ab:   0.000000e+000
+                    covariance ac:   0.000000e+000
+                    covariance ad:   0.000000e+000
+                    covariance bc:   0.000000e+000
+                    covariance bd:   0.000000e+000
+                    covariance cd:   0.000000e+000
+                          sigma x:   0.000000e+000
+Analysis based on doubles rate.
+
+                         PRIMARY RESULT
+
+ Known alpha results
+
+                            Alpha:          0.814
+                   Multiplication:          1.001
+ Multiplication corrected doubles:         34.149 +-     0.203
+                  Pu240e mass (g):         10.941 +-     0.082
+                       Pu240e (%):         19.121
+                      Pu mass (g):         57.217 +-     0.430
+         Declared Pu240e mass (g):         10.973
+             Declared Pu mass (g):         57.383
+     Declared - assay Pu mass (g):          0.166 +-     0.430
+     Declared - assay Pu mass (%):          0.290 +-     0.750
+
+                       END PRIMARY RESULT
+
+Known alpha calibration parameters
+
+                     Alpha weight:   1.000000e+000
+                         Rho zero:   3.620000e-002
+                                k:   2.166000e+000
+                                a:   7.169626e+000
+                                b:   2.465957e+000
+                       variance a:   0.000000e+000
+                       variance b:   0.000000e+000
+                    covariance ab:   0.000000e+000
+                          sigma x:   0.000000e+000
+
+Passive cycle data
+
+Count time (sec):  20
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1      35234       2269       1520       1501       2824  Pass
+   2      34985       2200       1471       1457       2814  Pass
+   3      35243       2235       1447       1473       2788  Pass
+   4      35161       2275       1467       1466       2836  Pass
+   5      35161       2236       1420       1503       2740  Pass
+   6      35408       2241       1524       1402       2836  Pass
+   7      34768       2072       1493       1478       2784  Pass
+   8      34878       2222       1442       1572       2726  Pass
+   9      34825       2240       1465       1536       2834  Pass
+  10      35109       2218       1506       1549       2750  Pass
+  11      34973       2146       1465       1504       2841  Pass
+  12      35047       2328       1414       1446       2784  Pass
+  13      34849       2247       1448       1462       2739  Pass
+  14      35239       2245       1496       1521       2721  Pass
+  15      35086       2221       1498       1523       2821  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1      1722.379        34.170         1.872        10.944  Pass
+   2      1709.927        33.169         2.105        10.635  Pass
+   3      1722.829        36.120        -1.030        11.546  Pass
+   4      1718.728        37.121         0.102        11.853  Pass
+   5      1718.728        37.521         0.540        11.976  Pass
+   6      1731.080        32.569        -0.405        10.449  Pass
+   7      1699.075        25.666        -1.255         8.295  Pass
+   8      1704.576        35.720        -0.075        11.423  Pass
+   9      1701.925        35.470         0.208        11.346  Pass
+  10      1716.128        32.319        -0.489        10.372  Pass
+  11      1709.327        30.768         0.961         9.890  Pass
+  12      1713.027        42.423         0.244        13.473  Pass
+  13      1703.125        36.670         1.028        11.715  Pass
+  14      1722.629        34.170         0.448        10.944  Pass
+  15      1714.978        32.869        -0.556        10.542  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0       33085        33769
+     1        2054         1412
+     2          84           51
+     3           7            2
+     4           2            0
+     5           1            0
+     6           1            0
+     7           1            0
+
+Cycle 2      R+A           A
+     0       32927        33578
+     1        1948         1349
+     2         105           54
+     3           5            3
+     4           1            0
+     5           2            1
+     6           1            0
+     7           1            0
+
+Cycle 3      R+A           A
+     0       33101        33844
+     1        2059         1352
+     2          79           46
+     3           6            1
+
+Cycle 4      R+A           A
+     0       32999        33738
+     1        2062         1380
+     2          96           42
+     3           7            1
+
+Cycle 5      R+A           A
+     0       33027        33778
+     1        2047         1347
+     2          79           35
+     3           5            1
+     4           4            0
+
+Cycle 6      R+A           A
+     0       33265        33935
+     1        2036         1425
+     2          92           45
+     3           7            3
+
+Cycle 7      R+A           A
+     0       32775        33323
+     1        1908         1398
+     2          79           46
+     3           2            1
+
+Cycle 8      R+A           A
+     0       32766        33488
+     1        2013         1340
+     2          93           48
+     3           6            2
+     4           0            0
+     5           1            0
+
+Cycle 9      R+A           A
+     0       32713        33417
+     1        1999         1354
+     2         112           51
+     3           3            3
+     4           2            0
+
+Cycle 10     R+A           A
+     0       33006        33668
+     1        1984         1377
+     2         111           63
+     3           4            1
+
+Cycle 11     R+A           A
+     0       32943        33547
+     1        1930         1388
+     2          94           37
+     3           8            1
+     4           1            0
+
+Cycle 12     R+A           A
+     0       32846        33680
+     1        2092         1322
+     2         109           43
+     3           6            2
+
+Cycle 13     R+A           A
+     0       32738        33472
+     1        1999         1313
+     2         101           60
+     3           7            3
+     4           2            0
+     5           1            0
+     6           2            1
+
+Cycle 14     R+A           A
+     0       33117        33794
+     1        2016         1396
+     2         103           47
+     3           5            2
+     4           2            0
+
+Cycle 15     R+A           A
+     0       32974        33645
+     1        2011         1385
+     2          96           55
+     3           6            1

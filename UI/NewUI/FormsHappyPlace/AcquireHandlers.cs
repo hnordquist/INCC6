@@ -324,12 +324,17 @@ namespace NewUI
                         }
                         else
                         {
-	                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();// analyzers are created in here, placed on global measurement
-                            if (dr == DialogResult.OK)
-                            {
-                                NC.App.DB.UpdateAcquireParams(ap); //update it again
-                                NC.App.DB.UpdateDetector(det);
-                            }
+                            // HN 5/2/2018 -- The default behavior on the main acquire menu should ALWAYS be to take the SR parms for the acquisition.
+                            // Never pop up the LMAcquire here, just create the VSR and go on.
+                            //dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();// analyzers are created in here, placed on global measurement
+                            //if (dr == DialogResult.OK)
+                            //{
+                            //NC.App.Opstate.Measurement.AnalysisParams.Add(det.MultiplicityParams);
+                            NC.App.Opstate.Measurement.AnalysisParams.PrepareMatchingVSR(det.MultiplicityParams);
+                            //NC.App.DB.UpdateAcquireParams(ap); //update it again
+                            //NC.App.DB.UpdateDetector(det);
+                            //}
+                            dr = DialogResult.OK;
                         }
 
                         if (dr == DialogResult.OK)

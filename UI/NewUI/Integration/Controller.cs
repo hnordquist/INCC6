@@ -149,8 +149,18 @@ namespace NewUI
 
             // check return bool and exit here on error
             string[] fullargs = Environment.GetCommandLineArgs();
-            string[] args = new string[fullargs.Length - 1];
-            Array.Copy(fullargs, 1, args, 0, args.Length);
+            string[] args;
+            if (fullargs.Length == 1)
+            {
+                args = new string[1];
+                Array.Copy(fullargs, 0, args, 0, args.Length);
+            }
+            else
+            {
+                args = new string[fullargs.Length - 1];
+                Array.Copy(fullargs, 1, args, 0, args.Length);
+            }
+            
             
             NCCConfig.Config c = new NCCConfig.Config(); // gets DB params
             if (!NC.App.LoadPersistenceConfig(c.DB)) // loads up DB, sets global AppContext

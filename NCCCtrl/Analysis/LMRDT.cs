@@ -615,6 +615,15 @@ namespace Analysis
                     state.cycle.SetDatastreamEndStatus();
                     CycleProcessing.ApplyTheCycleConditioningSteps(state.cycle, meas);
                     meas.CycleStatusTerminationCheck(state.cycle);
+                    if (state.cycle.CountingAnalysisResults.HasMultiplicity)
+                    { 
+                        SpecificCountingAnalyzerParams spec = state.cycle.CountingAnalysisResults.GetFirstMultiplicityOrFirstLMKey;
+                        MultiplicityCountingRes mcr = (MultiplicityCountingRes)state.cycle.CountingAnalysisResults[spec];
+
+                        //Add rates to display for live PTR acquisition HN 5/2/2018
+                        logger.TraceEvent(LogLevels.Info, 2018001, String.Format("Cycle {0,-3}     Singles: {1,14:F3}     Doubles: {2,14:F3}     Triples: {3,14:F3}",
+                            state.cycle.seq, mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v));
+                    }
 
                 }
                 catch (Exception ex)

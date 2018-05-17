@@ -217,6 +217,7 @@
             | System.Globalization.NumberStyles.AllowDecimalPoint) 
             | System.Globalization.NumberStyles.AllowThousands) 
             | System.Globalization.NumberStyles.AllowExponent)));
+            this.ConventionalATextBox.SetRange(-1000, 1000);
             this.ConventionalATextBox.Size = new System.Drawing.Size(100, 20);
             this.ConventionalATextBox.Steps = -1D;
             this.ConventionalATextBox.TabIndex = 6;
@@ -237,6 +238,7 @@
             | System.Globalization.NumberStyles.AllowDecimalPoint) 
             | System.Globalization.NumberStyles.AllowThousands) 
             | System.Globalization.NumberStyles.AllowExponent)));
+            this.ConventionalBTextBox.SetRange(-1000, 1000);
             this.ConventionalBTextBox.Size = new System.Drawing.Size(100, 20);
             this.ConventionalBTextBox.Steps = -1D;
             this.ConventionalBTextBox.TabIndex = 7;
@@ -257,6 +259,7 @@
             | System.Globalization.NumberStyles.AllowDecimalPoint) 
             | System.Globalization.NumberStyles.AllowThousands) 
             | System.Globalization.NumberStyles.AllowExponent)));
+            this.VarianceATextBox.SetRange(-1000, 1000);
             this.VarianceATextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceATextBox.Steps = -1D;
             this.VarianceATextBox.TabIndex = 8;
@@ -278,6 +281,7 @@
             | System.Globalization.NumberStyles.AllowDecimalPoint) 
             | System.Globalization.NumberStyles.AllowThousands) 
             | System.Globalization.NumberStyles.AllowExponent)));
+            this.VarianceBTextBox.SetRange(-1000, 1000);
             this.VarianceBTextBox.Size = new System.Drawing.Size(100, 20);
             this.VarianceBTextBox.Steps = -1D;
             this.VarianceBTextBox.TabIndex = 9;
@@ -299,6 +303,7 @@
             | System.Globalization.NumberStyles.AllowDecimalPoint) 
             | System.Globalization.NumberStyles.AllowThousands) 
             | System.Globalization.NumberStyles.AllowExponent)));
+            this.CovarianceABTextBox.SetRange(-1000, 1000);
             this.CovarianceABTextBox.Size = new System.Drawing.Size(100, 20);
             this.CovarianceABTextBox.Steps = -1D;
             this.CovarianceABTextBox.TabIndex = 10;

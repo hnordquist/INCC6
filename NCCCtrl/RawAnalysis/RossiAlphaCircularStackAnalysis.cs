@@ -118,8 +118,8 @@ namespace LMRawAnalysis
             spinTimeReady = false;
 #endif
 
-            rossiAlphaGateWidth = gateWidth;
-            rossiAlphaWindowWidth = ((UInt64)(RawAnalysisProperties.numRAGatesPerWindow)) * gateWidth;
+            rossiAlphaGateWidth = gateWidth*10;
+            rossiAlphaWindowWidth = ((UInt64)(RawAnalysisProperties.numRAGatesPerWindow)) * gateWidth*10;
             totalRossiAlphaAnalysisTime = 0;
 
             for (i = 0; i < RawAnalysisProperties.numRAGatesPerWindow; i++)

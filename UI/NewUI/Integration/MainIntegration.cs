@@ -108,6 +108,8 @@ namespace NewUI
                 {
                     NC.App.AppContext.FileInput = xs;
                     NC.App.AppContext.FileInputList = null;  // no explicit file list
+                    NC.App.AppContext.modified = true;
+                    NC.App.LMBD.UpdateLMINCCAppContext();
                     return DialogResult.OK;                }
                 else
                     return DialogResult.Cancel;
@@ -141,6 +143,8 @@ namespace NewUI
                 {
                     NC.App.AppContext.FileInputList = paths;
                     NC.App.AppContext.FileInput = null;  // no explicit folder System.IO.Path.GetDirectoryName(paths[0]);
+                    NC.App.AppContext.modified = true;
+                    NC.App.LMBD.UpdateLMINCCAppContext();
                 }
             }
             return r;

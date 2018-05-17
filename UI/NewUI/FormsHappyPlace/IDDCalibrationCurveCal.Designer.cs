@@ -201,6 +201,7 @@
             this.ATextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.ATextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.ATextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.ATextBox.SetRange(-1000, 1000);
             // 
             // BTextBox
             // 
@@ -211,6 +212,7 @@
             this.BTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.BTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.BTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.BTextBox.SetRange(-1000, 1000);
             // 
             // CTextBox
             // 
@@ -221,6 +223,7 @@
             this.CTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CTextBox.SetRange(-1000, 1000);
             // 
             // DTextBox
             // 
@@ -231,6 +234,7 @@
             this.DTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.DTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.DTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.DTextBox.SetRange(-1000, 1000);
             // 
             // VarianceATextBox
             // 
@@ -241,6 +245,7 @@
             this.VarianceATextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.VarianceATextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.VarianceATextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.VarianceATextBox.SetRange(-1000, 1000);
 
             // 
             // VarianceBTextBox
@@ -252,7 +257,7 @@
             this.VarianceBTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.VarianceBTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.VarianceBTextBox.NumberFormat = NumericTextBox.Formatter.E3;
-
+            this.VarianceBTextBox.SetRange(-1000, 1000);
             // 
             // VarianceCTextBox
             // 
@@ -263,6 +268,7 @@
             this.VarianceCTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.VarianceCTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.VarianceCTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.VarianceCTextBox.SetRange(-1000, 1000);
             // 
             // VarianceDTextBox
             // 
@@ -273,6 +279,7 @@
             this.VarianceDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.VarianceDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.VarianceDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.VarianceDTextBox.SetRange(-1000, 1000);
 
             // 
             // CovarianceABTextBox
@@ -284,6 +291,7 @@
             this.CovarianceABTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceABTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceABTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CovarianceABTextBox.SetRange(-1000, 1000);
 
             // 
             // CovarianceACTextBox
@@ -295,6 +303,7 @@
             this.CovarianceACTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceACTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceACTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CovarianceACTextBox.SetRange(-1000, 1000);
 
             // 
             // CovarianceADTextBox
@@ -306,6 +315,7 @@
             this.CovarianceADTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceADTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceADTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CovarianceADTextBox.SetRange(-1000, 1000);
 
             // 
             // CovarianceBCTextBox
@@ -317,7 +327,7 @@
             this.CovarianceBCTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceBCTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceBCTextBox.NumberFormat = NumericTextBox.Formatter.E3;
-
+            this.CovarianceBCTextBox.SetRange(-1000, 1000);
             // 
             // CovarianceBDTextBox
             // 
@@ -328,6 +338,7 @@
             this.CovarianceBDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceBDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceBDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CovarianceBDTextBox.SetRange(-1000, 1000);
             // 
             // CovarianceCDTextBox
             // 
@@ -338,6 +349,7 @@
             this.CovarianceCDTextBox.ToValidate = NumericTextBox.ValidateType.Double;
             this.CovarianceCDTextBox.NumStyles = System.Globalization.NumberStyles.AllowExponent;
             this.CovarianceCDTextBox.NumberFormat = NumericTextBox.Formatter.E3;
+            this.CovarianceCDTextBox.SetRange(-1000, 1000);
             // 
             // SigmaXTextBox
             // 

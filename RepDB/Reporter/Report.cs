@@ -264,7 +264,10 @@ namespace NCCReporter
             {
                 foreach (ValueType v in System.Enum.GetValues(et))
                 {
-                    Add(i, TS(v));
+                    string s = TS(v);
+                    if (s.Equals("GateWidth") || s.Equals("Predelay"))
+                        s += " µSec";
+                    Add(i, s);
                     i++;
                 }
                 r++;

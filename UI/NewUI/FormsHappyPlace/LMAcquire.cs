@@ -210,7 +210,7 @@ namespace NewUI
                 if (N.App.AppContext.FileInputList == null)
                     Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInput;
                 else
-                    Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInputList.Count.ToString() + " selected files";
+                    Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInputList.Count.ToString() + " selected file(s)";
             }
             else Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInput;        
         }
@@ -311,7 +311,19 @@ namespace NewUI
             switch (step)
             {
                 case LMSteps.FileBased:
-                    Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInput;
+                    if (N.App.AppContext.FileInput == null || N.App.AppContext.FileInput == "")// Empty string was not included here.
+                    {
+                        if (N.App.AppContext.FileInputList != null)
+                            Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInputList.Count + " selected file(s)";
+                        else
+                        {
+                            N.App.AppContext.FileInput = System.Environment.CurrentDirectory;
+                            Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInput;
+                            N.App.AppContext.modified = true;
+                        }
+                    }
+                    else
+                        Step2InputDirectoryTextBox.Text = N.App.AppContext.FileInput;
                     Step2RecurseCheckBox.CheckState = (N.App.AppContext.Recurse ? CheckState.Checked : CheckState.Unchecked);
                     Step2AutoOpenCheckBox.CheckState = (N.App.AppContext.OpenResults ? CheckState.Checked : CheckState.Unchecked);
                     Step2IncludeConfigCheckBox.CheckState = (ap.lm.IncludeConfig ? CheckState.Checked : CheckState.Unchecked);
@@ -574,10 +586,18 @@ namespace NewUI
                 DataGridViewRow row = AnalyzerGridView.Rows[e.RowIndex];
                 DataGridViewCell cell = row.Cells[e.ColumnIndex];
                 //Need to grab as double, multiply to tics, then compare;
+                //Predelay cannot be fractional tic value.
                 ulong x = (ulong)cell.Tag;
                 double y = 0;
                 double.TryParse((string)cell.Value, out y);
                 y *= 10;
+                if (e.ColumnIndex == 3 && y < 1)// fractional tics.
+                {
+                    cell.Value = "0.1";
+                    MessageBox.Show("Predelay cannot be < .1 μs", "ERROR");
+                    return;
+                }
+                y = 1;
                 bool mod = !(y.Equals(x));
                 if (mod)
                 {
@@ -1375,7 +1395,23 @@ namespace NewUI
 
         private void Step2InputDirectoryTextBox_TextChanged(object sender, EventArgs e)
         {
-            N.App.AppContext.FileInput = ((TextBox)(sender)).Text;
+            if (Directory.Exists(((TextBox)(sender)).Text))
+                N.App.AppContext.FileInput = ((TextBox)(sender)).Text;//It is a folder
+            else if (((TextBox)(sender)).Text.Contains("selected file(s)"))
+            {
+                if (System.IO.File.Exists (N.App.AppContext.FileInputList[0]))
+                {
+                    N.App.AppContext.FileInput = null;
+                }
+            }
+            else if (System.IO.File.Exists(((TextBox)(sender)).Text))
+            {
+                N.App.AppContext.FileInputList = new List<string>();//It is a file they 
+                N.App.AppContext.FileInputList.Add(((TextBox)(sender)).Text);
+                N.App.AppContext.FileInput = null;
+            }
+            else
+                MessageBox.Show("This is not a valid folder or file.", "ERROR");
             N.App.AppContext.modified = true;
 
         }

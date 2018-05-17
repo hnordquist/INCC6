@@ -39,7 +39,11 @@
             this.Path = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.IntervalTextBox = new System.Windows.Forms.TextBox();
             this.CycleNumTextBox = new System.Windows.Forms.TextBox();
+            this.Step2IncludeConfigCheckBox = new System.Windows.Forms.CheckBox();
+            this.Step2OutputDirectoryTextBox = new System.Windows.Forms.TextBox();
+            this.Step2SavePulseDataFiles = new System.Windows.Forms.CheckBox();
             this.LiveSettings = new System.Windows.Forms.TabPage();
+            this.DSave = new System.Windows.Forms.Button();
             this.SwapInputsL = new System.Windows.Forms.Button();
             this.CycleNum2Label = new System.Windows.Forms.Label();
             this.CycleNum1Label = new System.Windows.Forms.Label();
@@ -56,7 +60,11 @@
             this.Step2ACancel = new System.Windows.Forms.Button();
             this.Step2ASaveExit = new System.Windows.Forms.Button();
             this.Step2InputDirectoryLabel = new System.Windows.Forms.Label();
+            this.Step2SaveEarlyTermCheckBox = new System.Windows.Forms.CheckBox();
+            this.FilePicker2 = new System.Windows.Forms.Button();
+            this.Step2OutputDirectoryLabel = new System.Windows.Forms.Label();
             this.Step2InputDirectoryTextBox = new System.Windows.Forms.TextBox();
+            this.Step2AutoOpenCheckBox = new System.Windows.Forms.CheckBox();
             this.InputFileTypeGroupBox = new System.Windows.Forms.GroupBox();
             this.Step2MCA5272RadioBtn = new System.Windows.Forms.RadioButton();
             this.Step2PTR32RadioBtn = new System.Windows.Forms.RadioButton();
@@ -70,11 +78,6 @@
             this.DeleteBtn = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.AnalyzerGridView = new System.Windows.Forms.DataGridView();
-            this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.APCancel = new System.Windows.Forms.Button();
             this.Step3SaveExit = new System.Windows.Forms.Button();
             this.ReviewAndGo = new System.Windows.Forms.TabPage();
@@ -94,14 +97,11 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Step2AutoOpenCheckBox = new System.Windows.Forms.CheckBox();
-            this.Step2IncludeConfigCheckBox = new System.Windows.Forms.CheckBox();
-            this.Step2SaveEarlyTermCheckBox = new System.Windows.Forms.CheckBox();
-            this.FilePicker2 = new System.Windows.Forms.Button();
-            this.Step2OutputDirectoryLabel = new System.Windows.Forms.Label();
-            this.Step2OutputDirectoryTextBox = new System.Windows.Forms.TextBox();
-            this.DSave = new System.Windows.Forms.Button();
-            this.Step2SavePulseDataFiles = new System.Windows.Forms.CheckBox();
+            this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.LiveSettings.SuspendLayout();
             this.FileSettings.SuspendLayout();
             this.InputFileTypeGroupBox.SuspendLayout();
@@ -196,6 +196,41 @@
             this.CycleNumTextBox.TextChanged += new System.EventHandler(this.CycleNumTextBox_TextChanged);
             this.CycleNumTextBox.Leave += new System.EventHandler(this.CycleNumTextBox_Leave);
             // 
+            // Step2IncludeConfigCheckBox
+            // 
+            this.Step2IncludeConfigCheckBox.AutoSize = true;
+            this.Step2IncludeConfigCheckBox.Location = new System.Drawing.Point(9, 198);
+            this.Step2IncludeConfigCheckBox.Name = "Step2IncludeConfigCheckBox";
+            this.Step2IncludeConfigCheckBox.Size = new System.Drawing.Size(339, 17);
+            this.Step2IncludeConfigCheckBox.TabIndex = 51;
+            this.Step2IncludeConfigCheckBox.Text = "Append a copy of measurement configuration information to output";
+            this.toolTip1.SetToolTip(this.Step2IncludeConfigCheckBox, "append copy of app config file to CSV results file");
+            this.Step2IncludeConfigCheckBox.UseVisualStyleBackColor = true;
+            this.Step2IncludeConfigCheckBox.CheckedChanged += new System.EventHandler(this.Step2IncludeConfigCheckBox_CheckedChanged);
+            // 
+            // Step2OutputDirectoryTextBox
+            // 
+            this.Step2OutputDirectoryTextBox.Location = new System.Drawing.Point(10, 174);
+            this.Step2OutputDirectoryTextBox.Name = "Step2OutputDirectoryTextBox";
+            this.Step2OutputDirectoryTextBox.Size = new System.Drawing.Size(362, 20);
+            this.Step2OutputDirectoryTextBox.TabIndex = 49;
+            this.toolTip1.SetToolTip(this.Step2OutputDirectoryTextBox, "Results files are saved in this location. Uses the daily path if the daily path f" +
+        "lag is set.");
+            this.Step2OutputDirectoryTextBox.TextChanged += new System.EventHandler(this.Step2OutputDirectoryTextBox_TextChanged);
+            // 
+            // Step2SavePulseDataFiles
+            // 
+            this.Step2SavePulseDataFiles.AutoSize = true;
+            this.Step2SavePulseDataFiles.Location = new System.Drawing.Point(9, 267);
+            this.Step2SavePulseDataFiles.Name = "Step2SavePulseDataFiles";
+            this.Step2SavePulseDataFiles.Size = new System.Drawing.Size(209, 17);
+            this.Step2SavePulseDataFiles.TabIndex = 65;
+            this.Step2SavePulseDataFiles.Text = "Save pulse data files during acquisition";
+            this.Step2SavePulseDataFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.toolTip1.SetToolTip(this.Step2SavePulseDataFiles, "Save data files in the format native to the instrument (MCA-527, PTR-32, LMMM)");
+            this.Step2SavePulseDataFiles.UseVisualStyleBackColor = true;
+            this.Step2SavePulseDataFiles.CheckedChanged += new System.EventHandler(this.Step2SavePulseDataFiles_CheckedChanged);
+            // 
             // LiveSettings
             // 
             this.LiveSettings.Controls.Add(this.DSave);
@@ -215,10 +250,20 @@
             this.LiveSettings.Margin = new System.Windows.Forms.Padding(2);
             this.LiveSettings.Name = "LiveSettings";
             this.LiveSettings.Padding = new System.Windows.Forms.Padding(2);
-            this.LiveSettings.Size = new System.Drawing.Size(418, 449);
+            this.LiveSettings.Size = new System.Drawing.Size(455, 449);
             this.LiveSettings.TabIndex = 1;
             this.LiveSettings.Text = "DAQ Settings";
             this.LiveSettings.UseVisualStyleBackColor = true;
+            // 
+            // DSave
+            // 
+            this.DSave.Location = new System.Drawing.Point(125, 282);
+            this.DSave.Name = "DSave";
+            this.DSave.Size = new System.Drawing.Size(72, 40);
+            this.DSave.TabIndex = 65;
+            this.DSave.Text = "Save Changes";
+            this.DSave.UseVisualStyleBackColor = true;
+            this.DSave.Click += new System.EventHandler(this.DSave_Click);
             // 
             // SwapInputsL
             // 
@@ -274,7 +319,7 @@
             // 
             this.ReviewDetector.Location = new System.Drawing.Point(257, 21);
             this.ReviewDetector.Name = "ReviewDetector";
-            this.ReviewDetector.Size = new System.Drawing.Size(86, 25);
+            this.ReviewDetector.Size = new System.Drawing.Size(112, 24);
             this.ReviewDetector.TabIndex = 34;
             this.ReviewDetector.Text = "Review Details";
             this.ReviewDetector.UseVisualStyleBackColor = true;
@@ -341,7 +386,7 @@
             this.FileSettings.Margin = new System.Windows.Forms.Padding(2);
             this.FileSettings.Name = "FileSettings";
             this.FileSettings.Padding = new System.Windows.Forms.Padding(2);
-            this.FileSettings.Size = new System.Drawing.Size(418, 449);
+            this.FileSettings.Size = new System.Drawing.Size(455, 449);
             this.FileSettings.TabIndex = 0;
             this.FileSettings.Text = "File Settings";
             this.FileSettings.UseVisualStyleBackColor = true;
@@ -397,6 +442,36 @@
             this.Step2InputDirectoryLabel.TabIndex = 54;
             this.Step2InputDirectoryLabel.Text = "Directory containing input files:";
             // 
+            // Step2SaveEarlyTermCheckBox
+            // 
+            this.Step2SaveEarlyTermCheckBox.AutoSize = true;
+            this.Step2SaveEarlyTermCheckBox.Location = new System.Drawing.Point(9, 244);
+            this.Step2SaveEarlyTermCheckBox.Name = "Step2SaveEarlyTermCheckBox";
+            this.Step2SaveEarlyTermCheckBox.Size = new System.Drawing.Size(234, 17);
+            this.Step2SaveEarlyTermCheckBox.TabIndex = 53;
+            this.Step2SaveEarlyTermCheckBox.Text = "Save results in the event of early termination";
+            this.Step2SaveEarlyTermCheckBox.UseVisualStyleBackColor = true;
+            this.Step2SaveEarlyTermCheckBox.CheckedChanged += new System.EventHandler(this.Step2SaveEarlyTermCheckBox_CheckedChanged);
+            // 
+            // FilePicker2
+            // 
+            this.FilePicker2.Location = new System.Drawing.Point(377, 171);
+            this.FilePicker2.Name = "FilePicker2";
+            this.FilePicker2.Size = new System.Drawing.Size(36, 23);
+            this.FilePicker2.TabIndex = 52;
+            this.FilePicker2.Text = "...";
+            this.FilePicker2.UseVisualStyleBackColor = true;
+            this.FilePicker2.Click += new System.EventHandler(this.FilePicker2_Click);
+            // 
+            // Step2OutputDirectoryLabel
+            // 
+            this.Step2OutputDirectoryLabel.AutoSize = true;
+            this.Step2OutputDirectoryLabel.Location = new System.Drawing.Point(9, 157);
+            this.Step2OutputDirectoryLabel.Name = "Step2OutputDirectoryLabel";
+            this.Step2OutputDirectoryLabel.Size = new System.Drawing.Size(158, 13);
+            this.Step2OutputDirectoryLabel.TabIndex = 50;
+            this.Step2OutputDirectoryLabel.Text = "Directory to place output files in:";
+            // 
             // Step2InputDirectoryTextBox
             // 
             this.Step2InputDirectoryTextBox.Location = new System.Drawing.Point(11, 28);
@@ -404,6 +479,17 @@
             this.Step2InputDirectoryTextBox.Size = new System.Drawing.Size(362, 20);
             this.Step2InputDirectoryTextBox.TabIndex = 44;
             this.Step2InputDirectoryTextBox.TextChanged += new System.EventHandler(this.Step2InputDirectoryTextBox_TextChanged);
+            // 
+            // Step2AutoOpenCheckBox
+            // 
+            this.Step2AutoOpenCheckBox.AutoSize = true;
+            this.Step2AutoOpenCheckBox.Location = new System.Drawing.Point(9, 222);
+            this.Step2AutoOpenCheckBox.Name = "Step2AutoOpenCheckBox";
+            this.Step2AutoOpenCheckBox.Size = new System.Drawing.Size(310, 17);
+            this.Step2AutoOpenCheckBox.TabIndex = 48;
+            this.Step2AutoOpenCheckBox.Text = "Automatically open INCC measurement results when finished";
+            this.Step2AutoOpenCheckBox.UseVisualStyleBackColor = true;
+            this.Step2AutoOpenCheckBox.CheckedChanged += new System.EventHandler(this.Step2AutoOpenCheckBox_CheckedChanged);
             // 
             // InputFileTypeGroupBox
             // 
@@ -570,38 +656,6 @@
             this.AnalyzerGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.AnalyzerGridView_CellFormatting);
             this.AnalyzerGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.AnalyzerGridView_EditingControlShowing);
             this.AnalyzerGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_DataGridViewCellEventHandler);
-            // 
-            // Active
-            // 
-            this.Active.FalseValue = "no";
-            this.Active.HeaderText = "Active";
-            this.Active.Name = "Active";
-            this.Active.TrueValue = "yes";
-            this.Active.Width = 50;
-            // 
-            // Type
-            // 
-            this.Type.HeaderText = "Type";
-            this.Type.Name = "Type";
-            this.Type.Width = 140;
-            // 
-            // Gatewidth
-            // 
-            this.Gatewidth.HeaderText = "Gate width";
-            this.Gatewidth.Name = "Gatewidth";
-            this.Gatewidth.Width = 110;
-            // 
-            // Predelay
-            // 
-            this.Predelay.HeaderText = "-";
-            this.Predelay.Name = "Predelay";
-            this.Predelay.Width = 80;
-            // 
-            // Long
-            // 
-            this.Long.HeaderText = "-";
-            this.Long.Name = "Long";
-            this.Long.Width = 130;
             // 
             // APCancel
             // 
@@ -803,91 +857,37 @@
             this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             // 
-            // Step2AutoOpenCheckBox
+            // Active
             // 
-            this.Step2AutoOpenCheckBox.AutoSize = true;
-            this.Step2AutoOpenCheckBox.Location = new System.Drawing.Point(9, 222);
-            this.Step2AutoOpenCheckBox.Name = "Step2AutoOpenCheckBox";
-            this.Step2AutoOpenCheckBox.Size = new System.Drawing.Size(310, 17);
-            this.Step2AutoOpenCheckBox.TabIndex = 48;
-            this.Step2AutoOpenCheckBox.Text = "Automatically open INCC measurement results when finished";
-            this.Step2AutoOpenCheckBox.UseVisualStyleBackColor = true;
-            this.Step2AutoOpenCheckBox.CheckedChanged += new System.EventHandler(this.Step2AutoOpenCheckBox_CheckedChanged);
+            this.Active.FalseValue = "no";
+            this.Active.HeaderText = "Active";
+            this.Active.Name = "Active";
+            this.Active.TrueValue = "yes";
+            this.Active.Width = 50;
             // 
-            // Step2IncludeConfigCheckBox
+            // Type
             // 
-            this.Step2IncludeConfigCheckBox.AutoSize = true;
-            this.Step2IncludeConfigCheckBox.Location = new System.Drawing.Point(9, 198);
-            this.Step2IncludeConfigCheckBox.Name = "Step2IncludeConfigCheckBox";
-            this.Step2IncludeConfigCheckBox.Size = new System.Drawing.Size(339, 17);
-            this.Step2IncludeConfigCheckBox.TabIndex = 51;
-            this.Step2IncludeConfigCheckBox.Text = "Append a copy of measurement configuration information to output";
-            this.toolTip1.SetToolTip(this.Step2IncludeConfigCheckBox, "append copy of app config file to CSV results file");
-            this.Step2IncludeConfigCheckBox.UseVisualStyleBackColor = true;
-            this.Step2IncludeConfigCheckBox.CheckedChanged += new System.EventHandler(this.Step2IncludeConfigCheckBox_CheckedChanged);
+            this.Type.HeaderText = "Type";
+            this.Type.Name = "Type";
+            this.Type.Width = 140;
             // 
-            // Step2SaveEarlyTermCheckBox
+            // Gatewidth
             // 
-            this.Step2SaveEarlyTermCheckBox.AutoSize = true;
-            this.Step2SaveEarlyTermCheckBox.Location = new System.Drawing.Point(9, 244);
-            this.Step2SaveEarlyTermCheckBox.Name = "Step2SaveEarlyTermCheckBox";
-            this.Step2SaveEarlyTermCheckBox.Size = new System.Drawing.Size(234, 17);
-            this.Step2SaveEarlyTermCheckBox.TabIndex = 53;
-            this.Step2SaveEarlyTermCheckBox.Text = "Save results in the event of early termination";
-            this.Step2SaveEarlyTermCheckBox.UseVisualStyleBackColor = true;
-            this.Step2SaveEarlyTermCheckBox.CheckedChanged += new System.EventHandler(this.Step2SaveEarlyTermCheckBox_CheckedChanged);
+            this.Gatewidth.HeaderText = "Gate/Bin width";
+            this.Gatewidth.Name = "Gatewidth";
+            this.Gatewidth.Width = 110;
             // 
-            // FilePicker2
+            // Predelay
             // 
-            this.FilePicker2.Location = new System.Drawing.Point(377, 171);
-            this.FilePicker2.Name = "FilePicker2";
-            this.FilePicker2.Size = new System.Drawing.Size(36, 23);
-            this.FilePicker2.TabIndex = 52;
-            this.FilePicker2.Text = "...";
-            this.FilePicker2.UseVisualStyleBackColor = true;
-            this.FilePicker2.Click += new System.EventHandler(this.FilePicker2_Click);
+            this.Predelay.HeaderText = "-";
+            this.Predelay.Name = "Predelay";
+            this.Predelay.Width = 80;
             // 
-            // Step2OutputDirectoryLabel
+            // Long
             // 
-            this.Step2OutputDirectoryLabel.AutoSize = true;
-            this.Step2OutputDirectoryLabel.Location = new System.Drawing.Point(9, 157);
-            this.Step2OutputDirectoryLabel.Name = "Step2OutputDirectoryLabel";
-            this.Step2OutputDirectoryLabel.Size = new System.Drawing.Size(158, 13);
-            this.Step2OutputDirectoryLabel.TabIndex = 50;
-            this.Step2OutputDirectoryLabel.Text = "Directory to place output files in:";
-            // 
-            // Step2OutputDirectoryTextBox
-            // 
-            this.Step2OutputDirectoryTextBox.Location = new System.Drawing.Point(10, 174);
-            this.Step2OutputDirectoryTextBox.Name = "Step2OutputDirectoryTextBox";
-            this.Step2OutputDirectoryTextBox.Size = new System.Drawing.Size(362, 20);
-            this.Step2OutputDirectoryTextBox.TabIndex = 49;
-            this.toolTip1.SetToolTip(this.Step2OutputDirectoryTextBox, "Results files are saved in this location. Uses the daily path if the daily path f" +
-        "lag is set.");
-            this.Step2OutputDirectoryTextBox.TextChanged += new System.EventHandler(this.Step2OutputDirectoryTextBox_TextChanged);
-            // 
-            // DSave
-            // 
-            this.DSave.Location = new System.Drawing.Point(125, 282);
-            this.DSave.Name = "DSave";
-            this.DSave.Size = new System.Drawing.Size(72, 40);
-            this.DSave.TabIndex = 65;
-            this.DSave.Text = "Save Changes";
-            this.DSave.UseVisualStyleBackColor = true;
-            this.DSave.Click += new System.EventHandler(this.DSave_Click);
-            // 
-            // Step2SavePulseDataFiles
-            // 
-            this.Step2SavePulseDataFiles.AutoSize = true;
-            this.Step2SavePulseDataFiles.Location = new System.Drawing.Point(9, 267);
-            this.Step2SavePulseDataFiles.Name = "Step2SavePulseDataFiles";
-            this.Step2SavePulseDataFiles.Size = new System.Drawing.Size(209, 17);
-            this.Step2SavePulseDataFiles.TabIndex = 65;
-            this.Step2SavePulseDataFiles.Text = "Save pulse data files during acquisition";
-            this.Step2SavePulseDataFiles.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.toolTip1.SetToolTip(this.Step2SavePulseDataFiles, "Save data files in the format native to the instrument (MCA-527, PTR-32, LMMM)");
-            this.Step2SavePulseDataFiles.UseVisualStyleBackColor = true;
-            this.Step2SavePulseDataFiles.CheckedChanged += new System.EventHandler(this.Step2SavePulseDataFiles_CheckedChanged);
+            this.Long.HeaderText = "-";
+            this.Long.Name = "Long";
+            this.Long.Width = 130;
             // 
             // LMAcquire
             // 
@@ -972,11 +972,6 @@
         private System.Windows.Forms.ColumnHeader Lines;
         private System.Windows.Forms.Button FSave;
         private System.Windows.Forms.Button ASave;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn Active;
-		private System.Windows.Forms.DataGridViewComboBoxColumn Type;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Gatewidth;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
-		private System.Windows.Forms.DataGridViewTextBoxColumn Long;
         private System.Windows.Forms.ComboBox DataSource;
         private System.Windows.Forms.CheckBox CommentBox;
         private System.Windows.Forms.CheckBox PrintResults;
@@ -989,5 +984,10 @@
         private System.Windows.Forms.Label Step2OutputDirectoryLabel;
         private System.Windows.Forms.TextBox Step2OutputDirectoryTextBox;
         private System.Windows.Forms.CheckBox Step2AutoOpenCheckBox;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Active;
+        private System.Windows.Forms.DataGridViewComboBoxColumn Type;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Gatewidth;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Long;
     }
 }

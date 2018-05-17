@@ -46,7 +46,7 @@ namespace NCCReporter
     public class LMLoggers
     {
 
-        public enum AppSection { App, Data, Analysis, Control, Collect, DB ,Test};
+        public enum AppSection { App, Data, Analysis, Control, Collect, DB};
 
         Hashtable reps = null;
         NCCConfig.Config cfg = null;
@@ -54,10 +54,6 @@ namespace NCCReporter
         public LognLM Logger(AppSection wp)
         {
             return (LognLM)reps[wp];
-        }
-        public LognLM TestLogger
-        {
-            get { return (LognLM)reps[AppSection.Test]; }
         }
         public LognLM AppLogger
         {

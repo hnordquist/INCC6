@@ -58,6 +58,7 @@
     <Compile Include="BigNum\BigFloat.cs" />
     <Compile Include="BigNum\BigInt.cs" />
     <Compile Include="Central.cs" />
+    <Compile Include="CompareTools.cs" />
     <Compile Include="LMResults.cs" />
     <Compile Include="CounterPersistence.cs" />
     <Compile Include="Cycle.cs" />

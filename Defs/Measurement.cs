@@ -480,12 +480,14 @@ namespace AnalysisDefs
         public DateTimeOffset MeasDate
         {
             get { return mid.MeasDateTime; }
-            set { mid.MeasDateTime = value; }
+            set { if (mid.MeasDateTime == null)
+                    mid.MeasDateTime = new DateTime();
+                mid.MeasDateTime = value; }
         }
         public AssaySelector.MeasurementOption MeasOption
         {
             get { return mid.MeasOption; }
-            // set { mid.MeasOption = value; }
+            set {mid.MeasOption = value; }
         }
         public ResultFiles ResultsFiles; // the CSV file with general SR and LM results (non-mass) and cycle summaries per analysis,  INCC5-style text files; can have multiple output files if more than one SR params
 
@@ -563,6 +565,7 @@ namespace AnalysisDefs
         public AcquireParameters AcquireState
         {
             get { return mt.Item6; }
+            set { mt.Item6.item_id = value.item_id; }
         }
         /// <summary>
         ///  a single global value for the measurement context, checked against global strata map before caller uses in mass calculations
@@ -637,17 +640,20 @@ namespace AnalysisDefs
         public void AddErrorMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Error, id, s));
-            logger.TraceEvent(LogLevels.Error, id, s);
+            if (logger != null)
+                logger.TraceEvent(LogLevels.Error, id, s);
         }
         public void AddWarningMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Warning, id, s));
-            logger.TraceEvent(LogLevels.Warning, id, s);
+            if (logger !=null)
+                logger.TraceEvent(LogLevels.Warning, id, s);
         }
         public void AddDireMessage(string s, int id, Multiplicity mul)
         {
             LookupMessageList(mul).Add(new MeasurementMsg(LogLevels.Critical, id, s));
-            logger.TraceEvent(LogLevels.Critical, id, s);
+            if (logger != null)
+                logger.TraceEvent(LogLevels.Critical, id, s);
         }
 
 
@@ -845,6 +851,10 @@ namespace AnalysisDefs
 
         private void InitMisc()
         {
+            if (MeasDate == null)
+                MeasDate = new DateTimeOffset(DateTime.Now);
+            
+
             countresults = new CountingResults();
             cycles = new CycleList();
             Messages = new AnalysisMessages();
@@ -905,7 +915,8 @@ namespace AnalysisDefs
 
         public void InitializeResultsSummarizers()
         {
-            logger.TraceEvent(LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
+            if (logger != null)
+                logger.TraceEvent(LogLevels.Verbose, 4042, "Initialize results summarizers (countresults)");
             countresults.Clear();
             try
             {
@@ -955,7 +966,8 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
+                if (logger != null)
+                    logger.TraceEvent(LogLevels.Error, 4041, "Unable to create counting analyzers: " + ex.Message);
             }
         }
         public void InitializeContext(bool clearCounterResults = true)
@@ -969,7 +981,8 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                logger.TraceEvent(LogLevels.Error, 4041, "Measurement context: " + ex.Message);
+                if (logger != null)
+                    logger.TraceEvent(LogLevels.Error, 4041, "Measurement context: " + ex.Message);
             }
         }
 
@@ -1024,14 +1037,17 @@ namespace AnalysisDefs
                 {
                     existed = INCCAnalysisState.PrepareINCCResults(MeasOption, mcr, (MultiplicityCountingRes)CountingAnalysisResults[mcr]);
 					if (!existed) // it was created just now in PrepareINCCResults
-	                    logger.TraceEvent(LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
+	                    if (logger != null)
+                            logger.TraceEvent(LogLevels.Verbose, 4028, "Preparing INCC {0} results for {1}", MeasOption.PrintName(), mcr.ToString());
                     existed = INCCAnalysisState.PrepareINCCMethodResults(mcr, new INCCSelector(INCCAnalysisState.Methods.selector),this);
  					if (!existed) // it was created just now in PrepareINCCMethodResults
-						logger.TraceEvent(LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
+                        if (logger != null)
+                            logger.TraceEvent(LogLevels.Verbose, 4029, "Preparing INCC method {0} results for {1}", INCCAnalysisState.Methods.selector.ToString(), mcr.ToString());
                 }
                 catch (Exception ex)
                 {
-                    logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
+                    if (logger != null)
+                        logger.TraceEvent(LogLevels.Error, 4027, "PrepareINCCResults error: " + ex.Message);
                 }
             }
         }

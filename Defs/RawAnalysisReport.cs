@@ -111,26 +111,32 @@ namespace AnalysisDefs
         string DetectorCalibrationHeader(ValueType e)
         {
             string s = e.ToString();
-            if (s.Equals("Predelay") || s.Equals("GateLength") || s.Equals("DieAwayTime") || s.Equals("LongDelay"))
+            if (s.Equals("Predelay") || s.Equals("GateLength") || s.Equals("DieAwayTime") || s.Equals("LongDelay") ||
+                s.Equals ("DTCoeffA") || s.Equals("DTCoeffC") || s.Equals("GateWidth"))
+              
                 s += " µSec";
-            /*switch ((DetectorCalibration)e)
-            {
-                case DetectorCalibration.LongDelay:
-                case DetectorCalibration.Predelay:
-                case DetectorCalibration.GateLength:
-                case DetectorCalibration.DieAwayTime:
-                case DetectorCalibration.DTCoeffA:
-                    s += " µSec";
-                    break;
-                case DetectorCalibration.DTCoeffT:
-                case DetectorCalibration.DTCoeffC:
-                    s += " µSec";
-                    break;
-                case DetectorCalibration.DTCoeffB:
-                    s += " µSec";
-                    break;
-            }*/
-            return s;
+            if (s.Equals("DTCoeffT"))
+                s += " nsec";
+            if (s.Equals("DTCoeffB"))
+                s += " 10^-12 sec";
+                /*switch ((DetectorCalibration)e)
+                {
+                    case DetectorCalibration.LongDelay:
+                    case DetectorCalibration.Predelay:
+                    case DetectorCalibration.GateLength:
+                    case DetectorCalibration.DieAwayTime:
+                    case DetectorCalibration.DTCoeffA:
+                        s += " µSec";
+                        break;
+                    case DetectorCalibration.DTCoeffT:
+                    case DetectorCalibration.DTCoeffC:
+                        s += " µSec";
+                        break;
+                    case DetectorCalibration.DTCoeffB:
+                        s += " µSec";
+                        break;
+                }*/
+                return s;
         }
 
         /*
@@ -520,9 +526,9 @@ namespace AnalysisDefs
                 row.Add((int)DetectorCalibration.HighVoltage, sr.highVoltage.ToString());
                 row.Add((int)DetectorCalibration.DieAwayTime, (sr.dieAwayTime * 1e-1).ToString());
                 row.Add((int)DetectorCalibration.Efficiency, sr.efficiency.ToString());
-                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs/1000).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffT, (sr.deadTimeCoefficientTinNanoSecs).ToString());
                 row.Add((int)DetectorCalibration.DTCoeffA, (sr.deadTimeCoefficientAinMicroSecs).ToString());
-                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs/1000000).ToString());
+                row.Add((int)DetectorCalibration.DTCoeffB, (sr.deadTimeCoefficientBinPicoSecs).ToString());
                 row.Add((int)DetectorCalibration.DTCoeffC, (sr.deadTimeCoefficientCinNanoSecs/1000).ToString());
                 row.Add((int)DetectorCalibration.DoublesGateFraction, sr.doublesGateFraction.ToString());
                 row.Add((int)DetectorCalibration.TriplesGateFraction, sr.triplesGateFraction.ToString());
@@ -1001,7 +1007,7 @@ namespace AnalysisDefs
             switch ((RateInterval)e)
             {
                 case RateInterval.GateWidth:
-                    s += " 1e-7 s";
+                    s += " µSec";
                     break;
                 case RateInterval.OverallTime:
                     s += " sec";
@@ -1068,11 +1074,13 @@ namespace AnalysisDefs
                         {
                             RossiAlphaResultExt rar = (RossiAlphaResultExt)iter.Current;
                             if (sec == null) sec = new Section(typeof(Rossi), 1);
+                            Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " distribution");
+                            sec.Add(r);
                             temp = GenRossiRows(rar);
-                            Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
                             sec.Add(GenRossiParamsRow(rar));
                             //sec.AddLabelAndColumn(r);
                             sec.AddRange(temp);
+
                             i++;
                         }
                         break;
@@ -1226,8 +1234,9 @@ namespace AnalysisDefs
                         {
                             if (sec == null) sec = new Section(typeof(Rossi), 1);
                             SpecificCountingAnalyzerParams sap = (SpecificCountingAnalyzerParams)iter.Current;
-                            Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " results (" + i + ")");
-                            sec.AddLabelAndColumn(r, "Cycle");
+                            Row r = new Row(); r.Add(0, "Rossi-" + '\u03B1' + " distribution (" + i + ")");
+                            sec.Add (r);
+                            //sec.AddLabelAndColumn(r, "Cycle");
                             bool labeled = false;
                             foreach (Cycle cyc in cycles)
                             {
@@ -1328,8 +1337,8 @@ namespace AnalysisDefs
 
         Row[] GenRossiRows(RossiAlphaResultExt rar, Cycle c = null)
         {
-            Row[] rows = new Row[1];
 
+            Row[] rows = new Row[1];
             rows[0] = GenRossiDataRow(rar, c);
             return rows;
         }
@@ -1385,8 +1394,8 @@ namespace AnalysisDefs
             for (ulong i = 0; i < (ulong)rar.gateData.Length; i++)
             {
                 // Change the "bins" for Rossi Alpha display
-                float slice = rar.gateWidth / (ulong)rar.gateData.Length;
-                float bin = i * slice;
+                float slice = rar.gateWidth / 100;// / (ulong)rar.gateData.Length;
+                float bin = (i+1) * slice;
                 row.Add((int)i, bin.ToString("F4"));
             }
             
@@ -1397,13 +1406,13 @@ namespace AnalysisDefs
         Row GenRossiDataRow(RossiAlphaResultExt rar, Cycle c = null)
         {
             Row row = new Row();
-            int shift = 0;
-            if (c != null)
+            int shift = 1;
+            /*if (c != null)
             {
-                row.Add(0, c.seq.ToString());
+                row.Add(0, (c.seq.ToString()));
                 shift = 1;
-            }
-            int maxindex = rar.gateData.Length - 1;
+            }*/
+            int maxindex = rar.gateData.Length;
             int i = 0;
             for (i = rar.gateData.Length - 1; i >= 0; i--)
             {
@@ -1421,7 +1430,7 @@ namespace AnalysisDefs
 
             for (i = 0; i <= maxindex; i++)
             {
-                row.Add(i + shift, rar.gateData[i].ToString());
+                row.Add(i, rar.gateData[i].ToString());
             }
             return row;
         }
@@ -1636,13 +1645,14 @@ namespace AnalysisDefs
                 if (m.AnalysisParams.HasMultiplicity())
                     sections.Add(ConstructReportSection(ReportSections.RepResults));
 
+                sections.Add(ConstructReportSection(RawReportSections.Rossi));
                 sections.Add(ConstructReportSection(ReportSections.ChannelCounts)); // from RateInterval or m.cycles.HitsPerChannel
                 sections.Add(ConstructReportSection(ReportSections.ChannelRates)); // from RateInterval and/or  m.cycles.HitsPerChannel
                 sections.Add(ConstructReportSection(ReportSections.ComputedMultiplicityIntermediates));
 
                 sections.Add(ConstructReportSection(RawReportSections.CoincidenceMatrix));
                 sections.Add(ConstructReportSection(RawReportSections.Feynman));
-                sections.Add(ConstructReportSection(RawReportSections.Rossi));
+
                 sections.Add(ConstructReportSection(RawReportSections.TimeInterval));
 
                 sections.Add(ConstructReportSection(ReportSections.RawAndMultSums));
@@ -1663,7 +1673,6 @@ namespace AnalysisDefs
                 sections.Add(ConstructReportSection(RawReportSections.HitsPerChn, m.Cycles)); // from RateInterval
                 sections.Add(ConstructReportSection(RawReportSections.CoincidenceMatrix, m.Cycles));
                 sections.Add(ConstructReportSection(RawReportSections.Feynman, m.Cycles));
-                sections.Add(ConstructReportSection(RawReportSections.Rossi, m.Cycles));
                 sections.Add(ConstructReportSection(RawReportSections.TimeInterval, m.Cycles));
 
                 // environmental sampling

@@ -1957,8 +1957,6 @@ INSERT INTO [facility_names] VALUES(1, 'XXXX','XXXX');
 GO
 INSERT INTO [material_types] VALUES(2, 'Pu','Pu');
 GO
-INSERT INTO [material_types] VALUES(3,'PUOX','PUOX');
-GO
 INSERT INTO [mbas] VALUES(1, 'XXXX','XXXX');
 GO
 INSERT INTO [mbas] VALUES(2, 'matBalArea','descriptionOfMBA');

@@ -34,7 +34,7 @@ namespace NewUI
     {
         AnalysisMethods am;
 
-        public IDDSelectPrimaryAM(AnalysisDefs.AnalysisMethods aam)
+        public IDDSelectPrimaryAM(ref AnalysisDefs.AnalysisMethods aam)
         {
             am = aam;
             InitializeComponent();
@@ -257,7 +257,8 @@ namespace NewUI
                     am.Auxiliary = AnalysisMethod.CuriumRatio;
                 else if (ATruncatedMultiplicityRadioButton.Checked)
                     am.Auxiliary = AnalysisMethod.TruncatedMultiplicity;
-
+            am.modified = true;
+            
             DialogResult = System.Windows.Forms.DialogResult.OK;
                 this.Close();
         }

@@ -156,9 +156,9 @@ namespace NewUI
                 {
                     am.choices[0] = false;
                     am.choices[10] = false;
-                    am.Normal = am.GetFirstSelected();
+                    /*am.Normal = am.GetFirstSelected();
                     am.Backup = am.GetSecondSelected();
-                    am.Auxiliary = am.GetThirdSelected();
+                    am.Auxiliary = am.GetThirdSelected();*/
                 }
             }
 
@@ -239,6 +239,7 @@ namespace NewUI
             bool found = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original);
             if (found)
             {
+
                 if (original.selector == null) // empty initial value, copy the selector here
                     original.selector = new INCCSelector(am.selector);
                 if (!am.Equals(original)) // an existing has changed,
@@ -260,9 +261,15 @@ namespace NewUI
             // first, select priorities
             if (am.AnySelected())
             {
-                IDDSelectPrimaryAM x = new IDDSelectPrimaryAM(am);
+                IDDSelectPrimaryAM x = new IDDSelectPrimaryAM(ref am);
+
                 if (x.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
+                    if (am.modified)
+                    {
+                        NC.App.DB.UpdateAnalysisMethods(am.selector, am);
+                        NC.App.DB.UpdateAnalysisMethodSpecifics(am.selector.detectorid, original.selector.material);
+                    }
                     AnalysisMethods original2;
                     bool found2 = NC.App.DB.DetectorMaterialAnalysisMethods.TryGetValue(am.selector, out original2);
                     if (found2)

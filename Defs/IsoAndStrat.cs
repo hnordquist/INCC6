@@ -323,7 +323,8 @@ namespace AnalysisDefs
 
             if (isosum <= 0.0)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
+                if (logger != null)
+                    logger.TraceEvent(NCCReporter.LogLevels.Warning, 36783, "Unable to update isotopics, sum of Pu isotopes must be greater than zero");
                 return null;
             }
             Isotopics newiso = new Isotopics();
@@ -381,12 +382,15 @@ namespace AnalysisDefs
 
             if (cur_mass_sum <= 0.0)
             {
-                logger.TraceEvent(NCCReporter.LogLevels.Warning, 36784, "Unable to update isotopics, mass sum must be greater than zero");
+                if (logger != null)
+                    logger.TraceEvent(NCCReporter.LogLevels.Warning, 36784, "Unable to update isotopics, mass sum must be greater than zero");
                 return (null);
             }
             else
-                logger.TraceEvent(NCCReporter.LogLevels.Verbose, 36722, "'update_isotopics' mass sum " + cur_mass_sum);
-
+            {
+                if (logger != null)
+                    logger.TraceEvent(NCCReporter.LogLevels.Verbose, 36722, "'update_isotopics' mass sum " + cur_mass_sum);
+            }
 
             newiso.pu_date = new DateTime(ref_date.Ticks);
             newiso.am_date = new DateTime(ref_date.Ticks);

@@ -28,6 +28,11 @@ namespace NewUI
             else
                 return true;
         }
+        public void SetRange (double min, double max)
+        {
+            _Min = min;
+            _Max = max;
+        }
         #region events
         private void numValidating(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -142,7 +147,7 @@ namespace NewUI
                 _ToValidate = value;
                 if (_ToValidate == ValidateType.Percent)
                 {
-                    Min = 0;
+                    Min = -1000;//Allow negative numbers
                     Max = 1000;
                     NumberFormat = Formatter.P1;
                 }

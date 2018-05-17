@@ -510,7 +510,6 @@ namespace AnalysisDefs
             return Compare(this, other);
         }
     }
-
     /// <summary>
     /// The Accumulate method is implemented for summing multi-cycle typed list mode data
     /// </summary>
@@ -1163,32 +1162,32 @@ namespace AnalysisDefs
 		public ulong gateWidthTics;
 	}
 
-	//use:
-	//input is an mcr and an mkey
+    //use:
+    //input is an mcr and an mkey
 
-	//            // check if the arrays have not been computed
-	//            AlphaBeta AB = GetAlphaBeta(abkey);
-	//            if (AB != null)
-	//                return AB;
-
-
-	//// if not already computed and stored in cache, create a key and compute alphabeta and store the computed alpha beta in the cache
-	//           ABKey abkey = new ABKey(mkey, mcr);
-	//           mcr.AB = cached_calc_alpha_beta(abkey);
-
-	//       static AlphaBeta cached_calc_alpha_beta(ABKey abkey)
-	//       {
-	//           // check if the arrays have not been computed
-	//           AlphaBeta AB = GetAlphaBeta(abkey);
-	//           if (AB != null)
-	//               return AB;
-
-	//           AB = new AlphaBeta((int)abkey.bins);
-	//           AddAlphaBeta(abkey, AB);
+    //            // check if the arrays have not been computed
+    //            AlphaBeta AB = GetAlphaBeta(abkey);
+    //            if (AB != null)
+    //                return AB;
 
 
+    //// if not already computed and stored in cache, create a key and compute alphabeta and store the computed alpha beta in the cache
+    //           ABKey abkey = new ABKey(mkey, mcr);
+    //           mcr.AB = cached_calc_alpha_beta(abkey);
 
-	public class MultiplicityCountingRes : ParameterBase, ICountingResult
+    //       static AlphaBeta cached_calc_alpha_beta(ABKey abkey)
+    //       {
+    //           // check if the arrays have not been computed
+    //           AlphaBeta AB = GetAlphaBeta(abkey);
+    //           if (AB != null)
+    //               return AB;
+
+    //           AB = new AlphaBeta((int)abkey.bins);
+    //           AddAlphaBeta(abkey, AB);
+
+
+
+    public class MultiplicityCountingRes : ParameterBase, ICountingResult
     {
 
         public TimeSpan TS;
@@ -1206,6 +1205,7 @@ namespace AnalysisDefs
         public double singles_multi;  // these results are not actually used in INCC, WTF?
         public double doubles_multi;
         public double triples_multi;
+        public List<string> testStatus;
 
         public AlphaBeta AB
         {
@@ -1215,6 +1215,10 @@ namespace AnalysisDefs
         public double[] alpha
         {
             get { return αβ.α; }
+        }
+        public List<string> TestMessages
+        {
+            get { return testStatus; }
         }
         public double[] beta
         {
@@ -1380,7 +1384,6 @@ namespace AnalysisDefs
             AFactorialBetaMoment2 = src.AFactorialBetaMoment2;
             RAFactorialBetaMoment2 = src.RAFactorialBetaMoment2;
             FA = src.FA;
-
         }
 
         public void TransferSums(MultiplicityCountingRes src)
@@ -1400,8 +1403,8 @@ namespace AnalysisDefs
             Array.Resize(ref UnAMult, src.UnAMult.Length);
             Array.Resize(ref NormedAMult, src.NormedAMult.Length);
             Array.Resize(ref covariance_matrix, src.covariance_matrix.Length);
-			MinBins = src.MinBins;
-			MaxBins = src.MaxBins;
+            MinBins = src.MinBins;
+            MaxBins = src.MaxBins;
         }
         public MultiplicityCountingRes(FAType FA, int i)
         {
@@ -1412,7 +1415,7 @@ namespace AnalysisDefs
         public MultiplicityCountingRes(MultiplicityCountingRes src)
         {
             Init();
-			CopyFrom(src);
+            CopyFrom(src);
         }
         public MultiplicityCountingRes()
         {
@@ -1435,7 +1438,7 @@ namespace AnalysisDefs
             AFactorialAlphaMoment1 = 0;
             RAFactorialAlphaMoment1 = 0;
             AFactorialBetaMoment2 = 0;
-            RAFactorialBetaMoment2 =0;
+            RAFactorialBetaMoment2 = 0;
             multiplication = 1.0;
             uncorrectedfrominccres = new Rates();
             covariance_matrix = new double[3 * 3];
@@ -1443,8 +1446,9 @@ namespace AnalysisDefs
             scaler2 = new VTuple();
             TS = new TimeSpan();
             LMTS = new TimeSpan[2];
+            testStatus = new List<string>();
         }
-		public void CopyFrom(MultiplicityCountingRes src)
+        public void CopyFrom(MultiplicityCountingRes src)
         {
             FA = src.FA;
             idx = src.idx;
@@ -1491,7 +1495,6 @@ namespace AnalysisDefs
             triples_multi = src.triples_multi;
         }
 
-
         public void TransferRawResult(MultiplicityResult mr)
         {
             if (mr == null)
@@ -1531,7 +1534,7 @@ namespace AnalysisDefs
             }
 
             maxBins = Math.Max(mr.maxRABin + 1, mr.maxABin + 1);
-            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);  
+            minBins = Math.Min(mr.maxRABin + 1, mr.maxABin + 1);
 
             ComputeHitSums();
 
@@ -1576,7 +1579,7 @@ namespace AnalysisDefs
             res = 0;
             for (int i = 0; i < RAMult.Length; i++)
             {
-                res += (double) RAMult[i] * i;
+                res += (double)RAMult[i] * i;
             }
             _RASum = res;
         }
@@ -1604,13 +1607,12 @@ namespace AnalysisDefs
 
         public string[] StringifyCurrentMultiplicityDetails()
         {
-
             if (MaxBins > 1)
             {
                 string[] x = new string[MaxBins + 11];
                 int j = 0;
                 x[j++] = Name;
-                x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}{3,-20}", "Mult","R+A", "A(Normed)", "A(Raw)");
+                x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}{3,-20}", "Mult", "R+A", "A(Normed)", "A(Raw)");
                 for (uint i = 0; i < MinBins; i++)
                 {
                     x[j++] = string.Format("{0,-20}\t{1,-20}\t{2,-20}\t{3,-20}", i, RAMult[i], NormedAMult[i], UnAMult[i]);
@@ -1649,7 +1651,7 @@ namespace AnalysisDefs
             }
             else
             {
-                string[] x = new string[2];
+                string[] x = new string[4];
                 int j = 0;
                 x[j++] = Name;
                 //x[j++] = "No RA or A data";
@@ -1725,15 +1727,15 @@ namespace AnalysisDefs
             ps.AddRange(TuplePair("scaler1", Scaler1));
             ps.AddRange(TuplePair("scaler2", Scaler2));
             ps.AddRange(TuplePair("uncorrected_doubles", RawDoublesRate));
-            ps.Add(new DBParamEntry("singles_multi", singles_multi)); 
-            ps.Add(new DBParamEntry("doubles_multi", doubles_multi)); 
-            ps.Add(new DBParamEntry("triples_multi", triples_multi)); 
+            ps.Add(new DBParamEntry("singles_multi", singles_multi));
+            ps.Add(new DBParamEntry("doubles_multi", doubles_multi));
+            ps.Add(new DBParamEntry("triples_multi", triples_multi));
             ps.Add(new DBParamEntry("declared_mass", Mass));
-			{	// la super hack-a-whack
-				DB.DB db = new DB.DB(true);
-				if (db.TableHasColumn(Table,"mult_acc_un_sum"))
-					ps.Add(new DBParamEntry("mult_acc_un_sum", UnAMult));
-			}
+            {   // la super hack-a-whack
+                DB.DB db = new DB.DB(true);
+                if (db.TableHasColumn(Table, "mult_acc_un_sum"))
+                    ps.Add(new DBParamEntry("mult_acc_un_sum", UnAMult));
+            }
         }
 
         public List<DBParamEntry> MoreForResults()
@@ -1745,21 +1747,245 @@ namespace AnalysisDefs
             return s;
         }
 
-		public bool RawButNoDTCRates
-		// For when DTC rates are not calculated, for whatever reason 
-		{
-			get
-			{
-				bool res = false;
-				bool raw = (RawSinglesRate.v != 0 || RawDoublesRate.v != 0 || RawTriplesRate.v != 0);
-				bool dtc = (DeadtimeCorrectedSinglesRate.v != 0 || DeadtimeCorrectedDoublesRate.v != 0 || DeadtimeCorrectedTriplesRate.v != 0);
-				res = raw && !dtc;
-				return res;
-			}
-		}
+        public bool RawButNoDTCRates
+        // For when DTC rates are not calculated, for whatever reason 
+        {
+            get
+            {
+                bool res = false;
+                bool raw = (RawSinglesRate.v != 0 || RawDoublesRate.v != 0 || RawTriplesRate.v != 0);
+                bool dtc = (DeadtimeCorrectedSinglesRate.v != 0 || DeadtimeCorrectedDoublesRate.v != 0 || DeadtimeCorrectedTriplesRate.v != 0);
+                res = raw && !dtc;
+                return res;
+            }
+        }
 
+        public override bool Equals(object o)
+        {
+            bool compares = true;
+            bool casecompares = true;
+            MultiplicityCountingRes mcr = (MultiplicityCountingRes)o;
+
+            casecompares = this.TS == mcr.TS;
+            if (!casecompares)
+                testStatus.Add("Time span values do not match");
+            compares = compares && casecompares;
+
+            //Skipping LMTS for now. Should not happen in INCC5 files
+
+            casecompares = this.FA == mcr.FA;
+            if (!casecompares)
+                testStatus.Add("Fast accidentals settings do not match");
+            compares = compares && casecompares;
+
+            casecompares = this.accidentalsDelay == mcr.accidentalsDelay;
+            if (!casecompares)
+                testStatus.Add("Accidentals delay settings do not match");
+            compares = compares && casecompares;
+
+            casecompares = this.maxBins == mcr.maxBins;
+            if (!casecompares)
+                testStatus.Add("Max bin settings do not match");
+            compares = compares && casecompares;
+
+            casecompares = this.minBins == mcr.minBins;
+            if (!casecompares)
+                testStatus.Add("Min bin settings do not match");
+            compares = compares && casecompares;
+
+            casecompares = this.AB.CompareTo(mcr.AB) == 0;
+            if (!casecompares)
+                testStatus.Add("Alpha Beta arrays do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.ULongArraysCompare(this.RAMult, mcr.RAMult);
+            if (!casecompares)
+                testStatus.Add("RA distributions do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.ULongArraysCompare(this.UnAMult, mcr.UnAMult);
+            if (!casecompares)
+                testStatus.Add("Accidental distributions do not match.");
+            compares = compares && casecompares;
+
+            //TODO: Where are these normalized HN 5.16.2018
+            casecompares = CompareTools.ULongArraysCompare(this.NormedAMult, mcr.NormedAMult);
+            if (!casecompares)
+                testStatus.Add("Normalized accidental distributions do not match.");
+            compares = compares && casecompares;
+
+            if (!casecompares)
+                testStatus.Add("AFactorialAlphaMoment1 value does not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.AFactorialBetaMoment2, mcr.AFactorialBetaMoment2);
+            if (!casecompares)
+                testStatus.Add("AFactorialBetaMoment2 value does not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.RAFactorialAlphaMoment1, mcr.RAFactorialAlphaMoment1);
+            if (!casecompares)
+                testStatus.Add("RAFactorialAlphaMoment1 value does not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
+            if (!casecompares)
+                testStatus.Add("RAFactorialMoments arrays do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.RAFactorialBetaMoment2, mcr.RAFactorialBetaMoment2);
+            if (!casecompares)
+                testStatus.Add("RAFactorialBetaMoment2 value does not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1);
+            if (!casecompares)
+                testStatus.Add("AFactorialAlphaMoment1 value does not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesArraysCompare(this.AFactorialMoments, mcr.AFactorialMoments);
+            if (!casecompares)
+                testStatus.Add("AFactorialMoments arrays do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
+            if (!casecompares)
+                testStatus.Add("RAFactorialMoments arrays do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesArraysCompare(this.covariance_matrix, mcr.covariance_matrix);
+            if (!casecompares)
+                testStatus.Add("Covariance matrix arrays do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.RawSinglesRate, mcr.RawSinglesRate);
+            if (!casecompares)
+                testStatus.Add("Raw singles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.RawDoublesRate, mcr.RawDoublesRate);
+            if (!casecompares)
+                testStatus.Add("Raw doubles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.RawTriplesRate, mcr.RawTriplesRate);
+            if (!casecompares)
+                testStatus.Add("Raw triples rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedSinglesRate, mcr.DeadtimeCorrectedSinglesRate);
+            if (!casecompares)
+                testStatus.Add("Deadtime corrected singles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedDoublesRate, mcr.DeadtimeCorrectedDoublesRate);
+            if (!casecompares)
+                testStatus.Add("Deadtime corrected doubles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedTriplesRate, mcr.DeadtimeCorrectedTriplesRate);
+            if (!casecompares)
+                testStatus.Add("Deadtime corrected triples rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedSinglesRate, mcr.DytlewskiCorrectedSinglesRate);
+            if (!casecompares)
+                testStatus.Add("Dytlewski corrected singles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedDoublesRate, mcr.DytlewskiCorrectedDoublesRate);
+            if (!casecompares)
+                testStatus.Add("Dytlewski corrected doubles rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedTriplesRate, mcr.DytlewskiCorrectedTriplesRate);
+            if (!casecompares)
+                testStatus.Add("Dytlewski corrected triples rates do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.Scaler1, mcr.Scaler1);
+            if (!casecompares)
+                testStatus.Add("Scaler1 values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesTupleCompares(this.Scaler2, mcr.Scaler2);
+            if (!casecompares)
+                testStatus.Add("Scaler2 values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.multiplication, mcr.multiplication);
+            if (!casecompares)
+                testStatus.Add("Multiplicity values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.doubles_multi, mcr.doubles_multi);
+            if (!casecompares)
+                testStatus.Add("Doubles multiplication values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.multiAlpha, mcr.multiAlpha);
+            if (!casecompares)
+                testStatus.Add("Alpha multiplication values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.efficiency, mcr.efficiency);
+            if (!casecompares)
+                testStatus.Add("Efficiency values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.efficiency, mcr.efficiency);
+            if (!casecompares)
+                testStatus.Add("Mass values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.singles_multi, mcr.singles_multi);
+            if (!casecompares)
+                testStatus.Add("Singles_multi values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.doubles_multi, mcr.doubles_multi);
+            if (!casecompares)
+                testStatus.Add("Doubles_multi values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this.triples_multi, mcr.triples_multi);
+            if (!casecompares)
+                testStatus.Add("Triples_multi values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this._RASum, mcr._RASum);
+            if (!casecompares)
+                testStatus.Add("RA sum values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this._ASum, mcr._ASum);
+            if (!casecompares)
+                testStatus.Add("A sum values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this._UnASum, mcr._UnASum);
+            if (!casecompares)
+                testStatus.Add("UnA sum values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this._S1Sum, mcr._S1Sum);
+            if (!casecompares)
+                testStatus.Add("Scaler1 sum values do not match.");
+            compares = compares && casecompares;
+
+            casecompares = CompareTools.DoublesCompare(this._S2Sum, mcr._S2Sum);
+            if (!casecompares)
+                testStatus.Add("Scaler2 sum values do not match.");
+            compares = compares && casecompares;
+
+            return compares;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.AB.GetHashCode();
+        }
     }
-
     public class QCStatus
     {
         public QCStatus()
@@ -1984,6 +2210,10 @@ namespace AnalysisDefs
             return count;
         }
 
+        public void RemoveAll()
+        {
+            this.Clear();
+        }
         // the channel counts are the same for all rates analyzers so we only need the first one 
         public RatesResultEnhanced GetFirstRatesResultMod(bool includeSuspectEntries = false)
         {
