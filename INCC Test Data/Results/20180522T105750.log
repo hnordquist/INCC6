@@ -1,0 +1,23 @@
+***********************************************************
+Starting INCC Algorithms test at 10:57:50 AM
+33 *.ver files found in input directory
+***********************************************************
+
+***********************************************************
+Loading test file 1/33 at 10:57:50 AM
+Test file name: C:\CODE\INCC7\INCC Test Data\ActiveMult\713P0048.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Compare multiplicity counting for entire measurement:
+CountingResults match
+Comparing results for Active multiplicity
+Analysis results comparison for ActiveMultiplicity: PASS
+All analysis Method Results match
+Test 1/33 ended at 10:57:50 AM, 125 total milliseconds for this test
+***********************************************************
+

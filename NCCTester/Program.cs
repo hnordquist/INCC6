@@ -298,9 +298,12 @@ namespace NCCTester
         public static void ClearMeasurement(Measurement m)
         {
             m.Cycles.Clear();
+            m.AnalysisParams.Clear();
             m.CountingAnalysisResults.RemoveAll();
             state.Methods = new AnalysisMethods();
             m.INCCAnalysisResults.Clear();
+            m.INCCAnalysisState.ClearINCCAnalysisResults();
+            m.Detectors.Clear();
             numMethods = 0;
         }
         public static void LoadMeasurementFromFile(string fileName)
@@ -403,6 +406,9 @@ namespace NCCTester
                                 SetMethodPreference(cc);
                                 ReadKnownAlphaResults();
                                 numMethods++;
+                                break;
+                            case "Known alpha calibration parameters":
+                                ReadKnownAlphaCalibration();
                                 break;
                             case "END PRIMARY RESULT":
                                 break;
@@ -1367,6 +1373,8 @@ namespace NCCTester
                     numbers.Add(line);
                     line = sr.ReadLine();
                 }
+                //TODO: These are variable length. Cannot use the first one.......
+
                 MultiplicityCountingRes mcr1 = (MultiplicityCountingRes)testMeasurement.Cycles[i].CountingAnalysisResults[mult];
                 ulong[] RA = new ulong[numbers.Count];
                 ulong[] A = new ulong[numbers.Count];
