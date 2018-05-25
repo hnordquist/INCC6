@@ -631,7 +631,7 @@ namespace AnalysisDefs
     {
         // the old INCC report output style label -> value(s), convert to lines by ToString() on each row entry
         public virtual List<NCCReporter.Row> ToLines(Measurement m) { return new List<NCCReporter.Row>(); }
-
+        public virtual List<string> ToSimpleLines (Measurement m){ return new List<string>(); }
         // suitable for spreadsheet use, convert to lines by ToString() on each row entry
         public virtual List<NCCReporter.Row> ToColumns(Measurement m) { return new List<NCCReporter.Row>(); }
 
@@ -1477,6 +1477,15 @@ namespace AnalysisDefs
                 // optional parameter lines
                 if (methodParams != null) sec.AddRange(methodParams.ToLines(m));
                 return sec;
+            }
+
+            public override List<string> ToSimpleLines(Measurement m)
+            {
+                List<string> l = new List<string>();
+                l.Add(" Active Multiplicity results"); // todo: complete this, DB table etc.; might already be done
+                l.Add(string.Format ("mult: {0} {1}", mult.v, mult.err));
+               
+                return l;
             }
             public override void GenParamList()
             {

@@ -203,6 +203,7 @@ namespace DetectorDefs
         {
             return src == ConstructedSource.INCCTransferCopy || src == ConstructedSource.INCCTransfer || src == ConstructedSource.DatazFile;
         }
+
         public static bool SRDAQ(this ConstructedSource src, InstrType device)
         {
             return ((src == ConstructedSource.Live) && (device <= InstrType.UNAP)); // it is a Live SR DAQ

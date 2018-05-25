@@ -10,7 +10,7 @@ INCC 5.1.2
            Measurement date:  16.03.03  11:05:33
           Results file name:  633L0533.VER
           Inspection number:  
-                    Item id:  gvb18-#21
+                    Item id:  item1
                  Stratum id:  XXXX
            Bias uncertainty:  0.0000
          Random uncertainty:  0.0000
@@ -26,7 +26,7 @@ INCC 5.1.2
              Inspector name:  
             Passive comment:  
 
-               Isotopics id:  gvb18-#21
+               Isotopics id:  iso1
       Isotopics source code:  OD
                       Pu238:    0.1999 +-   0.0000      0.1760 +-   0.0000
                       Pu239:   80.6438 +-   0.0000     81.1815 +-   0.0000

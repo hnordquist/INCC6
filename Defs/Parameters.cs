@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using DetectorDefs;
+using System.IO;
 namespace AnalysisDefs
 {
     using Tuple = VTuple;
@@ -2230,27 +2231,31 @@ namespace AnalysisDefs
         {
             get
             {
-				if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && !string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))  // set specifically
-					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.Equals(results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
-					return NCC.CentralizedState.App.AppContext.ResultsFilePath;
-				else if (string.IsNullOrEmpty(results))   // use the daily path if nothing is set
-                    return NCC.CentralizedState.App.AppContext.RootPathOverride();                
-                else if (NCC.CentralizedState.App.AppContext.DailyRootPath)  // if daily path set, check the current path for a match
+                if (NCC.CentralizedState.App != null)
                 {
-                    string part = DateTime.Now.ToString("yyyy-MMdd");
-                    if (!results.EndsWith(part))  // it's not the current day
+                    if (NCC.CentralizedState.App.AppContext.isSet(NCCConfig.NCCFlags.resultsFileLoc) && !string.IsNullOrEmpty(NCC.CentralizedState.App.AppContext.ResultsFilePath))  // set specifically
+                        return NCC.CentralizedState.App.AppContext.ResultsFilePath;
+                    else if (string.Equals(results, NCC.CentralizedState.App.AppContext.RootPath, StringComparison.CurrentCultureIgnoreCase))  // default to daily path setting if DB raw value is the same as the root value
+                        return NCC.CentralizedState.App.AppContext.ResultsFilePath;
+                    else if (string.IsNullOrEmpty(results))   // use the daily path if nothing is set
+                        return NCC.CentralizedState.App.AppContext.RootPathOverride();
+                    else if (NCC.CentralizedState.App.AppContext.DailyRootPath)  // if daily path set, check the current path for a match
                     {
-                        Match m = Regex.Match(results, "\\d{4}-\\d{4}$");
-                        if (m.Success)  // it is a pattern match meant to use the override daily path scheme, so use it
+                        string part = DateTime.Now.ToString("yyyy-MMdd");
+                        if (!results.EndsWith(part))  // it's not the current day
                         {
-                            // strip and replace
-                            return NCC.CentralizedState.App.AppContext.RootPathOverride();
+                            Match m = Regex.Match(results, "\\d{4}-\\d{4}$");
+                            if (m.Success)  // it is a pattern match meant to use the override daily path scheme, so use it
+                            {
+                                // strip and replace
+                                return NCC.CentralizedState.App.AppContext.RootPathOverride();
+                            }
                         }
                     }
-                }                
-                // else use the path exactly as user has specified, it is not overridden by the daily flag
-                return results;
+                    return results;
+                }
+                else
+                    return Directory.GetCurrentDirectory();
             }
             set
             {

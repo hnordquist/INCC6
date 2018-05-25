@@ -28,6 +28,8 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using NCCReporter;
 using DetectorDefs;
+using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace AnalysisDefs
 {
@@ -197,7 +199,7 @@ namespace AnalysisDefs
             set { dsid = value; }
         }
 
-        public Cycle(LMLoggers.LognLM logger)
+        public Cycle(LMLoggers.LognLM logger=null)
         {
             // Raw counts aka totals
             singles = new VTuple();
@@ -206,6 +208,24 @@ namespace AnalysisDefs
             countresults = new CountingResults();
             daqStatus = CycleDAQStatus.None;
             this.logger = logger;
+            hitsPerChn = new double[NC.ChannelCount];
+        }
+        public Cycle(Cycle copyFrom)
+        {
+            // Raw counts aka totals
+            singles = new VTuple(copyFrom.singles);
+            dsid = new DataSourceIdentifier(copyFrom.dsid);
+            qcstatus = new QCStatusMap();
+            foreach (KeyValuePair<Multiplicity, QCStatus> kvp in copyFrom.qcstatus)
+                qcstatus.Add(kvp.Key, kvp.Value);
+            countresults = new CountingResults();
+            foreach (KeyValuePair <SpecificCountingAnalyzerParams,object> cr in copyFrom.countresults)
+            {
+                countresults.Add(cr.Key, cr.Value);
+            }
+            daqStatus = CycleDAQStatus.None;
+            ts = copyFrom.TS;
+            this.logger = null;
             hitsPerChn = new double[NC.ChannelCount];
         }
 

@@ -748,7 +748,10 @@ namespace AnalysisDefs
         {
             this.sectiontype = sec;
             scientific = "{0,15:e}";
-            SetFPCurrentFormatPrecision(N.App.AppContext.FPPrecision);
+            if (N.App != null)
+                SetFPCurrentFormatPrecision(N.App.AppContext.FPPrecision);
+            else
+                SetFPCurrentFormatPrecision(6);
         }
         ReportSection sectiontype;
         string scientific;

@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using NCCReporter;
+using System.Reflection;
 
 namespace AnalysisDefs
 {
@@ -161,6 +162,22 @@ namespace AnalysisDefs
             Auxiliary = src.Auxiliary;
             if (src.selector != null)
                 selector = new INCCSelector(src.selector);
+            foreach (AnalysisMethod am in src.methods.Keys)
+            {
+                switch (am)
+                {
+                    case (AnalysisMethod.ActiveMultiplicity):
+                        INCCAnalysisParams.active_mult_rec amr1 = (INCCAnalysisParams.active_mult_rec)src.GetMethodParameters(AnalysisMethod.ActiveMultiplicity);
+                        INCCAnalysisParams.active_mult_rec amr2 = new INCCAnalysisParams.active_mult_rec(amr1);
+                        methods.Add(am, amr2);
+                        break;
+                    case (AnalysisMethod.Multiplicity):
+                        INCCAnalysisParams.multiplicity_rec mr1 = (INCCAnalysisParams.multiplicity_rec)src.GetMethodParameters(AnalysisMethod.Multiplicity);
+                        INCCAnalysisParams.multiplicity_rec mr2 = new INCCAnalysisParams.multiplicity_rec(mr1);
+                        methods.Add(am, mr2);
+                        break;
+                }
+            }
             modified = true;
         }
 
@@ -279,7 +296,12 @@ namespace AnalysisDefs
             {
                 methods.Add(am, surr);
             }
-            else if (NCC.CentralizedState.App.AppContext.OverwriteImportedDefs)
+            else if (NCC.CentralizedState.App != null && NCC.CentralizedState.App.AppContext.OverwriteImportedDefs)
+            {
+                methods.Remove(am);
+                methods.Add(am, surr);
+            }
+            else if (NCC.CentralizedState.App == null)//Overwrite by default
             {
                 methods.Remove(am);
                 methods.Add(am, surr);

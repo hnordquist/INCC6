@@ -509,7 +509,7 @@ namespace DAQ
         /// <summary>
         /// Analysis processing after all cycles are collected
         /// </summary>
-        internal void CalculateMeasurementResults()
+        internal void CalculateMeasurementResults(bool ABCorrected = false)
         {
             CurState.Measurement.CalculateMeasurementResults();
         }

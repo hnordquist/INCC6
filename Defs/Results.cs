@@ -1793,10 +1793,11 @@ namespace AnalysisDefs
                 testStatus.Add("Min bin settings do not match");
             compares = compares && casecompares;
 
-            casecompares = this.AB.CompareTo(mcr.AB) == 0;
+            /*casecompares = this.AB.CompareTo(mcr.AB) == 0;
             if (!casecompares)
                 testStatus.Add("Alpha Beta arrays do not match.");
-            compares = compares && casecompares;
+            compares = compares && casecompares;*/
+            //Don't compare alpha/beta. These are not preserved in the file. They will result in different triples rates if they are wrong
 
             casecompares = CompareTools.ULongArraysCompare(this.RAMult, mcr.RAMult);
             if (!casecompares)

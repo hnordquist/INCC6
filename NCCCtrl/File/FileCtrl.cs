@@ -127,7 +127,7 @@ namespace NCCFile
         }
 
 
-        void Replay(Measurement m, ConstructedSource src, string fname)
+        void Replay(Measurement m, ConstructedSource src, string fname, bool ABCorrected = false)
         {
             ctrllog.TraceEvent(LogLevels.Info, 34071, "Replay " +  m.MeasOption.PrintName() + " measurement for detector " + m.Detector.Id.DetectorId + ", " + m.MeasurementId.MeasDateTime.ToString() + ", from " + fname);
             NC.App.Opstate.Measurement = m;
@@ -347,7 +347,7 @@ enditall:
 		/// <summary>
 		/// Process a list of NCD files
 		/// </summary>
-		void NCDFileAssay()
+		void NCDFileAssay(bool ABCorrected = false)
         {
             List<string> ext = new List<string>() { ".ncd" };
             FileList<NCDFile> hdlr = new FileList<NCDFile>();
@@ -539,7 +539,7 @@ enditall:
 
         }
 
-		protected void PTRFileCull()
+		protected void PTRFileCull(bool ABCorrected = false)
         {
 
             List<string> ext = new List<string>() { ".chn", ".bin" };
@@ -857,7 +857,7 @@ enditall:
         }
 
 
-        protected void PTRFilePairAssay()
+        protected void PTRFilePairAssay(bool ABCorrected = false)
         {
 
             List<string> ext = new List<string>() { ".chn", ".bin" };
@@ -1128,7 +1128,7 @@ enditall:
 
         }
 
-        protected void MCA527FileAssay()
+        protected void MCA527FileAssay(bool ABCorrected = false)
         {
 
             FileList<MCAFile> hdlr = new FileList<MCAFile>();
@@ -1367,7 +1367,7 @@ enditall:
 
 
 
-		protected void SortedPulseFileAssay()
+		protected void SortedPulseFileAssay(bool ABCorrected = false)
         {
 
             List<string> ext = new List<string>() { ".pulse.sorted", ".txt.sorted" };
