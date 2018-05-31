@@ -1,0 +1,72 @@
+***********************************************************
+Starting INCC Algorithms test at 4:34:08 PM
+33 *.ver files found in input directory
+***********************************************************
+
+***********************************************************
+Loading test file 1/33 at 4:34:09 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\ActiveMult\713P0048.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Compare multiplicity counting for entire measurement:
+CountingResults match
+Analysis results comparison for Active multiplicity: PASS
+All analysis Method Results match
+Test 1/33 ended at 4:34:09 PM, 660 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 2/33 at 4:34:10 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\ActiveMult\713P0602.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Compare multiplicity counting for entire measurement:
+CountingResults match
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 2/33 ended at 4:34:10 PM, 875 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 3/33 at 4:34:11 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EO5417.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 53081893 0
+A sum values do not match. 52980283 0
+UnA sum values do not match. 52980283 0
+Scaler1 sum values do not match. 5153090 0
+Scaler2 sum values do not match. 3390299 0
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 3/33 ended at 4:34:11 PM, 246 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 4/33 at 4:34:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EO5848.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation

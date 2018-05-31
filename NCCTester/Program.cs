@@ -407,7 +407,6 @@ namespace NCCTester
                         lineCount++;
                     }
                 }
-                //TODO: When all done, store the primary/secondary/tertiary analysis method.
             }
             catch (Exception ex)
             {
@@ -949,19 +948,19 @@ namespace NCCTester
                             break;
                         case "Scaler 1":
                             Double.TryParse(m.Groups[2].Value, out val);
-                            InputResult.Scaler1Rate.v = val;
-                            mcrTotal.Scaler1Rate.v = val;
+                            InputResult.Scaler1.v = val;
+                            mcrTotal.Scaler1.v = val;
                             Double.TryParse(m.Groups[3].Value, out val);
-                            InputResult.Scaler1Rate.err = val;
-                            mcrTotal.Scaler1Rate.err = val;
+                            InputResult.Scaler1.err = val;
+                            mcrTotal.Scaler1.err = val;
                             break;
                         case "Scaler 2":
                             Double.TryParse(m.Groups[2].Value, out val);
-                            InputResult.Scaler2Rate.v = val;
-                            mcrTotal.Scaler2Rate.v = val;
+                            InputResult.Scaler2.v = val;
+                            mcrTotal.Scaler2.v = val;
                             Double.TryParse(m.Groups[3].Value, out val);
-                            InputResult.Scaler1Rate.err = val;
-                            mcrTotal.Scaler2Rate.err = val;
+                            InputResult.Scaler2.err = val;
+                            mcrTotal.Scaler2.err = val;
                             break;
                         case "Aux1 Ratio":
                             Double.TryParse(m.Groups[2].Value, out val);
@@ -1434,36 +1433,7 @@ namespace NCCTester
                 max = 0;
             }
 
-
-            //totalMcr.RAMult = new ulong[maxmax];
-            //totalMcr.UnAMult = new ulong[maxmax];
-            //totalMcr.NormedAMult = new ulong[maxmax];
             totalMcr.MaxBins = maxmax;
-            //Calculate sums
-            /*sumRA = new ulong[max];
-            sumA = new ulong[max];
-            sumnormedA = new ulong[max];
-            foreach (Cycle c in testMeasurement.Cycles)
-            {
-                MultiplicityCountingRes mcrCycle = (MultiplicityCountingRes)c.CountingAnalysisResults[mult];
-                for (ulong i = 0; i < max; i ++)
-                {
-                    if (mcrCycle.RAMult.Length > 0 && i < (ulong)mcrCycle.RAMult.Length -1)
-                        sumRA[i] += mcrCycle.RAMult[i];
-                    if (mcrCycle.UnAMult.Length > 0 && i < (ulong)mcrCycle.UnAMult.Length -1)
-                        sumRA[i] += mcrCycle.UnAMult[i];
-                    if (mcrCycle.NormedAMult.Length > 0 && i < (ulong)mcrCycle.NormedAMult.Length -1)
-                        sumRA[i] += mcrCycle.NormedAMult[i];
-                }
-            }
-            summcr.RAMult = new ulong[sumRA.Length];
-            summcr.UnAMult = new ulong[sumA.Length];
-            summcr.NormedAMult = new ulong[sumnormedA.Length];
-            sumRA.CopyTo(summcr.RAMult,0);
-            sumA.CopyTo(summcr.UnAMult, 0);
-            sumnormedA.CopyTo(summcr.NormedAMult, 0);
-            summcr.MaxBins = max;*/ // TODO: This should have come earlier. Check.
-                                    //Sums stored in file, do not recalculate original
         }
 
         public static void ReadPassiveCalibrationCurveResults()
@@ -1811,6 +1781,7 @@ namespace NCCTester
             same = temp && same;
             PrintLine(String.Format("Method parameters compared: {0}", temp ? "PASS" : "FAIL"));
             return same;
+            //Just here for diagnostic. If parameters do not match, neither will results.
         }
 
         static bool CompareRates(Measurement original, Measurement recalculated)
@@ -1838,44 +1809,45 @@ namespace NCCTester
             }
             IEnumerator iter = original.CountingAnalysisResults.GetMultiplicityEnumerator();
             IEnumerator iter2 = recalculated.CountingAnalysisResults.GetMultiplicityEnumerator();
-
-            PrintLine("Compare multiplicity counting for entire measurement:");
-            while (iter.MoveNext())
+            if (recalculated.INCCAnalysisState.Methods.HasActiveMultSelected() || recalculated.INCCAnalysisState.Methods.HasMethod(AnalysisMethod.Multiplicity))
+                //Only compare multiplicity for mult measurements.
             {
-                iter2.MoveNext();
-                Multiplicity mkey1 = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                MultiplicityCountingRes mcr1 = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
-                /*if (verbose)
+                PrintLine("Compare multiplicity counting for entire measurement:");
+                while (iter.MoveNext())
                 {
-                    PrintLine("original multiplicity:");
-                    lines = mcr.StringifyCurrentMultiplicityDetails();
-                    foreach (string s in lines)
-                        PrintLine(s);
-                    PrintLine("");
-                }*/
-                Multiplicity mkey2 = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter2.Current)).Key;
-                MultiplicityCountingRes mcr2 = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter2.Current)).Value;
-                /*if (verbose)
-                {
-                    PrintLine("recalculated multiplicity:");
-                    lines = mcr2.StringifyCurrentMultiplicityDetails();
-                    foreach (string s in lines)
-                        PrintLine(s);
-                    PrintLine("");
-                }*/
-                //TODO: I don't think we can compare the AB values. They are not output in the file. Instead, deadtime correction will weed out differences
-                //TODO: Accidental sums not matching. Check.
-                temp = mcr1.Equals(mcr2);
-                ls = mcr1.TestMessages;
-                if (ls != null)
-                {
-                    foreach (string s in ls)
-                        PrintLine(s);
+                    iter2.MoveNext();
+                    Multiplicity mkey1 = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
+                    MultiplicityCountingRes mcr1 = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Value;
+                    /*if (verbose)
+                    {
+                        PrintLine("original multiplicity:");
+                        lines = mcr.StringifyCurrentMultiplicityDetails();
+                        foreach (string s in lines)
+                            PrintLine(s);
+                        PrintLine("");
+                    }*/
+                    Multiplicity mkey2 = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter2.Current)).Key;
+                    MultiplicityCountingRes mcr2 = (MultiplicityCountingRes)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter2.Current)).Value;
+                    /*if (verbose)
+                    {
+                        PrintLine("recalculated multiplicity:");
+                        lines = mcr2.StringifyCurrentMultiplicityDetails();
+                        foreach (string s in lines)
+                            PrintLine(s);
+                        PrintLine("");
+                    }*/
+                    temp = mcr1.Equals(mcr2);
+                    ls = mcr1.TestMessages;
+                    if (ls != null)
+                    {
+                        foreach (string s in ls)
+                            PrintLine(s);
+                    }
+                    same = temp && same;
                 }
                 same = temp && same;
+                PrintLine(temp ? "CountingResults match" : "CountingResults different: FAIL");
             }
-            same = temp && same;
-            PrintLine(temp ? "CountingResults match" : "CountingResults different: FAIL");
             return same;
         }
 

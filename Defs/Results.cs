@@ -1956,27 +1956,27 @@ namespace AnalysisDefs
 
             casecompares = CompareTools.DoublesCompare(this._RASum, mcr._RASum);
             if (!casecompares)
-                testStatus.Add("RA sum values do not match.");
+                testStatus.Add(String.Format("RA sum values do not match. {0} {1}", this._RASum, mcr._RASum));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this._ASum, mcr._ASum);
             if (!casecompares)
-                testStatus.Add("A sum values do not match.");
+                testStatus.Add(String.Format("A sum values do not match. {0} {1}", this._ASum, mcr._ASum));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this._UnASum, mcr._UnASum);
             if (!casecompares)
-                testStatus.Add("UnA sum values do not match.");
+                testStatus.Add(String.Format("UnA sum values do not match. {0} {1}", this._UnASum, mcr._UnASum));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this._S1Sum, mcr._S1Sum);
             if (!casecompares)
-                testStatus.Add("Scaler1 sum values do not match.");
+                testStatus.Add(String.Format("Scaler1 sum values do not match. {0} {1}", this._S1Sum, mcr._S1Sum));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this._S2Sum, mcr._S2Sum);
             if (!casecompares)
-                testStatus.Add("Scaler2 sum values do not match.");
+                testStatus.Add(String.Format("Scaler2 sum values do not match. {0} {1}", this._S2Sum, mcr._S2Sum));
             compares = compares && casecompares;
 
             return compares;
