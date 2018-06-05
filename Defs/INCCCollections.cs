@@ -1907,7 +1907,7 @@ namespace AnalysisDefs
         public List<INCCAnalysisParams.cm_pu_ratio_rec> GetList()
         {
             object o = GetAll();  // force load of local binding list
-            return cm_pu_ratio.ToList<INCCAnalysisParams.cm_pu_ratio_rec>();
+            return cm_pu_ratio.ToList();
         }
 
         BindingList<INCCAnalysisParams.cm_pu_ratio_rec> GetAll()
@@ -3428,11 +3428,11 @@ namespace AnalysisDefs
         public INCCDB()
         {
             // set up the internal DB transfer state
-            itemlist = new ItemIdListImpl();
-            collarItemlist = new CollarItemIdListImpl();
-            isotopics = new IsotopicsListImpl();
-            comp_isotopics = new CompositeIsotopicsListImpl();
-            testparams = new TestParamsImpl();
+            ItemIds = new ItemIdListImpl();
+            CollarItemIds = new CollarItemIdListImpl();
+            Isotopics = new IsotopicsListImpl();
+            CompositeIsotopics = new CompositeIsotopicsListImpl();
+            TestParameters = new TestParamsImpl();
 
             mbas = new MBAs();
             facs = new Facilities();
@@ -3442,14 +3442,14 @@ namespace AnalysisDefs
             dettypes = new DetectorTypes();
             stratums = new Stratums();
 
-            normParameters = new NormParamsImpl();
-            unattParameters = new UnattendedParamsImpl();
-            backgroundParameters = new BackgroundParamsImpl();
-            aasParameters = new AASParamsImpl();
+            NormParameters = new NormParamsImpl();
+            UnattendedParameters = new UnattendedParamsImpl();
+            BackgroundParameters = new BackgroundParamsImpl();
+            AASSParameters = new AASParamsImpl();
             HVParameters = new HVParamsImpl();
-            cm_pu_ratioparams = new cm_pu_ratio_Impl();
-            holdup_configparams = new HoldupListImpl();
-			poisonrods = new PoisonRodListImpl();
+            Cm_Pu_RatioParameters = new cm_pu_ratio_Impl();
+            HoldupConfigParameters = new HoldupListImpl();
+			PoisonRods = new PoisonRodListImpl();
         }
 
         public static string MakeFrag(bool good)
@@ -3943,109 +3943,18 @@ namespace AnalysisDefs
                 return facs;
             }
         }
-        private CollarItemIdListImpl collarItemlist;
-        public CollarItemIdListImpl CollarItemIds
-        {
-            get
-            {
-                return collarItemlist;
-            }
-        }
-        private ItemIdListImpl itemlist;
-        public ItemIdListImpl ItemIds
-        {
-            get
-            {
-                return itemlist;
-            }
-        }
-        private IsotopicsListImpl isotopics;
-        public IsotopicsListImpl Isotopics
-        {
-            get
-            {
-                return isotopics;
-            }
-        }
-        private CompositeIsotopicsListImpl comp_isotopics;
-        public CompositeIsotopicsListImpl CompositeIsotopics
-        {
-            get
-            {
-                return comp_isotopics;
-            }
-        }
-        private TestParamsImpl testparams;
-        public TestParamsImpl TestParameters
-        {
-            get
-            {
-                return testparams;
-            }
-        }
-
-        NormParamsImpl normParameters;
-        public NormParamsImpl NormParameters
-        {
-            get
-            {
-                return normParameters;
-            }
-        }
-
-        UnattendedParamsImpl unattParameters;
-        public UnattendedParamsImpl UnattendedParameters
-        {
-            get
-            {
-                return unattParameters;
-            }
-        }
-
-        BackgroundParamsImpl backgroundParameters;
-        public BackgroundParamsImpl BackgroundParameters
-        {
-            get
-            {
-                return backgroundParameters;
-            }
-        }
-
-        AASParamsImpl aasParameters;
-        public AASParamsImpl AASSParameters
-        {
-            get
-            {
-                return aasParameters;
-            }
-        }
-
-        private cm_pu_ratio_Impl cm_pu_ratioparams;
-        public cm_pu_ratio_Impl Cm_Pu_RatioParameters
-        {
-            get
-            {
-                return cm_pu_ratioparams;
-            }
-        }
-
-		private HoldupListImpl holdup_configparams;
-        public HoldupListImpl HoldupConfigParameters
-        {
-            get
-            {
-                return holdup_configparams;
-            }
-        }
-
-        private PoisonRodListImpl poisonrods;
-        public PoisonRodListImpl PoisonRods
-        {
-            get
-            {
-                return poisonrods;
-            }
-        }
+        public CollarItemIdListImpl CollarItemIds { get; }
+        public ItemIdListImpl ItemIds { get; }
+        public IsotopicsListImpl Isotopics { get; }
+        public CompositeIsotopicsListImpl CompositeIsotopics { get; }
+        public TestParamsImpl TestParameters { get; }
+        public NormParamsImpl NormParameters { get; }
+        public UnattendedParamsImpl UnattendedParameters { get; }
+        public BackgroundParamsImpl BackgroundParameters { get; }
+        public AASParamsImpl AASSParameters { get; }
+        public cm_pu_ratio_Impl Cm_Pu_RatioParameters { get; }
+        public HoldupListImpl HoldupConfigParameters { get; }
+        public PoisonRodListImpl PoisonRods { get; }
 
         public HVParamsImpl HVParameters { get; set; }
 

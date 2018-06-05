@@ -419,11 +419,12 @@ namespace NCCFile
                 files = (FileList<CSVFile>)hdlr.BuildFileList(NC.App.AppContext.FileInputList);
 			if (files != null && files.Count > 0)
             {
-				// construct lists of isotopics and items from the NOP and COP files
+				// construct lists of isotopics, items from NOP files and CmPu ratio recs from COP files
 				opfiles.Process(files);
-	            NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.Results.ItemIds.Count);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33085, "NOP items " + opfiles.Results.ItemIds.Count);
+                NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 33085, "COP entries " + opfiles.Results.COPRatioRecs.Count);
             }
-			else
+            else
 	            NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 33085, "No operator declarations available, continuing with default values");
 
             // process the NCC files only

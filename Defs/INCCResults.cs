@@ -1791,7 +1791,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_add_a_source_rec";
+                Table = "results_add_a_source_rec";
                 ps.Add(new DBParamEntry("dzero_cf252_doubles", dzero_cf252_doubles));
                 ps.AddRange(DBParamList.TupleArrayPair("sample_cf252_doubles", sample_cf252_doubles));
                 ps.Add(new DBParamEntry("sample_cf252_ratio", sample_cf252_ratio));
@@ -1879,7 +1879,7 @@ namespace AnalysisDefs
                 if (methodParams2 != null) sec.AddRange(methodParams2.ToLines(m));
                 sec.AddNumericRow("Decay corrected Cm/Pu ratio:", cm_pu_ratio_decay_corr);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
-                if (this.methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
+                if (methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
                     sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
                 sec.AddNumericRow("Cm mass (g)", cm_mass);
                 sec.AddNumericRow("Pu mass (g)", pu.mass);
@@ -1924,30 +1924,30 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_curium_ratio_rec";
-                ps.AddRange(DBParamList.TuplePair(pu.pu240e_mass, "pu240e_mass"));
-                ps.AddRange(DBParamList.TuplePair(pu.pu_mass, "pu_mass"));
+                Table = "results_curium_ratio_rec";
+                ps.AddRange(TuplePair(pu.pu240e_mass, "pu240e_mass"));
+                ps.AddRange(TuplePair(pu.pu_mass, "pu_mass"));
                 ps.Add(new DBParamEntry("dcl_pu_mass",pu.dcl_pu_mass));
-                ps.AddRange(DBParamList.TuplePair(pu.dcl_minus_asy_pu_mass, "dcl_minus_asy_pu_mass"));
+                ps.AddRange(TuplePair(pu.dcl_minus_asy_pu_mass, "dcl_minus_asy_pu_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_pu_mass_pct", pu.dcl_minus_asy_pu_mass_pct));
 
-                ps.AddRange(DBParamList.TuplePair(cm_mass, "cm_mass"));
+                ps.AddRange(TuplePair(cm_mass, "cm_mass"));
 
-                ps.AddRange(DBParamList.TuplePair(u.mass, "u_mass"));               
-                ps.AddRange(DBParamList.TuplePair(u.dcl_minus_asy_mass, "dcl_minus_asy_u_mass"));
+                ps.AddRange(TuplePair(u.mass, "u_mass"));               
+                ps.AddRange(TuplePair(u.dcl_minus_asy_mass, "dcl_minus_asy_u_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u_mass_pct", u.dcl_minus_asy_mass_pct));
-                ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
+                //as in INCC5, this results rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
 
-                ps.AddRange(DBParamList.TuplePair(u235.mass, "u235_mass"));               
-                ps.AddRange(DBParamList.TuplePair(u235.dcl_minus_asy_mass, "dcl_minus_asy_u235_mass"));
+                ps.AddRange(TuplePair(u235.mass, "u235_mass"));               
+                ps.AddRange(TuplePair(u235.dcl_minus_asy_mass, "dcl_minus_asy_u235_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u235_mass_pct", u235.dcl_minus_asy_mass_pct));
-                ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
+                //as in INCC5, this results rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
 
                 ps.Add(new DBParamEntry("pu_pass", pu.pass));
                 ps.Add(new DBParamEntry("u_pass", u.pass));
 
-                ps.AddRange(DBParamList.TuplePair(cm_pu_ratio_decay_corr, "cm_pu_ratio_decay_corr"));
-                ps.AddRange(DBParamList.TuplePair(cm_u_ratio_decay_corr, "cm_u_ratio_decay_corr"));
+                ps.AddRange(TuplePair(cm_pu_ratio_decay_corr, "cm_pu_ratio_decay_corr"));
+                ps.AddRange(TuplePair(cm_u_ratio_decay_corr, "cm_u_ratio_decay_corr"));
 
             }
 

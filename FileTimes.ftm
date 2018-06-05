@@ -1,14 +1,14 @@
-<filetimes time="2018-03-29T13:18:44.7882251" filetime="636579263247882251" version="4.1.0.4" git="1">
+<filetimes time="2018-06-05T14:57:23.3479040" filetime="636638074433479040" version="4.1.0.4" git="1">
   <file name=".gitignore" time="2018-01-02T12:36:10.8238308" filetime="636504933708238308" size="496" hash="WU06DO4btmPLblgIHXMX/A==" />
   <file name="clean.cmd" time="2017-10-10T23:11:56.3843875" filetime="636432739163843875" size="282" hash="RaAR1+yiwke+oByq1eA6XQ==" />
   <dir name="Cmd" time="2017-12-17T17:17:40.4988000" filetime="636491278604988000" hash="EnoqxOmpvmUrXPKrNYvS2g==" />
-  <file name="Cmd\App.config" time="2017-12-17T17:17:40.4988000" filetime="636491278604988000" size="5949" hash="1H9qjU5bZLKTlT4a4wuIZg==" />
+  <file name="Cmd\App.config" time="2018-05-15T13:55:59.3398090" filetime="636619893593398090" size="5809" hash="upFmHDV6r4FwTtZsB1MMKw==" />
   <file name="Cmd\Cmd.cs" time="2017-12-11T15:40:42.9580552" filetime="636486036429580552" size="9163" hash="sbzhDP31W0MxdfSJNASwww==" />
   <file name="Cmd\Cmd.csproj" time="2018-01-02T12:32:09.5679834" filetime="636504931295679834" size="6934" hash="tCLlFQl4+4mWvgfV5GFZxw==" />
   <file name="Cmd\DAQControl.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="6850" hash="QkrQifWgYAdwqBuKQ1mhAw==" />
   <file name="Cmd\FileControl.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="6927" hash="sYF+rlCmg+7FgLOEQJmCIw==" />
   <dir name="Cmd\Properties" time="2017-12-29T19:37:22.4064000" filetime="636501730424064000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="Cmd\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8087553" filetime="636579245818087553" size="1528" hash="zkMqHJASUs96lNdgIE+tFg==" />
+  <file name="Cmd\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.4859040" filetime="636638074284859040" size="1528" hash="zd7gxz/7bDuRSA22Kw0pzg==" />
   <file name="Cmd\rel.ico" time="2017-10-10T23:10:59.8445405" filetime="636432738598445405" size="309326" hash="gGZbNCbUccKqSQCe/yvgaQ==" />
   <dir name="Defs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" hash="/fwsxT8F8enFaOmd9QFV2w==" />
   <file name="Defs\Analysis.cs" time="2017-12-07T07:04:21.6616549" filetime="636482270616616549" size="29350" hash="oAOp/gyPFHor1Wr8Rm2Esw==" />
@@ -24,35 +24,35 @@
   <file name="Defs\DetectorDefs.cs" time="2017-12-07T07:04:21.6716548" filetime="636482270616716548" size="27396" hash="Kvx77YFe63jI/q2C2Bl5Lw==" />
   <file name="Defs\INCCAnPam.cs" time="2017-12-12T09:28:05.5299403" filetime="636486676855299403" size="83572" hash="JY2ltxyK+EiAEgNj2E2R/g==" />
   <file name="Defs\INCCCalibCollections.cs" time="2017-12-07T07:04:21.6716548" filetime="636482270616716548" size="68235" hash="NnWKj4aqKlrmdEuNh4DSgA==" />
-  <file name="Defs\INCCCollections.cs" time="2018-02-14T15:11:20.0835272" filetime="636542178800835272" size="202541" hash="j2fbHnF4gCzSGXvh5pC6Xg==" />
-  <file name="Defs\INCCResults.cs" time="2017-12-07T07:04:21.6716548" filetime="636482270616716548" size="113446" hash="iOzz6B9uC6fN/TvkgocExg==" />
+  <file name="Defs\INCCCollections.cs" time="2018-06-05T14:23:22.7109040" filetime="636638054027109040" size="200745" hash="WojYumMDWSHX2J+wBGW4/Q==" />
+  <file name="Defs\INCCResults.cs" time="2018-06-05T11:27:00.0399040" filetime="636637948200399040" size="113459" hash="M2cw2FNx+gsderqs1IKYSg==" />
   <file name="Defs\IsoAndStrat.cs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" size="43792" hash="z/41R7LzTOwlEcywnddnfw==" />
   <file name="Defs\LMResults.cs" time="2017-11-27T12:13:57.3930118" filetime="636473816373930118" size="7392" hash="TzQDPreSPEN2OdYs7Du6QQ==" />
-  <file name="Defs\LMSupport.cs" time="2017-12-11T15:26:23.8457828" filetime="636486027838457828" size="41100" hash="A3Gq7+uj/giIEty6RMXFZA==" />
+  <file name="Defs\LMSupport.cs" time="2018-05-15T13:55:59.3658090" filetime="636619893593658090" size="40252" hash="HTIM2Hbdm46W7jpwm4sT6Q==" />
   <file name="Defs\Measurement.cs" time="2017-12-12T09:36:51.7889403" filetime="636486682117889403" size="44745" hash="twWTP7zXCw9PivaQv7KPcQ==" />
   <file name="Defs\MethodResultsReport.cs" time="2017-12-12T09:37:06.0449403" filetime="636486682260449403" size="56826" hash="lFKgCfexJm/K2/5hCmhsIg==" />
   <file name="Defs\Parameters.cs" time="2017-12-11T13:50:45.6997519" filetime="636485970456997519" size="130895" hash="i8gd3bgFo/HT5+HqzrUiPQ==" />
   <dir name="Defs\Properties" time="2017-12-29T19:37:22.3764000" filetime="636501730423764000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="Defs\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8087553" filetime="636579245818087553" size="1483" hash="VahMkLS7D67YsyWp6SgbAw==" />
+  <file name="Defs\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.4869040" filetime="636638074284869040" size="1483" hash="ded6AQH3AVI7iqTzAbw9pw==" />
   <file name="Defs\RawAnalysisReport.cs" time="2017-12-11T20:10:01.4008000" filetime="636486198014008000" size="78942" hash="rTjBtBKXau9/kjn3QLgwCQ==" />
   <file name="Defs\ReportBase.cs" time="2017-12-11T20:03:22.2808000" filetime="636486194022808000" size="8482" hash="iVRFHiX/BLgLUaWTVUV32w==" />
   <file name="Defs\ReportSectional.cs" time="2017-10-10T23:11:01.2882766" filetime="636432738612882766" size="6708" hash="dn6CKzAfnQXFr/Zco4EcYg==" />
   <file name="Defs\Results.cs" time="2017-12-12T08:50:22.4335728" filetime="636486654224335728" size="70304" hash="Or+xpqdqJZ9oE9nGs4zJZw==" />
   <dir name="deployment" time="2018-01-02T10:45:55.6969811" filetime="636504867556969811" hash="PwpdMMp1ykC3YvkZmHPvCQ==" />
-  <file name="deployment\create_INCC6_sqlite.sql" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="67688" hash="sPgVuEO4CSgQcwR6hUp7RA==" />
-  <file name="deployment\create_INCC6_sqlserver.sql" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="68484" hash="y9U5INcmbCG61UczrbuTng==" />
+  <file name="deployment\create_INCC6_sqlite.sql" time="2018-06-05T14:55:09.4869040" filetime="636638073094869040" size="67688" hash="sPgVuEO4CSgQcwR6hUp7RA==" />
+  <file name="deployment\create_INCC6_sqlserver.sql" time="2018-06-05T14:55:09.4849040" filetime="636638073094849040" size="68484" hash="y9U5INcmbCG61UczrbuTng==" />
   <file name="deployment\Default.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
-  <file name="deployment\drop_INCC6_sqlite.sql" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="3489" hash="PugenL3MuyI6ZxhDuM+w8w==" />
-  <file name="deployment\drop_INCC6_sqlserver.sql" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="3500" hash="0A+cZ2vpzp67PlQx1/jfJA==" />
-  <file name="deployment\INCC6.exe.config" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="6415" hash="KjBvjpMaiuLSNQCAHh7iyQ==" />
+  <file name="deployment\drop_INCC6_sqlite.sql" time="2018-05-15T13:55:59.4608090" filetime="636619893594608090" size="3292" hash="TwzCLmRkOEaUEq82RcNFLw==" />
+  <file name="deployment\drop_INCC6_sqlserver.sql" time="2018-05-15T13:55:59.4498090" filetime="636619893594498090" size="3303" hash="FwEtVnupB8hzd4/kCtYICg==" />
+  <file name="deployment\INCC6.exe.Config" time="2018-06-05T14:55:09.4769040" filetime="636638073094769040" size="6415" hash="KjBvjpMaiuLSNQCAHh7iyQ==" />
   <file name="deployment\INCC6.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
-  <file name="deployment\INCCCmd.exe.config" time="2017-12-17T17:17:40.4988000" filetime="636491278604988000" size="5949" hash="1H9qjU5bZLKTlT4a4wuIZg==" />
+  <file name="deployment\INCCCmd.exe.Config" time="2018-06-05T14:55:09.4759040" filetime="636638073094759040" size="5949" hash="1H9qjU5bZLKTlT4a4wuIZg==" />
   <file name="deployment\inccuser.chm" time="2017-10-10T23:12:10.2747937" filetime="636432739302747937" size="674330" hash="hd+OI+ybl4FKQ4Z1dg/TAA==" />
   <file name="deployment\inccuser.chw" time="2017-10-10T23:12:10.2838891" filetime="636432739302838891" size="51273" hash="50Ee8qwIiQ8OyKuXBupHsg==" />
   <file name="deployment\inccuser.pdf" time="2017-10-10T23:12:10.8930403" filetime="636432739308930403" size="834133" hash="1/J2Ykw19oCOFbkTFJF7vA==" />
   <file name="deployment\LMSR.dll" time="2017-12-06T14:34:41.2018782" filetime="636481676812018782" size="12288" hash="BkHxQtdRRBLjDMDNfq9oNg==" />
   <file name="deployment\NCCCore.dll" time="2017-12-07T07:04:21.8416531" filetime="636482270618416531" size="106496" hash="Mi75gD5UZYIS+Hm4n4vlVQ==" />
-  <file name="deployment\reset.bat" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="108" hash="35rTbsxAvnXOt+eHj/m7UA==" />
+  <file name="deployment\reset.bat" time="2018-05-15T13:55:59.4608090" filetime="636619893594608090" size="105" hash="b/2UyFbWhHEXGj+Y3c/7dw==" />
   <file name="deployment\SQLite.Interop.dll" time="2017-12-07T06:51:38.9384761" filetime="636482262989384761" size="1141248" hash="Xpnp17lim8IQdHGMH5dCFQ==" />
   <file name="deployment\sqlite3.exe" time="2017-12-07T07:03:59.7518740" filetime="636482270397518740" size="740352" hash="hSi9InV4MdV7/MKROp8lSw==" />
   <file name="deployment\SR32.dll" time="2017-12-06T14:34:41.2178782" filetime="636481676812178782" size="34304" hash="vOzgAjNU+0ydeL3yW6/YDw==" />
@@ -60,7 +60,7 @@
   <file name="INCC6.sln" time="2018-01-04T16:10:40.6015376" filetime="636506790406015376" size="13959" hash="WDk/vVuiAEiJWkNLtm7J3Q==" />
   <dir name="NCCCtrl" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" hash="hJ2BedXsiAU6cEJkOtjFrA==" />
   <dir name="NCCCtrl\Analysis" time="2017-12-11T21:40:39.8818000" filetime="636486252398818000" hash="OAeBqDpKpu3SS/tmHcykzg==" />
-  <file name="NCCCtrl\Analysis\INCCMeasurement.cs" time="2017-12-11T13:09:12.8197038" filetime="636485945528197038" size="97928" hash="fQAkkcsdI998AWqX+s6c5Q==" />
+  <file name="NCCCtrl\Analysis\INCCMeasurement.cs" time="2018-06-05T12:08:59.2749040" filetime="636637973392749040" size="98023" hash="5rOeDXXieOMSPgfWU86Z/w==" />
   <file name="NCCCtrl\Analysis\LMRDT.cs" time="2017-12-11T20:53:34.3738000" filetime="636486224143738000" size="55535" hash="3zXRffUW89rm3EufmoQ9pg==" />
   <file name="NCCCtrl\Analysis\MCA527ProcessingState.cs" time="2017-10-10T23:11:28.0464818" filetime="636432738880464818" size="5617" hash="CeBo2dIABvhOWQu7Qk1PFA==" />
   <file name="NCCCtrl\Analysis\MCA527RawDataTransform.cs" time="2017-10-10T23:11:28.0815768" filetime="636432738880815768" size="3359" hash="PY7HCyFNs3asiIvboCXn4Q==" />
@@ -82,13 +82,13 @@
   <file name="NCCCtrl\DAQ\IAction.cs" time="2017-10-10T23:11:28.7353856" filetime="636432738887353856" size="4252" hash="jgAaXpIQoHsRnb+9Tcnl6g==" />
   <file name="NCCCtrl\DAQ\INCCSR.cs" time="2017-12-11T15:23:04.9207828" filetime="636486025849207828" size="32100" hash="eZFVZ8YU17Xria1IYSp73w==" />
   <file name="NCCCtrl\DAQ\Instr.cs" time="2017-12-11T20:27:19.5428000" filetime="636486208395428000" size="24827" hash="Ae2k7HFz6GITNBwZ/E2Dmg==" />
-  <file name="NCCCtrl\DAQ\MCA527Instrument.cs" time="2017-12-12T09:45:56.9469403" filetime="636486687569469403" size="35273" hash="esRE3Gx9iS29ts8CeeSlgw==" />
+  <file name="NCCCtrl\DAQ\MCA527Instrument.cs" time="2018-05-15T13:55:59.3928090" filetime="636619893593928090" size="34483" hash="UdUmK8p+EWfMDlJz6bigmg==" />
   <file name="NCCCtrl\DAQ\Ptr32Instrument.cs" time="2017-12-11T15:24:19.7717828" filetime="636486026597717828" size="23721" hash="H39kvaMZ7mfq/l1vG6kJkg==" />
   <file name="NCCCtrl\DAQ\SRDAQHandler.cs" time="2017-12-11T15:33:20.7577828" filetime="636486032007577828" size="46124" hash="jMEEPA3CE8Ww0YBbnvtHzA==" />
   <file name="NCCCtrl\DAQ\SREventHandler.cs" time="2017-12-11T19:44:01.7408000" filetime="636486182417408000" size="11260" hash="0tVgRPp1iiBIKXocZUmi2A==" />
   <dir name="NCCCtrl\Device" time="2017-12-12T08:45:47.1459403" filetime="636486651471459403" hash="/E5OoASDa3I6RWpVD/Sw9w==" />
-  <file name="NCCCtrl\Device\Lingo.cs" time="2017-12-12T08:44:18.8209403" filetime="636486650588209403" size="32481" hash="/CdbyjjAq4U8W0UBz+LTgQ==" />
-  <file name="NCCCtrl\Device\LMMMComm.cs" time="2017-12-12T08:45:47.1219403" filetime="636486651471219403" size="17222" hash="oj6bM1u/gJwLfMa1+8mGUw==" />
+  <file name="NCCCtrl\Device\Lingo.cs" time="2018-05-15T13:55:59.3998090" filetime="636619893593998090" size="31850" hash="m+fK0xwVIO3FyGPBTmys8A==" />
+  <file name="NCCCtrl\Device\LMMMComm.cs" time="2018-05-15T13:55:59.3988090" filetime="636619893593988090" size="16854" hash="UtqSBKSKQWE841GyMvtHVw==" />
   <file name="NCCCtrl\Device\MCA.cs" time="2017-10-10T23:11:31.2738955" filetime="636432738912738955" size="78826" hash="0tnoD4iR5ZtfEf4XDitVDw==" />
   <file name="NCCCtrl\Device\Ptr32.cs" time="2017-10-10T23:11:31.2944019" filetime="636432738912944019" size="26393" hash="Qmn8Sbh8jA1ptjURzwtF9w==" />
   <file name="NCCCtrl\Device\Ptr32Error.cs" time="2017-10-10T23:11:31.3194035" filetime="636432738913194035" size="3901" hash="yNisu1XNS8+qN79l7B2K7A==" />
@@ -98,13 +98,13 @@
   <dir name="NCCCtrl\File" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" hash="rMAWiS9h0Qjicd1MLoPX5Q==" />
   <file name="NCCCtrl\File\FileCtrl.cs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" size="103349" hash="fBqSeeAG9b3vLVg55U2RyA==" />
   <file name="NCCCtrl\File\FileCtrlDataz.cs" time="2018-03-29T12:54:21.0534935" filetime="636579248610534935" size="51761" hash="ssGHMql596vF+WRkYMIj9A==" />
-  <file name="NCCCtrl\File\FileCtrlINCC5.cs" time="2017-12-12T09:44:40.9099403" filetime="636486686809099403" size="41470" hash="J9rShDzcB+nK+yebLxguOg==" />
-  <file name="NCCCtrl\File\INCC5CSVFiles.cs" time="2017-12-12T09:13:15.5119403" filetime="636486667955119403" size="73826" hash="9z8cGsU9aXQV8KVJuOZPhw==" />
+  <file name="NCCCtrl\File\FileCtrlINCC5.cs" time="2018-06-05T14:38:21.2739040" filetime="636638063012739040" size="41631" hash="5MSWeU1cJqTf0c8J29Jb+Q==" />
+  <file name="NCCCtrl\File\INCC5CSVFiles.cs" time="2018-06-05T14:33:54.3809040" filetime="636638060343809040" size="72346" hash="KwjcpA2WtdK+kkITfMqBBA==" />
   <file name="NCCCtrl\File\INCCKnew.cs" time="2017-12-12T09:44:40.9289403" filetime="636486686809289403" size="233635" hash="v7km6w8wWWasCWpR2IFjLQ==" />
   <file name="NCCCtrl\File\NeutronDataFiles.cs" time="2017-12-12T08:46:28.4809403" filetime="636486651884809403" size="137541" hash="aDx43TLwrRpLaF3IHSkZ2Q==" />
-  <file name="NCCCtrl\NCCCtrl.csproj" time="2017-12-17T17:22:25.9438000" filetime="636491281459438000" size="9028" hash="NQmL4Av30YWDQUXyFTRQNg==" />
+  <file name="NCCCtrl\NCCCtrl.csproj" time="2018-06-05T13:04:42.3710570" filetime="636638006823710570" size="9028" hash="NQmL4Av30YWDQUXyFTRQNg==" />
   <dir name="NCCCtrl\Properties" time="2017-12-29T19:37:22.3864000" filetime="636501730423864000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="NCCCtrl\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8187550" filetime="636579245818187550" size="1485" hash="033niee2bnuqkg0xB4PUgA==" />
+  <file name="NCCCtrl\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.4939040" filetime="636638074284939040" size="1485" hash="F919SeDTens4+iLXjMC2eg==" />
   <dir name="NCCCtrl\RawAnalysis" time="2017-12-12T09:53:42.0839403" filetime="636486692220839403" hash="ok20rmc0xlLBQodl82sEXw==" />
   <file name="NCCCtrl\RawAnalysis\AnalyzerEventCode.cs" time="2017-10-10T23:11:31.9600174" filetime="636432738919600174" size="2769" hash="KoW5HMnFZxYB8sF7yEiiYA==" />
   <file name="NCCCtrl\RawAnalysis\AnalyzerHandler.cs" time="2017-12-12T09:53:42.0689403" filetime="636486692220689403" size="84800" hash="EOjYd2oeg/D64x61VKsmbg==" />
@@ -126,20 +126,20 @@
   <file name="NCCCtrl\Transfer\INCCFileInfo.cs" time="2017-12-12T09:16:24.8129403" filetime="636486669848129403" size="25533" hash="07e8q+/y/acfp4akKuIfcw==" />
   <dir name="NCCCtrl\Utils" time="2017-12-11T14:39:07.8508395" filetime="636485999478508395" hash="PT/luGYDxEdUQ5oSrsqWkw==" />
   <file name="NCCCtrl\Utils\ProgressTracker.cs" time="2017-10-10T23:11:32.7051193" filetime="636432738927051193" size="4678" hash="xFZlW5HXWjYNSBgWWs2hzA==" />
-  <file name="NCCCtrl\Utils\Status.cs" time="2017-12-07T07:04:21.7216543" filetime="636482270617216543" size="19454" hash="JWX1+DnBUETWFQPCyIMgkA==" />
-  <file name="readme.txt" time="2018-02-23T10:15:52.9165012" filetime="636549777529165012" size="18102" hash="voUSmbA+5+OLrBo7UHuTWw==" />
+  <file name="NCCCtrl\Utils\Status.cs" time="2018-05-15T13:55:59.4278090" filetime="636619893594278090" size="18994" hash="Jm0RaAVQjavzTHhg0P2skQ==" />
+  <file name="readme.txt" time="2018-05-15T13:56:00.2718090" filetime="636619893602718090" size="18102" hash="+p0Cd6yOtYytmB8rPUkFVw==" />
   <dir name="RepDB" time="2017-12-17T17:17:40.5388000" filetime="636491278605388000" hash="lPoTw7RTJBBeytYpwiutxA==" />
   <dir name="RepDB\Config" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" hash="QXEXjXyGGhzLUg5WS6Uqvg==" />
   <file name="RepDB\Config\App.Config" time="2017-10-10T23:11:32.9443014" filetime="636432738929443014" size="8757" hash="PLikZq9+LuBpXpPuU7LTGQ==" />
   <file name="RepDB\Config\Config.cs" time="2018-03-29T12:49:14.7235044" filetime="636579245547235044" size="78407" hash="nU611KpvUG4kmKc3golyJQ==" />
   <file name="RepDB\Config\Constants.cs" time="2017-10-10T23:11:33.0113492" filetime="636432738930113492" size="456" hash="7Lr1OtBOo77oMT5USndPsw==" />
   <dir name="RepDB\Config\NDesk" time="2017-12-11T14:39:07.8708387" filetime="636485999478708387" hash="Fqjo3Gt3a4iBA2iEIQ96/A==" />
-  <file name="RepDB\Config\NDesk\Options.cs" time="2017-12-07T07:04:21.7216543" filetime="636482270617216543" size="33101" hash="XLZTyovyxBroJx51u8jqng==" />
+  <file name="RepDB\Config\NDesk\Options.cs" time="2018-05-15T13:55:59.4338090" filetime="636619893594338090" size="31999" hash="QYLHTYWOr++LT9GZGcz3AQ==" />
   <file name="RepDB\Config\Options.cs" time="2018-03-29T12:49:14.7335041" filetime="636579245547335041" size="17560" hash="g2QsX2jiy0y6dq31Bq9fKw==" />
   <dir name="RepDB\DB" time="2017-12-17T17:17:40.3188000" filetime="636491278603188000" hash="tJRTeSNP9HCIjHnL19E15g==" />
   <file name="RepDB\DB\acq.cs" time="2017-10-10T23:11:34.0476565" filetime="636432738940476565" size="7167" hash="jnVGiT32iAqOo+uFoEYbGw==" />
-  <file name="RepDB\DB\AnalysisMethods.cs" time="2017-12-07T07:04:21.7316542" filetime="636482270617316542" size="11044" hash="Wwe8svGKAgF27Aebh+NUkA==" />
-  <file name="RepDB\DB\Autonomous.cs" time="2017-12-07T07:04:21.7316542" filetime="636482270617316542" size="36767" hash="26koJWPmQpsc2zOKHnhuww==" />
+  <file name="RepDB\DB\AnalysisMethods.cs" time="2018-05-15T13:55:59.4398090" filetime="636619893594398090" size="10795" hash="W7g9+P8FHaC6YIZclsnl8Q==" />
+  <file name="RepDB\DB\Autonomous.cs" time="2018-05-15T13:55:59.4408090" filetime="636619893594408090" size="35688" hash="VbgdvsZ6+eIY6EemXZPpfw==" />
   <file name="RepDB\DB\CountingAnalysisParameters.cs" time="2017-10-10T23:11:33.2840339" filetime="636432738932840339" size="12353" hash="R2GcuDPLRq7QU6rXSMdctw==" />
   <file name="RepDB\DB\DB.cs" time="2017-12-11T15:16:53.6267828" filetime="636486022136267828" size="38737" hash="iWchZDmKVF7OHuM4weYe6A==" />
   <file name="RepDB\DB\DBListener.cs" time="2017-12-07T07:04:21.7316542" filetime="636482270617316542" size="7449" hash="FPy3GjpgqepdNU4HimF3jA==" />
@@ -148,421 +148,421 @@
   <file name="RepDB\DB\Detectors.cs" time="2017-10-10T23:11:33.5257255" filetime="636432738935257255" size="18563" hash="CVQkmK7q/1aK3kXzbA+tEA==" />
   <file name="RepDB\DB\Measurements.cs" time="2017-11-27T12:13:57.4930098" filetime="636473816374930098" size="17995" hash="1SdWAtQ0UXh75T/qG7DUrQ==" />
   <file name="RepDB\DB\Pest.cs" time="2017-12-11T20:32:12.4858000" filetime="636486211324858000" size="10507" hash="F54664WRMOKxclOd/0hBUA==" />
-  <file name="RepDB\DB\Results.cs" time="2018-02-14T15:11:20.0625272" filetime="636542178800625272" size="12355" hash="qHNz/kM++K+y25BAVzOKyQ==" />
+  <file name="RepDB\DB\Results.cs" time="2018-05-15T13:55:59.4478090" filetime="636619893594478090" size="12052" hash="X54s89HgrGcfR7vM14SORg==" />
   <file name="RepDB\DB\Schema.Designer.cs" time="2017-10-10T23:11:33.7020404" filetime="636432738937020404" size="3886" hash="6LrvS7pmxXABo/iCkbKk4Q==" />
   <file name="RepDB\DB\Schema.resx" time="2017-10-10T23:11:33.7200573" filetime="636432738937200573" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
   <dir name="RepDB\DB\SQLite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" hash="SgMXMaPbuVg7i6oxkvsJRw==" />
-  <file name="RepDB\DB\SQLite\create_INCC6_sqlite.sql" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="67688" hash="sPgVuEO4CSgQcwR6hUp7RA==" />
+  <file name="RepDB\DB\SQLite\create_INCC6_sqlite.sql" time="2018-05-15T13:55:59.4598090" filetime="636619893594598090" size="65474" hash="kszck1ME6gfjD5Lnjd8sew==" />
   <file name="RepDB\DB\SQLite\Default.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
-  <file name="RepDB\DB\SQLite\drop_INCC6_sqlite.sql" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="3489" hash="PugenL3MuyI6ZxhDuM+w8w==" />
+  <file name="RepDB\DB\SQLite\drop_INCC6_sqlite.sql" time="2018-05-15T13:55:59.4608090" filetime="636619893594608090" size="3292" hash="TwzCLmRkOEaUEq82RcNFLw==" />
   <file name="RepDB\DB\SQLite\INCC6.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
-  <file name="RepDB\DB\SQLite\reset.bat" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="108" hash="35rTbsxAvnXOt+eHj/m7UA==" />
+  <file name="RepDB\DB\SQLite\reset.bat" time="2018-05-15T13:55:59.4608090" filetime="636619893594608090" size="105" hash="b/2UyFbWhHEXGj+Y3c/7dw==" />
   <dir name="RepDB\DB\SQLServer" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" hash="KUebIdumhungwappoSwQFA==" />
-  <file name="RepDB\DB\SQLServer\create_INCC6_sqlserver.sql" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="68484" hash="y9U5INcmbCG61UczrbuTng==" />
-  <file name="RepDB\DB\SQLServer\drop_INCC6_sqlserver.sql" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" size="3500" hash="0A+cZ2vpzp67PlQx1/jfJA==" />
+  <file name="RepDB\DB\SQLServer\create_INCC6_sqlserver.sql" time="2018-05-15T13:55:59.4498090" filetime="636619893594498090" size="66270" hash="bbvvgvwQTXvUu0hFL9ZE5g==" />
+  <file name="RepDB\DB\SQLServer\drop_INCC6_sqlserver.sql" time="2018-05-15T13:55:59.4498090" filetime="636619893594498090" size="3303" hash="FwEtVnupB8hzd4/kCtYICg==" />
   <file name="RepDB\DB\SQLSpecific.cs" time="2017-12-07T07:04:21.7316542" filetime="636482270617316542" size="6140" hash="TX7eQTs7sz4yg6n8F+vA1g==" />
   <file name="RepDB\DB\Strata.cs" time="2017-10-10T23:11:33.7840963" filetime="636432738937840963" size="9881" hash="idFwdNSVID2joJU5HUbplQ==" />
   <file name="RepDB\DB\Utils.cs" time="2017-10-10T23:11:33.8963517" filetime="636432738938963517" size="23366" hash="yDo8EiaDVg0Xall3g1xKNw==" />
   <dir name="RepDB\DB\Ye Olde" time="2017-12-11T14:39:07.8908379" filetime="636485999478908379" hash="nFpFk8xHcRm60GaNe3acGg==" />
-  <file name="RepDB\DB\Ye Olde\ncc_db.h" time="2017-12-07T07:04:21.7416541" filetime="636482270617416541" size="182126" hash="gwBMg76iBCtSOsqb0lsi/w==" />
+  <file name="RepDB\DB\Ye Olde\ncc_db.h" time="2018-05-15T13:55:59.4628090" filetime="636619893594628090" size="176769" hash="/LAQZ4RloVuGrVWTKelQmA==" />
   <file name="RepDB\DB\Ye Olde\NCC_DB.SCH" time="2017-11-09T16:39:49.1685070" filetime="636458423891685070" size="78006" hash="8RO7FlV/9DLZ0t5FpH+vmg==" />
-  <file name="RepDB\packages.config" time="2017-12-17T17:17:40.5388000" filetime="636491278605388000" size="161" hash="ef3c+xQvZ1BncFsr/R5vWw==" />
+  <file name="RepDB\packages.config" time="2018-05-15T13:55:59.4718090" filetime="636619893594718090" size="158" hash="uJiiEq51sIrLL6xlE2szLA==" />
   <dir name="RepDB\Properties" time="2017-12-29T19:37:22.3964000" filetime="636501730423964000" hash="GlFXd13uy4pHaLmasXfe+Q==" />
-  <file name="RepDB\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8287547" filetime="636579245818287547" size="1352" hash="wM90+jiQY2lWZ7kWtcRR9g==" />
-  <file name="RepDB\Properties\Resources.Designer.cs" time="2017-10-10T23:11:34.1908388" filetime="636432738941908388" size="3912" hash="wgZlsaIe41FFnBZ+3nUDRw==" />
+  <file name="RepDB\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.5019040" filetime="636638074285019040" size="1352" hash="yW1Kc/vC2LJdN1UuOpQmiQ==" />
+  <file name="RepDB\Properties\Resources.Designer.cs" time="2018-05-15T13:52:39.1118090" filetime="636619891591118090" size="3829" hash="No73iuVZ5Jv8v57PD7ArkQ==" />
   <file name="RepDB\Properties\Resources.resx" time="2017-10-10T23:11:34.2248406" filetime="636432738942248406" size="6198" hash="x1KEG9cq/aCPEs0dXqOw/w==" />
   <file name="RepDB\RepDB.csproj" time="2017-12-17T17:31:31.6408000" filetime="636491286916408000" size="5967" hash="3Q4CaiLgukkXKYYad5F0Wg==" />
   <dir name="RepDB\Reporter" time="2017-12-12T08:56:57.4799403" filetime="636486658174799403" hash="2v7MhjGdmQJVlR0mA0ENEw==" />
   <file name="RepDB\Reporter\Columns.cs" time="2017-10-10T23:11:34.3250524" filetime="636432738943250524" size="3077" hash="sKjraJaFpPY8b1ZrNuPWaA==" />
-  <file name="RepDB\Reporter\Excel.cs" time="2017-12-12T08:56:57.4679403" filetime="636486658174679403" size="4541" hash="KiUR/tGbXrxyYhdDqRjyrg==" />
+  <file name="RepDB\Reporter\Excel.cs" time="2018-05-15T13:55:59.4688090" filetime="636619893594688090" size="4432" hash="Xm4AvAz2NnGXlx2UM5/fLg==" />
   <file name="RepDB\Reporter\HeadFoot.cs" time="2017-10-10T23:11:34.3833006" filetime="636432738943833006" size="3361" hash="epDJgpUUBsUFiaLsMHZC9A==" />
   <file name="RepDB\Reporter\Loggers.cs" time="2017-12-11T15:18:27.3317828" filetime="636486023073317828" size="22373" hash="ag6oc2+MJPF1KDibxtKVBg==" />
   <file name="RepDB\Reporter\Report.cs" time="2017-12-11T20:52:02.0178000" filetime="636486223220178000" size="16312" hash="zcZ5mkmpTnPADMKmDfYdsQ==" />
   <dir name="SetupBuildStamp" time="2018-01-01T08:49:48.2608000" filetime="636503933882608000" hash="zV0glIW4Ddi55oe0nav54Q==" />
-  <file name="SetupBuildStamp\BuildStamp.csproj" time="2018-01-04T16:11:15.5385376" filetime="636506790755385376" size="2388" hash="MMLgVPYz2ebVD/B9rBXn+A==" />
-  <file name="SetupBuildStamp\Program.cs" time="2018-01-04T16:07:45.5395376" filetime="636506788655395376" size="5924" hash="qBDDRlxTfIgBxSkmdC+7fQ==" />
+  <file name="SetupBuildStamp\BuildStamp.csproj" time="2018-05-15T13:55:59.4718090" filetime="636619893594718090" size="2335" hash="ib71ACLBPHHO0u59TEsmOQ==" />
+  <file name="SetupBuildStamp\Program.cs" time="2018-05-15T13:55:59.4728090" filetime="636619893594728090" size="5769" hash="AML7rmioGmfTZlrtxpL5RA==" />
   <dir name="SetupBuildStamp\Properties" time="2017-12-18T17:32:53.1674000" filetime="636492151731674000" hash="Hg7feNp4ltz8cFAUuiwcJA==" />
-  <file name="SetupBuildStamp\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8387544" filetime="636579245818387544" size="1463" hash="tTUT/5tyTpeuN6Iy41bpiQ==" />
+  <file name="SetupBuildStamp\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.5039040" filetime="636638074285039040" size="1463" hash="pAMyeHLX7G9zXH1ri5elGQ==" />
   <dir name="UI" time="2018-01-04T09:25:08.6751017" filetime="636506547086751017" hash="Vkgumxpg8mVUvPlqF7MLDw==" />
-  <file name="UI\app.config" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="6415" hash="KjBvjpMaiuLSNQCAHh7iyQ==" />
-  <file name="UI\App.xaml" time="2017-12-17T17:17:40.5988000" filetime="636491278605988000" size="316" hash="qb1RCHP7GLW/AN0yO1R13Q==" />
-  <file name="UI\App.xaml.cs" time="2017-12-17T17:17:40.5988000" filetime="636491278605988000" size="185" hash="qkWaplLFB4AvTDVPgasVsQ==" />
+  <file name="UI\app.config" time="2018-05-15T13:56:00.1858090" filetime="636619893601858090" size="6264" hash="HSpjcwMeJPPdj3xsj0yBZg==" />
+  <file name="UI\App.xaml" time="2018-05-15T13:55:59.4768090" filetime="636619893594768090" size="307" hash="bdAs/6slKEySYIrlwz0YsA==" />
+  <file name="UI\App.xaml.cs" time="2018-05-15T13:55:59.4768090" filetime="636619893594768090" size="174" hash="wh9rCOhhU9CoJiD9nbf+3A==" />
   <dir name="UI\FormsHappyPlace" time="2017-12-26T07:13:00.7038000" filetime="636498691807038000" hash="wTS5XxCReodR8kxaJebHSg==" />
-  <file name="UI\FormsHappyPlace\Ack.cs" time="2017-12-17T17:17:40.6088000" filetime="636491278606088000" size="2259" hash="eE5XkR3z4JAJLUtH995WDQ==" />
-  <file name="UI\FormsHappyPlace\Ack.Designer.cs" time="2017-12-17T17:17:40.5988000" filetime="636491278605988000" size="2152" hash="+KhiRHgayZ4aETHwTZ5ljw==" />
-  <file name="UI\FormsHappyPlace\Ack.resx" time="2017-12-17T17:17:40.6088000" filetime="636491278606088000" size="7949" hash="w5AGBFFOCHyg5f/u+N+e6Q==" />
-  <file name="UI\FormsHappyPlace\AcquireHandlers.cs" time="2017-12-17T17:17:40.6088000" filetime="636491278606088000" size="23298" hash="G2XYYaKFE24ajHHNyERcLg==" />
-  <file name="UI\FormsHappyPlace\ChooseBackgroundType.cs" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="1390" hash="EYxQVT00y5L6KbI+brGjIw==" />
-  <file name="UI\FormsHappyPlace\ChooseBackgroundType.Designer.cs" time="2017-12-17T17:17:40.6088000" filetime="636491278606088000" size="5064" hash="ddZRcCABRnFPOWQUU38h4Q==" />
-  <file name="UI\FormsHappyPlace\ChooseBackgroundType.resx" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\EqCoeffViewer.cs" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="12542" hash="BoP+PRm3fnInKlju9HYWTg==" />
-  <file name="UI\FormsHappyPlace\EqCoeffViewer.Designer.cs" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="12808" hash="j+Csoswzm8CApb+0st2CUg==" />
-  <file name="UI\FormsHappyPlace\EqCoeffViewer.resx" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="6965" hash="mtceo4qdvmop2/mjmchUkg==" />
-  <file name="UI\FormsHappyPlace\FileSel.cs" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="2688" hash="nUNDAMlGZhuPX1U4GnseVg==" />
-  <file name="UI\FormsHappyPlace\FileSel.Designer.cs" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="3443" hash="GFCVbOqzdXI/QFVC3P0QPg==" />
-  <file name="UI\FormsHappyPlace\FileSel.resx" time="2017-12-17T17:17:40.6188000" filetime="636491278606188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\foldorfile.cs" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="2610" hash="ogJS5MEsvOhYDFvtjf5lSA==" />
-  <file name="UI\FormsHappyPlace\foldorfile.Designer.cs" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="3381" hash="K5nuNPDM1zBDKleKm+ToJQ==" />
-  <file name="UI\FormsHappyPlace\foldorfile.resx" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\HelpForm.resx" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="6018" hash="BtpYo2AiwXaHGjx2vB3bBw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireAssay.cs" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="27252" hash="5flAF+WwRjaNz4ZdIBgnlw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireAssay.Designer.cs" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="33854" hash="CpdEu5SvXPGkbP61+ZKqnA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireAssay.resx" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="6191" hash="JBNk/zFmqyVl9+5lm1kU8g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBackground.cs" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="14532" hash="QVB7tSs9HspQkcGhHSbX/g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBackground.Designer.cs" time="2017-12-17T17:17:40.6288000" filetime="636491278606288000" size="18771" hash="E8mr0ZWOSWSzfDtIM8Vi/g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBackground.resx" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBias.cs" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="14846" hash="u9D588exQwMfV1/LhY1Y+Q==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBias.Designer.cs" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="19894" hash="4lFBP31ypoeY/nWmcPnjRw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireBias.resx" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.cs" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="19843" hash="JDBfaQHqqhRgJv0w8chIJA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.Designer.cs" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="30366" hash="ldeIvBWavYshXjLzp8de0A==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.resx" time="2017-12-17T17:17:40.6388000" filetime="636491278606388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.cs" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="6900" hash="Q4Lwncz6NF+OaqKtqQ8Fgw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.Designer.cs" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="8323" hash="5h0pSnE/4AjXUKoUyKEw9Q==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.resx" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.cs" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="8710" hash="LquTAYt9YHAMM9msj4eVtw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.Designer.cs" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="21236" hash="W642dOfNd9N7nVkTWLgAww==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.resx" time="2017-12-17T17:17:40.6488000" filetime="636491278606488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.cs" time="2017-12-17T17:17:40.6588000" filetime="636491278606588000" size="18314" hash="B7FnJHWCsMybqJAaaf+78g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.Designer.cs" time="2017-12-17T17:17:40.6588000" filetime="636491278606588000" size="26211" hash="fX7wt9igkvZcgoRr3w5UYw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.resx" time="2017-12-17T17:17:40.6588000" filetime="636491278606588000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.cs" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="14327" hash="peViujqA+5tN2lquQckKkw==" />
-  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.Designer.cs" time="2017-12-17T17:17:40.6588000" filetime="636491278606588000" size="18759" hash="bqdkn1iuc5uGPhbz1Nc98g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.resx" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.cs" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="14750" hash="6jvYDeTlfYZ/VyuZgtLu4Q==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.Designer.cs" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="20185" hash="7/uu8S3o16GonIOssJvH6g==" />
-  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.resx" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDActiveCal.cs" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="9334" hash="g5rHi09GKR+pOSw6rcB4Hw==" />
-  <file name="UI\FormsHappyPlace\IDDActiveCal.Designer.cs" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="28350" hash="sgpaTa3taF4MKU2i8scToA==" />
-  <file name="UI\FormsHappyPlace\IDDActiveCal.resx" time="2017-12-17T17:17:40.6688000" filetime="636491278606688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDActiveMultCal.cs" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="6697" hash="/iTTZ/1/46ZguXyzj4+VMQ==" />
-  <file name="UI\FormsHappyPlace\IDDActiveMultCal.Designer.cs" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="13971" hash="N4KDIsIORd01fLZH33SO2Q==" />
-  <file name="UI\FormsHappyPlace\IDDActiveMultCal.resx" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.cs" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="9618" hash="DUeJhxPN+iBO2wQXs6n4Cw==" />
-  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.Designer.cs" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="27719" hash="ojOYNNM5TP91c4L6sFwmCg==" />
-  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.resx" time="2017-12-17T17:17:40.6788000" filetime="636491278606788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAddASourceCal.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="13762" hash="5QABVVMta6uxCxbx/tBQFw==" />
-  <file name="UI\FormsHappyPlace\IDDAddASourceCal.Designer.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="47199" hash="vu4h+4X9Msu3jWb7haQziw==" />
-  <file name="UI\FormsHappyPlace\IDDAddASourceCal.resx" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="5813" hash="IZjnzmrjpstx97dglJKbQA==" />
-  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.Designer.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="14495" hash="L1+Y0AifDyiHh0HDIAZgtQ==" />
-  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.resx" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="14409" hash="vm6RQqzby4W7+oCpMM8sRg==" />
-  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.Designer.cs" time="2017-12-17T17:17:40.6888000" filetime="636491278606888000" size="17827" hash="rCqlKQtm8eJWOP8x+NaKQA==" />
-  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.resx" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDAssaySummary.cs" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="8103" hash="JxPM/Zo1LmNJzzxFbjsoRg==" />
-  <file name="UI\FormsHappyPlace\IDDAssaySummary.Designer.cs" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="18762" hash="0ZQl5KIYKfo+kEoEhek6tQ==" />
-  <file name="UI\FormsHappyPlace\IDDAssaySummary.resx" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.cs" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="10274" hash="+sr72BqwyU2i+roCDIoySA==" />
-  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.Designer.cs" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="58110" hash="fE+PERnvbzTlWPiXZJ2rcg==" />
-  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.resx" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.cs" time="2017-12-17T17:17:40.7088000" filetime="636491278607088000" size="12211" hash="m7u9VuN4y6RuH5VDdCXptA==" />
-  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.Designer.cs" time="2017-12-17T17:17:40.6988000" filetime="636491278606988000" size="43272" hash="rEnYUzk12bg5+H7EeaMHJw==" />
-  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.resx" time="2017-12-17T17:17:40.7088000" filetime="636491278607088000" size="7004" hash="YR2w8Ft4yVnxLZn/+VH64g==" />
-  <file name="UI\FormsHappyPlace\IDDCf252Normalization.cs" time="2017-12-17T17:17:40.7088000" filetime="636491278607088000" size="8292" hash="sqqSF17CWfy2fEHhfByXTw==" />
-  <file name="UI\FormsHappyPlace\IDDCf252Normalization.Designer.cs" time="2017-12-17T17:17:40.7088000" filetime="636491278607088000" size="25266" hash="sPjJosm3Wx9iMws1XqezIQ==" />
-  <file name="UI\FormsHappyPlace\IDDCf252Normalization.resx" time="2017-12-17T17:17:40.7088000" filetime="636491278607088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.cs" time="2017-12-17T17:17:40.7188000" filetime="636491278607188000" size="7410" hash="KwcQP1nPExHJjClMLKtu+w==" />
-  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs" time="2017-12-17T17:17:40.7188000" filetime="636491278607188000" size="21793" hash="rjkdUS1yW80fpoSltz18rA==" />
-  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.resx" time="2017-12-17T17:17:40.7188000" filetime="636491278607188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCmPuRatio.cs" time="2017-12-17T17:17:40.7288000" filetime="636491278607288000" size="9523" hash="d8RPO1RR7MVV6ffHQg2jMg==" />
-  <file name="UI\FormsHappyPlace\IDDCmPuRatio.Designer.cs" time="2017-12-17T17:17:40.7288000" filetime="636491278607288000" size="20088" hash="akxp7HOFepzE6uOoaBFMyA==" />
-  <file name="UI\FormsHappyPlace\IDDCmPuRatio.resx" time="2017-12-17T17:17:40.7288000" filetime="636491278607288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarAcquire.cs" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="10296" hash="4mHc7ToFxothq1TIvzJBRA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarAcquire.Designer.cs" time="2017-12-17T17:17:40.7288000" filetime="636491278607288000" size="27891" hash="IkgVFkdhkFrod2QRANmaGA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarAcquire.resx" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCal.cs" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="14488" hash="B1BUGuACsrIbDDde8G/k/w==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCal.Designer.cs" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="40249" hash="qcsbcNjRy1TKNGaU6e+8AA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCal.resx" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="6013" hash="GX0wy+EW7IjPUrIbmsasAA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.cs" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="11238" hash="TQJd0YTqUrbzLLMpHRxXBw==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.Designer.cs" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="10996" hash="GOv/Ymb4es1vtrbCedmrKA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.resx" time="2017-12-17T17:17:40.7388000" filetime="636491278607388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarItemData.cs" time="2017-12-17T17:17:40.7488000" filetime="636491278607488000" size="6982" hash="Nrx2l46ZtsCmiDlemqR84A==" />
-  <file name="UI\FormsHappyPlace\IDDCollarItemData.Designer.cs" time="2017-12-17T17:17:40.7488000" filetime="636491278607488000" size="26064" hash="jcxlO/by6fRlKV2hq+vYzw==" />
-  <file name="UI\FormsHappyPlace\IDDCollarItemData.resx" time="2017-12-17T17:17:40.7488000" filetime="636491278607488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCollarNormalization.cs" time="2017-12-17T17:17:40.7588000" filetime="636491278607588000" size="6494" hash="89l73PyWtznXjtO8CwZJPQ==" />
-  <file name="UI\FormsHappyPlace\IDDCollarNormalization.Designer.cs" time="2017-12-17T17:17:40.7488000" filetime="636491278607488000" size="18195" hash="D1CUoYMC14aDGHObApUN0g==" />
-  <file name="UI\FormsHappyPlace\IDDCollarNormalization.resx" time="2017-12-17T17:17:40.7588000" filetime="636491278607588000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.cs" time="2017-12-17T17:17:40.7588000" filetime="636491278607588000" size="27133" hash="O4NUtMFmj8dx4hS3dYwYOA==" />
-  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.Designer.cs" time="2017-12-17T17:17:40.7588000" filetime="636491278607588000" size="27991" hash="xphoZDvGbM+IiIpZr1fhgg==" />
-  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.resx" time="2017-12-17T17:17:40.7588000" filetime="636491278607588000" size="7333" hash="VjGVqnqdliloA3PMGYJh6A==" />
-  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.cs" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="21800" hash="Au4ctOdjfkyiwuBEs5abGw==" />
-  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.Designer.cs" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="26858" hash="tfyEje2Ct5JmhjnTP4Lg4w==" />
-  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.resx" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="7641" hash="UwwQOlcKnKXRFxYbsEs/Hg==" />
-  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.cs" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="12993" hash="lhzTwbHoYo2bZcOf1xYF5g==" />
-  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.Designer.cs" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="31704" hash="leR129bnkK9spfpEwTtX0w==" />
-  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.resx" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDCurveType.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="8818" hash="u/5EFeXQlFWtMQmD10cXrQ==" />
-  <file name="UI\FormsHappyPlace\IDDCurveType.Designer.cs" time="2017-12-17T17:17:40.7688000" filetime="636491278607688000" size="5338" hash="aeho8cilTfHubFKKhxRqSg==" />
-  <file name="UI\FormsHappyPlace\IDDCurveType.resx" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="6484" hash="LzQ6RdKSglxniYo1aYncCw==" />
-  <file name="UI\FormsHappyPlace\IDDDeleteMeas.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="9340" hash="vhyQ7+SW5OjlCMeFGutuvw==" />
-  <file name="UI\FormsHappyPlace\IDDDeleteMeas.Designer.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="7593" hash="Ire+N/9Wt8J+kGNy82PuUQ==" />
-  <file name="UI\FormsHappyPlace\IDDDeleteMeas.resx" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFit.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="6244" hash="WYpTXyhzuq3zidFZt74siw==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFit.Designer.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="10084" hash="Pmg5cbDaKEtZR/XpZn1yxg==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFit.resx" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="6186" hash="rHxyDfbRqMRiupwWE9Nm8w==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="12442" hash="EMgQtvBKe1nulY7d4RyJqw==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.Designer.cs" time="2017-12-17T17:17:40.7788000" filetime="636491278607788000" size="7681" hash="6QZNEp6tznHiEdBtqtaP4Q==" />
-  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.resx" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="6186" hash="bLPCpTxa2pOrp7EJfhGLsg==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorAdd.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="7395" hash="pxVCn+rFJQi5ixAVmqfpKA==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorAdd.Designer.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="11630" hash="oWLMD20fdU9XD8QmLU8T+w==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorAdd.resx" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorDelete.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="4813" hash="R3QMq0pKRw4SLDbJ5mKFmQ==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorDelete.Designer.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="4852" hash="Vx/smYEgaw07d55o5o0tIA==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorDelete.resx" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorEdit.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="3452" hash="gXiPDxTbs4t8zGGDeVYEVQ==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorEdit.Designer.cs" time="2017-12-17T17:17:40.7888000" filetime="636491278607888000" size="5014" hash="cBxWLucx5MxelZq0PW0ZRw==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorEdit.resx" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="2972" hash="4Oy4RLEcFOLqb94hYej6AQ==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.Designer.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="4821" hash="or/Q4eAMUCwcDhQy94gGHw==" />
-  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.resx" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDEndingComment.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="34116" hash="3tIS0tjGBR288+VeuRvOFA==" />
-  <file name="UI\FormsHappyPlace\IDDEndingComment.Designer.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="6068" hash="M5gSVFje+BMxhQ/jk4Dr9A==" />
-  <file name="UI\FormsHappyPlace\IDDEndingComment.resx" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="3051" hash="7tgS316mjFvFKQ7zpAu7Rw==" />
-  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.Designer.cs" time="2017-12-17T17:17:40.7988000" filetime="636491278607988000" size="4930" hash="a1Vug1be+9epmuAO/PSqvQ==" />
-  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.resx" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="4106" hash="uL2jAR1edq/d72YRSnJ4sw==" />
-  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.Designer.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="6022" hash="rUXSj2loBf03OPZBjIsG7A==" />
-  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.resx" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDFacility.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="9601" hash="FhNmaMJWWDd3bWRX05dNkQ==" />
-  <file name="UI\FormsHappyPlace\IDDFacility.Designer.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="22463" hash="1SXgbPGIrVrgpVk87Ym6UA==" />
-  <file name="UI\FormsHappyPlace\IDDFacility.resx" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="6368" hash="rDVf7ql/+wLs54cysGRREA==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityAdd.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="4629" hash="Wm7oa8kBzoXFyCcNa34ZAA==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityAdd.Designer.cs" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="7461" hash="Ee3qrkOUa+786GjhRMfndw==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityAdd.resx" time="2017-12-17T17:17:40.8088000" filetime="636491278608088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityDelete.cs" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="4302" hash="9GbOIzzFCgwFOd4pRayh1Q==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityDelete.Designer.cs" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="4803" hash="tHRRcT29WAPdDjx4mpDPGw==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityDelete.resx" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityEdit.cs" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="3561" hash="lG/IhprIvFFYmseAGLrwyg==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityEdit.Designer.cs" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="5503" hash="3sUpGZbSbD6AOcu8iE3O4g==" />
-  <file name="UI\FormsHappyPlace\IDDFacilityEdit.resx" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDGlovebox.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="3451" hash="ggDqFhonnpJYp6AB4iX2gQ==" />
-  <file name="UI\FormsHappyPlace\IDDGlovebox.Designer.cs" time="2017-12-17T17:17:40.8188000" filetime="636491278608188000" size="7223" hash="bwclnszU5jqYuT2eZpqKEA==" />
-  <file name="UI\FormsHappyPlace\IDDGlovebox.resx" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="6067" hash="UlEWnyJFFncI3fJmLoaj6g==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.Designer.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="9877" hash="vtdecLRjLMZWcBHZMxpzFA==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.resx" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="4183" hash="H44WK/6g+DiehadzU7rCOg==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.Designer.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="4807" hash="QWbZxG8OriEWqWB2zaJUtQ==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.resx" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="5729" hash="J1EFW2M3ad0lk3clrgVVUQ==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.Designer.cs" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="8432" hash="rC/FfbCuVdLc3XE6ABKESA==" />
-  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.resx" time="2017-12-17T17:17:40.8288000" filetime="636491278608288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="4540" hash="cf3c6Z7Mu9vdu+K4qqtZdg==" />
-  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.Designer.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="5956" hash="jowdxmPeMY7w3U66l4CNXw==" />
-  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.resx" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="9608" hash="DZnN4wrfR5LmPEXd4MjQzA==" />
-  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.Designer.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="11511" hash="iFn9Cam/tpGKSKdfVkUVPg==" />
-  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.resx" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopics.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="24106" hash="3qW/lz5OxFDr0DkU2fn1ew==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopics.Designer.cs" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="36209" hash="XilfI8C/tLhaoRTrEdFFEQ==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopics.resx" time="2017-12-17T17:17:40.8388000" filetime="636491278608388000" size="6992" hash="+q/ZnlASUUIyxX2O2ZNRWQ==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.cs" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="3412" hash="IoZFJYVyc0TiuSf599DFLQ==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.Designer.cs" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="4737" hash="l9DKxa96StqhOZmyGV4mKA==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.resx" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.cs" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="3445" hash="sofjW8NmLBZep2x2kBbmEg==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.Designer.cs" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="4735" hash="8V+wMsrTG3K2chtld/iAag==" />
-  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.resx" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDItemDataEntry.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="9855" hash="h7xOkwKwj6bl/3Gbr33qMg==" />
-  <file name="UI\FormsHappyPlace\IDDItemDataEntry.Designer.cs" time="2017-12-17T17:17:40.8488000" filetime="636491278608488000" size="12893" hash="y4Yh0ybD11V5R4EiL5CeHA==" />
-  <file name="UI\FormsHappyPlace\IDDItemDataEntry.resx" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="7664" hash="mbz7u8ibgIBYr367wMnzNA==" />
-  <file name="UI\FormsHappyPlace\IDDItemType.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="3542" hash="fJtCRJxbqq/lAzWEEcZe/g==" />
-  <file name="UI\FormsHappyPlace\IDDItemType.Designer.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="4999" hash="UeRYrZP+fRXbdOS+exVEeA==" />
-  <file name="UI\FormsHappyPlace\IDDItemType.resx" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="4250" hash="CZWGUkdrCsFeAZP4Nu+C9A==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.Designer.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="6082" hash="Xi3lFJw2ySc2aj60aDr84Q==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.resx" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="4314" hash="51tYdO13IXiiqx8jGpuK9g==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.Designer.cs" time="2017-12-17T17:17:40.8588000" filetime="636491278608588000" size="4860" hash="tO0TDB2zz7U/gguRoV6dSQ==" />
-  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.resx" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.cs" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="16162" hash="hgQiToSrcgMVcA9Wc1P0rg==" />
-  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.Designer.cs" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="19164" hash="0JMraX1BkkuChPyLSJJbmQ==" />
-  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.resx" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="6745" hash="jHDJw7u6fni/XyShQ/DYGw==" />
-  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.cs" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="14681" hash="fbAD5FfJN5dc4eW8N7pAGw==" />
-  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.Designer.cs" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="59051" hash="HNqyV3mSC1HpuqjMRSG4AQ==" />
-  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.resx" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="11188" hash="itltYCvfQgHr5WmFQMkrLw==" />
-  <file name="UI\FormsHappyPlace\IDDKnownMCal.cs" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="7581" hash="vdCsnYgkpb+jUIyPYSI9FQ==" />
-  <file name="UI\FormsHappyPlace\IDDKnownMCal.Designer.cs" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="18571" hash="lkkhVNIKTHBPYC237AaS8A==" />
-  <file name="UI\FormsHappyPlace\IDDKnownMCal.resx" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDKValSelector.cs" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="3841" hash="OilP8vogleEKHILxPZJgCg==" />
-  <file name="UI\FormsHappyPlace\IDDKValSelector.Designer.cs" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="6510" hash="YndOfotsUF/tmg4hIlbLpQ==" />
-  <file name="UI\FormsHappyPlace\IDDKValSelector.resx" time="2017-12-17T17:17:40.8688000" filetime="636491278608688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDManualDataEntry.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="10872" hash="Wafa3yZBMrb0BIPt4bOVig==" />
-  <file name="UI\FormsHappyPlace\IDDManualDataEntry.Designer.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="12276" hash="3F+upUnvjw8jyRD/GLRARg==" />
-  <file name="UI\FormsHappyPlace\IDDManualDataEntry.resx" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="6750" hash="Jsgfy4TM3rDObV9GVnaLvg==" />
-  <file name="UI\FormsHappyPlace\IDDMBAAdd.cs" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="4390" hash="2Roqy2idj7VGV/64JZjtHg==" />
-  <file name="UI\FormsHappyPlace\IDDMBAAdd.Designer.cs" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="7357" hash="inhXWkWsTAEZFqy/cWMKzQ==" />
-  <file name="UI\FormsHappyPlace\IDDMBAAdd.resx" time="2017-12-17T17:17:40.8788000" filetime="636491278608788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDMBADelete.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="4077" hash="eMbiK5MeVn7uCBRCun8M2g==" />
-  <file name="UI\FormsHappyPlace\IDDMBADelete.Designer.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="4701" hash="pGWILu1BRS4JHibZhZNjhg==" />
-  <file name="UI\FormsHappyPlace\IDDMBADelete.resx" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDMBAEdit.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="3213" hash="LkzwFGcmom0xE7qRcy+EFQ==" />
-  <file name="UI\FormsHappyPlace\IDDMBAEdit.Designer.cs" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="5408" hash="edBBEIffFm+lKoMpQArHtA==" />
-  <file name="UI\FormsHappyPlace\IDDMBAEdit.resx" time="2017-12-17T17:17:40.8888000" filetime="636491278608888000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDMeasurementList.cs" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="19428" hash="MfAKEnQCnequd/agIY5IuQ==" />
-  <file name="UI\FormsHappyPlace\IDDMeasurementList.Designer.cs" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="10031" hash="nURL5/qPmeih9AhlgpBCwQ==" />
-  <file name="UI\FormsHappyPlace\IDDMeasurementList.resx" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.cs" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="10912" hash="I+xKuj5Pj6gOdHNptVsmRg==" />
-  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.Designer.cs" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="32764" hash="JjGNoZUmKoIITWdCZKzLKQ==" />
-  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.resx" time="2017-12-17T17:17:40.8988000" filetime="636491278608988000" size="7730" hash="b2jjLtezrcdpBFTvNPl6GQ==" />
-  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="6316" hash="RhADKailQz+uqN3CF/uEGw==" />
-  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.Designer.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="8030" hash="zyNVf+BYVXD98Aj7Oj00Lg==" />
-  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.resx" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDPercentU235.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="4305" hash="3L+JazXa9HgQnNJbySSALw==" />
-  <file name="UI\FormsHappyPlace\IDDPercentU235.Designer.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="5187" hash="JxI6zrgvdHYFel5ye09yxQ==" />
-  <file name="UI\FormsHappyPlace\IDDPercentU235.resx" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="5880" hash="lQsvllCVtLYco3khbR1UKA==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.Designer.cs" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="6243" hash="dAbUKimSAbLLxomIzCo9NQ==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.resx" time="2017-12-17T17:17:40.9088000" filetime="636491278609088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="24293" hash="BJkMO8XMKdT9gjQoRXmm2g==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.Designer.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="8226" hash="WOxYxA7Yv4m1UCDiu1myhQ==" />
-  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.resx" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="9393" hash="A7hOQgJfp5S9BLAZ8EFM9Q==" />
-  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.Designer.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="5407" hash="nMQJB5YcitzFQh9HT8GWLg==" />
-  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.resx" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodType.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="3258" hash="GpA9kBrA+KgyoL4sF8USnA==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodType.Designer.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="5046" hash="cYNbzHDap1A2K6BFG6CzDg==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodType.resx" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="5436" hash="/EVJsJacPxgZozjkiWeSOw==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.Designer.cs" time="2017-12-17T17:17:40.9188000" filetime="636491278609188000" size="7950" hash="ogBbRDeK1dlU0KZirYEcqQ==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.resx" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="4138" hash="PTEeN0QIL1I5ftwVcxj/jQ==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.Designer.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="4901" hash="hNwj34PVzn8Kq2gMRTJ/Hg==" />
-  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.resx" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="17319" hash="TxBQfdJ1gdCbjTBCjMz5Zg==" />
-  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.Designer.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="21304" hash="6qhyjvtyO0CuSeC1f4QVWw==" />
-  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.resx" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.cs" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="4650" hash="S5qEPhY+gBbUsLK2sCnICg==" />
-  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.Designer.cs" time="2017-12-17T17:17:40.9288000" filetime="636491278609288000" size="3405" hash="UKxRrasd0mq7xxCL/b5+ow==" />
-  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.resx" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.cs" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="5399" hash="1lLLsz1M7PR7GFprkHAfhg==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.Designer.cs" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="6980" hash="1wqrzYtRA4k7vMGEtAldOg==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.resx" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="6022" hash="NF9QCnuE2GKJBdVxwY/JJw==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreSelect.cs" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="3315" hash="zTN3fWcK0Gth5Vprekw3Tg==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreSelect.Designer.cs" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="11158" hash="O6EloN37/foDDIaf43KAcg==" />
-  <file name="UI\FormsHappyPlace\IDDRestoreSelect.resx" time="2017-12-17T17:17:40.9388000" filetime="636491278609388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAll.cs" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="9769" hash="G6kUEnZAe4tOUaw90Rm8IA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAll.Designer.cs" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="19831" hash="yXZCX7RZbEvhUjsSMTQV5Q==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAll.resx" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="6382" hash="VduKMI0xRnJPigDCohHFLg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAssay.cs" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="9267" hash="0vEuk1ii4l8ByHq+uGGUSw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAssay.Designer.cs" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="20647" hash="YL5TplXdRs282QVHxArgyA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewAssay.resx" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewBackground.cs" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="7659" hash="wo5vmQyc4tDjwx6Vea1fYg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewBackground.Designer.cs" time="2017-12-17T17:17:40.9488000" filetime="636491278609488000" size="16979" hash="A5Ah7jWrQHTubsYgJVF/jw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewBackground.resx" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="6382" hash="VduKMI0xRnJPigDCohHFLg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewCalibration.cs" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="8132" hash="VNhELeksc+ocWfI7BQ3Ejw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewCalibration.Designer.cs" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="18005" hash="DtDaycs7i3k32HmsOfw+xw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewCalibration.resx" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="6186" hash="VSMVB0Jj6FU0MFSgSYtDMw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewHoldup.cs" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="6327" hash="k+2RyJciacK1SzkJ32Ffhg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewHoldup.Designer.cs" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="12633" hash="eyFX5Jmg0Xy2tK45SejQBA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewHoldup.resx" time="2017-12-17T17:17:40.9588000" filetime="636491278609588000" size="6186" hash="VwE7jiUw+iR7FVl2lhNavg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.cs" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="7965" hash="iDePdA6nVuQAmAWTEyzzIA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.Designer.cs" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="16971" hash="2pPphCFHutQd0g5xd8kkYw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.resx" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="6382" hash="mybLedhG2Vhe6rnpMWC9HA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewNormalization.cs" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="7995" hash="04ImVPkf9Imxmkz39C1AnQ==" />
-  <file name="UI\FormsHappyPlace\IDDReviewNormalization.Designer.cs" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="16994" hash="r551sZo10OynCGXok2UYMA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewNormalization.resx" time="2017-12-17T17:17:40.9688000" filetime="636491278609688000" size="6382" hash="VduKMI0xRnJPigDCohHFLg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewPrecision.cs" time="2017-12-17T17:17:40.9788000" filetime="636491278609788000" size="7965" hash="RR69cn1j2m6jekFEUzBE/w==" />
-  <file name="UI\FormsHappyPlace\IDDReviewPrecision.Designer.cs" time="2017-12-17T17:17:40.9788000" filetime="636491278609788000" size="16975" hash="gqV/M5NBubgSs0H4nKIKpQ==" />
-  <file name="UI\FormsHappyPlace\IDDReviewPrecision.resx" time="2017-12-17T17:17:40.9788000" filetime="636491278609788000" size="6382" hash="EssKLc8DeWy82AKd3EVQTA==" />
-  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.cs" time="2017-12-17T17:17:40.9788000" filetime="636491278609788000" size="7652" hash="nWpdqAxDC7OUbr0dQuyYUw==" />
-  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.Designer.cs" time="2017-12-17T17:17:40.9788000" filetime="636491278609788000" size="16976" hash="ECuMaPet9SxoJjlgIqHggg==" />
-  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.resx" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="6382" hash="qIYsHD+ZIarWQTWT/qWfQA==" />
-  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.cs" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="4173" hash="/9Gjh959Iwp9bWuzPM1X6A==" />
-  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.Designer.cs" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="4873" hash="bS2laVxEGjE7PJ1uM2QKmQ==" />
-  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.resx" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDSaveInitialData.cs" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="4730" hash="Gmw1x62JQDLFl67SF+omsQ==" />
-  <file name="UI\FormsHappyPlace\IDDSaveInitialData.Designer.cs" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="8440" hash="HBm+5PPoLeD1t8jaJrJLAg==" />
-  <file name="UI\FormsHappyPlace\IDDSaveInitialData.resx" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDSaveTransfer.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="5701" hash="7fYg3ugvzRx+V9RocH7a4w==" />
-  <file name="UI\FormsHappyPlace\IDDSaveTransfer.Designer.cs" time="2017-12-17T17:17:40.9888000" filetime="636491278609888000" size="6406" hash="wN5tazGGA/IdRpQIW7XFHA==" />
-  <file name="UI\FormsHappyPlace\IDDSaveTransfer.resx" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="13694" hash="RnqT6Ty3n6cAFwY3zXI+Hw==" />
-  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.Designer.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="25238" hash="pg0bBm+Tcyo9KbA3JNEiXg==" />
-  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.resx" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="4696" hash="TYjbhmCu46iPc5yQp+L2gQ==" />
-  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.Designer.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="7975" hash="LvPdz0cJD41k8EvZXpaV1Q==" />
-  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.resx" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="6659" hash="UqibBX7tGoPAF+utz1Ti2Q==" />
-  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="19553" hash="Tq8EFuRwYEkvFRbkrrZFnQ==" />
-  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.Designer.cs" time="2017-12-17T17:17:40.9988000" filetime="636491278609988000" size="38196" hash="+GKDpTVLg4x+ZcGIAPvAmQ==" />
-  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.resx" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\IDDStratumId.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="4054" hash="qtxwoWcBIXQFyK9M7h+JcA==" />
-  <file name="UI\FormsHappyPlace\IDDStratumId.Designer.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="4915" hash="ImFdETBH2fWswQkva8+/kg==" />
-  <file name="UI\FormsHappyPlace\IDDStratumId.resx" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="7322" hash="T5G445wThyHFLdsppSn8eA==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.Designer.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="11981" hash="c2oO7Q/FqolHWkz/VW0Bdw==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.resx" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="6342" hash="xaE9ZHv24Yxnwecfu3EsAQ==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.Designer.cs" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="4788" hash="Qp0NvbkV5eNjkEU2WUDM7w==" />
-  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.resx" time="2017-12-17T17:17:41.0088000" filetime="636491278610088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDStratumLimits.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="6721" hash="/mNOT2F1fX4iWUuRw5QDFQ==" />
-  <file name="UI\FormsHappyPlace\IDDStratumLimits.Designer.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="7430" hash="Plm5V3ixwfN6gcaSbzMzCQ==" />
-  <file name="UI\FormsHappyPlace\IDDStratumLimits.resx" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="6605" hash="7PEwtW0lTIjpTXQX37CWkQ==" />
-  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="11728" hash="HAi/4Y0MVkHrhPT57R8sIA==" />
-  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.Designer.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="27191" hash="XR16bN7lRnHuHMtz3Z3UPA==" />
-  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.resx" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="7034" hash="Ks9GNFuzC9dl/dvPJ+sodg==" />
-  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.Designer.cs" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="11859" hash="08T2uk3lYS0Mh5uDt3d+XA==" />
-  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.resx" time="2017-12-17T17:17:41.0188000" filetime="636491278610188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\IsotopicsList.cs" time="2017-12-17T17:17:41.0288000" filetime="636491278610288000" size="8748" hash="7m1WHYATaFZiiCSIy3Xv5A==" />
-  <file name="UI\FormsHappyPlace\IsotopicsList.Designer.cs" time="2017-12-17T17:17:41.0288000" filetime="636491278610288000" size="7324" hash="Vkk3doXBdUWN14aBJJwXDg==" />
-  <file name="UI\FormsHappyPlace\IsotopicsList.resx" time="2017-12-17T17:17:41.0288000" filetime="636491278610288000" size="6013" hash="iY3YnA3/g9kTe4JjoXWScQ==" />
-  <file name="UI\FormsHappyPlace\LMAcquire.cs" time="2017-12-26T07:13:00.6638000" filetime="636498691806638000" size="48529" hash="8UnNH3vFs75EvxqhZdIbJQ==" />
-  <file name="UI\FormsHappyPlace\LMAcquire.Designer.cs" time="2017-12-17T17:17:41.0288000" filetime="636491278610288000" size="52267" hash="uxZh30KrQ3adps3Ei4+Iig==" />
-  <file name="UI\FormsHappyPlace\LMAcquire.resx" time="2017-12-17T17:17:41.0288000" filetime="636491278610288000" size="8018" hash="QoJMLg2zXZh03qf4549aKA==" />
-  <file name="UI\FormsHappyPlace\LMConnectionParams.cs" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="25517" hash="nl7DwgeRi9tNOpzhXluYcQ==" />
-  <file name="UI\FormsHappyPlace\LMConnectionParams.Designer.cs" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="60357" hash="8IIiMIDsTEMzES6IY9rHPg==" />
-  <file name="UI\FormsHappyPlace\LMConnectionParams.resx" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\MeasSetup.xaml" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="5922" hash="dEW/vvenJ+q86OyUidMp/g==" />
-  <file name="UI\FormsHappyPlace\MeasSetup.xaml.cs" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="9566" hash="S4H2xmN4bY+qawM5E0Swnw==" />
-  <file name="UI\FormsHappyPlace\MethodParam.cs" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="11550" hash="Q1gZJi7V9l4dWWREOBc78A==" />
-  <file name="UI\FormsHappyPlace\Overview.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="23897" hash="3NbeH4BCp3oXDLsnkRmEVQ==" />
-  <file name="UI\FormsHappyPlace\Overview.Designer.cs" time="2017-12-17T17:17:41.0388000" filetime="636491278610388000" size="9967" hash="13DzoV6KKsHu4wRHdibN2Q==" />
-  <file name="UI\FormsHappyPlace\Overview.resx" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="6381" hash="gM/g6EnrV1dfaR0sjMk0pQ==" />
-  <file name="UI\FormsHappyPlace\PlotAssayChart.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="4871" hash="V8QCyaoSN55WE6J6e+kIjg==" />
-  <file name="UI\FormsHappyPlace\PlotAssayChart.Designer.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="6200" hash="neUooEt9TePu574kIdTdtw==" />
-  <file name="UI\FormsHappyPlace\PlotAssayChart.resx" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\PlotSDTChart.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="4998" hash="EXFEabn+w20SzN8IENAqFQ==" />
-  <file name="UI\FormsHappyPlace\PlotSDTChart.Designer.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="15322" hash="8Y9+DNa3w1tWHwsXuAz/xw==" />
-  <file name="UI\FormsHappyPlace\PlotSDTChart.resx" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\Preferences.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="21152" hash="KQnGeUUIYftgfsaTBtGJXg==" />
-  <file name="UI\FormsHappyPlace\Preferences.Designer.cs" time="2017-12-17T17:17:41.0488000" filetime="636491278610488000" size="29119" hash="KnzYH1Nyb3wO5H8S1aRtKA==" />
-  <file name="UI\FormsHappyPlace\Preferences.resx" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="6186" hash="sZoMLhXjXKSoUb5gy8N5LA==" />
-  <file name="UI\FormsHappyPlace\PrintForm.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="4974" hash="GLpeBFp9iipZkmljEJEKlw==" />
-  <file name="UI\FormsHappyPlace\PrintForm.Designer.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="3815" hash="YdztyC9jQ7KKEOVO56eQHg==" />
-  <file name="UI\FormsHappyPlace\PrintForm.resx" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="6219" hash="cx96Wscmnd5lJw6CJ6j1bQ==" />
-  <file name="UI\FormsHappyPlace\SelectSQLiteDB.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="3789" hash="MItJpePdcvFYgEBl92SgYw==" />
-  <file name="UI\FormsHappyPlace\SelectSQLiteDB.Designer.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="4307" hash="rtjf+Yq2Uukygu7eBjOtBg==" />
-  <file name="UI\FormsHappyPlace\SelectSQLiteDB.resx" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\Splash.cs" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="7580" hash="D+M2wHC1qJJAOKjIT4pe0g==" />
-  <file name="UI\FormsHappyPlace\Splash.Designer.cs" time="2017-12-17T17:17:41.0588000" filetime="636491278610588000" size="6477" hash="M1Vcs6ZRAr9HjabH+TWuqQ==" />
-  <file name="UI\FormsHappyPlace\Splash.resx" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\FormsHappyPlace\TransferList.cs" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="7714" hash="KNqHgLqX5tV54R8NX2JmMw==" />
-  <file name="UI\FormsHappyPlace\TransferList.Designer.cs" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="7429" hash="FBvFUETc0ywmRojfeVtykQ==" />
-  <file name="UI\FormsHappyPlace\TransferList.resx" time="2017-12-17T17:17:41.0688000" filetime="636491278610688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
+  <file name="UI\FormsHappyPlace\Ack.cs" time="2018-05-15T13:55:59.4788090" filetime="636619893594788090" size="2199" hash="mZ3kMi0acC7Wni71/rpQew==" />
+  <file name="UI\FormsHappyPlace\Ack.Designer.cs" time="2018-05-15T13:55:59.4778090" filetime="636619893594778090" size="2090" hash="+QLA3shebzQVtUq6ACRRpA==" />
+  <file name="UI\FormsHappyPlace\Ack.resx" time="2018-05-15T13:55:59.4798090" filetime="636619893594798090" size="7783" hash="ey+vJXLWw1LAAumfFjQaAg==" />
+  <file name="UI\FormsHappyPlace\AcquireHandlers.cs" time="2018-05-15T13:55:59.4798090" filetime="636619893594798090" size="22838" hash="HPNz0AoeQJW/ACQTEMB+FA==" />
+  <file name="UI\FormsHappyPlace\ChooseBackgroundType.cs" time="2018-05-15T13:55:59.4808090" filetime="636619893594808090" size="1346" hash="WwVdkva09qw6ApCmvKFOfw==" />
+  <file name="UI\FormsHappyPlace\ChooseBackgroundType.Designer.cs" time="2018-05-15T13:55:59.4808090" filetime="636619893594808090" size="4960" hash="OQyPR7USf96o+F2GUBw9tQ==" />
+  <file name="UI\FormsHappyPlace\ChooseBackgroundType.resx" time="2018-05-15T13:55:59.4818090" filetime="636619893594818090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\EqCoeffViewer.cs" time="2018-05-15T13:55:59.4828090" filetime="636619893594828090" size="12204" hash="DifZBLUcKx+SbGfrvh6KgQ==" />
+  <file name="UI\FormsHappyPlace\EqCoeffViewer.Designer.cs" time="2018-05-15T13:55:59.4818090" filetime="636619893594818090" size="12520" hash="oa0c6BEYmu6b+wSSaMMIGw==" />
+  <file name="UI\FormsHappyPlace\EqCoeffViewer.resx" time="2018-05-15T13:55:59.4828090" filetime="636619893594828090" size="6828" hash="MEbxZ8VV7nhR54nhoV7mmQ==" />
+  <file name="UI\FormsHappyPlace\FileSel.cs" time="2018-05-15T13:55:59.4838090" filetime="636619893594838090" size="2643" hash="QS4vtjeKKdCIjNU7eTxEyQ==" />
+  <file name="UI\FormsHappyPlace\FileSel.Designer.cs" time="2018-05-15T13:55:59.4838090" filetime="636619893594838090" size="3356" hash="BYxjWHhNKOWTFwopJYOZDA==" />
+  <file name="UI\FormsHappyPlace\FileSel.resx" time="2018-05-15T13:55:59.4838090" filetime="636619893594838090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\foldorfile.cs" time="2018-05-15T13:55:59.9908090" filetime="636619893599908090" size="2545" hash="HHqoDkfpMXLf+B8hdW571Q==" />
+  <file name="UI\FormsHappyPlace\foldorfile.Designer.cs" time="2018-05-15T13:55:59.9888090" filetime="636619893599888090" size="3301" hash="vGQLyxXBjMNzLxlR2Jc8Zg==" />
+  <file name="UI\FormsHappyPlace\foldorfile.resx" time="2018-05-15T13:55:59.9908090" filetime="636619893599908090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\HelpForm.resx" time="2018-05-15T13:55:59.4848090" filetime="636619893594848090" size="5896" hash="v0R7SzGXkujUQx/Hnu4pYg==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireAssay.cs" time="2018-05-15T13:55:59.4858090" filetime="636619893594858090" size="26637" hash="tPmWNtUgWRRwdpHhl59PeA==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireAssay.Designer.cs" time="2018-05-15T13:55:59.4848090" filetime="636619893594848090" size="33171" hash="Zho+g6Vu8Uwn9JfhWuoDvQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireAssay.resx" time="2018-05-15T13:55:59.4868090" filetime="636619893594868090" size="6066" hash="CBBD150UZBb4l27F8PybIg==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBackground.cs" time="2018-05-15T13:55:59.4878090" filetime="636619893594878090" size="14225" hash="3qhoWzgUIKMVM+2sJ/rWtw==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBackground.Designer.cs" time="2018-05-15T13:55:59.4868090" filetime="636619893594868090" size="18419" hash="XHKDQToXql+BE8dvTWcaWg==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBackground.resx" time="2018-05-15T13:55:59.4888090" filetime="636619893594888090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBias.cs" time="2018-05-15T13:55:59.4898090" filetime="636619893594898090" size="14526" hash="u0MN/avFgB1AWmZ0v/ifmw==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBias.Designer.cs" time="2018-05-15T13:55:59.4888090" filetime="636619893594888090" size="19518" hash="fgHkSm0vfOjirmsFSllNYQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireBias.resx" time="2018-05-15T13:55:59.4898090" filetime="636619893594898090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.cs" time="2018-05-15T13:55:59.4918090" filetime="636619893594918090" size="19412" hash="Eeql+hasF8zVXeneaHE/mA==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.Designer.cs" time="2018-05-15T13:55:59.4908090" filetime="636619893594908090" size="29830" hash="ozlKLwI1/aB4/ak+BEL53w==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireCalibration.resx" time="2018-05-15T13:55:59.4918090" filetime="636619893594918090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.cs" time="2018-05-15T13:55:59.4928090" filetime="636619893594928090" size="6757" hash="T0zCxVoERx+/afuACFfbCw==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.Designer.cs" time="2018-05-15T13:55:59.4928090" filetime="636619893594928090" size="8140" hash="G6A8EGRqXB8p7K/vU1zWZA==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireDBMeas.resx" time="2018-05-15T13:55:59.4938090" filetime="636619893594938090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.cs" time="2018-05-15T13:55:59.4948090" filetime="636619893594948090" size="8509" hash="PHiGTxraPk9CJEOx4oFtCw==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.Designer.cs" time="2018-05-15T13:55:59.4948090" filetime="636619893594948090" size="20832" hash="9kgHZnC/Gnq695Dwo+vJZQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireHoldup.resx" time="2018-05-15T13:55:59.4958090" filetime="636619893594958090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.cs" time="2018-05-15T13:55:59.4968090" filetime="636619893594968090" size="17923" hash="mtfK6npAgfyd0WMuO/pAoQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.Designer.cs" time="2018-05-15T13:55:59.4958090" filetime="636619893594958090" size="25738" hash="J4qRvTGPPwVB+BRkC7i6IA==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireInitSrc.resx" time="2018-05-15T13:55:59.4978090" filetime="636619893594978090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.cs" time="2018-05-15T13:55:59.4988090" filetime="636619893594988090" size="14027" hash="Yh0aTlCerT4PqsfV0w4DWQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.Designer.cs" time="2018-05-15T13:55:59.4978090" filetime="636619893594978090" size="18407" hash="4ynODWQfoL5v971q+OzDEQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquirePrecision.resx" time="2018-05-15T13:55:59.4988090" filetime="636619893594988090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.cs" time="2018-05-15T13:55:59.4998090" filetime="636619893594998090" size="14437" hash="QBH2pSbUaf6qYkb2ZwZ7YQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.Designer.cs" time="2018-05-15T13:55:59.4998090" filetime="636619893594998090" size="19809" hash="pL8JYrN70FX9ZJxxHTEHnQ==" />
+  <file name="UI\FormsHappyPlace\IDDAcquireRatesOnly.resx" time="2018-05-15T13:55:59.5008090" filetime="636619893595008090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDActiveCal.cs" time="2018-05-15T13:55:59.5018090" filetime="636619893595018090" size="9109" hash="+yhNU6CPkHEPONZuLRCqSA==" />
+  <file name="UI\FormsHappyPlace\IDDActiveCal.Designer.cs" time="2018-05-15T13:55:59.5008090" filetime="636619893595008090" size="27798" hash="uYcf5TrgVbJTFyUnRtveqQ==" />
+  <file name="UI\FormsHappyPlace\IDDActiveCal.resx" time="2018-05-15T13:55:59.5028090" filetime="636619893595028090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDActiveMultCal.cs" time="2018-05-15T13:55:59.5038090" filetime="636619893595038090" size="6550" hash="ezur21d+2I6kXbvxrxl4Mg==" />
+  <file name="UI\FormsHappyPlace\IDDActiveMultCal.Designer.cs" time="2018-05-15T13:55:59.5028090" filetime="636619893595028090" size="13709" hash="qDYPpT1HVJrrWY1LNOywwg==" />
+  <file name="UI\FormsHappyPlace\IDDActiveMultCal.resx" time="2018-05-15T13:55:59.5038090" filetime="636619893595038090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.cs" time="2018-05-15T13:55:59.5048090" filetime="636619893595048090" size="9391" hash="zrIvJ91cIZrQf1sBSH16FA==" />
+  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.Designer.cs" time="2018-05-15T13:55:59.5048090" filetime="636619893595048090" size="27180" hash="7tO4FGCkQT4X2SrpXe8fog==" />
+  <file name="UI\FormsHappyPlace\IDDActivePassiveCal.resx" time="2018-05-15T13:55:59.5058090" filetime="636619893595058090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAddASourceCal.cs" time="2018-05-15T13:55:59.5068090" filetime="636619893595068090" size="13425" hash="lb0Qr+SlLfQvkrmYudhnDg==" />
+  <file name="UI\FormsHappyPlace\IDDAddASourceCal.Designer.cs" time="2018-05-15T13:55:59.5068090" filetime="636619893595068090" size="46299" hash="3Soc/N50OleVO/TVXFnlcg==" />
+  <file name="UI\FormsHappyPlace\IDDAddASourceCal.resx" time="2018-05-15T13:55:59.5078090" filetime="636619893595078090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.cs" time="2018-05-15T13:55:59.5088090" filetime="636619893595088090" size="5703" hash="DVPL+okX+/SCrofCuTjEtA==" />
+  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.Designer.cs" time="2018-05-15T13:55:59.5078090" filetime="636619893595078090" size="14226" hash="CAgcWNQWcGlPsLmSvNXYyQ==" />
+  <file name="UI\FormsHappyPlace\IDDAmLiNormalization.resx" time="2018-05-15T13:55:59.5088090" filetime="636619893595088090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.cs" time="2018-05-15T13:55:59.5108090" filetime="636619893595108090" size="14100" hash="xpdWtemvQYHJPKuyrQYl1w==" />
+  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.Designer.cs" time="2018-05-15T13:55:59.5098090" filetime="636619893595098090" size="17500" hash="Ue7IZZHzy/w6srxddGbOLA==" />
+  <file name="UI\FormsHappyPlace\IDDAnalysisMethodsConfig.resx" time="2018-05-15T13:55:59.5108090" filetime="636619893595108090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDAssaySummary.cs" time="2018-05-15T13:55:59.5118090" filetime="636619893595118090" size="7916" hash="LcOCe4XZ0Ile4Gk3DA5IEw==" />
+  <file name="UI\FormsHappyPlace\IDDAssaySummary.Designer.cs" time="2018-05-15T13:55:59.5118090" filetime="636619893595118090" size="18398" hash="EZlae6+Lz4FtL6SDNosfRA==" />
+  <file name="UI\FormsHappyPlace\IDDAssaySummary.resx" time="2018-05-15T13:55:59.5128090" filetime="636619893595128090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.cs" time="2018-05-15T13:55:59.5138090" filetime="636619893595138090" size="10064" hash="CNzWfvgGMYkFHR2uzko5+A==" />
+  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.Designer.cs" time="2018-05-15T13:55:59.5138090" filetime="636619893595138090" size="57174" hash="scIgdRxTv2jGmQ82BldzLA==" />
+  <file name="UI\FormsHappyPlace\IDDBackgroundSetup.resx" time="2018-05-15T13:55:59.5148090" filetime="636619893595148090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.cs" time="2018-05-15T13:55:59.5158090" filetime="636619893595158090" size="11945" hash="1YNeD3JgqTEBQyzPGxX2ew==" />
+  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.Designer.cs" time="2018-05-15T13:55:59.5148090" filetime="636619893595148090" size="42478" hash="Lrz4PuTEsBKF+NrOsf47sQ==" />
+  <file name="UI\FormsHappyPlace\IDDCalibrationCurveCal.resx" time="2018-05-15T13:55:59.5168090" filetime="636619893595168090" size="6873" hash="R+wLky1aKfeAuq8PFSzLfw==" />
+  <file name="UI\FormsHappyPlace\IDDCf252Normalization.cs" time="2018-05-15T13:55:59.5178090" filetime="636619893595178090" size="8144" hash="mrzQYF19VA7R4MOZu2hu5A==" />
+  <file name="UI\FormsHappyPlace\IDDCf252Normalization.Designer.cs" time="2018-05-15T13:55:59.5168090" filetime="636619893595168090" size="24836" hash="kGzzao9jSGT8wweIapeFqQ==" />
+  <file name="UI\FormsHappyPlace\IDDCf252Normalization.resx" time="2018-05-15T13:55:59.5178090" filetime="636619893595178090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.cs" time="2018-05-15T13:55:59.5188090" filetime="636619893595188090" size="7276" hash="sxO3l8M0N+Yp21wxlscwsw==" />
+  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs" time="2018-05-15T13:55:59.5188090" filetime="636619893595188090" size="21415" hash="jNyQ3hSNbUyoJ3wvV+6SlQ==" />
+  <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.resx" time="2018-05-15T13:55:59.5198090" filetime="636619893595198090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCmPuRatio.cs" time="2018-05-15T13:55:59.5208090" filetime="636619893595208090" size="9326" hash="gOkceze2NadNFDCdtHIX5Q==" />
+  <file name="UI\FormsHappyPlace\IDDCmPuRatio.Designer.cs" time="2018-05-15T13:55:59.5198090" filetime="636619893595198090" size="19702" hash="VYdX0IaTpABH+Mw4hWYmZQ==" />
+  <file name="UI\FormsHappyPlace\IDDCmPuRatio.resx" time="2018-05-15T13:55:59.5208090" filetime="636619893595208090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCollarAcquire.cs" time="2018-05-15T13:55:59.5218090" filetime="636619893595218090" size="10104" hash="T9RXvPQBc4U9rFtT8XiKbw==" />
+  <file name="UI\FormsHappyPlace\IDDCollarAcquire.Designer.cs" time="2018-05-15T13:55:59.5218090" filetime="636619893595218090" size="27410" hash="0O9tA2UjfXNJgic1a76BQw==" />
+  <file name="UI\FormsHappyPlace\IDDCollarAcquire.resx" time="2018-05-15T13:55:59.5228090" filetime="636619893595228090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCal.cs" time="2018-05-15T13:55:59.5238090" filetime="636619893595238090" size="14173" hash="8A+shQJAXRTO4WUo/JziYA==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCal.Designer.cs" time="2018-05-15T13:55:59.5238090" filetime="636619893595238090" size="39529" hash="lpLPPhL5ls98QtcpZq2aJw==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCal.resx" time="2018-05-15T13:55:59.5248090" filetime="636619893595248090" size="5891" hash="px3Due2C250Dg3VmX0TXEQ==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.cs" time="2018-05-15T13:55:59.5258090" filetime="636619893595258090" size="11006" hash="QVzJvbbC+nZdNotgU7rLtw==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.Designer.cs" time="2018-05-15T13:55:59.5248090" filetime="636619893595248090" size="10780" hash="vEFBcW3NZ1M7GUyKaaqpEQ==" />
+  <file name="UI\FormsHappyPlace\IDDCollarCrossRef.resx" time="2018-05-15T13:55:59.5258090" filetime="636619893595258090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCollarItemData.cs" time="2018-05-15T13:55:59.5278090" filetime="636619893595278090" size="6851" hash="T/vFmpocBJyUx7LxbJzc6A==" />
+  <file name="UI\FormsHappyPlace\IDDCollarItemData.Designer.cs" time="2018-05-15T13:55:59.5268090" filetime="636619893595268090" size="25604" hash="E/RXHSDhfGtWI0XDn6p/VA==" />
+  <file name="UI\FormsHappyPlace\IDDCollarItemData.resx" time="2018-05-15T13:55:59.5278090" filetime="636619893595278090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCollarNormalization.cs" time="2018-05-15T13:55:59.5288090" filetime="636619893595288090" size="6377" hash="+1T4zfXVdtI1LavAAZhrCQ==" />
+  <file name="UI\FormsHappyPlace\IDDCollarNormalization.Designer.cs" time="2018-05-15T13:55:59.5288090" filetime="636619893595288090" size="17887" hash="DYgFTIEGZG7ZKo0w4bQCKQ==" />
+  <file name="UI\FormsHappyPlace\IDDCollarNormalization.resx" time="2018-05-15T13:55:59.5298090" filetime="636619893595298090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.cs" time="2018-05-15T13:55:59.5308090" filetime="636619893595308090" size="26431" hash="QhE4u4rAPBhYtkullbgS+w==" />
+  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.Designer.cs" time="2018-05-15T13:55:59.5308090" filetime="636619893595308090" size="27499" hash="6FvorsZwfKnmZUzYgh+Gqw==" />
+  <file name="UI\FormsHappyPlace\IDDCompositeIsotopics.resx" time="2018-05-15T13:55:59.5318090" filetime="636619893595318090" size="7186" hash="sp6IWX5xfBVpoEUQRNM03w==" />
+  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.cs" time="2018-05-15T13:55:59.5328090" filetime="636619893595328090" size="21359" hash="BmH2ue85i47+Kxluc4rSew==" />
+  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.Designer.cs" time="2018-05-15T13:55:59.5318090" filetime="636619893595318090" size="26349" hash="eDvLQTSu2CoFng54C2T0pQ==" />
+  <file name="UI\FormsHappyPlace\IDDCorrectionFactors.resx" time="2018-05-15T13:55:59.5338090" filetime="636619893595338090" size="7492" hash="Pkki6EOpPJ0xGSaMujBAWw==" />
+  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.cs" time="2018-05-15T13:55:59.5348090" filetime="636619893595348090" size="12685" hash="yS1lz9WCYn6BoWPhshvJng==" />
+  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.Designer.cs" time="2018-05-15T13:55:59.5338090" filetime="636619893595338090" size="31106" hash="AeA6KDyDE8GfZXMMpH5ksg==" />
+  <file name="UI\FormsHappyPlace\IDDCuriumRatioCalibration.resx" time="2018-05-15T13:55:59.5348090" filetime="636619893595348090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDCurveType.cs" time="2018-05-15T13:55:59.5358090" filetime="636619893595358090" size="8623" hash="F6ES83QSqq4u9APQ4NcUWA==" />
+  <file name="UI\FormsHappyPlace\IDDCurveType.Designer.cs" time="2018-05-15T13:55:59.5358090" filetime="636619893595358090" size="5204" hash="Fne08RdngqOpVpIYEoFs7Q==" />
+  <file name="UI\FormsHappyPlace\IDDCurveType.resx" time="2018-05-15T13:55:59.5368090" filetime="636619893595368090" size="6355" hash="ygJauh1PVp+wnulWN3PddA==" />
+  <file name="UI\FormsHappyPlace\IDDDeleteMeas.cs" time="2018-05-15T13:55:59.5378090" filetime="636619893595378090" size="9120" hash="/uepuZiZv2AisfTVVIEAVQ==" />
+  <file name="UI\FormsHappyPlace\IDDDeleteMeas.Designer.cs" time="2018-05-15T13:55:59.5368090" filetime="636619893595368090" size="7422" hash="Ue/khnFRbmkDAmYOCfjAvQ==" />
+  <file name="UI\FormsHappyPlace\IDDDeleteMeas.resx" time="2018-05-15T13:55:59.5378090" filetime="636619893595378090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFit.cs" time="2018-05-15T13:55:59.5388090" filetime="636619893595388090" size="6095" hash="hMWLiq2LpyKCtZ5uBIaoug==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFit.Designer.cs" time="2018-05-15T13:55:59.5388090" filetime="636619893595388090" size="9895" hash="JY45Er9Jg1sPGhgiY/7Kfg==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFit.resx" time="2018-05-15T13:55:59.5398090" filetime="636619893595398090" size="6061" hash="E6Bby9BORPorbyr0WRmBiA==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.cs" time="2018-05-15T13:55:59.5408090" filetime="636619893595408090" size="12083" hash="MXuemilVKjlLFpPusZFe2g==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.Designer.cs" time="2018-05-15T13:55:59.5398090" filetime="636619893595398090" size="7512" hash="xkqtMKCeeWddFuoX4rcu3w==" />
+  <file name="UI\FormsHappyPlace\IDDDemingFitSelect.resx" time="2018-05-15T13:55:59.5418090" filetime="636619893595418090" size="6061" hash="Vr5ovJtbu6ucZXE0wWVWOQ==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorAdd.cs" time="2018-05-15T13:55:59.5428090" filetime="636619893595428090" size="7224" hash="jXAU31IO1gJZQ0mwSkY+GQ==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorAdd.Designer.cs" time="2018-05-15T13:55:59.5418090" filetime="636619893595418090" size="11394" hash="KrhtW6zWCnl2b8Ip6igoqg==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorAdd.resx" time="2018-05-15T13:55:59.5428090" filetime="636619893595428090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorDelete.cs" time="2018-05-15T13:55:59.5438090" filetime="636619893595438090" size="4716" hash="AlWGmqsL16Q4aSyx5Iteaw==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorDelete.Designer.cs" time="2018-05-15T13:55:59.5438090" filetime="636619893595438090" size="4741" hash="2A3j+cJmZZ5N0ph7WebEmg==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorDelete.resx" time="2018-05-15T13:55:59.5448090" filetime="636619893595448090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorEdit.cs" time="2018-05-15T13:55:59.5458090" filetime="636619893595458090" size="3377" hash="cGKK+vJHWObE+vdO7ONanQ==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorEdit.Designer.cs" time="2018-05-15T13:55:59.5448090" filetime="636619893595448090" size="4902" hash="lEp6rp3/C3LcN/XV0YD9XA==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorEdit.resx" time="2018-05-15T13:55:59.5458090" filetime="636619893595458090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.cs" time="2018-05-15T13:55:59.5468090" filetime="636619893595468090" size="2912" hash="Z9rH5VDrgkXdBtuItOhtIw==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.Designer.cs" time="2018-05-15T13:55:59.5468090" filetime="636619893595468090" size="4710" hash="iM2D7aYAIAp/J4NJ1oeq7A==" />
+  <file name="UI\FormsHappyPlace\IDDDetectorIdSelect.resx" time="2018-05-15T13:55:59.5468090" filetime="636619893595468090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDEndingComment.cs" time="2018-05-15T13:55:59.5488090" filetime="636619893595488090" size="33676" hash="zi7K0SoDofVswqx/h06R2Q==" />
+  <file name="UI\FormsHappyPlace\IDDEndingComment.Designer.cs" time="2018-05-15T13:55:59.5478090" filetime="636619893595478090" size="5934" hash="nmnHiemteH/GisIDugATOA==" />
+  <file name="UI\FormsHappyPlace\IDDEndingComment.resx" time="2018-05-15T13:55:59.5488090" filetime="636619893595488090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.cs" time="2018-05-15T13:55:59.5498090" filetime="636619893595498090" size="2986" hash="keFrMGEFheDjKDDiclDJvg==" />
+  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.Designer.cs" time="2018-05-15T13:55:59.5488090" filetime="636619893595488090" size="4818" hash="t1QJRC6pp3pU9ONk5XQBAA==" />
+  <file name="UI\FormsHappyPlace\IDDEnterIsotopics.resx" time="2018-05-15T13:55:59.5498090" filetime="636619893595498090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.cs" time="2018-05-15T13:55:59.5508090" filetime="636619893595508090" size="4020" hash="/zMPehUyOWOkJkplThGw8Q==" />
+  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.Designer.cs" time="2018-05-15T13:55:59.5508090" filetime="636619893595508090" size="5892" hash="uYtvnZ0QuemyyJfBU/S1mA==" />
+  <file name="UI\FormsHappyPlace\IDDErrorCalcMethod.resx" time="2018-05-15T13:55:59.5508090" filetime="636619893595508090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDFacility.cs" time="2018-05-15T13:55:59.5528090" filetime="636619893595528090" size="9398" hash="gevXqF7IUPDDSEpEtzfMfg==" />
+  <file name="UI\FormsHappyPlace\IDDFacility.Designer.cs" time="2018-05-15T13:55:59.5518090" filetime="636619893595518090" size="22030" hash="96f8K+bdTiDS5XsT1YMW+w==" />
+  <file name="UI\FormsHappyPlace\IDDFacility.resx" time="2018-05-15T13:55:59.5528090" filetime="636619893595528090" size="6241" hash="IbrG3yDB5HWQ0l3PT6odWQ==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityAdd.cs" time="2018-05-15T13:55:59.5538090" filetime="636619893595538090" size="4525" hash="ADh7KMu6ThA7fM7HEYEpTg==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityAdd.Designer.cs" time="2018-05-15T13:55:59.5538090" filetime="636619893595538090" size="7306" hash="OzZh1B14ZTHqzvgQAZAjZQ==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityAdd.resx" time="2018-05-15T13:55:59.5548090" filetime="636619893595548090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityDelete.cs" time="2018-05-15T13:55:59.5558090" filetime="636619893595558090" size="4201" hash="IA0H9KkmbzEjQpQ2A5QZkQ==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityDelete.Designer.cs" time="2018-05-15T13:55:59.5548090" filetime="636619893595548090" size="4692" hash="RqqHEQs/xg2qZ+PayApTuw==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityDelete.resx" time="2018-05-15T13:55:59.5568090" filetime="636619893595568090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityEdit.cs" time="2018-05-15T13:55:59.5618090" filetime="636619893595618090" size="3487" hash="vAeOH6k6M8z+kZ4SHpRMgg==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityEdit.Designer.cs" time="2018-05-15T13:55:59.5598090" filetime="636619893595598090" size="5385" hash="DYD91Qv64AVSKlxJM0W3Ag==" />
+  <file name="UI\FormsHappyPlace\IDDFacilityEdit.resx" time="2018-05-15T13:55:59.5628090" filetime="636619893595628090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDGlovebox.cs" time="2018-05-15T13:55:59.5638090" filetime="636619893595638090" size="3370" hash="BsMGHgUouNWX4cDBKYJWMw==" />
+  <file name="UI\FormsHappyPlace\IDDGlovebox.Designer.cs" time="2018-05-15T13:55:59.5628090" filetime="636619893595628090" size="7070" hash="uqL8OqSzuT31jMHxgfpSMw==" />
+  <file name="UI\FormsHappyPlace\IDDGlovebox.resx" time="2018-05-15T13:55:59.5638090" filetime="636619893595638090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.cs" time="2018-05-15T13:55:59.5658090" filetime="636619893595658090" size="5937" hash="i6uy+DsM6Ud+1VP+1eTsFA==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.Designer.cs" time="2018-05-15T13:55:59.5648090" filetime="636619893595648090" size="9674" hash="EiJi6eN47zDri2LiHcgwZg==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxAdd.resx" time="2018-05-15T13:55:59.5658090" filetime="636619893595658090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.cs" time="2018-05-15T13:55:59.5668090" filetime="636619893595668090" size="4092" hash="Cv8jQnov9cOkI2m1GqenNQ==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.Designer.cs" time="2018-05-15T13:55:59.5668090" filetime="636619893595668090" size="4696" hash="U/RBL/pUUK55kWGfW0C3FQ==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxDelete.resx" time="2018-05-15T13:55:59.5678090" filetime="636619893595678090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.cs" time="2018-05-15T13:55:59.5688090" filetime="636619893595688090" size="5614" hash="f9LUhvuiiXfB+nhTSpub3Q==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.Designer.cs" time="2018-05-15T13:55:59.5678090" filetime="636619893595678090" size="8252" hash="iM9/3XTarTSP3ZT2qMAj8w==" />
+  <file name="UI\FormsHappyPlace\IDDGloveboxEdit.resx" time="2018-05-15T13:55:59.5698090" filetime="636619893595698090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.cs" time="2018-05-15T13:55:59.5708090" filetime="636619893595708090" size="4438" hash="ueuO0oGGYUJs2DrljgA8VQ==" />
+  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.Designer.cs" time="2018-05-15T13:55:59.5708090" filetime="636619893595708090" size="5823" hash="H51m5Y/gdds20JdNER/w/w==" />
+  <file name="UI\FormsHappyPlace\IDDHeavyMetalItemData.resx" time="2018-05-15T13:55:59.5718090" filetime="636619893595718090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.cs" time="2018-05-15T13:55:59.5728090" filetime="636619893595728090" size="9403" hash="w3hzQlTiB2D6YgpVEqM4cw==" />
+  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.Designer.cs" time="2018-05-15T13:55:59.5718090" filetime="636619893595718090" size="11285" hash="0HurLzG/a71mmj36J0Koyw==" />
+  <file name="UI\FormsHappyPlace\IDDHighVoltagePlateau.resx" time="2018-05-15T13:55:59.5728090" filetime="636619893595728090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopics.cs" time="2018-05-15T13:55:59.5748090" filetime="636619893595748090" size="23532" hash="9jq6cRFtlw1LPowOcalyVw==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopics.Designer.cs" time="2018-05-15T13:55:59.5738090" filetime="636619893595738090" size="35577" hash="jEp7bsWHDmmiTjna7/0hbw==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopics.resx" time="2018-05-15T13:55:59.5748090" filetime="636619893595748090" size="6850" hash="JlUT3xInmEYExZuefLq1Yg==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.cs" time="2018-05-15T13:55:59.5768090" filetime="636619893595768090" size="3340" hash="HrkLXTY20dQ0xs6oxiMUnQ==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.Designer.cs" time="2018-05-15T13:55:59.5758090" filetime="636619893595758090" size="4627" hash="X9z7tF+ZEH24OzLzGUjxQg==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsAdd.resx" time="2018-05-15T13:55:59.5768090" filetime="636619893595768090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.cs" time="2018-05-15T13:55:59.5778090" filetime="636619893595778090" size="3369" hash="mY9rHMEujM6nXLIUNm6hUA==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.Designer.cs" time="2018-05-15T13:55:59.5778090" filetime="636619893595778090" size="4625" hash="gqMeXChJyoIEpTTlh3HCrw==" />
+  <file name="UI\FormsHappyPlace\IDDIsotopicsEdit.resx" time="2018-05-15T13:55:59.5788090" filetime="636619893595788090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDItemDataEntry.cs" time="2018-05-15T13:55:59.5798090" filetime="636619893595798090" size="9585" hash="+UXSvYwGwW9QMfPsB4OAiQ==" />
+  <file name="UI\FormsHappyPlace\IDDItemDataEntry.Designer.cs" time="2018-05-15T13:55:59.5788090" filetime="636619893595788090" size="12634" hash="Mx9rzfJybRiG1yVS+FZxWA==" />
+  <file name="UI\FormsHappyPlace\IDDItemDataEntry.resx" time="2018-05-15T13:55:59.5808090" filetime="636619893595808090" size="7515" hash="QXceCpwYPCLKtpk7gkBYDQ==" />
+  <file name="UI\FormsHappyPlace\IDDItemType.cs" time="2018-05-15T13:55:59.5818090" filetime="636619893595818090" size="3470" hash="dzxhjJ7tWlNaxv/4w3FBpA==" />
+  <file name="UI\FormsHappyPlace\IDDItemType.Designer.cs" time="2018-05-15T13:55:59.5808090" filetime="636619893595808090" size="4887" hash="8/5FYdplQsaEiDN3K4D+gw==" />
+  <file name="UI\FormsHappyPlace\IDDItemType.resx" time="2018-05-15T13:55:59.5818090" filetime="636619893595818090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.cs" time="2018-05-15T13:55:59.5828090" filetime="636619893595828090" size="4161" hash="241QGZ3kRqq0BRok1JLeVw==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.Designer.cs" time="2018-05-15T13:55:59.5828090" filetime="636619893595828090" size="5950" hash="UaLPSgBkLZebshqNXcSJAA==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeAdd.resx" time="2018-05-15T13:55:59.5838090" filetime="636619893595838090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.cs" time="2018-05-15T13:55:59.5848090" filetime="636619893595848090" size="4223" hash="2zS6lFlW8Da7WjKliKKmow==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.Designer.cs" time="2018-05-15T13:55:59.5848090" filetime="636619893595848090" size="4749" hash="MFqnl7FDEbSWgtNDr38IVg==" />
+  <file name="UI\FormsHappyPlace\IDDItemTypeDelete.resx" time="2018-05-15T13:55:59.5858090" filetime="636619893595858090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.cs" time="2018-05-15T13:55:59.5868090" filetime="636619893595868090" size="15800" hash="j78xes8s3QemqXCe1LopMQ==" />
+  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.Designer.cs" time="2018-05-15T13:55:59.5858090" filetime="636619893595858090" size="18825" hash="UpfU4aADzeMhgag2x5WWnQ==" />
+  <file name="UI\FormsHappyPlace\IDDK5CollarItemData.resx" time="2018-05-15T13:55:59.5878090" filetime="636619893595878090" size="6611" hash="azPGDHkr1GkMHL/513owig==" />
+  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.cs" time="2018-05-15T13:55:59.5908090" filetime="636619893595908090" size="14392" hash="KwbTegFdt9PoBMXEzj7T4A==" />
+  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.Designer.cs" time="2018-05-15T13:55:59.5898090" filetime="636619893595898090" size="58105" hash="+L1GDhgB62rUMaIhYdHR9Q==" />
+  <file name="UI\FormsHappyPlace\IDDKnownAlphaCal.resx" time="2018-05-15T13:55:59.5908090" filetime="636619893595908090" size="11021" hash="45E/PiAw5bTsp5yIZe/AMw==" />
+  <file name="UI\FormsHappyPlace\IDDKnownMCal.cs" time="2018-05-15T13:55:59.5928090" filetime="636619893595928090" size="7410" hash="/ELtcqf/NdYgg1M/i2woWA==" />
+  <file name="UI\FormsHappyPlace\IDDKnownMCal.Designer.cs" time="2018-05-15T13:55:59.5918090" filetime="636619893595918090" size="18217" hash="1UzUf1N2aIXUET5ilQZZTg==" />
+  <file name="UI\FormsHappyPlace\IDDKnownMCal.resx" time="2018-05-15T13:55:59.5928090" filetime="636619893595928090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDKValSelector.cs" time="2018-05-15T13:55:59.5888090" filetime="636619893595888090" size="3767" hash="zMOTtpQhVdgH+6bZsFKPIA==" />
+  <file name="UI\FormsHappyPlace\IDDKValSelector.Designer.cs" time="2018-05-15T13:55:59.5878090" filetime="636619893595878090" size="6368" hash="xqRyS64HhQyKe7Koggz1QA==" />
+  <file name="UI\FormsHappyPlace\IDDKValSelector.resx" time="2018-05-15T13:55:59.5888090" filetime="636619893595888090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDManualDataEntry.cs" time="2018-05-15T13:55:59.5988090" filetime="636619893595988090" size="10620" hash="5pMfONaaxN9BJsl+NfnbRQ==" />
+  <file name="UI\FormsHappyPlace\IDDManualDataEntry.Designer.cs" time="2018-05-15T13:55:59.5978090" filetime="636619893595978090" size="12038" hash="sjgUMM5XBkyBUKByxgTjAA==" />
+  <file name="UI\FormsHappyPlace\IDDManualDataEntry.resx" time="2018-05-15T13:55:59.5988090" filetime="636619893595988090" size="6616" hash="Q9fVl9U8L5zXzwMWq63/TQ==" />
+  <file name="UI\FormsHappyPlace\IDDMBAAdd.cs" time="2018-05-15T13:55:59.5938090" filetime="636619893595938090" size="4290" hash="jOo7Bei7y+vcDTbPKkwQyw==" />
+  <file name="UI\FormsHappyPlace\IDDMBAAdd.Designer.cs" time="2018-05-15T13:55:59.5938090" filetime="636619893595938090" size="7200" hash="ASH957z4F+AQiBIMibHYJA==" />
+  <file name="UI\FormsHappyPlace\IDDMBAAdd.resx" time="2018-05-15T13:55:59.5948090" filetime="636619893595948090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDMBADelete.cs" time="2018-05-15T13:55:59.5948090" filetime="636619893595948090" size="3984" hash="/P6zRZa3PQWSrTKgP1L68Q==" />
+  <file name="UI\FormsHappyPlace\IDDMBADelete.Designer.cs" time="2018-05-15T13:55:59.5948090" filetime="636619893595948090" size="4590" hash="X/ejMagKZGTpB0GMTH4wog==" />
+  <file name="UI\FormsHappyPlace\IDDMBADelete.resx" time="2018-05-15T13:55:59.5958090" filetime="636619893595958090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDMBAEdit.cs" time="2018-05-15T13:55:59.5968090" filetime="636619893595968090" size="3146" hash="MXKmOEjr54pyBxl1LKu9Xg==" />
+  <file name="UI\FormsHappyPlace\IDDMBAEdit.Designer.cs" time="2018-05-15T13:55:59.5968090" filetime="636619893595968090" size="5290" hash="VvtoSJOFGRn1rEEmTInRxA==" />
+  <file name="UI\FormsHappyPlace\IDDMBAEdit.resx" time="2018-05-15T13:55:59.5968090" filetime="636619893595968090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDMeasurementList.cs" time="2018-05-15T13:55:59.5998090" filetime="636619893595998090" size="18919" hash="DGfBtWYzPlY3wqwhVMUzuA==" />
+  <file name="UI\FormsHappyPlace\IDDMeasurementList.Designer.cs" time="2018-05-15T13:55:59.5998090" filetime="636619893595998090" size="9807" hash="1zt+Kmn6SL8redGV9Ai7uQ==" />
+  <file name="UI\FormsHappyPlace\IDDMeasurementList.resx" time="2018-05-15T13:55:59.6008090" filetime="636619893596008090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.cs" time="2018-05-15T13:55:59.6018090" filetime="636619893596018090" size="10659" hash="/wr4zk7ATaLETVN94CDH1A==" />
+  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.Designer.cs" time="2018-05-15T13:55:59.6018090" filetime="636619893596018090" size="32215" hash="wYxj0RJoo61VGKK5WNzp7Q==" />
+  <file name="UI\FormsHappyPlace\IDDMultiplicityCal.resx" time="2018-05-15T13:55:59.6028090" filetime="636619893596028090" size="7593" hash="CA4+0LsmnF8Yn8Ibhymh+w==" />
+  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.cs" time="2018-05-15T13:55:59.6038090" filetime="636619893596038090" size="6180" hash="6KmVvsWKkR8lkq0AYCqIHw==" />
+  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.Designer.cs" time="2018-05-15T13:55:59.6028090" filetime="636619893596028090" size="7871" hash="LYsUwqPbMT2qFAERavYkEg==" />
+  <file name="UI\FormsHappyPlace\IDDNormalizationSetup.resx" time="2018-05-15T13:55:59.6048090" filetime="636619893596048090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDPercentU235.cs" time="2018-05-15T13:55:59.6058090" filetime="636619893596058090" size="4215" hash="jbCiUnGL3KilIVtgpX6+JQ==" />
+  <file name="UI\FormsHappyPlace\IDDPercentU235.Designer.cs" time="2018-05-15T13:55:59.6048090" filetime="636619893596048090" size="5071" hash="0n4OxO259XCTdTWfb/qveQ==" />
+  <file name="UI\FormsHappyPlace\IDDPercentU235.resx" time="2018-05-15T13:55:59.6058090" filetime="636619893596058090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.cs" time="2018-05-15T13:55:59.6068090" filetime="636619893596068090" size="5757" hash="BG+/XQjURiorlINQsvbx3g==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.Designer.cs" time="2018-05-15T13:55:59.6068090" filetime="636619893596068090" size="6109" hash="c9ZfGSdVAeQud9WjXVMtNw==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssayResults.resx" time="2018-05-15T13:55:59.6078090" filetime="636619893596078090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.cs" time="2018-05-15T13:55:59.6098090" filetime="636619893596098090" size="23638" hash="OnKDQHD0nVqKdtZseUCLPA==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.Designer.cs" time="2018-05-15T13:55:59.6088090" filetime="636619893596088090" size="8045" hash="gkmf/jD//uwBSay/zg6Ebg==" />
+  <file name="UI\FormsHappyPlace\IDDPlotAssaySelect.resx" time="2018-05-15T13:55:59.6108090" filetime="636619893596108090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.cs" time="2018-05-15T13:55:59.6118090" filetime="636619893596118090" size="9161" hash="ImUJRt81caLOE/S5oKqOUg==" />
+  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.Designer.cs" time="2018-05-15T13:55:59.6108090" filetime="636619893596108090" size="5291" hash="zG/M5rI0yfOOJHo1oEo66g==" />
+  <file name="UI\FormsHappyPlace\IDDPlotBiasMeasHistory.resx" time="2018-05-15T13:55:59.6118090" filetime="636619893596118090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodType.cs" time="2018-05-15T13:55:59.6128090" filetime="636619893596128090" size="3191" hash="OUtsowRcmgCYNSOawB/aaQ==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodType.Designer.cs" time="2018-05-15T13:55:59.6128090" filetime="636619893596128090" size="4934" hash="5J5BiJr/wnvDlJrKIPlLZQ==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodType.resx" time="2018-05-15T13:55:59.6138090" filetime="636619893596138090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.cs" time="2018-05-15T13:55:59.6148090" filetime="636619893596148090" size="5315" hash="atO+1hMfJ6hVe2OoWgRitA==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.Designer.cs" time="2018-05-15T13:55:59.6138090" filetime="636619893596138090" size="7793" hash="CNXBxgVwisP8uqk2p4csZA==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeAdd.resx" time="2018-05-15T13:55:59.6148090" filetime="636619893596148090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.cs" time="2018-05-15T13:55:59.6158090" filetime="636619893596158090" size="4045" hash="dvoJ6CwizBtzq2JEu8HjeQ==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.Designer.cs" time="2018-05-15T13:55:59.6158090" filetime="636619893596158090" size="4790" hash="26AhR8s3biTGEtUUb4pXCw==" />
+  <file name="UI\FormsHappyPlace\IDDPoisonRodTypeDelete.resx" time="2018-05-15T13:55:59.6168090" filetime="636619893596168090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.cs" time="2018-05-15T13:55:59.6178090" filetime="636619893596178090" size="16939" hash="il43b8VvMRv/vmuWpqy9iQ==" />
+  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.Designer.cs" time="2018-05-15T13:55:59.6168090" filetime="636619893596168090" size="20852" hash="4TNIRzmgz4jUClShG6l2kw==" />
+  <file name="UI\FormsHappyPlace\IDDReanalysisAssay.resx" time="2018-05-15T13:55:59.6178090" filetime="636619893596178090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.cs" time="2018-05-15T13:55:59.6188090" filetime="636619893596188090" size="4554" hash="LlrO41pFJvo67bI4FDZsAg==" />
+  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.Designer.cs" time="2018-05-15T13:55:59.6188090" filetime="636619893596188090" size="3319" hash="HVcpnLDbtSuyfl8/iad6Vw==" />
+  <file name="UI\FormsHappyPlace\IDDReanalyzeDBMeas.resx" time="2018-05-15T13:55:59.6198090" filetime="636619893596198090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.cs" time="2018-05-15T13:55:59.6208090" filetime="636619893596208090" size="5273" hash="TmPr1VwdwllUg/aJTZhlFQ==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.Designer.cs" time="2018-05-15T13:55:59.6208090" filetime="636619893596208090" size="6843" hash="ZCbl3HjPuEtw2VMkFbQZng==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreInitialData.resx" time="2018-05-15T13:55:59.6218090" filetime="636619893596218090" size="5900" hash="NNH/YXMAgPja3eleU1iVYA==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreSelect.cs" time="2018-05-15T13:55:59.6228090" filetime="636619893596228090" size="3239" hash="NgRGCJA39ZQu506C5JQP6A==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreSelect.Designer.cs" time="2018-05-15T13:55:59.6228090" filetime="636619893596228090" size="10943" hash="e3nNrRAFj1okJKVuxE5r2g==" />
+  <file name="UI\FormsHappyPlace\IDDRestoreSelect.resx" time="2018-05-15T13:55:59.6238090" filetime="636619893596238090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAll.cs" time="2018-05-15T13:55:59.6248090" filetime="636619893596248090" size="9549" hash="Tk929UPedIv6FURtG1o6Dw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAll.Designer.cs" time="2018-05-15T13:55:59.6248090" filetime="636619893596248090" size="19526" hash="lPC3LRxRm0NdPrRgioViUw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAll.resx" time="2018-05-15T13:55:59.6258090" filetime="636619893596258090" size="6254" hash="g0YsElTICrBZxd/ZNvHD1Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAssay.cs" time="2018-05-15T13:55:59.6268090" filetime="636619893596268090" size="9066" hash="YCAyyD1vrnRwmOrxcYNh3Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAssay.Designer.cs" time="2018-05-15T13:55:59.6258090" filetime="636619893596258090" size="20328" hash="VRWl6YqrUTr37T+S+wcDkg==" />
+  <file name="UI\FormsHappyPlace\IDDReviewAssay.resx" time="2018-05-15T13:55:59.6268090" filetime="636619893596268090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\IDDReviewBackground.cs" time="2018-05-15T13:55:59.6278090" filetime="636619893596278090" size="7496" hash="hGARZoYq9rVP5XNxcDAMKw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewBackground.Designer.cs" time="2018-05-15T13:55:59.6278090" filetime="636619893596278090" size="16715" hash="QkaVVm2VoRM/geV6O/gxzA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewBackground.resx" time="2018-05-15T13:55:59.6288090" filetime="636619893596288090" size="6254" hash="g0YsElTICrBZxd/ZNvHD1Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewCalibration.cs" time="2018-05-15T13:55:59.6298090" filetime="636619893596298090" size="7961" hash="y+O7NaSCZS9M854E/JN1pg==" />
+  <file name="UI\FormsHappyPlace\IDDReviewCalibration.Designer.cs" time="2018-05-15T13:55:59.6288090" filetime="636619893596288090" size="17725" hash="7prxVkr3wOBD66B7vYp5qA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewCalibration.resx" time="2018-05-15T13:55:59.6308090" filetime="636619893596308090" size="6061" hash="dWIm3YLDQJ4DSrKc3nuhXw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewHoldup.cs" time="2018-05-15T13:55:59.6318090" filetime="636619893596318090" size="6185" hash="e6MTEXrg84k2+Qni/I9AfQ==" />
+  <file name="UI\FormsHappyPlace\IDDReviewHoldup.Designer.cs" time="2018-05-15T13:55:59.6318090" filetime="636619893596318090" size="12412" hash="QL8pa6BI1iNdpVopVHmaKw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewHoldup.resx" time="2018-05-15T13:55:59.6328090" filetime="636619893596328090" size="6061" hash="hRmJIg6asYxg28d/aBdZeA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.cs" time="2018-05-15T13:55:59.6348090" filetime="636619893596348090" size="7797" hash="gJAwL5eXLjnpnMVXG2QBrA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.Designer.cs" time="2018-05-15T13:55:59.6338090" filetime="636619893596338090" size="16707" hash="15xZVEAU49N/gizddpLL/Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewInitSrc.resx" time="2018-05-15T13:55:59.6358090" filetime="636619893596358090" size="6254" hash="sWhxSK76fEXGSS60x/T78g==" />
+  <file name="UI\FormsHappyPlace\IDDReviewNormalization.cs" time="2018-05-15T13:55:59.6368090" filetime="636619893596368090" size="7827" hash="E25/gUfyzsn51VtYNJQOLg==" />
+  <file name="UI\FormsHappyPlace\IDDReviewNormalization.Designer.cs" time="2018-05-15T13:55:59.6358090" filetime="636619893596358090" size="16730" hash="XMk6E1PRmb15D1xroPvhxg==" />
+  <file name="UI\FormsHappyPlace\IDDReviewNormalization.resx" time="2018-05-15T13:55:59.6378090" filetime="636619893596378090" size="6254" hash="g0YsElTICrBZxd/ZNvHD1Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewPrecision.cs" time="2018-05-15T13:55:59.6398090" filetime="636619893596398090" size="7798" hash="TfNfoa66nBjnnpa6B6rx3g==" />
+  <file name="UI\FormsHappyPlace\IDDReviewPrecision.Designer.cs" time="2018-05-15T13:55:59.6388090" filetime="636619893596388090" size="16711" hash="TUXOtyOv3HS6toiRnUVWXA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewPrecision.resx" time="2018-05-15T13:55:59.6398090" filetime="636619893596398090" size="6254" hash="cxs5h/jcDaTs3yXRB+Ol6Q==" />
+  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.cs" time="2018-05-15T13:55:59.6418090" filetime="636619893596418090" size="7490" hash="x8cybuJ/6LJnvAXTlmiaFw==" />
+  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.Designer.cs" time="2018-05-15T13:55:59.6408090" filetime="636619893596408090" size="16712" hash="drHicr8TR8YdxKeq/py9YA==" />
+  <file name="UI\FormsHappyPlace\IDDReviewRatesOnly.resx" time="2018-05-15T13:55:59.6428090" filetime="636619893596428090" size="6254" hash="4eJHmdgKB3wwkz/MaBxeSw==" />
+  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.cs" time="2018-05-15T13:55:59.6638090" filetime="636619893596638090" size="4074" hash="TVi4CA9CYq5HJp2kEPuL6Q==" />
+  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.Designer.cs" time="2018-05-15T13:55:59.6448090" filetime="636619893596448090" size="4762" hash="3DHtyHhwZGqJX9uwSLtROw==" />
+  <file name="UI\FormsHappyPlace\IDDSaveCampaignId.resx" time="2018-05-15T13:55:59.6638090" filetime="636619893596638090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDSaveInitialData.cs" time="2018-05-15T13:55:59.6658090" filetime="636619893596658090" size="4616" hash="1xrL6KldDa0UwnuPrEkANA==" />
+  <file name="UI\FormsHappyPlace\IDDSaveInitialData.Designer.cs" time="2018-05-15T13:55:59.6648090" filetime="636619893596648090" size="8279" hash="hF04gfq18p24+/3DhXlGLw==" />
+  <file name="UI\FormsHappyPlace\IDDSaveInitialData.resx" time="2018-05-15T13:55:59.6668090" filetime="636619893596668090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDSaveTransfer.cs" time="2018-05-15T13:55:59.6678090" filetime="636619893596678090" size="5576" hash="KQwf0RjZ2leuAu2HGWraqQ==" />
+  <file name="UI\FormsHappyPlace\IDDSaveTransfer.Designer.cs" time="2018-05-15T13:55:59.6668090" filetime="636619893596668090" size="6275" hash="H7CciRcXvrIaTRwUZVgllA==" />
+  <file name="UI\FormsHappyPlace\IDDSaveTransfer.resx" time="2018-05-15T13:55:59.6678090" filetime="636619893596678090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.cs" time="2018-05-15T13:55:59.9098090" filetime="636619893599098090" size="13417" hash="eo2bmEgZIeaKOkN28fg/6w==" />
+  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.Designer.cs" time="2018-05-15T13:55:59.6688090" filetime="636619893596688090" size="24820" hash="WoaOsLGZp04Oi8g6bWTdCw==" />
+  <file name="UI\FormsHappyPlace\IDDSelectPrimaryAM.resx" time="2018-05-15T13:55:59.9128090" filetime="636619893599128090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.cs" time="2018-05-15T13:55:59.9148090" filetime="636619893599148090" size="4591" hash="GfLKsWlzuUhTemV1HOvmcQ==" />
+  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.Designer.cs" time="2018-05-15T13:55:59.9138090" filetime="636619893599138090" size="7818" hash="3t9cPNbm5vfsKFgObKe0KA==" />
+  <file name="UI\FormsHappyPlace\IDDSetupUnattendedMeas.resx" time="2018-05-15T13:55:59.9158090" filetime="636619893599158090" size="6524" hash="pcqXoLPnEaD3/Yx00XsE+Q==" />
+  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.cs" time="2018-05-15T13:55:59.9198090" filetime="636619893599198090" size="19119" hash="BzrBBtKBJGLWFTCq3xu8lA==" />
+  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.Designer.cs" time="2018-05-15T13:55:59.9188090" filetime="636619893599188090" size="37569" hash="p+4BeDXiydGARtXr9rTB6Q==" />
+  <file name="UI\FormsHappyPlace\IDDShiftRegisterSetup.resx" time="2018-05-15T13:55:59.9208090" filetime="636619893599208090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\IDDStratumId.cs" time="2018-05-15T13:55:59.9238090" filetime="636619893599238090" size="3969" hash="VwxL3k3XJw2KH6L1i4qJ0g==" />
+  <file name="UI\FormsHappyPlace\IDDStratumId.Designer.cs" time="2018-05-15T13:55:59.9228090" filetime="636619893599228090" size="4803" hash="BCVJX1SNmSkrXJxySN3h7Q==" />
+  <file name="UI\FormsHappyPlace\IDDStratumId.resx" time="2018-05-15T13:55:59.9248090" filetime="636619893599248090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.cs" time="2018-05-15T13:55:59.9298090" filetime="636619893599298090" size="7167" hash="42OzscGjTP8QSgZtM3w/oQ==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.Designer.cs" time="2018-05-15T13:55:59.9278090" filetime="636619893599278090" size="11754" hash="aIK056rAvP5KkfYQr4432w==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdAdd.resx" time="2018-05-15T13:55:59.9308090" filetime="636619893599308090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.cs" time="2018-05-15T13:55:59.9348090" filetime="636619893599348090" size="6214" hash="yNtre2fhsxaGun/EtvhZsA==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.Designer.cs" time="2018-05-15T13:55:59.9328090" filetime="636619893599328090" size="4677" hash="rUTe2n5RCrTZADsJvkAJCg==" />
+  <file name="UI\FormsHappyPlace\IDDStratumIdDelete.resx" time="2018-05-15T13:55:59.9368090" filetime="636619893599368090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDStratumLimits.cs" time="2018-05-15T13:55:59.9408090" filetime="636619893599408090" size="6588" hash="4ORTZExVagoXeQUtOpJukQ==" />
+  <file name="UI\FormsHappyPlace\IDDStratumLimits.Designer.cs" time="2018-05-15T13:55:59.9388090" filetime="636619893599388090" size="7269" hash="ssq2Vld+MJuRHgJulHrp+A==" />
+  <file name="UI\FormsHappyPlace\IDDStratumLimits.resx" time="2018-05-15T13:55:59.9428090" filetime="636619893599428090" size="6474" hash="wEacYAkLN0wPdU7mzmBgfA==" />
+  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.cs" time="2018-05-15T13:55:59.9478090" filetime="636619893599478090" size="11517" hash="qaEXEoLuMiw4UWbGfLZb5g==" />
+  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.Designer.cs" time="2018-05-15T13:55:59.9458090" filetime="636619893599458090" size="26760" hash="zWnnp7wQVuw3eCJ9SuGdRA==" />
+  <file name="UI\FormsHappyPlace\IDDTestParametersSetup.resx" time="2018-05-15T13:55:59.9498090" filetime="636619893599498090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.cs" time="2018-05-15T13:55:59.9528090" filetime="636619893599528090" size="6876" hash="jjbEL59Oqo5xRML1uAOa2A==" />
+  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.Designer.cs" time="2018-05-15T13:55:59.9518090" filetime="636619893599518090" size="11630" hash="7ORlRVlppkPKELllm5h8tQ==" />
+  <file name="UI\FormsHappyPlace\IDDTruncatedMultCalibration.resx" time="2018-05-15T13:55:59.9538090" filetime="636619893599538090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\IsotopicsList.cs" time="2018-05-15T13:55:59.9558090" filetime="636619893599558090" size="8523" hash="hUX6xdkl5XFgt5GYwK0f7A==" />
+  <file name="UI\FormsHappyPlace\IsotopicsList.Designer.cs" time="2018-05-15T13:55:59.9548090" filetime="636619893599548090" size="7157" hash="sx7kbpQxUIXGjSO0HmfzhQ==" />
+  <file name="UI\FormsHappyPlace\IsotopicsList.resx" time="2018-05-15T13:55:59.9568090" filetime="636619893599568090" size="5891" hash="EwGIm4yqKg+tnL2JGODpMg==" />
+  <file name="UI\FormsHappyPlace\LMAcquire.cs" time="2018-05-15T13:55:59.9598090" filetime="636619893599598090" size="47194" hash="IYSAtb7CjgsrXX0C1iGT8A==" />
+  <file name="UI\FormsHappyPlace\LMAcquire.Designer.cs" time="2018-05-15T13:55:59.9588090" filetime="636619893599588090" size="51212" hash="uHX1rTfJ619rpo0t1ryJfg==" />
+  <file name="UI\FormsHappyPlace\LMAcquire.resx" time="2018-05-15T13:55:59.9608090" filetime="636619893599608090" size="7863" hash="1/o9MGOYK9XCDPotu6UXQQ==" />
+  <file name="UI\FormsHappyPlace\LMConnectionParams.cs" time="2018-05-15T13:55:59.9628090" filetime="636619893599628090" size="24856" hash="m+YwNi6oadf7MRDJ8nf1lQ==" />
+  <file name="UI\FormsHappyPlace\LMConnectionParams.Designer.cs" time="2018-05-15T13:55:59.9618090" filetime="636619893599618090" size="59278" hash="hNt5xl005TP0dkAMrj5bpw==" />
+  <file name="UI\FormsHappyPlace\LMConnectionParams.resx" time="2018-05-15T13:55:59.9638090" filetime="636619893599638090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\MeasSetup.xaml" time="2018-05-15T13:55:59.9648090" filetime="636619893599648090" size="5877" hash="Dza1fuNxKxI0Ort9NkKzLw==" />
+  <file name="UI\FormsHappyPlace\MeasSetup.xaml.cs" time="2018-05-15T13:55:59.9658090" filetime="636619893599658090" size="9315" hash="zVYkA33e9m5c3Gcs7obKhA==" />
+  <file name="UI\FormsHappyPlace\MethodParam.cs" time="2018-05-15T13:55:59.9668090" filetime="636619893599668090" size="11273" hash="ctY8wNRmBi2t5n8s4kQsNQ==" />
+  <file name="UI\FormsHappyPlace\Overview.cs" time="2018-05-15T13:55:59.9698090" filetime="636619893599698090" size="23195" hash="6dhBTZmlUI5vHK0/X6Qeeg==" />
+  <file name="UI\FormsHappyPlace\Overview.Designer.cs" time="2018-05-15T13:55:59.9678090" filetime="636619893599678090" size="9741" hash="T/FhnxsNI1KuxBktnY9lmA==" />
+  <file name="UI\FormsHappyPlace\Overview.resx" time="2018-05-15T13:55:59.9708090" filetime="636619893599708090" size="6253" hash="WTXsj+YlyO13EczIFGt8Bw==" />
+  <file name="UI\FormsHappyPlace\PlotAssayChart.cs" time="2018-05-15T13:55:59.9728090" filetime="636619893599728090" size="4726" hash="2SdvGQXFMzLaYZrFAfNiRg==" />
+  <file name="UI\FormsHappyPlace\PlotAssayChart.Designer.cs" time="2018-05-15T13:55:59.9718090" filetime="636619893599718090" size="6077" hash="QsKU/tFAbZCUzfokOsQwCg==" />
+  <file name="UI\FormsHappyPlace\PlotAssayChart.resx" time="2018-05-15T13:55:59.9728090" filetime="636619893599728090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\PlotSDTChart.cs" time="2018-05-15T13:55:59.9758090" filetime="636619893599758090" size="4872" hash="PCq70M+zszMl3MJDOdTzBw==" />
+  <file name="UI\FormsHappyPlace\PlotSDTChart.Designer.cs" time="2018-05-15T13:55:59.9738090" filetime="636619893599738090" size="15090" hash="3tS30QqHGAYsOqDAU1ooxw==" />
+  <file name="UI\FormsHappyPlace\PlotSDTChart.resx" time="2018-05-15T13:55:59.9758090" filetime="636619893599758090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\Preferences.cs" time="2018-05-15T13:55:59.9788090" filetime="636619893599788090" size="20750" hash="l4//hM+e/f7Aa6C+/wOvVg==" />
+  <file name="UI\FormsHappyPlace\Preferences.Designer.cs" time="2018-05-15T13:55:59.9778090" filetime="636619893599778090" size="28567" hash="BT9FOTCXJJJGT0Qr8XfMGw==" />
+  <file name="UI\FormsHappyPlace\Preferences.resx" time="2018-05-15T13:55:59.9798090" filetime="636619893599798090" size="6061" hash="dowzxrRkVPDPdagdRHBn2A==" />
+  <file name="UI\FormsHappyPlace\PrintForm.cs" time="2018-05-15T13:55:59.9818090" filetime="636619893599818090" size="4877" hash="yvBV9IlDquJUrkEP0EHcIg==" />
+  <file name="UI\FormsHappyPlace\PrintForm.Designer.cs" time="2018-05-15T13:55:59.9808090" filetime="636619893599808090" size="3724" hash="5Jlm6KyBsQ5hAa80kycBZg==" />
+  <file name="UI\FormsHappyPlace\PrintForm.resx" time="2018-05-15T13:55:59.9828090" filetime="636619893599828090" size="6094" hash="jwzmbUfls0g+CT9jZA762g==" />
+  <file name="UI\FormsHappyPlace\SelectSQLiteDB.cs" time="2018-05-15T13:55:59.9838090" filetime="636619893599838090" size="3700" hash="w6xQTZBQ+7tFJ4OsQvnKHw==" />
+  <file name="UI\FormsHappyPlace\SelectSQLiteDB.Designer.cs" time="2018-05-15T13:55:59.9828090" filetime="636619893599828090" size="4200" hash="VtvlDbL1TTNwZLKd1e8mag==" />
+  <file name="UI\FormsHappyPlace\SelectSQLiteDB.resx" time="2018-05-15T13:55:59.9848090" filetime="636619893599848090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\Splash.cs" time="2018-05-15T13:55:59.9858090" filetime="636619893599858090" size="7481" hash="bsCWettPTjIaFJMkW5ZGPw==" />
+  <file name="UI\FormsHappyPlace\Splash.Designer.cs" time="2018-05-15T13:55:59.9848090" filetime="636619893599848090" size="6323" hash="pKFz22mDZS7BorLDCCYvpg==" />
+  <file name="UI\FormsHappyPlace\Splash.resx" time="2018-05-15T13:55:59.9868090" filetime="636619893599868090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\FormsHappyPlace\TransferList.cs" time="2018-05-15T13:55:59.9878090" filetime="636619893599878090" size="7532" hash="sRR7YRt5hprhcKAsI3Z8dA==" />
+  <file name="UI\FormsHappyPlace\TransferList.Designer.cs" time="2018-05-15T13:55:59.9878090" filetime="636619893599878090" size="7235" hash="g4jVDL6OW2ESZjXJXTD+Kw==" />
+  <file name="UI\FormsHappyPlace\TransferList.resx" time="2018-05-15T13:55:59.9888090" filetime="636619893599888090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
   <dir name="UI\Integration" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" hash="/hGYnufxpIDebQKKNJqNqA==" />
-  <file name="UI\Integration\Controller.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="32621" hash="11357UeB2KdRYfYmdozapQ==" />
-  <file name="UI\Integration\MainIntegration.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="9820" hash="mgEHp5sq7aD/yHu40DDWzQ==" />
+  <file name="UI\Integration\Controller.cs" time="2018-05-15T13:56:00.0758090" filetime="636619893600758090" size="31862" hash="7ikG2EWP/QRbskKCnogMHQ==" />
+  <file name="UI\Integration\MainIntegration.cs" time="2018-05-15T13:56:00.0808090" filetime="636619893600808090" size="9595" hash="LkBm27LiN3ae4n7vNt9Uuw==" />
   <dir name="UI\Logging" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" hash="lvmIje5sJVSxy4dyI9naVA==" />
-  <file name="UI\Logging\AutoScrollBehavior.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="11665" hash="sbS7y+Lpk9eIXI+fjCgsHw==" />
-  <file name="UI\Logging\TraceEvent.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="5325" hash="vireAn6F9mDFHviDQKmIIg==" />
-  <file name="UI\Logging\WPFTraceListener.cs" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="11165" hash="Dfz4nGaL1OOIYO/1IUZs3w==" />
-  <file name="UI\MainWindow.xaml" time="2017-12-17T17:17:41.0788000" filetime="636491278610788000" size="17203" hash="YFYM1Q+/flGJkCOfTWG48w==" />
-  <file name="UI\MainWindow.xaml.cs" time="2018-02-23T10:20:09.4665012" filetime="636549780094665012" size="40775" hash="UEc0c27yI/y4Xwd5ZBIvAQ==" />
-  <file name="UI\NumericTextBox.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="5917" hash="TVUVgNrHgkRFnKHlgzomwQ==" />
+  <file name="UI\Logging\AutoScrollBehavior.cs" time="2018-05-15T13:56:00.0848090" filetime="636619893600848090" size="11418" hash="T8E0DnOo1aQo7hwLkLWjqw==" />
+  <file name="UI\Logging\TraceEvent.cs" time="2018-05-15T13:56:00.0868090" filetime="636619893600868090" size="5200" hash="8dmk9sb5QoDJCTdW8jxMXA==" />
+  <file name="UI\Logging\WPFTraceListener.cs" time="2018-05-15T13:56:00.0888090" filetime="636619893600888090" size="10959" hash="NbLvJ0Jh01HCMxS2BSOkew==" />
+  <file name="UI\MainWindow.xaml" time="2018-05-15T13:56:00.0908090" filetime="636619893600908090" size="17006" hash="6CK4r+RFUAjmfAA24Dg6Kg==" />
+  <file name="UI\MainWindow.xaml.cs" time="2018-05-15T13:56:00.1038090" filetime="636619893601038090" size="39807" hash="3y2JC6rstdUOzme1y4gLiA==" />
+  <file name="UI\NumericTextBox.cs" time="2018-05-15T13:56:00.1048090" filetime="636619893601048090" size="5724" hash="n4NXjeBLD4hlldi6xL1Q3w==" />
   <dir name="UI\Progress" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" hash="ilECmO5MZu55DldKSzz+LQ==" />
-  <file name="UI\Progress\CancelCommand.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="5136" hash="z+qivgxnMQdiUjtdn3FDUQ==" />
-  <file name="UI\Progress\ProgressDialog.xaml" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="1985" hash="V4sSF7dFX3kMPdw/227+rQ==" />
-  <file name="UI\Progress\ProgressDialog.xaml.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="7616" hash="syigUokT5KCDYnTkP9JC5w==" />
-  <file name="UI\Progress\TaskProgress.cs" time="2017-12-17T17:17:41.0888000" filetime="636491278610888000" size="8080" hash="ok13NAy5VdQ+trC548gRNA==" />
+  <file name="UI\Progress\CancelCommand.cs" time="2018-05-15T13:56:00.1058090" filetime="636619893601058090" size="5032" hash="vE8VIulIG7UcAm/fGE1HFg==" />
+  <file name="UI\Progress\ProgressDialog.xaml" time="2018-05-15T13:56:00.1068090" filetime="636619893601068090" size="1950" hash="Uu9oZOSgFXsfLkDtJWCbsA==" />
+  <file name="UI\Progress\ProgressDialog.xaml.cs" time="2018-05-15T13:56:00.1078090" filetime="636619893601078090" size="7463" hash="HzuBjR+EIQLzHu++pH68lQ==" />
+  <file name="UI\Progress\TaskProgress.cs" time="2018-05-15T13:56:00.1088090" filetime="636619893601088090" size="7891" hash="mgSPWvmhkPPbizGXR3GXKg==" />
   <dir name="UI\Properties" time="2017-12-29T19:37:22.3564000" filetime="636501730423564000" hash="f43fJTmIgjYXWbUDVghlsQ==" />
-  <file name="UI\Properties\app.manifest" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="3097" hash="v3FmbvZ60bBKiqoykviAgw==" />
-  <file name="UI\Properties\AssemblyInfo.cs" time="2018-03-29T12:49:41.8487541" filetime="636579245818487541" size="2462" hash="Rv0KXKiTJR8aBUXwJtW7WA==" />
-  <file name="UI\Properties\Resources.Designer.cs" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="7654" hash="QJQyojS2PMIlk8Fq1xtzYg==" />
-  <file name="UI\Properties\Resources.resx" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="9195" hash="GZJ31EorfN3zv71YUfmiCQ==" />
-  <file name="UI\Properties\Settings.Designer.cs" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="1083" hash="ZWgU5R4Nl1ExtfI1A6bRMw==" />
-  <file name="UI\Properties\Settings.settings" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="201" hash="r1uRhp7xJmwKM8iCoxHNIA==" />
+  <file name="UI\Properties\app.manifest" time="2018-05-15T13:56:00.1198090" filetime="636619893601198090" size="3044" hash="thxazAM7Bkajr8B/kVVF8w==" />
+  <file name="UI\Properties\AssemblyInfo.cs" time="2018-06-05T14:57:08.5079040" filetime="636638074285079040" size="2462" hash="DhFfV/gJLfoIu/bILnuYZg==" />
+  <file name="UI\Properties\Resources.Designer.cs" time="2018-05-15T13:56:00.1158090" filetime="636619893601158090" size="7471" hash="n8b+OoD0ygyAlKBWUHOP8w==" />
+  <file name="UI\Properties\Resources.resx" time="2018-05-15T13:56:00.1178090" filetime="636619893601178090" size="9039" hash="tQqXAaR0Z+PSNa62o2Zn8w==" />
+  <file name="UI\Properties\Settings.Designer.cs" time="2018-05-15T13:56:00.1178090" filetime="636619893601178090" size="1057" hash="e/d8ZWuzbJ7bPjRB+hj9sQ==" />
+  <file name="UI\Properties\Settings.settings" time="2018-05-15T13:56:00.1188090" filetime="636619893601188090" size="195" hash="J9sdar0NUkL/cOMp7edksQ==" />
   <file name="UI\rel.ico" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="309326" hash="Z2F39ZDANqdyURr/R97nBw==" />
   <dir name="UI\Resources" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" hash="sNWDau+nBGFawdJR811hvg==" />
   <file name="UI\Resources\CoincidenceMatrix.png" time="2017-12-17T17:17:41.0988000" filetime="636491278610988000" size="233" hash="hUMXaig6xmrH0VEMyBZ5xQ==" />
@@ -579,115 +579,115 @@
   <file name="UI\Resources\multiplicity_FA_initdelay.png" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="17440" hash="rG5TBKurKgPZie9J65EmOA==" />
   <file name="UI\Resources\refresh.png" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="888" hash="WHCjeWO2cw0n5lNk7+oHHw==" />
   <dir name="UI\Support" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" hash="ov98Dlz+PsFErTVzTZjk7Q==" />
-  <file name="UI\Support\Clip.cs" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="11820" hash="GRNPLDlytTgRjz6khGaeLw==" />
-  <file name="UI\Support\Folder.cs" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="11537" hash="nRLAl/KpTNzkMkjm+Kv9Cg==" />
-  <file name="UI\Support\Format.cs" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="12485" hash="ynDV1xz53ySrd8MpTdYuzQ==" />
-  <file name="UI\Support\SelSum.cs" time="2017-12-17T17:17:41.1088000" filetime="636491278611088000" size="28012" hash="0GKJu1hY5u1jbfFm8quRTA==" />
-  <file name="UI\UI.csproj" time="2018-01-02T13:13:06.6175227" filetime="636504955866175227" size="71441" hash="jqKXlY06lEpZ5Z7Ieqjnbg==" />
+  <file name="UI\Support\Clip.cs" time="2018-05-15T13:56:00.1338090" filetime="636619893601338090" size="11561" hash="ULavvFYVzduSTTTndX70JQ==" />
+  <file name="UI\Support\Folder.cs" time="2018-05-15T13:56:00.1338090" filetime="636619893601338090" size="11202" hash="Io9BVfwPWovNiFGBiGdooA==" />
+  <file name="UI\Support\Format.cs" time="2018-05-15T13:56:00.1348090" filetime="636619893601348090" size="12145" hash="bp0EX1O75SgyJrXmBjLI+Q==" />
+  <file name="UI\Support\SelSum.cs" time="2018-05-15T13:56:00.1358090" filetime="636619893601358090" size="27523" hash="tSIo/p3Z8N099DEou5JBng==" />
+  <file name="UI\UI.csproj" time="2018-05-15T13:56:00.1378090" filetime="636619893601378090" size="69860" hash="vcGaegYLU5XB0gpZf6PF1Q==" />
   <dir name="UI\Unready" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" hash="Y98rFmXvE9AmO1fujJ5ahw==" />
-  <file name="UI\Unready\IDDAboutINCC.cs" time="2017-12-17T17:17:41.1188000" filetime="636491278611188000" size="2845" hash="pozKqQD5VMVBUEnULyyFxQ==" />
-  <file name="UI\Unready\IDDAboutINCC.Designer.cs" time="2017-12-17T17:17:41.1188000" filetime="636491278611188000" size="7081" hash="A68G3GuqL9qXPFbiiLwhCg==" />
-  <file name="UI\Unready\IDDAboutINCC.resx" time="2017-12-17T17:17:41.1188000" filetime="636491278611188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDAboutNCC.cs" time="2017-12-17T17:17:41.1288000" filetime="636491278611288000" size="2843" hash="gyyDYMMb1I1JwTqU7c1rGQ==" />
-  <file name="UI\Unready\IDDAboutNCC.Designer.cs" time="2017-12-17T17:17:41.1188000" filetime="636491278611188000" size="6949" hash="IehJy3l+vzqn1z7GSfWk8g==" />
-  <file name="UI\Unready\IDDAboutNCC.resx" time="2017-12-17T17:17:41.1288000" filetime="636491278611288000" size="9768" hash="RbD66OBFUQwUw5/wfSdU1A==" />
-  <file name="UI\Unready\IDDArchiveConfig.cs" time="2017-12-17T17:17:41.1288000" filetime="636491278611288000" size="3276" hash="7SzJi5xzCUmps4+Np1UBnA==" />
-  <file name="UI\Unready\IDDArchiveConfig.Designer.cs" time="2017-12-17T17:17:41.1288000" filetime="636491278611288000" size="7858" hash="0gbSOeAutkz1huXeZimDbA==" />
-  <file name="UI\Unready\IDDArchiveConfig.resx" time="2017-12-17T17:17:41.1288000" filetime="636491278611288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDChangeDataDir.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="3044" hash="xTr1Fq5SYjZ/trKYsAS2rA==" />
-  <file name="UI\Unready\IDDChangeDataDir.Designer.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="5131" hash="mm55Znw3lfqZRpVk/ehUJw==" />
-  <file name="UI\Unready\IDDChangeDataDir.resx" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDCmSetup.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="4910" hash="sDEpqU5wa6MsE/qwK8rlqw==" />
-  <file name="UI\Unready\IDDCmSetup.Designer.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="27512" hash="H9ErTi8ni/3/iGIhihL6dA==" />
-  <file name="UI\Unready\IDDCmSetup.resx" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDCollarK5.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="3442" hash="aCANm+XQlsv1eiLdjDlpDQ==" />
-  <file name="UI\Unready\IDDCollarK5.Designer.cs" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="9384" hash="RpumaE4Y/08B2OExSKYA5w==" />
-  <file name="UI\Unready\IDDCollarK5.resx" time="2017-12-17T17:17:41.1388000" filetime="636491278611388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDCollarManualAcquire.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="3069" hash="oD0bTxOfvwQZ2jWAbhpxaA==" />
-  <file name="UI\Unready\IDDCollarManualAcquire.Designer.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="4574" hash="BH7pXnt6PiQlVcvWwIhfhg==" />
-  <file name="UI\Unready\IDDCollarManualAcquire.resx" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDDeleteMeasWaitMsg.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="2645" hash="c+nYLcowPgre4ZtpDfKO3w==" />
-  <file name="UI\Unready\IDDDeleteMeasWaitMsg.Designer.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="2021" hash="FhvYIM3ItwSegNQee7Hcng==" />
-  <file name="UI\Unready\IDDDeleteMeasWaitMsg.resx" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDDiskAcqPathFilename.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="3349" hash="XbGC0nMvPot05vkbeBGZ/A==" />
-  <file name="UI\Unready\IDDDiskAcqPathFilename.Designer.cs" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="6033" hash="kvif6L2Wx2NFY2tG1cgCHQ==" />
-  <file name="UI\Unready\IDDDiskAcqPathFilename.resx" time="2017-12-17T17:17:41.1488000" filetime="636491278611488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDDualEnergyMult.cs" time="2017-12-17T17:17:41.1588000" filetime="636491278611588000" size="4860" hash="0y9OHZQYFE4cP0vera7Z4A==" />
-  <file name="UI\Unready\IDDDualEnergyMult.Designer.cs" time="2017-12-17T17:17:41.1588000" filetime="636491278611588000" size="9198" hash="dH7meVt2QTlZPalDb64/tw==" />
-  <file name="UI\Unready\IDDDualEnergyMult.resx" time="2017-12-17T17:17:41.1588000" filetime="636491278611588000" size="6597" hash="vF8vfhW3ilmlszFmCkZ1iQ==" />
-  <file name="UI\Unready\IDDHoldupSelect.cs" time="2017-12-17T17:17:41.1688000" filetime="636491278611688000" size="3030" hash="w9i9oIPB9VvZJsOzrH+8pA==" />
-  <file name="UI\Unready\IDDHoldupSelect.Designer.cs" time="2017-12-17T17:17:41.1588000" filetime="636491278611588000" size="5441" hash="vZY18i3tJoA6VQdu5vIFpQ==" />
-  <file name="UI\Unready\IDDHoldupSelect.resx" time="2017-12-17T17:17:41.1688000" filetime="636491278611688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDIsoCompAdd.cs" time="2017-12-17T17:17:41.1688000" filetime="636491278611688000" size="3057" hash="yH+2I4iH/YUd8bDZOjOY+w==" />
-  <file name="UI\Unready\IDDIsoCompAdd.Designer.cs" time="2017-12-17T17:17:41.1688000" filetime="636491278611688000" size="4863" hash="2OzAX+5mWm19bki+vGGAtA==" />
-  <file name="UI\Unready\IDDIsoCompAdd.resx" time="2017-12-17T17:17:41.1688000" filetime="636491278611688000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDIsoCompEdit.cs" time="2017-12-17T17:17:41.1788000" filetime="636491278611788000" size="3059" hash="LRMsIMXnZl46FSzaW7nVWQ==" />
-  <file name="UI\Unready\IDDIsoCompEdit.Designer.cs" time="2017-12-17T17:17:41.1788000" filetime="636491278611788000" size="4864" hash="tHmeug7PvJCLm8s/t8kpQg==" />
-  <file name="UI\Unready\IDDIsoCompEdit.resx" time="2017-12-17T17:17:41.1788000" filetime="636491278611788000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDManualSetup.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="3045" hash="vsJr2F6WwGglzjUDtK37lw==" />
-  <file name="UI\Unready\IDDManualSetup.Designer.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="4681" hash="+HiJ7t0MmgNNJCGwijtZ0w==" />
-  <file name="UI\Unready\IDDManualSetup.resx" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDNewWellConfig.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="3186" hash="VT60ZKK95DKK9qpEzRmmhg==" />
-  <file name="UI\Unready\IDDNewWellConfig.Designer.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="6098" hash="T3UChwnSjAHj/OTzWAKxbQ==" />
-  <file name="UI\Unready\IDDNewWellConfig.resx" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPassword.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="3043" hash="1114sTzCcg1Y6deigpPDZw==" />
-  <file name="UI\Unready\IDDPassword.Designer.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="4668" hash="NQ34xpQewvi1opIYTCYJwg==" />
-  <file name="UI\Unready\IDDPassword.resx" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPasswordAdd.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="3050" hash="r8LJ4ryo/RKxozd9kUlgpg==" />
-  <file name="UI\Unready\IDDPasswordAdd.Designer.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="4754" hash="qR/Ck7PX/nA9+I28VoS7sQ==" />
-  <file name="UI\Unready\IDDPasswordAdd.resx" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPasswordDelete.cs" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="3062" hash="YaZsESrRx/hzGMxK+W3+Rw==" />
-  <file name="UI\Unready\IDDPasswordDelete.Designer.cs" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="4872" hash="kAz5YpwkkHyjP4L6rSxnGA==" />
-  <file name="UI\Unready\IDDPasswordDelete.resx" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPasswordEdit.cs" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="3323" hash="mKiqW8p3smpkr6lwIszJMw==" />
-  <file name="UI\Unready\IDDPasswordEdit.Designer.cs" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="4805" hash="ht8cPchNIRUZdD/8wB7hIg==" />
-  <file name="UI\Unready\IDDPasswordEdit.resx" time="2017-12-17T17:17:41.2088000" filetime="636491278612088000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPLCSetup.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="4049" hash="CO0T7OYam1w8dZoAQ9CA3w==" />
-  <file name="UI\Unready\IDDPLCSetup.Designer.cs" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="17060" hash="NNkvLWW+7wus2uEn6iM/KQ==" />
-  <file name="UI\Unready\IDDPLCSetup.resx" time="2017-12-17T17:17:41.1888000" filetime="636491278611888000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDPLCWaitMsg.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="2631" hash="GPsIYUzdi39h8+t6ik4kkg==" />
-  <file name="UI\Unready\IDDPLCWaitMsg.Designer.cs" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="2034" hash="vLXv8Hm7JbFoTTj79be1lA==" />
-  <file name="UI\Unready\IDDPLCWaitMsg.resx" time="2017-12-17T17:17:41.1988000" filetime="636491278611988000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDReanalysisHoldup.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="4643" hash="3wn6+cN4pMOpbpibHt54Hg==" />
-  <file name="UI\Unready\IDDReanalysisHoldup.Designer.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="21005" hash="SzVn81LK1x/bb/r8CxON4w==" />
-  <file name="UI\Unready\IDDReanalysisHoldup.resx" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDReimportMsg.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="2878" hash="kBQcmKce0z8GMVlkMWKUUw==" />
-  <file name="UI\Unready\IDDReimportMsg.Designer.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="4045" hash="q8GCRakHFf4B9lgnUwABXA==" />
-  <file name="UI\Unready\IDDReimportMsg.resx" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="6330" hash="EmVl0LStQ7kEYVpIKtBG4A==" />
-  <file name="UI\Unready\IDDReviewExitMsg.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="2765" hash="JnhwNxkrTLCg4eg4rlLrLQ==" />
-  <file name="UI\Unready\IDDReviewExitMsg.Designer.cs" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="2655" hash="qx0Kracctp995rrhiEzHpQ==" />
-  <file name="UI\Unready\IDDReviewExitMsg.resx" time="2017-12-17T17:17:41.2188000" filetime="636491278612188000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDRotationTable.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="2637" hash="fcipEnjXmKPdV7t3j71gWw==" />
-  <file name="UI\Unready\IDDRotationTable.Designer.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="2049" hash="Ob0QEFhSm/Ioa/1+SsCOlA==" />
-  <file name="UI\Unready\IDDRotationTable.resx" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDScaling.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="3830" hash="q/onvreGA5QIr3ijl7NMmQ==" />
-  <file name="UI\Unready\IDDScaling.Designer.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="14275" hash="lzIIVowBIR7MMH++p9iyiQ==" />
-  <file name="UI\Unready\IDDScaling.resx" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDSelectDriverType.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="3756" hash="nEG4a3Sv3SFvMbWmDs/m2w==" />
-  <file name="UI\Unready\IDDSelectDriverType.Designer.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="10912" hash="LX6yfkIfJg2tv028CFAcxg==" />
-  <file name="UI\Unready\IDDSelectDriverType.resx" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDSRREVAssay.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="4689" hash="o3zzzFy95BSRRrGOtkf0+A==" />
-  <file name="UI\Unready\IDDSRREVAssay.Designer.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="21413" hash="gLebPS9OWF6sqx7U3m7lAw==" />
-  <file name="UI\Unready\IDDSRREVAssay.resx" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDSRREVBackground.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="3606" hash="6nVAuI/SiCDscSwI+rPUIg==" />
-  <file name="UI\Unready\IDDSRREVBackground.Designer.cs" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="9817" hash="65xJxWkKRqS8J5f3VzkgFw==" />
-  <file name="UI\Unready\IDDSRREVBackground.resx" time="2017-12-17T17:17:41.2288000" filetime="636491278612288000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDSRREVBias.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="3808" hash="9ERydMKfs0V1V6kdXoBsRQ==" />
-  <file name="UI\Unready\IDDSRREVBias.Designer.cs" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="12032" hash="W5ggJ22kB13PwWL6/Cs7GA==" />
-  <file name="UI\Unready\IDDSRREVBias.resx" time="2017-12-17T17:17:41.2388000" filetime="636491278612388000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDSweepFeature.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="3272" hash="nmVzIN9diTAGtYNgDsApMA==" />
-  <file name="UI\Unready\IDDSweepFeature.Designer.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="6325" hash="90CS6Djd/qMEboHfAAyhcw==" />
-  <file name="UI\Unready\IDDSweepFeature.resx" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="2917" hash="tGuGhgSftgF1G/0rr4z23g==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg.Designer.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="7322" hash="eSkcIj9HvVgTFyE75XL8LA==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg.resx" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg1.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="2839" hash="iAVyCf1qPAbXHsJLoET3gg==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg1.Designer.cs" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="3282" hash="NIsX66jUL4pPxEcRnxzvug==" />
-  <file name="UI\Unready\IDDTakeDataWaitMsg1.resx" time="2017-12-17T17:17:41.2488000" filetime="636491278612488000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\Unready\IDDWeightedMult.cs" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="3158" hash="ksOg0+S+FdzNe1bjb22wzg==" />
-  <file name="UI\Unready\IDDWeightedMult.Designer.cs" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="6944" hash="bQ5Jws2rZWKnGs3Me1ApSA==" />
-  <file name="UI\Unready\IDDWeightedMult.resx" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="5817" hash="TrWROg5aqEIlD3QZU4+iMA==" />
-  <file name="UI\WinPos.cs" time="2017-12-17T17:17:41.2588000" filetime="636491278612588000" size="2054" hash="WER2Slia8jsyfaJwc87Bhw==" />
+  <file name="UI\Unready\IDDAboutINCC.cs" time="2018-05-15T13:56:00.1388090" filetime="636619893601388090" size="2790" hash="KCaaM3RA6CyPVy/JBUDQ/Q==" />
+  <file name="UI\Unready\IDDAboutINCC.Designer.cs" time="2018-05-15T13:56:00.1378090" filetime="636619893601378090" size="6920" hash="7hJ4OSnqNb2PJ0Lqadm7vg==" />
+  <file name="UI\Unready\IDDAboutINCC.resx" time="2018-05-15T13:56:00.1398090" filetime="636619893601398090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDAboutNCC.cs" time="2018-05-15T13:56:00.1398090" filetime="636619893601398090" size="2788" hash="CoSP7eJ/n4ERNIUAwN5qzA==" />
+  <file name="UI\Unready\IDDAboutNCC.Designer.cs" time="2018-05-15T13:56:00.1398090" filetime="636619893601398090" size="6796" hash="DFq+KojRdD1Wae8M5e8e+g==" />
+  <file name="UI\Unready\IDDAboutNCC.resx" time="2018-05-15T13:56:00.1408090" filetime="636619893601408090" size="9603" hash="inofLHsMtoj0x1/pwyW8Jg==" />
+  <file name="UI\Unready\IDDArchiveConfig.cs" time="2018-05-15T13:56:00.1418090" filetime="636619893601418090" size="3205" hash="Uew84C8DAtpY5qst/BPeMQ==" />
+  <file name="UI\Unready\IDDArchiveConfig.Designer.cs" time="2018-05-15T13:56:00.1408090" filetime="636619893601408090" size="7703" hash="fYQDPEwGNx4F2FKTdoAGlg==" />
+  <file name="UI\Unready\IDDArchiveConfig.resx" time="2018-05-15T13:56:00.1418090" filetime="636619893601418090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDChangeDataDir.cs" time="2018-05-15T13:56:00.1428090" filetime="636619893601428090" size="2983" hash="4tA071Iks/hpGMtOX5KkiA==" />
+  <file name="UI\Unready\IDDChangeDataDir.Designer.cs" time="2018-05-15T13:56:00.1428090" filetime="636619893601428090" size="5010" hash="0JO8UoQL8b3+Hg4HAmvf4w==" />
+  <file name="UI\Unready\IDDChangeDataDir.resx" time="2018-05-15T13:56:00.1428090" filetime="636619893601428090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDCmSetup.cs" time="2018-05-15T13:56:00.1448090" filetime="636619893601448090" size="4764" hash="AV8IXU6a7fBGn2WCusoWZg==" />
+  <file name="UI\Unready\IDDCmSetup.Designer.cs" time="2018-05-15T13:56:00.1438090" filetime="636619893601438090" size="27029" hash="5NBY+KzHJmz2SzfjN5qkkA==" />
+  <file name="UI\Unready\IDDCmSetup.resx" time="2018-05-15T13:56:00.1448090" filetime="636619893601448090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDCollarK5.cs" time="2018-05-15T13:56:00.1468090" filetime="636619893601468090" size="3361" hash="ms67dHKbNaSHgXf4GYfEOg==" />
+  <file name="UI\Unready\IDDCollarK5.Designer.cs" time="2018-05-15T13:56:00.1458090" filetime="636619893601458090" size="9178" hash="D7o4QSSawvIryq35jihJwA==" />
+  <file name="UI\Unready\IDDCollarK5.resx" time="2018-05-15T13:56:00.1468090" filetime="636619893601468090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDCollarManualAcquire.cs" time="2018-05-15T13:56:00.1478090" filetime="636619893601478090" size="3008" hash="MeqwSTONz0EaGhNJjptsow==" />
+  <file name="UI\Unready\IDDCollarManualAcquire.Designer.cs" time="2018-05-15T13:56:00.1478090" filetime="636619893601478090" size="4464" hash="8jOnZFUt7lyoxuv2qh1l4Q==" />
+  <file name="UI\Unready\IDDCollarManualAcquire.resx" time="2018-05-15T13:56:00.1478090" filetime="636619893601478090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDDeleteMeasWaitMsg.cs" time="2018-05-15T13:56:00.1488090" filetime="636619893601488090" size="2605" hash="YimXKF+Qh9oQpWJ8dX95AA==" />
+  <file name="UI\Unready\IDDDeleteMeasWaitMsg.Designer.cs" time="2018-05-15T13:56:00.1488090" filetime="636619893601488090" size="1962" hash="kH4EapV8AQ6JsPNEv6iGWw==" />
+  <file name="UI\Unready\IDDDeleteMeasWaitMsg.resx" time="2018-05-15T13:56:00.1498090" filetime="636619893601498090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDDiskAcqPathFilename.cs" time="2018-05-15T13:56:00.1508090" filetime="636619893601508090" size="3273" hash="mYhB8mSt5XYZ5kKkAf/I/A==" />
+  <file name="UI\Unready\IDDDiskAcqPathFilename.Designer.cs" time="2018-05-15T13:56:00.1498090" filetime="636619893601498090" size="5897" hash="mxdlsW1sHHif3lM2Sxcrlg==" />
+  <file name="UI\Unready\IDDDiskAcqPathFilename.resx" time="2018-05-15T13:56:00.1508090" filetime="636619893601508090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDDualEnergyMult.cs" time="2018-05-15T13:56:00.1518090" filetime="636619893601518090" size="4749" hash="TXm4Z2NqUPWTBxt1dBxVKw==" />
+  <file name="UI\Unready\IDDDualEnergyMult.Designer.cs" time="2018-05-15T13:56:00.1518090" filetime="636619893601518090" size="8996" hash="EsBOUJTyohug9ukljbdFBQ==" />
+  <file name="UI\Unready\IDDDualEnergyMult.resx" time="2018-05-15T13:56:00.1528090" filetime="636619893601528090" size="6466" hash="vgesuEwOHeENkZh8Z2IxQw==" />
+  <file name="UI\Unready\IDDHoldupSelect.cs" time="2018-05-15T13:56:00.1538090" filetime="636619893601538090" size="2969" hash="Gq7Ew6CH/TguIx4H8Od0Rw==" />
+  <file name="UI\Unready\IDDHoldupSelect.Designer.cs" time="2018-05-15T13:56:00.1528090" filetime="636619893601528090" size="5319" hash="GRrFZqA4JN1Lx2NSB7xWhw==" />
+  <file name="UI\Unready\IDDHoldupSelect.resx" time="2018-05-15T13:56:00.1538090" filetime="636619893601538090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDIsoCompAdd.cs" time="2018-05-15T13:56:00.1558090" filetime="636619893601558090" size="2996" hash="/ip5kMS5138LhKnHpT8CoA==" />
+  <file name="UI\Unready\IDDIsoCompAdd.Designer.cs" time="2018-05-15T13:56:00.1548090" filetime="636619893601548090" size="4754" hash="3/q3TNXysDLvjaCHCqScjw==" />
+  <file name="UI\Unready\IDDIsoCompAdd.resx" time="2018-05-15T13:56:00.1558090" filetime="636619893601558090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDIsoCompEdit.cs" time="2018-05-15T13:56:00.1568090" filetime="636619893601568090" size="2998" hash="u33FI2gFKN5M7v0XB3LJjQ==" />
+  <file name="UI\Unready\IDDIsoCompEdit.Designer.cs" time="2018-05-15T13:56:00.1558090" filetime="636619893601558090" size="4755" hash="neLg5aEkkmftx0iNps36Ng==" />
+  <file name="UI\Unready\IDDIsoCompEdit.resx" time="2018-05-15T13:56:00.1568090" filetime="636619893601568090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDManualSetup.cs" time="2018-05-15T13:56:00.1578090" filetime="636619893601578090" size="2984" hash="83uLXDJsDxbchmSlnpJxHQ==" />
+  <file name="UI\Unready\IDDManualSetup.Designer.cs" time="2018-05-15T13:56:00.1578090" filetime="636619893601578090" size="4572" hash="RWcoxffn41+oVGybzOa4eg==" />
+  <file name="UI\Unready\IDDManualSetup.resx" time="2018-05-15T13:56:00.1578090" filetime="636619893601578090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDNewWellConfig.cs" time="2018-05-15T13:56:00.1588090" filetime="636619893601588090" size="3120" hash="TpETJl3SpwbLOvpyNSKM2Q==" />
+  <file name="UI\Unready\IDDNewWellConfig.Designer.cs" time="2018-05-15T13:56:00.1588090" filetime="636619893601588090" size="5969" hash="SgLn34iHQm/UmVCfd9XStQ==" />
+  <file name="UI\Unready\IDDNewWellConfig.resx" time="2018-05-15T13:56:00.1598090" filetime="636619893601598090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPassword.cs" time="2018-05-15T13:56:00.1638090" filetime="636619893601638090" size="2981" hash="xuxEKeZybrv6ThmTmV7hwA==" />
+  <file name="UI\Unready\IDDPassword.Designer.cs" time="2018-05-15T13:56:00.1628090" filetime="636619893601628090" size="4557" hash="P5mmO60eJ+qkzO+Z4ieleQ==" />
+  <file name="UI\Unready\IDDPassword.resx" time="2018-05-15T13:56:00.1638090" filetime="636619893601638090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPasswordAdd.cs" time="2018-05-15T13:56:00.1648090" filetime="636619893601648090" size="2989" hash="wICsYQiS5Gu8Wu+gt8Byhg==" />
+  <file name="UI\Unready\IDDPasswordAdd.Designer.cs" time="2018-05-15T13:56:00.1648090" filetime="636619893601648090" size="4643" hash="1HtxHkXWuPiqbjuQBSJW4g==" />
+  <file name="UI\Unready\IDDPasswordAdd.resx" time="2018-05-15T13:56:00.1648090" filetime="636619893601648090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPasswordDelete.cs" time="2018-05-15T13:56:00.1658090" filetime="636619893601658090" size="3000" hash="blkHBvMZwLpXzexy1z0y9g==" />
+  <file name="UI\Unready\IDDPasswordDelete.Designer.cs" time="2018-05-15T13:56:00.1658090" filetime="636619893601658090" size="4761" hash="rPzr2KhgeBbuMhDyaJXvUg==" />
+  <file name="UI\Unready\IDDPasswordDelete.resx" time="2018-05-15T13:56:00.1668090" filetime="636619893601668090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPasswordEdit.cs" time="2018-05-15T13:56:00.1668090" filetime="636619893601668090" size="3255" hash="q4U3LhrBprmotJCL+uMJ4A==" />
+  <file name="UI\Unready\IDDPasswordEdit.Designer.cs" time="2018-05-15T13:56:00.1668090" filetime="636619893601668090" size="4694" hash="91ldCiff/1wD14Zdp6/gLQ==" />
+  <file name="UI\Unready\IDDPasswordEdit.resx" time="2018-05-15T13:56:00.1678090" filetime="636619893601678090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPLCSetup.cs" time="2018-05-15T13:56:00.1608090" filetime="636619893601608090" size="3942" hash="G3ne45F80Vav7EHswu4AFA==" />
+  <file name="UI\Unready\IDDPLCSetup.Designer.cs" time="2018-05-15T13:56:00.1598090" filetime="636619893601598090" size="16753" hash="SPvCF5bSgueSJFWZOUB32g==" />
+  <file name="UI\Unready\IDDPLCSetup.resx" time="2018-05-15T13:56:00.1608090" filetime="636619893601608090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDPLCWaitMsg.cs" time="2018-05-15T13:56:00.1618090" filetime="636619893601618090" size="2591" hash="T9/iLyTm3gJo0zDJpfKFqQ==" />
+  <file name="UI\Unready\IDDPLCWaitMsg.Designer.cs" time="2018-05-15T13:56:00.1608090" filetime="636619893601608090" size="1975" hash="fDzKaaHbfNSqcUVzesLL4g==" />
+  <file name="UI\Unready\IDDPLCWaitMsg.resx" time="2018-05-15T13:56:00.1618090" filetime="636619893601618090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDReanalysisHoldup.cs" time="2018-05-15T13:56:00.1688090" filetime="636619893601688090" size="4508" hash="dPKVesh82Q6y0fdqsq9nLw==" />
+  <file name="UI\Unready\IDDReanalysisHoldup.Designer.cs" time="2018-05-15T13:56:00.1688090" filetime="636619893601688090" size="20631" hash="VVQFKp7sDWBWk1IM2EavBg==" />
+  <file name="UI\Unready\IDDReanalysisHoldup.resx" time="2018-05-15T13:56:00.1688090" filetime="636619893601688090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDReimportMsg.cs" time="2018-05-15T13:56:00.1698090" filetime="636619893601698090" size="2827" hash="qV6EoY+X8gSwrEgutZ1DzQ==" />
+  <file name="UI\Unready\IDDReimportMsg.Designer.cs" time="2018-05-15T13:56:00.1698090" filetime="636619893601698090" size="3956" hash="6h0Vr0/8Fd/JA8WIzFUtLQ==" />
+  <file name="UI\Unready\IDDReimportMsg.resx" time="2018-05-15T13:56:00.1698090" filetime="636619893601698090" size="6208" hash="QFx2dsaOEpz+Pq/VQ+2QBQ==" />
+  <file name="UI\Unready\IDDReviewExitMsg.cs" time="2018-05-15T13:56:00.1708090" filetime="636619893601708090" size="2719" hash="dY949mC9qIkdLQCmkSWgGQ==" />
+  <file name="UI\Unready\IDDReviewExitMsg.Designer.cs" time="2018-05-15T13:56:00.1708090" filetime="636619893601708090" size="2583" hash="0Vt0q5JNjSmZWkiXrnHT3Q==" />
+  <file name="UI\Unready\IDDReviewExitMsg.resx" time="2018-05-15T13:56:00.1718090" filetime="636619893601718090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDRotationTable.cs" time="2018-05-15T13:56:00.1728090" filetime="636619893601728090" size="2597" hash="aFN2Sm8gJrQ6B/iye+6JCw==" />
+  <file name="UI\Unready\IDDRotationTable.Designer.cs" time="2018-05-15T13:56:00.1718090" filetime="636619893601718090" size="1990" hash="GBrpy2OXlZsUXcSY00+ZBw==" />
+  <file name="UI\Unready\IDDRotationTable.resx" time="2018-05-15T13:56:00.1728090" filetime="636619893601728090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDScaling.cs" time="2018-05-15T13:56:00.1778090" filetime="636619893601778090" size="3734" hash="lAf4hWH27e7ZYKwy0zrVBA==" />
+  <file name="UI\Unready\IDDScaling.Designer.cs" time="2018-05-15T13:56:00.1778090" filetime="636619893601778090" size="14007" hash="NuKuxoVxHVrQ4FYMhw0zXw==" />
+  <file name="UI\Unready\IDDScaling.resx" time="2018-05-15T13:56:00.1778090" filetime="636619893601778090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDSelectDriverType.cs" time="2018-05-15T13:56:00.1788090" filetime="636619893601788090" size="3665" hash="Lgx9ctnu9VhkS7V65MX5OQ==" />
+  <file name="UI\Unready\IDDSelectDriverType.Designer.cs" time="2018-05-15T13:56:00.1788090" filetime="636619893601788090" size="10708" hash="uvoa44RCNLw86dWoPP9YnQ==" />
+  <file name="UI\Unready\IDDSelectDriverType.resx" time="2018-05-15T13:56:00.1798090" filetime="636619893601798090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDSRREVAssay.cs" time="2018-05-15T13:56:00.1738090" filetime="636619893601738090" size="4552" hash="T+hEmMhZvDzxDcdYUwWvMQ==" />
+  <file name="UI\Unready\IDDSRREVAssay.Designer.cs" time="2018-05-15T13:56:00.1738090" filetime="636619893601738090" size="21017" hash="n6TC4WRLf1Dk//g/vFnVJg==" />
+  <file name="UI\Unready\IDDSRREVAssay.resx" time="2018-05-15T13:56:00.1738090" filetime="636619893601738090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDSRREVBackground.cs" time="2018-05-15T13:56:00.1748090" filetime="636619893601748090" size="3519" hash="naqYMB0yKyMCU9OiWGmCZQ==" />
+  <file name="UI\Unready\IDDSRREVBackground.Designer.cs" time="2018-05-15T13:56:00.1748090" filetime="636619893601748090" size="9627" hash="tB3OieCI4D5N98EoNZKjDA==" />
+  <file name="UI\Unready\IDDSRREVBackground.resx" time="2018-05-15T13:56:00.1758090" filetime="636619893601758090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDSRREVBias.cs" time="2018-05-15T13:56:00.1768090" filetime="636619893601768090" size="3712" hash="o7KU50WXps7js+UT3XrGUQ==" />
+  <file name="UI\Unready\IDDSRREVBias.Designer.cs" time="2018-05-15T13:56:00.1758090" filetime="636619893601758090" size="11804" hash="VVm0JmzT+sc7cGtKDhgFzA==" />
+  <file name="UI\Unready\IDDSRREVBias.resx" time="2018-05-15T13:56:00.1768090" filetime="636619893601768090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDSweepFeature.cs" time="2018-05-15T13:56:00.1808090" filetime="636619893601808090" size="3201" hash="i25eXTEpYt6RKCk6Q+E4zw==" />
+  <file name="UI\Unready\IDDSweepFeature.Designer.cs" time="2018-05-15T13:56:00.1798090" filetime="636619893601798090" size="6188" hash="atIZBeOaOAs5vzeIfbA4VA==" />
+  <file name="UI\Unready\IDDSweepFeature.resx" time="2018-05-15T13:56:00.1808090" filetime="636619893601808090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg.cs" time="2018-05-15T13:56:00.1818090" filetime="636619893601818090" size="2864" hash="ynH04midDcKCJLRXQSg4mQ==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg.Designer.cs" time="2018-05-15T13:56:00.1808090" filetime="636619893601808090" size="7167" hash="X1jtA13RjsbwyTYZ324JlQ==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg.resx" time="2018-05-15T13:56:00.1818090" filetime="636619893601818090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg1.cs" time="2018-05-15T13:56:00.1818090" filetime="636619893601818090" size="2788" hash="4s2D2TyKX0dPYnpNP1kCwQ==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg1.Designer.cs" time="2018-05-15T13:56:00.1818090" filetime="636619893601818090" size="3199" hash="Fby7oDQ+QIV/uncFY5coUw==" />
+  <file name="UI\Unready\IDDTakeDataWaitMsg1.resx" time="2018-05-15T13:56:00.1828090" filetime="636619893601828090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\Unready\IDDWeightedMult.cs" time="2018-05-15T13:56:00.1838090" filetime="636619893601838090" size="3092" hash="/g4nPLOQ5AGwYHhJffVFLg==" />
+  <file name="UI\Unready\IDDWeightedMult.Designer.cs" time="2018-05-15T13:56:00.1838090" filetime="636619893601838090" size="6788" hash="vHtW0tW/567uke8FTtT+Ng==" />
+  <file name="UI\Unready\IDDWeightedMult.resx" time="2018-05-15T13:56:00.1848090" filetime="636619893601848090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
+  <file name="UI\WinPos.cs" time="2018-05-15T13:56:00.1848090" filetime="636619893601848090" size="1988" hash="Rfuk5aSx6o9EhwIhKdZ4Mg==" />
   <dir name="_External" time="2017-12-17T17:34:40.7438000" filetime="636491288807438000" hash="UPnjxyP3M92fT833FrqHcQ==" />
   <dir name="_External\DB" time="2017-12-17T17:38:19.5918000" filetime="636491290995918000" hash="poxGdSUNIzsLnm0HpQ56jw==" />
   <file name="_External\DB\SQLite.Interop.dll" time="2017-12-07T06:51:38.9384761" filetime="636482262989384761" size="1141248" hash="Xpnp17lim8IQdHGMH5dCFQ==" />

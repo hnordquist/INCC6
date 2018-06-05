@@ -1180,8 +1180,9 @@ namespace AnalysisDefs
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
                         INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params, 
-                        // dev note: better not to ref DB here, because this is a one-off state retrieval and no other DB access occurs during mass calc processing, but that is how it works this morning
-
+                        // INCC5 has this simlar to the QC satte, there is only one active, so if it;s null, create a new empty one with default vlaues.
+                        if (cm_pu_ratio == null)
+                            cm_pu_ratio = new INCCAnalysisParams.cm_pu_ratio_rec();
                         //calc  curium mass
                         INCCAnalysis.calc_curium_mass(res, cm_pu_ratio, meas);
                         res.u.dcl_mass = cm_pu_ratio.cm_dcl_u_mass;
@@ -1256,7 +1257,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                meas.Logger.TraceException(e);
+                meas.Logger.TraceException(e, stack:true);
             }
 
         }

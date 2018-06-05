@@ -550,8 +550,7 @@ namespace NCCFile
 			}
 			return res;
 		}
-
-
+        
 
 		// The results of processing a dmr file
 
@@ -624,7 +623,7 @@ namespace NCCFile
 				if (name.IndexOf('.') >= 0)
 					csv.ThisSuffix = name.Substring(name.IndexOf('.'));
 				csv.ProcessFile();  // split lines with scanner
-				int el = System.Enum.GetValues(typeof(ItemCol)).Length;
+				int el = Enum.GetValues(typeof(ItemCol)).Length;
 				foreach (string[] entry in csv.Lines)
 				{
 					List<string> ls = new List<string>(entry);
@@ -657,7 +656,7 @@ namespace NCCFile
 					Results.ItemIds.Add(iid);
 					// mass was scooped up in one of the three scanners						
 				}
-			} catch (Microsoft.VisualBasic.FileIO.MalformedLineException)  // not a CSV file
+			} catch (MalformedLineException)  // not a CSV file
 			{
 				NC.App.ControlLogger.TraceEvent(LogLevels.Verbose, 34100, "Skipped " + System.IO.Path.GetFileName(file));
 			}
@@ -667,17 +666,11 @@ namespace NCCFile
 			Results.DoSrcCodes();
 		}
 
-/*		void ApplyContent()
-*		{
-Composite isotopics
-SourceCodes
- }
-*/
-		
+	
 		void PopulateSingletons(List<string> sa)
 		{
 			string s = string.Empty;
-			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			foreach (ItemCol op in Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -737,7 +730,7 @@ SourceCodes
 			Isotopics i = new Isotopics();
 			string s = string.Empty;
 			double v = 0, err = 0;
-			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			foreach (ItemCol op in Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -818,7 +811,7 @@ SourceCodes
 		{
 			ItemId i = new ItemId();
 			string s = string.Empty;
-			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			foreach (ItemCol op in Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -876,7 +869,7 @@ SourceCodes
 			CompositeIsotopics i = new CompositeIsotopics();
 			string s = string.Empty;
 			double v = 0, err = 0;
-			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			foreach (ItemCol op in Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -961,7 +954,7 @@ SourceCodes
 
 			string s = string.Empty;
 			double v = 0;
-			foreach (ItemCol op in System.Enum.GetValues(typeof(ItemCol)))
+			foreach (ItemCol op in Enum.GetValues(typeof(ItemCol)))
 			{
 				try
 				{
@@ -1081,8 +1074,7 @@ SourceCodes
         {
             mPathToNOPFile = new Dictionary<string, CSVFile>();
             mPathToCOPFile = new Dictionary<string, CSVFile>();
-            COPRatioRecs = new List<INCCAnalysisParams.cm_pu_ratio_rec>();
-			Results = new INCC5FileImportUtils();
+  			Results = new INCC5FileImportUtils();
         }
 
         /// <summary>
@@ -1097,7 +1089,7 @@ SourceCodes
                 Isotopics i = new Isotopics();
                 string s = string.Empty;
                 double v = 0, err = 0;
-                foreach (NOPCol op in System.Enum.GetValues(typeof(NOPCol)))
+                foreach (NOPCol op in Enum.GetValues(typeof(NOPCol)))
                 {
                     try
                     {
@@ -1112,7 +1104,7 @@ SourceCodes
 								INCC5FileImportUtils.GenFromYYYYMMDD(s, ref i.pu_date );
                                 break;
                             case NOPCol.IsoSourceCode:
-                                System.Enum.TryParse<Isotopics.SourceCode>(s, out i.source_code);
+                                Enum.TryParse(s, out i.source_code);
                                 break;
                             case NOPCol.IsoId:
                                 i.id = string.Copy(s);
@@ -1179,7 +1171,7 @@ SourceCodes
             foreach (string[] sa in csv.Lines)
             {
                 ItemId iid = new ItemId();
-                foreach (NOPCol op in System.Enum.GetValues(typeof(NOPCol)))
+                foreach (NOPCol op in Enum.GetValues(typeof(NOPCol)))
                 {
                     try
                     {
@@ -1242,7 +1234,7 @@ SourceCodes
         /// </summary>
         enum COPCol
         {
-            ItemId, LabelId, Id, InputBatchId, DecPuMassGr, DecUMassGr, DecU235MassGr,
+            ItemId, LabelForId, MonthlyBatchId, InputBatchId, DecPuMassGr, DecUMassGr, DecU235MassGr,
             CmPuRatio, CmPuErr, CmPuDate, CmURatio, CmUErr, CmUDate
         }
 
@@ -1252,13 +1244,12 @@ SourceCodes
         /// <param name="csv">The field-scanned csv file instance with an array of tokenized lines</param>
         void GenerateCmPuRatioRecs(CSVFile csv)
         {
-            List<INCCAnalysisParams.cm_pu_ratio_rec> l = COPRatioRecs;  // local alias
-
             INCCAnalysisParams.cm_pu_ratio_rec cpr = new INCCAnalysisParams.cm_pu_ratio_rec();
             string s = string.Empty;
             foreach (string[] sa in csv.Lines)
             {
-                foreach (COPCol op in System.Enum.GetValues(typeof(COPCol)))
+                string itemid = string.Empty;
+                foreach (COPCol op in Enum.GetValues(typeof(COPCol)))
                 {
                     try
                     {
@@ -1267,7 +1258,7 @@ SourceCodes
                         switch (op)
                         {
                             case COPCol.ItemId:
-                                //cpr.cm_id = string.Copy(s);
+                                itemid = string.Copy(s);
                                 break;
                             case COPCol.DecPuMassGr:
                                 //Double.TryParse(s, out cpr.cm_dcl_u235_mass);
@@ -1275,10 +1266,10 @@ SourceCodes
                             case COPCol.InputBatchId:
                                 cpr.cm_input_batch_id = string.Copy(s);
                                 break;
-                            case COPCol.LabelId:
+                            case COPCol.LabelForId:
                                 cpr.cm_id_label = string.Copy(s);
                                 break;
-                            case COPCol.Id:
+                            case COPCol.MonthlyBatchId:
                                 cpr.cm_id = string.Copy(s);
                                 break;
                             case COPCol.DecU235MassGr:
@@ -1300,7 +1291,7 @@ SourceCodes
                         NC.App.ControlLogger.TraceEvent(LogLevels.Warning, 34100, s + " fails as CmPu ratio element " + op.ToString() + " " + ex.Message);
                     }
                 }
-                l.Add(cpr);
+                Results.COPRatioRecs.Add(Tuple.Create(itemid, cpr));
             }
         }
 
@@ -1340,7 +1331,6 @@ SourceCodes
 
         // The results of processing a folder with nop and cop files
 		public INCC5FileImportUtils Results;
-        public List<INCCAnalysisParams.cm_pu_ratio_rec> COPRatioRecs;
 
         // private vars used for processing
         private Dictionary<string, CSVFile> mPathToNOPFile;
@@ -1399,12 +1389,13 @@ SourceCodes
 		public List<CompositeIsotopics> CompIsoIsotopics;
 		public List<ItemId> ItemIds;
 		public List<string> Facilities, MBAs, ItemNames, Strata, InventoryChangeCodes, IOCodes, MaterialTypes, SourceCodes, ItemTypes;
+        public List<Tuple<string, INCCAnalysisParams.cm_pu_ratio_rec>> COPRatioRecs;
         //  vars used for processing
 
-		void Init()
+        void Init()
 		{
-			IsoIsotopics = new List<AnalysisDefs.Isotopics>();
-            CompIsoIsotopics = new List<AnalysisDefs.CompositeIsotopics>();
+			IsoIsotopics = new List<Isotopics>();
+            CompIsoIsotopics = new List<CompositeIsotopics>();
 			ItemIds = new List<ItemId>();
 			Facilities = new List<string>();
 			MBAs = new List<string>();
@@ -1415,7 +1406,9 @@ SourceCodes
 			SourceCodes = new List<string>();
 			ItemTypes = new List<string>();
 			ItemNames = new List<string>();
-		}
+            COPRatioRecs = new List<Tuple<string, INCCAnalysisParams.cm_pu_ratio_rec>>();
+
+        }
 
 		static Regex yyyymmdd = new Regex("^\\d{4}\\d{2}\\d{2}$");
  
@@ -1450,6 +1443,7 @@ SourceCodes
             MtlTypes();
             DoItemIds();
             IsotopicGen();
+            CmPuRatioGen();
         }
         protected void DoMBAs()
         {
@@ -1570,7 +1564,7 @@ SourceCodes
             // for each isotopics found, either overwrite existing isotopics, or add them to the list
             // write all the changes to the DB
 
-            List<AnalysisDefs.Isotopics> l = NC.App.DB.Isotopics.GetList();
+            List<Isotopics> l = NC.App.DB.Isotopics.GetList();
 
             foreach (Isotopics isotopics in IsoIsotopics)
             {
@@ -1619,7 +1613,23 @@ SourceCodes
             }
         }
 
-	}
+        public void CmPuRatioGen()
+        {
+            // for each cm_pu_ratio found, stuff it in the DB
+
+            List<INCCAnalysisParams.cm_pu_ratio_rec> l = NC.App.DB.Cm_Pu_RatioParameters.GetList();
+
+            foreach (Tuple<string, INCCAnalysisParams.cm_pu_ratio_rec> iicpr in COPRatioRecs)
+            {
+                INCCAnalysisParams.cm_pu_ratio_rec ex = l.Find(c => c.CompareTo(iicpr.Item2) == 0);
+                if (ex == null)
+                {
+                    NC.App.DB.Cm_Pu_RatioParameters.Set(iicpr.Item2);
+                }
+            }
+        }
+
+    }
 
     // NEXT: these features shoud be folded into the IsoFile class
     public class INCC5FileExportUtils
@@ -1822,7 +1832,7 @@ SourceCodes
         void GenerateStrata(CSVFile csv)
         {
             string s = string.Empty;
-            Array ae = System.Enum.GetValues(typeof(SACol));
+            Array ae = Enum.GetValues(typeof(SACol));
             foreach (string[] sa in csv.Lines)
             {
                 if (sa.Length != ae.Length)
