@@ -868,6 +868,13 @@ namespace AnalysisDefs
             r.Add(3, value.ToString("HH:mm:ss"));
             Add(r);
         }
+        public void AddDateOnlyRow(string label, DateTime value)
+        {
+            Row r = new Row();
+            AddPaddedLabel(r, label);
+            r.Add(1, value.ToString(" yy.MM.dd"));
+            Add(r);
+        }
         public void AddDualDateOnlyRow(string label, DateTime value, DateTime value2)
         {
             Row r = new Row();

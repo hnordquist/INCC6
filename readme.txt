@@ -1,7 +1,7 @@
 **********************************************************************************
 
 INCC6 Beta Release 18
-6.18 Mar 23, 2018 (IAEATest)
+6.18 Jun 06, 2018 (IAEATest)
 
 This work was supported by the United States Member State Support Program to IAEA Safeguards;
 the U.S. Department of Energy, Office of Nonproliferation and National Security, International
@@ -138,6 +138,9 @@ Issues for production
 
 Closed issues
 
+6.18 Jun 6, 2018  ************
+***  Curium Ratio declaration handling improvements
+***  DataZ field name change
 
 6.18 Mar 23, 2018  ************
 ***  CSV summary missing item id in query

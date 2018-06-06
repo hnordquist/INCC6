@@ -1876,15 +1876,22 @@ namespace AnalysisDefs
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.AddHeader("Curium ratio results");  // section header
-                if (methodParams2 != null) sec.AddRange(methodParams2.ToLines(m));
+                sec.AddTwo(methodParams2.cm_id_label + ':', methodParams2?.cm_id);
+                sec.AddTwo("Input batch id:", methodParams2?.cm_input_batch_id);
+                sec.AddDateOnlyRow("Cm/Pu ratio date:", methodParams2.cm_pu_ratio_date);
+                sec.AddNumericRow("Pu effective half-life:", methodParams2.pu_half_life);
+                sec.AddNumericRow("Cm/Pu ratio:", methodParams2.cm_pu_ratio);
                 sec.AddNumericRow("Decay corrected Cm/Pu ratio:", cm_pu_ratio_decay_corr);
+                sec.AddDateOnlyRow("Cm/U ratio date:", methodParams2.cm_u_ratio_date);
+                sec.AddNumericRow("Cm/U ratio:", methodParams2.cm_u_ratio);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
+
                 if (methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
                     sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
-                sec.AddNumericRow("Cm mass (g)", cm_mass);
-                sec.AddNumericRow("Pu mass (g)", pu.mass);
-                sec.AddNumericRow("U mass (g)", u.mass);
-                sec.AddNumericRow("U235 mass (g)", u235.mass);
+                sec.AddNumericRow("Cm mass (g):", cm_mass);
+                sec.AddNumericRow("Pu mass (g):", pu.mass);
+                sec.AddNumericRow("U mass (g):", u.mass);
+                sec.AddNumericRow("U235 mass (g):", u235.mass);
                 if (pu.dcl_pu_mass > 0.0)
                 {
                     sec.AddNumericRow("Declared Pu mass (g):", pu.dcl_mass);
@@ -1936,12 +1943,12 @@ namespace AnalysisDefs
                 ps.AddRange(TuplePair(u.mass, "u_mass"));               
                 ps.AddRange(TuplePair(u.dcl_minus_asy_mass, "dcl_minus_asy_u_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u_mass_pct", u.dcl_minus_asy_mass_pct));
-                //as in INCC5, this results rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
+                //as in INCC5, this result value rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
 
                 ps.AddRange(TuplePair(u235.mass, "u235_mass"));               
                 ps.AddRange(TuplePair(u235.dcl_minus_asy_mass, "dcl_minus_asy_u235_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u235_mass_pct", u235.dcl_minus_asy_mass_pct));
-                //as in INCC5, this results rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
+                //as in INCC5, this result value rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
 
                 ps.Add(new DBParamEntry("pu_pass", pu.pass));
                 ps.Add(new DBParamEntry("u_pass", u.pass));

@@ -745,10 +745,11 @@ namespace NCCFile
             Indexes dataIndices;
 
             // Cycle data columns as encountered in the wild:
-            //Nr,DateTime,MeasurementInterval, Totals,Totals_SR, Reals&Acc,Acc, Reals, Total1,...,Total32,                MultiplicityChannels, Mult0,...,Mult19,           MultAcc0,...,MultAcc19
-            //   DateTime,MeasurementInterval,                                         Total1,...,Total32, Reals&Acc,Acc, MultDataPoints,       Mult0,...,Mult19,...,Mult99,MultAcc0,...,MultAcc19,...,MultAcc99
+            //Nr,DateTime,MeasurementTime, Totals,Totals_SR, Reals&Acc,Acc, Reals, Total1,...,Total32,                MultiplicityChannels, Mult0,...,Mult19,           MultAcc0,...,MultAcc19
+            //   DateTime,MeasurementTime,                                         Total1,...,Total32, Reals&Acc,Acc, MultDataPoints,       Mult0,...,Mult19,...,Mult99,MultAcc0,...,MultAcc19,...,MultAcc99
 
             const string DT = "DateTime";
+            const string MeasurementTime = "MeasurementTime";
             const string MeasurementInterval = "MeasurementInterval";
             const string Total = "Total";
             const string Totals = Total + "s";
@@ -794,7 +795,7 @@ namespace NCCFile
                 int.TryParse(num, out dataIndices.totalChannels);
 
                 i = 0;
-                while (i < s.Length && !s[i].StartsWith(MeasurementInterval)) i++;
+                while (i < s.Length && (!s[i].StartsWith(MeasurementTime) && !s[i].StartsWith(MeasurementInterval))) i++;
                 dataIndices.intervalIdx = i < s.Length ? i : -1;
 
                 i = 0;
@@ -833,7 +834,7 @@ namespace NCCFile
 
                     float dursecs = 0;
                     if (float.TryParse(s[ind.intervalIdx], out dursecs))
-                        c.Duration = TimeSpan.FromSeconds(dursecs);// MeasurementInterval 
+                        c.Duration = TimeSpan.FromSeconds(dursecs);// MeasurementTime 
                     c.Totals = new ulong[ind.totalChannels];
                     for (int i = ind.totalIdx; i < (ind.totalIdx + ind.totalChannels); i++)
                         ulong.TryParse(s[i], out c.Totals[i - ind.totalIdx]);
