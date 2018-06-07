@@ -1179,11 +1179,11 @@ namespace AnalysisDefs
 
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
-                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params, 
-                        // INCC5 has this simlar to the QC satte, there is only one active, so if it;s null, create a new empty one with default vlaues.
+                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params 
+                        // INCC5 implements this data similar to the QC state, there is only one instance active. So if it's null, create a new empty one with default vlaues.
                         if (cm_pu_ratio == null)
                             cm_pu_ratio = new INCCAnalysisParams.cm_pu_ratio_rec();
-                        //calc  curium mass
+                        // calc curium mass
                         INCCAnalysis.calc_curium_mass(res, cm_pu_ratio, meas);
                         res.u.dcl_mass = cm_pu_ratio.cm_dcl_u_mass;
                         res.u235.dcl_mass = cm_pu_ratio.cm_dcl_u235_mass;

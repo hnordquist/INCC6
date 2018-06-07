@@ -1249,12 +1249,13 @@ namespace NCCFile
             foreach (string[] sa in csv.Lines)
             {
                 string itemid = string.Empty;
+                double v = 0, err = 0;
                 foreach (COPCol op in Enum.GetValues(typeof(COPCol)))
                 {
                     try
                     {
                         s = string.Empty;
-                        s = sa[(int)op];  // might blow here when file was badly created
+                        s = sa[(int)op]; 
                         switch (op)
                         {
                             case COPCol.ItemId:
@@ -1281,8 +1282,20 @@ namespace NCCFile
                             case COPCol.CmPuDate:
 								INCC5FileImportUtils.GenFromYYYYMMDD(s, ref cpr.cm_pu_ratio_date);
                                 break;
+                            case COPCol.CmPuErr:
+                                Double.TryParse(s, out v); cpr.cm_pu_ratio.err = err;
+                                break;
+                            case COPCol.CmPuRatio:
+                                Double.TryParse(s, out v); cpr.cm_pu_ratio.v = v;
+                                break;
                             case COPCol.CmUDate:
-								INCC5FileImportUtils.GenFromYYYYMMDD(s, ref cpr.cm_u_ratio_date);
+                                INCC5FileImportUtils.GenFromYYYYMMDD(s, ref cpr.cm_u_ratio_date);
+                                break;
+                            case COPCol.CmUErr:
+                                Double.TryParse(s, out v); cpr.cm_u_ratio.err = err;
+                                break;
+                            case COPCol.CmURatio:
+                                Double.TryParse(s, out v); cpr.cm_u_ratio.v = v;
                                 break;
                         }
                     }

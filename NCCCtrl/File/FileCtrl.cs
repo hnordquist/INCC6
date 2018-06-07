@@ -1806,10 +1806,10 @@ enditall:
             // Announce that the event handler has been invoked.
             NC.App.ControlLogger.TraceInformation("Interrupting the {0} action", NC.App.Opstate.Action);
             args.Cancel = true;
-            PseudoInstrument.RDT.EndAnalysisImmediately();
+            PseudoInstrument?.RDT.EndAnalysisImmediately();
             NC.App.Opstate.SOH = OperatingState.Cancelling;
             NC.App.Opstate.Cancel();
-            PseudoInstrument.PendingComplete();
+            PseudoInstrument?.PendingComplete();
         }
 
         #endregion FileControl Callbacks and Event Handlers

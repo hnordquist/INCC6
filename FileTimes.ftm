@@ -1,4 +1,4 @@
-<filetimes time="2018-06-06T13:45:24.4732890" filetime="636638895244732890" version="4.1.0.4" git="1">
+<filetimes time="2018-06-07T14:17:41.4735440" filetime="636639778614735440" version="4.1.0.4" git="1">
   <file name=".gitignore" time="2018-01-02T12:36:10.8238308" filetime="636504933708238308" size="496" hash="WU06DO4btmPLblgIHXMX/A==" />
   <file name="clean.cmd" time="2017-10-10T23:11:56.3843875" filetime="636432739163843875" size="282" hash="RaAR1+yiwke+oByq1eA6XQ==" />
   <dir name="Cmd" time="2017-12-17T17:17:40.4988000" filetime="636491278604988000" hash="EnoqxOmpvmUrXPKrNYvS2g==" />
@@ -39,14 +39,14 @@
   <file name="Defs\ReportSectional.cs" time="2017-10-10T23:11:01.2882766" filetime="636432738612882766" size="6708" hash="dn6CKzAfnQXFr/Zco4EcYg==" />
   <file name="Defs\Results.cs" time="2017-12-12T08:50:22.4335728" filetime="636486654224335728" size="70304" hash="Or+xpqdqJZ9oE9nGs4zJZw==" />
   <dir name="deployment" time="2018-01-02T10:45:55.6969811" filetime="636504867556969811" hash="PwpdMMp1ykC3YvkZmHPvCQ==" />
-  <file name="deployment\create_INCC6_sqlite.sql" time="2018-05-15T13:55:59.4598090" filetime="636619893594598090" size="65474" hash="kszck1ME6gfjD5Lnjd8sew==" />
-  <file name="deployment\create_INCC6_sqlserver.sql" time="2018-05-15T13:55:59.4498090" filetime="636619893594498090" size="66270" hash="bbvvgvwQTXvUu0hFL9ZE5g==" />
+  <file name="deployment\create_INCC6_sqlite.sql" time="2018-06-07T14:16:28.5175440" filetime="636639777885175440" size="67688" hash="sPgVuEO4CSgQcwR6hUp7RA==" />
+  <file name="deployment\create_INCC6_sqlserver.sql" time="2018-06-07T14:16:27.7295440" filetime="636639777877295440" size="68484" hash="y9U5INcmbCG61UczrbuTng==" />
   <file name="deployment\Default.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
   <file name="deployment\drop_INCC6_sqlite.sql" time="2018-05-15T13:55:59.4608090" filetime="636619893594608090" size="3292" hash="TwzCLmRkOEaUEq82RcNFLw==" />
   <file name="deployment\drop_INCC6_sqlserver.sql" time="2018-05-15T13:55:59.4498090" filetime="636619893594498090" size="3303" hash="FwEtVnupB8hzd4/kCtYICg==" />
-  <file name="deployment\INCC6.exe.Config" time="2018-05-15T13:56:00.1858090" filetime="636619893601858090" size="6264" hash="HSpjcwMeJPPdj3xsj0yBZg==" />
+  <file name="deployment\INCC6.exe.Config" time="2018-06-07T14:16:26.9365440" filetime="636639777869365440" size="6415" hash="KjBvjpMaiuLSNQCAHh7iyQ==" />
   <file name="deployment\INCC6.sqlite" time="2017-12-17T17:17:40.5288000" filetime="636491278605288000" size="491520" hash="+GOP1kod+cnfvtdNRlBdeQ==" />
-  <file name="deployment\INCCCmd.exe.Config" time="2018-05-15T13:55:59.3398090" filetime="636619893593398090" size="5809" hash="upFmHDV6r4FwTtZsB1MMKw==" />
+  <file name="deployment\INCCCmd.exe.Config" time="2018-06-07T14:16:26.1515440" filetime="636639777861515440" size="5949" hash="1H9qjU5bZLKTlT4a4wuIZg==" />
   <file name="deployment\inccuser.chm" time="2017-10-10T23:12:10.2747937" filetime="636432739302747937" size="674330" hash="hd+OI+ybl4FKQ4Z1dg/TAA==" />
   <file name="deployment\inccuser.chw" time="2017-10-10T23:12:10.2838891" filetime="636432739302838891" size="51273" hash="50Ee8qwIiQ8OyKuXBupHsg==" />
   <file name="deployment\inccuser.pdf" time="2017-10-10T23:12:10.8930403" filetime="636432739308930403" size="834133" hash="1/J2Ykw19oCOFbkTFJF7vA==" />
@@ -60,7 +60,7 @@
   <file name="INCC6.sln" time="2018-01-04T16:10:40.6015376" filetime="636506790406015376" size="13959" hash="WDk/vVuiAEiJWkNLtm7J3Q==" />
   <dir name="NCCCtrl" time="2017-12-17T17:17:40.5188000" filetime="636491278605188000" hash="hJ2BedXsiAU6cEJkOtjFrA==" />
   <dir name="NCCCtrl\Analysis" time="2017-12-11T21:40:39.8818000" filetime="636486252398818000" hash="OAeBqDpKpu3SS/tmHcykzg==" />
-  <file name="NCCCtrl\Analysis\INCCMeasurement.cs" time="2018-06-05T12:08:59.2749040" filetime="636637973392749040" size="98023" hash="5rOeDXXieOMSPgfWU86Z/w==" />
+  <file name="NCCCtrl\Analysis\INCCMeasurement.cs" time="2018-06-07T06:32:35.9914832" filetime="636639499559914832" size="98044" hash="Mt1cEP1gIOFsLj3noT/jnA==" />
   <file name="NCCCtrl\Analysis\LMRDT.cs" time="2017-12-11T20:53:34.3738000" filetime="636486224143738000" size="55535" hash="3zXRffUW89rm3EufmoQ9pg==" />
   <file name="NCCCtrl\Analysis\MCA527ProcessingState.cs" time="2017-10-10T23:11:28.0464818" filetime="636432738880464818" size="5617" hash="CeBo2dIABvhOWQu7Qk1PFA==" />
   <file name="NCCCtrl\Analysis\MCA527RawDataTransform.cs" time="2017-10-10T23:11:28.0815768" filetime="636432738880815768" size="3359" hash="PY7HCyFNs3asiIvboCXn4Q==" />
@@ -96,10 +96,10 @@
   <file name="NCCCtrl\Device\Ptr32Parser.cs" time="2017-10-10T23:11:31.4925786" filetime="636432738914925786" size="9346" hash="eneZ6A/8Zv6Kv/orIdOnhQ==" />
   <file name="NCCCtrl\Device\Ptr32RateCounter.cs" time="2017-10-10T23:11:31.5165771" filetime="636432738915165771" size="8016" hash="61sqstlpN9DwbzCE3YxErw==" />
   <dir name="NCCCtrl\File" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" hash="rMAWiS9h0Qjicd1MLoPX5Q==" />
-  <file name="NCCCtrl\File\FileCtrl.cs" time="2017-12-17T17:17:40.5088000" filetime="636491278605088000" size="103349" hash="fBqSeeAG9b3vLVg55U2RyA==" />
+  <file name="NCCCtrl\File\FileCtrl.cs" time="2018-06-07T10:35:07.1663115" filetime="636639645071663115" size="103351" hash="6LIFdRdzX6++UmysW7dYjQ==" />
   <file name="NCCCtrl\File\FileCtrlDataz.cs" time="2018-06-06T10:13:31.9072866" filetime="636638768119072866" size="51851" hash="+l7D1zqeFn8rflk4DaShNw==" />
   <file name="NCCCtrl\File\FileCtrlINCC5.cs" time="2018-06-05T14:38:21.2739040" filetime="636638063012739040" size="41631" hash="5MSWeU1cJqTf0c8J29Jb+Q==" />
-  <file name="NCCCtrl\File\INCC5CSVFiles.cs" time="2018-06-05T14:33:54.3809040" filetime="636638060343809040" size="72346" hash="KwjcpA2WtdK+kkITfMqBBA==" />
+  <file name="NCCCtrl\File\INCC5CSVFiles.cs" time="2018-06-06T15:23:04.1738080" filetime="636638953841738080" size="73058" hash="2EpVO5EgMAFoGALR6r/edg==" />
   <file name="NCCCtrl\File\INCCKnew.cs" time="2017-12-12T09:44:40.9289403" filetime="636486686809289403" size="233635" hash="v7km6w8wWWasCWpR2IFjLQ==" />
   <file name="NCCCtrl\File\NeutronDataFiles.cs" time="2017-12-12T08:46:28.4809403" filetime="636486651884809403" size="137541" hash="aDx43TLwrRpLaF3IHSkZ2Q==" />
   <file name="NCCCtrl\NCCCtrl.csproj" time="2018-06-05T13:04:42.3710570" filetime="636638006823710570" size="9028" hash="NQmL4Av30YWDQUXyFTRQNg==" />
@@ -265,7 +265,7 @@
   <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.cs" time="2018-05-15T13:55:59.5188090" filetime="636619893595188090" size="7276" hash="sxO3l8M0N+Yp21wxlscwsw==" />
   <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.Designer.cs" time="2018-05-15T13:55:59.5188090" filetime="636619893595188090" size="21415" hash="jNyQ3hSNbUyoJ3wvV+6SlQ==" />
   <file name="UI\FormsHappyPlace\IDDCf252SinglesNorm.resx" time="2018-05-15T13:55:59.5198090" filetime="636619893595198090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
-  <file name="UI\FormsHappyPlace\IDDCmPuRatio.cs" time="2018-05-15T13:55:59.5208090" filetime="636619893595208090" size="9326" hash="gOkceze2NadNFDCdtHIX5Q==" />
+  <file name="UI\FormsHappyPlace\IDDCmPuRatio.cs" time="2018-06-06T15:56:14.9736659" filetime="636638973749736659" size="9362" hash="7yZhb4Z7Yg8P5bD6ZjIU2g==" />
   <file name="UI\FormsHappyPlace\IDDCmPuRatio.Designer.cs" time="2018-05-15T13:55:59.5198090" filetime="636619893595198090" size="19702" hash="VYdX0IaTpABH+Mw4hWYmZQ==" />
   <file name="UI\FormsHappyPlace\IDDCmPuRatio.resx" time="2018-05-15T13:55:59.5208090" filetime="636619893595208090" size="5698" hash="lroKRE0IeuBvMjGcpPCj5A==" />
   <file name="UI\FormsHappyPlace\IDDCollarAcquire.cs" time="2018-05-15T13:55:59.5218090" filetime="636619893595218090" size="10104" hash="T9RXvPQBc4U9rFtT8XiKbw==" />
