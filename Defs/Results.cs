@@ -1569,19 +1569,23 @@ namespace AnalysisDefs
             {
                 res += (double)UnAMult[i] * i;
             }
-            _UnASum = res;
+            //If there is no multiplicity (i.e. JSR) you need to just use the totals.
+            if (res != 0) _UnASum = res;
+            else UnASum = _UnASum;
             res = 0;
             for (int i = 0; i < NormedAMult.Length; i++)
             {
                 res += (double)NormedAMult[i] * i;
             }
-            _ASum = res;
+            if (res != 0) _ASum = res;
+            else ASum = _ASum;
             res = 0;
             for (int i = 0; i < RAMult.Length; i++)
             {
                 res += (double)RAMult[i] * i;
             }
-            _RASum = res;
+            if (res != 0) _RASum = res;
+            else RASum = _RASum;
         }
 
         public string Name
@@ -1904,14 +1908,14 @@ namespace AnalysisDefs
                 testStatus.Add("Dytlewski corrected triples rates do not match.");
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesTupleCompares(this.Scaler1, mcr.Scaler1);
+            casecompares = CompareTools.DoublesTupleCompares(this.Scaler1Rate, mcr.Scaler1Rate);
             if (!casecompares)
-                testStatus.Add("Scaler1 values do not match.");
+                testStatus.Add("Scaler1 rates do not match.");
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesTupleCompares(this.Scaler2, mcr.Scaler2);
+            casecompares = CompareTools.DoublesTupleCompares(this.Scaler2Rate, mcr.Scaler2Rate);
             if (!casecompares)
-                testStatus.Add("Scaler2 values do not match.");
+                testStatus.Add("Scaler2 rates do not match.");
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.multiplication, mcr.multiplication);

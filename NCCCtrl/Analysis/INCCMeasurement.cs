@@ -64,8 +64,7 @@ namespace AnalysisDefs
                 if (meas.MeasCycleStatus.num_checksum_failures > meas.Tests.maxNumFailures)
                 {
 
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 7071, "Maximum checksum failure count met, cycle {0} {1}", cc.seq, mkey);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 7071, "Maximum checksum failure count met, cycle {0} {1}", cc.seq, mkey);
                     if (stopAndComputeResults)
                     {
                         // URGENT: set state to end of measurement so that state moves out of cycles and skips forward to CalculateMeasurementResults
@@ -78,14 +77,12 @@ namespace AnalysisDefs
                 }
                 if (meas.MeasCycleStatus.num_acc_sngl_failures > meas.Tests.maxNumFailures)
                 {
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 7072, "Maximum A/S failure count met, cycle {0} {1}", cc.seq, mkey);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 7072, "Maximum A/S failure count met, cycle {0} {1}", cc.seq, mkey);
                     // ditto above comment block                    
                 }
                 if (meas.MeasCycleStatus.num_high_voltage_failures > meas.Tests.maxNumFailures)
                 {
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 7073, "Maximum checksum failure count met, cycle {0} {1}", cc.seq, mkey);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 7073, "Maximum checksum failure count met, cycle {0} {1}", cc.seq, mkey);
                     // ditto above comment block     
                 }
                 if ((meas.MeasCycleStatus.num_acc_sngl_failures >= NUM_ACC_SNGL_WARNING) &&
@@ -233,11 +230,14 @@ namespace AnalysisDefs
                             mcr.S1Sum += ccm.Scaler1.v;
                             mcr.S2Sum += ccm.Scaler2.v;
                         }
+                    //HN -- Yup, these are counts and not rates.
 					if (denom > 0) // error-corrected scaler rates wrongly carried in these two vars from CalcAvgAndSums after this step, should fix this someday
 					{
-						mcr.Scaler1.v = mcr.S1Sum / denom;
-						mcr.Scaler2.v = mcr.S2Sum / denom;
-					}
+                        mcr.Scaler1Rate.v = mcr.S1Sum / meas.CountTimeInSeconds;
+                        mcr.Scaler2Rate.v = mcr.S2Sum / meas.CountTimeInSeconds;
+                        mcr.Scaler1.v = mcr.Scaler1Rate.v;
+                        mcr.Scaler2.v = mcr.Scaler2Rate.v;
+                    }
                 }
                 else if (pair.Key is BaseRate && !pair.Key.suspect) // Rates counts merge
                 {
@@ -328,8 +328,7 @@ namespace AnalysisDefs
             }
             catch (Exception ex)
             {
-                if (meas.Logger != null)
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Error, 4040, "GenerateCycleSums error in cycle loop: " + ex.Message);
+                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Error, 4040, "GenerateCycleSums error in cycle loop: " + ex.Message);
             }
         }
 
@@ -400,8 +399,7 @@ namespace AnalysisDefs
                 if (meas.MeasOption == AssaySelector.MeasurementOption.rates)   // Doug  Requirement #2
                 {
                     // for a rates only measurement, all done!
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10180, "Rates Only measurement complete");
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10180, "Rates Only measurement complete");
                     continue;
                 }
 
@@ -432,15 +430,13 @@ namespace AnalysisDefs
                                 // Trunc Mult Bkg step, calc_tm_rates, sets TM bkg rates on Measurement.Background
                                 INCCAnalysis.calc_tm_rates(mkey, results, meas, meas.Background.TMBkgParams, meas.Detector.Id.SRType);
 
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10181, "Background measurement complete");
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10181, "Background measurement complete");
                             break;
                         case AssaySelector.MeasurementOption.initial:
 
                             INCCResults.results_init_src_rec results_init_src = (INCCResults.results_init_src_rec)results;
 
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10182, "Calculating Initial source measurement results");
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10182, "Calculating Initial source measurement results");
                             bool funhappy = INCCAnalysis.initial_source_meas(meas, mkey, RatesAdjustments.DeadtimeCorrected);
                             if (!funhappy || !results_init_src.pass)
                             {
@@ -451,36 +447,30 @@ namespace AnalysisDefs
                             break;
                         case AssaySelector.MeasurementOption.normalization:
 
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10183, "Calculating Normalization measurement results");
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10183, "Calculating Normalization measurement results");
                             bool happyfun = INCCAnalysis.bias_test(meas, mkey, RatesAdjustments.DeadtimeCorrected);
                             if (!happyfun)
                             {
-                                if (meas.Logger != null)
-                                    meas.AddWarningMessage("Normalization test -- data quality is inadequate", 10124, mkey);
+                                meas.AddWarningMessage("Normalization test -- data quality is inadequate", 10124, mkey);
                             }
                             break;
                         case AssaySelector.MeasurementOption.precision:
 
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10184, "Calculating Precision measurement results");
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10184, "Calculating Precision measurement results");
                             bool charmyfun = INCCAnalysis.precision_test(meas, mkey, RatesAdjustments.DeadtimeCorrected);
                             if (!charmyfun)
                             {
-                                if (meas.Logger != null)
-                                    meas.AddWarningMessage("Precision test failed", 10125, mkey);
+                                meas.AddWarningMessage("Precision test failed", 10125, mkey);
                             }
                             break;
                         case AssaySelector.MeasurementOption.calibration: // from calc_res.cpp
                             if (meas.INCCAnalysisState.Methods.CalibrationAnalysisSelected())
                             {
-                                if (meas.Logger != null)
-                                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10185, "Calculating Calibration measurement results");
+                                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10185, "Calculating Calibration measurement results");
                                 // dev note: since the analysis routines have similar signatures, design a class OK?
                                 if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.CalibrationCurve))
                                 {
-                                    if (meas.Logger != null)
-                                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10191, "Calculating " + AnalysisMethod.CalibrationCurve.FullName() + " measurement results");
+                                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10191, "Calculating " + AnalysisMethod.CalibrationCurve.FullName() + " measurement results");
                                     // get the current results_cal_curve_rec
                                     INCCMethodResults.results_cal_curve_rec ccres = (INCCMethodResults.results_cal_curve_rec)
                                         meas.INCCAnalysisResults.LookupMethodResults(mkey, meas.INCCAnalysisState.Methods.selector, AnalysisMethod.CalibrationCurve, true);
@@ -501,8 +491,7 @@ namespace AnalysisDefs
                                 }
                                 if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.KnownA))
                                 {
-                                    if (meas.Logger != null)
-                                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10192, "Calculating " + AnalysisMethod.KnownA.FullName() + " calibration results");
+                                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10192, "Calculating " + AnalysisMethod.KnownA.FullName() + " calibration results");
                                     INCCMethodResults.results_known_alpha_rec kares = INCCAnalysis.CalculateKnownAlpha(mkey, results.rates, meas, RatesAdjustments.DeadtimeCorrected);
                                     if (kares == null)
                                     {
@@ -524,8 +513,7 @@ namespace AnalysisDefs
                                 }
                                 if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.Active))
                                 {
-                                    if (meas.Logger != null)
-                                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10192, "Arranging " + AnalysisMethod.Active.FullName() + " calibration results");
+                                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10192, "Arranging " + AnalysisMethod.Active.FullName() + " calibration results");
 
                                     INCCSelector sel = new INCCSelector(meas.INCCAnalysisState.Methods.selector);
                                     INCCAnalysisParams.active_rec act;
@@ -548,8 +536,7 @@ namespace AnalysisDefs
                                 }
                                 if (meas.INCCAnalysisState.Methods.Has(AnalysisMethod.AddASource))
                                 {
-                                    if (meas.Logger != null)
-                                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10152, "Calculating " + AnalysisMethod.AddASource.FullName() + " calibration results");
+                                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10152, "Calculating " + AnalysisMethod.AddASource.FullName() + " calibration results");
                                     INCCSelector sel = new INCCSelector(meas.INCCAnalysisState.Methods.selector);
                                     INCCAnalysisParams.add_a_source_rec aas;
                                     INCCMethodResults.results_add_a_source_rec acres;
@@ -589,17 +576,14 @@ namespace AnalysisDefs
                             // dev note: check for item in the item table, make sure to place this item id on the MeasurementId.item property
                             if (!string.IsNullOrEmpty(meas.AcquireState.item_id))
                             {
-                                if (meas.Logger != null)
-                                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10194, "Using item id '{0}'", meas.AcquireState.item_id);
+                                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10194, "Using item id '{0}'", meas.AcquireState.item_id);
                             }
                             else
-                                if (meas.Logger != null)
-                                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 10194, "No item id");
+                                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 10194, "No item id");
 
                             if (meas.INCCAnalysisState.Methods.VerificationAnalysisSelected())
                             {
-                                if (meas.Logger != null)
-                                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10186, "Calculating {0} measurement results", meas.MeasOption.PrintName());
+                                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10186, "Calculating {0} measurement results", meas.MeasOption.PrintName());
 
                                 meas.CalculateVerificationResults(mkey, results);
                             }
@@ -609,15 +593,13 @@ namespace AnalysisDefs
                             }
                             break;
                         case AssaySelector.MeasurementOption.holdup:   // NEXT: Hold-up held up, implement it #35 
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Error, 10187, "Holdup analysis unsupported");
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Error, 10187, "Holdup analysis unsupported");
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    if (meas.Logger != null)
-                        meas.Logger.TraceException(e);
+                    meas.Logger?.TraceException(e);
                 }
             }
 
@@ -642,8 +624,7 @@ namespace AnalysisDefs
                     INCCAnalysisParams.CalCurveResult status = INCCAnalysisParams.CalCurveResult.Unknown;
                     if (cal_curve == null)
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 10199, "No " + AnalysisMethod.KnownA.FullName() + " method parameters found");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 10199, "No " + AnalysisMethod.KnownA.FullName() + " method parameters found");
                         return;
                     }
                     if (cal_curve.CalCurveType != INCCAnalysisParams.CalCurveType.HM)
@@ -698,8 +679,7 @@ namespace AnalysisDefs
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
                         ccres.dcl_pu_mass = meas.AcquireState.mass; // another requirement for the acquire state
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 10133, "calc_mass/calc_u235_mass are called next");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 10133, "calc_mass/calc_u235_mass are called next");
                         if (cal_curve.CalCurveType != INCCAnalysisParams.CalCurveType.U)
                         {
                             INCCAnalysis.calc_mass(ccres.pu240e_mass,
@@ -749,8 +729,7 @@ namespace AnalysisDefs
                     INCCAnalysisParams.known_alpha_rec ka_params = (INCCAnalysisParams.known_alpha_rec)meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.KnownA);
                     if (ka_params == null)
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 10199, "No Known alpha method parameters found");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 10199, "No Known alpha method parameters found");
                         return;
                     }
                     bool success = false;
@@ -764,8 +743,7 @@ namespace AnalysisDefs
                         if (karesdup != null) // we have the new mass results, and they are preserved in the results map
                         {
                             success = true;
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha results for pu240E {0} +- {1}", karesdup.pu240e_mass.v, karesdup.pu240e_mass.err);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha results for pu240E {0} +- {1}", karesdup.pu240e_mass.v, karesdup.pu240e_mass.err);
 
                         }
                     }
@@ -789,8 +767,7 @@ namespace AnalysisDefs
                         if (karesdup != null) // we have the new mass results, and they are preserved in the results map
                         {
                             success = true;
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha HM results for pu240E {0} +- {1}", karesdup.pu240e_mass.v, karesdup.pu240e_mass.err);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha HM results for pu240E {0} +- {1}", karesdup.pu240e_mass.v, karesdup.pu240e_mass.err);
                         }
                         kares.pu240e_mass.v *= meas.MeasurementId.Item.length;
                         kares.pu240e_mass.err *= meas.MeasurementId.Item.length;
@@ -810,8 +787,7 @@ namespace AnalysisDefs
                                     ref kares.alphaK,
                                     ref kares.pu240e_mass, ka_params, meas, mkey);
                         if (success)
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha MoistureCorrAppliedToDryAlpha results for pu240E {0} +- {1}", kares.pu240e_mass.v, kares.pu240e_mass.err);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha MoistureCorrAppliedToDryAlpha results for pu240E {0} +- {1}", kares.pu240e_mass.v, kares.pu240e_mass.err);
 
                     }
                     else if (ka_params.known_alpha_type == INCCAnalysisParams.KnownAlphaVariant.MoistureCorrAppliedToMultCorrDoubles)
@@ -829,8 +805,7 @@ namespace AnalysisDefs
                                     ref kares.alphaK,
                                     ref kares.pu240e_mass, ka_params, meas, mkey);
                         if (success)
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha MoistureCorrAppliedToMultCorrDoubles results for pu240E {0} +- {1}", kares.pu240e_mass.v, kares.pu240e_mass.err);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Known alpha MoistureCorrAppliedToMultCorrDoubles results for pu240E {0} +- {1}", kares.pu240e_mass.v, kares.pu240e_mass.err);
 
                     }
 
@@ -877,8 +852,7 @@ namespace AnalysisDefs
                     INCCAnalysisParams.multiplicity_rec mul_param = (INCCAnalysisParams.multiplicity_rec)meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.Multiplicity);
                     if (mul_param == null)
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No Multiplicity method parameters found");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No Multiplicity method parameters found");
                         return;
                     }
                     INCCMethodResults.results_multiplicity_rec mmres = (INCCMethodResults.results_multiplicity_rec)meas.INCCAnalysisResults.LookupMethodResults(
@@ -887,8 +861,7 @@ namespace AnalysisDefs
                     INCCMethodResults.results_multiplicity_rec mmresdup = INCCAnalysis.CalculateMultiplicity(mkey, results.covariance_matrix, results.rates.GetDTCRates(RatesAdjustments.DeadtimeCorrected), meas, RatesAdjustments.DeadtimeCorrected);
                     if (mmresdup != null) // we have the new mass results, and they are preserved in the results map
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Multiplicity results for pu240E {0} +- {1}", mmres.pu240e_mass.v, mmres.pu240e_mass.err);
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Multiplicity results for pu240E {0} +- {1}", mmres.pu240e_mass.v, mmres.pu240e_mass.err);
                         if (meas.AcquireState.acquire_type == AcquireConvergence.Pu240EffPrecision)
                         {
                             if (mmres.pu240e_mass.v != 0.0)
@@ -918,13 +891,11 @@ namespace AnalysisDefs
 
                         if (mul_param.solve_efficiency == INCCAnalysisParams.MultChoice.CONVENTIONAL_MULT_WEIGHTED) // todo: implement Weighted
                         {
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 36010, "CONVENTIONAL_MULT_WEIGHTED Multiplicity measurement results");
+                             meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 36010, "CONVENTIONAL_MULT_WEIGHTED Multiplicity measurement results");
                         }
                         else if (mul_param.solve_efficiency == INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL) // todo: implement DE
                         {
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 36010, "MULT_DUAL_ENERGY_MODEL Multiplicity measurement results");
+                             meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 36010, "MULT_DUAL_ENERGY_MODEL Multiplicity measurement results");
                         }
                         // normal and backup retention
                         if (meas.INCCAnalysisState.Methods.Normal == AnalysisMethod.Multiplicity)
@@ -994,8 +965,7 @@ namespace AnalysisDefs
                     INCCAnalysisParams.active_rec act_param = (INCCAnalysisParams.active_rec)meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.Active);
                     if (act_param == null)
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No Active method parameters found");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No Active method parameters found");
                         return;
                     }
                     INCCMethodResults.results_active_rec actres = (INCCMethodResults.results_active_rec)meas.INCCAnalysisResults.LookupMethodResults(
@@ -1022,8 +992,7 @@ namespace AnalysisDefs
                     {
                         meas.AddErrorMessage("Active calibration curve analysis error", 10197, mkey);
                     }
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 240, "Active results for U235 {0} +- {1}", actres.u235_mass.v, actres.u235_mass.err);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 240, "Active results for U235 {0} +- {1}", actres.u235_mass.v, actres.u235_mass.err);
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
                         actres.dcl_u235_mass = meas.AcquireState.mass;
@@ -1089,8 +1058,7 @@ namespace AnalysisDefs
                     INCCAnalysisParams.active_passive_rec act_param = (INCCAnalysisParams.active_passive_rec)meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.ActivePassive);
                     if (act_param == null)
                     {
-                        if (meas.Logger != null)
-                            meas.Logger.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No active/passive method parameters found");
+                        meas.Logger?.TraceEvent(NCCReporter.LogLevels.Warning, 10198, "No active/passive method parameters found");
                         return;
                     }
                     INCCMethodResults.results_active_passive_rec actres = (INCCMethodResults.results_active_passive_rec)meas.INCCAnalysisResults.LookupMethodResults(
@@ -1219,7 +1187,9 @@ namespace AnalysisDefs
 
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
-                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params, 
+                        //Why are you doing this? URGH
+                        // INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params, 
+                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = (INCCAnalysisParams.cm_pu_ratio_rec)  meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.CuriumRatio);
                         // dev note: better not to ref DB here, because this is a one-off state retrieval and no other DB access occurs during mass calc processing, but that is how it works this morning
 
                         //calc  curium mass
@@ -1262,16 +1232,14 @@ namespace AnalysisDefs
                     bool got = meas.INCCAnalysisResults.TryGetINCCResults(mkey, out imr);
                     if (got)
                         imr.primaryMethod = meas.INCCAnalysisState.Methods.Normal;
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10100, "Verification primary method {0} with mass {1} is from the normal method", imr.primaryMethod.ToString(), normal_mass.v);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10100, "Verification primary method {0} with mass {1} is from the normal method", imr.primaryMethod.ToString(), normal_mass.v);
                 }
                 else if (backup_mass.v != -1.0)
                 {
                     bool got = meas.INCCAnalysisResults.TryGetINCCResults(mkey, out imr);
                     if (got)
                         imr.primaryMethod = meas.INCCAnalysisState.Methods.Backup;
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10101, "Verification primary method {0} with mass {1} is from the backup method", imr.primaryMethod.ToString(), backup_mass.v);
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10101, "Verification primary method {0} with mass {1} is from the backup method", imr.primaryMethod.ToString(), backup_mass.v);
                 }
                 if ((normal_mass.v != -1.0) && (backup_mass.v != -1.0))
                 {
@@ -1286,14 +1254,12 @@ namespace AnalysisDefs
                         if (delta <= (delta_error * meas.Tests.normalBackupAssayTestLimit))
                         {
                             if (got) imr.primaryMethod = meas.INCCAnalysisState.Methods.Normal;
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10102, "Verification primary method {0} with masses {1} and {2} is from the normal method", imr.primaryMethod.ToString(), normal_mass.v, backup_mass.v);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10102, "Verification primary method {0} with masses {1} and {2} is from the normal method", imr.primaryMethod.ToString(), normal_mass.v, backup_mass.v);
                         }
                         else
                         {
                             if (got) imr.primaryMethod = meas.INCCAnalysisState.Methods.Backup;
-                            if (meas.Logger != null)
-                                meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 10103, "Verification primary method {0} with masses {1} and {2} is from the backup method", imr.primaryMethod.ToString(), normal_mass.v, backup_mass.v);
+                            meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 10103, "Verification primary method {0} with masses {1} and {2} is from the backup method", imr.primaryMethod.ToString(), normal_mass.v, backup_mass.v);
                         }
                     }
                 }
@@ -1302,8 +1268,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                if (meas.Logger != null)
-                    meas.Logger.TraceException(e);
+                meas.Logger?.TraceException(e);
             }
 
         }
@@ -1675,8 +1640,7 @@ namespace AnalysisDefs
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
 
-                if (meas.Logger != null)
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 7002, "Final outlier conditioning {0}", mkey);
+                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 7002, "Final outlier conditioning {0}", mkey);
 
                 INCCAnalysis.OutlierProcessing(mkey, meas);
             }
@@ -1698,8 +1662,7 @@ namespace AnalysisDefs
             while (iter.MoveNext())
             {
                 Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                if (meas.Logger != null)
-                    meas.Logger.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
+                meas.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 7003, "Calculating averages and sums for valid cycles {0} {1}", dtchoice, mkey);
                 MultiplicityCountingRes mcr = (MultiplicityCountingRes)meas.CountingAnalysisResults[mkey];
                 mcr.ComputeHitSums();
 				// APluralityOfMultiplicityAnalyzers: When a list mode sourced measurement is in use, and 
@@ -1753,8 +1716,7 @@ namespace AnalysisDefs
                     }
 					DB.LMParamsRelatedBackToMeasurement counter = new DB.LMParamsRelatedBackToMeasurement(s.Table);
 					s.Rank = counter.Create(mid, els);
-                    if (meas.Logger != null)
-                        meas.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, string.Format("Preserving {0}_m as {1}", s.Table, s.Rank));
+                    meas.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, string.Format("Preserving {0}_m as {1}", s.Table, s.Rank));
 				}
 			}
 
@@ -1764,7 +1726,7 @@ namespace AnalysisDefs
 			while (iter.MoveNext())
 			{
 				Multiplicity mkey = (Multiplicity)((KeyValuePair<SpecificCountingAnalyzerParams, object>)(iter.Current)).Key;
-                if (NC.App.Opstate.IsAbortRequested)
+                if (NC.App != null && NC.App.Opstate.IsAbortRequested)
 					return;
 
 				INCCResult results;
@@ -1791,6 +1753,7 @@ namespace AnalysisDefs
                             INCCResults.results_init_src_rec results_init_src = (INCCResults.results_init_src_rec)results;
                             // on fail, only the relevant results_init_src_rec is saved
                             // on pass, the normalization parameters are modified with the results_init_src_rec results, and so both are updated.
+                            //TODO: This needs to run without the app for testing.HN 6/28/2018
                             if (results_init_src.pass)
                             {
                                 NormParameters np = NC.App.DB.NormParameters.Get(meas.Detector);
@@ -1819,8 +1782,7 @@ namespace AnalysisDefs
 				}
 				catch (Exception e)
 				{
-                    if (meas.Logger != null)
-                        meas.Logger.TraceException(e);
+                    meas.Logger?.TraceException(e);
 				}
 
                 SaveSummaryResultsForThisMeasurement(meas, moskey);
@@ -1850,7 +1812,7 @@ namespace AnalysisDefs
 			}
             else
                 NC.App.DB.AddCycles(m.Cycles, m.Detector.MultiplicityParams, mid);  // traditional single SR with multiplicity key to a single cycle result
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
+            m.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 34105, string.Format("{0} cycles stored", m.Cycles.Count));
         }
 
         /// <summary>
@@ -1882,7 +1844,7 @@ namespace AnalysisDefs
 					do
 					{
 						long mresid = ar.CreateMethod(resid, mid, imr.methodParams.ToDBElementList()); // save the initial method params (the copy rides on the results)
-						m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}, {2})", imr.Table, resid, mresid));
+						m.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 34104, string.Format("Method results {0} preserved ({1}, {2})", imr.Table, resid, mresid));
 					} while (imr.methodParams.Pump > 0);
                 }
             }                        
@@ -1899,7 +1861,7 @@ namespace AnalysisDefs
             DB.ElementList els = res.ToDBElementList(); // generates the Table property content too
             DB.ParamsRelatedBackToMeasurement ar = new DB.ParamsRelatedBackToMeasurement(res.Table);
             long resid = ar.Create(mid, els);                          
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, String.Format("Results {0} preserved ({1})",resid, res.Table));
+            m.Logger?.TraceEvent(NCCReporter.LogLevels.Verbose, 34103, String.Format("Results {0} preserved ({1})",resid, res.Table));
         }
 
         /// <summary>
@@ -1913,7 +1875,7 @@ namespace AnalysisDefs
             DB.Results dbres = new DB.Results();
             // save results with mid as foreign key
             bool b = dbres.Update(mid, m.INCCAnalysisResults.TradResultsRec.ToDBElementList()); // APluralityOfMultiplicityAnalyzers: results rec needs to be fully populated before here, or it needs to be saved again at the end of the processing
-            m.Logger.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
+            m.Logger?.TraceEvent(NCCReporter.LogLevels.Info, 34045, (b ? "Preserved " : "Failed to save ") + "summary results");
         }
 
 		/// <summary>

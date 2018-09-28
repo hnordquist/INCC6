@@ -101,6 +101,10 @@ namespace NCCFile
 							if (go)
 								INCCTransferFileProcessing();
 						}				
+                        //else if (NC.App.AppContext.DatazConvert)
+                        //    DatazFileConvert();
+                        else if (NC.App.AppContext.FilterLMOutliers)
+                            PTRFileCull();
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
                         else
@@ -323,7 +327,7 @@ namespace NCCFile
 						INCCKnew k = new INCCKnew(ctrllog);
 						bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j);
 						j++;
-						if (!supercool)
+						if (!k.BuildMeasurement((INCCTransferFile)bar, j))
 							continue;
 						if (NC.App.AppContext.Replay)
 							Replay(k.Meas, ConstructedSource.INCCTransfer, System.IO.Path.GetFileName(bar.Path));
@@ -1811,10 +1815,10 @@ enditall:
             // Announce that the event handler has been invoked.
             ctrllog.TraceInformation("Interrupting the {0} action", NC.App.Opstate.Action);
             args.Cancel = true;
-            PseudoInstrument.RDT.EndAnalysisImmediately();
+            PseudoInstrument?.RDT.EndAnalysisImmediately();
             NC.App.Opstate.SOH = OperatingState.Cancelling;
             NC.App.Opstate.Cancel();
-            PseudoInstrument.PendingComplete();
+            PseudoInstrument?.PendingComplete();
         }
 
         #endregion FileControl Callbacks and Event Handlers

@@ -1,0 +1,146 @@
+INCC 5.1.2
+
+                   Facility:  PCDF
+      Material balance area:  JR1B
+              Detector type:  WELL
+                Detector id:  PSMC
+             Electronics id:  AMSR
+           Measurement date:  18.07.18  13:53:11
+          Results file name:  87IN5311.RTS
+          Inspection number:  007
+                    Item id:  40000
+         Measurement option:  Rates Only
+                Data source:  Shift register
+     Detector configuration:  Passive
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Measured
+             Inspector name:  nakamura
+            Passive comment:  
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1700
+              Die away time:     49.0000
+                 Efficiency:      0.5430
+      Multiplicity deadtime:    112.0000
+     Coefficient A deadtime:      0.3790
+     Coefficient B deadtime:      0.1230
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.6150
+      Triples gate fraction:      0.4000
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:     33.102 +-     0.270
+ Passive doubles background:      0.020 +-     0.007
+ Passive triples background:     -0.000 +-     0.000
+ Passive scaler1 background:      0.000
+ Passive scaler2 background:      0.000
+
+Passive summed raw data
+
+                 Number of good cycles:                3
+                      Total count time:               90
+            Shift register singles sum:          3600818
+Shift register reals + accidentals sum:          9221917
+        Shift register accidentals sum:          9220193
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0      277370       278254
+   1      712165       712013
+   2      913142       912598
+   3      777840       777894
+   4      498281       498450
+   5      256191       255385
+   6      108725       108917
+   7       39658        39713
+   8       12622        12738
+   9        3629         3636
+  10         933          935
+  11         208          211
+  12          45           46
+  13           8            8
+  14           1            0
+
+Results
+
+       Singles:      40129.921 +-    22.007
+       Doubles:         19.433 +-    33.223
+       Triples:        -57.672 +-    49.958
+         Quads:          8.622 +-    12.340
+ Quads/Triples:         -0.156 +-     0.073
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+    Aux1 Ratio:          0.000
+   Aux2 Ratio:          0.000
+
+
+Passive cycle data
+
+Count time (sec):  30
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1    1201166    3080380    3077970          0          0  Pass
+   2    1198996    3065918    3066864          0          0  Pass
+   3    1200656    3075619    3075359          0          0  Pass
+
+Cycle      Singles       Doubles       Triples  QC Tests
+   1     40159.929        81.558       -75.151  Pass
+   2     40087.035       -32.041        36.151  Pass
+   3     40142.798         8.781      -134.268  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0       92362        93000
+     1      237120       237048
+     2      304479       304205
+     3      259458       259590
+     4      165942       166121
+     5       85844        85316
+     6       36759        36584
+     7       13375        13392
+     8        4212         4289
+     9        1198         1193
+    10         323          323
+    11          77           78
+    12          15           19
+    13           2            2
+
+Cycle 2      R+A           A
+     0       92737        92621
+     1      237937       237783
+     2      304176       303968
+     3      258675       258904
+     4      165634       166090
+     5       84962        84645
+     6       35831        36054
+     7       13202        13072
+     8        4229         4206
+     9        1209         1240
+    10         317          320
+    11          70           68
+    12          16           16
+    13           1            2
+
+Cycle 3      R+A           A
+     0       92271        92633
+     1      237108       237182
+     2      304487       304425
+     3      259707       259400
+     4      166705       166239
+     5       85385        85424
+     6       36135        36279
+     7       13081        13249
+     8        4181         4243
+     9        1222         1203
+    10         293          292
+    11          61           65
+    12          14           11
+    13           5            4
+    14           1            0

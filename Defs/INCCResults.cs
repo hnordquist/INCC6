@@ -292,7 +292,7 @@ namespace AnalysisDefs
 
             public override void GenParamList()
             {
-                base.GenParamList();
+                //base.GenParamList();
                 this.Table = "results_init_src_rec";
 
                 ps.Add(new DBParamEntry("init_src_id", init_src_id));
@@ -366,7 +366,7 @@ namespace AnalysisDefs
 
             public override void GenParamList()
             {
-                base.GenParamList();
+            //    base.GenParamList();
                 this.Table = "results_bias_rec";
 
                 ps.Add(new DBParamEntry("source_id", this.sourceId));
@@ -1966,11 +1966,17 @@ namespace AnalysisDefs
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);
                 sec.AddHeader("Curium ratio results");  // section header
-                if (methodParams2 != null) sec.AddRange(methodParams2.ToLines(m));
+                sec.AddTwo(methodParams2.cm_id_label + ':', methodParams2?.cm_id);
+                sec.AddTwo("Input batch id:", methodParams2?.cm_input_batch_id);
+                sec.AddDateOnlyRow("Cm/Pu ratio date:", methodParams2.cm_pu_ratio_date);
+                sec.AddNumericRow("Pu effective half-life:", methodParams2.pu_half_life);
+                sec.AddNumericRow("Cm/Pu ratio:", methodParams2.cm_pu_ratio);
                 sec.AddNumericRow("Decay corrected Cm/Pu ratio:", cm_pu_ratio_decay_corr);
+                sec.AddDateOnlyRow("Cm/U ratio date:", methodParams2.cm_u_ratio_date);
+                sec.AddNumericRow("Cm/U ratio:", methodParams2.cm_u_ratio);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
-                if (this.methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
-                    sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
+
+                sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
                 sec.AddNumericRow("Cm mass (g)", cm_mass);
                 sec.AddNumericRow("Pu mass (g)", pu.mass);
                 sec.AddNumericRow("U mass (g)", u.mass);

@@ -309,6 +309,7 @@ namespace NCCReporter
             // the padders
             for (long i = 0; i < prelines; i++)
                 Add(new Row());
+            
         }
 
         public void AddLabelAndColumn(Row label, string rowindexlabel = null)

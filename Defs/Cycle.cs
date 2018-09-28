@@ -245,8 +245,7 @@ namespace AnalysisDefs
             {
                 ba.reason = "BaseRate transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87405, ba.reason);
+                logger?.TraceEvent(LogLevels.Error, 87405, ba.reason);
             }
             return res;
         }
@@ -274,8 +273,7 @@ namespace AnalysisDefs
             {
                 mup.reason = "Multiplicity transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87406,  mup.reason);
+                logger?.TraceEvent(LogLevels.Error, 87406,  mup.reason);
             }
             return res;
         }
@@ -295,8 +293,7 @@ namespace AnalysisDefs
             {
                 cop.reason = "Coincidence matrix transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87410, cop.reason);
+                logger?.TraceEvent(LogLevels.Error, 87410, cop.reason);
             }
             return res;
         }
@@ -316,8 +313,7 @@ namespace AnalysisDefs
             {
                 ryp.reason = "Feynman transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87407, ryp.reason);
+                logger?.TraceEvent(LogLevels.Error, 87407, ryp.reason);
             }
             return res;
         }
@@ -336,8 +332,7 @@ namespace AnalysisDefs
             {
                 rap.reason = "Rossi transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87408, rap.reason);
+                logger?.TraceEvent(LogLevels.Error, 87408, rap.reason);
             }
             return res;
         }
@@ -357,8 +352,7 @@ namespace AnalysisDefs
             {
                 esp.reason = "TimeInterval transfer " + e.Message;
                 res = false;
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87409, esp.reason);
+                logger?.TraceEvent(LogLevels.Error, 87409, esp.reason);
             }
             return res;
         }
@@ -400,8 +394,7 @@ namespace AnalysisDefs
                         }
                         catch (Exception ex)
                         {
-                            if (logger != null)
-                                logger.TraceEvent(LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
+                            logger?.TraceEvent(LogLevels.Error, 87118, "StringifyCycleMultiplicityDetails error: " + ex.Message);
                         }
                     }
                 }
@@ -415,8 +408,7 @@ namespace AnalysisDefs
             }
             catch (Exception ex2)
             {
-                if (logger != null)
-                    logger.TraceEvent(LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
+                logger?.TraceEvent(LogLevels.Error, 87119, "StringifyCycleMultiplicityDetails error: " + ex2.Message);
             }
             return x;
         }
@@ -472,8 +464,7 @@ namespace AnalysisDefs
                 }
                 catch (Exception) // mkey not found happens when a param is changed on a VSR that is not reflected back to the default [0] SR 
                 {
-                    if (logger != null)
-                        logger.TraceEvent(LogLevels.Warning, 7832, "Cycle status not set in DB, mkey mismatch: " + mkey.ToString());
+                    logger?.TraceEvent(LogLevels.Warning, 7832, "Cycle status not set in DB, mkey mismatch: " + mkey.ToString());
                 }
             if (pmcr == null)
                 pmcr = new MultiplicityCountingRes();  // null results 

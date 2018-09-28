@@ -5,13 +5,13 @@ namespace AnalysisDefs
 {
     public static class CompareTools
     {
-
+        public static double tolerance = 0.001;
         public static bool DoublesCompare(double a, double b)
         {
             if (a == b)
                 return true;
             else
-                return Math.Abs(a - b) <= .001;
+                return Math.Abs(a - b)/a <= tolerance;
         }
         public static bool DoublesArraysCompare(double[] a, double[] b)
         {

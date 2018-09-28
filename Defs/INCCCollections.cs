@@ -1906,7 +1906,7 @@ namespace AnalysisDefs
         public List<INCCAnalysisParams.cm_pu_ratio_rec> GetList()
         {
             object o = GetAll();  // force load of local binding list
-            return cm_pu_ratio.ToList<INCCAnalysisParams.cm_pu_ratio_rec>();
+            return cm_pu_ratio.ToList();
         }
 
         BindingList<INCCAnalysisParams.cm_pu_ratio_rec> GetAll()

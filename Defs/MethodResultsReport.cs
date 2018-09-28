@@ -341,7 +341,7 @@ namespace AnalysisDefs
                         {
                             sec = new INCCStyleSection(null, 1);
                             sec.SetFPCurrentFormatPrecision(4);
-                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, meas.logger, N.App.AppContext.INCCParity);
+                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, meas.Logger, N.App.AppContext.INCCParity);
                             if (curiso == null)
                             {
                                 curiso = new Isotopics();
@@ -885,6 +885,13 @@ namespace AnalysisDefs
             r.Add(3, value.ToString("HH:mm:ss"));
             Add(r);
         }
+        public void AddDateOnlyRow(string label, DateTime value)
+        {
+            Row r = new Row();
+            AddPaddedLabel(r, label);
+            r.Add(1, value.ToString(" yy.MM.dd"));
+        }
+
         public void AddDateTimeRow(string label, DateTimeOffset value)
         {
             Row r = new Row();

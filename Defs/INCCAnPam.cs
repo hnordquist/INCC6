@@ -153,7 +153,7 @@ namespace AnalysisDefs
         public AnalysisMethod Backup;
         public AnalysisMethod Auxiliary;
         public bool[] choices;
-
+        //TODO: Not removing analysis methods now? HN 6/28/2018
         public void CopySettings(AnalysisMethods src)
         {
             Array.Copy(src.choices, choices, choices.Length);
@@ -279,8 +279,7 @@ namespace AnalysisDefs
         public INCCAnalysisParams.INCCMethodDescriptor GetMethodParameters(AnalysisMethod am)
         {
             INCCAnalysisParams.INCCMethodDescriptor surr;
-            //if (am.Equals(AnalysisMethod.Collar))
-            //    ;
+
             bool got = methods.TryGetValue(am, out surr);
             return surr;
         }
@@ -1182,11 +1181,11 @@ namespace AnalysisDefs
             public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.Standard);
-                sec.AddTwo(cm_id_label, cm_id);
+                sec.AddTwo(cm_id_label + ':', cm_id);
                 sec.AddTwo("Input batch id:", cm_input_batch_id);
-                sec.AddDateTimeRow("Cm/Pu ratio date:", cm_pu_ratio_date);
+                sec.AddDateOnlyRow("Cm/Pu ratio date:", cm_pu_ratio_date);
                 sec.AddNumericRow("Cm/Pu ratio:", cm_pu_ratio);
-                sec.AddDateTimeRow("Cm/U ratio date:", cm_u_ratio_date);
+                sec.AddDateOnlyRow("Cm/U ratio date:", cm_u_ratio_date);
                 sec.AddNumericRow("Cm/U ratio:", cm_u_ratio);
                 return sec;
             }
@@ -1196,8 +1195,25 @@ namespace AnalysisDefs
         public class curium_ratio_rec : INCCMethodDescriptor
         {
             public CurveEquationVals cev;
-            public CuriumRatioVariant curium_ratio_type; 
+            public CuriumRatioVariant curium_ratio_type;
 
+            public void SetVariantByString (string s)
+            {
+                CuriumRatioVariant cm = CuriumRatioVariant.UseDoubles;//Default
+                switch (s)
+                {
+                    case "Using Singles":
+                        cm = CuriumRatioVariant.UseSingles;
+                        break;
+                    case "Using Doubles":
+                        cm = CuriumRatioVariant.UseDoubles;
+                        break;
+                    case "Using Add-a-Source Doubles":
+                        cm = CuriumRatioVariant.UseAddASourceDoubles;
+                        break;
+                }
+                this.curium_ratio_type = cm;
+            }
             public curium_ratio_rec()
             {
                 cev = new CurveEquationVals();
@@ -1225,6 +1241,7 @@ namespace AnalysisDefs
                 ps.Add(new DBParamEntry("curium_ratio_type", (int)curium_ratio_type));
 
             }
+
             public override List<Row> ToLines(Measurement m)
             {
                 INCCStyleSection sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MethodResults);

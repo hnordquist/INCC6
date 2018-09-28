@@ -49,13 +49,13 @@
       <Project>{00572805-e746-49f5-aa40-25313e3a87e3}</Project>
       <Name>NCCCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Defs\Defs.csproj">
-      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
-      <Name>Defs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NCCCtrl\NCCCtrl.csproj">
       <Project>{c4393a93-abf7-448c-a3eb-4f0e5a1f7376}</Project>
       <Name>NCCCtrl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Defs\Defs.csproj">
+      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
+      <Name>Defs</Name>
     </ProjectReference>
     <ProjectReference Include="..\RepDB\RepDB.csproj">
       <Project>{15214429-93da-45c9-a0bc-30285c990a5d}</Project>
