@@ -663,6 +663,11 @@ namespace AnalysisDefs
                     step = this.Equals(mult_rec);
                     overall = step && overall;
                     break;
+                case "AnalysisDefs.INCCMethodResults+results_known_alpha_rec":
+                    INCCMethodResults.results_known_alpha_rec ka_rec = (INCCMethodResults.results_known_alpha_rec)o;
+                    step = this.Equals(ka_rec);
+                    overall = step && overall;
+                    break;
                 default:
                     break;
             }
@@ -908,7 +913,55 @@ namespace AnalysisDefs
                 ps.Add(new DBParamEntry("corr_factor", corr_factor));
                 ps.Add(new DBParamEntry("dry_alpha_or_mult_dbls", dry_alpha_or_mult_dbls));
             }
-               
+
+            public override bool Equals(object o)
+            {
+                bool step = true;
+                bool overall = true;
+                results_known_alpha_rec other = (results_known_alpha_rec)o;
+
+                step = CompareTools.DoublesCompare(this.alphaK, other.alphaK);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.mult_corr_doubles, other.mult_corr_doubles);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.mult, other.mult);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.pu240e_mass, other.pu240e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.pu_mass, other.pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu240e_mass, other.dcl_pu240e_mass);
+                overall = step && overall;
+                step = this.pass == other.pass;
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu_mass, other.dcl_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_u_mass, other.dcl_u_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.dcl_minus_asy_pu_mass, other.dcl_minus_asy_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_minus_asy_pu_mass_pct, other.dcl_minus_asy_pu_mass_pct);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.length, other.length);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.heavy_metal_content, other.heavy_metal_content);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.heavy_metal_correction, other.heavy_metal_correction);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.corr_singles, other.corr_singles);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.corr_doubles, other.corr_doubles);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.mult_corr_doubles, other.mult_corr_doubles);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dry_alpha_or_mult_dbls, other.dry_alpha_or_mult_dbls);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.lower_corr_factor_limit, other.lower_corr_factor_limit);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.upper_corr_factor_limit, other.upper_corr_factor_limit);
+                overall = step && overall;
+                return overall;
+            }
         }
 
         public class results_multiplicity_rec : INCCMethodResult
@@ -1013,16 +1066,16 @@ namespace AnalysisDefs
                 if (solve_efficiency_choice == INCCAnalysisParams.MultChoice.MULT_DUAL_ENERGY_MODEL)
                 {
                     /* dual energy correction factor */
-                    //sec.AddNumericRow("Energy correction factor:", de_energy_corr_factor);
+                //sec.AddNumericRow("Energy correction factor:", de_energy_corr_factor);
 
-                    /* (alpha, n) ring ratio */
-                    //sec.AddNumericRow("(alpha, n) ring ratio:", de_meas_ring_ratio);
+                /* (alpha, n) ring ratio */
+                //sec.AddNumericRow("(alpha, n) ring ratio:", de_meas_ring_ratio);
 
-                    /* (alpha, n) energy */
-                    //sec.AddNumericRow("(alpha, n) energy:",de_interpolated_neutron_energy);        
-                }
-                /* pu240e mass and error */
-				 sec.AddNumericRow("Pu240e mass (g):", pu240e_mass);
+                /* (alpha, n) energy */
+                //sec.AddNumericRow("(alpha, n) energy:",de_interpolated_neutron_energy);        
+            }
+            /* pu240e mass and error */
+            sec.AddNumericRow("Pu240e mass (g):", pu240e_mass);
 				/* % pu240e */
 				 sec.AddNumericRow("Pu240e (%):", calc_percent_pu240e (pu240e_mass.v, pu_mass.v));
 

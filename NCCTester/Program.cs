@@ -27,7 +27,10 @@ namespace NCCTester
         public static Measurement testMeasurement;
         public static MeasId measID;
         public static AnalysisMethod am;
+        public static AlphaBeta thisSetting;
 
+        //Max length of mult dist over all cycles
+        public static ulong maxmax;
         //Results loaded from file.
         public static Multiplicity mult;
         public static INCCResult TestVersionResult = new INCCResult();
@@ -152,7 +155,9 @@ namespace NCCTester
                 PrintLine(String.Format("Defs Version {0}", typeof(AnalysisDefs.INCCAnalysisParams).Assembly.GetName().Version));
                 PrintLine(String.Format("NCCCtrl Version {0}", typeof(AnalysisDefs.MeasurementExtensions).Assembly.GetName().Version));
                 PrintLine(String.Format("RepDB Version {0}", typeof(DB.DB).Assembly.GetName().Version));
-                PrintLine(String.Format("{0} *.ver files found in input directory", inputFiles.Count));
+                PrintLine(String.Format("{0} input files found in input directory", inputFiles.Count));
+
+                PrintLine(String.Format("This test was run using a tolerance for equality of {0}", CompareTools.tolerance));
 
                 PrintLine("***********************************************************");
                 PrintLine("");
@@ -176,13 +181,25 @@ namespace NCCTester
                     Measurement newResultMeasurement = new Measurement(AssaySelector.MeasurementOption.verification, null);
                     newResultMeasurement = BuildMeasurement(testMeasurement);
                     newResultMeasurement.Detector.Id.source = DetectorDefs.ConstructedSource.INCCTransfer;
-                    foreach (Cycle cl in newResultMeasurement.Cycles)
+                    //Problem if no multiplicity distributions. Fix here.
+                    MultiplicityCountingRes Checkmcr = ((MultiplicityCountingRes)newResultMeasurement.CountingAnalysisResults[mult]);
+                    bool noMult = false;
+                    if (Checkmcr.MaxBins == 1)
                     {
-                        CycleProcessing.ApplyTheCycleConditioningSteps(cl, newResultMeasurement);
+                        ((MultiplicityCountingRes)newResultMeasurement.CountingAnalysisResults[mult]).MaxBins = 0;
+                        noMult = true;
                     }
-                    
-                    newResultMeasurement.CalcAvgAndSums();
-                    newResultMeasurement.CalculateMeasurementResults();
+                    //This seems to be adding the cycle that failed the outlier test. Why?
+                    //This is equivalent code to CalculateMeasurement
+                    if (newResultMeasurement.Cycles.GetValidCycleCount() > 0) // INCC5 Pu mass calcs
+                    {
+                        newResultMeasurement.OutlierProcessing(); // summary pass at the end of all the cycles
+                        newResultMeasurement.GenerateCycleCountingSummaries(ignoreSuspectResults: false);
+                        newResultMeasurement.CalcAvgAndSums();
+                        newResultMeasurement.CalculateResults();
+                    }
+                    else // everything else
+                        newResultMeasurement.GenerateCycleCountingSummaries(ignoreSuspectResults: false);
                     PrintLine("Measurement recalculated");
 
                     bool compare = true;
@@ -192,6 +209,7 @@ namespace NCCTester
 
                     bool testCompare = true;
                     testCompare = CompareRates(testMeasurement, newResultMeasurement);
+                    
                     compare = testCompare && testCompare;
 
                     if (!testFile.ToLower().EndsWith(".rts"))
@@ -203,7 +221,7 @@ namespace NCCTester
 
                     DateTime TestEnd = DateTime.Now;
                     TimeSpan TestTime = TestEnd - TestStart;
-                    PrintLine(String.Format("Test {0}/{1} ended at {2}, {3} total milliseconds for this test", testNum + 1, inputFiles.Count, TestStart.ToLongTimeString(), TestTime.Milliseconds));
+                    PrintLine(String.Format("Test {0}/{1} ended at {2}, {3} total milliseconds", testNum + 1, inputFiles.Count, TestStart.ToLongTimeString(), TestTime.Milliseconds));
                     testNum++;
                     PrintLine("***********************************************************");
                     PrintLine("");
@@ -342,6 +360,7 @@ namespace NCCTester
                         switch (line.Trim(' '))
                         {
                             case "":
+                            case "Detector configuration": // This says Passive or Active in a rates file. Doesn't matter.
                                 line = sr.ReadLine();
                                 lineCount++;
                                 continue;
@@ -1498,7 +1517,7 @@ namespace NCCTester
             MultiplicityCountingRes totalMcr = (MultiplicityCountingRes)testMeasurement.CountingAnalysisResults[mult];
             line = sr.ReadLine();
             ulong max = 0;
-            ulong maxmax = 0;
+            maxmax = 0;
             for (int i = 0; i < testMeasurement.Cycles.Count; i++)
             {
                 line = sr.ReadLine();
@@ -1516,7 +1535,9 @@ namespace NCCTester
                 if ((ulong)numbers.Count > max)//per cycle
                     max = (ulong)numbers.Count;
                 if ((ulong)numbers.Count > maxmax)//Over all cycles
-                    maxmax = (ulong)numbers.Count;
+                    //Again, if failed cycle is the max, don't add that as max.
+                    if (testMeasurement.Cycles[cycleNum-1].QCStatusValid(mult))
+                        maxmax = (ulong)numbers.Count;
 
                 ulong[] RA = new ulong[numbers.Count];
                 ulong[] A = new ulong[numbers.Count];
@@ -2141,7 +2162,7 @@ namespace NCCTester
                 temp = mcr1.Equals(mcr2);
 
                 PrintLine(String.Format("Cycle{0}: {1}", i + 1, temp ? "PASS" : "FAIL"));
-                ls = mcr1.TestMessages;
+                ls = mcr1.testStatus;
                 if (ls != null)
                 {
                     foreach (string s in ls)
@@ -2179,7 +2200,7 @@ namespace NCCTester
                         PrintLine("");
                     }*/
                     temp = mcr1.Equals(mcr2);
-                    ls = mcr1.TestMessages;
+                    ls = mcr1.testStatus;
                     if (ls != null)
                     {
                         foreach (string s in ls)
@@ -2189,6 +2210,7 @@ namespace NCCTester
                 }
                 same = temp && same;
                 PrintLine(temp ? "CountingResults match" : "CountingResults different: FAIL");
+                // We sometimes fail here, and it seems that we are finding more outliers than the original code. Need to math it. HN
             }
             return same;
         }
@@ -2302,13 +2324,28 @@ namespace NCCTester
                         break;
                 }
             }
+            ABKey thisRun = new ABKey(mult, (uint)maxmax);
+
             foreach (Cycle c in meas.Cycles)
             {
-                //c.SetQCStatus(mult, c.);
+                ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB = AlphaBetaCache.GetAlphaBeta(thisRun);
+                if (((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB == null)
+                {
+                    ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB = new AlphaBeta((int)maxmax);
+                    ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB.Resize((int)maxmax);
+                    AlphaBetaCache.AddAlphaBeta(thisRun, ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB);
+                }
+                else
+                    ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB = AlphaBetaCache.GetAlphaBeta(thisRun);
+
                 copied.Cycles.Add(new Cycle(c));
             }
+            
             copied.CountingAnalysisResults.Remove(mult);
             MultiplicityCountingRes mcr2 = new MultiplicityCountingRes((MultiplicityCountingRes)meas.CountingAnalysisResults[mult]);
+            CycleProcessing.calc_alpha_beta(mult, mcr2);
+            thisSetting = mcr2.AB;
+            mcr2.AB = (thisSetting == null || (thisSetting.MaxBins == 1 && mcr2.RASum == 0)) ?null:thisSetting;
             mcr2.RAMult = new ulong[mcr2.MaxBins];
             mcr2.UnAMult = new ulong[mcr2.MaxBins];
             mcr2.NormedAMult = new ulong[mcr2.MaxBins];
@@ -2320,6 +2357,8 @@ namespace NCCTester
             LMRawAnalysis.SDTMultiplicityCalculator sdtmc = new LMRawAnalysis.SDTMultiplicityCalculator(1e-7);
             MultiplicityResult mr;
             MultiplicityCountingRes mcr = ((MultiplicityCountingRes)meas.CountingAnalysisResults[mult]);
+            mcr.AB = (thisSetting == null || (thisSetting.MaxBins == 1 && mcr2.RASum == 0)) ? null : thisSetting;
+
             if (mcr.FA == FAType.FAOff)
             {
                 // Fix triples. Was sending GW in wrong units. HN 4/26/2018
@@ -2343,15 +2382,8 @@ namespace NCCTester
                         mult.sr.deadTimeCoefficientBinPicoSecs, mult.sr.deadTimeCoefficientCinNanoSecs,
                         mcr.LMTS[0].TotalSeconds);
 
-            ((MultiplicityCountingRes)copied.CountingAnalysisResults[mult]).AB = new AlphaBeta(mr.alpha, mr.beta);
-            foreach (Cycle c in copied.Cycles)
-            {
-                ((MultiplicityCountingRes)c.CountingAnalysisResults[mult]).AB = new AlphaBeta(mr.alpha, mr.beta);
-            }
-
             copied.Stratum = new Stratum();
             copied.Stratum.CopyFrom(meas.Stratum);
-
 
             return copied;
         }

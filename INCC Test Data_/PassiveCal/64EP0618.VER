@@ -1,0 +1,146 @@
+INCC 5.1.2
+
+                   Facility:  RRP TCVS-B
+      Material balance area:  XXXX
+              Detector type:  NCC
+                Detector id:  TCVSB
+             Electronics id:  AMSR
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  16.04.14  15:06:18
+          Results file name:  64EP0618.VER
+          Inspection number:  
+                    Item id:  79-16d
+                 Stratum id:  XXXX
+              Material type:  Pu
+     Original declared mass:  0.000
+         Measurement option:  Verification
+                Data source:  Review disk file
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Calculated
+             Inspector name:  
+            Passive comment:  
+
+               Isotopics id:  Default
+      Isotopics source code:  OD
+                      Pu238:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu239:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu240:  100.0000 +-   0.0000    100.0000 +-   0.0000
+                      Pu241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu242:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Pu date:  00.01.01                16.04.14
+                      Am241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Am date:  00.01.01                16.04.14
+
+                   Predelay:      4.50
+                Gate length:    128.00
+            2nd gate length:     64.00
+               High voltage:   1760
+              Die away time:    124.0000
+                 Efficiency:      0.0001
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      1.3900
+     Coefficient B deadtime:     -4.8700
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:  32907.689 +-     0.000
+ Passive doubles background:    123.330 +-     0.000
+ Passive triples background:      0.000 +-     0.000
+ Passive scaler1 background:  13316.146
+ Passive scaler2 background:  15653.609
+
+Warning messages
+
+Passive calibration curve: passed stratum rejection limits
+
+Passive summed raw data
+
+                 Number of good cycles:                5
+                      Total count time:              150
+            Shift register singles sum:          6743268
+Shift register reals + accidentals sum:         38887976
+        Shift register accidentals sum:         38798297
+         Shift register 1st scaler sum:          3751943
+         Shift register 2nd scaler sum:          2434091
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Results
+
+       Singles:      12643.014 +-    14.992
+       Doubles:        477.295 +-    24.011
+       Triples:          0.000 +-     0.000
+      Scaler 1:      11696.808 +-    17.232
+      Scaler 2:        573.665 +-     5.952
+    Aux1 Ratio:          0.081
+   Aux2 Ratio:         21.039
+
+
+ Passive calibration curve results
+
+                  Pu240e mass (g):        477.295 +-    24.011
+                       Pu240e (%):        100.000
+                      Pu mass (g):        477.295 +-    24.011
+
+Passive calibration curve calibration parameters
+
+                         Equation:  D = a + b * m + c * m^2 + d * m^3
+                                a:   0.000000e+000
+                                b:   1.000000e+000
+                                c:   0.000000e+000
+                                d:   0.000000e+000
+                       variance a:   0.000000e+000
+                       variance b:   0.000000e+000
+                       variance c:   0.000000e+000
+                       variance d:   0.000000e+000
+                    covariance ab:   0.000000e+000
+                    covariance ac:   0.000000e+000
+                    covariance ad:   0.000000e+000
+                    covariance bc:   0.000000e+000
+                    covariance bd:   0.000000e+000
+                    covariance cd:   0.000000e+000
+                          sigma x:   0.000000e+000
+Analysis based on doubles rate.
+
+Passive cycle data
+
+Count time (sec):  30
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1    1347645    7767167    7745965     750067     486176  Pass
+   2    1347903    7770409    7754525     749463     486877  Pass
+   3    1350024    7791872    7773295     752257     486810  Pass
+   4    1349250    7785107    7765993     750670     487267  Pass
+   5    1348446    7773421    7758519     749486     486961  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1     12608.584       518.672         0.000       518.672  Pass
+   2     12617.391       528.331         0.000       528.331  Pass
+   3     12689.795       424.645         0.000       424.645  Pass
+   4     12663.373       500.142         0.000       500.142  Pass
+   5     12635.927       414.684         0.000       414.684  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0
+
+Cycle 4      R+A           A
+     0           0            0
+
+Cycle 5      R+A           A
+     0           0            0

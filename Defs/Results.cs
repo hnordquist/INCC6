@@ -1675,7 +1675,7 @@ namespace AnalysisDefs
             BinSumLoop(m);
             MaxBins = Math.Max(MaxBins, m.MaxBins);
             MinBins = Math.Max(MinBins, m.MinBins);
-            αβ.TransferIntermediates(m.AB);
+            αβ?.TransferIntermediates(m.AB);
         }
 
         /// <summary>
@@ -1772,150 +1772,149 @@ namespace AnalysisDefs
 
             casecompares = this.TS == mcr.TS;
             if (!casecompares)
-                testStatus.Add("Time span values do not match");
+                testStatus.Add(String.Format ("Time span values do not match 1st:{0} 2nd:{1}",this.TS.TotalSeconds, mcr.TS.TotalSeconds));
             compares = compares && casecompares;
 
             //Skipping LMTS for now. Should not happen in INCC5 files
 
             casecompares = this.FA == mcr.FA;
             if (!casecompares)
-                testStatus.Add("Fast accidentals settings do not match");
+                testStatus.Add(String.Format("Fast accidentals settings do not match 1st:{0} 2nd:{1}", this.FA.ToString(), mcr.FA.ToString()));
             compares = compares && casecompares;
 
             casecompares = this.accidentalsDelay == mcr.accidentalsDelay;
             if (!casecompares)
-                testStatus.Add("Accidentals delay settings do not match");
+                testStatus.Add(String.Format("Accidentals delay settings do not match 1st:{0} 2nd:{1}", this.accidentalsDelay, mcr.accidentalsDelay)); 
             compares = compares && casecompares;
 
-            casecompares = this.maxBins == mcr.maxBins;
-            if (!casecompares)
-                testStatus.Add("Max bin settings do not match");
-            compares = compares && casecompares;
+            if (mcr.maxBins > 0)
+                //In our test cases, sometimes no multiplicity data except totals. Ignore this for those.
+            {
+                casecompares = this.maxBins == mcr.maxBins;
+                if (!casecompares)
+                    testStatus.Add(String.Format("Max bin settings do not match 1st:{0} 2nd:{1}", this.maxBins, mcr.maxBins));
+                compares = compares && casecompares;
 
-            casecompares = this.minBins == mcr.minBins;
-            if (!casecompares)
-                testStatus.Add("Min bin settings do not match");
-            compares = compares && casecompares;
+                casecompares = this.minBins == mcr.minBins;
+                if (!casecompares)
+                    testStatus.Add(String.Format("Min bin settings do not match 1st:{0} 2nd:{1}", this.minBins, mcr.minBins));
+                compares = compares && casecompares;
 
-            /*casecompares = this.AB.CompareTo(mcr.AB) == 0;
-            if (!casecompares)
-                testStatus.Add("Alpha Beta arrays do not match.");
-            compares = compares && casecompares;*/
-            //Don't compare alpha/beta. These are not preserved in the file. They will result in different triples rates if they are wrong
+                casecompares = CompareTools.ULongArraysCompare(this.RAMult, mcr.RAMult);
+                if (!casecompares)
+                    testStatus.Add("RA distributions do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.ULongArraysCompare(this.RAMult, mcr.RAMult);
-            if (!casecompares)
-                testStatus.Add("RA distributions do not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.ULongArraysCompare(this.UnAMult, mcr.UnAMult);
+                if (!casecompares)
+                    testStatus.Add("Accidental distributions do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.ULongArraysCompare(this.UnAMult, mcr.UnAMult);
-            if (!casecompares)
-                testStatus.Add("Accidental distributions do not match.");
-            compares = compares && casecompares;
+                //TODO: Where are these normalized HN 5.16.2018
+                casecompares = CompareTools.ULongArraysCompare(this.NormedAMult, mcr.NormedAMult);
+                if (!casecompares)
+                    testStatus.Add("Normalized accidental distributions do not match.");
+                compares = compares && casecompares;
 
-            //TODO: Where are these normalized HN 5.16.2018
-            casecompares = CompareTools.ULongArraysCompare(this.NormedAMult, mcr.NormedAMult);
-            if (!casecompares)
-                testStatus.Add("Normalized accidental distributions do not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesCompare(this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1);
+                if (!casecompares)
+                    testStatus.Add(String.Format("AFactorialAlphaMoment1 value does not match 1st:{0} 2nd:{1}", this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1));
+                compares = compares && casecompares;
 
-            if (!casecompares)
-                testStatus.Add("AFactorialAlphaMoment1 value does not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesCompare(this.AFactorialBetaMoment2, mcr.AFactorialBetaMoment2);
+                if (!casecompares)
+                    testStatus.Add(String.Format("AFactorialBetaMoment2 value does not match 1st:{0} 2nd:{1}", this.AFactorialBetaMoment2, mcr.AFactorialBetaMoment2));
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this.AFactorialBetaMoment2, mcr.AFactorialBetaMoment2);
-            if (!casecompares)
-                testStatus.Add("AFactorialBetaMoment2 value does not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesCompare(this.RAFactorialAlphaMoment1, mcr.RAFactorialAlphaMoment1);
+                if (!casecompares)
+                    testStatus.Add(String.Format("RAFactorialAlphaMoment1 value does not match 1st:{0} 2nd:{1}", this.RAFactorialAlphaMoment1, mcr.RAFactorialAlphaMoment1));
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this.RAFactorialAlphaMoment1, mcr.RAFactorialAlphaMoment1);
-            if (!casecompares)
-                testStatus.Add("RAFactorialAlphaMoment1 value does not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
+                if (!casecompares)
+                    testStatus.Add("RAFactorialMoments arrays do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
-            if (!casecompares)
-                testStatus.Add("RAFactorialMoments arrays do not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesCompare(this.RAFactorialBetaMoment2, mcr.RAFactorialBetaMoment2);
+                if (!casecompares)
+                    testStatus.Add(String.Format("RAFactorialBetaMoment2 value does not match 1st:{0} 2nd:{1}", this.RAFactorialBetaMoment2, mcr.RAFactorialBetaMoment2));
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this.RAFactorialBetaMoment2, mcr.RAFactorialBetaMoment2);
-            if (!casecompares)
-                testStatus.Add("RAFactorialBetaMoment2 value does not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesCompare(this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1);
+                if (!casecompares)
+                    testStatus.Add(String.Format("AFactorialAlphaMoment1 value does not match 1st:{0} 2nd:{1}", this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1));
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this.AFactorialAlphaMoment1, mcr.AFactorialAlphaMoment1);
-            if (!casecompares)
-                testStatus.Add("AFactorialAlphaMoment1 value does not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesArraysCompare(this.AFactorialMoments, mcr.AFactorialMoments);
+                if (!casecompares)
+                    testStatus.Add("AFactorialMoments arrays do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesArraysCompare(this.AFactorialMoments, mcr.AFactorialMoments);
-            if (!casecompares)
-                testStatus.Add("AFactorialMoments arrays do not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
+                if (!casecompares)
+                    testStatus.Add("RAFactorialMoments arrays do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesArraysCompare(this.RAFactorialMoments, mcr.RAFactorialMoments);
-            if (!casecompares)
-                testStatus.Add("RAFactorialMoments arrays do not match.");
-            compares = compares && casecompares;
+                casecompares = CompareTools.DoublesArraysCompare(this.covariance_matrix, mcr.covariance_matrix);
+                if (!casecompares)
+                    testStatus.Add("Covariance matrix arrays do not match.");
+                compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesArraysCompare(this.covariance_matrix, mcr.covariance_matrix);
+                casecompares = CompareTools.DoublesTupleCompares(this.RawSinglesRate, mcr.RawSinglesRate);
+            }
             if (!casecompares)
-                testStatus.Add("Covariance matrix arrays do not match.");
-            compares = compares && casecompares;
-
-            casecompares = CompareTools.DoublesTupleCompares(this.RawSinglesRate, mcr.RawSinglesRate);
-            if (!casecompares)
-                testStatus.Add("Raw singles rates do not match.");
+                testStatus.Add(String.Format("Raw singles rates do not match 1st:{0} 2nd:{1}", this.RawSinglesRate.ToString(), mcr.RawSinglesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.RawDoublesRate, mcr.RawDoublesRate);
             if (!casecompares)
-                testStatus.Add("Raw doubles rates do not match.");
+                testStatus.Add(String.Format("Raw doubles rates do not match 1st:{0} 2nd:{1}", this.RawDoublesRate.ToString(), mcr.RawDoublesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.RawTriplesRate, mcr.RawTriplesRate);
             if (!casecompares)
-                testStatus.Add("Raw triples rates do not match.");
+                testStatus.Add(String.Format("Raw triples rates do not match 1st:{0} 2nd:{1}", this.RawTriplesRate.ToString(), mcr.RawTriplesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedSinglesRate, mcr.DeadtimeCorrectedSinglesRate);
             if (!casecompares)
-                testStatus.Add("Deadtime corrected singles rates do not match.");
+                testStatus.Add(String.Format("Deadtime corrected singles rates do not match 1st:{0} 2nd:{1}", this.DeadtimeCorrectedSinglesRate.ToString(), mcr.DeadtimeCorrectedSinglesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedDoublesRate, mcr.DeadtimeCorrectedDoublesRate);
             if (!casecompares)
-                testStatus.Add("Deadtime corrected doubles rates do not match.");
+                testStatus.Add(String.Format("Deadtime corrected doubles rates do not match 1st:{0} 2nd:{1}", this.DeadtimeCorrectedDoublesRate.ToString(), mcr.DeadtimeCorrectedDoublesRate.ToString())); ;
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DeadtimeCorrectedTriplesRate, mcr.DeadtimeCorrectedTriplesRate);
             if (!casecompares)
-                testStatus.Add("Deadtime corrected triples rates do not match.");
+                testStatus.Add(String.Format("Deadtime corrected triples rates do not match 1st:{0} 2nd:{1}", this.DeadtimeCorrectedTriplesRate.ToString(), mcr.DeadtimeCorrectedTriplesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedSinglesRate, mcr.DytlewskiCorrectedSinglesRate);
             if (!casecompares)
-                testStatus.Add("Dytlewski corrected singles rates do not match.");
+                testStatus.Add(String.Format("Dytlewski corrected singles rates do not match 1st:{0} 2nd:{1}", this.DytlewskiCorrectedSinglesRate.ToString(), mcr.DytlewskiCorrectedSinglesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedDoublesRate, mcr.DytlewskiCorrectedDoublesRate);
             if (!casecompares)
-                testStatus.Add("Dytlewski corrected doubles rates do not match.");
+                testStatus.Add(String.Format("Dytlewski corrected doubles rates do not match 1st:{0} 2nd:{1}", this.DytlewskiCorrectedDoublesRate.ToString(), mcr.DytlewskiCorrectedDoublesRate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.DytlewskiCorrectedTriplesRate, mcr.DytlewskiCorrectedTriplesRate);
             if (!casecompares)
-                testStatus.Add("Dytlewski corrected triples rates do not match.");
+                testStatus.Add(String.Format("Dytlewski corrected triples rates do not match 1st:{0} 2nd:{1}", this.DeadtimeCorrectedTriplesRate.ToString(), mcr.DytlewskiCorrectedTriplesRate.ToString())); 
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.Scaler1Rate, mcr.Scaler1Rate);
             if (!casecompares)
-                testStatus.Add("Scaler1 rates do not match.");
+                testStatus.Add(String.Format("Scaler1 rates do not match 1st:{0} 2nd:{1}", this.Scaler1Rate.ToString(), mcr.Scaler1Rate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesTupleCompares(this.Scaler2Rate, mcr.Scaler2Rate);
             if (!casecompares)
-                testStatus.Add("Scaler2 rates do not match.");
+                testStatus.Add(String.Format("Scaler2 rates do not match 1st:{0} 2nd:{1}", this.Scaler2Rate.ToString(), mcr.Scaler2Rate.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.multiplication, mcr.multiplication);
@@ -1925,7 +1924,7 @@ namespace AnalysisDefs
 
             casecompares = CompareTools.DoublesCompare(this.doubles_multi, mcr.doubles_multi);
             if (!casecompares)
-                testStatus.Add("Doubles multiplication values do not match.");
+                testStatus.Add("Doubles multiplication values do not match 1st:{0} 2nd:{1}");
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.multiAlpha, mcr.multiAlpha);
@@ -1938,49 +1937,49 @@ namespace AnalysisDefs
                 testStatus.Add("Efficiency values do not match.");
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this.efficiency, mcr.efficiency);
+            casecompares = CompareTools.DoublesCompare(this.mass, mcr.mass);
             if (!casecompares)
-                testStatus.Add("Mass values do not match.");
+                testStatus.Add(String.Format("Mass values do not match 1st:{0} 2nd:{1}", this.mass, mcr.mass));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.singles_multi, mcr.singles_multi);
             if (!casecompares)
-                testStatus.Add("Singles_multi values do not match.");
+                testStatus.Add(String.Format("Singles_multi values do not match 1st:{0} 2nd:{1}", this.singles_multi.ToString(), mcr.singles_multi.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.doubles_multi, mcr.doubles_multi);
             if (!casecompares)
-                testStatus.Add("Doubles_multi values do not match.");
+                testStatus.Add(String.Format("Doubles_multi values do not match 1st:{0} 2nd:{1}", this.doubles_multi.ToString(), mcr.doubles_multi.ToString()));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this.triples_multi, mcr.triples_multi);
             if (!casecompares)
-                testStatus.Add("Triples_multi values do not match.");
+                testStatus.Add(String.Format("Triples_multi values do not match 1st:{0} 2nd:{1}", this.triples_multi.ToString(), mcr.triples_multi.ToString()));
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this._RASum, mcr._RASum);
+            casecompares = CompareTools.DoublesCompare(this.RASum, mcr.RASum);
             if (!casecompares)
-                testStatus.Add(String.Format("RA sum values do not match. {0} {1}", this._RASum, mcr._RASum));
+                testStatus.Add(String.Format("RA sum values do not match. 1st:{0} 2nd:{1}", this.RASum, mcr.RASum));
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this._ASum, mcr._ASum);
+            casecompares = CompareTools.DoublesCompare(this.ASum, mcr.ASum);
             if (!casecompares)
-                testStatus.Add(String.Format("A sum values do not match. {0} {1}", this._ASum, mcr._ASum));
+                testStatus.Add(String.Format("A sum values do not match. 1st:{0} 2nd:{1}", this.ASum, mcr.ASum));
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this._UnASum, mcr._UnASum);
+            casecompares = CompareTools.DoublesCompare(this.UnASum, mcr.UnASum);
             if (!casecompares)
-                testStatus.Add(String.Format("UnA sum values do not match. {0} {1}", this._UnASum, mcr._UnASum));
+                testStatus.Add(String.Format("UnA sum values do not match. 1st:{0} 2nd:{1}", this.UnASum, mcr.UnASum));
             compares = compares && casecompares;
 
-            casecompares = CompareTools.DoublesCompare(this._S1Sum, mcr._S1Sum);
+            casecompares = CompareTools.DoublesCompare(this.S1Sum, mcr.S1Sum);
             if (!casecompares)
-                testStatus.Add(String.Format("Scaler1 sum values do not match. {0} {1}", this._S1Sum, mcr._S1Sum));
+                testStatus.Add(String.Format("Scaler1 sum values do not match. 1st:{0} 2nd:{1}", this.S1Sum, mcr.S1Sum));
             compares = compares && casecompares;
 
             casecompares = CompareTools.DoublesCompare(this._S2Sum, mcr._S2Sum);
             if (!casecompares)
-                testStatus.Add(String.Format("Scaler2 sum values do not match. {0} {1}", this._S2Sum, mcr._S2Sum));
+                testStatus.Add(String.Format("Scaler2 sum values do not match. 1st:{0} 2nd:{1}", this.S2Sum, mcr.S2Sum));
             compares = compares && casecompares;
 
             return compares;

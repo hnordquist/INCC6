@@ -1,0 +1,30 @@
+***********************************************************
+Starting INCC Algorithms test at 8:28:28 AM
+OS platform for test Microsoft Windows NT 6.1.7601 Service Pack 1
+NCCCore Version 6.2.6750.26945
+Defs Version 6.2.6750.26945
+NCCCtrl Version 6.2.6750.26945
+RepDB Version 6.2.6750.26944
+47 *.ver files found in input directory
+***********************************************************
+
+***********************************************************
+Loading test file 1/47 at 8:28:28 AM
+Test file name: C:\CODE\INCC7\INCC Test Data\ActiveMult\713P0048.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Compare multiplicity counting for entire measurement:
+CountingResults match
+Analysis results comparison for Active multiplicity: PASS
+All analysis Method Results match
+Test 1/47 ended at 8:28:28 AM, 95 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 2/47 at 8:28:30 AM
+Test file name: C:\CODE\INCC7\INCC Test Data\CmRatio\34RA0051.VER: 

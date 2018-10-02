@@ -1,0 +1,2832 @@
+INCC 5.1.2
+
+                   Facility:  RRP-VCAS
+      Material balance area:  MBA3
+              Detector type:  FISSION
+                Detector id:  VCAS
+             Electronics id:  MG
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  12.07.09  03:54:51
+          Results file name:  279D5451.VER
+          Inspection number:  
+                    Item id:  V00166
+                 Stratum id:  VCAS14
+           Bias uncertainty:  0.0500
+         Random uncertainty:  0.0500
+     Systematic uncertainty:  0.0500
+     Relative std deviation:  0.0707
+              Material type:  vcas
+     Original declared mass:  4.252
+         Measurement option:  Verification
+                Data source:  Review disk file
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Calculated
+             Inspector name:  
+            Passive comment:  
+
+               Isotopics id:  dummyx
+      Isotopics source code:  OD
+                      Pu238:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu239:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu240:  100.0000 +-   0.0000    100.0000 +-   0.0000
+                      Pu241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu242:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Pu date:  00.01.01                12.07.09
+                      Am241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Am date:  00.01.01                12.07.09
+
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:    500
+              Die away time:     75.0000
+                 Efficiency:      0.0001
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.0000
+     Coefficient B deadtime:      0.0000
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:      0.000 +-     0.000
+ Passive doubles background:      0.000 +-     0.000
+ Passive triples background:      0.000 +-     0.000
+ Passive scaler1 background:      0.000
+ Passive scaler2 background:      0.000
+
+Warning messages
+
+Curium ratio: Pu failed stratum rejection limits
+Curium ratio: U failed stratum rejection limits
+
+Passive summed raw data
+
+                 Number of good cycles:              538
+                      Total count time:            16140
+            Shift register singles sum:          1896927
+Shift register reals + accidentals sum:                0
+        Shift register accidentals sum:                0
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Results
+
+       Singles:        117.530 +-     0.090
+       Doubles:         -0.884 +-     0.001
+       Triples:          0.000 +-     0.000
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+
+ Curium ratio results
+
+                             VCAS:              x
+                   Input batch id:   vcas-default
+                 Cm/Pu ratio date:       12.07.09
+           Pu effective half-life:        194.000
+                      Cm/Pu ratio:       1.408451 +-  0.000000
+      Decay corrected Cm/Pu ratio:       1.408395 +-  0.000000
+                  Cm/U ratio date:       12.07.09
+                       Cm/U ratio:       0.045369 +-  0.000000
+       Decay corrected Cm/U ratio:       0.045368 +-  0.000000
+                      Cm mass (g):          3.523 +-     0.042
+                      Pu mass (g):          2.501 +-     0.030
+                       U mass (g):         77.655 +-     0.936
+                    U235 mass (g):          0.655 +-     0.008
+             Declared Pu mass (g):          4.252
+     Declared - assay Pu mass (g):          1.751 +-     0.030
+     Declared - assay Pu mass (%):         41.169 +-     0.709
+              Declared U mass (g):        132.000
+      Declared - assay U mass (g):         54.345 +-     0.936
+      Declared - assay U mass (%):         41.171 +-     0.709
+           Declared U235 mass (g):          1.113
+   Declared - assay U235 mass (g):          0.458 +-     0.008
+   Declared - assay U235 mass (%):         41.171 +-     0.709
+
+Curium ratio calibration parameters
+
+                         Equation:  D = a + b * m + c * m^2 + d * m^3
+                                a:   0.000000e+000
+                                b:   3.336000e+001
+                                c:   0.000000e+000
+                                d:   0.000000e+000
+                       variance a:   2.000000e+000
+                       variance b:   0.000000e+000
+                       variance c:   0.000000e+000
+                       variance d:   0.000000e+000
+                    covariance ab:   0.000000e+000
+                    covariance ac:   0.000000e+000
+                    covariance ad:   0.000000e+000
+                    covariance bc:   0.000000e+000
+                    covariance bd:   0.000000e+000
+                    covariance cd:   0.000000e+000
+                          sigma x:   0.000000e+000
+Analysis based on singles rate.
+
+Passive cycle data
+
+Count time (sec):  30
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1       3462          0          0          0          0  Pass
+   2       3567          0          0          0          0  Pass
+   3       3486          0          0          0          0  Pass
+   4       3477          0          0          0          0  Pass
+   5       3495          0          0          0          0  Pass
+   6       3447          0          0          0          0  Pass
+   7       3459          0          0          0          0  Pass
+   8       3507          0          0          0          0  Pass
+   9       3504          0          0          0          0  Pass
+  10       3510          0          0          0          0  Pass
+  11       3477          0          0          0          0  Pass
+  12       3471          0          0          0          0  Pass
+  13       3414          0          0          0          0  Pass
+  14       3561          0          0          0          0  Pass
+  15       3522          0          0          0          0  Pass
+  16       3468          0          0          0          0  Pass
+  17       3639          0          0          0          0  Pass
+  18       3519          0          0          0          0  Pass
+  19       3531          0          0          0          0  Pass
+  20       3396          0          0          0          0  Pass
+  21       3525          0          0          0          0  Pass
+  22       3540          0          0          0          0  Pass
+  23       3588          0          0          0          0  Pass
+  24       3621          0          0          0          0  Pass
+  25       3471          0          0          0          0  Pass
+  26       3558          0          0          0          0  Pass
+  27       3525          0          0          0          0  Pass
+  28       3471          0          0          0          0  Pass
+  29       3429          0          0          0          0  Pass
+  30       3576          0          0          0          0  Pass
+  31       3492          0          0          0          0  Pass
+  32       3489          0          0          0          0  Pass
+  33       3549          0          0          0          0  Pass
+  34       3618          0          0          0          0  Pass
+  35       3591          0          0          0          0  Pass
+  36       3630          0          0          0          0  Pass
+  37       3531          0          0          0          0  Pass
+  38       3543          0          0          0          0  Pass
+  39       3552          0          0          0          0  Pass
+  40       3513          0          0          0          0  Pass
+  41       3528          0          0          0          0  Pass
+  42       3480          0          0          0          0  Pass
+  43       3543          0          0          0          0  Pass
+  44       3558          0          0          0          0  Pass
+  45       3483          0          0          0          0  Pass
+  46       3474          0          0          0          0  Pass
+  47       3468          0          0          0          0  Pass
+  48       3501          0          0          0          0  Pass
+  49       3435          0          0          0          0  Pass
+  50       3567          0          0          0          0  Pass
+  51       3597          0          0          0          0  Pass
+  52       3552          0          0          0          0  Pass
+  53       3501          0          0          0          0  Pass
+  54       3576          0          0          0          0  Pass
+  55       3558          0          0          0          0  Pass
+  56       3546          0          0          0          0  Pass
+  57       3501          0          0          0          0  Pass
+  58       3576          0          0          0          0  Pass
+  59       3534          0          0          0          0  Pass
+  60       3531          0          0          0          0  Pass
+  61       3567          0          0          0          0  Pass
+  62       3510          0          0          0          0  Pass
+  63       3534          0          0          0          0  Pass
+  64       3474          0          0          0          0  Pass
+  65       3519          0          0          0          0  Pass
+  66       3498          0          0          0          0  Pass
+  67       3582          0          0          0          0  Pass
+  68       3642          0          0          0          0  Pass
+  69       3471          0          0          0          0  Pass
+  70       3555          0          0          0          0  Pass
+  71       3468          0          0          0          0  Pass
+  72       3549          0          0          0          0  Pass
+  73       3600          0          0          0          0  Pass
+  74       3492          0          0          0          0  Pass
+  75       3474          0          0          0          0  Pass
+  76       3492          0          0          0          0  Pass
+  77       3420          0          0          0          0  Pass
+  78       3537          0          0          0          0  Pass
+  79       3522          0          0          0          0  Pass
+  80       3423          0          0          0          0  Pass
+  81       3486          0          0          0          0  Pass
+  82       3474          0          0          0          0  Pass
+  83       3528          0          0          0          0  Pass
+  84       3639          0          0          0          0  Pass
+  85       3615          0          0          0          0  Pass
+  86       3558          0          0          0          0  Pass
+  87       3486          0          0          0          0  Pass
+  88       3615          0          0          0          0  Pass
+  89       3519          0          0          0          0  Pass
+  90       3474          0          0          0          0  Pass
+  91       3444          0          0          0          0  Pass
+  92       3447          0          0          0          0  Pass
+  93       3549          0          0          0          0  Pass
+  94       3483          0          0          0          0  Pass
+  95       3561          0          0          0          0  Pass
+  96       3525          0          0          0          0  Pass
+  97       3642          0          0          0          0  Pass
+  98       3360          0          0          0          0  Pass
+  99       3561          0          0          0          0  Pass
+ 100       3480          0          0          0          0  Pass
+ 101       3588          0          0          0          0  Pass
+ 102       3468          0          0          0          0  Pass
+ 103       3588          0          0          0          0  Pass
+ 104       3507          0          0          0          0  Pass
+ 105       3444          0          0          0          0  Pass
+ 106       3435          0          0          0          0  Pass
+ 107       3486          0          0          0          0  Pass
+ 108       3603          0          0          0          0  Pass
+ 109       3579          0          0          0          0  Pass
+ 110       3471          0          0          0          0  Pass
+ 111       3603          0          0          0          0  Pass
+ 112       3513          0          0          0          0  Pass
+ 113       3456          0          0          0          0  Pass
+ 114       3444          0          0          0          0  Pass
+ 115       3582          0          0          0          0  Pass
+ 116       3537          0          0          0          0  Pass
+ 117       3513          0          0          0          0  Pass
+ 118       3474          0          0          0          0  Pass
+ 119       3534          0          0          0          0  Pass
+ 120       3507          0          0          0          0  Pass
+ 121       3552          0          0          0          0  Pass
+ 122       3618          0          0          0          0  Pass
+ 123       3525          0          0          0          0  Pass
+ 124       3522          0          0          0          0  Pass
+ 125       3432          0          0          0          0  Pass
+ 126       3636          0          0          0          0  Pass
+ 127       3393          0          0          0          0  Pass
+ 128       3546          0          0          0          0  Pass
+ 129       3465          0          0          0          0  Pass
+ 130       3561          0          0          0          0  Pass
+ 131       3432          0          0          0          0  Pass
+ 132       3537          0          0          0          0  Pass
+ 133       3513          0          0          0          0  Pass
+ 134       3447          0          0          0          0  Pass
+ 135       3402          0          0          0          0  Pass
+ 136       3459          0          0          0          0  Pass
+ 137       3537          0          0          0          0  Pass
+ 138       3537          0          0          0          0  Pass
+ 139       3450          0          0          0          0  Pass
+ 140       3483          0          0          0          0  Pass
+ 141       3516          0          0          0          0  Pass
+ 142       3459          0          0          0          0  Pass
+ 143       3678          0          0          0          0  Pass
+ 144       3585          0          0          0          0  Pass
+ 145       3558          0          0          0          0  Pass
+ 146       3549          0          0          0          0  Pass
+ 147       3552          0          0          0          0  Pass
+ 148       3498          0          0          0          0  Pass
+ 149       3549          0          0          0          0  Pass
+ 150       3498          0          0          0          0  Pass
+ 151       3642          0          0          0          0  Pass
+ 152       3519          0          0          0          0  Pass
+ 153       3576          0          0          0          0  Pass
+ 154       3492          0          0          0          0  Pass
+ 155       3564          0          0          0          0  Pass
+ 156       3564          0          0          0          0  Pass
+ 157       3501          0          0          0          0  Pass
+ 158       3489          0          0          0          0  Pass
+ 159       3477          0          0          0          0  Pass
+ 160       3564          0          0          0          0  Pass
+ 161       3492          0          0          0          0  Pass
+ 162       3561          0          0          0          0  Pass
+ 163       3597          0          0          0          0  Pass
+ 164       3486          0          0          0          0  Pass
+ 165       3516          0          0          0          0  Pass
+ 166       3504          0          0          0          0  Pass
+ 167       3549          0          0          0          0  Pass
+ 168       3384          0          0          0          0  Pass
+ 169       3516          0          0          0          0  Pass
+ 170       3582          0          0          0          0  Pass
+ 171       3420          0          0          0          0  Pass
+ 172       3546          0          0          0          0  Pass
+ 173       3672          0          0          0          0  Pass
+ 174       3459          0          0          0          0  Pass
+ 175       3408          0          0          0          0  Pass
+ 176       3459          0          0          0          0  Pass
+ 177       3576          0          0          0          0  Pass
+ 178       3405          0          0          0          0  Pass
+ 179       3435          0          0          0          0  Pass
+ 180       3519          0          0          0          0  Pass
+ 181       3507          0          0          0          0  Pass
+ 182       3498          0          0          0          0  Pass
+ 183       3483          0          0          0          0  Pass
+ 184       3591          0          0          0          0  Pass
+ 185       3510          0          0          0          0  Pass
+ 186       3531          0          0          0          0  Pass
+ 187       3429          0          0          0          0  Pass
+ 188       3549          0          0          0          0  Pass
+ 189       3513          0          0          0          0  Pass
+ 190       3480          0          0          0          0  Pass
+ 191       3543          0          0          0          0  Pass
+ 192       3507          0          0          0          0  Pass
+ 193       3516          0          0          0          0  Pass
+ 194       3411          0          0          0          0  Pass
+ 195       3483          0          0          0          0  Pass
+ 196       3513          0          0          0          0  Pass
+ 197       3453          0          0          0          0  Pass
+ 198       3570          0          0          0          0  Pass
+ 199       3561          0          0          0          0  Pass
+ 200       3528          0          0          0          0  Pass
+ 201       3606          0          0          0          0  Pass
+ 202       3651          0          0          0          0  Pass
+ 203       3477          0          0          0          0  Pass
+ 204       3498          0          0          0          0  Pass
+ 205       3522          0          0          0          0  Pass
+ 206       3396          0          0          0          0  Pass
+ 207       3492          0          0          0          0  Pass
+ 208       3495          0          0          0          0  Pass
+ 209       3489          0          0          0          0  Pass
+ 210       3624          0          0          0          0  Pass
+ 211       3489          0          0          0          0  Pass
+ 212       3624          0          0          0          0  Pass
+ 213       3423          0          0          0          0  Pass
+ 214       3552          0          0          0          0  Pass
+ 215       3459          0          0          0          0  Pass
+ 216       3552          0          0          0          0  Pass
+ 217       3525          0          0          0          0  Pass
+ 218       3585          0          0          0          0  Pass
+ 219       3489          0          0          0          0  Pass
+ 220       3633          0          0          0          0  Pass
+ 221       3498          0          0          0          0  Pass
+ 222       3489          0          0          0          0  Pass
+ 223       3552          0          0          0          0  Pass
+ 224       3534          0          0          0          0  Pass
+ 225       3546          0          0          0          0  Pass
+ 226       3585          0          0          0          0  Pass
+ 227       3639          0          0          0          0  Pass
+ 228       3537          0          0          0          0  Pass
+ 229       3543          0          0          0          0  Pass
+ 230       3465          0          0          0          0  Pass
+ 231       3513          0          0          0          0  Pass
+ 232       3552          0          0          0          0  Pass
+ 233       3495          0          0          0          0  Pass
+ 234       3558          0          0          0          0  Pass
+ 235       3456          0          0          0          0  Pass
+ 236       3531          0          0          0          0  Pass
+ 237       3543          0          0          0          0  Pass
+ 238       3495          0          0          0          0  Pass
+ 239       3606          0          0          0          0  Pass
+ 240       3627          0          0          0          0  Pass
+ 241       3540          0          0          0          0  Pass
+ 242       3459          0          0          0          0  Pass
+ 243       3540          0          0          0          0  Pass
+ 244       3513          0          0          0          0  Pass
+ 245       3447          0          0          0          0  Pass
+ 246       3426          0          0          0          0  Pass
+ 247       3408          0          0          0          0  Pass
+ 248       3645          0          0          0          0  Pass
+ 249       3402          0          0          0          0  Pass
+ 250       3540          0          0          0          0  Pass
+ 251       3480          0          0          0          0  Pass
+ 252       3444          0          0          0          0  Pass
+ 253       3486          0          0          0          0  Pass
+ 254       3549          0          0          0          0  Pass
+ 255       3390          0          0          0          0  Pass
+ 256       3606          0          0          0          0  Pass
+ 257       3525          0          0          0          0  Pass
+ 258       3528          0          0          0          0  Pass
+ 259       3477          0          0          0          0  Pass
+ 260       3540          0          0          0          0  Pass
+ 261       3504          0          0          0          0  Pass
+ 262       3522          0          0          0          0  Pass
+ 263       3606          0          0          0          0  Pass
+ 264       3579          0          0          0          0  Pass
+ 265       3588          0          0          0          0  Pass
+ 266       3465          0          0          0          0  Pass
+ 267       3411          0          0          0          0  Pass
+ 268       3531          0          0          0          0  Pass
+ 269       3579          0          0          0          0  Pass
+ 270       3537          0          0          0          0  Pass
+ 271       3471          0          0          0          0  Pass
+ 272       3579          0          0          0          0  Pass
+ 273       3516          0          0          0          0  Pass
+ 274       3471          0          0          0          0  Pass
+ 275       3423          0          0          0          0  Pass
+ 276       3423          0          0          0          0  Pass
+ 277       3453          0          0          0          0  Pass
+ 278       3618          0          0          0          0  Pass
+ 279       3435          0          0          0          0  Pass
+ 280       3597          0          0          0          0  Pass
+ 281       3567          0          0          0          0  Pass
+ 282       3552          0          0          0          0  Pass
+ 283       3432          0          0          0          0  Pass
+ 284       3630          0          0          0          0  Pass
+ 285       3567          0          0          0          0  Pass
+ 286       3519          0          0          0          0  Pass
+ 287       3543          0          0          0          0  Pass
+ 288       3534          0          0          0          0  Pass
+ 289       3516          0          0          0          0  Pass
+ 290       3522          0          0          0          0  Pass
+ 291       3414          0          0          0          0  Pass
+ 292       3573          0          0          0          0  Pass
+ 293       3531          0          0          0          0  Pass
+ 294       3714          0          0          0          0  Pass
+ 295       3501          0          0          0          0  Pass
+ 296       3543          0          0          0          0  Pass
+ 297       3576          0          0          0          0  Pass
+ 298       3429          0          0          0          0  Pass
+ 299       3645          0          0          0          0  Pass
+ 300       3618          0          0          0          0  Pass
+ 301       3507          0          0          0          0  Pass
+ 302       3345          0          0          0          0  Pass
+ 303       3498          0          0          0          0  Pass
+ 304       3615          0          0          0          0  Pass
+ 305       3555          0          0          0          0  Pass
+ 306       3453          0          0          0          0  Pass
+ 307       3540          0          0          0          0  Pass
+ 308       3537          0          0          0          0  Pass
+ 309       3654          0          0          0          0  Pass
+ 310       3573          0          0          0          0  Pass
+ 311       3612          0          0          0          0  Pass
+ 312       3618          0          0          0          0  Pass
+ 313       3615          0          0          0          0  Pass
+ 314       3564          0          0          0          0  Pass
+ 315       3543          0          0          0          0  Pass
+ 316       3471          0          0          0          0  Pass
+ 317       3519          0          0          0          0  Pass
+ 318       3564          0          0          0          0  Pass
+ 319       3483          0          0          0          0  Pass
+ 320       3579          0          0          0          0  Pass
+ 321       3567          0          0          0          0  Pass
+ 322       3615          0          0          0          0  Pass
+ 323       3603          0          0          0          0  Pass
+ 324       3591          0          0          0          0  Pass
+ 325       3537          0          0          0          0  Pass
+ 326       3672          0          0          0          0  Pass
+ 327       3579          0          0          0          0  Pass
+ 328       3567          0          0          0          0  Pass
+ 329       3486          0          0          0          0  Pass
+ 330       3552          0          0          0          0  Pass
+ 331       3582          0          0          0          0  Pass
+ 332       3582          0          0          0          0  Pass
+ 333       3462          0          0          0          0  Pass
+ 334       3516          0          0          0          0  Pass
+ 335       3552          0          0          0          0  Pass
+ 336       3540          0          0          0          0  Pass
+ 337       3501          0          0          0          0  Pass
+ 338       3489          0          0          0          0  Pass
+ 339       3549          0          0          0          0  Pass
+ 340       3552          0          0          0          0  Pass
+ 341       3588          0          0          0          0  Pass
+ 342       3450          0          0          0          0  Pass
+ 343       3573          0          0          0          0  Pass
+ 344       3468          0          0          0          0  Pass
+ 345       3564          0          0          0          0  Pass
+ 346       3519          0          0          0          0  Pass
+ 347       3519          0          0          0          0  Pass
+ 348       3558          0          0          0          0  Pass
+ 349       3462          0          0          0          0  Pass
+ 350       3528          0          0          0          0  Pass
+ 351       3447          0          0          0          0  Pass
+ 352       3390          0          0          0          0  Pass
+ 353       3441          0          0          0          0  Pass
+ 354       3564          0          0          0          0  Pass
+ 355       3594          0          0          0          0  Pass
+ 356       3354          0          0          0          0  Pass
+ 357       3603          0          0          0          0  Pass
+ 358       3546          0          0          0          0  Pass
+ 359       3465          0          0          0          0  Pass
+ 360       3495          0          0          0          0  Pass
+ 361       3522          0          0          0          0  Pass
+ 362       3582          0          0          0          0  Pass
+ 363       3567          0          0          0          0  Pass
+ 364       3468          0          0          0          0  Pass
+ 365       3513          0          0          0          0  Pass
+ 366       3540          0          0          0          0  Pass
+ 367       3663          0          0          0          0  Pass
+ 368       3573          0          0          0          0  Pass
+ 369       3555          0          0          0          0  Pass
+ 370       3621          0          0          0          0  Pass
+ 371       3507          0          0          0          0  Pass
+ 372       3510          0          0          0          0  Pass
+ 373       3624          0          0          0          0  Pass
+ 374       3492          0          0          0          0  Pass
+ 375       3525          0          0          0          0  Pass
+ 376       3534          0          0          0          0  Pass
+ 377       3492          0          0          0          0  Pass
+ 378       3495          0          0          0          0  Pass
+ 379       3471          0          0          0          0  Pass
+ 380       3558          0          0          0          0  Pass
+ 381       3618          0          0          0          0  Pass
+ 382       3573          0          0          0          0  Pass
+ 383       3501          0          0          0          0  Pass
+ 384       3543          0          0          0          0  Pass
+ 385       3543          0          0          0          0  Pass
+ 386       3435          0          0          0          0  Pass
+ 387       3444          0          0          0          0  Pass
+ 388       3552          0          0          0          0  Pass
+ 389       3624          0          0          0          0  Pass
+ 390       3459          0          0          0          0  Pass
+ 391       3396          0          0          0          0  Pass
+ 392       3537          0          0          0          0  Pass
+ 393       3498          0          0          0          0  Pass
+ 394       3591          0          0          0          0  Pass
+ 395       3507          0          0          0          0  Pass
+ 396       3501          0          0          0          0  Pass
+ 397       3504          0          0          0          0  Pass
+ 398       3459          0          0          0          0  Pass
+ 399       3633          0          0          0          0  Pass
+ 400       3456          0          0          0          0  Pass
+ 401       3561          0          0          0          0  Pass
+ 402       3621          0          0          0          0  Pass
+ 403       3570          0          0          0          0  Pass
+ 404       3495          0          0          0          0  Pass
+ 405       3618          0          0          0          0  Pass
+ 406       3603          0          0          0          0  Pass
+ 407       3486          0          0          0          0  Pass
+ 408       3522          0          0          0          0  Pass
+ 409       3477          0          0          0          0  Pass
+ 410       3573          0          0          0          0  Pass
+ 411       3579          0          0          0          0  Pass
+ 412       3444          0          0          0          0  Pass
+ 413       3555          0          0          0          0  Pass
+ 414       3567          0          0          0          0  Pass
+ 415       3591          0          0          0          0  Pass
+ 416       3552          0          0          0          0  Pass
+ 417       3432          0          0          0          0  Pass
+ 418       3606          0          0          0          0  Pass
+ 419       3516          0          0          0          0  Pass
+ 420       3492          0          0          0          0  Pass
+ 421       3579          0          0          0          0  Pass
+ 422       3546          0          0          0          0  Pass
+ 423       3483          0          0          0          0  Pass
+ 424       3507          0          0          0          0  Pass
+ 425       3555          0          0          0          0  Pass
+ 426       3420          0          0          0          0  Pass
+ 427       3441          0          0          0          0  Pass
+ 428       3579          0          0          0          0  Pass
+ 429       3555          0          0          0          0  Pass
+ 430       3516          0          0          0          0  Pass
+ 431       3714          0          0          0          0  Pass
+ 432       3552          0          0          0          0  Pass
+ 433       3570          0          0          0          0  Pass
+ 434       3498          0          0          0          0  Pass
+ 435       3552          0          0          0          0  Pass
+ 436       3657          0          0          0          0  Pass
+ 437       3543          0          0          0          0  Pass
+ 438       3525          0          0          0          0  Pass
+ 439       3507          0          0          0          0  Pass
+ 440       3579          0          0          0          0  Pass
+ 441       3567          0          0          0          0  Pass
+ 442       3603          0          0          0          0  Pass
+ 443       3561          0          0          0          0  Pass
+ 444       3582          0          0          0          0  Pass
+ 445       3534          0          0          0          0  Pass
+ 446       3576          0          0          0          0  Pass
+ 447       3501          0          0          0          0  Pass
+ 448       3432          0          0          0          0  Pass
+ 449       3585          0          0          0          0  Pass
+ 450       3561          0          0          0          0  Pass
+ 451       3546          0          0          0          0  Pass
+ 452       3411          0          0          0          0  Pass
+ 453       3501          0          0          0          0  Pass
+ 454       3576          0          0          0          0  Pass
+ 455       3573          0          0          0          0  Pass
+ 456       3525          0          0          0          0  Pass
+ 457       3552          0          0          0          0  Pass
+ 458       3525          0          0          0          0  Pass
+ 459       3600          0          0          0          0  Pass
+ 460       3540          0          0          0          0  Pass
+ 461       3507          0          0          0          0  Pass
+ 462       3582          0          0          0          0  Pass
+ 463       3540          0          0          0          0  Pass
+ 464       3420          0          0          0          0  Pass
+ 465       3591          0          0          0          0  Pass
+ 466       3531          0          0          0          0  Pass
+ 467       3480          0          0          0          0  Pass
+ 468       3432          0          0          0          0  Pass
+ 469       3552          0          0          0          0  Pass
+ 470       3480          0          0          0          0  Pass
+ 471       3543          0          0          0          0  Pass
+ 472       3501          0          0          0          0  Pass
+ 473       3594          0          0          0          0  Pass
+ 474       3444          0          0          0          0  Pass
+ 475       3525          0          0          0          0  Pass
+ 476       3546          0          0          0          0  Pass
+ 477       3663          0          0          0          0  Pass
+ 478       3606          0          0          0          0  Pass
+ 479       3501          0          0          0          0  Pass
+ 480       3537          0          0          0          0  Pass
+ 481       3507          0          0          0          0  Pass
+ 482       3477          0          0          0          0  Pass
+ 483       3456          0          0          0          0  Pass
+ 484       3510          0          0          0          0  Pass
+ 485       3459          0          0          0          0  Pass
+ 486       3528          0          0          0          0  Pass
+ 487       3669          0          0          0          0  Pass
+ 488       3627          0          0          0          0  Pass
+ 489       3642          0          0          0          0  Pass
+ 490       3525          0          0          0          0  Pass
+ 491       3534          0          0          0          0  Pass
+ 492       3585          0          0          0          0  Pass
+ 493       3513          0          0          0          0  Pass
+ 494       3522          0          0          0          0  Pass
+ 495       3582          0          0          0          0  Pass
+ 496       3636          0          0          0          0  Pass
+ 497       3513          0          0          0          0  Pass
+ 498       3474          0          0          0          0  Pass
+ 499       3573          0          0          0          0  Pass
+ 500       3459          0          0          0          0  Pass
+ 501       3399          0          0          0          0  Pass
+ 502       3459          0          0          0          0  Pass
+ 503       3453          0          0          0          0  Pass
+ 504       3459          0          0          0          0  Pass
+ 505       3486          0          0          0          0  Pass
+ 506       3498          0          0          0          0  Pass
+ 507       3606          0          0          0          0  Pass
+ 508       3507          0          0          0          0  Pass
+ 509       3606          0          0          0          0  Pass
+ 510       3480          0          0          0          0  Pass
+ 511       3486          0          0          0          0  Pass
+ 512       3576          0          0          0          0  Pass
+ 513       3534          0          0          0          0  Pass
+ 514       3534          0          0          0          0  Pass
+ 515       3591          0          0          0          0  Pass
+ 516       3360          0          0          0          0  Pass
+ 517       3615          0          0          0          0  Pass
+ 518       3552          0          0          0          0  Pass
+ 519       3579          0          0          0          0  Pass
+ 520       3486          0          0          0          0  Pass
+ 521       3525          0          0          0          0  Pass
+ 522       3504          0          0          0          0  Pass
+ 523       3471          0          0          0          0  Pass
+ 524       3537          0          0          0          0  Pass
+ 525       3597          0          0          0          0  Pass
+ 526       3468          0          0          0          0  Pass
+ 527       3606          0          0          0          0  Pass
+ 528       3462          0          0          0          0  Pass
+ 529       3447          0          0          0          0  Pass
+ 530       3609          0          0          0          0  Pass
+ 531       3687          0          0          0          0  Pass
+ 532       3570          0          0          0          0  Pass
+ 533       3429          0          0          0          0  Pass
+ 534       3531          0          0          0          0  Pass
+ 535       3462          0          0          0          0  Pass
+ 536       3477          0          0          0          0  Pass
+ 537       3516          0          0          0          0  Pass
+ 538       3552          0          0          0          0  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1       115.400        -0.852         0.000         3.459  Pass
+   2       118.900        -0.905         0.000         3.564  Pass
+   3       116.200        -0.864         0.000         3.483  Pass
+   4       115.900        -0.860         0.000         3.474  Pass
+   5       116.500        -0.869         0.000         3.492  Pass
+   6       114.900        -0.845         0.000         3.444  Pass
+   7       115.300        -0.851         0.000         3.456  Pass
+   8       116.900        -0.875         0.000         3.504  Pass
+   9       116.800        -0.873         0.000         3.501  Pass
+  10       117.000        -0.876         0.000         3.507  Pass
+  11       115.900        -0.860         0.000         3.474  Pass
+  12       115.700        -0.857         0.000         3.468  Pass
+  13       113.800        -0.829         0.000         3.411  Pass
+  14       118.700        -0.902         0.000         3.558  Pass
+  15       117.400        -0.882         0.000         3.519  Pass
+  16       115.600        -0.855         0.000         3.465  Pass
+  17       121.300        -0.942         0.000         3.636  Pass
+  18       117.300        -0.881         0.000         3.516  Pass
+  19       117.700        -0.887         0.000         3.528  Pass
+  20       113.200        -0.820         0.000         3.393  Pass
+  21       117.500        -0.884         0.000         3.522  Pass
+  22       118.000        -0.891         0.000         3.537  Pass
+  23       119.600        -0.915         0.000         3.585  Pass
+  24       120.700        -0.932         0.000         3.618  Pass
+  25       115.700        -0.857         0.000         3.468  Pass
+  26       118.600        -0.900         0.000         3.555  Pass
+  27       117.500        -0.884         0.000         3.522  Pass
+  28       115.700        -0.857         0.000         3.468  Pass
+  29       114.300        -0.836         0.000         3.426  Pass
+  30       119.200        -0.909         0.000         3.573  Pass
+  31       116.400        -0.867         0.000         3.489  Pass
+  32       116.300        -0.866         0.000         3.486  Pass
+  33       118.300        -0.896         0.000         3.546  Pass
+  34       120.600        -0.931         0.000         3.615  Pass
+  35       119.700        -0.917         0.000         3.588  Pass
+  36       121.000        -0.937         0.000         3.627  Pass
+  37       117.700        -0.887         0.000         3.528  Pass
+  38       118.100        -0.893         0.000         3.540  Pass
+  39       118.400        -0.897         0.000         3.549  Pass
+  40       117.100        -0.878         0.000         3.510  Pass
+  41       117.600        -0.885         0.000         3.525  Pass
+  42       116.000        -0.861         0.000         3.477  Pass
+  43       118.100        -0.893         0.000         3.540  Pass
+  44       118.600        -0.900         0.000         3.555  Pass
+  45       116.100        -0.863         0.000         3.480  Pass
+  46       115.800        -0.858         0.000         3.471  Pass
+  47       115.600        -0.855         0.000         3.465  Pass
+  48       116.700        -0.872         0.000         3.498  Pass
+  49       114.500        -0.839         0.000         3.432  Pass
+  50       118.900        -0.905         0.000         3.564  Pass
+  51       119.900        -0.920         0.000         3.594  Pass
+  52       118.400        -0.897         0.000         3.549  Pass
+  53       116.700        -0.872         0.000         3.498  Pass
+  54       119.200        -0.909         0.000         3.573  Pass
+  55       118.600        -0.900         0.000         3.555  Pass
+  56       118.200        -0.894         0.000         3.543  Pass
+  57       116.700        -0.872         0.000         3.498  Pass
+  58       119.200        -0.909         0.000         3.573  Pass
+  59       117.800        -0.888         0.000         3.531  Pass
+  60       117.700        -0.887         0.000         3.528  Pass
+  61       118.900        -0.905         0.000         3.564  Pass
+  62       117.000        -0.876         0.000         3.507  Pass
+  63       117.800        -0.888         0.000         3.531  Pass
+  64       115.800        -0.858         0.000         3.471  Pass
+  65       117.300        -0.881         0.000         3.516  Pass
+  66       116.600        -0.870         0.000         3.495  Pass
+  67       119.400        -0.912         0.000         3.579  Pass
+  68       121.400        -0.943         0.000         3.639  Pass
+  69       115.700        -0.857         0.000         3.468  Pass
+  70       118.500        -0.899         0.000         3.552  Pass
+  71       115.600        -0.855         0.000         3.465  Pass
+  72       118.300        -0.896         0.000         3.546  Pass
+  73       120.000        -0.922         0.000         3.597  Pass
+  74       116.400        -0.867         0.000         3.489  Pass
+  75       115.800        -0.858         0.000         3.471  Pass
+  76       116.400        -0.867         0.000         3.489  Pass
+  77       114.000        -0.832         0.000         3.417  Pass
+  78       117.900        -0.890         0.000         3.534  Pass
+  79       117.400        -0.882         0.000         3.519  Pass
+  80       114.100        -0.833         0.000         3.420  Pass
+  81       116.200        -0.864         0.000         3.483  Pass
+  82       115.800        -0.858         0.000         3.471  Pass
+  83       117.600        -0.885         0.000         3.525  Pass
+  84       121.300        -0.942         0.000         3.636  Pass
+  85       120.500        -0.929         0.000         3.612  Pass
+  86       118.600        -0.900         0.000         3.555  Pass
+  87       116.200        -0.864         0.000         3.483  Pass
+  88       120.500        -0.929         0.000         3.612  Pass
+  89       117.300        -0.881         0.000         3.516  Pass
+  90       115.800        -0.858         0.000         3.471  Pass
+  91       114.800        -0.843         0.000         3.441  Pass
+  92       114.900        -0.845         0.000         3.444  Pass
+  93       118.300        -0.896         0.000         3.546  Pass
+  94       116.100        -0.863         0.000         3.480  Pass
+  95       118.700        -0.902         0.000         3.558  Pass
+  96       117.500        -0.884         0.000         3.522  Pass
+  97       121.400        -0.943         0.000         3.639  Pass
+  98       112.000        -0.803         0.000         3.357  Pass
+  99       118.700        -0.902         0.000         3.558  Pass
+ 100       116.000        -0.861         0.000         3.477  Pass
+ 101       119.600        -0.915         0.000         3.585  Pass
+ 102       115.600        -0.855         0.000         3.465  Pass
+ 103       119.600        -0.915         0.000         3.585  Pass
+ 104       116.900        -0.875         0.000         3.504  Pass
+ 105       114.800        -0.843         0.000         3.441  Pass
+ 106       114.500        -0.839         0.000         3.432  Pass
+ 107       116.200        -0.864         0.000         3.483  Pass
+ 108       120.100        -0.923         0.000         3.600  Pass
+ 109       119.300        -0.911         0.000         3.576  Pass
+ 110       115.700        -0.857         0.000         3.468  Pass
+ 111       120.100        -0.923         0.000         3.600  Pass
+ 112       117.100        -0.878         0.000         3.510  Pass
+ 113       115.200        -0.849         0.000         3.453  Pass
+ 114       114.800        -0.843         0.000         3.441  Pass
+ 115       119.400        -0.912         0.000         3.579  Pass
+ 116       117.900        -0.890         0.000         3.534  Pass
+ 117       117.100        -0.878         0.000         3.510  Pass
+ 118       115.800        -0.858         0.000         3.471  Pass
+ 119       117.800        -0.888         0.000         3.531  Pass
+ 120       116.900        -0.875         0.000         3.504  Pass
+ 121       118.400        -0.897         0.000         3.549  Pass
+ 122       120.600        -0.931         0.000         3.615  Pass
+ 123       117.500        -0.884         0.000         3.522  Pass
+ 124       117.400        -0.882         0.000         3.519  Pass
+ 125       114.400        -0.838         0.000         3.429  Pass
+ 126       121.200        -0.940         0.000         3.633  Pass
+ 127       113.100        -0.819         0.000         3.390  Pass
+ 128       118.200        -0.894         0.000         3.543  Pass
+ 129       115.500        -0.854         0.000         3.462  Pass
+ 130       118.700        -0.902         0.000         3.558  Pass
+ 131       114.400        -0.838         0.000         3.429  Pass
+ 132       117.900        -0.890         0.000         3.534  Pass
+ 133       117.100        -0.878         0.000         3.510  Pass
+ 134       114.900        -0.845         0.000         3.444  Pass
+ 135       113.400        -0.823         0.000         3.399  Pass
+ 136       115.300        -0.851         0.000         3.456  Pass
+ 137       117.900        -0.890         0.000         3.534  Pass
+ 138       117.900        -0.890         0.000         3.534  Pass
+ 139       115.000        -0.846         0.000         3.447  Pass
+ 140       116.100        -0.863         0.000         3.480  Pass
+ 141       117.200        -0.879         0.000         3.513  Pass
+ 142       115.300        -0.851         0.000         3.456  Pass
+ 143       122.600        -0.962         0.000         3.675  Pass
+ 144       119.500        -0.914         0.000         3.582  Pass
+ 145       118.600        -0.900         0.000         3.555  Pass
+ 146       118.300        -0.896         0.000         3.546  Pass
+ 147       118.400        -0.897         0.000         3.549  Pass
+ 148       116.600        -0.870         0.000         3.495  Pass
+ 149       118.300        -0.896         0.000         3.546  Pass
+ 150       116.600        -0.870         0.000         3.495  Pass
+ 151       121.400        -0.943         0.000         3.639  Pass
+ 152       117.300        -0.881         0.000         3.516  Pass
+ 153       119.200        -0.909         0.000         3.573  Pass
+ 154       116.400        -0.867         0.000         3.489  Pass
+ 155       118.800        -0.903         0.000         3.561  Pass
+ 156       118.800        -0.903         0.000         3.561  Pass
+ 157       116.700        -0.872         0.000         3.498  Pass
+ 158       116.300        -0.866         0.000         3.486  Pass
+ 159       115.900        -0.860         0.000         3.474  Pass
+ 160       118.800        -0.903         0.000         3.561  Pass
+ 161       116.400        -0.867         0.000         3.489  Pass
+ 162       118.700        -0.902         0.000         3.558  Pass
+ 163       119.900        -0.920         0.000         3.594  Pass
+ 164       116.200        -0.864         0.000         3.483  Pass
+ 165       117.200        -0.879         0.000         3.513  Pass
+ 166       116.800        -0.873         0.000         3.501  Pass
+ 167       118.300        -0.896         0.000         3.546  Pass
+ 168       112.800        -0.814         0.000         3.381  Pass
+ 169       117.200        -0.879         0.000         3.513  Pass
+ 170       119.400        -0.912         0.000         3.579  Pass
+ 171       114.000        -0.832         0.000         3.417  Pass
+ 172       118.200        -0.894         0.000         3.543  Pass
+ 173       122.400        -0.959         0.000         3.669  Pass
+ 174       115.300        -0.851         0.000         3.456  Pass
+ 175       113.600        -0.826         0.000         3.405  Pass
+ 176       115.300        -0.851         0.000         3.456  Pass
+ 177       119.200        -0.909         0.000         3.573  Pass
+ 178       113.500        -0.824         0.000         3.402  Pass
+ 179       114.500        -0.839         0.000         3.432  Pass
+ 180       117.300        -0.881         0.000         3.516  Pass
+ 181       116.900        -0.875         0.000         3.504  Pass
+ 182       116.600        -0.870         0.000         3.495  Pass
+ 183       116.100        -0.863         0.000         3.480  Pass
+ 184       119.700        -0.917         0.000         3.588  Pass
+ 185       117.000        -0.876         0.000         3.507  Pass
+ 186       117.700        -0.887         0.000         3.528  Pass
+ 187       114.300        -0.836         0.000         3.426  Pass
+ 188       118.300        -0.896         0.000         3.546  Pass
+ 189       117.100        -0.878         0.000         3.510  Pass
+ 190       116.000        -0.861         0.000         3.477  Pass
+ 191       118.100        -0.893         0.000         3.540  Pass
+ 192       116.900        -0.875         0.000         3.504  Pass
+ 193       117.200        -0.879         0.000         3.513  Pass
+ 194       113.700        -0.827         0.000         3.408  Pass
+ 195       116.100        -0.863         0.000         3.480  Pass
+ 196       117.100        -0.878         0.000         3.510  Pass
+ 197       115.100        -0.848         0.000         3.450  Pass
+ 198       119.000        -0.906         0.000         3.567  Pass
+ 199       118.700        -0.902         0.000         3.558  Pass
+ 200       117.600        -0.885         0.000         3.525  Pass
+ 201       120.200        -0.925         0.000         3.603  Pass
+ 202       121.700        -0.948         0.000         3.648  Pass
+ 203       115.900        -0.860         0.000         3.474  Pass
+ 204       116.600        -0.870         0.000         3.495  Pass
+ 205       117.400        -0.882         0.000         3.519  Pass
+ 206       113.200        -0.820         0.000         3.393  Pass
+ 207       116.400        -0.867         0.000         3.489  Pass
+ 208       116.500        -0.869         0.000         3.492  Pass
+ 209       116.300        -0.866         0.000         3.486  Pass
+ 210       120.800        -0.934         0.000         3.621  Pass
+ 211       116.300        -0.866         0.000         3.486  Pass
+ 212       120.800        -0.934         0.000         3.621  Pass
+ 213       114.100        -0.833         0.000         3.420  Pass
+ 214       118.400        -0.897         0.000         3.549  Pass
+ 215       115.300        -0.851         0.000         3.456  Pass
+ 216       118.400        -0.897         0.000         3.549  Pass
+ 217       117.500        -0.884         0.000         3.522  Pass
+ 218       119.500        -0.914         0.000         3.582  Pass
+ 219       116.300        -0.866         0.000         3.486  Pass
+ 220       121.100        -0.939         0.000         3.630  Pass
+ 221       116.600        -0.870         0.000         3.495  Pass
+ 222       116.300        -0.866         0.000         3.486  Pass
+ 223       118.400        -0.897         0.000         3.549  Pass
+ 224       117.800        -0.888         0.000         3.531  Pass
+ 225       118.200        -0.894         0.000         3.543  Pass
+ 226       119.500        -0.914         0.000         3.582  Pass
+ 227       121.300        -0.942         0.000         3.636  Pass
+ 228       117.900        -0.890         0.000         3.534  Pass
+ 229       118.100        -0.893         0.000         3.540  Pass
+ 230       115.500        -0.854         0.000         3.462  Pass
+ 231       117.100        -0.878         0.000         3.510  Pass
+ 232       118.400        -0.897         0.000         3.549  Pass
+ 233       116.500        -0.869         0.000         3.492  Pass
+ 234       118.600        -0.900         0.000         3.555  Pass
+ 235       115.200        -0.849         0.000         3.453  Pass
+ 236       117.700        -0.887         0.000         3.528  Pass
+ 237       118.100        -0.893         0.000         3.540  Pass
+ 238       116.500        -0.869         0.000         3.492  Pass
+ 239       120.200        -0.925         0.000         3.603  Pass
+ 240       120.900        -0.935         0.000         3.624  Pass
+ 241       118.000        -0.891         0.000         3.537  Pass
+ 242       115.300        -0.851         0.000         3.456  Pass
+ 243       118.000        -0.891         0.000         3.537  Pass
+ 244       117.100        -0.878         0.000         3.510  Pass
+ 245       114.900        -0.845         0.000         3.444  Pass
+ 246       114.200        -0.835         0.000         3.423  Pass
+ 247       113.600        -0.826         0.000         3.405  Pass
+ 248       121.500        -0.945         0.000         3.642  Pass
+ 249       113.400        -0.823         0.000         3.399  Pass
+ 250       118.000        -0.891         0.000         3.537  Pass
+ 251       116.000        -0.861         0.000         3.477  Pass
+ 252       114.800        -0.843         0.000         3.441  Pass
+ 253       116.200        -0.864         0.000         3.483  Pass
+ 254       118.300        -0.896         0.000         3.546  Pass
+ 255       113.000        -0.817         0.000         3.387  Pass
+ 256       120.200        -0.925         0.000         3.603  Pass
+ 257       117.500        -0.884         0.000         3.522  Pass
+ 258       117.600        -0.885         0.000         3.525  Pass
+ 259       115.900        -0.860         0.000         3.474  Pass
+ 260       118.000        -0.891         0.000         3.537  Pass
+ 261       116.800        -0.873         0.000         3.501  Pass
+ 262       117.400        -0.882         0.000         3.519  Pass
+ 263       120.200        -0.925         0.000         3.603  Pass
+ 264       119.300        -0.911         0.000         3.576  Pass
+ 265       119.600        -0.915         0.000         3.585  Pass
+ 266       115.500        -0.854         0.000         3.462  Pass
+ 267       113.700        -0.827         0.000         3.408  Pass
+ 268       117.700        -0.887         0.000         3.528  Pass
+ 269       119.300        -0.911         0.000         3.576  Pass
+ 270       117.900        -0.890         0.000         3.534  Pass
+ 271       115.700        -0.857         0.000         3.468  Pass
+ 272       119.300        -0.911         0.000         3.576  Pass
+ 273       117.200        -0.879         0.000         3.513  Pass
+ 274       115.700        -0.857         0.000         3.468  Pass
+ 275       114.100        -0.833         0.000         3.420  Pass
+ 276       114.100        -0.833         0.000         3.420  Pass
+ 277       115.100        -0.848         0.000         3.450  Pass
+ 278       120.600        -0.931         0.000         3.615  Pass
+ 279       114.500        -0.839         0.000         3.432  Pass
+ 280       119.900        -0.920         0.000         3.594  Pass
+ 281       118.900        -0.905         0.000         3.564  Pass
+ 282       118.400        -0.897         0.000         3.549  Pass
+ 283       114.400        -0.838         0.000         3.429  Pass
+ 284       121.000        -0.937         0.000         3.627  Pass
+ 285       118.900        -0.905         0.000         3.564  Pass
+ 286       117.300        -0.881         0.000         3.516  Pass
+ 287       118.100        -0.893         0.000         3.540  Pass
+ 288       117.800        -0.888         0.000         3.531  Pass
+ 289       117.200        -0.879         0.000         3.513  Pass
+ 290       117.400        -0.882         0.000         3.519  Pass
+ 291       113.800        -0.829         0.000         3.411  Pass
+ 292       119.100        -0.908         0.000         3.570  Pass
+ 293       117.700        -0.887         0.000         3.528  Pass
+ 294       123.800        -0.981         0.000         3.711  Pass
+ 295       116.700        -0.872         0.000         3.498  Pass
+ 296       118.100        -0.893         0.000         3.540  Pass
+ 297       119.200        -0.909         0.000         3.573  Pass
+ 298       114.300        -0.836         0.000         3.426  Pass
+ 299       121.500        -0.945         0.000         3.642  Pass
+ 300       120.600        -0.931         0.000         3.615  Pass
+ 301       116.900        -0.875         0.000         3.504  Pass
+ 302       111.500        -0.796         0.000         3.342  Pass
+ 303       116.600        -0.870         0.000         3.495  Pass
+ 304       120.500        -0.929         0.000         3.612  Pass
+ 305       118.500        -0.899         0.000         3.552  Pass
+ 306       115.100        -0.848         0.000         3.450  Pass
+ 307       118.000        -0.891         0.000         3.537  Pass
+ 308       117.900        -0.890         0.000         3.534  Pass
+ 309       121.800        -0.949         0.000         3.651  Pass
+ 310       119.100        -0.908         0.000         3.570  Pass
+ 311       120.400        -0.928         0.000         3.609  Pass
+ 312       120.600        -0.931         0.000         3.615  Pass
+ 313       120.500        -0.929         0.000         3.612  Pass
+ 314       118.800        -0.903         0.000         3.561  Pass
+ 315       118.100        -0.893         0.000         3.540  Pass
+ 316       115.700        -0.857         0.000         3.468  Pass
+ 317       117.300        -0.881         0.000         3.516  Pass
+ 318       118.800        -0.903         0.000         3.561  Pass
+ 319       116.100        -0.863         0.000         3.480  Pass
+ 320       119.300        -0.911         0.000         3.576  Pass
+ 321       118.900        -0.905         0.000         3.564  Pass
+ 322       120.500        -0.929         0.000         3.612  Pass
+ 323       120.100        -0.923         0.000         3.600  Pass
+ 324       119.700        -0.917         0.000         3.588  Pass
+ 325       117.900        -0.890         0.000         3.534  Pass
+ 326       122.400        -0.959         0.000         3.669  Pass
+ 327       119.300        -0.911         0.000         3.576  Pass
+ 328       118.900        -0.905         0.000         3.564  Pass
+ 329       116.200        -0.864         0.000         3.483  Pass
+ 330       118.400        -0.897         0.000         3.549  Pass
+ 331       119.400        -0.912         0.000         3.579  Pass
+ 332       119.400        -0.912         0.000         3.579  Pass
+ 333       115.400        -0.852         0.000         3.459  Pass
+ 334       117.200        -0.879         0.000         3.513  Pass
+ 335       118.400        -0.897         0.000         3.549  Pass
+ 336       118.000        -0.891         0.000         3.537  Pass
+ 337       116.700        -0.872         0.000         3.498  Pass
+ 338       116.300        -0.866         0.000         3.486  Pass
+ 339       118.300        -0.896         0.000         3.546  Pass
+ 340       118.400        -0.897         0.000         3.549  Pass
+ 341       119.600        -0.915         0.000         3.585  Pass
+ 342       115.000        -0.846         0.000         3.447  Pass
+ 343       119.100        -0.908         0.000         3.570  Pass
+ 344       115.600        -0.855         0.000         3.465  Pass
+ 345       118.800        -0.903         0.000         3.561  Pass
+ 346       117.300        -0.881         0.000         3.516  Pass
+ 347       117.300        -0.881         0.000         3.516  Pass
+ 348       118.600        -0.900         0.000         3.555  Pass
+ 349       115.400        -0.852         0.000         3.459  Pass
+ 350       117.600        -0.885         0.000         3.525  Pass
+ 351       114.900        -0.845         0.000         3.444  Pass
+ 352       113.000        -0.817         0.000         3.387  Pass
+ 353       114.700        -0.842         0.000         3.438  Pass
+ 354       118.800        -0.903         0.000         3.561  Pass
+ 355       119.800        -0.919         0.000         3.591  Pass
+ 356       111.800        -0.800         0.000         3.351  Pass
+ 357       120.100        -0.923         0.000         3.600  Pass
+ 358       118.200        -0.894         0.000         3.543  Pass
+ 359       115.500        -0.854         0.000         3.462  Pass
+ 360       116.500        -0.869         0.000         3.492  Pass
+ 361       117.400        -0.882         0.000         3.519  Pass
+ 362       119.400        -0.912         0.000         3.579  Pass
+ 363       118.900        -0.905         0.000         3.564  Pass
+ 364       115.600        -0.855         0.000         3.465  Pass
+ 365       117.100        -0.878         0.000         3.510  Pass
+ 366       118.000        -0.891         0.000         3.537  Pass
+ 367       122.100        -0.954         0.000         3.660  Pass
+ 368       119.100        -0.908         0.000         3.570  Pass
+ 369       118.500        -0.899         0.000         3.552  Pass
+ 370       120.700        -0.932         0.000         3.618  Pass
+ 371       116.900        -0.875         0.000         3.504  Pass
+ 372       117.000        -0.876         0.000         3.507  Pass
+ 373       120.800        -0.934         0.000         3.621  Pass
+ 374       116.400        -0.867         0.000         3.489  Pass
+ 375       117.500        -0.884         0.000         3.522  Pass
+ 376       117.800        -0.888         0.000         3.531  Pass
+ 377       116.400        -0.867         0.000         3.489  Pass
+ 378       116.500        -0.869         0.000         3.492  Pass
+ 379       115.700        -0.857         0.000         3.468  Pass
+ 380       118.600        -0.900         0.000         3.555  Pass
+ 381       120.600        -0.931         0.000         3.615  Pass
+ 382       119.100        -0.908         0.000         3.570  Pass
+ 383       116.700        -0.872         0.000         3.498  Pass
+ 384       118.100        -0.893         0.000         3.540  Pass
+ 385       118.100        -0.893         0.000         3.540  Pass
+ 386       114.500        -0.839         0.000         3.432  Pass
+ 387       114.800        -0.843         0.000         3.441  Pass
+ 388       118.400        -0.897         0.000         3.549  Pass
+ 389       120.800        -0.934         0.000         3.621  Pass
+ 390       115.300        -0.851         0.000         3.456  Pass
+ 391       113.200        -0.820         0.000         3.393  Pass
+ 392       117.900        -0.890         0.000         3.534  Pass
+ 393       116.600        -0.870         0.000         3.495  Pass
+ 394       119.700        -0.917         0.000         3.588  Pass
+ 395       116.900        -0.875         0.000         3.504  Pass
+ 396       116.700        -0.872         0.000         3.498  Pass
+ 397       116.800        -0.873         0.000         3.501  Pass
+ 398       115.300        -0.851         0.000         3.456  Pass
+ 399       121.100        -0.939         0.000         3.630  Pass
+ 400       115.200        -0.849         0.000         3.453  Pass
+ 401       118.700        -0.902         0.000         3.558  Pass
+ 402       120.700        -0.932         0.000         3.618  Pass
+ 403       119.000        -0.906         0.000         3.567  Pass
+ 404       116.500        -0.869         0.000         3.492  Pass
+ 405       120.600        -0.931         0.000         3.615  Pass
+ 406       120.100        -0.923         0.000         3.600  Pass
+ 407       116.200        -0.864         0.000         3.483  Pass
+ 408       117.400        -0.882         0.000         3.519  Pass
+ 409       115.900        -0.860         0.000         3.474  Pass
+ 410       119.100        -0.908         0.000         3.570  Pass
+ 411       119.300        -0.911         0.000         3.576  Pass
+ 412       114.800        -0.843         0.000         3.441  Pass
+ 413       118.500        -0.899         0.000         3.552  Pass
+ 414       118.900        -0.905         0.000         3.564  Pass
+ 415       119.700        -0.917         0.000         3.588  Pass
+ 416       118.400        -0.897         0.000         3.549  Pass
+ 417       114.400        -0.838         0.000         3.429  Pass
+ 418       120.200        -0.925         0.000         3.603  Pass
+ 419       117.200        -0.879         0.000         3.513  Pass
+ 420       116.400        -0.867         0.000         3.489  Pass
+ 421       119.300        -0.911         0.000         3.576  Pass
+ 422       118.200        -0.894         0.000         3.543  Pass
+ 423       116.100        -0.863         0.000         3.480  Pass
+ 424       116.900        -0.875         0.000         3.504  Pass
+ 425       118.500        -0.899         0.000         3.552  Pass
+ 426       114.000        -0.832         0.000         3.417  Pass
+ 427       114.700        -0.842         0.000         3.438  Pass
+ 428       119.300        -0.911         0.000         3.576  Pass
+ 429       118.500        -0.899         0.000         3.552  Pass
+ 430       117.200        -0.879         0.000         3.513  Pass
+ 431       123.800        -0.981         0.000         3.711  Pass
+ 432       118.400        -0.897         0.000         3.549  Pass
+ 433       119.000        -0.906         0.000         3.567  Pass
+ 434       116.600        -0.870         0.000         3.495  Pass
+ 435       118.400        -0.897         0.000         3.549  Pass
+ 436       121.900        -0.951         0.000         3.654  Pass
+ 437       118.100        -0.893         0.000         3.540  Pass
+ 438       117.500        -0.884         0.000         3.522  Pass
+ 439       116.900        -0.875         0.000         3.504  Pass
+ 440       119.300        -0.911         0.000         3.576  Pass
+ 441       118.900        -0.905         0.000         3.564  Pass
+ 442       120.100        -0.923         0.000         3.600  Pass
+ 443       118.700        -0.902         0.000         3.558  Pass
+ 444       119.400        -0.912         0.000         3.579  Pass
+ 445       117.800        -0.888         0.000         3.531  Pass
+ 446       119.200        -0.909         0.000         3.573  Pass
+ 447       116.700        -0.872         0.000         3.498  Pass
+ 448       114.400        -0.838         0.000         3.429  Pass
+ 449       119.500        -0.914         0.000         3.582  Pass
+ 450       118.700        -0.902         0.000         3.558  Pass
+ 451       118.200        -0.894         0.000         3.543  Pass
+ 452       113.700        -0.827         0.000         3.408  Pass
+ 453       116.700        -0.872         0.000         3.498  Pass
+ 454       119.200        -0.909         0.000         3.573  Pass
+ 455       119.100        -0.908         0.000         3.570  Pass
+ 456       117.500        -0.884         0.000         3.522  Pass
+ 457       118.400        -0.897         0.000         3.549  Pass
+ 458       117.500        -0.884         0.000         3.522  Pass
+ 459       120.000        -0.922         0.000         3.597  Pass
+ 460       118.000        -0.891         0.000         3.537  Pass
+ 461       116.900        -0.875         0.000         3.504  Pass
+ 462       119.400        -0.912         0.000         3.579  Pass
+ 463       118.000        -0.891         0.000         3.537  Pass
+ 464       114.000        -0.832         0.000         3.417  Pass
+ 465       119.700        -0.917         0.000         3.588  Pass
+ 466       117.700        -0.887         0.000         3.528  Pass
+ 467       116.000        -0.861         0.000         3.477  Pass
+ 468       114.400        -0.838         0.000         3.429  Pass
+ 469       118.400        -0.897         0.000         3.549  Pass
+ 470       116.000        -0.861         0.000         3.477  Pass
+ 471       118.100        -0.893         0.000         3.540  Pass
+ 472       116.700        -0.872         0.000         3.498  Pass
+ 473       119.800        -0.919         0.000         3.591  Pass
+ 474       114.800        -0.843         0.000         3.441  Pass
+ 475       117.500        -0.884         0.000         3.522  Pass
+ 476       118.200        -0.894         0.000         3.543  Pass
+ 477       122.100        -0.954         0.000         3.660  Pass
+ 478       120.200        -0.925         0.000         3.603  Pass
+ 479       116.700        -0.872         0.000         3.498  Pass
+ 480       117.900        -0.890         0.000         3.534  Pass
+ 481       116.900        -0.875         0.000         3.504  Pass
+ 482       115.900        -0.860         0.000         3.474  Pass
+ 483       115.200        -0.849         0.000         3.453  Pass
+ 484       117.000        -0.876         0.000         3.507  Pass
+ 485       115.300        -0.851         0.000         3.456  Pass
+ 486       117.600        -0.885         0.000         3.525  Pass
+ 487       122.300        -0.957         0.000         3.666  Pass
+ 488       120.900        -0.935         0.000         3.624  Pass
+ 489       121.400        -0.943         0.000         3.639  Pass
+ 490       117.500        -0.884         0.000         3.522  Pass
+ 491       117.800        -0.888         0.000         3.531  Pass
+ 492       119.500        -0.914         0.000         3.582  Pass
+ 493       117.100        -0.878         0.000         3.510  Pass
+ 494       117.400        -0.882         0.000         3.519  Pass
+ 495       119.400        -0.912         0.000         3.579  Pass
+ 496       121.200        -0.940         0.000         3.633  Pass
+ 497       117.100        -0.878         0.000         3.510  Pass
+ 498       115.800        -0.858         0.000         3.471  Pass
+ 499       119.100        -0.908         0.000         3.570  Pass
+ 500       115.300        -0.851         0.000         3.456  Pass
+ 501       113.300        -0.822         0.000         3.396  Pass
+ 502       115.300        -0.851         0.000         3.456  Pass
+ 503       115.100        -0.848         0.000         3.450  Pass
+ 504       115.300        -0.851         0.000         3.456  Pass
+ 505       116.200        -0.864         0.000         3.483  Pass
+ 506       116.600        -0.870         0.000         3.495  Pass
+ 507       120.200        -0.925         0.000         3.603  Pass
+ 508       116.900        -0.875         0.000         3.504  Pass
+ 509       120.200        -0.925         0.000         3.603  Pass
+ 510       116.000        -0.861         0.000         3.477  Pass
+ 511       116.200        -0.864         0.000         3.483  Pass
+ 512       119.200        -0.909         0.000         3.573  Pass
+ 513       117.800        -0.888         0.000         3.531  Pass
+ 514       117.800        -0.888         0.000         3.531  Pass
+ 515       119.700        -0.917         0.000         3.588  Pass
+ 516       112.000        -0.803         0.000         3.357  Pass
+ 517       120.500        -0.929         0.000         3.612  Pass
+ 518       118.400        -0.897         0.000         3.549  Pass
+ 519       119.300        -0.911         0.000         3.576  Pass
+ 520       116.200        -0.864         0.000         3.483  Pass
+ 521       117.500        -0.884         0.000         3.522  Pass
+ 522       116.800        -0.873         0.000         3.501  Pass
+ 523       115.700        -0.857         0.000         3.468  Pass
+ 524       117.900        -0.890         0.000         3.534  Pass
+ 525       119.900        -0.920         0.000         3.594  Pass
+ 526       115.600        -0.855         0.000         3.465  Pass
+ 527       120.200        -0.925         0.000         3.603  Pass
+ 528       115.400        -0.852         0.000         3.459  Pass
+ 529       114.900        -0.845         0.000         3.444  Pass
+ 530       120.300        -0.926         0.000         3.606  Pass
+ 531       122.900        -0.967         0.000         3.684  Pass
+ 532       119.000        -0.906         0.000         3.567  Pass
+ 533       114.300        -0.836         0.000         3.426  Pass
+ 534       117.700        -0.887         0.000         3.528  Pass
+ 535       115.400        -0.852         0.000         3.459  Pass
+ 536       115.900        -0.860         0.000         3.474  Pass
+ 537       117.200        -0.879         0.000         3.513  Pass
+ 538       118.400        -0.897         0.000         3.549  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0
+
+Cycle 4      R+A           A
+     0           0            0
+
+Cycle 5      R+A           A
+     0           0            0
+
+Cycle 6      R+A           A
+     0           0            0
+
+Cycle 7      R+A           A
+     0           0            0
+
+Cycle 8      R+A           A
+     0           0            0
+
+Cycle 9      R+A           A
+     0           0            0
+
+Cycle 10     R+A           A
+     0           0            0
+
+Cycle 11     R+A           A
+     0           0            0
+
+Cycle 12     R+A           A
+     0           0            0
+
+Cycle 13     R+A           A
+     0           0            0
+
+Cycle 14     R+A           A
+     0           0            0
+
+Cycle 15     R+A           A
+     0           0            0
+
+Cycle 16     R+A           A
+     0           0            0
+
+Cycle 17     R+A           A
+     0           0            0
+
+Cycle 18     R+A           A
+     0           0            0
+
+Cycle 19     R+A           A
+     0           0            0
+
+Cycle 20     R+A           A
+     0           0            0
+
+Cycle 21     R+A           A
+     0           0            0
+
+Cycle 22     R+A           A
+     0           0            0
+
+Cycle 23     R+A           A
+     0           0            0
+
+Cycle 24     R+A           A
+     0           0            0
+
+Cycle 25     R+A           A
+     0           0            0
+
+Cycle 26     R+A           A
+     0           0            0
+
+Cycle 27     R+A           A
+     0           0            0
+
+Cycle 28     R+A           A
+     0           0            0
+
+Cycle 29     R+A           A
+     0           0            0
+
+Cycle 30     R+A           A
+     0           0            0
+
+Cycle 31     R+A           A
+     0           0            0
+
+Cycle 32     R+A           A
+     0           0            0
+
+Cycle 33     R+A           A
+     0           0            0
+
+Cycle 34     R+A           A
+     0           0            0
+
+Cycle 35     R+A           A
+     0           0            0
+
+Cycle 36     R+A           A
+     0           0            0
+
+Cycle 37     R+A           A
+     0           0            0
+
+Cycle 38     R+A           A
+     0           0            0
+
+Cycle 39     R+A           A
+     0           0            0
+
+Cycle 40     R+A           A
+     0           0            0
+
+Cycle 41     R+A           A
+     0           0            0
+
+Cycle 42     R+A           A
+     0           0            0
+
+Cycle 43     R+A           A
+     0           0            0
+
+Cycle 44     R+A           A
+     0           0            0
+
+Cycle 45     R+A           A
+     0           0            0
+
+Cycle 46     R+A           A
+     0           0            0
+
+Cycle 47     R+A           A
+     0           0            0
+
+Cycle 48     R+A           A
+     0           0            0
+
+Cycle 49     R+A           A
+     0           0            0
+
+Cycle 50     R+A           A
+     0           0            0
+
+Cycle 51     R+A           A
+     0           0            0
+
+Cycle 52     R+A           A
+     0           0            0
+
+Cycle 53     R+A           A
+     0           0            0
+
+Cycle 54     R+A           A
+     0           0            0
+
+Cycle 55     R+A           A
+     0           0            0
+
+Cycle 56     R+A           A
+     0           0            0
+
+Cycle 57     R+A           A
+     0           0            0
+
+Cycle 58     R+A           A
+     0           0            0
+
+Cycle 59     R+A           A
+     0           0            0
+
+Cycle 60     R+A           A
+     0           0            0
+
+Cycle 61     R+A           A
+     0           0            0
+
+Cycle 62     R+A           A
+     0           0            0
+
+Cycle 63     R+A           A
+     0           0            0
+
+Cycle 64     R+A           A
+     0           0            0
+
+Cycle 65     R+A           A
+     0           0            0
+
+Cycle 66     R+A           A
+     0           0            0
+
+Cycle 67     R+A           A
+     0           0            0
+
+Cycle 68     R+A           A
+     0           0            0
+
+Cycle 69     R+A           A
+     0           0            0
+
+Cycle 70     R+A           A
+     0           0            0
+
+Cycle 71     R+A           A
+     0           0            0
+
+Cycle 72     R+A           A
+     0           0            0
+
+Cycle 73     R+A           A
+     0           0            0
+
+Cycle 74     R+A           A
+     0           0            0
+
+Cycle 75     R+A           A
+     0           0            0
+
+Cycle 76     R+A           A
+     0           0            0
+
+Cycle 77     R+A           A
+     0           0            0
+
+Cycle 78     R+A           A
+     0           0            0
+
+Cycle 79     R+A           A
+     0           0            0
+
+Cycle 80     R+A           A
+     0           0            0
+
+Cycle 81     R+A           A
+     0           0            0
+
+Cycle 82     R+A           A
+     0           0            0
+
+Cycle 83     R+A           A
+     0           0            0
+
+Cycle 84     R+A           A
+     0           0            0
+
+Cycle 85     R+A           A
+     0           0            0
+
+Cycle 86     R+A           A
+     0           0            0
+
+Cycle 87     R+A           A
+     0           0            0
+
+Cycle 88     R+A           A
+     0           0            0
+
+Cycle 89     R+A           A
+     0           0            0
+
+Cycle 90     R+A           A
+     0           0            0
+
+Cycle 91     R+A           A
+     0           0            0
+
+Cycle 92     R+A           A
+     0           0            0
+
+Cycle 93     R+A           A
+     0           0            0
+
+Cycle 94     R+A           A
+     0           0            0
+
+Cycle 95     R+A           A
+     0           0            0
+
+Cycle 96     R+A           A
+     0           0            0
+
+Cycle 97     R+A           A
+     0           0            0
+
+Cycle 98     R+A           A
+     0           0            0
+
+Cycle 99     R+A           A
+     0           0            0
+
+Cycle 100    R+A           A
+     0           0            0
+
+Cycle 101    R+A           A
+     0           0            0
+
+Cycle 102    R+A           A
+     0           0            0
+
+Cycle 103    R+A           A
+     0           0            0
+
+Cycle 104    R+A           A
+     0           0            0
+
+Cycle 105    R+A           A
+     0           0            0
+
+Cycle 106    R+A           A
+     0           0            0
+
+Cycle 107    R+A           A
+     0           0            0
+
+Cycle 108    R+A           A
+     0           0            0
+
+Cycle 109    R+A           A
+     0           0            0
+
+Cycle 110    R+A           A
+     0           0            0
+
+Cycle 111    R+A           A
+     0           0            0
+
+Cycle 112    R+A           A
+     0           0            0
+
+Cycle 113    R+A           A
+     0           0            0
+
+Cycle 114    R+A           A
+     0           0            0
+
+Cycle 115    R+A           A
+     0           0            0
+
+Cycle 116    R+A           A
+     0           0            0
+
+Cycle 117    R+A           A
+     0           0            0
+
+Cycle 118    R+A           A
+     0           0            0
+
+Cycle 119    R+A           A
+     0           0            0
+
+Cycle 120    R+A           A
+     0           0            0
+
+Cycle 121    R+A           A
+     0           0            0
+
+Cycle 122    R+A           A
+     0           0            0
+
+Cycle 123    R+A           A
+     0           0            0
+
+Cycle 124    R+A           A
+     0           0            0
+
+Cycle 125    R+A           A
+     0           0            0
+
+Cycle 126    R+A           A
+     0           0            0
+
+Cycle 127    R+A           A
+     0           0            0
+
+Cycle 128    R+A           A
+     0           0            0
+
+Cycle 129    R+A           A
+     0           0            0
+
+Cycle 130    R+A           A
+     0           0            0
+
+Cycle 131    R+A           A
+     0           0            0
+
+Cycle 132    R+A           A
+     0           0            0
+
+Cycle 133    R+A           A
+     0           0            0
+
+Cycle 134    R+A           A
+     0           0            0
+
+Cycle 135    R+A           A
+     0           0            0
+
+Cycle 136    R+A           A
+     0           0            0
+
+Cycle 137    R+A           A
+     0           0            0
+
+Cycle 138    R+A           A
+     0           0            0
+
+Cycle 139    R+A           A
+     0           0            0
+
+Cycle 140    R+A           A
+     0           0            0
+
+Cycle 141    R+A           A
+     0           0            0
+
+Cycle 142    R+A           A
+     0           0            0
+
+Cycle 143    R+A           A
+     0           0            0
+
+Cycle 144    R+A           A
+     0           0            0
+
+Cycle 145    R+A           A
+     0           0            0
+
+Cycle 146    R+A           A
+     0           0            0
+
+Cycle 147    R+A           A
+     0           0            0
+
+Cycle 148    R+A           A
+     0           0            0
+
+Cycle 149    R+A           A
+     0           0            0
+
+Cycle 150    R+A           A
+     0           0            0
+
+Cycle 151    R+A           A
+     0           0            0
+
+Cycle 152    R+A           A
+     0           0            0
+
+Cycle 153    R+A           A
+     0           0            0
+
+Cycle 154    R+A           A
+     0           0            0
+
+Cycle 155    R+A           A
+     0           0            0
+
+Cycle 156    R+A           A
+     0           0            0
+
+Cycle 157    R+A           A
+     0           0            0
+
+Cycle 158    R+A           A
+     0           0            0
+
+Cycle 159    R+A           A
+     0           0            0
+
+Cycle 160    R+A           A
+     0           0            0
+
+Cycle 161    R+A           A
+     0           0            0
+
+Cycle 162    R+A           A
+     0           0            0
+
+Cycle 163    R+A           A
+     0           0            0
+
+Cycle 164    R+A           A
+     0           0            0
+
+Cycle 165    R+A           A
+     0           0            0
+
+Cycle 166    R+A           A
+     0           0            0
+
+Cycle 167    R+A           A
+     0           0            0
+
+Cycle 168    R+A           A
+     0           0            0
+
+Cycle 169    R+A           A
+     0           0            0
+
+Cycle 170    R+A           A
+     0           0            0
+
+Cycle 171    R+A           A
+     0           0            0
+
+Cycle 172    R+A           A
+     0           0            0
+
+Cycle 173    R+A           A
+     0           0            0
+
+Cycle 174    R+A           A
+     0           0            0
+
+Cycle 175    R+A           A
+     0           0            0
+
+Cycle 176    R+A           A
+     0           0            0
+
+Cycle 177    R+A           A
+     0           0            0
+
+Cycle 178    R+A           A
+     0           0            0
+
+Cycle 179    R+A           A
+     0           0            0
+
+Cycle 180    R+A           A
+     0           0            0
+
+Cycle 181    R+A           A
+     0           0            0
+
+Cycle 182    R+A           A
+     0           0            0
+
+Cycle 183    R+A           A
+     0           0            0
+
+Cycle 184    R+A           A
+     0           0            0
+
+Cycle 185    R+A           A
+     0           0            0
+
+Cycle 186    R+A           A
+     0           0            0
+
+Cycle 187    R+A           A
+     0           0            0
+
+Cycle 188    R+A           A
+     0           0            0
+
+Cycle 189    R+A           A
+     0           0            0
+
+Cycle 190    R+A           A
+     0           0            0
+
+Cycle 191    R+A           A
+     0           0            0
+
+Cycle 192    R+A           A
+     0           0            0
+
+Cycle 193    R+A           A
+     0           0            0
+
+Cycle 194    R+A           A
+     0           0            0
+
+Cycle 195    R+A           A
+     0           0            0
+
+Cycle 196    R+A           A
+     0           0            0
+
+Cycle 197    R+A           A
+     0           0            0
+
+Cycle 198    R+A           A
+     0           0            0
+
+Cycle 199    R+A           A
+     0           0            0
+
+Cycle 200    R+A           A
+     0           0            0
+
+Cycle 201    R+A           A
+     0           0            0
+
+Cycle 202    R+A           A
+     0           0            0
+
+Cycle 203    R+A           A
+     0           0            0
+
+Cycle 204    R+A           A
+     0           0            0
+
+Cycle 205    R+A           A
+     0           0            0
+
+Cycle 206    R+A           A
+     0           0            0
+
+Cycle 207    R+A           A
+     0           0            0
+
+Cycle 208    R+A           A
+     0           0            0
+
+Cycle 209    R+A           A
+     0           0            0
+
+Cycle 210    R+A           A
+     0           0            0
+
+Cycle 211    R+A           A
+     0           0            0
+
+Cycle 212    R+A           A
+     0           0            0
+
+Cycle 213    R+A           A
+     0           0            0
+
+Cycle 214    R+A           A
+     0           0            0
+
+Cycle 215    R+A           A
+     0           0            0
+
+Cycle 216    R+A           A
+     0           0            0
+
+Cycle 217    R+A           A
+     0           0            0
+
+Cycle 218    R+A           A
+     0           0            0
+
+Cycle 219    R+A           A
+     0           0            0
+
+Cycle 220    R+A           A
+     0           0            0
+
+Cycle 221    R+A           A
+     0           0            0
+
+Cycle 222    R+A           A
+     0           0            0
+
+Cycle 223    R+A           A
+     0           0            0
+
+Cycle 224    R+A           A
+     0           0            0
+
+Cycle 225    R+A           A
+     0           0            0
+
+Cycle 226    R+A           A
+     0           0            0
+
+Cycle 227    R+A           A
+     0           0            0
+
+Cycle 228    R+A           A
+     0           0            0
+
+Cycle 229    R+A           A
+     0           0            0
+
+Cycle 230    R+A           A
+     0           0            0
+
+Cycle 231    R+A           A
+     0           0            0
+
+Cycle 232    R+A           A
+     0           0            0
+
+Cycle 233    R+A           A
+     0           0            0
+
+Cycle 234    R+A           A
+     0           0            0
+
+Cycle 235    R+A           A
+     0           0            0
+
+Cycle 236    R+A           A
+     0           0            0
+
+Cycle 237    R+A           A
+     0           0            0
+
+Cycle 238    R+A           A
+     0           0            0
+
+Cycle 239    R+A           A
+     0           0            0
+
+Cycle 240    R+A           A
+     0           0            0
+
+Cycle 241    R+A           A
+     0           0            0
+
+Cycle 242    R+A           A
+     0           0            0
+
+Cycle 243    R+A           A
+     0           0            0
+
+Cycle 244    R+A           A
+     0           0            0
+
+Cycle 245    R+A           A
+     0           0            0
+
+Cycle 246    R+A           A
+     0           0            0
+
+Cycle 247    R+A           A
+     0           0            0
+
+Cycle 248    R+A           A
+     0           0            0
+
+Cycle 249    R+A           A
+     0           0            0
+
+Cycle 250    R+A           A
+     0           0            0
+
+Cycle 251    R+A           A
+     0           0            0
+
+Cycle 252    R+A           A
+     0           0            0
+
+Cycle 253    R+A           A
+     0           0            0
+
+Cycle 254    R+A           A
+     0           0            0
+
+Cycle 255    R+A           A
+     0           0            0
+
+Cycle 256    R+A           A
+     0           0            0
+
+Cycle 257    R+A           A
+     0           0            0
+
+Cycle 258    R+A           A
+     0           0            0
+
+Cycle 259    R+A           A
+     0           0            0
+
+Cycle 260    R+A           A
+     0           0            0
+
+Cycle 261    R+A           A
+     0           0            0
+
+Cycle 262    R+A           A
+     0           0            0
+
+Cycle 263    R+A           A
+     0           0            0
+
+Cycle 264    R+A           A
+     0           0            0
+
+Cycle 265    R+A           A
+     0           0            0
+
+Cycle 266    R+A           A
+     0           0            0
+
+Cycle 267    R+A           A
+     0           0            0
+
+Cycle 268    R+A           A
+     0           0            0
+
+Cycle 269    R+A           A
+     0           0            0
+
+Cycle 270    R+A           A
+     0           0            0
+
+Cycle 271    R+A           A
+     0           0            0
+
+Cycle 272    R+A           A
+     0           0            0
+
+Cycle 273    R+A           A
+     0           0            0
+
+Cycle 274    R+A           A
+     0           0            0
+
+Cycle 275    R+A           A
+     0           0            0
+
+Cycle 276    R+A           A
+     0           0            0
+
+Cycle 277    R+A           A
+     0           0            0
+
+Cycle 278    R+A           A
+     0           0            0
+
+Cycle 279    R+A           A
+     0           0            0
+
+Cycle 280    R+A           A
+     0           0            0
+
+Cycle 281    R+A           A
+     0           0            0
+
+Cycle 282    R+A           A
+     0           0            0
+
+Cycle 283    R+A           A
+     0           0            0
+
+Cycle 284    R+A           A
+     0           0            0
+
+Cycle 285    R+A           A
+     0           0            0
+
+Cycle 286    R+A           A
+     0           0            0
+
+Cycle 287    R+A           A
+     0           0            0
+
+Cycle 288    R+A           A
+     0           0            0
+
+Cycle 289    R+A           A
+     0           0            0
+
+Cycle 290    R+A           A
+     0           0            0
+
+Cycle 291    R+A           A
+     0           0            0
+
+Cycle 292    R+A           A
+     0           0            0
+
+Cycle 293    R+A           A
+     0           0            0
+
+Cycle 294    R+A           A
+     0           0            0
+
+Cycle 295    R+A           A
+     0           0            0
+
+Cycle 296    R+A           A
+     0           0            0
+
+Cycle 297    R+A           A
+     0           0            0
+
+Cycle 298    R+A           A
+     0           0            0
+
+Cycle 299    R+A           A
+     0           0            0
+
+Cycle 300    R+A           A
+     0           0            0
+
+Cycle 301    R+A           A
+     0           0            0
+
+Cycle 302    R+A           A
+     0           0            0
+
+Cycle 303    R+A           A
+     0           0            0
+
+Cycle 304    R+A           A
+     0           0            0
+
+Cycle 305    R+A           A
+     0           0            0
+
+Cycle 306    R+A           A
+     0           0            0
+
+Cycle 307    R+A           A
+     0           0            0
+
+Cycle 308    R+A           A
+     0           0            0
+
+Cycle 309    R+A           A
+     0           0            0
+
+Cycle 310    R+A           A
+     0           0            0
+
+Cycle 311    R+A           A
+     0           0            0
+
+Cycle 312    R+A           A
+     0           0            0
+
+Cycle 313    R+A           A
+     0           0            0
+
+Cycle 314    R+A           A
+     0           0            0
+
+Cycle 315    R+A           A
+     0           0            0
+
+Cycle 316    R+A           A
+     0           0            0
+
+Cycle 317    R+A           A
+     0           0            0
+
+Cycle 318    R+A           A
+     0           0            0
+
+Cycle 319    R+A           A
+     0           0            0
+
+Cycle 320    R+A           A
+     0           0            0
+
+Cycle 321    R+A           A
+     0           0            0
+
+Cycle 322    R+A           A
+     0           0            0
+
+Cycle 323    R+A           A
+     0           0            0
+
+Cycle 324    R+A           A
+     0           0            0
+
+Cycle 325    R+A           A
+     0           0            0
+
+Cycle 326    R+A           A
+     0           0            0
+
+Cycle 327    R+A           A
+     0           0            0
+
+Cycle 328    R+A           A
+     0           0            0
+
+Cycle 329    R+A           A
+     0           0            0
+
+Cycle 330    R+A           A
+     0           0            0
+
+Cycle 331    R+A           A
+     0           0            0
+
+Cycle 332    R+A           A
+     0           0            0
+
+Cycle 333    R+A           A
+     0           0            0
+
+Cycle 334    R+A           A
+     0           0            0
+
+Cycle 335    R+A           A
+     0           0            0
+
+Cycle 336    R+A           A
+     0           0            0
+
+Cycle 337    R+A           A
+     0           0            0
+
+Cycle 338    R+A           A
+     0           0            0
+
+Cycle 339    R+A           A
+     0           0            0
+
+Cycle 340    R+A           A
+     0           0            0
+
+Cycle 341    R+A           A
+     0           0            0
+
+Cycle 342    R+A           A
+     0           0            0
+
+Cycle 343    R+A           A
+     0           0            0
+
+Cycle 344    R+A           A
+     0           0            0
+
+Cycle 345    R+A           A
+     0           0            0
+
+Cycle 346    R+A           A
+     0           0            0
+
+Cycle 347    R+A           A
+     0           0            0
+
+Cycle 348    R+A           A
+     0           0            0
+
+Cycle 349    R+A           A
+     0           0            0
+
+Cycle 350    R+A           A
+     0           0            0
+
+Cycle 351    R+A           A
+     0           0            0
+
+Cycle 352    R+A           A
+     0           0            0
+
+Cycle 353    R+A           A
+     0           0            0
+
+Cycle 354    R+A           A
+     0           0            0
+
+Cycle 355    R+A           A
+     0           0            0
+
+Cycle 356    R+A           A
+     0           0            0
+
+Cycle 357    R+A           A
+     0           0            0
+
+Cycle 358    R+A           A
+     0           0            0
+
+Cycle 359    R+A           A
+     0           0            0
+
+Cycle 360    R+A           A
+     0           0            0
+
+Cycle 361    R+A           A
+     0           0            0
+
+Cycle 362    R+A           A
+     0           0            0
+
+Cycle 363    R+A           A
+     0           0            0
+
+Cycle 364    R+A           A
+     0           0            0
+
+Cycle 365    R+A           A
+     0           0            0
+
+Cycle 366    R+A           A
+     0           0            0
+
+Cycle 367    R+A           A
+     0           0            0
+
+Cycle 368    R+A           A
+     0           0            0
+
+Cycle 369    R+A           A
+     0           0            0
+
+Cycle 370    R+A           A
+     0           0            0
+
+Cycle 371    R+A           A
+     0           0            0
+
+Cycle 372    R+A           A
+     0           0            0
+
+Cycle 373    R+A           A
+     0           0            0
+
+Cycle 374    R+A           A
+     0           0            0
+
+Cycle 375    R+A           A
+     0           0            0
+
+Cycle 376    R+A           A
+     0           0            0
+
+Cycle 377    R+A           A
+     0           0            0
+
+Cycle 378    R+A           A
+     0           0            0
+
+Cycle 379    R+A           A
+     0           0            0
+
+Cycle 380    R+A           A
+     0           0            0
+
+Cycle 381    R+A           A
+     0           0            0
+
+Cycle 382    R+A           A
+     0           0            0
+
+Cycle 383    R+A           A
+     0           0            0
+
+Cycle 384    R+A           A
+     0           0            0
+
+Cycle 385    R+A           A
+     0           0            0
+
+Cycle 386    R+A           A
+     0           0            0
+
+Cycle 387    R+A           A
+     0           0            0
+
+Cycle 388    R+A           A
+     0           0            0
+
+Cycle 389    R+A           A
+     0           0            0
+
+Cycle 390    R+A           A
+     0           0            0
+
+Cycle 391    R+A           A
+     0           0            0
+
+Cycle 392    R+A           A
+     0           0            0
+
+Cycle 393    R+A           A
+     0           0            0
+
+Cycle 394    R+A           A
+     0           0            0
+
+Cycle 395    R+A           A
+     0           0            0
+
+Cycle 396    R+A           A
+     0           0            0
+
+Cycle 397    R+A           A
+     0           0            0
+
+Cycle 398    R+A           A
+     0           0            0
+
+Cycle 399    R+A           A
+     0           0            0
+
+Cycle 400    R+A           A
+     0           0            0
+
+Cycle 401    R+A           A
+     0           0            0
+
+Cycle 402    R+A           A
+     0           0            0
+
+Cycle 403    R+A           A
+     0           0            0
+
+Cycle 404    R+A           A
+     0           0            0
+
+Cycle 405    R+A           A
+     0           0            0
+
+Cycle 406    R+A           A
+     0           0            0
+
+Cycle 407    R+A           A
+     0           0            0
+
+Cycle 408    R+A           A
+     0           0            0
+
+Cycle 409    R+A           A
+     0           0            0
+
+Cycle 410    R+A           A
+     0           0            0
+
+Cycle 411    R+A           A
+     0           0            0
+
+Cycle 412    R+A           A
+     0           0            0
+
+Cycle 413    R+A           A
+     0           0            0
+
+Cycle 414    R+A           A
+     0           0            0
+
+Cycle 415    R+A           A
+     0           0            0
+
+Cycle 416    R+A           A
+     0           0            0
+
+Cycle 417    R+A           A
+     0           0            0
+
+Cycle 418    R+A           A
+     0           0            0
+
+Cycle 419    R+A           A
+     0           0            0
+
+Cycle 420    R+A           A
+     0           0            0
+
+Cycle 421    R+A           A
+     0           0            0
+
+Cycle 422    R+A           A
+     0           0            0
+
+Cycle 423    R+A           A
+     0           0            0
+
+Cycle 424    R+A           A
+     0           0            0
+
+Cycle 425    R+A           A
+     0           0            0
+
+Cycle 426    R+A           A
+     0           0            0
+
+Cycle 427    R+A           A
+     0           0            0
+
+Cycle 428    R+A           A
+     0           0            0
+
+Cycle 429    R+A           A
+     0           0            0
+
+Cycle 430    R+A           A
+     0           0            0
+
+Cycle 431    R+A           A
+     0           0            0
+
+Cycle 432    R+A           A
+     0           0            0
+
+Cycle 433    R+A           A
+     0           0            0
+
+Cycle 434    R+A           A
+     0           0            0
+
+Cycle 435    R+A           A
+     0           0            0
+
+Cycle 436    R+A           A
+     0           0            0
+
+Cycle 437    R+A           A
+     0           0            0
+
+Cycle 438    R+A           A
+     0           0            0
+
+Cycle 439    R+A           A
+     0           0            0
+
+Cycle 440    R+A           A
+     0           0            0
+
+Cycle 441    R+A           A
+     0           0            0
+
+Cycle 442    R+A           A
+     0           0            0
+
+Cycle 443    R+A           A
+     0           0            0
+
+Cycle 444    R+A           A
+     0           0            0
+
+Cycle 445    R+A           A
+     0           0            0
+
+Cycle 446    R+A           A
+     0           0            0
+
+Cycle 447    R+A           A
+     0           0            0
+
+Cycle 448    R+A           A
+     0           0            0
+
+Cycle 449    R+A           A
+     0           0            0
+
+Cycle 450    R+A           A
+     0           0            0
+
+Cycle 451    R+A           A
+     0           0            0
+
+Cycle 452    R+A           A
+     0           0            0
+
+Cycle 453    R+A           A
+     0           0            0
+
+Cycle 454    R+A           A
+     0           0            0
+
+Cycle 455    R+A           A
+     0           0            0
+
+Cycle 456    R+A           A
+     0           0            0
+
+Cycle 457    R+A           A
+     0           0            0
+
+Cycle 458    R+A           A
+     0           0            0
+
+Cycle 459    R+A           A
+     0           0            0
+
+Cycle 460    R+A           A
+     0           0            0
+
+Cycle 461    R+A           A
+     0           0            0
+
+Cycle 462    R+A           A
+     0           0            0
+
+Cycle 463    R+A           A
+     0           0            0
+
+Cycle 464    R+A           A
+     0           0            0
+
+Cycle 465    R+A           A
+     0           0            0
+
+Cycle 466    R+A           A
+     0           0            0
+
+Cycle 467    R+A           A
+     0           0            0
+
+Cycle 468    R+A           A
+     0           0            0
+
+Cycle 469    R+A           A
+     0           0            0
+
+Cycle 470    R+A           A
+     0           0            0
+
+Cycle 471    R+A           A
+     0           0            0
+
+Cycle 472    R+A           A
+     0           0            0
+
+Cycle 473    R+A           A
+     0           0            0
+
+Cycle 474    R+A           A
+     0           0            0
+
+Cycle 475    R+A           A
+     0           0            0
+
+Cycle 476    R+A           A
+     0           0            0
+
+Cycle 477    R+A           A
+     0           0            0
+
+Cycle 478    R+A           A
+     0           0            0
+
+Cycle 479    R+A           A
+     0           0            0
+
+Cycle 480    R+A           A
+     0           0            0
+
+Cycle 481    R+A           A
+     0           0            0
+
+Cycle 482    R+A           A
+     0           0            0
+
+Cycle 483    R+A           A
+     0           0            0
+
+Cycle 484    R+A           A
+     0           0            0
+
+Cycle 485    R+A           A
+     0           0            0
+
+Cycle 486    R+A           A
+     0           0            0
+
+Cycle 487    R+A           A
+     0           0            0
+
+Cycle 488    R+A           A
+     0           0            0
+
+Cycle 489    R+A           A
+     0           0            0
+
+Cycle 490    R+A           A
+     0           0            0
+
+Cycle 491    R+A           A
+     0           0            0
+
+Cycle 492    R+A           A
+     0           0            0
+
+Cycle 493    R+A           A
+     0           0            0
+
+Cycle 494    R+A           A
+     0           0            0
+
+Cycle 495    R+A           A
+     0           0            0
+
+Cycle 496    R+A           A
+     0           0            0
+
+Cycle 497    R+A           A
+     0           0            0
+
+Cycle 498    R+A           A
+     0           0            0
+
+Cycle 499    R+A           A
+     0           0            0
+
+Cycle 500    R+A           A
+     0           0            0
+
+Cycle 501    R+A           A
+     0           0            0
+
+Cycle 502    R+A           A
+     0           0            0
+
+Cycle 503    R+A           A
+     0           0            0
+
+Cycle 504    R+A           A
+     0           0            0
+
+Cycle 505    R+A           A
+     0           0            0
+
+Cycle 506    R+A           A
+     0           0            0
+
+Cycle 507    R+A           A
+     0           0            0
+
+Cycle 508    R+A           A
+     0           0            0
+
+Cycle 509    R+A           A
+     0           0            0
+
+Cycle 510    R+A           A
+     0           0            0
+
+Cycle 511    R+A           A
+     0           0            0
+
+Cycle 512    R+A           A
+     0           0            0
+
+Cycle 513    R+A           A
+     0           0            0
+
+Cycle 514    R+A           A
+     0           0            0
+
+Cycle 515    R+A           A
+     0           0            0
+
+Cycle 516    R+A           A
+     0           0            0
+
+Cycle 517    R+A           A
+     0           0            0
+
+Cycle 518    R+A           A
+     0           0            0
+
+Cycle 519    R+A           A
+     0           0            0
+
+Cycle 520    R+A           A
+     0           0            0
+
+Cycle 521    R+A           A
+     0           0            0
+
+Cycle 522    R+A           A
+     0           0            0
+
+Cycle 523    R+A           A
+     0           0            0
+
+Cycle 524    R+A           A
+     0           0            0
+
+Cycle 525    R+A           A
+     0           0            0
+
+Cycle 526    R+A           A
+     0           0            0
+
+Cycle 527    R+A           A
+     0           0            0
+
+Cycle 528    R+A           A
+     0           0            0
+
+Cycle 529    R+A           A
+     0           0            0
+
+Cycle 530    R+A           A
+     0           0            0
+
+Cycle 531    R+A           A
+     0           0            0
+
+Cycle 532    R+A           A
+     0           0            0
+
+Cycle 533    R+A           A
+     0           0            0
+
+Cycle 534    R+A           A
+     0           0            0
+
+Cycle 535    R+A           A
+     0           0            0
+
+Cycle 536    R+A           A
+     0           0            0
+
+Cycle 537    R+A           A
+     0           0            0
+
+Cycle 538    R+A           A
+     0           0            0

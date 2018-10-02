@@ -1,0 +1,2200 @@
+***********************************************************
+Starting INCC Algorithms test at 12:13:09 PM
+OS platform for test Microsoft Windows NT 6.1.7601 Service Pack 1
+NCCCore Version 6.2.6751.19909
+Defs Version 6.2.6751.19908
+NCCCtrl Version 6.2.6751.19910
+RepDB Version 6.2.6750.26944
+76 *.ver files found in input directory
+***********************************************************
+
+***********************************************************
+Loading test file 1/76 at 12:13:09 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\ActiveMult\713P0048.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Compare multiplicity counting for entire measurement:
+CountingResults match
+Analysis results comparison for Active multiplicity: PASS
+All analysis Method Results match
+Test 1/76 ended at 12:13:09 PM, 594 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 2/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EO5417.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 2/76 ended at 12:13:13 PM, 37 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 3/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EO5848.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 3/76 ended at 12:13:13 PM, 14 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 4/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EP0248.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 4/76 ended at 12:13:13 PM, 13 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 5/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EP0618.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 5/76 ended at 12:13:13 PM, 13 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 6/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EP0949.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 6/76 ended at 12:13:13 PM, 13 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 7/76 at 12:13:13 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\64EP1319.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 7/76 ended at 12:13:13 PM, 14 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 8/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GO5941.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 8/76 ended at 12:13:14 PM, 20 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 9/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP0641.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 9/76 ended at 12:13:14 PM, 19 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 10/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP1312.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 10/76 ended at 12:13:14 PM, 20 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 11/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP2013.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 11/76 ended at 12:13:14 PM, 18 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 12/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP2613.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 12/76 ended at 12:13:14 PM, 19 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 13/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP3244.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 13/76 ended at 12:13:14 PM, 16 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 14/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal\73GP3245.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Analysis results comparison for Passive calibration curve: PASS
+All analysis Method Results match
+Test 14/76 ended at 12:13:14 PM, 17 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 15/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_KnownAlpha\633L0533.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+All analysis Method Results match
+Test 15/76 ended at 12:13:14 PM, 23 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 16/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_KnownAlpha\633L1453.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+All analysis Method Results match
+Test 16/76 ended at 12:13:14 PM, 21 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 17/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AHW5944.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 5613598381 5660791796
+A sum values do not match. 5605502376 5652565513
+UnA sum values do not match. 5605502376 5652565513
+Scaler1 sum values do not match. 182470821 180935687
+Scaler2 sum values do not match. 143464035 142256749
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 17/76 ended at 12:13:14 PM, 60 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 18/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AHW5945.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 5613598381 5660791796
+A sum values do not match. 5605502376 5652565513
+UnA sum values do not match. 5605502376 5652565513
+Scaler1 sum values do not match. 182470821 180935687
+Scaler2 sum values do not match. 143464035 142256749
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 18/76 ended at 12:13:14 PM, 54 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 19/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AHW5946.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 5613598381 5660791796
+A sum values do not match. 5605502376 5652565513
+UnA sum values do not match. 5605502376 5652565513
+Scaler1 sum values do not match. 182470821 180935687
+Scaler2 sum values do not match. 143464035 142256749
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 19/76 ended at 12:13:14 PM, 54 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 20/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AHW5947.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 5613598381 5660791796
+A sum values do not match. 5605502376 5652565513
+UnA sum values do not match. 5605502376 5652565513
+Scaler1 sum values do not match. 182470821 180935687
+Scaler2 sum values do not match. 143464035 142256749
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 20/76 ended at 12:13:14 PM, 46 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 21/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AHX3842.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Cycle121: PASS
+Cycle122: PASS
+Cycle123: PASS
+Cycle124: PASS
+Cycle125: PASS
+Cycle126: PASS
+Cycle127: PASS
+Cycle128: PASS
+Cycle129: PASS
+Cycle130: PASS
+Cycle131: PASS
+Cycle132: PASS
+Cycle133: PASS
+Cycle134: PASS
+Cycle135: PASS
+Cycle136: PASS
+Cycle137: PASS
+Cycle138: PASS
+Cycle139: PASS
+Cycle140: PASS
+Cycle141: PASS
+Cycle142: PASS
+Cycle143: PASS
+Cycle144: PASS
+Cycle145: PASS
+Cycle146: PASS
+Cycle147: PASS
+Cycle148: PASS
+Cycle149: PASS
+Cycle150: PASS
+Cycle151: PASS
+Cycle152: PASS
+Cycle153: PASS
+Cycle154: PASS
+Cycle155: PASS
+Cycle156: PASS
+Cycle157: PASS
+Cycle158: PASS
+Cycle159: PASS
+Cycle160: PASS
+Cycle161: PASS
+Cycle162: PASS
+Cycle163: PASS
+Cycle164: PASS
+Cycle165: PASS
+Cycle166: PASS
+Cycle167: PASS
+Cycle168: PASS
+Cycle169: PASS
+Cycle170: PASS
+Cycle171: PASS
+Cycle172: PASS
+Cycle173: PASS
+Cycle174: PASS
+Cycle175: PASS
+Cycle176: PASS
+Cycle177: PASS
+Cycle178: PASS
+Cycle179: PASS
+Cycle180: PASS
+Cycle181: PASS
+Cycle182: PASS
+Cycle183: PASS
+Cycle184: PASS
+Cycle185: PASS
+Cycle186: PASS
+Cycle187: PASS
+Cycle188: PASS
+Cycle189: PASS
+Cycle190: PASS
+Cycle191: PASS
+Cycle192: PASS
+Cycle193: PASS
+Cycle194: PASS
+Cycle195: PASS
+Cycle196: PASS
+Cycle197: PASS
+Cycle198: PASS
+Cycle199: PASS
+Cycle200: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+Scaler1 sum values do not match. 186326113 185395825
+Scaler2 sum values do not match. 154918943 154144011
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Known alpha: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 21/76 ended at 12:13:14 PM, 52 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 22/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AIV2734.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 3797545298 3829470943
+A sum values do not match. 3794167458 3826007598
+UnA sum values do not match. 3794167458 3826007598
+Scaler1 sum values do not match. 149199897 147962436
+Scaler2 sum values do not match. 118487002 117500501
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 22/76 ended at 12:13:14 PM, 44 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 23/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AIW0133.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 23/76 ended at 12:13:14 PM, 19 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 24/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AIW3327.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+A sum values do not match. 152533 152226
+UnA sum values do not match. 152533 152226
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 24/76 ended at 12:13:14 PM, 18 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 25/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AIX0036.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Cycle69: PASS
+Cycle70: PASS
+Cycle71: PASS
+Cycle72: PASS
+Cycle73: PASS
+Cycle74: PASS
+Cycle75: PASS
+Cycle76: PASS
+Cycle77: PASS
+Cycle78: PASS
+Cycle79: PASS
+Cycle80: PASS
+Cycle81: PASS
+Cycle82: PASS
+Cycle83: PASS
+Cycle84: PASS
+Cycle85: PASS
+Cycle86: PASS
+Cycle87: PASS
+Cycle88: PASS
+Cycle89: PASS
+Cycle90: PASS
+Cycle91: PASS
+Cycle92: PASS
+Cycle93: PASS
+Cycle94: PASS
+Cycle95: PASS
+Cycle96: PASS
+Cycle97: PASS
+Cycle98: PASS
+Cycle99: PASS
+Cycle100: PASS
+Cycle101: PASS
+Cycle102: PASS
+Cycle103: PASS
+Cycle104: PASS
+Cycle105: PASS
+Cycle106: PASS
+Cycle107: PASS
+Cycle108: PASS
+Cycle109: PASS
+Cycle110: PASS
+Cycle111: PASS
+Cycle112: PASS
+Cycle113: PASS
+Cycle114: PASS
+Cycle115: PASS
+Cycle116: PASS
+Cycle117: PASS
+Cycle118: PASS
+Cycle119: PASS
+Cycle120: PASS
+Cycle121: PASS
+Cycle122: PASS
+Cycle123: PASS
+Cycle124: PASS
+Cycle125: PASS
+Cycle126: PASS
+Cycle127: PASS
+Cycle128: PASS
+Cycle129: PASS
+Cycle130: PASS
+Cycle131: PASS
+Cycle132: PASS
+Cycle133: PASS
+Cycle134: PASS
+Cycle135: PASS
+Cycle136: PASS
+Cycle137: PASS
+Cycle138: PASS
+Cycle139: PASS
+Cycle140: PASS
+Cycle141: PASS
+Cycle142: PASS
+Cycle143: PASS
+Cycle144: PASS
+Cycle145: PASS
+Cycle146: PASS
+Cycle147: PASS
+Cycle148: PASS
+Cycle149: PASS
+Cycle150: PASS
+Cycle151: PASS
+Cycle152: PASS
+Cycle153: PASS
+Cycle154: PASS
+Cycle155: PASS
+Cycle156: PASS
+Cycle157: PASS
+Cycle158: PASS
+Cycle159: PASS
+Cycle160: PASS
+Cycle161: PASS
+Cycle162: PASS
+Cycle163: PASS
+Cycle164: PASS
+Cycle165: PASS
+Cycle166: PASS
+Cycle167: PASS
+Cycle168: PASS
+Cycle169: PASS
+Cycle170: PASS
+Cycle171: PASS
+Cycle172: PASS
+Cycle173: PASS
+Cycle174: PASS
+Cycle175: PASS
+Cycle176: PASS
+Cycle177: PASS
+Cycle178: PASS
+Cycle179: PASS
+Cycle180: PASS
+Cycle181: PASS
+Cycle182: PASS
+Cycle183: PASS
+Cycle184: PASS
+Cycle185: PASS
+Cycle186: PASS
+Cycle187: PASS
+Cycle188: PASS
+Cycle189: PASS
+Cycle190: PASS
+Cycle191: PASS
+Cycle192: PASS
+Cycle193: PASS
+Cycle194: PASS
+Cycle195: PASS
+Cycle196: PASS
+Cycle197: PASS
+Cycle198: PASS
+Cycle199: PASS
+Cycle200: PASS
+Cycle201: PASS
+Cycle202: PASS
+Cycle203: PASS
+Cycle204: PASS
+Cycle205: PASS
+Cycle206: PASS
+Cycle207: PASS
+Cycle208: PASS
+Cycle209: PASS
+Cycle210: PASS
+Cycle211: PASS
+Cycle212: PASS
+Cycle213: PASS
+Cycle214: PASS
+Cycle215: PASS
+Cycle216: PASS
+Cycle217: PASS
+Cycle218: PASS
+Cycle219: PASS
+Cycle220: PASS
+Cycle221: PASS
+Cycle222: PASS
+Cycle223: PASS
+Cycle224: PASS
+Cycle225: PASS
+Cycle226: PASS
+Cycle227: PASS
+Cycle228: PASS
+Cycle229: PASS
+Cycle230: PASS
+Cycle231: PASS
+Cycle232: PASS
+Cycle233: PASS
+Cycle234: PASS
+Cycle235: PASS
+Cycle236: PASS
+Cycle237: PASS
+Cycle238: PASS
+Cycle239: PASS
+Cycle240: PASS
+Cycle241: PASS
+Cycle242: PASS
+Cycle243: PASS
+Cycle244: PASS
+Cycle245: PASS
+Cycle246: PASS
+Cycle247: PASS
+Cycle248: PASS
+Cycle249: PASS
+Cycle250: PASS
+Cycle251: PASS
+Cycle252: PASS
+Cycle253: PASS
+Cycle254: PASS
+Cycle255: PASS
+Cycle256: PASS
+Cycle257: PASS
+Cycle258: PASS
+Cycle259: PASS
+Cycle260: PASS
+Cycle261: PASS
+Cycle262: PASS
+Cycle263: PASS
+Cycle264: PASS
+Cycle265: PASS
+Cycle266: PASS
+Cycle267: PASS
+Cycle268: PASS
+Cycle269: PASS
+Cycle270: PASS
+Cycle271: PASS
+Cycle272: PASS
+Cycle273: PASS
+Cycle274: PASS
+Cycle275: PASS
+Cycle276: PASS
+Cycle277: PASS
+Cycle278: PASS
+Cycle279: PASS
+Cycle280: PASS
+Cycle281: PASS
+Cycle282: PASS
+Cycle283: PASS
+Cycle284: PASS
+Cycle285: PASS
+Cycle286: PASS
+Cycle287: PASS
+Cycle288: PASS
+Cycle289: PASS
+Cycle290: PASS
+Cycle291: PASS
+Cycle292: PASS
+Cycle293: PASS
+Cycle294: PASS
+Cycle295: PASS
+Cycle296: PASS
+Cycle297: PASS
+Cycle298: PASS
+Cycle299: PASS
+Cycle300: PASS
+Cycle301: PASS
+Cycle302: PASS
+Cycle303: PASS
+Cycle304: PASS
+Cycle305: PASS
+Cycle306: PASS
+Cycle307: PASS
+Cycle308: PASS
+Cycle309: PASS
+Cycle310: PASS
+Cycle311: PASS
+Cycle312: PASS
+Cycle313: PASS
+Cycle314: PASS
+Cycle315: PASS
+Cycle316: PASS
+Cycle317: PASS
+Cycle318: PASS
+Cycle319: PASS
+Cycle320: PASS
+Cycle321: PASS
+Cycle322: PASS
+Cycle323: PASS
+Cycle324: PASS
+Cycle325: PASS
+Cycle326: PASS
+Cycle327: PASS
+Cycle328: PASS
+Cycle329: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 475300 484485
+A sum values do not match. 281609 285663
+UnA sum values do not match. 281609 285663
+Scaler1 sum values do not match. 3070937 3061638
+Scaler2 sum values do not match. 2262352 2255387
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 25/76 ended at 12:13:14 PM, 58 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 26/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AJB1420.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+A sum values do not match. 245086 244644
+UnA sum values do not match. 245086 244644
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 26/76 ended at 12:13:14 PM, 19 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 27/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AJB4700.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Cycle22: PASS
+Cycle23: PASS
+Cycle24: PASS
+Cycle25: PASS
+Cycle26: PASS
+Cycle27: PASS
+Cycle28: PASS
+Cycle29: PASS
+Cycle30: PASS
+Cycle31: PASS
+Cycle32: PASS
+Cycle33: PASS
+Cycle34: PASS
+Cycle35: PASS
+Cycle36: PASS
+Cycle37: PASS
+Cycle38: PASS
+Cycle39: PASS
+Cycle40: PASS
+Cycle41: PASS
+Cycle42: PASS
+Cycle43: PASS
+Cycle44: PASS
+Cycle45: PASS
+Cycle46: PASS
+Cycle47: PASS
+Cycle48: PASS
+Cycle49: PASS
+Cycle50: PASS
+Cycle51: PASS
+Cycle52: PASS
+Cycle53: PASS
+Cycle54: PASS
+Cycle55: PASS
+Cycle56: PASS
+Cycle57: PASS
+Cycle58: PASS
+Cycle59: PASS
+Cycle60: PASS
+Cycle61: PASS
+Cycle62: PASS
+Cycle63: PASS
+Cycle64: PASS
+Cycle65: PASS
+Cycle66: PASS
+Cycle67: PASS
+Cycle68: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 27/76 ended at 12:13:14 PM, 28 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 28/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AKV1719.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 28/76 ended at 12:13:14 PM, 15 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 29/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AKV3507.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 29/76 ended at 12:13:14 PM, 14 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 30/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AKV5229.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Cycle21: PASS
+Compare multiplicity counting for entire measurement:
+RA distributions do not match.
+Accidental distributions do not match.
+Normalized accidental distributions do not match.
+AFactorialAlphaMoment1 value does not match.
+Scaler1 values do not match.
+Scaler2 values do not match.
+RA sum values do not match. 203356 213705
+A sum values do not match. 122205 128131
+UnA sum values do not match. 122205 128131
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 30/76 ended at 12:13:14 PM, 13 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 31/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AKW0707.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+A sum values do not match. 76838 76744
+UnA sum values do not match. 76838 76744
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 31/76 ended at 12:13:14 PM, 12 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 32/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\PassiveCal_PassiveMult\1AKW2118.VER: 
+Measurement created from file
+Copying parameters and raw data for recalculation
+Measurement recalculated
+Compare each cycle
+Cycle1: PASS
+Cycle2: PASS
+Cycle3: PASS
+Cycle4: PASS
+Cycle5: PASS
+Cycle6: PASS
+Cycle7: PASS
+Cycle8: PASS
+Cycle9: PASS
+Cycle10: PASS
+Cycle11: PASS
+Cycle12: PASS
+Cycle13: PASS
+Cycle14: PASS
+Cycle15: PASS
+Cycle16: PASS
+Cycle17: PASS
+Cycle18: PASS
+Cycle19: PASS
+Cycle20: PASS
+Compare multiplicity counting for entire measurement:
+Scaler1 values do not match.
+Scaler2 values do not match.
+A sum values do not match. 25992 25901
+UnA sum values do not match. 25992 25901
+CountingResults different: FAIL
+Analysis results comparison for Passive calibration curve: PASS
+Analysis results comparison for Multiplicity: PASS
+All analysis Method Results match
+Test 32/76 ended at 12:13:14 PM, 13 total milliseconds for this test
+***********************************************************
+
+***********************************************************
+Loading test file 33/76 at 12:13:14 PM
+Test file name: C:\CODE\INCC7\INCC Test Data\Rates Only\6B1I5522.RTS: 
+Unknown label found in input file q���h�?�����C@�n����?a2U0*�s?        �#�����?j�t��?     @�@�������?      @      @      �?      �?     �X@.
+Unknown label found in input file        I@                                                                                                    ��                .
+Unknown label found in input file  p��v�� @�� C : \ i n c c \                                                                                                                             E   8��   � � E   8��   �     2   �� E     � 8�� �� �3�v �vVwD� ��   � P� T� �� P� P� ��     2       P� w    ��     w   w   E       w   E   8��        �� x  x    �� �� �� �� z`w�� �`w          ��    T� 2��v��v�IwD�   @�� �� EXw    ����   * , ��v(        *           �� ��v  * �� ��v            ��    *   ��v � �Iw��  � �� EXw   D� �� ��vH�� �� "   @�� p��v       �� o�0t�   �?�   @    �0t � (� �       <�    N t T e r m i n a t e T h r e a d   �?��� n a ��  �/t��h����0� ��0t   (�    @    <�            ����    <�               �� J��v��vHw � ��   �     ]�w+  �  |� @          , a �  �� �� hE� �1t    �� �� @ � XB� xC�  ,�  G� e \ <� S T �� EXw�� �� �1t    �� �� �� c1t\ E                     ��     � �� �a1t�7� ��� �<��� c1tR C                                             �       p� �v/t         � �� �7� �� ��.t    �=��  � .
+Unknown label found in input file    f 5 6 3 P�   b ������ ��     �� �.t��       ����    �� D� �8�      =�����`� � �� �� U2t8�       ����4 /8� �� �7� �  ��         �R    � �8�                   b G�                   b (�             �7�                  =�G�                  =�h�                  =��2�                  =���                  =��<�d� 92t����p� �x1t    8� 2���     T1t�� � �v4�v(Mw�� ��   � P�        P�   � t�   �    ��v MwX� ��   � `� �       �b@    �� A                    `?�@     ��@    p3�@     4�@     �@     H�@     �R@      @       @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            І A     ��@     `r@      C@      ,@                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        gxF��@޹a@c�,b�Xn@`���<�@b{�vi�O@�X�,�t�?                                E@']�Xn@!`P.r3 @��pL��@�7���^n@b{�vi�O@Zd;�O@	        16.11.01 08:55:22 6B1I5522.RTS Pulser       t;�h��� �/tf�1t � 0   ����  1t�1��� �흌ħ&@h�VHʊ<c�*ab9�<     p�<�i��6@u@$7}�?     ��u@$7}�?�"��fk�?      @      Y@      �?     �@              �?      @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        �켰4t?vاRN�?��B�9�?�i|}�&@    16.11.01 08:56:01 Pass HV 1658               >@    �E�@                     �@     �@    @5�@     .
+Unknown label found in input file �@     ��@     �t@      *@      �?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ���@      |@     �H@      @      @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        �벚,�@���^z�n@�#ݝ�N@                      �?                             �@                                                                �q��_��?�[V�D�$@ 16.11.01 08:56:40 Pass HV 1658               >@     �@                     ��@     H�@    @��@     ��@     X�@     Pv@      0@       @       @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            �}�@     P|@      Q@       @      �?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ���j+ό@��^�Jo@�lGFQ@                      �?                             �@                                                                r�R�z�?�6���m*@ 16.11.01 08:57:18 Pass HV 1658               >@    �!�@                     ��@     `�@     '�@     ��@     p�@     0t@      (@      �?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ��@     �|@      P@       @       @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        [c���@kWc~��m@d��N@                      �?                             �@                                                                K,��"1�?�-v/�#@ 16.11.01 08:57:57 Pass HV 1658               >@    ���@                     ��@     H�@    @��@     g�@     ��@     `u@      .@      @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    �C�@     �{@     �K@      @      @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @hٲ��@��k��?n@8v�6XP@                      �?                             �@                                                                u������?�]nx6'@ 16.11.01 08:58:35 Pass HV 1658               >@    ���@                     1�@     ��@     ��@     &�@     ��@     �t@      2@                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ��@     �{@      M@      (@      @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ��e�Y�@7�s.
+Measurement created from file
+Copying parameters and raw data for recalculation

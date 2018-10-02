@@ -199,21 +199,23 @@ namespace AnalysisDefs
                     ulong maxbins = 0; ulong minbins = 0;
                     MultiplicityCountingRes mcr = (MultiplicityCountingRes)pair.Value;
                     object obj; MultiplicityCountingRes ccm;
-                    foreach (Cycle cc in meas.Cycles)
+                    IEnumerator cyc = meas.Cycles.GetValidCycleList();
+                    while (cyc.MoveNext())
                     {
-                        bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
+                        bool there = ((Cycle)cyc.Current).CountingAnalysisResults.TryGetValue(pair.Key, out obj);
                         if (!there)
                             continue;
                         ccm = (MultiplicityCountingRes)obj;
                         maxbins = Math.Max(maxbins, ccm.MaxBins);
                         minbins = Math.Max(minbins, ccm.MinBins);
                     }
-                    mcr.MaxBins = Math.Max(maxbins, mcr.MaxBins);
-                    mcr.MinBins = Math.Max(minbins, mcr.MinBins);
+                    //Special case happening here. If cycle with outlier was largest # bins, was fubar
+                    mcr.MaxBins = maxbins;// Math.Max(maxbins, mcr.MaxBins);
+                    mcr.MinBins = minbins;// Math.Max(minbins, mcr.MinBins);
                     Array.Resize(ref mcr.RAMult, (int)mcr.MaxBins);
                     Array.Resize(ref mcr.NormedAMult, (int)mcr.MaxBins);
                     Array.Resize(ref mcr.UnAMult, (int)mcr.MaxBins);
-                    mcr.AB.Resize((int)mcr.MaxBins);
+                    mcr.AB?.Resize((int)mcr.MaxBins);
 
 					double denom = 0.0;
                     if (mcr.S1Sum == 0 && mcr.S2Sum == 0)
@@ -254,8 +256,9 @@ namespace AnalysisDefs
 
             try
             {
-               //  dev note: need a trim function that marches through R+A and ANorm removing dual 0s from the end of the arrays, apply per cycle and at this summary point, prior to reporting and storage
-                foreach (Cycle cc in meas.Cycles)
+                //  dev note: need a trim function that marches through R+A and ANorm removing dual 0s from the end of the arrays, apply per cycle and at this summary point, prior to reporting and storage
+                IEnumerator cyc = meas.Cycles.GetValidCycleList();
+                while (cyc.MoveNext())
                 {
                     foreach (KeyValuePair<SpecificCountingAnalyzerParams, object> pair in meas.CountingAnalysisResults)
                     {
@@ -263,7 +266,7 @@ namespace AnalysisDefs
                         {
                             ICountingResult cr = (ICountingResult)pair.Value;
 							object obj;
-                            bool there = cc.CountingAnalysisResults.TryGetValue(pair.Key, out obj);
+                            bool there = ((Cycle)cyc.Current).CountingAnalysisResults.TryGetValue(pair.Key, out obj);
                             if (!there)
                                 continue;
                             cr.Accumulate((ICountingResult)obj);
@@ -271,7 +274,7 @@ namespace AnalysisDefs
                     }
                 }
 
-                if (meas.Cycles.Count > 0)  // adjustments
+                if (meas.Cycles.GetValidCycleCount() > 0)  // adjustments
                 {
                     // average the summed coincidence matrix rates
                     IEnumerator iter = meas.CountingAnalysisResults.GetATypedResultEnumerator(typeof(AnalysisDefs.Coincidence));
