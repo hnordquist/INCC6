@@ -16,3 +16,7 @@ obj
 /*.ide
 
 /deployment/*.csv
+/INCC Test Data/Results
+/INCC Test Data_
+/deployment
+deployment
