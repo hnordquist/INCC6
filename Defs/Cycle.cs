@@ -29,7 +29,6 @@ using System;
 using NCCReporter;
 using DetectorDefs;
 using System.Collections.Generic;
-using System.Collections.Generic;
 
 namespace AnalysisDefs
 {

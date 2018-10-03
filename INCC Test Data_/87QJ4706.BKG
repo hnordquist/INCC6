@@ -1,0 +1,82 @@
+INCC 5.1.2
+
+                   Facility:  PCDF
+      Material balance area:  JR1B
+              Detector type:  WELL
+                Detector id:  PSMC
+             Electronics id:  AMSR
+           Measurement date:  18.07.26  09:47:06
+          Results file name:  87QJ4706.BKG
+          Inspection number:  007
+         Measurement option:  Background
+                Data source:  Shift register
+     Detector configuration:  Passive
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Measured
+             Inspector name:  nakamura
+            Passive comment:  5 bkg
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1700
+              Die away time:     49.0000
+                 Efficiency:      0.5430
+      Multiplicity deadtime:    112.0000
+     Coefficient A deadtime:      0.3790
+     Coefficient B deadtime:      0.1230
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.6150
+      Triples gate fraction:      0.4000
+
+
+Passive summed raw data
+
+                 Number of good cycles:                3
+                      Total count time:               90
+            Shift register singles sum:                0
+Shift register reals + accidentals sum:                0
+        Shift register accidentals sum:                0
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Results
+
+       Singles:          0.000 +-     0.000
+       Doubles:          0.000 +-     0.000
+       Triples:          0.000 +-     0.000
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+    Aux1 Ratio:          0.000
+   Aux2 Ratio:          0.000
+
+
+Passive cycle data
+
+Count time (sec):  30
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1          0          0          0          0          0  Pass
+   2          0          0          0          0          0  Pass
+   3          0          0          0          0          0  Pass
+
+Cycle      Singles       Doubles       Triples  QC Tests
+   1         0.000         0.000         0.000  Pass
+   2         0.000         0.000         0.000  Pass
+   3         0.000         0.000         0.000  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0

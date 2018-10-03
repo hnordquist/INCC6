@@ -13,13 +13,13 @@ using System.Globalization;
 
 namespace NCCTester
 {
-    class Program
+    class NCCTester
     {
 
         public static String testFileDir = "";
         public static String testFile = "";
         public static String testOutputDir = "";
-        public static List<String> inputFiles = new List<string>();
+        public static Dictionary<String, AssaySelector.MeasurementOption> inputFiles = new Dictionary<String, AssaySelector.MeasurementOption>();
         public static String resultsFile = "";
         public static StreamWriter results;
 
@@ -101,6 +101,8 @@ namespace NCCTester
         public static bool verbose = false;
         public static int numMethods;
 
+        public static AssaySelector.MeasurementOption currOption;
+
         static void Main(string[] args)
         {
             //Set the tolerance. Read from args.
@@ -165,20 +167,21 @@ namespace NCCTester
                 verbose = args[2] == "verbose";
                 int testNum = 0;
 
-                foreach (string testFile in inputFiles)
+                foreach (KeyValuePair<String, AssaySelector.MeasurementOption> testFile in inputFiles)
                 {
                     DateTime TestStart = DateTime.Now;
                     PrintLine("***********************************************************");
                     PrintLine(String.Format("Loading test file {0}/{1} at {2}", testNum + 1, inputFiles.Count, TestStart.ToLongTimeString()));
                     PrintLine(String.Format("Test file name: {0}: ", testFile));
-                    LoadMeasurementFromFile(testFile);
+                    currOption = testFile.Value;
+                    LoadMeasurementFromFile(testFile.Key);
                     testMeasurement.INCCAnalysisState.Methods.selector = new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.item_type);
 
                     PrintLine("Measurement created from file");
                     PrintLine("Copying parameters and raw data for recalculation");
 
                     //Copy to new measurement for calculation/comparison
-                    Measurement newResultMeasurement = new Measurement(AssaySelector.MeasurementOption.verification, null);
+                    Measurement newResultMeasurement = new Measurement(testFile.Value, null);
                     newResultMeasurement = BuildMeasurement(testMeasurement);
                     newResultMeasurement.Detector.Id.source = DetectorDefs.ConstructedSource.INCCTransfer;
                     //Problem if no multiplicity distributions. Fix here.
@@ -212,8 +215,8 @@ namespace NCCTester
                     
                     compare = testCompare && testCompare;
 
-                    if (!testFile.ToLower().EndsWith(".rts"))
-                    // No method results for rates only
+                    if (!testFile.Value.Equals (AssaySelector.MeasurementOption.background) && !testFile.Value.Equals(AssaySelector.MeasurementOption.rates))
+                    // No method results for rates only or background measurements
                     {
                         testCompare = CompareResults(testMeasurement, newResultMeasurement);
                         compare = testCompare && testCompare;
@@ -244,26 +247,34 @@ namespace NCCTester
 
         }
 
-        static void PrintLine(String s)
-        {
-            Console.WriteLine(s);
-            results.WriteLine(s);
-            results.Flush();
-        }
-
         static void WalkDirectoryTree(System.IO.DirectoryInfo root)
         {
-            System.IO.FileInfo[] files = null;
             System.IO.DirectoryInfo[] subDirs = null;
 
             // First, process all the files in the root folder
             try
             {
-                string[] extensions = new string[] { ".ver", ".rts", ".cal"};
+                string[] extensions = new string[] { ".ver", ".rts", ".cal", ".bkg"};
                 foreach (FileInfo f in root.EnumerateFiles().ToArray())
                 {
-                    if (extensions.Contains(f.Extension.ToLower()))
-                        inputFiles.Add(f.FullName);
+                    switch(f.Extension.ToLower())
+                    {
+                        case ".ver":
+                            inputFiles.Add(f.FullName,AssaySelector.MeasurementOption.verification);
+                            break;
+                        case ".rts":
+                            inputFiles.Add(f.FullName, AssaySelector.MeasurementOption.rates);
+                            break;
+                        case ".cal":
+                            inputFiles.Add(f.FullName, AssaySelector.MeasurementOption.calibration);
+                            break;
+                        case ".bkg":
+                            inputFiles.Add(f.FullName, AssaySelector.MeasurementOption.background);
+                            break;
+                        default:
+                            continue;
+                    }
+                        
                 }
 
 
@@ -306,10 +317,11 @@ namespace NCCTester
             //Set up all the data structs needed for test.
             mult = new Multiplicity(FAType.FAOn);
             acq = new AcquireParameters();
-            measID = new MeasId(AssaySelector.MeasurementOption.verification);
+            // Verification by default, but is set during read for background, et. al.
+            measID = new MeasId(currOption);
             INCCResults.results_rec rec = new INCCResults.results_rec();
             hvp = new HVCalibrationParameters();
-            testMeasurement = new Measurement(AssaySelector.MeasurementOption.verification);
+            testMeasurement = new Measurement(currOption);
             testMeasurement.ResultsFiles = new ResultFiles();
             testMeasurement.AnalysisParams = new CountingAnalysisParameters();
             testMeasurement.INCCAnalysisState = new INCCAnalysisState();
@@ -379,6 +391,7 @@ namespace NCCTester
                             case "Active cycle data":
                             case "Passive cycle data":
                             case "Passive cycle raw data":
+                            case "Passive cycle DTC rate data":
                                 ReadCycleData();
                                 break;
                             case "Number Passive cycles":
@@ -558,6 +571,9 @@ namespace NCCTester
                             //Of course, some of the test files are different. SIGHS.
                             ReadSummedData(line);
                             break;
+                        case "Detector configuration":
+                            //Not sure needed for background. TODO
+                            break;
                         case "Facility":
                             testMeasurement.AcquireState.facility = new INCCDB.Descriptor(m.Groups[2].Value, "Facility for test.");
                             break;
@@ -577,6 +593,8 @@ namespace NCCTester
                             Detector d = testMeasurement.Detector;
                             testMeasurement.Detector = new Detector(d.Id, mult, new AlphaBeta());
                             break;
+                        case "Virtual shift register":
+                            break;
                         case "Inventory change code":
                             testMeasurement.AcquireState.inventory_change_code = m.Groups[2].Value;
                             break;
@@ -595,7 +613,7 @@ namespace NCCTester
                             break;
                         case "Item id":
                             MeasId mid = new MeasId(m.Groups[2].Value);
-                            mid.MeasOption = AssaySelector.MeasurementOption.verification;
+                            mid.MeasOption = currOption;
                             testMeasurement.MeasurementId = mid;
                             testMeasurement.AcquireState.item_id = m.Groups[2].Value;
                             break;
@@ -627,7 +645,7 @@ namespace NCCTester
                             testMeasurement.AcquireState.mass = val;
                             break;
                         case "Measurement option"://Don't care. We know this from file extension at start.
-                            mos = new MeasOptionSelector(AssaySelector.MeasurementOption.verification, mult);
+                            mos = new MeasOptionSelector(currOption, mult);
                             break;
                         case "Data source":
                             testMeasurement.AcquireState.data_src = DetectorDefs.ConstructedSource.CycleFile;
@@ -706,6 +724,7 @@ namespace NCCTester
                             break;
                         //Begin background read
                         case "Active singles background"://Are the background rates raw or DTC? I think DTC
+                        case "Active singles bkgrnd":
                         case "Passive singles bkgrnd":
                         case "Passive singles background":
                             t = tuple.Match(line);
@@ -720,6 +739,7 @@ namespace NCCTester
                             testMeasurement.Background.DeadtimeCorrectedSinglesRate.CopyFrom(ValErr);
                             break;
                         case "Active doubles background":
+                        case "Active doubles bkgrnd":
                         case "Passive doubles bkgrnd":
                         case "Passive doubles background":
                             t = tuple.Match(line);
@@ -729,6 +749,7 @@ namespace NCCTester
                             testMeasurement.Background.DeadtimeCorrectedDoublesRate.CopyFrom(ValErr);
                             break;
                         case "Active triples background":
+                        case "Active triples bkgrnd":
                         case "Passive triples bkgrnd":
                         case "Passive triples background":
                             t = tuple.Match(line);
@@ -738,6 +759,7 @@ namespace NCCTester
                             testMeasurement.Background.DeadtimeCorrectedTriplesRate.CopyFrom(ValErr);
                             break;
                         case "Active scaler1 background":
+                        case "Active scaler1 bkgrnd":
                         case "Passive scaler1 bkgrnd":
                         case "Passive scaler1 background":
                             double.TryParse(m.Groups[2].Value, out val);
@@ -747,6 +769,7 @@ namespace NCCTester
                             testMeasurement.Background.DytlewskiDeadtimeCorrectedRates.Scaler1Rate = val;
                             break;
                         case "Active scaler2 background":
+                        case "Active scaler2 bkgrnd":
                         case "Passive scaler2 bkgrnd":
                         case "Passive scaler2 background":
                             double.TryParse(m.Groups[2].Value, out val);
@@ -902,10 +925,16 @@ namespace NCCTester
                             testMeasurement.Cycles.Capacity = num;
                             break;
                         case "Total count time":
-                        case "Count time (sec)":
+                            // Not sure about this. Seems that in a background measurement this is cycle count time.
                             Double.TryParse(m.Groups[2].Value, out val);
                             InputResult.TS = TimeSpan.FromSeconds(val);
                             mcrTotal.TS = TimeSpan.FromSeconds(val);
+                            break;
+                        case "Count time (sec)":
+                            // Not sure about this. Seems that in a background measurement this is cycle count time. TODO
+                            Double.TryParse(m.Groups[2].Value, out val);
+                            InputResult.TS = TimeSpan.FromSeconds(val * testMeasurement.Cycles.Count);
+                            mcrTotal.TS = TimeSpan.FromSeconds(val * testMeasurement.Cycles.Count);
                             break;
                         case "Shift register singles sum":
                             Double.TryParse(m.Groups[2].Value, out val);
@@ -1396,6 +1425,7 @@ namespace NCCTester
             {
                 end = DateTime.Now;
                 ts = end - start;
+                ts = end - start;
                 PrintLine(String.Format("Exception in ReadActiveMultiplicityCalibration: {0}", ex.Message));
                 PrintLine(String.Format("Ending test at {0}", end.ToLongTimeString()));
                 PrintLine(String.Format("Total test time {0}", ts.ToString()));
@@ -1404,10 +1434,13 @@ namespace NCCTester
         }
         public static void ReadCycleData()
         {
+            // But of course, sometimes background has everything, other times not. SIGHS TODO
             line = sr.ReadLine();//blank
             //Another variation has no count time.
-            line = sr.ReadLine();//Count time
+            line = sr.ReadLine();//Count time, maybe.....
             long countTime = 0;
+            List<MultiplicityCountingRes> mcrcycs = new List<MultiplicityCountingRes>();
+            List<Cycle> cycs = new List<Cycle>();
             Match m = labelValue.Match(line);//Count time
             if (m.Success)
             {
@@ -1416,82 +1449,100 @@ namespace NCCTester
             else
             {
                 //Calculate cycle time with total/number cycles
-                countTime = (long)Math.Round(InputResult.TS.TotalSeconds / testMeasurement.Cycles.Capacity);//Why do I have some weird # of cycles?
+                if (currOption != AssaySelector.MeasurementOption.background)
+                    countTime = (long)Math.Round(InputResult.TS.TotalSeconds / testMeasurement.Cycles.Capacity);//Why do I have some weird # of cycles?
+                // Background read in header
             }
             MultiplicityCountingRes mcrTotal = (MultiplicityCountingRes)testMeasurement.CountingAnalysisResults[mult];
 
             try
             {
-                line = sr.ReadLine();//Blank
-                line = sr.ReadLine();//header
-                line = sr.ReadLine();//data
-
-                lineCount += 3;
-                List<MultiplicityCountingRes> mcrcycs = new List<MultiplicityCountingRes>();
-                List<Cycle> cycs = new List<Cycle>();
-
-                while (line != "")
+                if (currOption != AssaySelector.MeasurementOption.background)
                 {
-                    int idx = 0;
-                    Match c;
-                    while (line != "")
-                    {
-                        //Cycle totals
-                        c = cycleData.Match(line);
-                        cycs.Add(new Cycle());
-                        mcrcycs.Add(new MultiplicityCountingRes());
+                    line = sr.ReadLine();//Blank
+                    line = sr.ReadLine();//header
+                    line = sr.ReadLine();//data
+                    lineCount += 3;
+                }
+                int idx = 0;
+                Match c;
 
-                        if (c.Success)
-                        {
-                            cycs[idx].TS = new TimeSpan(0, 0, (int)countTime);
-                            Int32.TryParse(c.Groups[1].Value, out cycs[idx].seq);
-                            Double.TryParse(c.Groups[2].Value, out val);
-                            mcrcycs[idx].Totals = val;
-                            cycs[idx].Totals = (ulong)val;
-                            mcrcycs[idx].TS = cycs[idx].TS;
-                            Double.TryParse(c.Groups[3].Value, out val);
-                            mcrcycs[idx].RASum = val;
-                            double.TryParse(c.Groups[4].Value, out val);
-                            mcrcycs[idx].ASum = val;
-                            mcrcycs[idx].UnASum = val;
-                            //Scaler rates are not stored by cycle......Only totals.
-                            double.TryParse(c.Groups[5].Value, out val);
-                            mcrcycs[idx].Scaler1.v = val;
-                            double.TryParse(c.Groups[6].Value, out val);
-                            mcrcycs[idx].Scaler2.v = val;
-                            QCTestStatus qc = QCTestStatusExtensions.FromString(c.Groups[7].Value);
-                            cycs[idx].SetQCStatus(mult, qc);
-                            line = sr.ReadLine();
-                            lineCount++;
-                            idx++;
-                        }
-                    }
-
-                    line = sr.ReadLine();
-                    line = sr.ReadLine();
+                if (currOption != AssaySelector.MeasurementOption.background)
+                {
                     while (line != "")
                     {
                         idx = 0;
-                        //Cycle rates -- set DTC corrected to raw for now.
-                        c = ratesData.Match(line);
-                        if (c.Success)
+
+                        while (line != "")
                         {
-                            Double.TryParse(c.Groups[2].Value, out val);
-                            mcrcycs[idx].DeadtimeCorrectedSinglesRate.v = val;
-                            cycs[idx].SinglesRate = val;
-                            Double.TryParse(c.Groups[3].Value, out val);
-                            mcrcycs[idx].rates.DeadtimeCorrectedRates.DoublesRate = val;
-                            Double.TryParse(c.Groups[4].Value, out val);
-                            mcrcycs[idx].rates.DeadtimeCorrectedRates.TriplesRate = val;
-                            Double.TryParse(c.Groups[5].Value, out val);
-                            mcrcycs[idx].mass = val;
-                            cycs[idx].SetQCStatus(mult, QCTestStatusExtensions.FromString(c.Groups[6].Value));
+                            //Cycle totals
+                            c = cycleData.Match(line);
+                            cycs.Add(new Cycle());
+                            mcrcycs.Add(new MultiplicityCountingRes());
+
+                            if (c.Success)
+                            {
+                                cycs[idx].TS = new TimeSpan(0, 0, (int)countTime);
+                                Int32.TryParse(c.Groups[1].Value, out cycs[idx].seq);
+                                Double.TryParse(c.Groups[2].Value, out val);
+                                mcrcycs[idx].Totals = val;
+                                cycs[idx].Totals = (ulong)val;
+                                mcrcycs[idx].TS = cycs[idx].TS;
+                                Double.TryParse(c.Groups[3].Value, out val);
+                                mcrcycs[idx].RASum = val;
+                                double.TryParse(c.Groups[4].Value, out val);
+                                mcrcycs[idx].ASum = val;
+                                mcrcycs[idx].UnASum = val;
+                                //Scaler rates are not stored by cycle......Only totals.
+                                double.TryParse(c.Groups[5].Value, out val);
+                                mcrcycs[idx].Scaler1.v = val;
+                                double.TryParse(c.Groups[6].Value, out val);
+                                mcrcycs[idx].Scaler2.v = val;
+                                QCTestStatus qc = QCTestStatusExtensions.FromString(c.Groups[7].Value);
+                                cycs[idx].SetQCStatus(mult, qc);
+                                line = sr.ReadLine();
+                                lineCount++;
+                                idx++;
+                            }
                         }
-                        line = sr.ReadLine();
-                        lineCount++;
-                        idx++;
                     }
+                    line = sr.ReadLine();
                     
+                }
+
+                line = sr.ReadLine();
+
+                while (line != "")
+                {
+                    idx = 0;
+                    //Cycle rates -- set DTC corrected to raw for now.
+                    c = ratesData.Match(line);
+                    if (currOption == AssaySelector.MeasurementOption.background)
+                    {
+                        //background. We haven't created them yet.
+                        cycs.Add(new Cycle());
+                        mcrcycs.Add(new MultiplicityCountingRes());
+                    }
+                    if (c.Success)
+                    {
+                        Double.TryParse(c.Groups[2].Value, out val);
+                        mcrcycs[idx].DeadtimeCorrectedSinglesRate.v = val;
+                        cycs[idx].SinglesRate = val;
+                        Double.TryParse(c.Groups[3].Value, out val);
+                        mcrcycs[idx].rates.DeadtimeCorrectedRates.DoublesRate = val;
+                        Double.TryParse(c.Groups[4].Value, out val);
+                        mcrcycs[idx].rates.DeadtimeCorrectedRates.TriplesRate = val;
+                        Double.TryParse(c.Groups[5].Value, out val);
+                        mcrcycs[idx].mass = val;
+                        cycs[idx].SetQCStatus(mult, QCTestStatusExtensions.FromString(c.Groups[6].Value));
+                    }
+                    line = sr.ReadLine();
+                    lineCount++;
+                    idx++;
+                }
+                if (currOption != AssaySelector.MeasurementOption.background)
+                    // No mult for background.
+                {
                     foreach (Cycle cy in cycs)
                     {
                         cy.CountingAnalysisResults.Add(mult, mcrcycs[cy.seq - 1]);
@@ -2125,12 +2176,12 @@ namespace NCCTester
         }
         public static void ReadAddASourceCalibration()
         {
-
+            //TODO
         }
 
         public static void ReadAddASourceResults()
         {
-
+            //TODO
         }
 
         static bool CompareParameters(Measurement original, Measurement recalculated)
@@ -2170,6 +2221,8 @@ namespace NCCTester
                 }
                 same = temp && same;
             }
+            PrintLine("Compare rates for measurement");
+            //TODO Compare actual singles,doubles, triples
             IEnumerator iter = original.CountingAnalysisResults.GetMultiplicityEnumerator();
             IEnumerator iter2 = recalculated.CountingAnalysisResults.GetMultiplicityEnumerator();
             if (iter != null && iter2 != null)
@@ -2351,7 +2404,7 @@ namespace NCCTester
             mcr2.NormedAMult = new ulong[mcr2.MaxBins];
             copied.CountingAnalysisResults.Add(mult, mcr2);
             
-            copied.INCCAnalysisState.PrepareINCCResults(AssaySelector.MeasurementOption.verification, mult, mcr2);
+            copied.INCCAnalysisState.PrepareINCCResults(currOption, mult, mcr2);
 
 
             LMRawAnalysis.SDTMultiplicityCalculator sdtmc = new LMRawAnalysis.SDTMultiplicityCalculator(1e-7);
@@ -2388,8 +2441,13 @@ namespace NCCTester
             return copied;
         }
 
-
-        ~Program()
+        static void PrintLine(String s)
+        {
+            Console.WriteLine(s);
+            results.WriteLine(s);
+            results.Flush();
+        }
+        ~NCCTester()
         {
             PrintLine("Finalizing object");
             results.Flush();

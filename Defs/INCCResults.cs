@@ -649,8 +649,8 @@ namespace AnalysisDefs
             switch (s)
             {
                 case "AnalysisDefs.INCCMethodResults+results_active_mult_rec":
-                    INCCMethodResults.results_active_mult_rec act_rec = (INCCMethodResults.results_active_mult_rec)o;
-                    step = this.Equals(act_rec);
+                    INCCMethodResults.results_active_mult_rec act_mult_rec = (INCCMethodResults.results_active_mult_rec)o;
+                    step = this.Equals(act_mult_rec);
                     overall = step && overall;
                     break;
                 case "AnalysisDefs.INCCMethodResults+results_cal_curve_rec":
@@ -668,6 +668,61 @@ namespace AnalysisDefs
                     step = this.Equals(ka_rec);
                     overall = step && overall;
                     break;
+                case "AnalysisDefs.INCCMethodResults+results_known_m_rec":
+                    INCCMethodResults.results_known_m_rec km_rec = (INCCMethodResults.results_known_m_rec)o;
+                    step = this.Equals(km_rec);
+                    overall = step && overall;
+                    break;
+                    //<<>> Add other comparators.....HN 10.3.2018
+                    //AnalysisDefs.INCCMethodResults.results_collar_rec
+                    //AnalysisDefs.INCCMethodResults.results_active_passive_rec
+                    //AnalysisDefs.INCCMethodResults.results_active_rec
+                    //AnalysisDefs.INCCMethodResults.results_add_a_source_rec
+                    //AnalysisDefs.INCCMethodResults.results_curium_ratio_rec
+                    //AnalysisDefs.INCCMethodResults.results_de_mult_rec
+                    //AnalysisDefs.INCCMethodResults.results_tm_bkg_rec
+                    //AnalysisDefs.INCCMethodResults.results_truncated_mult_rec
+                case "AnalysisDefs.INCCMethodResults+results_collar_rec":
+                    INCCMethodResults.results_collar_rec col_rec = (INCCMethodResults.results_collar_rec)o;
+                    step = this.Equals(col_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_active_passive_rec":
+                    INCCMethodResults.results_active_passive_rec act_pass_rec = (INCCMethodResults.results_active_passive_rec)o;
+                    step = this.Equals(act_pass_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_active_rec":
+                    INCCMethodResults.results_active_rec act_rec = (INCCMethodResults.results_active_rec)o;
+                    step = this.Equals(act_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_add_a_source_rec":
+                    INCCMethodResults.results_add_a_source_rec aas_rec = (INCCMethodResults.results_add_a_source_rec)o;
+                    step = this.Equals(aas_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_curium_ratio_rec":
+                    INCCMethodResults.results_curium_ratio_rec cm_ratio_rec = (INCCMethodResults.results_curium_ratio_rec)o;
+                    step = this.Equals(cm_ratio_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_de_mult_rec":
+                    INCCMethodResults.results_de_mult_rec de_mult_rec = (INCCMethodResults.results_de_mult_rec)o;
+                    step = this.Equals(de_mult_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_tm_bkg_rec":
+                    INCCMethodResults.results_tm_bkg_rec tm_bkg_rec = (INCCMethodResults.results_tm_bkg_rec)o;
+                    step = this.Equals(tm_bkg_rec);
+                    overall = step && overall;
+                    break;
+                case "AnalysisDefs.INCCMethodResults+results_truncated_mult_rec":
+                    INCCMethodResults.results_truncated_mult_rec tm_rec = (INCCMethodResults.results_truncated_mult_rec)o;
+                    step = this.Equals(tm_rec);
+                    overall = step && overall;
+                    break;
+                    
                 default:
                     break;
             }
@@ -1410,6 +1465,37 @@ namespace AnalysisDefs
 
                 ps.Add(new DBParamEntry("pass", pass));   
             }
+
+            public override bool Equals(object o)
+            {
+                bool step = true;
+                bool overall = true;
+                results_known_m_rec other = (results_known_m_rec)o;
+                step = CompareTools.DoublesTupleCompares(this.pu240e_mass, other.pu240e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.pu_mass, other.pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.mult, other.mult);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.alpha, other.alpha);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.pu239e_mass, other.pu239e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu240e_mass, other.dcl_pu240e_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_pu_mass, other.dcl_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_minus_asy_pu_mass_pct, other.dcl_minus_asy_pu_mass_pct);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.dcl_minus_asy_pu_mass, other.dcl_minus_asy_pu_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_minus_asy_pu_mass_pct, other.dcl_minus_asy_pu_mass_pct);
+                overall = step && overall;
+                step = pass == other.pass;
+                overall = step && overall;
+                return overall;
+
+            }
         }
 
         public class results_active_rec : INCCMethodResult
@@ -1468,7 +1554,7 @@ namespace AnalysisDefs
                 if (dcl_u235_mass > 0.0)
                 {
                     /* declared pu240e */
-                    sec.AddNumericRow("Declared U235 mass (g):", dcl_u235_mass);
+                sec.AddNumericRow("Declared U235 mass (g):", dcl_u235_mass);
                     /* declared minus assay Pu mass and error */
                     sec.AddNumericRow("Declared - assay U235 mass (g):", dcl_minus_asy_u235_mass);
                     Tuple temp = new Tuple(dcl_minus_asy_u235_mass_pct, (u235_mass.err / dcl_u235_mass) * 100.0);
