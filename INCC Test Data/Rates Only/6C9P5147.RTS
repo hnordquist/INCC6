@@ -1,0 +1,87 @@
+INCC 5.1.2
+
+                   Facility:  Empty
+      Material balance area:  XXXX
+              Detector type:  AMSR
+                Detector id:  AMSR
+             Electronics id:  
+           Measurement date:  16.12.09  15:51:47
+          Results file name:  6C9P5147.RTS
+          Inspection number:  
+                    Item id:  
+         Measurement option:  Rates Only
+                Data source:  Shift register
+     Detector configuration:  Passive
+                   QC tests:  ON
+          Error calculation:  Theoretical method
+         Accidentals method:  Measured
+             Inspector name:  
+            Passive comment:  
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1680
+              Die away time:     50.0000
+                 Efficiency:      0.0001
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.0000
+     Coefficient B deadtime:      0.0000
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:      0.000 +-     0.000
+ Passive doubles background:      0.000 +-     0.000
+ Passive triples background:      0.000 +-     0.000
+ Passive scaler1 background:      0.000
+ Passive scaler2 background:      0.000
+
+Passive summed raw data
+
+                 Number of good cycles:                3
+                      Total count time:               30
+            Shift register singles sum:                0
+Shift register reals + accidentals sum:                0
+        Shift register accidentals sum:                0
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Results
+
+       Singles:          0.000 +-     0.000
+       Doubles:          0.000 +-     0.000
+       Triples:          0.000 +-     0.000
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+
+Passive cycle data
+
+Count time (sec):  10
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1          0          0          0          0          0  Pass
+   2          0          0          0          0          0  Pass
+   3          0          0          0          0          0  Pass
+
+Cycle      Singles       Doubles       Triples  QC Tests
+   1         0.000         0.000         0.000  Pass
+   2         0.000         0.000         0.000  Pass
+   3         0.000         0.000         0.000  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0

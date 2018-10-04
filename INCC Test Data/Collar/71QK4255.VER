@@ -1,0 +1,264 @@
+INCC 5.1.2
+
+                   Facility:  Empty
+      Material balance area:  XXXX
+              Detector type:  AMSR
+                Detector id:  AMSR
+             Electronics id:  
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  17.01.26  10:42:55
+          Results file name:  71QK4255.VER
+          Inspection number:  
+                    Item id:  1234
+                 Stratum id:  XXXX
+           Bias uncertainty:  0.0000
+         Random uncertainty:  0.0000
+     Systematic uncertainty:  0.0000
+     Relative std deviation:  0.0000
+              Material type:  Pu
+     Original declared mass:  10.000
+         Measurement option:  Verification
+                Data source:  Database
+                   QC tests:  ON
+          Error calculation:  Sample method
+         Accidentals method:  Measured
+             Inspector name:  
+                    Comment:  
+
+               Isotopics id:  Default
+      Isotopics source code:  OD
+                      Pu238:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu239:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu240:  100.0000 +-   0.0000    100.0000 +-   0.0000
+                      Pu241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                      Pu242:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Pu date:  00.01.01                17.01.26
+                      Am241:    0.0000 +-   0.0000      0.0000 +-   0.0000
+                    Am date:  00.01.01                17.01.26
+
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1680
+              Die away time:     50.0000
+                 Efficiency:      0.0001
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.0000
+     Coefficient B deadtime:      0.0000
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+ Passive singles background:      0.000 +-     0.000
+ Passive doubles background:      0.000 +-     0.000
+ Passive triples background:      0.000 +-     0.000
+ Passive scaler1 background:      0.000
+ Passive scaler2 background:      0.000
+  Active singles background:      0.000 +-     0.000
+  Active doubles background:      0.000 +-     0.000
+  Active triples background:      0.000 +-     0.000
+  Active scaler1 background:      0.000
+  Active scaler2 background:      0.000
+
+Warning messages
+
+Collar: failed stratum rejection limits
+
+Passive summed raw data
+
+                 Number of good cycles:                3
+                      Total count time:               30
+            Shift register singles sum:           120086
+Shift register reals + accidentals sum:            30883
+        Shift register accidentals sum:            30970
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Passive summed multiplicity distributions
+
+        R+A sums       A sums
+   0       92879        92763
+   1       23848        23994
+   2        3053         3028
+   3         283          284
+   4          20           17
+
+Active summed raw data
+
+                 Number of good cycles:                3
+                      Total count time:               30
+            Shift register singles sum:           119985
+Shift register reals + accidentals sum:            33351
+        Shift register accidentals sum:            30728
+         Shift register 1st scaler sum:                0
+         Shift register 2nd scaler sum:                0
+
+Active summed multiplicity distributions
+
+        R+A sums       A sums
+   0       91148        93156
+   1       24753        23303
+   2        3691         3183
+   3         366          314
+   4          27           28
+   5           2            1
+
+Passive results
+
+       Singles:       4002.867 +-    18.136
+       Doubles:         -2.900 +-     8.052
+       Triples:          2.081 +-     0.953
+         Quads:         -0.085 +-     1.190
+ Quads/Triples:          0.441 +-     0.592
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+
+Active results
+
+       Singles:       3999.500 +-     3.851
+       Doubles:         87.433 +-     3.005
+       Triples:         -0.125 +-     3.478
+         Quads:         -1.177 +-     0.318
+ Quads/Triples:         -0.097 +-     0.181
+      Scaler 1:          0.000 +-     0.000
+      Scaler 2:          0.000 +-     0.000
+
+Collar results
+
+                   AmLi source id:            52984
+                             Mode:        Fast (Cd)
+           Declared U235 mass (g):         10.000 +-    0.0000
+           Declared U238 mass (g):          0.000 +-    0.0000
+                  Declared length:          1.000 +-    0.0000
+              Declared total rods:              1
+       Declared total poison rods:              0
+         Declared poison rod type:              G
+                Declared poison %:          0.000 +-    0.0000
+         k0 (source yield factor):          1.045 +-    0.0044
+            k1 (stability factor):          1.000 +-    0.0000
+    k2 (detector response factor):        100.000 +-    0.3000
+               k3 (poison factor):          1.000 +-    0.0000
+              k4 (uranium factor):          1.321 +-    0.0000
+     k5 (other correction factor):          1.000 +-    0.0000
+      K (total correction factor):        137.959 +-    0.4139
+            Corrected net doubles:      12462.313 +- 1679.6225
+                    U235 mass (g):          0.000 +- 1679.6225
+   Declared - assay U235 mass (g):         10.000 +- 1679.6225
+   Declared - assay U235 mass (%):        100.000 +- 16796.2246
+
+Collar calibration parameters
+
+                         Equation:  D = (a * m) / (1 + b * m)
+                                a:  1.000000e+000
+                                b:  1.000000e+000
+                                c:  0.000000e+000
+                                d:  0.000000e+000
+                       variance a:  0.000000e+000
+                       variance b:  0.000000e+000
+                       variance c:  0.000000e+000
+                       variance d:  0.000000e+000
+                    covariance ab:  0.000000e+000
+                    covariance ac:  0.000000e+000
+                    covariance ad:  0.000000e+000
+                    covariance bc:  0.000000e+000
+                    covariance bd:  0.000000e+000
+                    covariance cd:  0.000000e+000
+                          sigma x:  0.000000e+000
+       number of calibration rods:              1
+                  poison rod type:              G
+         poison absorption factor:          0.647
+       poison correction factor a:  0.000000e+000
+ poison correction factor a error:  0.000000e+000
+       poison correction factor b:  0.000000e+000
+ poison correction factor b error:  0.000000e+000
+       poison correction factor c:  0.000000e+000
+ poison correction factor c error:  0.000000e+000
+       U mass correction factor a:  7.240000e-004
+ U mass correction factor a error:  0.000000e+000
+       U mass correction factor b:  4.530000e+002
+ U mass correction factor b error:  0.000000e+000
+           item correction factor:  1.000000e+000
+     item correction factor error:  0.000000e+000
+                   reference date:       89.10.18
+            relative doubles rate:  1.000000e+002
+K5 item correction factors
+
+Passive cycle data
+
+Count time (sec):  10
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1      39998      10400      10271          0          0  Pass
+   2      40357      10326      10407          0          0  Pass
+   3      39731      10157      10292          0          0  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1      3999.800        12.900         1.087         0.000  Pass
+   2      4035.700        -8.100         1.189         0.000  Pass
+   3      3973.100       -13.500         3.997         0.000  Pass
+
+Passive multiplicity distributions
+
+Cycle 1      R+A           A
+     0       30883        30980
+     1        7967         7877
+     2        1038         1033
+     3         107          104
+     4           9            4
+
+Cycle 2      R+A           A
+     0       31213        31152
+     1        8051         8104
+     2         991         1006
+     3          87           89
+     4           8            6
+
+Cycle 3      R+A           A
+     0       30783        30631
+     1        7830         8013
+     2        1024          989
+     3          89           91
+     4           3            7
+
+Active cycle data
+
+Count time (sec):  10
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1      39958      11118      10193          0          0  Pass
+   2      40072      11100      10223          0          0  Pass
+   3      39955      11133      10312          0          0  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1      3995.800        92.500        -6.996         0.000  Pass
+   2      4007.200        87.700         4.226         0.000  Pass
+   3      3995.500        82.100         2.411         0.000  Pass
+
+Active multiplicity distributions
+
+Cycle 1      R+A           A
+     0       30360        31115
+     1        8224         7641
+     2        1242         1065
+     3         123          126
+     4           9           11
+     5           1            0
+
+Cycle 2      R+A           A
+     0       30450        31086
+     1        8288         7851
+     2        1217         1040
+     3         114           89
+     4           9            5
+     5           0            1
+
+Cycle 3      R+A           A
+     0       30338        30955
+     1        8241         7811
+     2        1232         1078
+     3         129           99
+     4           9           12
+     5           1            0

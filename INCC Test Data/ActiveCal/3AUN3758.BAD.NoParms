@@ -1,0 +1,119 @@
+INCC  5.04
+
+                   Facility:  PU LABS
+      Material balance area:  WLPM
+              Detector type:  AWCC-03
+                Detector id:  86-51010
+             Electronics id:  JSR12
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  13.10.30  13:37:58
+          Results file name:  3AUN3758.VER
+          Inspection number:  wk44 2013-11
+                    Item id:  CAN 9
+                 Stratum id:  XXXX
+           Bias uncertainty:  0.0000
+         Random uncertainty:  0.0000
+     Systematic uncertainty:  0.0000
+     Relative std deviation:  0.0000
+              Material type:  UO2
+     Original declared mass:  733.147
+         Measurement option:  Verification
+                Data source:  Shift register
+                   QC tests:  ON
+          Error calculation:  Theoretical method
+         Accidentals method:  Measured
+             Inspector name:  PdB, MI
+             Active comment:  
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1700
+              Die away time:     53.9000
+                 Efficiency:      0.1700
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.6270
+     Coefficient B deadtime:      0.2090
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+  Active singles background:   7627.240 +-     2.768
+  Active doubles background:      0.028 +-     0.013
+  Active triples background:      0.000 +-     0.000
+  Active scaler1 background:      0.005
+  Active scaler2 background:      0.000
+
+Active error messages
+
+No active calibration curve calibration
+
+Active summed raw data
+
+                 Number of good cycles:                7
+                      Total count time:              700
+            Shift register singles sum:          4599143
+Shift register reals + accidentals sum:          2010380
+        Shift register accidentals sum:          1932835
+         Shift register 1st scaler sum:                7
+         Shift register 2nd scaler sum:                0
+
+Active summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Active results
+
+       Singles:      -1050.250 +-     3.152
+       Doubles:        111.209 +-     2.971
+       Triples:          0.000 +-     0.000
+      Scaler 1:          0.005 +-     0.027
+      Scaler 2:          0.000 +-     0.000
+
+Active cycle data
+
+Count time (sec):  100
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1     655703     286049     274686          1          0  Pass
+   2     658741     288195     278383          1          0  Pass
+   3     654269     285155     273912          1          0  Pass
+   4     658607     288555     276480          1          0  Pass
+   5     657859     287920     277109          1          0  Pass
+   6     657739     287753     277159          1          0  Pass
+   7     656225     286753     275106          1          0  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1     -1063.452       114.071         0.000         0.000  Pass
+   2     -1033.009        98.499         0.000         0.000  Pass
+   3     -1077.822       112.865         0.000         0.000  Pass
+   4     -1034.352       121.223         0.000         0.000  Pass
+   5     -1041.847       108.530         0.000         0.000  Pass
+   6     -1043.050       106.351         0.000         0.000  Pass
+   7     -1058.221       116.923         0.000         0.000  Pass
+
+Active multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0
+
+Cycle 4      R+A           A
+     0           0            0
+
+Cycle 5      R+A           A
+     0           0            0
+
+Cycle 6      R+A           A
+     0           0            0
+
+Cycle 7      R+A           A
+     0           0            0

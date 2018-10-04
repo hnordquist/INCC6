@@ -1,0 +1,148 @@
+INCC  5.04
+
+                   Facility:  PU LABS
+      Material balance area:  WLPM
+              Detector type:  AWCC-03
+                Detector id:  86-51010
+             Electronics id:  JSR12
+      Inventory change code:    
+                   I/O code:   
+           Measurement date:  13.10.30  14:53:58
+          Results file name:  3AUO5358.VER
+          Inspection number:  wk44 2013-11
+                    Item id:  CAN 5
+                 Stratum id:  XXXX
+           Bias uncertainty:  0.0000
+         Random uncertainty:  0.0000
+     Systematic uncertainty:  0.0000
+     Relative std deviation:  0.0000
+              Material type:  UO2
+     Original declared mass:  207.123
+         Measurement option:  Verification
+                Data source:  Shift register
+                   QC tests:  ON
+          Error calculation:  Theoretical method
+         Accidentals method:  Measured
+             Inspector name:  PdB, MI
+             Active comment:  
+                   Predelay:      4.50
+                Gate length:     64.00
+            2nd gate length:     64.00
+               High voltage:   1700
+              Die away time:     53.9000
+                 Efficiency:      0.1700
+      Multiplicity deadtime:      0.0000
+     Coefficient A deadtime:      0.6270
+     Coefficient B deadtime:      0.2090
+     Coefficient C deadtime:      0.0000
+      Doubles gate fraction:      0.0001
+      Triples gate fraction:      0.0001
+
+     Normalization constant:      1.0000 +-    0.0000
+
+  Active singles background:   7627.240 +-     2.768
+  Active doubles background:      0.028 +-     0.013
+  Active triples background:      0.000 +-     0.000
+  Active scaler1 background:      0.005
+  Active scaler2 background:      0.000
+
+Messages
+
+Active calibration curve: failed stratum rejection limits
+
+Active summed raw data
+
+                 Number of good cycles:                7
+                      Total count time:              700
+            Shift register singles sum:          4345348
+Shift register reals + accidentals sum:          1755090
+        Shift register accidentals sum:          1728066
+         Shift register 1st scaler sum:                7
+         Shift register 2nd scaler sum:                0
+
+Active summed multiplicity distributions
+
+        R+A sums       A sums
+   0           0            0
+
+Active results
+
+       Singles:      -1413.544 +-     3.015
+       Doubles:         38.729 +-     2.719
+       Triples:          0.000 +-     0.000
+      Scaler 1:          0.005 +-     0.027
+      Scaler 2:          0.000 +-     0.000
+
+Active calibration curve results
+
+         k0 (source yield factor):          1.000
+            k1 (stability factor):          1.000 +-     0.000
+      K (total correction factor):          1.000 +-     0.000
+                    U235 mass (g):        267.259 +-    16.487
+           Declared U235 mass (g):        207.123
+   Declared - assay U235 mass (g):        -60.136 +-    16.487
+   Declared - assay U235 mass (%):        -29.034 +-     7.960
+
+Active calibration curve calibration parameters
+
+                         Equation:  D = a + b * m + c * m^2 + d * m^3
+                                a:  -5.659223e+000
+                                b:   1.647156e-001
+                                c:   1.451024e-005
+                                d:  -3.510301e-008
+                       variance a:   0.000000e+000
+                       variance b:   0.000000e+000
+                       variance c:   0.000000e+000
+                       variance d:   0.000000e+000
+                    covariance ab:   0.000000e+000
+                    covariance ac:   0.000000e+000
+                    covariance ad:   0.000000e+000
+                    covariance bc:   0.000000e+000
+                    covariance bd:   0.000000e+000
+                    covariance cd:   0.000000e+000
+                          sigma x:   0.000000e+000
+
+Active cycle data
+
+Count time (sec):  100
+
+Cycle   Singles     R+A         A        Scaler1    Scaler2  QC Tests
+   1     620108     250707     246847          1          0  Pass
+   2     620994     251230     247326          1          0  Pass
+   3     621221     251385     247268          1          0  Pass
+   4     620623     251262     245655          1          0  Pass
+   5     621565     250856     247987          1          0  Pass
+   6     620774     250570     247211          1          0  Pass
+   7     620063     249080     245772          1          0  Pass
+
+Cycle      Singles       Doubles       Triples          Mass  QC Tests
+   1     -1420.117        38.723         0.000       267.223  Pass
+   2     -1411.239        39.165         0.000       269.903  Pass
+   3     -1408.965        41.303         0.000       282.887  Pass
+   4     -1414.957        56.261         0.000       374.769  Pass
+   5     -1405.518        28.774         0.000       207.164  Pass
+   6     -1413.444        33.693         0.000       236.803  Pass
+   7     -1420.568        33.181         0.000       233.713  Pass
+
+Active multiplicity distributions
+
+Cycle 1      R+A           A
+     0           0            0
+
+Cycle 2      R+A           A
+     0           0            0
+
+Cycle 3      R+A           A
+     0           0            0
+
+Cycle 4      R+A           A
+     0           0            0
+
+Cycle 5      R+A           A
+     0           0            0
+
+Cycle 6      R+A           A
+     0           0            0
+
+Cycle 7      R+A           A
+     0           0            0

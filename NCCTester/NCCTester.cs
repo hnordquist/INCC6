@@ -40,7 +40,9 @@ namespace NCCTester
         public static INCCMethodResults.results_multiplicity_rec passive_mult_results = new INCCMethodResults.results_multiplicity_rec();
         public static INCCAnalysisParams.multiplicity_rec passive_mult_params = new INCCAnalysisParams.multiplicity_rec();
         public static INCCAnalysisParams.cal_curve_rec cal_curve_params = new INCCAnalysisParams.cal_curve_rec();
+        public static INCCAnalysisParams.active_rec active_cal_curve_params = new INCCAnalysisParams.active_rec();
         public static INCCMethodResults.results_cal_curve_rec passive_cal_results = new INCCMethodResults.results_cal_curve_rec();
+        public static INCCMethodResults.results_active_rec active_cal_results = new INCCMethodResults.results_active_rec();
         public static INCCAnalysisParams.curium_ratio_rec cm_ratio_cev_rec = new INCCAnalysisParams.curium_ratio_rec();
         public static INCCAnalysisParams.cm_pu_ratio_rec cm_ratio_params = new INCCAnalysisParams.cm_pu_ratio_rec();
         public static INCCMethodResults.results_curium_ratio_rec cm_ratio_results = new INCCMethodResults.results_curium_ratio_rec();
@@ -408,6 +410,7 @@ namespace NCCTester
                                 ReadWarnings();
                                 break;
                             case "Passive error messages":
+                            case "Active error messages":
                                 ReadErrors();
                                 break;
                             case "Passive messages":
@@ -441,6 +444,13 @@ namespace NCCTester
                                 ReadPassiveMultiplicityCalibration();
                                 numMethods++;
                                 break;
+                            case "Collar calibration parameters":
+                                am = AnalysisMethod.CollarAmLi; // Assume AmLi to begin
+                                testMeasurement.INCCAnalysisState.Methods.choices[(int)AnalysisMethod.CollarAmLi] = true;
+                                SetMethodPreference(am);
+                                ReadCollarCalibration();
+                                numMethods++;
+                                break;
                             case "Passive calibration curve results":
                                 ReadPassiveCalibrationCurveResults();
                                 break;
@@ -457,6 +467,16 @@ namespace NCCTester
                                 SetMethodPreference(am);
                                 ReadKnownAlphaResults();
                                 numMethods++;
+                                break;
+                            case "Active calibration curve results":
+                                am = AnalysisMethod.Active;
+                                testMeasurement.INCCAnalysisState.Methods.choices[(int)AnalysisMethod.Active] = true;
+                                SetMethodPreference(am);
+                                ReadActiveCalibrationResults();
+                                numMethods++;
+                                break;
+                            case "Active calibration curve calibration parameters":
+                                ReadActiveCalibrationParams();
                                 break;
                             case "Curium Ratio parameters":
                             case "Curium ratio calibration parameters":
@@ -485,6 +505,9 @@ namespace NCCTester
                                 break;
                             case "Add a source results":
                                 ReadAddASourceResults();
+                                break;
+                            case "Collar results":
+                                ReadCollarResults();
                                 break;
                             default:
                                 //We will see this in log if there is something wrong with parsing code.
@@ -664,6 +687,7 @@ namespace NCCTester
                             break;
                         case "Active comment":
                         case "Passive comment":
+                        case "Comment":
                             testMeasurement.AcquireState.comment = m.Groups[2].Value;
                             break;
                         case "Predelay":
@@ -1330,6 +1354,10 @@ namespace NCCTester
             }
 
         }
+        public static void ReadCollarCalibration()
+        {
+            line = sr.ReadLine();
+        }
         public static void ReadPassiveMultiplicityCalibration()
         {
             double val = 0;
@@ -1685,6 +1713,12 @@ namespace NCCTester
             testMeasurement.INCCAnalysisResults.AddMethodResults(mult, new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.item_type), AnalysisMethod.CalibrationCurve, passive_cal_results);
 
         }
+
+        public static void ReadCollarResults()
+        {
+            line = sr.ReadLine();
+        }
+
         public static void ReadPassiveCalibrationCurveCalibration()
         {
             //Grab params
@@ -2186,6 +2220,178 @@ namespace NCCTester
         public static void ReadAddASourceResults()
         {
             //TODO
+        }
+
+        public static void ReadActiveCalibrationParams()
+        {
+            //Grab params
+            line = sr.ReadLine(); //empty
+            line = sr.ReadLine();
+            //line = sr.ReadLine();
+            lineCount += 2;
+
+            while (line.Contains(":"))
+            {
+                double num;
+                Match m = labelValue.Match(line);
+                switch (m.Groups[1].Value)
+                {
+                    case "Equation":
+                        active_cal_curve_params.cev.cal_curve_equation = CurveEquationStringToEnum(m.Groups[2].Value);
+                        break;
+                    case "a":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.a = num;
+                        break;
+                    case "b":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.b = num;
+                        break;
+                    case "c":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.c = num;
+                        break;
+                    case "d":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.d = num;
+                        break;
+                    case "variance a":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.var_a = num;
+                        break;
+                    case "variance b":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.var_b = num;
+                        break;
+                    case "variance c":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.var_c = num;
+                        break;
+                    case "variance d":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.var_d = num;
+                        break;
+                    case "covariance ab":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.a, Coeff.b, num);
+                        break;
+                    case "covariance ac":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.a, Coeff.c, num);
+                        break;
+                    case "covariance ad":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.a, Coeff.d, num);
+                        break;
+                    case "covariance bc":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.b, Coeff.c, num);
+                        break;
+                    case "covariance bd":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.b, Coeff.d, num);
+                        break;
+                    case "covariance cd":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.setcovar(Coeff.c, Coeff.d, num);
+                        break;
+                    case "sigma x":
+                        double.TryParse(m.Groups[2].Value, out num);
+                        active_cal_curve_params.cev.sigma_x = num;
+                        break;
+                    default:
+                        PrintLine(String.Format("Unknown label found in input file {0}", line));
+                        break;
+                }
+                line = sr.ReadLine();
+                lineCount++;
+
+            }
+            testMeasurement.INCCAnalysisState.Methods.AddMethod(AnalysisMethod.Active, active_cal_curve_params);
+
+        }
+
+        public static void ReadActiveCalibrationResults()
+        {
+            line = sr.ReadLine();//Empty line
+            line = sr.ReadLine();
+            lineCount += 2;
+
+            //while loop below
+            while (line.Contains(":"))
+            {
+                Match t = tuple.Match(line);// some lines will contain tuple data
+                Match m = labelValue.Match(line);// all lines can can be represented as labels, we need to go through all lines
+                switch (m.Groups[1].Value)
+                {
+                    case "Pu240e mass (g)":
+                        //how do we know that this is from a curium source?
+                        double u235_mass = 0;
+                        double u235_mass_err = 0;
+                        double.TryParse(t.Groups[2].Value, out u235_mass);
+                        double.TryParse(t.Groups[3].Value, out u235_mass_err);
+                        active_cal_results.u235_mass.v = u235_mass;
+                        active_cal_results.u235_mass.err = u235_mass_err;
+                        break;
+                    case "k0 (source yield factor)":
+                        double k0 = 0;
+                        //double k0_err = 0;
+                        double.TryParse(m.Groups[2].Value, out k0);
+                        //double.TryParse(m.Groups[3].Value, out k0_err);
+                        active_cal_results.k0.v = k0;
+                        //Error not printed on report
+                        //active_cal_results.k0.err = k0_err;
+                        break;
+                    case "k1 (stability factor)":
+                        double k1 = 0;
+                        double k1_err = 0;
+                        double.TryParse(m.Groups[2].Value, out k1);
+                        double.TryParse(m.Groups[3].Value, out k1_err);
+                        active_cal_results.k1.v = k1;
+                        active_cal_results.k1.err = k1_err;
+                        break;
+                    case "K (total correction factor)":
+                        double k = 0;
+                        double k_err = 0;
+                        double.TryParse(m.Groups[2].Value, out k);
+                        double.TryParse(m.Groups[3].Value, out k_err);
+                        active_cal_results.k1.v = k;
+                        active_cal_results.k1.err = k_err;
+                        break;
+                    case "U235 mass (g)":
+                        //how do we know that this is from a curium source?
+                        double U235_mass = 0;
+                        double U235_mass_err = 0;
+                        double.TryParse(t.Groups[2].Value, out U235_mass);
+                        double.TryParse(t.Groups[3].Value, out U235_mass_err);
+                        active_cal_results.u235_mass.v = U235_mass;
+                        active_cal_results.u235_mass.err = U235_mass_err;
+                        break;
+                    case "Declared U235 mass (g)":
+                        double declared_U235_mass = 0;
+                        double.TryParse(m.Groups[2].Value, out declared_U235_mass);// not sure what to do with this value or where to parse it.
+                        active_cal_results.dcl_u235_mass = declared_U235_mass;
+                        break;
+                    case "Declared - assay U235 mass (g)":
+                        double declared_assay_U235_mass = 0;
+                        double declared_assay_U235_mass_err = 0;
+                        double.TryParse(t.Groups[2].Value, out declared_assay_U235_mass);
+                        double.TryParse(t.Groups[3].Value, out declared_assay_U235_mass_err);
+                        active_cal_results.dcl_minus_asy_u235_mass.v = declared_assay_U235_mass;
+                        active_cal_results.dcl_minus_asy_u235_mass.err = declared_assay_U235_mass_err;
+                        break;
+                    case "Declared - assay U235 mass (%)":
+                        double declared_assay_U235_mass_pct = 0;
+                        double.TryParse(t.Groups[2].Value, out declared_assay_U235_mass_pct);
+                        active_cal_results.dcl_minus_asy_u235_mass_pct = declared_assay_U235_mass_pct;
+                        break;
+                }
+                line = sr.ReadLine();
+                lineCount++;
+
+            }
+            testMeasurement.INCCAnalysisResults.AddMethodResults(mult, new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.item_type), AnalysisMethod.Active, active_cal_results);
+
         }
 
         static bool CompareParameters(Measurement original, Measurement recalculated)

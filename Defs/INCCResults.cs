@@ -678,7 +678,6 @@ namespace AnalysisDefs
                     //AnalysisDefs.INCCMethodResults.results_active_passive_rec
                     //AnalysisDefs.INCCMethodResults.results_active_rec
                     //AnalysisDefs.INCCMethodResults.results_add_a_source_rec
-                    //AnalysisDefs.INCCMethodResults.results_curium_ratio_rec
                     //AnalysisDefs.INCCMethodResults.results_de_mult_rec
                     //AnalysisDefs.INCCMethodResults.results_tm_bkg_rec
                     //AnalysisDefs.INCCMethodResults.results_truncated_mult_rec
@@ -1581,6 +1580,36 @@ namespace AnalysisDefs
 
                 ps.Add(new DBParamEntry("pass", pass));
             }
+
+            public override bool Equals(object o)
+            {
+                /*            public Tuple k, k0, k1;
+            public Tuple u235_mass;
+            public double dcl_u235_mass;
+            public Tuple dcl_minus_asy_u235_mass;
+            public double dcl_minus_asy_u235_mass_pct;
+            public bool pass;*/
+                bool step = true;
+                bool overall = true;
+                results_active_rec other = (results_active_rec)o;
+                step = CompareTools.DoublesTupleCompares(this.k, other.k);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.k1, other.k1);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.k0, other.k0);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.u235_mass, other.u235_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_u235_mass, other.dcl_u235_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.dcl_minus_asy_u235_mass, other.dcl_minus_asy_u235_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesCompare(this.dcl_minus_asy_u235_mass_pct, other.dcl_minus_asy_u235_mass_pct);
+                overall = step && overall;
+
+                return overall;
+
+            }
         }
 
         public class results_active_mult_rec : INCCMethodResult
@@ -1694,7 +1723,7 @@ namespace AnalysisDefs
                 if (dcl_u235_mass > 0.0)
                 {
                     /* declared pu240e */
-                    sec.AddNumericRow("Declared U235 mass (g):", dcl_u235_mass);
+                sec.AddNumericRow("Declared U235 mass (g):", dcl_u235_mass);
                     /* declared minus assay Pu mass and error */
                     sec.AddNumericRow("Declared - assay U235 mass (g):", dcl_minus_asy_u235_mass);
                     Tuple temp = new Tuple(dcl_minus_asy_u235_mass_pct, (u235_mass.err / dcl_u235_mass) * 100.0);
