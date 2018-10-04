@@ -292,7 +292,7 @@ namespace AnalysisDefs
 
             public override void GenParamList()
             {
-                //base.GenParamList();
+                base.GenParamList();
                 this.Table = "results_init_src_rec";
 
                 ps.Add(new DBParamEntry("init_src_id", init_src_id));
@@ -366,7 +366,7 @@ namespace AnalysisDefs
 
             public override void GenParamList()
             {
-            //    base.GenParamList();
+                base.GenParamList();
                 this.Table = "results_bias_rec";
 
                 ps.Add(new DBParamEntry("source_id", this.sourceId));
@@ -2020,7 +2020,7 @@ namespace AnalysisDefs
             public override void GenParamList()
             {
                 base.GenParamList();
-                this.Table = "results_add_a_source_rec";
+                Table = "results_add_a_source_rec";
                 ps.Add(new DBParamEntry("dzero_cf252_doubles", dzero_cf252_doubles));
                 ps.AddRange(DBParamList.TupleArrayPair("sample_cf252_doubles", sample_cf252_doubles));
                 ps.Add(new DBParamEntry("sample_cf252_ratio", sample_cf252_ratio));
@@ -2115,11 +2115,12 @@ namespace AnalysisDefs
                 sec.AddNumericRow("Cm/U ratio:", methodParams2.cm_u_ratio);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
 
-                sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
-                sec.AddNumericRow("Cm mass (g)", cm_mass);
-                sec.AddNumericRow("Pu mass (g)", pu.mass);
-                sec.AddNumericRow("U mass (g)", u.mass);
-                sec.AddNumericRow("U235 mass (g)", u235.mass);
+                if (methodParams.curium_ratio_type == INCCAnalysisParams.CuriumRatioVariant.UseAddASourceDoubles)
+                    sec.AddTwo("Add-a-source corrected doubles:", "todo: get results_add_a_source.ad_corr_doubles");
+                sec.AddNumericRow("Cm mass (g):", cm_mass);
+                sec.AddNumericRow("Pu mass (g):", pu.mass);
+                sec.AddNumericRow("U mass (g):", u.mass);
+                sec.AddNumericRow("U235 mass (g):", u235.mass);
                 if (pu.dcl_pu_mass > 0.0)
                 {
                     sec.AddNumericRow("Declared Pu mass (g):", pu.dcl_mass);
@@ -2156,36 +2157,57 @@ namespace AnalysisDefs
                 }
                 return sec;
             }
-            public override void GenParamList()
+            public override void GenParamList() // From Joe June 2018
             {
                 base.GenParamList();
-                this.Table = "results_curium_ratio_rec";
-                ps.AddRange(DBParamList.TuplePair(pu.pu240e_mass, "pu240e_mass"));
-                ps.AddRange(DBParamList.TuplePair(pu.pu_mass, "pu_mass"));
-                ps.Add(new DBParamEntry("dcl_pu_mass",pu.dcl_pu_mass));
-                ps.AddRange(DBParamList.TuplePair(pu.dcl_minus_asy_pu_mass, "dcl_minus_asy_pu_mass"));
+                Table = "results_curium_ratio_rec";
+                ps.AddRange(TuplePair(pu.pu240e_mass, "pu240e_mass"));
+                ps.AddRange(TuplePair(pu.pu_mass, "pu_mass"));
+                ps.Add(new DBParamEntry("dcl_pu_mass", pu.dcl_pu_mass));
+                ps.AddRange(TuplePair(pu.dcl_minus_asy_pu_mass, "dcl_minus_asy_pu_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_pu_mass_pct", pu.dcl_minus_asy_pu_mass_pct));
 
-                ps.AddRange(DBParamList.TuplePair(cm_mass, "cm_mass"));
+                ps.AddRange(TuplePair(cm_mass, "cm_mass"));
 
-                ps.AddRange(DBParamList.TuplePair(u.mass, "u_mass"));               
-                ps.AddRange(DBParamList.TuplePair(u.dcl_minus_asy_mass, "dcl_minus_asy_u_mass"));
+                ps.AddRange(TuplePair(u.mass, "u_mass"));
+                ps.AddRange(TuplePair(u.dcl_minus_asy_mass, "dcl_minus_asy_u_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u_mass_pct", u.dcl_minus_asy_mass_pct));
-                ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
+                //as in INCC5, this result value rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u_mass", u.dcl_mass));
 
-                ps.AddRange(DBParamList.TuplePair(u235.mass, "u235_mass"));               
-                ps.AddRange(DBParamList.TuplePair(u235.dcl_minus_asy_mass, "dcl_minus_asy_u235_mass"));
+                ps.AddRange(TuplePair(u235.mass, "u235_mass"));
+                ps.AddRange(TuplePair(u235.dcl_minus_asy_mass, "dcl_minus_asy_u235_mass"));
                 ps.Add(new DBParamEntry("dcl_minus_asy_u235_mass_pct", u235.dcl_minus_asy_mass_pct));
-                ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
+                //as in INCC5, this result value rides on the related cm_pu_ratio_rec[_m] copy ps.Add(new DBParamEntry("dcl_u235_mass", u235.dcl_mass));
 
                 ps.Add(new DBParamEntry("pu_pass", pu.pass));
                 ps.Add(new DBParamEntry("u_pass", u.pass));
 
-                ps.AddRange(DBParamList.TuplePair(cm_pu_ratio_decay_corr, "cm_pu_ratio_decay_corr"));
-                ps.AddRange(DBParamList.TuplePair(cm_u_ratio_decay_corr, "cm_u_ratio_decay_corr"));
+                ps.AddRange(TuplePair(cm_pu_ratio_decay_corr, "cm_pu_ratio_decay_corr"));
+                ps.AddRange(TuplePair(cm_u_ratio_decay_corr, "cm_u_ratio_decay_corr"));
 
             }
 
+            public override bool Equals(object o)
+            {
+
+                bool step = true;
+                bool overall = true;
+                results_curium_ratio_rec other = (results_curium_ratio_rec)o;
+                step = CompareTools.DoublesTupleCompares(this.cm_mass, other.cm_mass);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.cm_pu_ratio_decay_corr, other.cm_pu_ratio_decay_corr);
+                overall = step && overall;
+                step = CompareTools.DoublesTupleCompares(this.cm_u_ratio_decay_corr, other.cm_u_ratio_decay_corr);
+                overall = step && overall;
+                step = this.u235.Equals(other.u235);
+                overall = step && overall;
+                step = this.u.Equals(other.u);
+                overall = step && overall;
+                step = this.pu.Equals(other.pu);
+                overall = step && overall;
+               
+                return overall;
+            }
         }
 
         public class results_collar_rec : INCCMethodResult

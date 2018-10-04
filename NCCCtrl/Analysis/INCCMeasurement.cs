@@ -1190,10 +1190,15 @@ namespace AnalysisDefs
 
                     if (status == INCCAnalysisParams.CalCurveResult.Success || status == INCCAnalysisParams.CalCurveResult.FailedOnMassLimit)
                     {
-                        //Why are you doing this? URGH
-                        // INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = NC.App.DB.Cm_Pu_RatioParameters.Get(); // load from DB, just like test params, 
-                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio = (INCCAnalysisParams.cm_pu_ratio_rec)  meas.INCCAnalysisState.Methods.GetMethodParameters(AnalysisMethod.CuriumRatio);
-                        // dev note: better not to ref DB here, because this is a one-off state retrieval and no other DB access occurs during mass calc processing, but that is how it works this morning
+                        //Finally fixed this. Need to run live. TODO hn 10.4.2018
+                        INCCMethodResults imrs = new INCCMethodResults();
+                        meas.INCCAnalysisResults.MethodsResults.TryGetValue(mkey,out imrs);
+                        INCCMethodResult imr_cm2;
+                        imrs.GetMethodResults(new INCCSelector(meas.AcquireState.item_id, meas.Detector.Id.DetectorId), AnalysisMethod.CuriumRatio, out imr_cm2);
+                        
+                        INCCAnalysisParams.cm_pu_ratio_rec cm_pu_ratio =((INCCMethodResults.results_curium_ratio_rec)imr_cm2).methodParams2;
+                        if (cm_pu_ratio == null)
+                            cm_pu_ratio = new INCCAnalysisParams.cm_pu_ratio_rec();
 
                         //calc  curium mass
                         INCCAnalysis.calc_curium_mass(res, cm_pu_ratio, meas);
@@ -1271,7 +1276,7 @@ namespace AnalysisDefs
             }
             catch (Exception e)
             {
-                meas.Logger?.TraceException(e);
+                meas.Logger?.TraceException(e, stack: true);
             }
 
         }

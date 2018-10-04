@@ -89,13 +89,14 @@ namespace NewUI
             {
                 NC.App.DB.Cm_Pu_RatioParameters.Set(cmpuratio);  // event fires at scope of Cm_Pu_RatioParameters.GetList, writes changes to the DB
             }
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
             // exit withtout doing anything, any changes to cmpuratio are local and discarded here
-            this.Close();
+            Close();
         }
 
         private void HelpBtn_Click(object sender, EventArgs e)

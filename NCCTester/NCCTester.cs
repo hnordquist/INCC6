@@ -172,7 +172,7 @@ namespace NCCTester
                     DateTime TestStart = DateTime.Now;
                     PrintLine("***********************************************************");
                     PrintLine(String.Format("Loading test file {0}/{1} at {2}", testNum + 1, inputFiles.Count, TestStart.ToLongTimeString()));
-                    PrintLine(String.Format("Test file name: {0}: ", testFile));
+                    PrintLine(String.Format("Test file name: {0}: ", testFile.Key));
                     currOption = testFile.Value;
                     LoadMeasurementFromFile(testFile.Key);
                     testMeasurement.INCCAnalysisState.Methods.selector = new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.item_type);
@@ -2029,7 +2029,7 @@ namespace NCCTester
                 line = sr.ReadLine();
                 lineCount++;
             }
-            testMeasurement.INCCAnalysisState.Methods.AddMethod(AnalysisMethod.CuriumRatio, cm_ratio_cev_rec);
+            //Add this after you have the cm_pu info.
         }
 
         public static void ReadCmRatioResults()
@@ -2127,6 +2127,7 @@ namespace NCCTester
                     case "Declared U mass (g)":
                         double dec_u_mass = 0;
                         double.TryParse(t.Groups[2].Value, out dec_u_mass);
+                        cm_ratio_params.cm_dcl_u_mass = dec_u_mass;
                         cm_ratio_results.u.dcl_mass = dec_u_mass;
                         break;
                     case "Declared - assay U mass(g)":
@@ -2148,6 +2149,7 @@ namespace NCCTester
                     case "Declared U235 mass (g)":
                         double dec_u235_mass = 0;
                         double.TryParse(t.Groups[2].Value, out dec_u235_mass);
+                        cm_ratio_params.cm_dcl_u235_mass = dec_u235_mass;
                         cm_ratio_results.u235.dcl_mass = dec_u235_mass;
                         break;
                     case "Declared - assay U235 mass(g)":
@@ -2170,8 +2172,10 @@ namespace NCCTester
                 line = sr.ReadLine();
                 lineCount++;
             }
-            //Not sure if this can be done here. Need Cal Curve stuff, too
-            testMeasurement.INCCAnalysisResults.AddMethodResults(mult, new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.item_type), AnalysisMethod.CuriumRatio, cm_ratio_results);
+            testMeasurement.INCCAnalysisState.Methods.AddMethod(AnalysisMethod.CuriumRatio, cm_ratio_cev_rec);
+            cm_ratio_results.methodParams = cm_ratio_cev_rec;
+            cm_ratio_results.methodParams2 = cm_ratio_params;
+            testMeasurement.INCCAnalysisResults.AddMethodResults(mult, new INCCSelector(testMeasurement.AcquireState.item_id, testMeasurement.AcquireState.detector_id), AnalysisMethod.CuriumRatio, cm_ratio_results);
 
         }
         public static void ReadAddASourceCalibration()

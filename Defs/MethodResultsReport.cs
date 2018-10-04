@@ -237,38 +237,18 @@ namespace AnalysisDefs
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MultiColumn);
                         sec.AddHeader(String.Format("{0} cycle DTC rate data",meas.AcquireState.well_config == WellConfiguration.Active?"Active":"Passive"));  // section header
 
-                        int[] crawidths;
-                            if (meas.MeasOption == AssaySelector.MeasurementOption.verification)
+                        int[] crawidths = new int[] { 5, 13, 13, 13, 13, 10 };
+                            sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "Mass", "QC Tests" }, crawidths);
+
+                            foreach (Cycle cyc in meas.Cycles)
                             {
-                                //Only add mass for verf
-                                crawidths = new int[] { 5, 13, 13, 13, 13, 10 };
-                                sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "Mass", "QC Tests" }, crawidths);
-                            }
-                            else
-                            {
-                                crawidths = new int[] { 5, 13, 13, 13, 10 };
-                                sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "QC Tests" }, crawidths);
-                            }
-                        
-                        foreach (Cycle cyc in meas.Cycles)
-                        {
-                            if (cyc.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity)) > 0)                            // if no results on the cycle, these map indexers throw
-                            {
-                                MultiplicityCountingRes mcr = (MultiplicityCountingRes)cyc.CountingAnalysisResults[moskey.MultiplicityParams];
-                                    if (meas.MeasOption == AssaySelector.MeasurementOption.verification)
-                                    {
-                                        sec.AddCycleColumnRow(cyc.seq,
-                                        // Using the corrected rates!
-                                        new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v, mcr.mass/*Mass*/ },
-                                        meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
-                                    }
-                                    else
-                                    {
-                                        sec.AddCycleColumnRow(cyc.seq,
-                                        // Using the corrected rates!
-                                        new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v},
-                                        meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
-                                    }
+                                if (cyc.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity)) > 0)                            // if no results on the cycle, these map indexers throw
+                                {
+                                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)cyc.CountingAnalysisResults[moskey.MultiplicityParams];
+                                    sec.AddCycleColumnRow(cyc.seq,
+                                         // Using the corrected rates!
+                                         new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v, mcr.mass/*Mass*/ },
+                                          meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
                                 }
                             }
                         break;
