@@ -39,6 +39,7 @@ namespace Analysis
 
     public class LMProcessingState : ProcessingState
     {
+        private const int RECORD_SIZE = 8;
         internal LMProcessingState()
         {
             hitsPerChn = new Double[NC.ChannelCount];
@@ -111,12 +112,14 @@ namespace Analysis
 
         // local processing buffer
         internal byte[] rawDataBuff;
-
+        internal const long TIME_PER_ROLLOVER = 0x1_0000_0000;
         // accumulators across buffer transform calls, xfer to results for cycle at end of streaming 
         internal UInt32 maxValuesInBuffer;  //upper bound to number of structures in the array, based on buffer length
 
         internal UInt32 lastValue;
-        internal UInt64 wraparoundOffset;
+        internal long wraparoundOffset;
+        internal long RejectedPulses;
+        internal int HeartBeats;
 
         // Wrapper code over the virtual SR counting processor
         private Supporter sup;
@@ -228,7 +231,8 @@ namespace Analysis
 				{
 					long tiks = 0;
 					// convert to a TimeSpan
-					if (timebase == 1e-7)  // LMMM NCD 
+                    //TODO: need to know what the time base is for ALMM?? HN
+					if (timebase == 1e-7)  // ALMM NCD 
 						tiks = (long)timeArray[(int)numValuesParsed - 1];
 					else if (timebase == 1e-8)  // dev note: hack test until I can abstract this based on input file type spec, so far we only have 1e-7 and 1e-8 units
 						tiks = (long)(timeArray[(int)numValuesParsed - 1] / 10);
@@ -243,98 +247,117 @@ namespace Analysis
 		// non-null StatusBlock returned when end of data encountered during processing
 		public override StreamStatusBlock ConvertDataBuffer(int bytecount)
         {
-            UInt32[] uintHolder1 = new UInt32[1];
-            UInt32[] uintHolder2 = new UInt32[1];
+
             int index = 0;  //index into the active buffer of bytes from the last read 
             StreamStatusBlock res = null;
 
-            // logger.TraceEvent(LogLevels.Verbose, 221, "{0}: Processing {1} bytes", numbuff, bytecount);
-            /*
-             *  case 0: UInt32 /= 0 is time, then next uint is channel hits
-             *  case 1: UInt32 == 0 means end of data file, next uint is length of subsequent terminating ASCII message
-             *  case 2: UInt32 == 0 means veto, following uint is skipped
-             *  case 3: if gen2 flag is set we do an expensive examination for "trigger" because the null byte tests for gen3 do not work 
-             * */
-            while (index < bytecount)
+            int length = rawDataBuff.Length;
+            if (length % RECORD_SIZE != 0) return new StreamStatusBlock ("length not divisible by record size");
+            if (length == 0) return new StreamStatusBlock("0 bytes received");
+            long nPulsesInRecord;
+            long pulseTime;
+            timeArray = new List<ulong>();
+            neutronEventArray = new List<uint>();
+
+            HeartBeats = 0;
+
+            long lastTimeStamp = -1;
+
+            while (index < length)
             {
-                //if ((index % (16 * 8192)) == 0) // dev note: could, maybe even should, flush log here based on some configurable modulus
-                //{
-                //    NC.App.Loggers.Flush();
-                //}
-
-                // dev note: review this code to remove all un-needed steps, even copies
-                Buffer.BlockCopy(rawDataBuff, index, uintHolder1, 0, 4);
-                index += 4;
-                Buffer.BlockCopy(rawDataBuff, index, uintHolder2, 0, 4); //get time of event from array
-                index += 4;
-
-                if (uintHolder1[0] == 0)
+                bool Rejected = false;
+                //was running off end of array.....hn 4/29/19
+                if (rawDataBuff[index] == 0 && rawDataBuff[index + 1] == 0 && rawDataBuff[index + 2] == 0 && rawDataBuff[index + 3] == 0 && index + 15 < rawDataBuff.Length)
                 {
-                    if (uintHolder2[0] == 0)  // 8 null bytes means end of the cycle
+                    // Flag
+                    UInt32 secondWord = (UInt32)(rawDataBuff[index + 4] << 24 | rawDataBuff[index + 5] << 16 | rawDataBuff[index + 6] << 8 | rawDataBuff[index + 7]);
+                    UInt32 thirdWord = (UInt32)(rawDataBuff[index + 8] << 24 | rawDataBuff[index + 9] << 16 | rawDataBuff[index + 10] << 8 | rawDataBuff[index + 11]);
+                    UInt32 fourthWord = (UInt32)(rawDataBuff[index + 12] << 24 | rawDataBuff[index + 13] << 16 | rawDataBuff[index + 14] << 8 | rawDataBuff[index + 15]);
+                    switch (thirdWord)
                     {
-                        res = ExtractStatusBlock(ref index, bytecount);
-                        //logger.TraceEvent(LogLevels.Verbose, 8888, "{0}: END-OF-CYCLE BLOCK!", state.NumValuesParsed);
+                        case 0xFFFFFFFF:
+                            // End of file
+                            return new StreamStatusBlock("End of file");
+                        case 0x0A0B0C0D:
+                            // Heartbeat
+                            HeartBeats++;
+                            break;
+                        case 0x01000000:
+                            // Clock rollover
+                            wraparoundOffset += TIME_PER_ROLLOVER;
+                            return new StreamStatusBlock("Clock rolled over");
+                        default:
+                            UInt32 mystery = thirdWord;
+                            break;
                     }
-                    else  // it is a veto, and TDB set flag to find its pair
+                    index += 16;
+                }
+
+                else
+                {
+                    pulseTime = 100_000L * ((long)(((ulong)rawDataBuff[index + 7]) << 24 |
+                        ((ulong)rawDataBuff[index + 6]) << 16 |
+                        ((ulong)rawDataBuff[index + 5]) << 8 |
+                        ((ulong)rawDataBuff[index + 4]))
+                        + wraparoundOffset);
+                    if (pulseTime > lastTimeStamp)
                     {
-                        // dev note: do something with the veto time in uintHolder2[0] 
-                        //logger.TraceEvent(LogLevels.Info, 8888, "{0}: Veto!", state.NumValuesParsed);
+                        nPulsesInRecord = 0L;
+                        for (int chGroup = 0; chGroup < 4; chGroup++)
+                        {
+                            for (int bit = 0; bit < 8; bit++)
+                            {
+                                if ((rawDataBuff[index + chGroup] & (1 << bit)) != 0)
+                                {
+                                    timeArray.Add((ulong)(pulseTime + nPulsesInRecord));
+                                    nPulsesInRecord++;
+                                }
+                            }
+                        }
+                        lastTimeStamp = pulseTime;
                     }
-                }
-                else if (includingGen2 && // unsure of best way to find these older files, so I look for the word "triggers", for a three step logical check
-                    ((uintHolder1[0] == 0x67697274) && (uintHolder2[0] == 0x73726567))) // girt sreg 
-                {
-                    res = new StreamStatusBlock();
-                    res.index = index - 8;
-                    uint messagelength = (uint)(bytecount - res.index);
-                    res.msglen = (int)((0x000000FF) & (messagelength >> 24)           //shift byte 1 to byte 4 and mask it
-                                        | (0x0000FF00) & (messagelength >> 8)     //shift byte 2 to byte 3 and mask it
-                                        | (0x00FF0000) & (messagelength << 8)     //shift byte 3 to byte 2 and mask it
-                                        | (0xFF000000) & (messagelength << 24));  //shift byte 4 to byte 1 and mask it
-                    logger.TraceEvent(LogLevels.Verbose, 219, "todo gen2: for gen 2 we improperly parsed the preceding 8 bytes 0x0002 0x000+ or 0x0002 0x000-, so need to back it out of the counts, and moreover there may be other end patterns I haven't seen yet for gen 2 files.");
-                }
-                else  //should have a valid pair of UInt32s.  Swap byte order for first value, and read and swap bytes for next value.
-                {
-                    UInt32 aValue, swapped;
-
-                    //swap endianness of neutron event, already parsed from array...
-                    aValue = uintHolder1[0];
-                    swapped = ((0x000000FF) & (aValue >> 24)   //shift byte 1 to byte 4 and mask it
-                               | (0x0000FF00) & (aValue >> 8)    //shift byte 2 to byte 3 and mask it
-                               | (0x00FF0000) & (aValue << 8)    //shift byte 3 to byte 2 and mask it
-                               | (0xFF000000) & (aValue << 24)); //shift byte 4 to byte 1 and mask it
-
-                    neutronEventArray[(int)NumValuesParsed] = swapped;
-
+                    else
+                    {
+                        RejectedPulses++;
+                        Rejected = true;
+                    }
+                    index += 8;
+                    NumTotalsEncountered = 0;
                     for (short i = 0; i < NC.ChannelCount; i++)  // count channel hits here
                     {
-                        if ((swapped & chnmask[i]) != 0)
+                        if ((pulseTime & chnmask[i]) != 0)
                         {
                             hitsPerChn[i]++;
                             NumTotalsEncountered++;
                         }
                     }
-                    //swap endianness of time of event, note: times are cumulative ticks, not deltas
-                    aValue = uintHolder2[0];
-                    swapped = ((0x000000FF) & (aValue >> 24)   //shift byte 1 to byte 4 and mask it
-                               | (0x0000FF00) & (aValue >> 8)    //shift byte 2 to byte 3 and mask it
-                               | (0x00FF0000) & (aValue << 8)    //shift byte 3 to byte 2 and mask it
-                               | (0xFF000000) & (aValue << 24)); //shift byte 4 to byte 1 and mask it
-                    if (swapped < lastValue)  //then we have wrapped around, so increment the wraparoundoffset by 33 bits
+
+                    if (!Rejected && NumTotalsEncountered > 0)
                     {
-                        wraparoundOffset += 0x100000000;  // max clock
+                        lastValue = (uint)pulseTime;
+                        //logger.TraceData(LogLevels.Verbose, 0, string.Format("adding timestamp: {0}, num events: {1}", pulseTime, NumTotalsEncountered));
+
+                        neutronEventArray.Add((uint)NumTotalsEncountered);
+                        numValuesParsed++;
+                        if (!usingStreamRawAnalysis) // drop them in, one by one
+                        {
+                            Sup.HandleANeutronEvent(timeArray[(int)numValuesParsed - 1], neutronEventArray[(int)numValuesParsed - 1]);
+                        }
+                        else
+                        {
+                            logger.TraceData(LogLevels.Verbose, 0, "channel hits == 0");
+                        }
                     }
-                    lastValue = swapped;
-
-                    //store the time in the array, adding the wraparoundOffset in case the UInt32 has overflowed (which it will every 429.4967... seconds)
-                    timeArray[(int)NumValuesParsed] = wraparoundOffset + ((UInt64)swapped);
-
-                    if (!usingStreamRawAnalysis) // drop them in, one by one
-                        Sup.HandleANeutronEvent(timeArray[(int)NumValuesParsed], neutronEventArray[(int)NumValuesParsed]);
-
-                    NumValuesParsed++;
+                    else
+                    {
+                        logger.TraceEvent(LogLevels.Verbose, 0, "Pulse rejected..... ");
+                        Rejected = false;
+                    }
                 }
             }
+
+
+
             return res;
         }
 
@@ -521,20 +544,20 @@ namespace Analysis
         }
 
         // used by file ops only
-		public void SetLMState(NCCConfig.LMMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
+		public void SetLMState(NCCConfig.ALMMNetComm config, uint unitbytes = 8, bool useRawBuff = false)
         {
-            State.useAsynch = config.UseAsynchAnalysis;
+            /*State.useAsynch = config.UseAsynchAnalysis;
             State.includingGen2 = NC.App.AppContext.ParseGen2;
             State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
-            statusCheckCount = NC.App.AppContext.StatusPacketCount;
-            State.InitParseBuffers(config.ParseBufferSize, unitbytes, useRawBuff);
+            statusCheckCount = NC.App.AppContext.StatusPacketCount;*/
+            State.InitParseBuffers((uint)config.ReceiveBufferSize, unitbytes, useRawBuff);
         }
 
-		public void SetLMStateFlags(NCCConfig.LMMMNetComm config)
+		public void SetLMStateFlags(NCCConfig.ALMMNetComm config)
         {
-            State.useAsynch = config.UseAsynchAnalysis;
+           /* State.useAsynch = config.UseAsynchAnalysis;
             State.includingGen2 = NC.App.AppContext.ParseGen2;
-            State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;
+            State.usingStreamRawAnalysis = config.UsingStreamRawAnalysis;*/
         }
 
 
@@ -693,12 +716,13 @@ namespace Analysis
         {
             // dev note: if reading from socket stream, consider if socket return is larger than max buffer in here, what to do?
             // dev note: this buff copy is pointless in the single-threaded model
+            State.rawDataBuff = new byte[bytecount];
             Buffer.BlockCopy(buffer, idx, State.rawDataBuff, 0, bytecount);  // copy from the asynch socket caller
             StreamStatusBlock endofdata = null;
 
             if (state.NumValuesParsed >= (State.maxValuesInBuffer - (bytecount / 8))) // if limit will reach with this new data buffer of size bytecount, then must startnewbuffer here, AND must pass the "nearly full" stream buffers to the counters
             {
-                logger.TraceEvent(LogLevels.Verbose, 644, state.NumValuesParsed + " >= " + (State.maxValuesInBuffer - (bytecount / 8)) + " starting new internal buffer");
+                //logger.TraceEvent(LogLevels.Verbose, 644, state.NumValuesParsed + " >= " + (State.maxValuesInBuffer - (bytecount / 8)) + " starting new internal buffer");
                 if (State.usingStreamRawAnalysis)
                     State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)state.NumValuesParsed);
                 StartNewBuffer(); // resets stream IO buffer indexing and moves accumulated data to cycle 
@@ -706,7 +730,7 @@ namespace Analysis
             }
 
             endofdata = State.ConvertDataBuffer(bytecount);
-            if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
+            //if (NumProcessedRawDataBuffers > 0) logger.TraceEvent(LogLevels.Verbose, 222, "{0}: Completed with {1} events", NumProcessedRawDataBuffers, state.NumValuesParsed);
 
             if (State.usingStreamRawAnalysis && (endofdata != null))
                 State.Sup.HandleAnArrayOfNeutronEvents(State.timeArray, State.neutronEventArray, (int)State.NumValuesParsed);
@@ -737,6 +761,7 @@ namespace Analysis
 
         /// <summary>
         ///  Tailored only for LMMM/NPOD! 
+        ///  TODO: Check out what happens for ALMM. Do NPODS exist anymore?
         ///  this looks at the status block content and sets the cycle status; Rates, Assay Cancelled, Status, are the three I've seen in data so far
         /// </summary>
         /// <param name="sb"></param>

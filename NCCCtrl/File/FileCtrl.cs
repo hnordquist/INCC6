@@ -101,10 +101,6 @@ namespace NCCFile
 							if (go)
 								INCCTransferFileProcessing();
 						}				
-                        //else if (NC.App.AppContext.DatazConvert)
-                        //    DatazFileConvert();
-                        else if (NC.App.AppContext.FilterLMOutliers)
-                            PTRFileCull();
                         else if (NC.App.AppContext.SortPulseFile)
                             PulseFileSort();
                         else
@@ -327,7 +323,7 @@ namespace NCCFile
 						INCCKnew k = new INCCKnew(ctrllog);
 						bool supercool = k.BuildMeasurement((INCCTransferFile)bar, j);
 						j++;
-						if (!k.BuildMeasurement((INCCTransferFile)bar, j))
+						if (!supercool)
 							continue;
 						if (NC.App.AppContext.Replay)
 							Replay(k.Meas, ConstructedSource.INCCTransfer, System.IO.Path.GetFileName(bar.Path));
@@ -422,33 +418,33 @@ enditall:
 			ulong totalBuffersProcessed = 0;
 			meas.CurrentRepetition = 0;
             NC.App.Opstate.ResetTimer(filerawprocessing, PseudoInstrument, 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
-            foreach (var ncd in files)
+            foreach (var almm in files)
             {
                 if (NC.App.Opstate.IsQuitRequested)  // cancellation occurs here and at selected steps in the internal file and analyzer processing 
                     break;
-                if (!ncd.OpenForReading())
+                if (!almm.OpenForReading())
                     continue;
                 PseudoInstrument.PendingReset();
                 if (meas.CurrentRepetition == 0)
                 {
-                    meas.MeasDate = ncd.DTO;
-                    meas.Detector.Id.source = ConstructedSource.NCDFile;
-                    PseudoInstrument.id.source = ConstructedSource.NCDFile;
+                    meas.MeasDate = almm.DTO;
+                    meas.Detector.Id.source = ConstructedSource.ALMMFile;
+                    PseudoInstrument.id.source = ConstructedSource.ALMMFile;
                 }
 
                 Cycle cycle = new Cycle(ctrllog);
-                cycle.UpdateDataSourceId(ConstructedSource.NCDFile, InstrType.LMMM /* revisit this, it could be from any source */,
-                                         ncd.DTO, ncd.Filename);
+                cycle.UpdateDataSourceId(ConstructedSource.ALMMFile, InstrType.ALMM /* revisit this, it could be from any source */,
+                                         almm.DTO, almm.Filename);
                 meas.Add(cycle);
                 rdt.StartCycle(cycle);
                 meas.CurrentRepetition++;
                 rdt.NumProcessedRawDataBuffers = 0;
                 int thisread = 0;
-                long read = 0, fulllen = ncd.stream.Length;
+                long read = 0, fulllen = almm.stream.Length;
                 NC.App.Opstate.SOH = OperatingState.Living;
-                PseudoInstrument.id.FileName = ncd.Filename;
+                PseudoInstrument.id.FileName = almm.Filename;
 
-                ctrllog.TraceEvent(LogLevels.Info, 3335, "Assaying with {0}", ncd.Filename);
+                ctrllog.TraceEvent(LogLevels.Info, 3335, "Assaying with {0}", almm.Filename);
 
                 try
                 {
@@ -458,7 +454,7 @@ enditall:
                         // divide file size into discrete lengths of a reasonable size, say 50Mb or a 128 Mb default
                         int len = (fulllen > (int)rdt.CurEventBuffLen ? (int)rdt.CurEventBuffLen : (int)fulllen);
 
-                        thisread = ncd.reader.Read(rdt.RawDataBuff, 0, len);
+                        thisread = almm.reader.Read(rdt.RawDataBuff, 0, len);
                         read += thisread;
 
                         ctrllog.TraceEvent(LogLevels.Verbose, 410, "Processing buffer {0} of {1} bytes", rdt.NumProcessedRawDataBuffers, len);
@@ -499,7 +495,7 @@ enditall:
                 }
                 finally
                 {
-                    ncd.CloseReader();
+                    almm.CloseReader();
                     if (meas.CurrentRepetition == 1)// this is the first file, create the results before they get used 
                     {
                         meas.PrepareINCCResults();
@@ -1466,7 +1462,7 @@ enditall:
                 }
 
                 Cycle cycle = new Cycle(ctrllog);
-                cycle.UpdateDataSourceId(ConstructedSource.SortedPulseTextFile, InstrType.LMMM, // MCNPX is common source of pulse files, but we need an explicit LM type here /* revisit this, it could be from any source */,
+                cycle.UpdateDataSourceId(ConstructedSource.SortedPulseTextFile, InstrType.ALMM, // MCNPX is common source of pulse files, but we need an explicit LM type here /* revisit this, it could be from any source */,
                           sortedpulse.DTO, sortedpulse.Filename);
                 meas.Add(cycle);
                 rdt.StartCycle(cycle);
@@ -1815,10 +1811,10 @@ enditall:
             // Announce that the event handler has been invoked.
             ctrllog.TraceInformation("Interrupting the {0} action", NC.App.Opstate.Action);
             args.Cancel = true;
-            PseudoInstrument?.RDT.EndAnalysisImmediately();
+            PseudoInstrument.RDT.EndAnalysisImmediately();
             NC.App.Opstate.SOH = OperatingState.Cancelling;
             NC.App.Opstate.Cancel();
-            PseudoInstrument?.PendingComplete();
+            PseudoInstrument.PendingComplete();
         }
 
         #endregion FileControl Callbacks and Event Handlers

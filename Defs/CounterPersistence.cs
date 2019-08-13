@@ -30,6 +30,7 @@ using System.Data;
 using System.Reflection;
 using AnalysisDefs;
 using DetectorDefs;
+using System.Net;
 namespace ListModeDB
 {
 
@@ -183,31 +184,24 @@ namespace ListModeDB
             if (dt.Rows.Count < 1)
                 return lm;
             DataRow drl = dt.Rows[dt.Rows.Count - 1];
-
-            lm.NetComm.Broadcast = DB.Utils.DBBool(drl["broadcast"]);
-            lm.NetComm.LMListeningPort = DB.Utils.DBInt32(drl["broadcastport"]);
+            IPAddress.TryParse((string)drl["ipaddress"], out lm.NetComm.ipaddress);
             lm.NetComm.Port = DB.Utils.DBInt32(drl["port"]);
-            lm.NetComm.Subnet = (string)(drl["subnet"]);
-            lm.NetComm.Wait = DB.Utils.DBInt32(drl["wait"]);
-
-            lm.NetComm.NumConnections = DB.Utils.DBInt32(drl["numConnections"]);
             lm.NetComm.ReceiveBufferSize = DB.Utils.DBInt32(drl["receiveBufferSize"]);
-            lm.NetComm.ParseBufferSize = DB.Utils.DBUInt32(drl["parseBufferSize"]);
-            lm.NetComm.UseAsynchAnalysis = DB.Utils.DBBool(drl["useAsyncAnalysis"]);
-            lm.NetComm.UseAsynchFileIO = DB.Utils.DBBool(drl["useAsyncFileIO"]);
-            lm.NetComm.UsingStreamRawAnalysis = DB.Utils.DBBool(drl["streamRawAnalysis"]);
-
+            lm.NetComm.LongWaitTime = DB.Utils.DBInt32(drl["longwaittime"]);
+            lm.NetComm.CmdWaitTime = DB.Utils.DBInt32(drl["cmdwaittime"]);
+            //HV? HN 6/13
             dt = gray.GetHW(); 
             if (dt.Rows.Count < 1)
                 return lm;
             drl = dt.Rows[dt.Rows.Count - 1];
-            lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
-            lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
-            lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
-            lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
-            lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
+            lm.Port = lm.NetComm.Port.ToString();
+            //lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
+            //lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
+            //lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
+            //lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
+            //lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
             try {
-                lm.DeviceConfig.HVTimeout = DB.Utils.DBInt32(drl["hvtimeout"]);
+                //lm.DeviceConfig.HVTimeout = DB.Utils.DBInt32(drl["hvtimeout"]);
             } catch (Exception) { }
            return lm;
         }

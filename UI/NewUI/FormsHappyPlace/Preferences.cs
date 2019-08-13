@@ -110,13 +110,13 @@ namespace NewUI
 			Incc5IniFileLoc.Visible =  NC.App.AppContext.UseINCC5Ini;
 			incc5IniLoc.Visible = NC.App.AppContext.UseINCC5Ini;
 
-            bool lmmm = false;
+            bool almm = false;
             Detector det = NCC.IntegrationHelpers.GetCurrentAcquireDetector();
-            lmmm = (det.Id.SRType == DetectorDefs.InstrType.LMMM);
-            PollPacket.Visible = lmmm;
-            PollTimer.Visible = lmmm;
-            label2.Visible = lmmm;
-            label3.Visible = lmmm;
+            almm = (det.Id.SRType == DetectorDefs.InstrType.ALMM);
+            PollPacket.Visible = almm;
+            PollTimer.Visible = almm;
+            label2.Visible = almm;
+            label3.Visible = almm;
         }
         private void OKBtn_Click(object sender, EventArgs e)
         {

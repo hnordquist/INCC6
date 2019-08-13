@@ -2008,37 +2008,31 @@ namespace AnalysisDefs
     // UI actual use pulls from same cmd line default settings first, then specifies changes to the defaults through a dialog, 
     // final state has params written with other acquire params on detector/mat type
     // NEXT: no UI available for these, where do they go?
-    public class LMMMConfig : NCCConfig.LMMMConfig, IParameterBase, IComparable<LMMMConfig>, IEquatable<LMMMConfig>
+    public class ALMMConfig : NCCConfig.ALMMConfig, IParameterBase, IComparable<ALMMConfig>, IEquatable<ALMMConfig>
     {
-        public LMMMConfig()
+        public ALMMConfig()
             : base(NCCConfig.Config.ParameterBasis())
         {             
         }
-        public LMMMConfig(LMMMConfig src)
+        public ALMMConfig(ALMMConfig src)
             : base(src)
         {
         }
 
-        public static int Compare(LMMMConfig x, LMMMConfig y)
+        public static int Compare(ALMMConfig x, ALMMConfig y)
         {
             int res = x.LEDs.CompareTo(y.LEDs);
             if (res == 0)
-                res = x.Input.CompareTo(y.Input);
-            if (res == 0)
-                res = x.Debug.CompareTo(y.Debug);
-            if (res == 0)
                 res = x.HV.CompareTo(y.HV);
-            if (res == 0)
-                res = x.LLD.CompareTo(y.LLD);
             return res;
         }
 
-        public int CompareTo(LMMMConfig other)
+        public int CompareTo(ALMMConfig other)
         {
             return Compare(this, other);
         }
 
-        public bool Equals(LMMMConfig other)
+        public bool Equals(ALMMConfig other)
         {
             return CompareTo(other) == 0;
         }
@@ -2047,14 +2041,12 @@ namespace AnalysisDefs
         public void GenParamList()
         {
             pb.GenParamList();
-            pb.Table = "LMMMConfig";
-            pb.ps.Add(new DBParamEntry("leds", LEDs));
-            pb.ps.Add(new DBParamEntry("input", Input));
-            pb.ps.Add(new DBParamEntry("debug", Debug));
+            pb.Table = "ALMMConfig";
+            //Wut? This table does not exist in the db.
             pb.ps.Add(new DBParamEntry("hv", HV));
-            pb.ps.Add(new DBParamEntry("LLD", LLD)); // alias for VoltageTolerance on PTR32 and MCA527
+            pb.ps.Add(new DBParamEntry("leds", LEDs));
             pb.ps.Add(new DBParamEntry("hvtimeout", HVTimeout));
-
+            pb.ps.Add(new DBParamEntry("LLD", VoltageTolerance ));
         }
 
         public DB.ElementList ToDBElementList()
@@ -2092,51 +2084,40 @@ namespace AnalysisDefs
     // cmd line values become the defaults for the constructors here, 
     // UI actual use pulls from same cmd line default settings first, then specifies changes to the defaults through a dialog, 
     // final state has params written with other acquire params on detector/mat type
-    public class LMMMNetComm : NCCConfig.LMMMNetComm, IParameterBase, IComparable<LMMMNetComm>, IEquatable<LMMMNetComm> //, IINCCStringRep
+    public class ALMMNetComm : NCCConfig.ALMMNetComm, IParameterBase, IComparable<ALMMNetComm>, IEquatable<ALMMNetComm> //, IINCCStringRep
     {
-        public LMMMNetComm()
+        public ALMMNetComm()
             : base(NCCConfig.Config.ParameterBasis())
         {
 			//resetVal(NCCConfig.NCCFlags.streamRawAnalysis, true, typeof(bool));
         }
 
-        public LMMMNetComm(LMMMNetComm src) : base(src)
+        public ALMMNetComm(ALMMNetComm src) : base(src)
         {
         }
 
-        public static int Compare(LMMMNetComm x, LMMMNetComm y)
+        public static int Compare(ALMMNetComm x, ALMMNetComm y)
         {
-            int res = x.LMListeningPort.CompareTo(y.LMListeningPort);
+            int res = 0;
             if (res == 0)
-                res = x.Broadcast.CompareTo(y.Broadcast);
+                res = x.CmdWaitTime.CompareTo(y.CmdWaitTime);
+            if (res == 0)
+                res = x.LongWaitTime.CompareTo(y.LongWaitTime);
             if (res == 0)
                 res = x.Port.CompareTo(y.Port);
             if (res == 0)
-                res = x.Wait.CompareTo(y.Wait);
-            if (res == 0)
-                res = x.Subnet.CompareTo(y.Subnet);
-
+                res = x.ipaddress.Equals(y.ipaddress) ==true?0:1;
             if (res == 0)
                 res = x.ReceiveBufferSize.CompareTo(y.ReceiveBufferSize); 
-            if (res == 0)
-                res = x.ParseBufferSize.CompareTo(y.ParseBufferSize); 
-            if (res == 0)
-                res = x.UseAsynchAnalysis.CompareTo(y.UseAsynchAnalysis);
-            if (res == 0)
-                res = x.NumConnections.CompareTo(y.NumConnections);
-            if (res == 0)
-                res = x.UseAsynchFileIO.CompareTo(y.UseAsynchFileIO);
-            if (res == 0)
-                res = x.UsingStreamRawAnalysis.CompareTo(y.UsingStreamRawAnalysis);
             return res;
         }
 
-        public int CompareTo(LMMMNetComm other)
+        public int CompareTo(ALMMNetComm other)
         {
             return Compare(this, other);
         }
 
-        public bool Equals(LMMMNetComm other)
+        public bool Equals(ALMMNetComm other)
         {
             return CompareTo(other) == 0;
         }
@@ -2146,18 +2127,13 @@ namespace AnalysisDefs
         public void GenParamList()
         {
             pb.GenParamList();
-            pb.Table = "LMMMNetComm";
-            pb.ps.Add(new DBParamEntry("broadcast", Broadcast));
-            pb.ps.Add(new DBParamEntry("broadcastport", LMListeningPort));
+            pb.Table = "ALMMNetComm";
+            //TODO: Most of this not needed for ALMM......hn 6/12/2019
+            pb.ps.Add(new DBParamEntry("ipaddress", "169.1.1.10"));
             pb.ps.Add(new DBParamEntry("port", Port));
-            pb.ps.Add(new DBParamEntry("subnet", Subnet));
-            pb.ps.Add(new DBParamEntry("wait", Wait));
-            pb.ps.Add(new DBParamEntry("numConnections", NumConnections));
+            pb.ps.Add(new DBParamEntry("longwaittime", LongWaitTime));
+            pb.ps.Add(new DBParamEntry("cmdwaittime", CmdWaitTime));
             pb.ps.Add(new DBParamEntry("receiveBufferSize", ReceiveBufferSize));
-            pb.ps.Add(new DBParamEntry("parseBufferSize", ParseBufferSize));
-            pb.ps.Add(new DBParamEntry("useAsyncFileIO", UseAsynchFileIO));
-            pb.ps.Add(new DBParamEntry("useAsyncAnalysis", UseAsynchAnalysis));
-            pb.ps.Add(new DBParamEntry("streamRawAnalysis", UsingStreamRawAnalysis));
         }
 
         public DB.ElementList ToDBElementList()

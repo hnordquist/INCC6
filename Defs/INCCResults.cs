@@ -2136,11 +2136,11 @@ namespace AnalysisDefs
                 sec.AddHeader("Curium ratio results");  // section header
                 sec.AddTwo(methodParams2.cm_id_label + ':', methodParams2?.cm_id);
                 sec.AddTwo("Input batch id:", methodParams2?.cm_input_batch_id);
-                sec.AddDateOnlyRow("Cm/Pu ratio date:", methodParams2.cm_pu_ratio_date);
+                sec.AddDateTimeRow("Cm/Pu ratio date:", methodParams2.cm_pu_ratio_date);
                 sec.AddNumericRow("Pu effective half-life:", methodParams2.pu_half_life);
                 sec.AddNumericRow("Cm/Pu ratio:", methodParams2.cm_pu_ratio);
                 sec.AddNumericRow("Decay corrected Cm/Pu ratio:", cm_pu_ratio_decay_corr);
-                sec.AddDateOnlyRow("Cm/U ratio date:", methodParams2.cm_u_ratio_date);
+                sec.AddDateTimeRow("Cm/U ratio date:", methodParams2.cm_u_ratio_date);
                 sec.AddNumericRow("Cm/U ratio:", methodParams2.cm_u_ratio);
                 sec.AddNumericRow("Decay corrected Cm/U ratio:", cm_u_ratio_decay_corr);
 

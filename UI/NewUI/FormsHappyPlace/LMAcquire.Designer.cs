@@ -78,6 +78,11 @@
             this.DeleteBtn = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.AnalyzerGridView = new System.Windows.Forms.DataGridView();
+            this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.APCancel = new System.Windows.Forms.Button();
             this.Step3SaveExit = new System.Windows.Forms.Button();
             this.ReviewAndGo = new System.Windows.Forms.TabPage();
@@ -97,11 +102,7 @@
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Active = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Type = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Gatewidth = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Predelay = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Long = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Step2ALMMRadioBtn = new System.Windows.Forms.RadioButton();
             this.LiveSettings.SuspendLayout();
             this.FileSettings.SuspendLayout();
             this.InputFileTypeGroupBox.SuspendLayout();
@@ -199,7 +200,7 @@
             // Step2IncludeConfigCheckBox
             // 
             this.Step2IncludeConfigCheckBox.AutoSize = true;
-            this.Step2IncludeConfigCheckBox.Location = new System.Drawing.Point(9, 198);
+            this.Step2IncludeConfigCheckBox.Location = new System.Drawing.Point(9, 259);
             this.Step2IncludeConfigCheckBox.Name = "Step2IncludeConfigCheckBox";
             this.Step2IncludeConfigCheckBox.Size = new System.Drawing.Size(339, 17);
             this.Step2IncludeConfigCheckBox.TabIndex = 51;
@@ -210,7 +211,7 @@
             // 
             // Step2OutputDirectoryTextBox
             // 
-            this.Step2OutputDirectoryTextBox.Location = new System.Drawing.Point(10, 174);
+            this.Step2OutputDirectoryTextBox.Location = new System.Drawing.Point(10, 235);
             this.Step2OutputDirectoryTextBox.Name = "Step2OutputDirectoryTextBox";
             this.Step2OutputDirectoryTextBox.Size = new System.Drawing.Size(362, 20);
             this.Step2OutputDirectoryTextBox.TabIndex = 49;
@@ -221,7 +222,7 @@
             // Step2SavePulseDataFiles
             // 
             this.Step2SavePulseDataFiles.AutoSize = true;
-            this.Step2SavePulseDataFiles.Location = new System.Drawing.Point(9, 267);
+            this.Step2SavePulseDataFiles.Location = new System.Drawing.Point(9, 328);
             this.Step2SavePulseDataFiles.Name = "Step2SavePulseDataFiles";
             this.Step2SavePulseDataFiles.Size = new System.Drawing.Size(209, 17);
             this.Step2SavePulseDataFiles.TabIndex = 65;
@@ -445,7 +446,7 @@
             // Step2SaveEarlyTermCheckBox
             // 
             this.Step2SaveEarlyTermCheckBox.AutoSize = true;
-            this.Step2SaveEarlyTermCheckBox.Location = new System.Drawing.Point(9, 244);
+            this.Step2SaveEarlyTermCheckBox.Location = new System.Drawing.Point(9, 305);
             this.Step2SaveEarlyTermCheckBox.Name = "Step2SaveEarlyTermCheckBox";
             this.Step2SaveEarlyTermCheckBox.Size = new System.Drawing.Size(234, 17);
             this.Step2SaveEarlyTermCheckBox.TabIndex = 53;
@@ -455,7 +456,7 @@
             // 
             // FilePicker2
             // 
-            this.FilePicker2.Location = new System.Drawing.Point(377, 171);
+            this.FilePicker2.Location = new System.Drawing.Point(377, 232);
             this.FilePicker2.Name = "FilePicker2";
             this.FilePicker2.Size = new System.Drawing.Size(36, 23);
             this.FilePicker2.TabIndex = 52;
@@ -466,7 +467,7 @@
             // Step2OutputDirectoryLabel
             // 
             this.Step2OutputDirectoryLabel.AutoSize = true;
-            this.Step2OutputDirectoryLabel.Location = new System.Drawing.Point(9, 157);
+            this.Step2OutputDirectoryLabel.Location = new System.Drawing.Point(9, 218);
             this.Step2OutputDirectoryLabel.Name = "Step2OutputDirectoryLabel";
             this.Step2OutputDirectoryLabel.Size = new System.Drawing.Size(158, 13);
             this.Step2OutputDirectoryLabel.TabIndex = 50;
@@ -483,7 +484,7 @@
             // Step2AutoOpenCheckBox
             // 
             this.Step2AutoOpenCheckBox.AutoSize = true;
-            this.Step2AutoOpenCheckBox.Location = new System.Drawing.Point(9, 222);
+            this.Step2AutoOpenCheckBox.Location = new System.Drawing.Point(9, 283);
             this.Step2AutoOpenCheckBox.Name = "Step2AutoOpenCheckBox";
             this.Step2AutoOpenCheckBox.Size = new System.Drawing.Size(310, 17);
             this.Step2AutoOpenCheckBox.TabIndex = 48;
@@ -493,13 +494,14 @@
             // 
             // InputFileTypeGroupBox
             // 
+            this.InputFileTypeGroupBox.Controls.Add(this.Step2ALMMRadioBtn);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2MCA5272RadioBtn);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2PTR32RadioBtn);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2SortedPulseRadioBtn);
             this.InputFileTypeGroupBox.Controls.Add(this.Step2NCDRadioBtn);
             this.InputFileTypeGroupBox.Location = new System.Drawing.Point(9, 85);
             this.InputFileTypeGroupBox.Name = "InputFileTypeGroupBox";
-            this.InputFileTypeGroupBox.Size = new System.Drawing.Size(375, 68);
+            this.InputFileTypeGroupBox.Size = new System.Drawing.Size(375, 92);
             this.InputFileTypeGroupBox.TabIndex = 47;
             this.InputFileTypeGroupBox.TabStop = false;
             this.InputFileTypeGroupBox.Text = "Select List Mode data file type";
@@ -656,6 +658,38 @@
             this.AnalyzerGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.AnalyzerGridView_CellFormatting);
             this.AnalyzerGridView.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.AnalyzerGridView_EditingControlShowing);
             this.AnalyzerGridView.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.AnalyzerGridView_DataGridViewCellEventHandler);
+            // 
+            // Active
+            // 
+            this.Active.FalseValue = "no";
+            this.Active.HeaderText = "Active";
+            this.Active.Name = "Active";
+            this.Active.TrueValue = "yes";
+            this.Active.Width = 50;
+            // 
+            // Type
+            // 
+            this.Type.HeaderText = "Type";
+            this.Type.Name = "Type";
+            this.Type.Width = 140;
+            // 
+            // Gatewidth
+            // 
+            this.Gatewidth.HeaderText = "Gate/Bin width";
+            this.Gatewidth.Name = "Gatewidth";
+            this.Gatewidth.Width = 110;
+            // 
+            // Predelay
+            // 
+            this.Predelay.HeaderText = "-";
+            this.Predelay.Name = "Predelay";
+            this.Predelay.Width = 80;
+            // 
+            // Long
+            // 
+            this.Long.HeaderText = "-";
+            this.Long.Name = "Long";
+            this.Long.Width = 130;
             // 
             // APCancel
             // 
@@ -857,37 +891,17 @@
             this.dataGridViewTextBoxColumn4.HeaderText = "Fast";
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             // 
-            // Active
+            // Step2ALMMRadioBtn
             // 
-            this.Active.FalseValue = "no";
-            this.Active.HeaderText = "Active";
-            this.Active.Name = "Active";
-            this.Active.TrueValue = "yes";
-            this.Active.Width = 50;
-            // 
-            // Type
-            // 
-            this.Type.HeaderText = "Type";
-            this.Type.Name = "Type";
-            this.Type.Width = 140;
-            // 
-            // Gatewidth
-            // 
-            this.Gatewidth.HeaderText = "Gate/Bin width";
-            this.Gatewidth.Name = "Gatewidth";
-            this.Gatewidth.Width = 110;
-            // 
-            // Predelay
-            // 
-            this.Predelay.HeaderText = "-";
-            this.Predelay.Name = "Predelay";
-            this.Predelay.Width = 80;
-            // 
-            // Long
-            // 
-            this.Long.HeaderText = "-";
-            this.Long.Name = "Long";
-            this.Long.Width = 130;
+            this.Step2ALMMRadioBtn.AutoSize = true;
+            this.Step2ALMMRadioBtn.Location = new System.Drawing.Point(8, 65);
+            this.Step2ALMMRadioBtn.Name = "Step2ALMMRadioBtn";
+            this.Step2ALMMRadioBtn.Size = new System.Drawing.Size(107, 17);
+            this.Step2ALMMRadioBtn.TabIndex = 7;
+            this.Step2ALMMRadioBtn.TabStop = true;
+            this.Step2ALMMRadioBtn.Text = "ALMM BIN (*.bin)";
+            this.Step2ALMMRadioBtn.UseVisualStyleBackColor = true;
+            this.Step2ALMMRadioBtn.CheckedChanged += new System.EventHandler(this.Step2ALMMRadioBtn_CheckedChanged);
             // 
             // LMAcquire
             // 
@@ -989,5 +1003,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Gatewidth;
         private System.Windows.Forms.DataGridViewTextBoxColumn Predelay;
         private System.Windows.Forms.DataGridViewTextBoxColumn Long;
+        private System.Windows.Forms.RadioButton Step2ALMMRadioBtn;
     }
 }

@@ -45,9 +45,8 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LMSR, Version=0.9.5246.27500, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\deployment\LMSR.dll</HintPath>
+    <Reference Include="LMSR">
+      <HintPath>..\..\..\Users\169437\Source\Repos\NCCCore\LMSR.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -71,7 +70,7 @@
     <Compile Include="Analysis\RDT.cs" />
     <Compile Include="Analysis\RTAnalysis.cs" />
     <Compile Include="Analysis\SRRDT.cs" />
-    <Compile Include="Device\Lingo.cs" />
+    <Compile Include="Device\ALMMController.cs" />
     <Compile Include="Device\LMMMComm.cs" />
     <Compile Include="DAQServer\BufferPool.cs" />
     <Compile Include="DAQServer\ExtensionMethods.cs" />
@@ -93,6 +92,7 @@
     <Compile Include="Device\Ptr32Exception.cs" />
     <Compile Include="Device\Ptr32Parser.cs" />
     <Compile Include="Device\Ptr32RateCounter.cs" />
+    <Compile Include="Device\TelnetClient.cs" />
     <Compile Include="File\FileCtrlDataz.cs" />
     <Compile Include="File\FileCtrlINCC5.cs" />
     <Compile Include="File\FileCtrl.cs" />

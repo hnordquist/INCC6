@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using AnalysisDefs;
 
+
 namespace DetectorDefs
 {
 
@@ -41,7 +42,7 @@ namespace DetectorDefs
         JSR15,// aka HHMR, order taken from sr.h
         UNAP, // aka JSR16, the 40k box
         /* LM */
-        NPOD, LMMM, LMI = LMMM, PTR32, MCA527,
+        ALMM, PTR32, MCA527,
         /* Simulated */
         MCNPX, N1
     };  // note: only LMI used for older N-1 data, now the files say "LMMM" and we also find an occasional NPOD
@@ -90,12 +91,12 @@ namespace DetectorDefs
 
         public static bool IsListMode(this InstrType itype)
         {
-            return itype >= InstrType.NPOD && itype <= InstrType.MCA527;
+            return itype >= InstrType.ALMM && itype <= InstrType.MCA527;
         }
 
         public static bool IsSocketBasedLM(this InstrType itype)
         {
-            return itype == InstrType.NPOD || itype == InstrType.LMMM || itype == InstrType.MCA527;
+            return itype == InstrType.ALMM || itype == InstrType.ALMM || itype == InstrType.MCA527;
         }
         public static bool IsUSBBasedLM(this InstrType itype)
         {
@@ -109,7 +110,7 @@ namespace DetectorDefs
 
         public static bool IsSRWithVariableBaudRate(this InstrType itype)
         {
-            return itype < InstrType.NPOD && itype >= InstrType.JSR15;
+            return itype < InstrType.ALMM && itype >= InstrType.JSR15;
         }
 
 		public static bool CanDoTriples(this InstrType itype)
@@ -174,7 +175,7 @@ namespace DetectorDefs
     public enum ConstructedSource
     {
         Unknown = -1, Live = 0, DB, CycleFile, Manual, ReviewFile, // traditional INCC 
-        NCDFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
+        NCDFile, ALMMFile, PTRFile, MCA527File, SortedPulseTextFile,// List Mode file inputs 
         INCCTransferCopy, INCCTransfer, Reanalysis /* Reanalysis flag */ , DatazFile
     };  // sources of data: file, DAQ, DB
 
@@ -223,20 +224,21 @@ namespace DetectorDefs
         {
             bool needsAdditionalSpecification =
                ((src == ConstructedSource.Live &&
-                (device >= InstrType.NPOD && device <= InstrType.MCA527)) // it is a Live LM DAQ, or
+                (device >= InstrType.ALMM && device <= InstrType.MCA527)) // it is a Live LM DAQ, or
              ||
-               (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile));  // data from other source and the processing went through the raw counting code 
+               (src >= ConstructedSource.ALMMFile && src <= ConstructedSource.SortedPulseTextFile));  // data from other source and the processing went through the raw counting code 
             return needsAdditionalSpecification;
         }
 
         public static bool LMFiles(this ConstructedSource src, InstrType device)
         {
-            bool ack = (src >= ConstructedSource.NCDFile && src <= ConstructedSource.SortedPulseTextFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
+            bool ack = (src >= ConstructedSource.ALMMFile && src <= ConstructedSource.SortedPulseTextFile) && device.IsListMode();  // data from other source and the processing went through the raw counting code 
             return ack;
         }
 
 		public static double TimeBase(this ConstructedSource src, InstrType device)
 		{
+            //CHECK: I believe Marc's code converting from 10-7 to 10-8 hn 6/20
 			double te = 1e-7;  // JSR files, LMMM and MCA-527 use 100 ns units, but MCA-527 can change 
 			switch (device)
 			{
@@ -253,7 +255,7 @@ namespace DetectorDefs
 			case ConstructedSource.SortedPulseTextFile:
 				te = 1e-8;
 				break;
-			case ConstructedSource.NCDFile:
+			case ConstructedSource.ALMMFile:
 			case ConstructedSource.MCA527File: // LMMM and MCA-527 use 100 ns units, but MCA-527 can change (a header field value) 
 				te = 1e-7;
 				break;
@@ -276,6 +278,7 @@ namespace DetectorDefs
                 PrettyName.Add(ConstructedSource.Manual, "Manual entry");
                 PrettyName.Add(ConstructedSource.ReviewFile, "Review disk file");
                 PrettyName.Add(ConstructedSource.NCDFile, "LMMM data file");
+                PrettyName.Add(ConstructedSource.ALMMFile, "ALMM data file");
                 PrettyName.Add(ConstructedSource.Live, "Shift register");
                 PrettyName.Add(ConstructedSource.INCCTransfer, "Transfer");
                 PrettyName.Add(ConstructedSource.INCCTransferCopy, "Transfer Copy");
@@ -400,15 +403,15 @@ namespace DetectorDefs
 
     public class LMConnectionInfo : ConnectionInfo, IEquatable<LMConnectionInfo>
     {
-        public LMMMNetComm NetComm { get; set; }
+        public ALMMNetComm NetComm { get; set; }
 
-        public LMMMConfig DeviceConfig { get; set; }
+        public ALMMConfig DeviceConfig { get; set; }
 
         public LMConnectionInfo()
             : base()
         {
-            NetComm = new LMMMNetComm();
-            DeviceConfig = new LMMMConfig();
+            NetComm = new ALMMNetComm();
+            DeviceConfig = new ALMMConfig();
         }
 
         public LMConnectionInfo(LMConnectionInfo src)
@@ -416,15 +419,14 @@ namespace DetectorDefs
         {
             if (src != null)
             {
-                NetComm = new LMMMNetComm(src.NetComm);
-                DeviceConfig = new LMMMConfig(src.DeviceConfig);
+                NetComm = new ALMMNetComm(src.NetComm);
+                DeviceConfig = new ALMMConfig(src.DeviceConfig);
             }
             else
             {
-                NetComm = new LMMMNetComm();
-                DeviceConfig = new LMMMConfig();
+                NetComm = new ALMMNetComm();
+                DeviceConfig = new ALMMConfig();
             }
-            Wait = NetComm.Wait;
         }
 
         public bool Equals(LMConnectionInfo other)
@@ -515,6 +517,7 @@ namespace DetectorDefs
             get { int p = 0; int.TryParse(conninfo.Port, out p); return p; }
             set { conninfo.Port = value.ToString(); }
         }
+        
         public int BaudRate
         {
             get { return conninfo.Baud; }
@@ -526,7 +529,7 @@ namespace DetectorDefs
         private string desc;
         private InstrType srtype;
         private string filename;
-        private ConnectionInfo conninfo; // ip and port, or serial port, e.g.
+        public ConnectionInfo conninfo; // ip and port, or serial port, e.g.
         public DateTimeOffset dt;
         public ConstructedSource source = ConstructedSource.Live;
 
@@ -542,7 +545,7 @@ namespace DetectorDefs
 			case ConstructedSource.Live:
 				l = iname + "-" + srtype.ToString() + (string.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
 				break;
-			case ConstructedSource.NCDFile:
+			case ConstructedSource.ALMMFile:
 			case ConstructedSource.SortedPulseTextFile:
 			case ConstructedSource.PTRFile:
 			case ConstructedSource.MCA527File:
@@ -583,7 +586,7 @@ namespace DetectorDefs
 				case ConstructedSource.Live:
 					l = iname + "-" + srtype.ToString() + (string.IsNullOrEmpty(ConnInfo) ? "" : "[" + ConnInfo + "]");
 					break;
-				case ConstructedSource.NCDFile:
+				case ConstructedSource.ALMMFile:
 				case ConstructedSource.SortedPulseTextFile:
 				case ConstructedSource.PTRFile:
 				case ConstructedSource.MCA527File:
@@ -638,7 +641,7 @@ namespace DetectorDefs
             source = dsid.source;
             desc = string.Copy(dsid.desc);
             type = string.Copy(dsid.type);
-
+            
             Type t = dsid.conninfo.GetType();
             ConstructorInfo ci = t.GetConstructor(new Type[] { t });
             conninfo = (ConnectionInfo)ci.Invoke(new object[] { dsid.conninfo });

@@ -650,13 +650,17 @@ namespace NewUI
                                 if (!Instruments.Active.Contains(mca))
                                     Instruments.Active.Add(mca);                                
                             } 
-							else // LMMM
+							else // ALMM
 							{
                                 LMInstrument lm = new LMInstrument(NC.App.Opstate.Measurement.Detector);
+                                LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
+                                lm.port = lmc.NetComm.Port;
                                 lm.DAQState = DAQInstrState.Offline; // these are manually initiated as opposed to auto-pickup
                                 lm.selected = false;  //must broadcast first to get it selected
+                                Int32.TryParse(NC.App.Opstate.Measurement.Detector.Id.FullConnInfo.Port, out lm.port);
+
                                 if (!Instruments.All.Contains(lm))
-                                    Instruments.All.Add(lm); // add to global runtime list		
+                                    Instruments.All.Add(lm); // add to global runtime list	
 							}
                         }
                         else
@@ -694,6 +698,10 @@ namespace NewUI
 
                     case ConstructedSource.NCDFile:
                         NC.App.AppContext.NCDFileAssay = true; // suntoucher, this is right here how we're flowing now
+                        UIIntegration.Controller.file = true;
+                        break;
+                    case ConstructedSource.ALMMFile:
+                        NC.App.AppContext.ALMMFileAssay = true; // I need to clean up these STUPID comments
                         UIIntegration.Controller.file = true;
                         break;
                     case ConstructedSource.SortedPulseTextFile:

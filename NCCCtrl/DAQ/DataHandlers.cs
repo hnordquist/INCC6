@@ -28,6 +28,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using DetectorDefs;
 using NCCReporter;
@@ -43,7 +44,7 @@ namespace DAQ
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        static void SL_DataReceived(object sender, SocketAsyncEventArgs e)
+        static void AL_DataReceived(object sender, SocketAsyncEventArgs e)
         {
             Socket s = e.UserToken as Socket;
             System.Net.IPEndPoint ep = (System.Net.IPEndPoint)s.RemoteEndPoint;
@@ -53,6 +54,8 @@ namespace DAQ
             // This routine is needed if there are more than one type of instrument.
             // match with port it came from, each connection will have a different port.
             LMInstrument activeInstr = Instruments.Active.MatchByPort(ep.Port);  // dev note: this might be slow, could speed up this by switching to a map rather than a list
+            if (activeInstr == null)
+                activeInstr = (LMInstrument)Instruments.Active.FirstLM();
             bool verbose = gControl.collog.ShouldTrace(LogLevels.Verbose);
             if (verbose)
             {
@@ -62,23 +65,23 @@ namespace DAQ
             {
                 activeInstr.NumProcessedRawDataBuffers++;
 
-                if (verbose) /* diag buffer tracing */
-                {
-                    string temp = string.Format("{0}: bytes {1}, total bytes {2}, LM {3}",
-                                             activeInstr.NumProcessedRawDataBuffers, e.BytesTransferred, numTotalBytes, Instruments.Active.IndexOf(activeInstr));
-                    gControl.collog.TraceEvent(LogLevels.Verbose, 686, temp);
-                }
+                //if (verbose) /* diag buffer tracing */
+                //{
+                    //string temp = string.Format("{0}: bytes {1}, total bytes {2}, LM {3}",
+                    //                         activeInstr.NumProcessedRawDataBuffers, e.BytesTransferred, numTotalBytes, Instruments.Active.IndexOf(activeInstr));
+                    //gControl.collog.TraceEvent(LogLevels.Verbose, 686, temp);
+                //}
 
                 try
                 {
-
                     if (CurState.IsQuitRequested)
                         throw new AnalysisDefs.CancellationRequestedException();
                     else if ((e.BytesTransferred % 2) == 0) // EVEN messages are data.
-             {
+                    {
                         // dev note: file writing is controlled via LiveFileWrite
-                        (activeInstr.file as NCCFile.NCDFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
-
+                        //(activeInstr.file as NCCFile.NCDFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
+                        //(activeInstr.file as NCCFile.ALMMFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
+                        //TODO: ALMM file write
                         try
                         {
                             // this method copies the buffer and sends it on to neutron counting
@@ -97,49 +100,15 @@ namespace DAQ
                     {
                         try
                         {
-                            LMComm.LMMMLingo.Tokens response = LMMMComm.DataPacketResponseMatch(e.Buffer, e.Offset, e.BytesTransferred);
+                            //LMComm.ALMMLingo.Tokens response = ALMMComm.DataPacketResponseMatch(e.Buffer, e.Offset, e.BytesTransferred);
+                            String response = System.Text.Encoding.ASCII.GetString(e.Buffer, 0, e.BytesTransferred);
+                            gControl.collog.TraceEvent(LogLevels.Verbose, 0, string.Format("non-data response received {0}", response));
                             // command parsing here should be as fast as possible because data collection is active and may be hampered by even short delays in this section
                             // it is a status message, the last message of an assay
-                            if (response == LMComm.LMMMLingo.Tokens.statusdata) // dev note: must be odd length and end with '......' or '......' (old style) or else start with 'Status\r\n' (new style Nov. 2010)
-                            {
-                                try // // write the last message to the file.This might be a partial data + last message
-                                {
-                                    (activeInstr.file as NCCFile.NCDFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
-                                    (activeInstr.file as NCCFile.NCDFile).CloseWriter();
-                                }
-                                catch (Exception fex)
-                                {
-                                    if ((activeInstr.file as NCCFile.NCDFile).stream != null)
-                                        gControl.collog.TraceEvent(LogLevels.Error, 642, "{0}: error on close {1}", (activeInstr.file as NCCFile.NCDFile).stream.Name, fex.Message);
-                                }
 
-                                var res = activeInstr.RDT.PassBufferToTheCounters(e.Buffer, e.Offset, e.BytesTransferred);
-                                HandleEndOfCycleProcessing(activeInstr, res);
-                            }
-                            else if (response == LMComm.LMMMLingo.Tokens.tosenddatasize) // this says how many bytes are going to be sent
+                            bool isEnd = GetResponse(sender, response);
+                            if (isEnd)
                             {
-                                numTotalBytes = LMMMComm.ResponseToSendDataSize(e.Buffer, e.Offset, e.BytesTransferred);  // t
-                                gControl.collog.TraceEvent(LogLevels.Verbose, 654, "Expecting " + Convert.ToString(numTotalBytes) + " (to sen)");
-                            }
-                            else if (response == LMComm.LMMMLingo.Tokens.unrecognizeddata) // unrecognized command
-                            {
-                                string temp = LMMMComm.ResponseUnrecoSample(e.Buffer, e.Offset, e.BytesTransferred);
-                                gControl.collog.TraceInformation(temp);
-                            }
-                            else // it might be an odd message with some data tacked on the beginning
-                            {
-                                if (gControl.collectingFileData)
-                                {
-                                    (activeInstr.file as NCCFile.NCDFile).Write(e.Buffer, e.Offset, e.BytesTransferred);
-                                    (activeInstr.file as NCCFile.NCDFile).CloseWriter();
-                                }
-                                if (response == LMComm.LMMMLingo.Tokens.rates) // somehow got a rates block
-                                {
-                                    RatesStatus p = new RatesStatus();
-                                    String received = LMMMComm.NonDataResponse(e.Buffer, e.Offset, e.BytesTransferred);
-                                    LMMMComm.SplitRatesReadResponse(received, ref p);
-                                    gControl.collog.TraceInformation("ReceivingData rates {0} on LM {1}:{2}", p.ToString(), Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId);
-                                }
                                 CurState.State = DAQInstrState.Online;
                                 gControl.collog.TraceInformation("Cycle " + CurState.Measurement.CurrentRepetition + " complete");
                                 if ((CurState.Measurement.CurrentRepetition < CurState.Measurement.RequestedRepetitions) || (CurState.Measurement.RequestedRepetitions == 0))
@@ -148,6 +117,8 @@ namespace DAQ
                                     if (ok)
                                     {
                                         gControl.FireEvent(EventType.ActionInProgress, gControl);
+                                        //Set this for next cycle
+                                        ((LMComm.ALMMController)sender).SetReps(string.Format("{0}, {1}", CurState.Measurement.CurrentRepetition + 1, CurState.Measurement.RequestedRepetitions));
                                         gControl.StartLM_SRAssay();
                                     }
                                     else
@@ -156,9 +127,10 @@ namespace DAQ
                                 else
                                 {
                                     gControl.collog.TraceInformation("All assay cycles completed, but with data in an odd-sized packet");
-                                    bool ok = activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement, last:true);
+                                    bool ok = activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement, last: true);
                                     gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
                                 }
+
                             }
                         }
                         catch (AnalysisDefs.FatalNeutronCountingException fae)  // propagated up from the AnalysisHandler 
@@ -185,16 +157,16 @@ namespace DAQ
             }
             else if (activeInstr.DAQState == DAQInstrState.Online || activeInstr.DAQState == DAQInstrState.HVCalib) // we are not taking data.
             {
-                String received = LMMMComm.NonDataResponse(e.Buffer, e.Offset, e.BytesTransferred);
+                //String received = ALMMComm.NonDataResponse(e.Buffer, e.Offset, e.BytesTransferred);
 
                 if (activeInstr.IsNew())
                 {
                     string iname = String.Empty;
-                    string type = InstrType.LMMM.ToString();
-                    LMMMComm.SplitBroadcastResponse(received, ref type, ref iname, ref activeInstr.id.version);
+                    string type = InstrType.ALMM.ToString();
+                    //ALMMComm.SplitBroadcastResponse(received, ref type, ref iname, ref activeInstr.id.version);
                     activeInstr.id.DetectorId = iname;
                     activeInstr.id.SetSRType(type);
-                    gControl.collog.TraceInformation("The new instrument is " + LMLoggers.LognLM.FlattenChars(received));
+                    //gControl.collog.TraceInformation("The new instrument is " + LMLoggers.LognLM.FlattenChars(received));
                     gControl.collog.TraceInformation(Instruments.All.Count + " instrument(s) online");
                     activeInstr.selected = true;  // this should only be set if there is no UI
                     CurState.State = DAQInstrState.Online;
@@ -203,49 +175,50 @@ namespace DAQ
                 else
                 {
                     // slow parsing in this section is fine because data collection is not occurring
-                    LMComm.LMMMLingo.Tokens response = LMMMComm.ResponseMatchPrefix(received);
-                    if (response == LMComm.LMMMLingo.Tokens.cstatus) //  it is a status readback
+                    //LMComm.ALMMLingo.Tokens response = ALMMComm.ResponseMatchPrefix(received);
+                    string response = System.Text.Encoding.ASCII.GetString(e.Buffer, 0, e.BytesTransferred);
+                    /*if (response == LMComm.ALMMLingo.Tokens.cstatus) //  it is a status readback
                     {
-                        LMMMComm.SplitCStatusResponse(received, ref activeInstr.lmstatus);
+                        ALMMComm.SplitCStatusResponse(received, ref activeInstr.lmstatus);
                         gControl.collog.TraceInformation(
                             "cStatus for LM {0}:{1} is dbg:{2}, leds:{3}, input:{4}, HVset:{5}, HV:{6}, LLD Max:{7}, LLD:{8}, (u1:{9})",
                             Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId, activeInstr.lmstatus.debug, activeInstr.lmstatus.leds, activeInstr.lmstatus.inputPath, activeInstr.lmstatus.setpoint, activeInstr.lmstatus.hv,
                             activeInstr.lmstatus.MaxLLD, activeInstr.lmstatus.LLD, activeInstr.lmstatus.u1);
                     }
-                    else if (response == LMComm.LMMMLingo.Tokens.hvread) // it is a hv readback
+                    else if (response == LMComm.ALMMLingo.Tokens.hvread) // it is a hv readback
                     {
                         int hv = 0;
-                        LMMMComm.SplitHVReadResponse(received, ref hv);
+                        ALMMComm.SplitHVReadResponse(received, ref hv);
                         gControl.collog.TraceInformation("HVread {0} volts for LM {1}:{2}", hv,
                              Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId);
                     }
-                    else if (response == LMComm.LMMMLingo.Tokens.hvcalib) // it is a hv calibration point
+                    else if (response == LMComm.ALMMLingo.Tokens.hvcalib) // it is a hv calibration point
                     {
                         HVControl.HVStatus hvst = new HVControl.HVStatus();
-                        LMMMComm.SplitHVCalibResponse(received, ref hvst);
+                        ALMMComm.SplitHVCalibResponse(received, ref hvst);
                         gControl.AppendHVCalibration(hvst);
                         gControl.collog.TraceInformation("HVcalib for LM {0}:{1} is [setpt:{2}, read:{3},  . . .]",
                               Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId, hvst.HVsetpt, hvst.HVread);
                         gControl.StepHVCalibration();
                     }
-                    else if (response == LMComm.LMMMLingo.Tokens.rates) // it is a rates response
+                    else if (response == LMComm.ALMMLingo.Tokens.rates) // it is a rates response
                     {
                         RatesStatus p = new RatesStatus();
-                        LMMMComm.SplitRatesReadResponse(received, ref p);
+                        ALMMComm.SplitRatesReadResponse(received, ref p);
                         gControl.collog.TraceInformation("Rates {0} on LM {1}:{2}", p.ToString(),
                              Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId);
                     }
-                    else if (response == LMComm.LMMMLingo.Tokens.power) // it is a power status 
+                    else if (response == LMComm.ALMMLingo.Tokens.power) // it is a power status 
                     {
                         PowerStatus p = new PowerStatus();
-                        LMMMComm.SplitPowerReadResponse(received, ref p);
+                        ALMMComm.SplitPowerReadResponse(received, ref p);
                         gControl.collog.TraceInformation("Power AC {0}, Batt {1}, Batt Level {2} on LM {3}:{4}", p.ACPresent, p.batteryPresent, p.batterylevelPct,
                              Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId);
                     }
-                    else if (response == LMComm.LMMMLingo.Tokens.lld) // LLD status
+                    else if (response == LMComm.ALMMLingo.Tokens.lld) // LLD status
                     {
                         int lld = 0;
-                        LMMMComm.SplitLLDReadResponse(received, ref lld);
+                        ALMMComm.SplitLLDReadResponse(received, ref lld);
                         gControl.collog.TraceInformation("LLD {0} on LM {1}:{2}", lld,
                              Instruments.Active.IndexOf(activeInstr), activeInstr.id.DetectorId);
                     }
@@ -258,12 +231,79 @@ namespace DAQ
                             PacketLogSLOW(activeInstr, e);
                         }
                     }
+                }*/
+
+                    bool isEnd = GetResponse(sender, response);
+                    if (isEnd)
+                    {
+                        CurState.State = DAQInstrState.Online;
+                        gControl.collog.TraceInformation("Cycle " + CurState.Measurement.CurrentRepetition + " complete");
+                        if ((CurState.Measurement.CurrentRepetition < CurState.Measurement.RequestedRepetitions) || (CurState.Measurement.RequestedRepetitions == 0))
+                        {
+                            bool ok = activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement);
+                            if (ok)
+                            {
+                                gControl.FireEvent(EventType.ActionInProgress, gControl);
+                                gControl.StartLM_SRAssay();
+                            }
+                            else
+                                gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
+                        }
+                        else
+                        {
+                            gControl.collog.TraceInformation("All assay cycles completed, but with data in an odd-sized packet");
+                            bool ok = activeInstr.RDT.EndOfCycleProcessing(CurState.Measurement, last: true);
+                            gControl.MajorOperationCompleted(); // the overall pend handle used by cmd line 
+                        }
+
+                    }
+
                 }
-                if (verbose) gControl.collog.Flush();
             }
         }
         
 
+        public static bool GetResponse (object sender, string message)
+        {
+            bool res = false;
+            string pat = @"(.*)[=:](.*)";
+            Regex r = new Regex(pat, RegexOptions.IgnoreCase);
+            if (r.IsMatch(message))
+            {
+                Match m = r.Match(message);
+
+                switch (m.Groups[1].Value.ToLower().Trim(' '))
+                {
+                    case ("go:error"):
+                        //We got a send error...cancel and retry. 
+                        LMComm.ALMMController.ReturnCode ret = ((LMComm.ALMMController)sender).Cancel();
+                        if (ret == LMComm.ALMMController.ReturnCode.ALL_GOOD)
+                        ((LMComm.ALMMController)sender).Go();
+                        return false;
+                    case ("go:done"):
+                        gControl.collog.TraceEvent(LogLevels.Verbose, 0, message);
+                        return false;
+                    case ("lfslist"):
+                        //lfs list response
+                        gControl.collog.TraceEvent(LogLevels.Verbose, 0, message);
+                        return false;
+                    case ("rates"):
+                        //rates response
+                        gControl.collog.TraceEvent(LogLevels.Verbose, 0, message);
+                        return false;
+                    case ("listmodedatafileversion"):
+                        //This is the end of the cycle.
+                        gControl.collog.TraceEvent(LogLevels.Verbose, 0, message);
+                        return true;
+                    default:
+                        gControl.collog.TraceEvent(LogLevels.Verbose, 0, string.Format ("unrecognized message:", message));
+                        return res;
+                }
+            }
+            else
+                return res;
+
+        }
          /// <summary>
         /// Checks control state for DAQ continuation, then
         /// If at the end of a cycle
@@ -365,22 +405,26 @@ namespace DAQ
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        static void SL_ClientConnected(object sender, SocketAsyncEventArgs e)
+        static void AL_ClientConnected(object sender, SocketAsyncEventArgs e)
         {
             connections = Interlocked.Increment(ref connections);
-            Socket s = e.UserToken as Socket;
-            System.Net.IPEndPoint ep = (System.Net.IPEndPoint)s.RemoteEndPoint;
-
-            gControl.collog.TraceInformation("New Connection : " + s.RemoteEndPoint.ToString());
-
-            LMInstrument lmi = new LMInstrument(e, ep.Port);
+            LMInstrument lmi = new LMInstrument(e);
+            lmi.id.SRType = InstrType.ALMM;
+            Instruments.All.Clear();
             Instruments.All.Add(lmi);
             // dev note: need a parallel entry in the counting parameters map on the enclosing Measurement for each instrument and it's SR params class instance
 
             // get the status of the instrument
-			LMMMComm.FormatAndSendLMMMCommand(LMComm.LMMMLingo.Tokens.cstatus, 0, Instruments.Active.RankPositionInList(lmi));
+			//ALMMComm.FormatAndSendALMMCommand(LMComm.ALMMLingo.Tokens.cstatus, 0, Instruments.Active.RankPositionInList(lmi));
         }
 
+        static void AL_ClientDisconnected(object sender, SocketAsyncEventArgs e)
+        {
+            connections = Interlocked.Decrement(ref connections);
+            
+            gControl.collog.TraceInformation("Socket disconnected ");
+            // dev note: need a parallel entry in the counting parameters map on the enclosing Measurement for each instrument and it's SR params class instance
+        }
         // used for verbose data logging only
         static string bytestoASCIIchars(byte[] bdata, int len, int max)
         {
@@ -415,8 +459,8 @@ namespace DAQ
                     buffo = activeInstr.NumProcessedRawDataBuffers;
                 eos += activeInstr.DAQState.ToString();
             }
-            gControl.collog.TraceEvent(LogLevels.Verbose, 696, "{0}:{1} {2} bytes, state {3}", buffo, packets, e.BytesTransferred, eos);
-            gControl.collog.TraceEvent(LogLevels.Verbose, 697, ">>>" + tesmp);
+           // gControl.collog.TraceEvent(LogLevels.Verbose, 696, "{0}:{1} {2} bytes, state {3}", buffo, packets, e.BytesTransferred, eos);
+           // gControl.collog.TraceEvent(LogLevels.Verbose, 697, ">>>" + tesmp);
         }
     }
 }

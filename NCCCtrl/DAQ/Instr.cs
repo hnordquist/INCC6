@@ -27,6 +27,7 @@ IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O
 */
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Sockets;
 using Analysis;
 using AnalysisDefs;
@@ -88,9 +89,9 @@ namespace Instr
         {
             return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.MCA527; });
         }
-		public bool HasLMMM()
+		public bool HasALMM()
         {
-            return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.LMMM; });
+            return Exists(i => { return (i is LMInstrument) &&  i.id.SRType == InstrType.ALMM; });
         }
         public bool HasUSBBasedLM()
         {
@@ -443,6 +444,12 @@ namespace Instr
             if (RDT == null)
             {
                 RDT = new LMRawDataTransform();
+                if (RDT.State.Sup == null)
+                {
+                    RDT.State.Sup = new Supporter();
+                    RDT.State.Sup.SetLogger(NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis));
+                }
+                RDT.State.Sup.ResetCompletely(closeCounters:true);
                 RDT.Init(datalog == null ? NC.App.Loggers.Logger(LMLoggers.AppSection.Data) : datalog, 
                     alog == null ? NC.App.Loggers.Logger(LMLoggers.AppSection.Analysis) :  alog );
 
@@ -460,7 +467,7 @@ namespace Instr
         {
             id = new DataSourceIdentifier(det.Id);
             lmstatus = new LMInstrStatus();
-            file = new NCDFile();
+            file = new ALMMFile();
             file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             Init(null,null);
 
@@ -471,15 +478,19 @@ namespace Instr
         /// </summary>
         /// <param name="e">socket event struct</param>
         /// <param name="EndpointPort">the source port</param>
-        public LMInstrument(SocketAsyncEventArgs e, int EndpointPort)
+        public LMInstrument(SocketAsyncEventArgs e)
             : base()
         {
             lmstatus = new LMInstrStatus();
             instrSocketEvent = e;
-            port = EndpointPort;
+            port = ((IPEndPoint)e.RemoteEndPoint).Port;
             id.DetectorId = "new"; // always this special string, see IsNew
-            id.SetSRType("LMMM"); // this constructor should only be called for LMMM ethernet enabled devices
-            file = new NCDFile();
+            id.FullConnInfo = new LMConnectionInfo();
+            id.SetSRType("ALMM"); // this constructor should only be called for LMMM ethernet enabled devices
+
+            ((LMConnectionInfo)id.FullConnInfo).NetComm.ipaddress = ((IPEndPoint)e.RemoteEndPoint).Address;
+            ((LMConnectionInfo)id.FullConnInfo).Port = port.ToString();
+            file = new ALMMFile();
             file.Log = NC.App.Loggers.Logger(LMLoggers.AppSection.Collect);
             Init(null,null);
 

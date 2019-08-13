@@ -235,7 +235,7 @@ namespace NCC
                     s += " HV "; // todo: finish this and clean up ActionInProgressStatusTimerCB impl
                     break;
                 case NCCAction.Assay:
-                    if (asy.cpss.dsid.SRType == InstrType.PTR32 || asy.cpss.dsid.SRType == InstrType.LMMM)
+                    if (asy.cpss.dsid.SRType == InstrType.PTR32 || asy.cpss.dsid.SRType == InstrType.ALMM)
                     {
                         s += String.Format("; cycle {0}, rate {1:F4}, totals {2}, hits {3}, (IO {4}) ",  // some cycle info
                             asy.cpss.seq, asy.cpss.singles, asy.cpss.totals, asy.cpss.totalevents, asy.cpss.daqStatus);
@@ -339,7 +339,7 @@ namespace NCC
                     numProcessedRawDataBuffers = lm.NumProcessedRawDataBuffers;
                     maxValuesInBuffer = lmrdtstate.maxValuesInBuffer;
                     lastValue = lmrdtstate.lastValue;
-                    wraparoundOffset = lmrdtstate.wraparoundOffset;
+                    wraparoundOffset = (ulong)lmrdtstate.wraparoundOffset;
                     hitsPerChn = lmrdtstate.hitsPerChn;
                 }
                 else if (inst is SRInstrument)

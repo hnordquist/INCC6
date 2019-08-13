@@ -237,18 +237,38 @@ namespace AnalysisDefs
                         sec = new INCCStyleSection(null, 1, INCCStyleSection.ReportSection.MultiColumn);
                         sec.AddHeader(String.Format("{0} cycle DTC rate data",meas.AcquireState.well_config == WellConfiguration.Active?"Active":"Passive"));  // section header
 
-                        int[] crawidths = new int[] { 5, 13, 13, 13, 13, 10 };
-                            sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "Mass", "QC Tests" }, crawidths);
-
-                            foreach (Cycle cyc in meas.Cycles)
+                        int[] crawidths;
+                            if (meas.MeasOption == AssaySelector.MeasurementOption.verification)
                             {
-                                if (cyc.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity)) > 0)                            // if no results on the cycle, these map indexers throw
-                                {
-                                    MultiplicityCountingRes mcr = (MultiplicityCountingRes)cyc.CountingAnalysisResults[moskey.MultiplicityParams];
-                                    sec.AddCycleColumnRow(cyc.seq,
-                                         // Using the corrected rates!
-                                         new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v, mcr.mass/*Mass*/ },
-                                          meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
+                                //Only add mass for verf
+                                crawidths = new int[] { 5, 13, 13, 13, 13, 10 };
+                                sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "Mass", "QC Tests" }, crawidths);
+                            }
+                            else
+                            {
+                                crawidths = new int[] { 5, 13, 13, 13, 10 };
+                                sec.AddColumnRowHeader(new string[] { "Cycle", "Singles", "Doubles", "Triples", "QC Tests" }, crawidths);
+                            }
+                        
+                        foreach (Cycle cyc in meas.Cycles)
+                        {
+                            if (cyc.CountingAnalysisResults.GetResultsCount(typeof(Multiplicity)) > 0)                            // if no results on the cycle, these map indexers throw
+                            {
+                                MultiplicityCountingRes mcr = (MultiplicityCountingRes)cyc.CountingAnalysisResults[moskey.MultiplicityParams];
+                                    if (meas.MeasOption == AssaySelector.MeasurementOption.verification)
+                                    {
+                                        sec.AddCycleColumnRow(cyc.seq,
+                                        // Using the corrected rates!
+                                        new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v, mcr.mass/*Mass*/ },
+                                        meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
+                                    }
+                                    else
+                                    {
+                                        sec.AddCycleColumnRow(cyc.seq,
+                                        // Using the corrected rates!
+                                        new double[] { mcr.DeadtimeCorrectedSinglesRate.v, mcr.DeadtimeCorrectedDoublesRate.v, mcr.DeadtimeCorrectedTriplesRate.v},
+                                        meas.AcquireState.qc_tests ? cyc.QCStatus(moskey.MultiplicityParams).INCCString() : "Off", crawidths);
+                                    }
                                 }
                             }
                         break;
@@ -321,7 +341,7 @@ namespace AnalysisDefs
                         {
                             sec = new INCCStyleSection(null, 1);
                             sec.SetFPCurrentFormatPrecision(4);
-                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, meas.Logger, N.App.AppContext.INCCParity);
+                            Isotopics curiso = Isotopics.update_isotopics(1.0, meas.MeasDate, meas.Isotopics, meas.logger, N.App.AppContext.INCCParity);
                             if (curiso == null)
                             {
                                 curiso = new Isotopics();
@@ -865,13 +885,6 @@ namespace AnalysisDefs
             r.Add(3, value.ToString("HH:mm:ss"));
             Add(r);
         }
-        public void AddDateOnlyRow(string label, DateTime value)
-        {
-            Row r = new Row();
-            AddPaddedLabel(r, label);
-            r.Add(1, value.ToString(" yy.MM.dd"));
-        }
-
         public void AddDateTimeRow(string label, DateTimeOffset value)
         {
             Row r = new Row();

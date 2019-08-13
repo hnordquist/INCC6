@@ -74,7 +74,7 @@ namespace NewUI
 			}
 
 			EditBtn.Visible = false;
-			if (det.Id.SRType < InstrType.NPOD) {
+			if (det.Id.SRType < InstrType.ALMM) {
 
 				Refre_Click(null, null);
 				SetBaudRateSelectorVisibility(det.Id.SRType.IsSRWithVariableBaudRate());
@@ -240,7 +240,7 @@ namespace NewUI
             bool mod = false;
             
 
-            if (det.Id.SRType < InstrType.NPOD)
+            if (det.Id.SRType < InstrType.ALMM)
             {
                 string c = (String)(ShiftRegisterSerialPortComboBox.SelectedItem);
 				//"COM PORT nnn (some text)"

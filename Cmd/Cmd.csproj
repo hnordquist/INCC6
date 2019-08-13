@@ -79,14 +79,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Defs">
-      <HintPath>..\deployment\Defs.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NCCCore, Version=6.0.1.15, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\INCC6\deployment\NCCCore.dll</HintPath>
-    </Reference>
     <Reference Include="RepDB">
       <HintPath>..\deployment\RepDB.dll</HintPath>
     </Reference>
@@ -140,6 +133,14 @@
     <Content Include="rel.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\NCCCore\NCCCore.csproj">
+      <Project>{00572805-e746-49f5-aa40-25313e3a87e3}</Project>
+      <Name>NCCCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Defs\Defs.csproj">
+      <Project>{56b09dac-7da7-4925-9057-54b736bb82b8}</Project>
+      <Name>Defs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NCCCtrl\NCCCtrl.csproj">
       <Project>{c4393a93-abf7-448c-a3eb-4f0e5a1f7376}</Project>
       <Name>NCCCtrl</Name>

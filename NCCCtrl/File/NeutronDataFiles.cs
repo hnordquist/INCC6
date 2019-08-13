@@ -430,9 +430,102 @@ namespace NCCFile
 
     }
 
+    //*.bin and *.bin.lmx for ALMM data
+
+    public class ALMMFile : NeutronDataFile
+    {
+        public BinaryWriter writer;
+        public BinaryReader reader;
+
+        public TextWriter Twriter;//For lmx which is a file summary for the binary file
+        public TextReader Treader;
+
+        public long FirstEventTimeInTics;
+        public ulong TotalDups;
+        public ulong TotalEvents;
+        public long LastTimeInTics;
+
+        public ALMMFile()
+        {
+            FirstEventTimeInTics = 0; TotalDups = 0; TotalEvents = 0; LastTimeInTics = 0;
+        }
+
+        public override bool OpenForReading(string filename = null)
+        {
+            try
+            {
+                reader = new BinaryReader(new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+            }
+            catch (ArgumentException argex)
+            {
+                Log.TraceEvent(LogLevels.Warning, 0, "Argument exception opening file for reading:" + argex.Message + filename);
+            }
+            return reader != null;
+        }
+
+        public void CloseReader()
+        {
+            if (Log != null) Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
+            try
+            {
+                if (writer != null)
+                {
+                    writer.Flush();
+                    writer.Close();
+                }
+                CloseStream();
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+        }
+
+        public override bool CreateForWriting()
+        {
+            bool ok = base.CreateForWriting();
+            if (ok)
+            {
+                writer = new BinaryWriter(stream);
+            }
+            return ok;
+        }
+
+        public override void ConstructFullPathName(string opt = "")
+        {
+            Filename = PrefixPath + "_" + Num + opt; //dev note: good to provide external config approach to specify output file pattern
+            // opt is really id
+        }
+
+        public void Write(byte[] buffer, int index, int count)
+        {
+            if (writer != null)
+                writer.Write(buffer, index, count);
+        }
+
+        public override void CloseWriter()
+        {
+            base.CloseWriter();
+            if (Log != null) Log.TraceEvent(LogLevels.Verbose, 117, "Closing writer for " + Filename);
+            try
+            {
+                if (writer != null)
+                {
+                    writer.Flush();
+                    writer.Close();
+                }
+                CloseStream();
+            }
+            catch (Exception e)
+            {
+                if (Log != null) Log.TraceException(e);
+            }
+        }
+    }
+
     ///  dev note: we are assuming the list is sorted during enumeration based on file naming scheme 
     ///  dev note: regex string sPattern = "^\\d{4}_\\d{2}_\\d{2}_\\d{6}{\[\\\d{3}]}\.ncd$";
-    public class NCDFile : NeutronDataFile
+        public class NCDFile : NeutronDataFile
     {
 
         public BinaryWriter writer;

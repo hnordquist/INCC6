@@ -1906,7 +1906,7 @@ namespace AnalysisDefs
         public List<INCCAnalysisParams.cm_pu_ratio_rec> GetList()
         {
             object o = GetAll();  // force load of local binding list
-            return cm_pu_ratio.ToList();
+            return cm_pu_ratio.ToList<INCCAnalysisParams.cm_pu_ratio_rec>();
         }
 
         BindingList<INCCAnalysisParams.cm_pu_ratio_rec> GetAll()
@@ -3368,9 +3368,9 @@ namespace AnalysisDefs
             if (lmlimited == null)
             {
                 lmlimited = new List<INCCDB.Descriptor>();
-                INCCDB.Descriptor d = new INCCDB.Descriptor("LMMM", "LMMM (LANL)"); lmlimited.Add(d);
+                INCCDB.Descriptor d = new INCCDB.Descriptor("ALMM", "ALMM (LANL)"); lmlimited.Add(d);
                 d = new INCCDB.Descriptor("PTR32", "PTR-32"); lmlimited.Add(d);
-                d = new INCCDB.Descriptor("MCA527", "GBS Elektronik GmbH"); lmlimited.Add(d);
+               // d = new INCCDB.Descriptor("MCA527", "GBS Elektronik GmbH"); lmlimited.Add(d);
              }
             return lmlimited;
         }
@@ -3557,25 +3557,15 @@ namespace AnalysisDefs
                                 lm.DeviceConfig.LEDs = DB.Utils.DBInt32(drl["leds"]);
                                 lm.DeviceConfig.HV = DB.Utils.DBInt32(drl["hv"]);
                                 lm.DeviceConfig.LLD = DB.Utils.DBInt32(drl["LLD"]); // alias for VoltageTolerance on PTR32 and MCA527
-                                lm.DeviceConfig.Debug = DB.Utils.DBInt32(drl["debug"]);
-                                lm.DeviceConfig.Input = DB.Utils.DBInt32(drl["input"]);
                                 try
                                 {
                                     lm.DeviceConfig.HVTimeout = DB.Utils.DBInt32(drl["hvtimeout"]);
                                 }
                                 catch (Exception) { }
-                                lm.NetComm.Broadcast = DB.Utils.DBBool(drl["broadcast"]);
-                                lm.NetComm.LMListeningPort = DB.Utils.DBInt32(drl["broadcastport"]);
-                                lm.NetComm.Port = DB.Utils.DBInt32(drl["port"]);
-                                lm.NetComm.Subnet = (string)(drl["subnet"]);
-                                lm.NetComm.Wait = DB.Utils.DBInt32(drl["wait"]);
 
-                                lm.NetComm.NumConnections = DB.Utils.DBInt32(drl["numConnections"]);
+                                lm.NetComm.Port = DB.Utils.DBInt32(drl["port"]);
                                 lm.NetComm.ReceiveBufferSize = DB.Utils.DBInt32(drl["receiveBufferSize"]);
-                                lm.NetComm.ParseBufferSize = DB.Utils.DBUInt32(drl["parseBufferSize"]);
-                                lm.NetComm.UseAsynchAnalysis = DB.Utils.DBBool(drl["useAsyncAnalysis"]);
-                                lm.NetComm.UseAsynchFileIO = DB.Utils.DBBool(drl["useAsyncFileIO"]);
-                                lm.NetComm.UsingStreamRawAnalysis = DB.Utils.DBBool(drl["streamRawAnalysis"]);
+
 
                                 // These values are used for each virtual SR analysis when doing an INCC or LM calc
                                 // For each virtual SR used, the values are pulled from the LMMultiplicity table at the point the analysis occurs. 
@@ -5113,21 +5103,22 @@ namespace AnalysisDefs
             }
             if (dr.Id.SRType.IsListMode())
             {
+                //TODO: Make sure we can store ALMM data in DB
                 DB.LMNetCommParams lnnc = new DB.LMNetCommParams(db.db);
                 LMConnectionInfo info = (LMConnectionInfo)dr.Id.FullConnInfo;
-                DB.ElementList lmparams = info.NetComm.ToDBElementList();
+                //DB.ElementList lmparams = info.NetComm.ToDBElementList();
 
                 if (!lnnc.Has(dr.Id.DetectorId))
                 {
-                    long a = lnnc.CreateNetComm(l, lmparams, db.db);
-                    a = lnnc.CreateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34034, MakeIdFrag(a) + " detector LM params for {0}", dr.Id.DetectorId);
+                    //long a = lnnc.CreateNetComm(l, lmparams, db.db);
+                    //a = lnnc.CreateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
+                    //NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34034, MakeIdFrag(a) + " detector LM params for {0}", dr.Id.DetectorId);
                 }
                 else
                 {
-                    bool b = lnnc.UpdateNetComm(l, lmparams, db.db);
-                    b = lnnc.UpdateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
-                    NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34035, UpdateFrag(b) + " detector LM params for {0}", dr.Id.DetectorId);
+                    //bool b = lnnc.UpdateNetComm(l, lmparams, db.db);
+                    //b = lnnc.UpdateCfg(l, info.DeviceConfig.ToDBElementList(), db.db);
+                    //NC.App.Pest.logger.TraceEvent(LogLevels.Verbose, 34035, UpdateFrag(b) + " detector LM params for {0}", dr.Id.DetectorId);
                 }
 
             }

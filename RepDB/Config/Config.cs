@@ -71,25 +71,25 @@ namespace NCCConfig
 
         // cmd line overrides of default LM params, used to replace DB defaults for new LM definitions generated from cmd line only
         // the code has LM HW and Conn defaults used to create new LM detector defs. These values replace the code defaults.
-        protected LMMMNetComm NetComm
+        protected ALMMNetComm NetComm
         {
             get { return netcomm; }
             set { netcomm = value; }
         }
 
-        protected LMMMConfig LMMM
+        protected ALMMConfig ALMM
         {
-            get { return lmmm; }
-            set { lmmm = value; }
+            get { return almm; }
+            set { almm = value; }
         }
 
 
 
         private CmdConfig cmd;
-        LMMMNetComm netcomm;
+        ALMMNetComm netcomm;
         LMAcquireConfig acq;
         AppContextConfig app;
-        LMMMConfig lmmm;
+        ALMMConfig almm;
         DBConfig db;
 
         public string AppName
@@ -162,8 +162,8 @@ namespace NCCConfig
             // sets hardcoded defaults for all values
             app = appctx;
             acq = new LMAcquireConfig(_parms);
-            netcomm = new LMMMNetComm(_parms);
-            lmmm = new LMMMConfig(_parms);
+            netcomm = new ALMMNetComm(_parms);
+            almm = new ALMMConfig(_parms);
             cmd = new CmdConfig(_parms);            
         }
 
@@ -714,6 +714,7 @@ namespace NCCConfig
             resetVal(NCCFlags.dbDataAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.testDataFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.ncdFileAssay, false, typeof(bool), retain: false);
+            resetVal(NCCFlags.ALMMFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.reviewFileAssay, false, typeof(bool), retain: false);
             resetVal(NCCFlags.opStatusPktInterval, (uint)128, typeof(uint)); /* every 1Mb, or 128 8192Kb, socket packet receipts, get the status from the analyzes, */
             resetVal(NCCFlags.opStatusTimeInterval, (uint)1000, typeof(uint)); /* status poll timer fires every 1000 milliseconds */
@@ -866,6 +867,11 @@ namespace NCCConfig
         {
             get { return (bool)getVal(NCCFlags.ncdFileAssay); }
             set { MutuallyExclusiveFileActions(NCCFlags.ncdFileAssay, value); }
+        }
+        public bool ALMMFileAssay
+        {
+            get { return (bool)getVal(NCCFlags.ALMMFileAssay); }
+            set { MutuallyExclusiveFileActions(NCCFlags.ALMMFileAssay, value); }
         }
         public bool PTRFileAssay
         {
@@ -1168,6 +1174,7 @@ namespace NCCConfig
             if (val)
             {
                 setVal(NCCFlags.ncdFileAssay, false);
+                setVal(NCCFlags.ALMMFileAssay, false);
                 setVal(NCCFlags.sortPulseFile, false);
                 setVal(NCCFlags.filterLMOutliers, false);
                 setVal(NCCFlags.INCCXfer, false);
@@ -1195,6 +1202,7 @@ namespace NCCConfig
                 (bool)getVal(NCCFlags.pulseFileAssay) ||
                 (bool)getVal(NCCFlags.filterLMOutliers) ||
                 (bool)getVal(NCCFlags.ncdFileAssay) ||
+                (bool)getVal(NCCFlags.ALMMFileAssay)||
                 (bool)getVal(NCCFlags.sortPulseFile);
         }
 
@@ -1254,9 +1262,9 @@ namespace NCCConfig
 				else if (DatazFileAssay)
 					x[ix++] = ("  use Dataz (e.g. MCSR) files" + fis);
 				else if (NCDFileAssay)
-					x[ix++] = ("  use LMMM NCD files" + fis);
+					x[ix++] = ("  use ALMM NCD files" + fis);
 				else
-					x[ix++] = ("  (default) use LMMM NCD files" + fis);
+					x[ix++] = ("  (default) use ALMM NCD files" + fis);
 			}
 			if (!INCCXfer)
             {
@@ -1338,142 +1346,61 @@ namespace NCCConfig
         }
     }
 
-    public class LMMMNetComm : ConfigHelper
+    public class ALMMNetComm : ConfigHelper
     {
 
-        private const string defsubnet = "169.254.255.255";
-        public IPAddress subnetip;
+        private const string ip = "169.254.30.30";
+        public IPAddress ipaddress;
         public bool validip = false;
 
-        public LMMMNetComm()
+        public ALMMNetComm()
         {
+            IPAddress.TryParse(ip, out ipaddress);
         }
-        public LMMMNetComm(LMMMNetComm src)
+        public ALMMNetComm(ALMMNetComm src)
         {
             _parms = (Hashtable)src._parms.Clone();
-            LMListeningPort = src.LMListeningPort; Broadcast = src.Broadcast; Port = src.Port; Wait = src.Wait; Subnet = String.Copy(src.Subnet);
-            UseAsynchAnalysis = src.UseAsynchAnalysis; UseAsynchFileIO = src.UseAsynchFileIO; NumConnections = src.NumConnections; ReceiveBufferSize = src.ReceiveBufferSize;
-            UsingStreamRawAnalysis = src.UsingStreamRawAnalysis; ParseBufferSize = src.ParseBufferSize;
+            ipaddress = src.ipaddress; Port = src.Port; ReceiveBufferSize = src.ReceiveBufferSize;LongWaitTime = src.LongWaitTime; CmdWaitTime = src.CmdWaitTime;
         }
-        public LMMMNetComm(Hashtable _parms)
+        public ALMMNetComm(Hashtable _parms)
         {
             this._parms = _parms;
-            resetVal(NCCFlags.numConnections, 8, typeof(int));
             resetVal(NCCFlags.receiveBufferSize, 8192, typeof(int));
-            resetVal(NCCFlags.parseBufferSize, (uint)50, typeof(uint)); // 50 MB
-            resetVal(NCCFlags.useAsyncFileIO, false, typeof(bool));
-            resetVal(NCCFlags.useAsyncAnalysis, false, typeof(bool));
-            resetVal(NCCFlags.streamRawAnalysis, true, typeof(bool));
-            resetVal(NCCFlags.broadcast, true, typeof(bool));
             resetVal(NCCFlags.port, 5011, typeof(int));
-            resetVal(NCCFlags.broadcastport, 5000, typeof(int));
-            resetVal(NCCFlags.subnet, defsubnet, typeof(string));
-            resetVal(NCCFlags.wait, 500, typeof(int));
-            validip = IPAddress.TryParse(defsubnet, out subnetip);
+            resetVal(NCCFlags.longwait, 250, typeof(int));
+            resetVal(NCCFlags.cmdwait, 30, typeof(int));
+            validip = IPAddress.TryParse(ip, out ipaddress);
         }
-        public bool UseAsynchAnalysis
+        public int LongWaitTime
         {
-            get { return (bool)getVal(NCCFlags.useAsyncAnalysis); }
-            set { setVal(NCCFlags.useAsyncAnalysis, value); }
+            get { return (int)getVal(NCCFlags.longwait); }
+            set { setVal(NCCFlags.longwait, value); }
         }
-        public bool UseAsynchFileIO
+        public int CmdWaitTime
         {
-            get { return (bool)getVal(NCCFlags.useAsyncFileIO); }
-            set { setVal(NCCFlags.useAsyncFileIO, value); }
-        }
-        public int NumConnections
-        {
-            get { return (int)getVal(NCCFlags.numConnections); }
-            set { setVal(NCCFlags.numConnections, value); }
+            get { return (int)getVal(NCCFlags.cmdwait); }
+            set { setVal(NCCFlags.cmdwait, value); }
         }
         public int ReceiveBufferSize
         {
             get { return (int)getVal(NCCFlags.receiveBufferSize); }
             set { setVal(NCCFlags.receiveBufferSize, value); }
         }
-        public uint ParseBufferSize
-        {
-            get { return (uint)getVal(NCCFlags.parseBufferSize); }
-            set
-            {
-                if (value > 1024) value = 512;  // let's not go overboard LOL
-                if (value < 1) value = 1;  // let's not go underboard LOL
-                setVal(NCCFlags.parseBufferSize, value);
-            }
-        }
-
-        public bool UsingStreamRawAnalysis
-        {
-            get { return (bool)getVal(NCCFlags.streamRawAnalysis); }
-            set { setVal(NCCFlags.streamRawAnalysis, value); }
-        }
-        public uint StreamEventCount
-        {
-            get
-            {
-                uint v = (uint)getVal(NCCFlags.parseBufferSize);
-                return (v * 1024 * 1024) / 8;
-            }
-        }
-        public int LMListeningPort
-        {
-            get { return (int)(getVal(NCCFlags.broadcastport)); }
-            set
-            {
-                setVal(NCCFlags.broadcastport, value);
-            }
-        }
-
-        public bool Broadcast
-        {
-            get { return (bool)(getVal(NCCFlags.broadcast)); }
-            set { setVal(NCCFlags.broadcast, value); }
-        }
-
         public int Port
         {
             get { return (int)(getVal(NCCFlags.port)); }
             set { setVal(NCCFlags.port, value); }
-        }
-        public int Wait
-        {
-            get { return (int)(getVal(NCCFlags.wait)); }
-            set { setVal(NCCFlags.wait, value); }
-        }
-        public string Subnet
-        {
-            get { return (string)(getVal(NCCFlags.subnet)); }
-            set
-            {
-                setVal(NCCFlags.subnet, value);
-                validip = IPAddress.TryParse(value, out subnetip);
-                if (!validip)
-                {
-                    validip = IPAddress.TryParse(defsubnet, out subnetip);
-                }
-            }
         }
 
         public string[] ToLines()
         {
             string[] x = new string[100];
             int ix = 0;
-            x[ix++] = "  LMMM subnet: " + Subnet;
-            x[ix++] = "  LMMM sending port: " + Port;
-            x[ix++] = "  LMMM broadcast response wait delay: " + Wait;
-            x[ix++] = "  LMMM broadcast endpoint port: " + LMListeningPort;
-            x[ix++] = (Broadcast ? "  LMMM broadcast go" : "  LMMM synchronous start");
-            x[ix++] = "  LMMM connections: " + NumConnections;
-            x[ix++] = "  LMMM TCP/IP receive buffer: " + ReceiveBufferSize + " bytes";
-            x[ix++] = "  event processing buffer: " + ParseBufferSize + " MB (1024*1024)";
-            if (UsingStreamRawAnalysis)
-                x[ix++] = "  neutron counting event block count: " + StreamEventCount + " (" + StreamEventCount / (1024 * 1024) + " MB events)";
-            else
-                x[ix++] = "  using single event neutron counting feed";
-            if (UseAsynchFileIO)
-                x[ix++] = "  asynch file writer task enabled";
-            if (UseAsynchAnalysis)
-                x[ix++] = "  asynch analysis task enabled";
+            x[ix++] = "  ALMM IP: " + ipaddress.ToString();
+            x[ix++] = "  ALMM port: " + Port;
+            x[ix++] = "  ALMM buffer: " + ReceiveBufferSize + " bytes";
+            x[ix++] = "  ALMM long wait time: " + LongWaitTime + " ms";
+            x[ix++] = "  ALMM command wait time: " + CmdWaitTime + " ms";
             Array.Resize(ref x, ix);
             return x;
         }
@@ -1490,42 +1417,30 @@ namespace NCCConfig
         }
     }
 
-    public class LMMMConfig : ConfigHelper
+    public class ALMMConfig : ConfigHelper
     {
-        public LMMMConfig()
+        public ALMMConfig()
         {
         }
 
-        public LMMMConfig(LMMMConfig src)
+        public ALMMConfig(ALMMConfig src)
         {
             _parms = (Hashtable)src._parms.Clone();
-            LEDs = src.LEDs; Input = src.Input; Debug = src.Debug; HV = src.HV; LLD = src.LLD; HVTimeout = src.HVTimeout;
+            LEDs = src.LEDs; HV = src.HV; HVTimeout = src.HVTimeout; LLD = src.LLD;
         }
 
-        public LMMMConfig(Hashtable _parms)
+        public ALMMConfig(Hashtable _parms)
         {
             this._parms = _parms;
             resetVal(NCCFlags.leds, 1, typeof(int));
-            resetVal(NCCFlags.debug, 0, typeof(int));
             resetVal(NCCFlags.hv, 1650, typeof(int));
             resetVal(NCCFlags.LLD, 500, typeof(int));
             resetVal(NCCFlags.hvtimeout, 120, typeof(int));
-            resetVal(NCCFlags.input, 1, typeof(int));
         }
         public int LEDs
         {
             get { return (int)getVal(NCCFlags.leds); }
             set { setVal(NCCFlags.leds, value); }
-        }
-        public int Input
-        {
-            get { return (int)getVal(NCCFlags.input); }
-            set { setVal(NCCFlags.input, value); }
-        }
-        public int Debug
-        {
-            get { return (int)getVal(NCCFlags.debug); }
-            set { setVal(NCCFlags.debug, value); }
         }
         public int HV
         {
@@ -1880,7 +1795,7 @@ namespace NCCConfig
             string[] x = new string[100];
             int ix = 0;
 			if (c.LM >= 0)
-				x[ix++] = "  LMMM LM #: " + c.LM;
+				x[ix++] = "  ALMM LM #: " + c.LM;
             x[ix++] = "  annotation message: " + "'" + c.Message + "'";
             //x[ix++] = "  raw NCD file location: " + (cfg == null ? c.Raw : cfg.Raw); fix lameness
             //x[ix++] = "  results file location: " + (cfg == null ? c.Results : cfg.Results);

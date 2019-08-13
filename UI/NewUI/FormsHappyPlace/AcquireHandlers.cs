@@ -426,6 +426,19 @@ namespace NewUI
                         dr = UIIntegration.GetUsersFilesFolder("Select NCD files or folder", NC.App.AppContext.FileInput, "LMMM NCD", "ncd");
                     }
                     break;
+                case ConstructedSource.ALMMFile:
+                    Integ.BuildMeasurement(ap, det, mo);
+                    NC.App.AppContext.ALMMFileAssay = true;
+                    UIIntegration.Controller.file = true;
+                    if (det.ListMode || NC.App.Opstate.Measurement.MeasOption.IsListMode())
+                    {
+                        dr = (new LMAcquire(ap, det, fromINCC5Acq: true)).ShowDialog();  // show LM-relevant acquire-style settings for modification or confirmation
+                    }
+                    else
+                    {
+                        dr = UIIntegration.GetUsersFilesFolder("Select ALMM files or folder", NC.App.AppContext.FileInput, "ALMM bin", "bin");
+                    }
+                    break;
                 case ConstructedSource.SortedPulseTextFile:
 					Integ.BuildMeasurement(ap, det, mo);
                     NC.App.AppContext.PulseFileAssay = true;

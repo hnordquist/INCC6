@@ -91,7 +91,7 @@ namespace NewUI
             this.efficiency.Text = sr.efficiency.ToString();
             this.hv.Text = sr.highVoltage.ToString();
             this.gatelength.Text = sr.gateLengthMS.ToString();
-            if (d.Id.SRType < InstrType.NPOD)
+            if (d.Id.SRType < InstrType.ALMM)
             {
                 COMvNetLabel.Content = "Serial Port";
                 string cur = "COM" + d.Id.SerialPort.ToString();

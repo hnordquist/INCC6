@@ -36,6 +36,7 @@ using AnalysisDefs;
 using DetectorDefs;
 using NCCReporter;
 using Instr;
+
 namespace LMComm
 {
 
@@ -45,42 +46,52 @@ namespace LMComm
     // They support cmd string to operation mapping with smarts for full token expansion and replacement
     // They also wrap the physical send of final constructed command strings 
     // They also do the string to token matching and deconstruction of return strings for use in the Receive/Accept handler
-    public class TalkToLMMMM
+    public class TalkToALMM
     {
 
-        LMMMLingo cmdprocessor;
-        Server _LMServer = null;
+        //ALMMLingo cmdprocessor;
+        //ALMMLingo cmdprocessor;
+        ALMMController almmctrl;
+        //Server _LMServer = null;
 
-        public Server LMServer
+        /*public Server LMServer
         {
           get { return _LMServer; }
           set { _LMServer = value; }
+        }*/
+        public ALMMController ALMMCtrl
+        {
+            get { return almmctrl; }
+            set { almmctrl = value; }
+
         }
         //Config cfg;
-       LMLoggers.LognLM commlog = null;
+        LMLoggers.LognLM commlog = null;
 
-        public TalkToLMMMM(LMLoggers.LognLM logger)
+        public TalkToALMM(LMLoggers.LognLM logger)
         {
-            cmdprocessor = new LMMMLingo(); // same for cfg copy
-            
+            //cmdprocessor = new ALMMLingo(); // same for cfg copy
+
             commlog = logger;
-            cmdprocessor.CommLog = logger;
+            //cmdprocessor = new ALMMLingo();
+            almmctrl = new ALMMController();
+            //cmdprocessor.CommLog = logger;
         }
 
 
-        internal void CommandPromptMatchPrefix(string input, ref LMMMLingo.OpDesc op)
+        /*internal void CommandPromptMatchPrefix(string input, ref ALMMLingo.OpDesc op)
         {
             cmdprocessor.CommandPromptMatchPrefix(input, ref op);
         }
 
         // string response expected, called on data received while in Online or HVClaib DAQ state
-        public LMMMLingo.Tokens ResponseMatchPrefix(string received)
+        public ALMMLingo.Tokens ResponseMatchPrefix(string received)
         {
             return cmdprocessor.ResponseMatchPrefix(received);
         }
 
         // an arbitrary byte string is contained in this response because this is called on data received while in the ReceivingData DAQ state
-        public LMMMLingo.Tokens DataPacketResponseMatch(byte[] buffer, int offset, int bytesTransferred)
+        public ALMMLingo.Tokens DataPacketResponseMatch(byte[] buffer, int offset, int bytesTransferred)
         {
             return cmdprocessor.DataPacketResponseMatch(buffer, offset, bytesTransferred);
         }
@@ -131,7 +142,7 @@ namespace LMComm
         }
 
         // extract the single integer arg if there, mark bad if expected and not there
-        bool ParsePrompt(string line, LMMMLingo.OpDesc cmdt, ref Int32 res)
+        bool ParsePrompt(string line, ALMMLingo.OpDesc cmdt, ref Int32 res)
         {
             res = 0;
             bool good = !cmdt.needsArg;
@@ -139,10 +150,11 @@ namespace LMComm
             if (cmdt.needsArg && temp.Count() > 1)
             {
                 good = Int32.TryParse(temp[1], out res);
-                if (!good && cmdt.tok == LMMMLingo.Tokens.assay)
-                {
-                    good = AssaySelector.AssayTypeConv(temp[1], out res);
-                }
+                //no assay command now
+                //if (!good && cmdt.tok == ALMMLingo.Tokens.assay)
+               // {
+                //    good = AssaySelector.AssayTypeConv(temp[1], out res);
+               // }
             }        
             return good;
         }
@@ -151,36 +163,39 @@ namespace LMComm
         //
         // "Send" wrapper hiding socket and the looping over list of LMMMs
         //
-        private void SendToLMMM(string cmd, Int32 specificLMIndex = -1)
+        private void SendToALMM(string cmd, Int32 specificLMIndex = -1)
         {
-            if (!Instruments.Active.HasLMMM())
+            if (!Instruments.Active.HasALMM())
             {
-                commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instruments available to receive '" + cmd + "'");
+                commlog.TraceEvent(LogLevels.Warning, 325, "No ALMM instruments available to receive '" + cmd + "'");
                 return;
             }
             try
             {
                 if (CurrentLM == -1 && specificLMIndex == -1)  // all of them
                 {
-                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
+                    commlog.TraceInformation("Send " + LMLoggers.LognLM.FlattenChars(cmd) + ALMMLingo.eolprintrep + " to all the LMMM instruments on the subnet");
                     IEnumerator iter = Instruments.Active.GetLMEnumerator();
                     while (iter.MoveNext())
                     {
                         LMInstrument lmi = (LMInstrument)iter.Current;
-                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
-                        LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent);
+                        commlog.TraceEvent(LogLevels.Verbose, 360, "Send '" + LMLoggers.LognLM.FlattenChars(cmd) + ALMMLingo.eolprintrep + "' to " + Instruments.Active.RankPositionInList(lmi) + " " + lmi.port + ", ");
+                        //LMServer.SendData(cmd + ALMMLingo.eol, lmi.instrSocketEvent);
                     }
                 }
                 else
                 {
                     int index = specificLMIndex > -1 ? specificLMIndex : CurrentLM;  // index override from live call in main code, not from command line
+                    ALMMController.ReturnCode rc;
                     // make sure the element is actually there
-                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + LMMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
+                    commlog.TraceInformation("Send '" + LMLoggers.LognLM.FlattenChars(cmd) + ALMMLingo.eolprintrep + "' to LMMM instrument {0} on the subnet", index);
                     LMInstrument lmi = Instruments.Active.FindByIndexer(index);
                     if (lmi == null) // index must always be less than Count, the list is 0 based
                         commlog.TraceEvent(LogLevels.Warning, 325, "No LMMM instrument {0} available", index);
                     else
-                        LMServer.SendData(cmd + LMMMLingo.eol, lmi.instrSocketEvent); 
+                        //LMServer.SendData(cmd + ALMMLingo.eol, lmi.instrSocketEvent); 
+                    
+                        rc = almmctrl.Send(cmd);
                 }
             }
             catch (ObjectDisposedException ex)
@@ -198,14 +213,14 @@ namespace LMComm
         }
 
         // UDP broadcast
-        public bool PostLMMMCommand(LMMMLingo.Tokens cmd, bool terminator = false)
+        public bool PostALMMCommand(ALMMLingo.Tokens cmd, bool terminator = false)
         {
             bool res = true;
 
             if (NC.App.AppContext.UseINCC5Ini)
             { // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
-                LMMMLingo.OpDesc op = null;
+                ALMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
             }
             else
@@ -216,11 +231,10 @@ namespace LMComm
                     LMConnectionInfo net = ((LMConnectionInfo)(NC.App.Opstate.Measurement.Detector.Id.FullConnInfo));
                     // broadcast go message to all cfg.Net.Subnet addresses. This is the instrument group.
                     Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                    IPAddress broadcast = IPAddress.Parse(net.NetComm.Subnet);
-                    if (terminator) cmds += LMMMLingo.eol;
+                    if (terminator) cmds += ALMMLingo.eol;
                     Byte[] sendBuffer = Encoding.ASCII.GetBytes(cmds);
 
-                    IPEndPoint ep = new IPEndPoint(broadcast, net.NetComm.LMListeningPort);
+                    IPEndPoint ep = new IPEndPoint(net.NetComm.ipaddress, net.NetComm.Port);
                     s.SendTo(sendBuffer, ep);
                     commlog.TraceEvent(LogLevels.Verbose, 361, "UDP send: '" + LMLoggers.LognLM.FlattenChars(cmds) + "'");
 
@@ -242,14 +256,14 @@ namespace LMComm
         }
 
         // TCP/IP synchronous send
-        public bool FormatAndSendLMMMCommand(LMMMLingo.Tokens cmd, Int32 arg = 0, Int32 LMRankPosition = -1)
+        public bool FormatAndSendALMMCommand(ALMMLingo.Tokens cmd, Int32 arg = 0, Int32 LMRankPosition = -1)
         {
             bool res = true;
 
             if (NC.App.AppContext.UseINCC5Ini)
             {   // look up OpDesc instance from map
                 // dispatch to thrift based on cmd token
-                LMMMLingo.OpDesc op = null;
+                ALMMLingo.OpDesc op = null;
                 cmdprocessor.LookupOpDescriptor(cmd, ref op);
             }
             else
@@ -259,7 +273,7 @@ namespace LMComm
                     string cmds = cmdprocessor.ComposeCommandStrings(cmd, arg);
                     if (cmds.Length > 0)
                     {
-                        SendToLMMM(cmds, LMRankPosition);
+                        SendToALMM(cmds, LMRankPosition);
                     }
                 }
                 catch (Exception e)
@@ -269,8 +283,8 @@ namespace LMComm
             }
             return res;
         }
-
-        internal Thread ProcessUserCommand(LMMMLingo.OpDesc cmdt, string tline, DAQ.DAQControl control, ref bool keepgoing)
+        
+        internal Thread ProcessUserCommand(ALMMLingo.OpDesc cmdt, string tline, DAQ.DAQControl control, ref bool keepgoing)
         {
             Thread t = null;
             // each prompt command might have a '=' followed by a single numeric argument e.g. cmd = 1
@@ -286,11 +300,11 @@ namespace LMComm
             keepgoing = true;
             switch (cmdt.tok)
             {
-                case LMMMLingo.Tokens.quit: // quit console prompt
+                case ALMMLingo.Tokens.quit: // quit console prompt
                     Console.WriteLine(NC.App.AbbrName + "> Be seeing you . . .");
                     keepgoing = false;
                     break;
-                case LMMMLingo.Tokens.lm:  // set or show cur LM #
+                case ALMMLingo.Tokens.lm:  // set or show cur LM #
                     try
                     {
                         CurrentLM = arg;
@@ -301,19 +315,19 @@ namespace LMComm
                         commlog.TraceEvent(LogLevels.Error, 361, "Current instrument and measurement undefined or incomplete: " + e.Message);
                     }
                     break;
-                case LMMMLingo.Tokens.help:
+                case ALMMLingo.Tokens.help:
                     //Console.Write(NC.App.AbbrName + ">");
                     foreach (string s in cmdprocessor.CmdPromptHelp) Console.WriteLine(s);
                     break;
-                case LMMMLingo.Tokens.config:  //
+                case ALMMLingo.Tokens.config:  //
                     //Console.Write(NC.App.AbbrName + ">");
                     NCCConfig.Config.ShowCfg(NC.App.Config, NC.App.AppContext.Verbose() == System.Diagnostics.TraceEventType.Verbose);
                     break;
-                case LMMMLingo.Tokens.stop:  // mostly for stopping an assay, might work for HV Calib too but must test it
+                case ALMMLingo.Tokens.stop:  // mostly for stopping an assay, might work for HV Calib too but must test it
                     Console.Write(NC.App.AbbrName + ">");
                     control.StopCurrentAction(); // NEXT: see if this works for HV Calib 
                     break;
-                case LMMMLingo.Tokens.assay:
+                case ALMMLingo.Tokens.assay:
                     if (hasarg)
                     {
                         NC.App.Opstate.Measurement.MeasurementId.MeasOption = (AssaySelector.MeasurementOption)arg;
@@ -324,16 +338,16 @@ namespace LMComm
                         t = control.AssayOperation();
                     }
                     break;
-                case LMMMLingo.Tokens.hvcalib:
+                case ALMMLingo.Tokens.hvcalib:
                     t = control.HVCalibOperation();
                     break;
-                case LMMMLingo.Tokens.broadcast:  // UDP "NDAC Control"
+                case ALMMLingo.Tokens.broadcast:  // UDP "NDAC Control"
                     {
                         NCC.NCCAction x = NC.App.Opstate.Action;
                         NC.App.Opstate.Action = NCC.NCCAction.Discover;
                         control.StartLMDAQServer(null);
                         Console.WriteLine(NC.App.AbbrName + "> Broadcasting to LM instruments. . .");
-                        PostLMMMCommand(cmdt.tok);
+                        PostALMMCommand(cmdt.tok);
                         Console.WriteLine(NC.App.AbbrName + "> Sent broadcast. Waiting for LM instruments to connect"); 
                         control.PrepSRDAQHandler();
                         control.ConnectSRInstruments();
@@ -343,7 +357,7 @@ namespace LMComm
                 default:
                     try
                     {
-                        FormatAndSendLMMMCommand(cmdt.tok, arg, CurrentLM);
+                        FormatAndSendALMMCommand(cmdt.tok, arg, CurrentLM);
                     }
                     catch (Exception e)
                     {
@@ -364,10 +378,8 @@ namespace LMComm
 
 
         int CurrentLM
-        { get { return NC.App.Opstate.Measurement.AcquireState.lm.LM; } set { NC.App.Opstate.Measurement.AcquireState.lm.LM = value; } }
-         //
+        {
+            get { return NC.App.Opstate.Measurement.AcquireState.lm.LM; } set { NC.App.Opstate.Measurement.AcquireState.lm.LM = value; } }
+        }*/
     }
-
-
-  
 }

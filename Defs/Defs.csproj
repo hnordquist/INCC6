@@ -42,9 +42,6 @@
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="RepDB">
-      <HintPath>..\deployment\RepDB.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -81,6 +78,12 @@
   <ItemGroup>
     <Content Include="BigNum\BigNum.XML" />
     <Content Include="BigNum\Doc.xsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RepDB\RepDB.csproj">
+      <Project>{15214429-93da-45c9-a0bc-30285c990a5d}</Project>
+      <Name>RepDB</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

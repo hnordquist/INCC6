@@ -41,8 +41,7 @@ namespace NCCConfig
         verbose, opStatusPktInterval, opStatusTimeInterval,
         assaytype,
 
-        broadcast, port, broadcastport, subnet, wait,
-        numConnections, receiveBufferSize, useAsyncFileIO, useAsyncAnalysis, parseBufferSize, streamRawAnalysis,
+        port, receiveBufferSize, longwait, cmdwait,
 
         leds, input, debug, hv, LLD, hvtimeout,
 
@@ -54,7 +53,7 @@ namespace NCCConfig
         detector, item, material, saveOnTerminate,
 
         fileinput, recurse, parseGen2, INCCXfer, replay, INCCParity,
-        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay,
+        sortPulseFile, filterLMOutliers, pulseFileAssay, ptrFileAssay, mcaFileAssay, datazFileAssay, testDataFileAssay, reviewFileAssay, dbDataAssay, ncdFileAssay, ALMMFileAssay,
         autoCreateMissing, auxRatioReport,
 
         overwriteImportedDefs, liveFileWrite, gen5TestDataFile, MyProviderName, MyDBConnectionString,
@@ -94,19 +93,19 @@ namespace NCCConfig
             { "reportSect=", "char flags specifying report content sections to include or exclude, default \"d c i t\": ",  
                                            s => app.ReportSectional = s},
             { "prompt", "start in interactive prompt mode",  b => {if (b != null) acq.Action = 1;} },            
-            { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nLMMM DAQ control ********************", 
+            { "discover", "send UDP discovery message on the LM subnet, then enter interactive prompt mode\r\n\r\nALMM DAQ control ********************", 
                                             b => {if (b != null) acq.Action = 2;} },
 
-             // this is for LMMM DAQ control, originally assumed as the primary input instrument
-            { "subnet=", "subnet {mask} for LM network, defaults to 169.254.255.255",  s => netcomm.Subnet = s },
+             // this is for ALMM DAQ control, originally assumed as the primary input instrument
+           /* { "subnet=", "subnet {mask} for LM network, defaults to 169.254.255.255",  s => netcomm.Subnet = s },
             { "port=", "port {number} for this app's LM TCP/IP listener, defaults to 5011",  (int n) => netcomm.Port = n },
             { "wait=", "milliseconds to wait for response to broadcast command, default 500",  (int n) => netcomm.Wait = n },
             { "broadcast", "use one or more uncoupled multiple LMs, default on", b => netcomm.Broadcast = b != null},
             { "synch", "use synchronous start director+pupil scheme for multiple LMs, default off", b => netcomm.Broadcast = b == null},
             { "lmport=", "port {number} used by LMs to listen for broadcast messages, def 5000",  (int n) => netcomm.LMListeningPort = n },
-            { "input=", "LMMM input mode 0/TTL or 1/ribbon, defaults to 1\r\n\r\nLMMM DAQ tuning ********************", (int n) => lmmm.Input = n}, // dev note: current HW is defaulted at 1, so app must set to 0 manually upon start-up for NPS input to work
+            { "input=", "ALMM input mode 0/TTL or 1/ribbon, defaults to 1\r\n\r\nALMM DAQ tuning ********************", (int n) => almm.Input = n}, // dev note: current HW is defaulted at 1, so app must set to 0 manually upon start-up for NPS input to work
  
-            // LMMM DAQ tuning
+            // ALMM DAQ tuning
             { "connections=", "maximum {number} connections permitted for LM TCP/IP listener", (int n) => netcomm.NumConnections = n}, 
             { "buffer=", "{byte size} of input buffer for each LM TCP/IP listener connection, default is 8192 to match hardware value, change only with supervision", (int n) => netcomm.ReceiveBufferSize = n}, 
             { "eventbuff=", "{MB size} of input buffer for DAQ and NCD file input, default is 50MB (50), max is 1024", (uint n) => netcomm.ParseBufferSize = n}, 
@@ -115,7 +114,7 @@ namespace NCCConfig
 
             // neutron counting analysis tuning
             { "stream", "number of time:channel pairs to present to the neutron counting processor in a single operation, derived from eventbuff; on = eventbuff/8, off = 1\r\n\r\nAssay control ********************",
-                                            (b) => { netcomm.UsingStreamRawAnalysis = (b != null);} }, // todo: should go on it's own config class, expand to include other analysis tuning parameters.
+                                            (b) => { netcomm.UsingStreamRawAnalysis = (b != null);} }, // todo: should go on it's own config class, expand to include other analysis tuning parameters.*/
 
   
             // action commands
@@ -128,12 +127,12 @@ namespace NCCConfig
             { "mat|material=", "Material or item type to be used in calibration or verification assay",
                     v => {if (v != null) acq.Material = v; } },
             { "includeConfig", "append copy of app config file to CSV results file, [false] ", b => acq.IncludeConfig = b != null}, 
-            { "ncd|raw=", "location of this assay's MCA-527|PTR-32|pulse|LMMM NCD raw data file output, overrides root", 
+            { "ncd|raw=", "location of this assay's MCA-527|PTR-32|ALMM|pulse raw data file output, overrides root", 
                                             v => {if (v != null) acq.Raw = v; } },
             { "c|rep|cycles=", "{number} of cycles to run for this operation, defaults to 1, 0 means continuous",  (int n) => acq.Cycles = n },
             { "i|interval=", "interval or cycle time in {seconds}, defaults to 5", (double d) => acq.Interval = d}, 
-            { "sep=", "LMMM network buffer send separation in {milliseconds}, defaults to 0, \"set higher if network freezes\"", (int n) => acq.Separation = n}, 
-            { "feedback", "LMMM feedback flag, [false]", b => acq.Feedback = b != null},
+            { "sep=", "ALMM network buffer send separation in {milliseconds}, defaults to 0, \"set higher if network freezes\"", (int n) => acq.Separation = n}, 
+            { "feedback", "ALMM feedback flag, [false]", b => acq.Feedback = b != null},
             { "save|saveOnTerminate", "save results upon early termination, [true] ", b => acq.SaveOnTerminate = b != null}, 
             { "precision=", "precison of floating point results mass reporting output, default to INCC5 standard",
                                             (ushort n) => app.FPPrecision = n},
@@ -152,14 +151,15 @@ namespace NCCConfig
             { "INCCParity", "process mass calculations using INCC constraints",  v => app.INCCParity = v != null },                                                           
             { "replay", "run the last transfer measurement, valid only when the INCCXfer flag is specified",  v => app.Replay = v != null },                                                           
             { "pulseFileAssay", "use sorted pulse files for input", v => app.PulseFileAssay = v != null }, 
-            { "ncdFileAssay", "use LMMM NCD files for input", v => app.NCDFileAssay = v != null }, 
+            { "ncdFileAssay", "use ALMM NCD files for input", v => app.NCDFileAssay = v != null }, 
+            { "ALMMFileAssay", "use ALMM *.bin files for input", v => app.ALMMFileAssay = v != null }, 
             { "ptrFileAssay", "use PTR-32 dual file streams for input", v => app.PTRFileAssay = v != null }, 
             { "mcaFileAssay", "use MCA-527 file streams for input", v => app.MCA527FileAssay = v != null },
             { "datazFileAssay", "use Dataz file streams for input", v => app.DatazFileAssay = v != null },
             { "testDataFileAssay", "use INCC5 test data files (.DAT, .CNN) for input", v => app.TestDataFileAssay = v != null },
             { "dbDataAssay", "use existing measurement data (database) for input (next: no way to specify MeasId from cmd line though)", v => app.DBDataAssay = v != null },
             { "reviewFileAssay|import", "use Rad Review (.NCC) data files for input", v => app.ReviewFileAssay = v != null }, 
-            { "LMFilterParams=", "interval in µ-seconds (1-64256) and cutoff count level {µ-seconds:neutrons}, defaults to 140 µ-seconds and 4 neutrons\r\n\r\nLMMM HV control ********************", 
+            { "LMFilterParams=", "interval in µ-seconds (1-64256) and cutoff count level {µ-seconds:neutrons}, defaults to 140 µ-seconds and 4 neutrons\r\n\r\nALMM HV control ********************", 
                                             (b, s) => acq.LMFilterParams(b, s) },  
 
          
@@ -171,7 +171,7 @@ namespace NCCConfig
                                             (b, s) => acq.HVRange(b, s) },
             { "hvstep=", "HV calibration step voltages defaults to 10",  
                                             (int n) => acq.Step = n },
-            { "hvi|hvintervals|hvtimes=", "step duration and delay after step is complete in {seconds:seconds}, defaults to 1 and 2 seconds\r\n\r\nLMMM emulation for testing ********************", 
+            { "hvi|hvintervals|hvtimes=", "step duration and delay after step is complete in {seconds:seconds}, defaults to 1 and 2 seconds\r\n\r\nALMM emulation for testing ********************", 
                                             (b, s) => acq.HVTime(b, s) },   
 
             { "m|msg|message=", "annotation for this action", v => {if (v != null) acq.Message = v; } },       // todo: message retention and use

@@ -29,6 +29,8 @@ using System;
 using System.Windows.Forms;
 using AnalysisDefs;
 using DetectorDefs;
+using System.Net;
+
 namespace NewUI
 {
 
@@ -45,10 +47,10 @@ namespace NewUI
         {
             SelectorPanel.Visible = false;
             AddDetectorTypePanel.Visible = false;
-            if (det.Id.SRType == InstrType.LMMM)
+            if (det.Id.SRType == InstrType.ALMM)
             {
-                LMMMPanel.Visible = true;
-                LMMMBackBtn.Enabled = false;
+                ALMMPanel.Visible = true;
+                ALMMBackBtn.Enabled = false;
             }
             else if (det.Id.SRType == InstrType.PTR32 || det.Id.SRType == InstrType.MCA527)
             {
@@ -92,8 +94,8 @@ namespace NewUI
 			// Reposition the various panels on top of each other
 			SelectorPanel.Top = 4;
 			SelectorPanel.Left = 6;
-			LMMMPanel.Top = 4;
-			LMMMPanel.Left = 6;
+			ALMMPanel.Top = 4;
+			ALMMPanel.Left = 6;
 			PTR32Panel.Top = 4;
 			PTR32Panel.Left = 6;
 			AddDetectorTypePanel.Top = 4;
@@ -117,45 +119,26 @@ namespace NewUI
 					PopulateMCA527ParamFields();
 				} else
 				{
-					PopulateLMMM_PTR32ParamFields();
+					PopulateALMM_PTR32ParamFields();
 				}
 			}
 		}
 
 		// Depending on the shift register type for d, fill in the fields in the appropriate panel and make it visible.
-		private void PopulateLMMM_PTR32ParamFields() 
+		private void PopulateALMM_PTR32ParamFields() 
         {
             if (det != null)
             {
-                if (det.Id.SRType == InstrType.LMMM) 
+                if (det.Id.SRType == InstrType.ALMM) 
                 {    // Fill edit panel fields
                     // LMNetComm
                     LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-                    LMMMSubnetTextBox.Text = l.NetComm.Subnet;
-                    LMMMLocalPortTextBox.Text = l.NetComm.Port.ToString();
-                    LMMMRemotePortTextBox.Text = l.NetComm.LMListeningPort.ToString();
-                    LMMMDiscWaitTimeTextBox.Text = l.NetComm.Wait.ToString();
-                    LMMMBroadcastCheckBox.Checked = l.NetComm.Broadcast;
+                    ALMMIPAddressTextBox.Text = l.NetComm.ipaddress.ToString();
+                    ALMMPortTextBox.Text = l.NetComm.Port.ToString();
 
-                    LMMMConnectionsTextBox.Text = l.NetComm.NumConnections.ToString();
-                    LMMMBufferTextBox.Text = l.NetComm.ReceiveBufferSize.ToString();
-                    LMMMEventBufferTextBox.Text = l.NetComm.ParseBufferSize.ToString(); 
-                    LMMMStreamCheckBox.Checked = l.NetComm.UsingStreamRawAnalysis;
-                    LMMMAsyncFileCheckBox.Checked = l.NetComm.UseAsynchFileIO;
-                    LMMMSyncAnalysisCheckBox.Checked = !l.NetComm.UseAsynchAnalysis;
-
-                    // LMHWConfig
-                    LMMMInModeComboBox.SelectedIndex = l.DeviceConfig.Input;  // 0 is ribbon, 1 is TTL
-                    LMMMDebugFlag.Checked = (l.DeviceConfig.Debug == 1 ? true : false);
-                    LMMMHV.Text = l.DeviceConfig.HV.ToString();
-                    LMMMLEDs.Checked = (l.DeviceConfig.LEDs == 2 ? true : false);
-                    LMMMLLDmV.Text = l.DeviceConfig.LLD.ToString();
-
-                    LMMMIntervalTextBox.Text = acq.lm.Separation.ToString();
-                    LMMMFeedbackFlagCheckBox.Checked = acq.lm.Feedback;
-
+                    ALMMHVTextBox.Text = l.DeviceConfig.HV.ToString();
                     // Make edit panel visible
-                    LMMMPanel.Visible = true;
+                    ALMMPanel.Visible = true;
                 }
                 else if (det.Id.SRType == InstrType.PTR32)
                 {
@@ -233,7 +216,7 @@ namespace NewUI
 						PopulateMCA527ParamFields();
 					} else
 					{
-						PopulateLMMM_PTR32ParamFields();
+						PopulateALMM_PTR32ParamFields();
 					}
 				}
 				Text = oTitle + (" for " + det.Id.DetectorName);
@@ -301,7 +284,7 @@ namespace NewUI
 					PopulateMCA527ParamFields();
 				} else
 				{
-					PopulateLMMM_PTR32ParamFields();
+					PopulateALMM_PTR32ParamFields();
 				}
 			}
 			AddingNew = true;
@@ -314,7 +297,7 @@ namespace NewUI
             SelectorPanel.Visible = true;
         }
 
-   //// LMMM PARAMETERS ////////////////////////////////////////////////////////////////////////////////////
+   //// ALMM PARAMETERS ////////////////////////////////////////////////////////////////////////////////////
 
         private void CancelBtn_Click(object sender, EventArgs e)
         {
@@ -323,7 +306,7 @@ namespace NewUI
 
         private void BackBtn_Click(object sender, EventArgs e)
         {
-            LMMMPanel.Visible = false;
+            ALMMPanel.Visible = false;
             SelectorPanel.Visible = true;
         }
 
@@ -332,22 +315,25 @@ namespace NewUI
 
         }
 
-        private void LMMMOKBtn_Click(object sender, EventArgs e)
+        private void ALMMOKBtn_Click(object sender, EventArgs e)
         {
-            // set the LMMM params on the current LMMM acquire and det def pair
-            //LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
+            // set the ALMM params on the current ALMM acquire and det def pair
+            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
+            l.Port = l.NetComm.Port.ToString();
+            
             if (AddingNew)
             {
                 NC.App.DB.Detectors.AddOnlyIfNotThere(det);
                 RefreshDetectorCombo();
                 AddingNew = false;
             }
+
             NC.App.DB.UpdateDetector(det);
             if (acq.modified)
             {
                 NC.App.DB.ReplaceAcquireParams(new INCCDB.AcquireSelector(det, acq.item_type, acq.MeasDateTime), acq);
             }
-            LMMMPanel.Visible = false;  // like the back button
+            ALMMPanel.Visible = false;  // like the back button
             SelectorPanel.Visible = true;
 
             //if (INCCEntry)
@@ -355,16 +341,23 @@ namespace NewUI
 
         }
         bool modified;
-        private void LMMMSubnetTextBox_Leave(object sender, EventArgs e)
+
+        private void ALMMIPAddressTextBox_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            String s = l.NetComm.Subnet;
-            modified |= Format.Changed(((TextBox)sender).Text, ref s);
-            if (modified)
-                l.NetComm.Subnet = s;
+            IPAddress old = l.NetComm.ipaddress;
+            IPAddress IP;
+            bool success = IPAddress.TryParse(ALMMIPAddressTextBox.Text, out IP);
+            if (success)
+                modified |= old.Equals(IP);
+            else
+            {
+                MessageBox.Show(ALMMIPAddressTextBox.Text + " is not a valid IP address. Please enter a valid IP address.", "IP error", MessageBoxButtons.OK);
+                ALMMIPAddressTextBox.SelectAll();
+            }
         }
 
-        private void LMMMLocalPortTextBox_Leave(object sender, EventArgs e)
+        private void ALMMPortTextBox_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
             int i = l.NetComm.Port;
@@ -373,68 +366,8 @@ namespace NewUI
                 l.NetComm.Port = i;
         }
 
-        private void LMMMRemotePortTextBox_Leave(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.NetComm.LMListeningPort;
-            modified |= Format.ToInt(((TextBox)sender).Text, ref i);
-            if (modified)
-                l.NetComm.LMListeningPort = i;
-        }
-
-        private void LMMMInModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.DeviceConfig.Input;
-            if (((ComboBox)sender).SelectedIndex != i)
-            {
-                l.DeviceConfig.Input = ((ComboBox)sender).SelectedIndex;
-                modified |= true;
-            }
-        }
-
-        private void LMMMDiscWaitTimeTextBox_Leave(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.NetComm.Wait;
-            modified |= Format.ToInt(((TextBox)sender).Text, ref i);
-            if (modified)
-                l.NetComm.Wait = i;
-        }
-
-        private void LMMMBroadcastCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            modified |= (l.NetComm.Broadcast != ((CheckBox)sender).Checked);
-             l.NetComm.Broadcast = !((CheckBox)sender).Checked;
-        }
-
-        private void LMMMIntervalTextBox_Leave(object sender, EventArgs e)
-        {
-            int i = acq.lm.Separation;
-            acq.modified |= Format.ToInt(((TextBox)sender).Text, ref i);
-            if (acq.modified)
-                acq.lm.Separation = i;
-        }
-
-        private void LMMMFeedbackFlagCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            bool bi = acq.lm.Feedback;
-            acq.modified |= (acq.lm.Feedback != ((CheckBox)sender).Checked);
-            if (acq.modified)
-                acq.lm.Feedback = ((CheckBox)sender).Checked;
-        }
-
-        private void LMMMConnectionsTextBox_Leave(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.NetComm.NumConnections;
-            modified |= Format.ToInt(((TextBox)sender).Text, ref i);
-            if (modified)
-                l.NetComm.NumConnections = i;
-        }
-
-        private void LMMMBufferTextBox_Leave(object sender, EventArgs e)
+        
+        private void ALMMBufferTextBox_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
             int i = l.NetComm.ReceiveBufferSize;
@@ -443,37 +376,27 @@ namespace NewUI
                 l.NetComm.ReceiveBufferSize = i;
         }
 
-        private void LMMMEventBufferTextBox_Leave(object sender, EventArgs e)
+        private void ALMMLongWaitTextBox_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            uint i = l.NetComm.ParseBufferSize;
-            modified |= Format.ToNN(((TextBox)sender).Text, ref i);
+            int i = l.NetComm.LongWaitTime;
+            modified |= Format.ToInt(((TextBox)sender).Text, ref i);
             if (modified)
-                l.NetComm.ParseBufferSize = i;
+                l.NetComm.LongWaitTime = i;
+
         }
 
-        private void LMMMSyncAnalysisCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-             modified |= (l.NetComm.UseAsynchAnalysis != ((CheckBox)sender).Checked);
-             l.NetComm.UseAsynchAnalysis = !((CheckBox)sender).Checked;
-        }
-
-        private void LMMMAsyncFileCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void ALMMCommandWaitTimeTextBox_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            modified |= (l.NetComm.UseAsynchFileIO != ((CheckBox)sender).Checked);
-            l.NetComm.UseAsynchFileIO = ((CheckBox)sender).Checked;
+            int i = l.NetComm.CmdWaitTime;
+            modified |= Format.ToInt(((TextBox)sender).Text, ref i);
+            if (modified)
+                l.NetComm.CmdWaitTime = i;
+
         }
 
-        private void LMMMStreamCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            modified |= (l.NetComm.UsingStreamRawAnalysis != ((CheckBox)sender).Checked);
-            l.NetComm.UsingStreamRawAnalysis = ((CheckBox)sender).Checked;
-        }
-
-        private void LMMMHV_Leave(object sender, EventArgs e)
+        private void ALMMHV_Leave(object sender, EventArgs e)
         {
             LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
             int i = l.DeviceConfig.HV;
@@ -481,31 +404,7 @@ namespace NewUI
             if (modified)
                 l.DeviceConfig.HV = i;
         }
-
-        private void LMMMDebugFlag_CheckedChanged(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int val =  ((CheckBox)sender).Checked ? 1 : 0;
-            modified |= (l.DeviceConfig.Debug != val);
-            l.DeviceConfig.Debug = val;
-        }
-
-        private void LMMMLLDmV_Leave(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int i = l.DeviceConfig.LLD;
-            modified |= Format.ToNZInt(((TextBox)sender).Text, ref i);
-            if (modified)
-                l.DeviceConfig.LLD = i;
-        }
-
-        private void LMMMLEDs_CheckedChanged(object sender, EventArgs e)
-        {
-            LMConnectionInfo l = (LMConnectionInfo)(det.Id.FullConnInfo);
-            int val = ((CheckBox)sender).Checked ? 2 : 1;  // the 1 and 2 must be an LMMM-specific detail
-            modified |= (l.DeviceConfig.LEDs != val);
-            l.DeviceConfig.LEDs = val;
-        }
+        //End ALMM Stuff
 
         private void PTR32Ok_Click(object sender, EventArgs e)
         {
@@ -658,5 +557,7 @@ namespace NewUI
 
         }
 		const string MCAPrefix ="MCA-527#";
-	}
+
+
+    }
 }

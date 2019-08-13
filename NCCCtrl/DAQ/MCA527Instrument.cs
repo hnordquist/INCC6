@@ -52,7 +52,7 @@ namespace Instr
         public MCA527Instrument(Detector detector)
             : base(detector)
         {
-            LMMMConfig lm = ((DetectorDefs.LMConnectionInfo)(detector.Id.FullConnInfo)).DeviceConfig;
+            ALMMConfig lm = ((DetectorDefs.LMConnectionInfo)(detector.Id.FullConnInfo)).DeviceConfig;
             m_setvoltage = ((lm.LEDs == 2) || (lm.LEDs == 0)) ? false : true;
             m_voltage = (ushort)detector.MultiplicityParams.SR.highVoltage;
             file = new MCAFile();

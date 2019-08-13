@@ -403,7 +403,7 @@ namespace DB
         public DataTable GetComms()
         {
             db.SetConnection(); 
-            string sSQL = "Select * from LMNetComm";
+            string sSQL = "Select * from LMNetComm2";
             DataTable dt = db.DT(sSQL);
             return dt;
         }
@@ -419,7 +419,7 @@ namespace DB
             db.SetConnection();
             Detectors dets = new Detectors(db);
             long l = dets.PrimaryKey(measDetId);
-            string sSQL = "Select * from LMNetComm, LMHWParams where (LMNetComm.detector_id=" + l.ToString() + " AND LMHWParams.detector_id=" + l.ToString() +")";
+            string sSQL = "Select * from LMNetComm2, LMHWParams where (LMNetComm2.detector_id=" + l.ToString() + " AND LMHWParams.detector_id=" + l.ToString() +")";
             DataTable dt = db.DT(sSQL);
             return dt;
         }
@@ -440,7 +440,7 @@ namespace DB
         }
         public long CreateNetComm(long id, ElementList sParams, IDB db) 
         {
-            return CreateTbl(id, "LMNetComm", sParams, db);
+            return CreateTbl(id, "LMNetComm2", sParams, db);
         }
         public long CreateTbl(long id, string table, ElementList sParams, IDB db) 
         {
@@ -470,7 +470,7 @@ namespace DB
         }
         public bool UpdateNetComm(long id, ElementList sParams, IDB db) 
         {
-            return UpdateTbl(id, "LMNetComm", sParams, db);
+            return UpdateTbl(id, "LMNetComm2", sParams, db);
         }
         public bool UpdateTbl(long id, string table, ElementList sParams, IDB db) 
         {

@@ -164,12 +164,14 @@ namespace DAQ
 							Thread.Sleep(hvDelayms); // wait for HV to settle, nominally 2 seconds
                             inst.StartHVCalibration(hvCalibPoint, TimeSpan.FromSeconds(hvp.HVDuration));
                         }
-                        else if (inst.id.SRType == InstrType.LMMM)
+                        else if (inst.id.SRType == InstrType.ALMM)
 						{
                             int LM = control.FirstActiveIndexOf(inst);
-                            DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvprep, hvCalibPoint, LM);
+                            //DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.hvprep, hvCalibPoint, LM);
+                            //DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.hvset, hvCalibPoint, LM);
+                            //TODO: send hv command here.
                             Thread.Sleep(hvDelayms); // wait for HV to settle, nominally 2 seconds
-                            DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvcalib, 0, LM);
+                            //DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.hvcalib, 0, LM);
                         }
                     }
                     else

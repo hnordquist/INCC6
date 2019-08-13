@@ -194,19 +194,19 @@ namespace LMRawAnalysis
             if (count == 0)
             {
                 permissionToUseEndOfEvents.Release();
-                if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4239, "Released permissionToUseEndOfEvents ({0} -> {1}) {2}", count, permissionToUseEndOfEvents.CurrentCount, where);
+                //if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4239, "Released permissionToUseEndOfEvents ({0} -> {1}) {2}", count, permissionToUseEndOfEvents.CurrentCount, where);
             }
             else
             {
-                if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4238, "Caller tried to grant permissionToUseEndOfEvents again ({0} > 0) {1}", count, where);
+ //               if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4238, "Caller tried to grant permissionToUseEndOfEvents again ({0} > 0) {1}", count, where);
             }
         }
 
         void PermissionToUseEndOfEventsWait()
         {
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4237, "Petitioning for the shared end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
+            //if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4237, "Petitioning for the shared end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
             permissionToUseEndOfEvents.Wait();
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4273, "Petition granted for end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
+            //if (verboseTrace) log.TraceEvent(LogLevels.Verbose, 4273, "Petition granted for end-of-stack ({0})", permissionToUseEndOfEvents.CurrentCount);
         }
 
         #region SpinTimeMethods
@@ -969,14 +969,14 @@ namespace LMRawAnalysis
         public void HandleANeutronEvent(ulong timeOfNewEvent, uint neutronsOfNewEvent)
         {
             uint numNeutrons;
-
+           
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot++;
 
-            if (verboseTrace) log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron event #"
+            /*if (verboseTrace) log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron event #"
                                                                                               + numNeutronEventsReceivedWhetherProcessedOrNot
                                                                                               + " at Time= " + timeOfNewEvent
-                                                                                              + " Neutrons=0x" + String.Format("{0:X8}", neutronsOfNewEvent));
+                                                                                              + " Neutrons=0x" + String.Format("{0:X8}", neutronsOfNewEvent));*/
 
             if (timeOfNewEvent <= timeOfLastNeutronEvent)
             {
@@ -1007,6 +1007,11 @@ namespace LMRawAnalysis
             PermissionToUseEndOfEventsWait();
 
             //place the new neutron data in the data-holder at the end of the list
+            if (endOfNeutronEventList == null)
+            {
+                startOfNeutronEventList = endOfNeutronEventList = new NeutronEvent(1);
+                endOfNeutronEventList.next = startOfNeutronEventList;
+            }
             endOfNeutronEventList.eventTime = timeOfNewEvent;
             endOfNeutronEventList.eventNeutrons = neutronsOfNewEvent;
             numNeutrons = 0;
@@ -1071,10 +1076,10 @@ namespace LMRawAnalysis
             //count another event received whether processed or not, in case this event has a time that is out of sequence
             numNeutronEventsReceivedWhetherProcessedOrNot += (UInt64)numEvents;
 
-            log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron array with "
-                                                                                                + numEvents
-                                                                                                + " events. Time of first event="
-                                                                                                + timeOfNewEvents[0]);
+            //log.TraceEvent(LogLevels.Verbose, (int)AnalyzerEventCode.AnalyzerHandlerEvent, "AnalyzerHandler received Neutron array with "
+              //                                                                                  + numEvents
+                //                                                                                + " events. Time of first event="
+                  //                                                                              + timeOfNewEvents[0]);
 
             //WAIT for permission to use the shared end-of-stack object
             PermissionToUseEndOfEventsWait();

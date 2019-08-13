@@ -44,7 +44,7 @@ namespace DAQ
         public static DAQControl gControl;
 
         // dev note: is this singleton thread-safe when we move to threads?
-        static internal LMComm.TalkToLMMMM LMMMComm;
+        static internal LMComm.TalkToALMM ALMMComm;
 
         protected LMLoggers.LognLM collog;
         protected LMLoggers.LognLM ctrllog;
@@ -66,8 +66,8 @@ namespace DAQ
             // The state was set on cmd line prior to exec here, and it still is, so must upcast to an Assay instance
             NC.App.Opstate = new AssayState(NC.App.Opstate);
 
-            LMMMComm = LMMMComm ?? new TalkToLMMMM(collog);  // a singleton, modern syntax just for fun
-
+            ALMMComm = ALMMComm ?? new TalkToALMM(collog);  // a singleton, modern syntax just for fun
+            ApplyInstrumentSettings();
             CurState.SOH = NCC.OperatingState.Starting;
 
         }
@@ -99,8 +99,8 @@ namespace DAQ
         // Do what the command line said: 
         //    start assay,  (via LM) 
         //    start HV Calib, (LM only)
-        //    broadcast go and/or 
-        //    wait at command prompt for individual queries against the LMMMMMM
+        //    no broadcast for ALMM
+        //    wait at command prompt for individual queries against the ALMM
         public void Run()
         {
             ShiftRegisterRuntimeInit();
@@ -110,11 +110,12 @@ namespace DAQ
                     ApplyInstrumentSettings();
                     CommandPrompt();   // launch command line interpreter loop 
                     break;
-                case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
-                    ConnectInstruments();
-                    ApplyInstrumentSettings();
-                    CommandPrompt();   // launch command line interpreter loop 
-                    break;
+                    //ALMM does not do this.
+                //case NCCAction.Discover: // for LMMM only, not needed for SR AFAIKT
+                //    ConnectInstruments();
+                //    ApplyInstrumentSettings();
+                //    CommandPrompt();   // launch command line interpreter loop 
+               //     break;
                 case NCCAction.HVCalibration:       // if SR, must have SR RT inst preset
                     FireEvent(EventType.PreAction, this);
                     DoHVCalib();
@@ -128,7 +129,7 @@ namespace DAQ
                     break;
             }
 
-            LMMMComm.Settle();
+            //ALMMComm.Settle();
             NC.App.Loggers.Flush();
             NC.App.Opstate.SOH = NCC.OperatingState.Stopped;
         }
@@ -179,18 +180,19 @@ namespace DAQ
                     if (line != null && (line.Length > 0))
                     {
                         string tline = line.Trim();
-                        LMMMLingo.OpDesc cmdt = new LMMMLingo.OpDesc(true);
-                        LMMMComm.CommandPromptMatchPrefix(tline, ref cmdt);
+                        //TODO: parse cmd line for new ALMM
+                        /*ALMMLingo.OpDesc cmdt = new ALMMLingo.OpDesc(true);
+                        ALMMComm.CommandPromptMatchPrefix(tline, ref cmdt);
 
-                        if (LMMMLingo.Tokens.unknown == cmdt.tok)
+                        if (ALMMLingo.Tokens.unknown == cmdt.tok)
                             Console.WriteLine(NC.App.AbbrName + "> skipping '" + tline + "', \r\n  enter 'help' for valid commands");
                         else
                         {
-                            Thread pnt = LMMMComm.ProcessUserCommand(cmdt, tline, this, ref keepGoing);
+                            Thread pnt = ALMMComm.ProcessUserCommand(cmdt, tline, this, ref keepGoing);
                             if (t == null)
                                 t = pnt;
                             Console.Write(NC.App.AbbrName + ">");
-                        }
+                        }*/
                     }
                     else
                         Console.Write(NC.App.AbbrName + "> ");
@@ -199,7 +201,7 @@ namespace DAQ
 
             // Issue: user quits operations via cmd prompt but system is still going waiting for HV or file or DAQ analysis to complete.
             // todo: Solution 1 (todo): prevent exit if waiting HVCalib or Assay operations to complete, pend woud occur in ProcessUserCommand above or around it via a polling loop
-            // Solution 2 (below): to use the cancellation token here, provided that t is non-null & user typed quit to prompt, so need to stop LMMM and stop the pending thread represented by t, if possible.
+            // Solution 2 (below): to use the cancellation token here, provided that t is non-null & user typed quit to prompt, so need to stop ALMM and stop the pending thread represented by t, if possible.
 
             if (NC.App.Opstate.SOH == NCC.OperatingState.Living && t != null && line.ToLower().StartsWith("quit"))
             {
@@ -212,7 +214,7 @@ namespace DAQ
         }
 
         // this starts the first iteration of the assay loop, 
-        // subsequent iterations are driven by the SR thread termination, PTR-32 thread termination, or LMMM socket callback 
+        // subsequent iterations are driven by the SR thread termination, PTR-32 thread termination, or ALMM socket callback 
         // at the end of each cycle
         protected bool StartAssay()
         {
@@ -234,7 +236,7 @@ namespace DAQ
             ushort attempts = 0;
             while (attempts < retry && Instruments.Active.ConnectedCount() <= 0 && Instruments.Active.Count > 0)
             {
-                ConnectInstruments();  // try to connect to any and all instruments (LMMM, PTR-32, MCA-527 and SR) 
+                ConnectInstruments();  // try to connect to any and all instruments (ALMM, PTR-32, MCA-527 and SR) 
 				Thread.Sleep(90);      // wait a moment
                 attempts++;
             }
@@ -327,8 +329,10 @@ namespace DAQ
             else
             {
                 FireEvent(EventType.ActionStop, this);
-                if (_SL != null)
-					_SL.Stop();  // shutdown server process
+                //if (_SL != null)
+                //	_SL.Stop();  // shutdown server process
+                if (_AL != null)
+                    _AL.Disconnect();
             }
         }
 
@@ -402,7 +406,7 @@ namespace DAQ
 		public bool AssayInception()
         {
             _completed[0].Reset(Instruments.Active.Count);
-            ApplyInstrumentSettings();
+            //ApplyInstrumentSettings();//For ALMM, this has already been done. ?? HN 6/19
             bool task = StartAssay(); // note: data collection occurs in async socket event callbacks through the LM DAQ server, don't need another thread 
             if (task)
             {
@@ -486,9 +490,11 @@ namespace DAQ
             }
             else
             {
-                FireEvent(EventType.ActionStop, this); 
-                if (_SL != null) 
-                    _SL.Stop();  // shutdown server process
+                FireEvent(EventType.ActionStop, this);
+                //if (_SL != null)
+                //	_SL.Stop();  // shutdown server process
+                if (_AL != null)
+                    _AL.Disconnect();
             }
         }
 
@@ -546,8 +552,8 @@ namespace DAQ
             collog.TraceEvent(LogLevels.Info, 0, "Connecting instruments...");
             ConnectMCAInstruments();
 
-            // for the LMMMs
-            ConnectLMMMInstruments();
+            // for the ALMMs
+            ConnectALMMInstruments();
 
             // for the PTR-32s
             ConnectPTR32Instruments();
@@ -605,27 +611,38 @@ namespace DAQ
 			return deviceInfos;
 		}
 
-		public void ConnectLMMMInstruments()
+		public void ConnectALMMInstruments()
         {
-            if (!Instruments.Active.HasLMMM())
+            if (!Instruments.Active.HasALMM())
                 return;
             LMInstrument lmi = (LMInstrument)Instruments.Active.FirstLM();
-			if (lmi.id.SRType != InstrType.LMMM)
+			if (lmi.id.SRType != InstrType.ALMM)
 				return;
             // for the LMs
             // Start listening for instruments.
             StartLMDAQServer((LMConnectionInfo)lmi.id.FullConnInfo);   // NEXT: socket reset should occur here for robust restart and recovery            
-            collog.TraceInformation("Broadcasting to LMMM instruments. . .");
+            collog.TraceInformation("Connecting to ALMM instruments. . .");
 
+            //There is no broadcast function on the ALMM
             // broadcast message to all subnet (configurable, defaulting to 169.254.x.x) addresses. This is the instrument group.
             // look for the number of requested instruments
-            DAQControl.LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.broadcast);
-            collog.TraceInformation("Sent broadcast. Waiting for LMMM instruments to connect");
+            //DAQControl.ALMMComm.PostALMMCommand(ALMMLingo.Tokens.broadcast);
+            //collog.TraceInformation("Sent broadcast. Waiting for ALMM instruments to connect");
 
             // wait until enough time has elapsed to be sure live instruments can report back
             Thread.Sleep(lmi.id.FullConnInfo.Wait);  // todo: configure this with a unique wait parameter value
-            if (!LMMMComm.LMServer.IsRunning)
-                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for LMMM support running");
+            //if (!ALMMComm.LMServer.IsRunning)
+            if ((!ALMMComm.ALMMCtrl.Connected()))
+            {
+                collog.TraceEvent(LogLevels.Error, 0x2A29, "No socket server for ALMM support running, will try reboot.");
+                _AL.ResetALMM();
+                Thread.Sleep(20000);
+            }
+            else 
+            {
+                Instruments.Active.FirstLM().DAQState = DAQInstrState.Online;
+                Instruments.Active.FirstLM().selected = true;
+            }
         }
 
         public void ConnectPTR32Instruments()
@@ -659,7 +676,7 @@ namespace DAQ
 				active.Disconnect();
             }
 
-            DisconnectFromLMMMInstruments();
+            DisconnectFromALMMInstruments();
             DisconnectFromSRInstruments();
             Instruments.All.Clear();
             collog.TraceInformation("Offline");
@@ -687,25 +704,230 @@ namespace DAQ
 			LMInstrument lm = (LMInstrument)Instruments.Active.AConnectedLM();
 			LMConnectionInfo lmc = (LMConnectionInfo)lm.id.FullConnInfo;
 
-			if (lm.id.SRType == InstrType.LMMM) // it's an LMMM
+			if (lm.id.SRType == InstrType.ALMM) // it's an ALMM
 			{
-				// look for any flags requiring conditioning of the instrument prior to assay or HV
-				// e.g. input=0, the arg to each is already parsed in the command line processing state
-				//if (NC.App.Config.LMMM.isSet(LMFlags.input))
-				{
-					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.input, lmc.DeviceConfig.Input);
+                string reply;
+                try
+                {
+                    //Always set debug to off. This could be enabled if we ever need it.
+                    //Need it 
+                    if (_AL.SetDebug(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set debug on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set debug on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set debug on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set debug on ALMM!");
+                    }
+                    _AL.Logger = collog;
+                    // Send initialization commands in particular order
+                    if (_AL.SetTime() != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set time on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set time on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set time on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set time on ALMM!");
+                    }
+                    //Should we do fractional intervals? HN 6/18
+                    if (_AL.SetDMATimeInterval(250) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set DMA time interval on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set DMA time interval on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set DMA time interval on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set DMA time interval on ALMM!");
+                    }
+                    //Should we do fractional intervals? HN 6/18
+                    if (_AL.SetDuration((int)NC.App.Config.Cur.Interval) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set duration on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set duration on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set duration on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set duration on ALMM!");
+                    }
+
+                    if (_AL.SetVetoTrue(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set vetoTrue on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set vetoTrue on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set vetoTrue on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set vetoTrue on ALMM!");
+                    }
+                    if (_AL.SetVetoGateWidth(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set vetoGateWidth on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set vetoGateWidth on ALMM!");
+
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set vetoGateWidth on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set vetoGateWidt on ALMM!");
+                    }
+
+                    if (_AL.SetVeto(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set veto on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set veto on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set veto on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set veto on ALMM!");
+                    }
+
+                    if (_AL.SetRunDescription("INCC6 run " + DateTime.Now.ToLongDateString()) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set run description on ALMM!");
+                        collog.TraceEvent(LogLevels.Warning, 0, "Could not set run description on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set run description on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set run description on ALMM!");
+                    }
+                    
+                    if (_AL.SetReps(string.Format("1, {0}",(int)NC.App.Config.Cur.Cycles)) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set reps on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set reps on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set reps on ALMM!");     
+                        collog.TraceEvent(LogLevels.Info, 0, "Set reps on ALMM!");
+                    }
+
+                    if (_AL.SetStorage(ALMMController.StorageLocation.NET) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set storage location on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set storage location on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set storage location on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set storage location on ALMM!");
+                    }
+
+                    if (_AL.SetDistToObject(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set DistToObject on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set DistToObject on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set DistToObject on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set DistToObject on ALMM!");
+                    }
+
+                    if (_AL.SetDistToFloor(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set DistToFloor on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set DistToFloor on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set DistToFloor on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set DistToFloor on ALMM!");
+                    }
+
+                    if (_AL.SetHV(lmc.DeviceConfig.HV) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set HV on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set HV on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set HV on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Set HV on ALMM!");
+                    }
+
+                    if (_AL.SetDeadTime(0) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set deadtime on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set deadtime on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set deadtime on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set deadtime on ALMM!");
+                    }
+
+                    if (_AL.SetChannelMask(0xFF) != ALMMController.ReturnCode.ALL_GOOD)
+                    {
+                        collog.TraceInformation("Could not set channel mask on ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not set channel mask on ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Set channel mask on ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, "Set channel mask on ALMM!");
+                    }
+
+                    reply = _AL.GetLFSList();
+
+                    if (reply.Length < 1)
+                    {
+                        collog.TraceInformation("Could not get LFS List from ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not get LFS List from ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation(String.Format("Got LFS List from ALMM! {0}", reply));
+                        collog.TraceEvent(LogLevels.Verbose, 0, string.Format("lfs list returned by ALMM: {0}", reply));
+                    }
+
+                    reply = _AL.GetRates();
+
+                    if (reply.Length < 1)
+                    {
+                        collog.TraceInformation("Could not get Rates from ALMM!");
+                        collog.TraceEvent(LogLevels.Info, 0, "Could not get Rates from ALMM!");
+                    }
+                    else
+                    {
+                        collog.TraceInformation("Got Rates from ALMM!");
+                        collog.TraceEvent(LogLevels.Verbose, 0, string.Format("rates returned by ALMM: {0}", reply));
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    collog.TraceInformation(String.Format ("Exception caught setting ALMM {0}",ex.Message));
+                    collog.TraceEvent(LogLevels.Warning, 0, String.Format("Exception caught setting ALMM {0}", ex.Message));
+                    _AL.Disconnect();
+                }
+                //TODO: No idea what these were. Incoroporate Marc's code instead. HN
+                // look for any flags requiring conditioning of the instrument prior to assay or HV
+                // e.g. input=0, the arg to each is already parsed in the command line processing state
+                //if (NC.App.Config(LMFlags.input))
+                {
+				//	DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.input, lmc.DeviceConfig.Input);
 				}
 				//if (NC.App.Config.LMMM.isSet(LMFlags.debug))
 				{
-					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
+				//	DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.debug, lmc.DeviceConfig.Debug);
 				}
 				//if (NC.App.Config.LMMM.isSet(LMFlags.leds))
 				{
-					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
+				//	DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.leds, lmc.DeviceConfig.LEDs);
 				}
 				//if (NC.App.Config.LMMM.isSet(LMFlags.hv))
 				{
-					DAQControl.LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
+				//	DAQControl.ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.hvset, lmc.DeviceConfig.HV);
 				}
 			} else if (lm.id.SRType == InstrType.PTR32) // its a PTR-32
 			{
@@ -744,7 +966,7 @@ namespace DAQ
 					String ss = cipss.cs.ToString() + ";";
 					ss += cipss.iss.ToString();
 					s = ss + " " + id;
-					if (/*channels && cipss.iss.asy != null*/cipss.iss.ins.dsid.SRType == InstrType.LMMM || cipss.iss.ins.dsid.SRType == InstrType.PTR32)
+					if (/*channels && cipss.iss.asy != null*/cipss.iss.ins.dsid.SRType == InstrType.ALMM || cipss.iss.ins.dsid.SRType == InstrType.PTR32)
 						s += ";  " + cipss.iss.asy.cpss.HitsPerChnImage();
 				}
 			} catch (System.ObjectDisposedException) {

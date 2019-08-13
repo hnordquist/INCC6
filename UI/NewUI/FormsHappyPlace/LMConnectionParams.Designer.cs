@@ -29,50 +29,29 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.SubnetLabel = new System.Windows.Forms.Label();
-            this.LMMMSubnetTextBox = new System.Windows.Forms.TextBox();
-            this.PortLabel = new System.Windows.Forms.Label();
-            this.LMMMLocalPortTextBox = new System.Windows.Forms.TextBox();
-            this.DiscWaitTimeLabel = new System.Windows.Forms.Label();
-            this.LMMMDiscWaitTimeTextBox = new System.Windows.Forms.TextBox();
-            this.DiscWaitTimeUnitsLabel = new System.Windows.Forms.Label();
-            this.LMMMRemotePortLabel = new System.Windows.Forms.Label();
-            this.LMMMBroadcastCheckBox = new System.Windows.Forms.CheckBox();
-            this.LMMMRemotePortTextBox = new System.Windows.Forms.TextBox();
-            this.LMMMInModeLabel = new System.Windows.Forms.Label();
-            this.LMMMInModeComboBox = new System.Windows.Forms.ComboBox();
-            this.LMMMDiscoverBtn = new System.Windows.Forms.Button();
-            this.IntervalLabel = new System.Windows.Forms.Label();
-            this.LMMMIntervalTextBox = new System.Windows.Forms.TextBox();
-            this.LMMMFeedbackFlagCheckBox = new System.Windows.Forms.CheckBox();
-            this.ConnectionsLabel = new System.Windows.Forms.Label();
-            this.LMMMConnectionsTextBox = new System.Windows.Forms.TextBox();
-            this.BufferLabel = new System.Windows.Forms.Label();
-            this.LMMMBufferTextBox = new System.Windows.Forms.TextBox();
-            this.BufferWarningLabel = new System.Windows.Forms.Label();
-            this.EventBufferLabel = new System.Windows.Forms.Label();
-            this.LMMMEventBufferTextBox = new System.Windows.Forms.TextBox();
-            this.EventBufferUnitsLabel = new System.Windows.Forms.Label();
-            this.LMMMSyncAnalysisCheckBox = new System.Windows.Forms.CheckBox();
-            this.LMMMAsyncFileCheckBox = new System.Windows.Forms.CheckBox();
-            this.LMMMStreamCheckBox = new System.Windows.Forms.CheckBox();
-            this.LMMMOKBtn = new System.Windows.Forms.Button();
-            this.LMMMCancelBtn = new System.Windows.Forms.Button();
-            this.LMMMHelpBtn = new System.Windows.Forms.Button();
-            this.PerformanceTuningGroupBox = new System.Windows.Forms.GroupBox();
-            this.IntervalUnitsLabel = new System.Windows.Forms.Label();
-            this.InstrumentDiscoveryGroupBox = new System.Windows.Forms.GroupBox();
-            this.JoeIsTheCoolestGroupBox = new System.Windows.Forms.GroupBox();
-            this.LMMMPanel = new System.Windows.Forms.Panel();
-            this.HWConfig = new System.Windows.Forms.GroupBox();
-            this.LMMMLLDmV = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.LMMMLEDs = new System.Windows.Forms.CheckBox();
-            this.LMMMHV = new System.Windows.Forms.TextBox();
-            this.LMMMDebugFlag = new System.Windows.Forms.CheckBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.LMMMBackBtn = new System.Windows.Forms.Button();
-            this.LMMMLabel = new System.Windows.Forms.Label();
+            this.ALMMIPLabel = new System.Windows.Forms.Label();
+            this.ALMMIPAddressTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMPortLabel = new System.Windows.Forms.Label();
+            this.ALMMPortTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMBufferLabel = new System.Windows.Forms.Label();
+            this.ALMMBufferTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMOKBtn = new System.Windows.Forms.Button();
+            this.ALMMCancelBtn = new System.Windows.Forms.Button();
+            this.ALMMHelpBtn = new System.Windows.Forms.Button();
+            this.ALMMPerformanceTuningGroupBox = new System.Windows.Forms.GroupBox();
+            this.CommandWaitTimemsLabel = new System.Windows.Forms.Label();
+            this.ALMMCommandWaitTimeTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMCommandWaitTimeLabel = new System.Windows.Forms.Label();
+            this.LongWaitTimemsLabel = new System.Windows.Forms.Label();
+            this.ALMMLongWaitTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMLongWaitTimeLabel = new System.Windows.Forms.Label();
+            this.ALMMNetworkSettings = new System.Windows.Forms.GroupBox();
+            this.ALMMPanel = new System.Windows.Forms.Panel();
+            this.ALMMHWConfig = new System.Windows.Forms.GroupBox();
+            this.ALMMHVTextBox = new System.Windows.Forms.TextBox();
+            this.ALMMHVLabel = new System.Windows.Forms.Label();
+            this.ALMMBackBtn = new System.Windows.Forms.Button();
+            this.ALMMLabel = new System.Windows.Forms.Label();
             this.SelectorPanel = new System.Windows.Forms.Panel();
             this.DeleteBtn = new System.Windows.Forms.Button();
             this.AddDetectorBtn = new System.Windows.Forms.Button();
@@ -107,514 +86,257 @@
             this.AddDetectorTypeComboBox = new System.Windows.Forms.ComboBox();
             this.AddDetectorTypeLabel = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.PerformanceTuningGroupBox.SuspendLayout();
-            this.InstrumentDiscoveryGroupBox.SuspendLayout();
-            this.JoeIsTheCoolestGroupBox.SuspendLayout();
-            this.LMMMPanel.SuspendLayout();
-            this.HWConfig.SuspendLayout();
+            this.ALMMPerformanceTuningGroupBox.SuspendLayout();
+            this.ALMMNetworkSettings.SuspendLayout();
+            this.ALMMPanel.SuspendLayout();
+            this.ALMMHWConfig.SuspendLayout();
             this.SelectorPanel.SuspendLayout();
             this.PTR32Panel.SuspendLayout();
             this.AddDetectorTypePanel.SuspendLayout();
             this.SuspendLayout();
             // 
-            // SubnetLabel
-            // 
-            this.SubnetLabel.AutoSize = true;
-            this.SubnetLabel.Location = new System.Drawing.Point(68, 35);
-            this.SubnetLabel.Name = "SubnetLabel";
-            this.SubnetLabel.Size = new System.Drawing.Size(41, 13);
-            this.SubnetLabel.TabIndex = 0;
-            this.SubnetLabel.Text = "Subnet";
-            // 
-            // LMMMSubnetTextBox
-            // 
-            this.LMMMSubnetTextBox.Location = new System.Drawing.Point(115, 32);
-            this.LMMMSubnetTextBox.Name = "LMMMSubnetTextBox";
-            this.LMMMSubnetTextBox.Size = new System.Drawing.Size(92, 20);
-            this.LMMMSubnetTextBox.TabIndex = 1;
-            this.LMMMSubnetTextBox.Text = "169.254.255.255";
-            this.toolTip1.SetToolTip(this.LMMMSubnetTextBox, "subnet mask for LM network");
-            this.LMMMSubnetTextBox.Leave += new System.EventHandler(this.LMMMSubnetTextBox_Leave);
-            // 
-            // PortLabel
-            // 
-            this.PortLabel.AutoSize = true;
-            this.PortLabel.Location = new System.Drawing.Point(55, 61);
-            this.PortLabel.Name = "PortLabel";
-            this.PortLabel.Size = new System.Drawing.Size(54, 13);
-            this.PortLabel.TabIndex = 2;
-            this.PortLabel.Text = "Local port";
-            // 
-            // LMMMLocalPortTextBox
-            // 
-            this.LMMMLocalPortTextBox.Location = new System.Drawing.Point(115, 58);
-            this.LMMMLocalPortTextBox.Name = "LMMMLocalPortTextBox";
-            this.LMMMLocalPortTextBox.Size = new System.Drawing.Size(49, 20);
-            this.LMMMLocalPortTextBox.TabIndex = 3;
-            this.LMMMLocalPortTextBox.Text = "5011";
-            this.toolTip1.SetToolTip(this.LMMMLocalPortTextBox, "port number for this app\'s LM TCP/IP listener");
-            this.LMMMLocalPortTextBox.Leave += new System.EventHandler(this.LMMMLocalPortTextBox_Leave);
-            // 
-            // DiscWaitTimeLabel
-            // 
-            this.DiscWaitTimeLabel.AutoSize = true;
-            this.DiscWaitTimeLabel.Location = new System.Drawing.Point(26, 68);
-            this.DiscWaitTimeLabel.Name = "DiscWaitTimeLabel";
-            this.DiscWaitTimeLabel.Size = new System.Drawing.Size(98, 13);
-            this.DiscWaitTimeLabel.TabIndex = 4;
-            this.DiscWaitTimeLabel.Text = "Discovery wait time";
-            // 
-            // LMMMDiscWaitTimeTextBox
-            // 
-            this.LMMMDiscWaitTimeTextBox.Location = new System.Drawing.Point(130, 65);
-            this.LMMMDiscWaitTimeTextBox.Name = "LMMMDiscWaitTimeTextBox";
-            this.LMMMDiscWaitTimeTextBox.Size = new System.Drawing.Size(55, 20);
-            this.LMMMDiscWaitTimeTextBox.TabIndex = 5;
-            this.LMMMDiscWaitTimeTextBox.Text = "500";
-            this.toolTip1.SetToolTip(this.LMMMDiscWaitTimeTextBox, "milliseconds to wait for response to broadcast command");
-            this.LMMMDiscWaitTimeTextBox.Leave += new System.EventHandler(this.LMMMDiscWaitTimeTextBox_Leave);
-            // 
-            // DiscWaitTimeUnitsLabel
-            // 
-            this.DiscWaitTimeUnitsLabel.AutoSize = true;
-            this.DiscWaitTimeUnitsLabel.Location = new System.Drawing.Point(191, 68);
-            this.DiscWaitTimeUnitsLabel.Name = "DiscWaitTimeUnitsLabel";
-            this.DiscWaitTimeUnitsLabel.Size = new System.Drawing.Size(20, 13);
-            this.DiscWaitTimeUnitsLabel.TabIndex = 6;
-            this.DiscWaitTimeUnitsLabel.Text = "ms";
-            // 
-            // LMMMRemotePortLabel
-            // 
-            this.LMMMRemotePortLabel.AutoSize = true;
-            this.LMMMRemotePortLabel.Location = new System.Drawing.Point(7, 87);
-            this.LMMMRemotePortLabel.Name = "LMMMRemotePortLabel";
-            this.LMMMRemotePortLabel.Size = new System.Drawing.Size(102, 13);
-            this.LMMMRemotePortLabel.TabIndex = 7;
-            this.LMMMRemotePortLabel.Text = "LMMM listening port";
-            // 
-            // LMMMBroadcastCheckBox
-            // 
-            this.LMMMBroadcastCheckBox.AutoSize = true;
-            this.LMMMBroadcastCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMBroadcastCheckBox.Checked = true;
-            this.LMMMBroadcastCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.LMMMBroadcastCheckBox.Location = new System.Drawing.Point(69, 91);
-            this.LMMMBroadcastCheckBox.Name = "LMMMBroadcastCheckBox";
-            this.LMMMBroadcastCheckBox.Size = new System.Drawing.Size(74, 17);
-            this.LMMMBroadcastCheckBox.TabIndex = 8;
-            this.LMMMBroadcastCheckBox.Text = "Broadcast";
-            this.toolTip1.SetToolTip(this.LMMMBroadcastCheckBox, "use one or more uncoupled multiple LMs");
-            this.LMMMBroadcastCheckBox.UseVisualStyleBackColor = true;
-            this.LMMMBroadcastCheckBox.CheckedChanged += new System.EventHandler(this.LMMMBroadcastCheckBox_CheckedChanged);
-            // 
-            // LMMMRemotePortTextBox
-            // 
-            this.LMMMRemotePortTextBox.Location = new System.Drawing.Point(115, 84);
-            this.LMMMRemotePortTextBox.Name = "LMMMRemotePortTextBox";
-            this.LMMMRemotePortTextBox.Size = new System.Drawing.Size(49, 20);
-            this.LMMMRemotePortTextBox.TabIndex = 10;
-            this.LMMMRemotePortTextBox.Text = "5000";
-            this.toolTip1.SetToolTip(this.LMMMRemotePortTextBox, "port number used by LMs to listen for broadcast messages");
-            this.LMMMRemotePortTextBox.Leave += new System.EventHandler(this.LMMMRemotePortTextBox_Leave);
-            // 
-            // LMMMInModeLabel
-            // 
-            this.LMMMInModeLabel.AutoSize = true;
-            this.LMMMInModeLabel.Location = new System.Drawing.Point(21, 24);
-            this.LMMMInModeLabel.Name = "LMMMInModeLabel";
-            this.LMMMInModeLabel.Size = new System.Drawing.Size(95, 13);
-            this.LMMMInModeLabel.TabIndex = 11;
-            this.LMMMInModeLabel.Text = "LMMM input mode";
-            this.toolTip1.SetToolTip(this.LMMMInModeLabel, "LMMM input mode 0/TTL or 1/ribbon");
-            // 
-            // LMMMInModeComboBox
-            // 
-            this.LMMMInModeComboBox.FormattingEnabled = true;
-            this.LMMMInModeComboBox.Items.AddRange(new object[] {
-            "diff/ribbon",
-            "TTL"});
-            this.LMMMInModeComboBox.Location = new System.Drawing.Point(122, 21);
-            this.LMMMInModeComboBox.Name = "LMMMInModeComboBox";
-            this.LMMMInModeComboBox.Size = new System.Drawing.Size(70, 21);
-            this.LMMMInModeComboBox.TabIndex = 12;
-            this.toolTip1.SetToolTip(this.LMMMInModeComboBox, "LMMM input mode TTL or ribbon");
-            this.LMMMInModeComboBox.SelectedIndexChanged += new System.EventHandler(this.LMMMInModeComboBox_SelectedIndexChanged);
-            // 
-            // LMMMDiscoverBtn
-            // 
-            this.LMMMDiscoverBtn.Location = new System.Drawing.Point(104, 34);
-            this.LMMMDiscoverBtn.Name = "LMMMDiscoverBtn";
-            this.LMMMDiscoverBtn.Size = new System.Drawing.Size(81, 23);
-            this.LMMMDiscoverBtn.TabIndex = 13;
-            this.LMMMDiscoverBtn.Text = "Discover";
-            this.toolTip1.SetToolTip(this.LMMMDiscoverBtn, "send UDP discovery message on the LM subnet");
-            this.LMMMDiscoverBtn.UseVisualStyleBackColor = true;
-            // 
-            // IntervalLabel
-            // 
-            this.IntervalLabel.AutoSize = true;
-            this.IntervalLabel.Location = new System.Drawing.Point(17, 24);
-            this.IntervalLabel.Name = "IntervalLabel";
-            this.IntervalLabel.Size = new System.Drawing.Size(166, 13);
-            this.IntervalLabel.TabIndex = 14;
-            this.IntervalLabel.Text = "Network buffer separation interval";
-            // 
-            // LMMMIntervalTextBox
-            // 
-            this.LMMMIntervalTextBox.Location = new System.Drawing.Point(189, 21);
-            this.LMMMIntervalTextBox.Name = "LMMMIntervalTextBox";
-            this.LMMMIntervalTextBox.Size = new System.Drawing.Size(48, 20);
-            this.LMMMIntervalTextBox.TabIndex = 15;
-            this.LMMMIntervalTextBox.Text = "0";
-            this.toolTip1.SetToolTip(this.LMMMIntervalTextBox, "network buffer send separation in milliseconds, defaults to 0, \\\"set higher if ne" +
-        "twork freezes\\\"");
-            this.LMMMIntervalTextBox.Leave += new System.EventHandler(this.LMMMIntervalTextBox_Leave);
-            // 
-            // LMMMFeedbackFlagCheckBox
-            // 
-            this.LMMMFeedbackFlagCheckBox.AutoSize = true;
-            this.LMMMFeedbackFlagCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMFeedbackFlagCheckBox.Location = new System.Drawing.Point(110, 47);
-            this.LMMMFeedbackFlagCheckBox.Name = "LMMMFeedbackFlagCheckBox";
-            this.LMMMFeedbackFlagCheckBox.Size = new System.Drawing.Size(94, 17);
-            this.LMMMFeedbackFlagCheckBox.TabIndex = 16;
-            this.LMMMFeedbackFlagCheckBox.Text = "Feedback flag";
-            this.LMMMFeedbackFlagCheckBox.UseVisualStyleBackColor = true;
-            this.LMMMFeedbackFlagCheckBox.CheckedChanged += new System.EventHandler(this.LMMMFeedbackFlagCheckBox_CheckedChanged);
-            // 
-            // ConnectionsLabel
-            // 
-            this.ConnectionsLabel.AutoSize = true;
-            this.ConnectionsLabel.Location = new System.Drawing.Point(117, 73);
-            this.ConnectionsLabel.Name = "ConnectionsLabel";
-            this.ConnectionsLabel.Size = new System.Drawing.Size(66, 13);
-            this.ConnectionsLabel.TabIndex = 17;
-            this.ConnectionsLabel.Text = "Connections";
-            // 
-            // LMMMConnectionsTextBox
-            // 
-            this.LMMMConnectionsTextBox.Location = new System.Drawing.Point(189, 70);
-            this.LMMMConnectionsTextBox.Name = "LMMMConnectionsTextBox";
-            this.LMMMConnectionsTextBox.Size = new System.Drawing.Size(49, 20);
-            this.LMMMConnectionsTextBox.TabIndex = 18;
-            this.LMMMConnectionsTextBox.Text = "8";
-            this.toolTip1.SetToolTip(this.LMMMConnectionsTextBox, "maximum number of connections permitted for LM TCP/IP listener");
-            this.LMMMConnectionsTextBox.Leave += new System.EventHandler(this.LMMMConnectionsTextBox_Leave);
-            // 
-            // BufferLabel
-            // 
-            this.BufferLabel.AutoSize = true;
-            this.BufferLabel.Location = new System.Drawing.Point(112, 99);
-            this.BufferLabel.Name = "BufferLabel";
-            this.BufferLabel.Size = new System.Drawing.Size(71, 13);
-            this.BufferLabel.TabIndex = 19;
-            this.BufferLabel.Text = "Socket buffer";
-            // 
-            // LMMMBufferTextBox
-            // 
-            this.LMMMBufferTextBox.Location = new System.Drawing.Point(189, 96);
-            this.LMMMBufferTextBox.Name = "LMMMBufferTextBox";
-            this.LMMMBufferTextBox.Size = new System.Drawing.Size(48, 20);
-            this.LMMMBufferTextBox.TabIndex = 20;
-            this.LMMMBufferTextBox.Text = "8192";
-            this.toolTip1.SetToolTip(this.LMMMBufferTextBox, "(note:  must match hardware configuration)");
-            this.LMMMBufferTextBox.Leave += new System.EventHandler(this.LMMMBufferTextBox_Leave);
-            // 
-            // BufferWarningLabel
-            // 
-            this.BufferWarningLabel.AutoSize = true;
-            this.BufferWarningLabel.Location = new System.Drawing.Point(243, 99);
-            this.BufferWarningLabel.Name = "BufferWarningLabel";
-            this.BufferWarningLabel.Size = new System.Drawing.Size(14, 13);
-            this.BufferWarningLabel.TabIndex = 21;
-            this.BufferWarningLabel.Text = "B";
-            this.BufferWarningLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.toolTip1.SetToolTip(this.BufferWarningLabel, " ");
-            // 
-            // EventBufferLabel
-            // 
-            this.EventBufferLabel.AutoSize = true;
-            this.EventBufferLabel.Location = new System.Drawing.Point(98, 125);
-            this.EventBufferLabel.Name = "EventBufferLabel";
-            this.EventBufferLabel.Size = new System.Drawing.Size(86, 13);
-            this.EventBufferLabel.TabIndex = 22;
-            this.EventBufferLabel.Text = "Event buffer size";
-            // 
-            // LMMMEventBufferTextBox
-            // 
-            this.LMMMEventBufferTextBox.Location = new System.Drawing.Point(190, 122);
-            this.LMMMEventBufferTextBox.Name = "LMMMEventBufferTextBox";
-            this.LMMMEventBufferTextBox.Size = new System.Drawing.Size(47, 20);
-            this.LMMMEventBufferTextBox.TabIndex = 23;
-            this.LMMMEventBufferTextBox.Text = "50";
-            this.toolTip1.SetToolTip(this.LMMMEventBufferTextBox, "MB size of input buffer for DAQ and NCD file input, default is 50MB (50), max is " +
-        "1024");
-            this.LMMMEventBufferTextBox.Leave += new System.EventHandler(this.LMMMEventBufferTextBox_Leave);
-            // 
-            // EventBufferUnitsLabel
-            // 
-            this.EventBufferUnitsLabel.AutoSize = true;
-            this.EventBufferUnitsLabel.Location = new System.Drawing.Point(243, 125);
-            this.EventBufferUnitsLabel.Name = "EventBufferUnitsLabel";
-            this.EventBufferUnitsLabel.Size = new System.Drawing.Size(23, 13);
-            this.EventBufferUnitsLabel.TabIndex = 24;
-            this.EventBufferUnitsLabel.Text = "MB";
-            // 
-            // LMMMSyncAnalysisCheckBox
-            // 
-            this.LMMMSyncAnalysisCheckBox.AutoSize = true;
-            this.LMMMSyncAnalysisCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMSyncAnalysisCheckBox.Checked = true;
-            this.LMMMSyncAnalysisCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.LMMMSyncAnalysisCheckBox.Location = new System.Drawing.Point(74, 148);
-            this.LMMMSyncAnalysisCheckBox.Name = "LMMMSyncAnalysisCheckBox";
-            this.LMMMSyncAnalysisCheckBox.Size = new System.Drawing.Size(130, 17);
-            this.LMMMSyncAnalysisCheckBox.TabIndex = 25;
-            this.LMMMSyncAnalysisCheckBox.Text = "Synchronized analysis";
-            this.toolTip1.SetToolTip(this.LMMMSyncAnalysisCheckBox, "use synchronous analysis processing");
-            this.LMMMSyncAnalysisCheckBox.UseVisualStyleBackColor = true;
-            this.LMMMSyncAnalysisCheckBox.CheckedChanged += new System.EventHandler(this.LMMMSyncAnalysisCheckBox_CheckedChanged);
-            // 
-            // LMMMAsyncFileCheckBox
-            // 
-            this.LMMMAsyncFileCheckBox.AutoSize = true;
-            this.LMMMAsyncFileCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMAsyncFileCheckBox.Location = new System.Drawing.Point(55, 171);
-            this.LMMMAsyncFileCheckBox.Name = "LMMMAsyncFileCheckBox";
-            this.LMMMAsyncFileCheckBox.Size = new System.Drawing.Size(149, 17);
-            this.LMMMAsyncFileCheckBox.TabIndex = 26;
-            this.LMMMAsyncFileCheckBox.Text = "Asynchronous file analysis";
-            this.toolTip1.SetToolTip(this.LMMMAsyncFileCheckBox, "use asynchronous NCD file processing");
-            this.LMMMAsyncFileCheckBox.UseVisualStyleBackColor = true;
-            this.LMMMAsyncFileCheckBox.CheckedChanged += new System.EventHandler(this.LMMMAsyncFileCheckBox_CheckedChanged);
-            // 
-            // LMMMStreamCheckBox
-            // 
-            this.LMMMStreamCheckBox.AutoSize = true;
-            this.LMMMStreamCheckBox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMStreamCheckBox.Checked = true;
-            this.LMMMStreamCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.LMMMStreamCheckBox.Location = new System.Drawing.Point(145, 194);
-            this.LMMMStreamCheckBox.Name = "LMMMStreamCheckBox";
-            this.LMMMStreamCheckBox.Size = new System.Drawing.Size(59, 17);
-            this.LMMMStreamCheckBox.TabIndex = 27;
-            this.LMMMStreamCheckBox.Text = "Stream";
-            this.toolTip1.SetToolTip(this.LMMMStreamCheckBox, "Use block of time:channel pairs to present to the neutron counting processor in a" +
-        " single operation. Block size is derived from eventbuff; on = eventbuff/8, off =" +
-        " 1");
-            this.LMMMStreamCheckBox.UseVisualStyleBackColor = true;
-            this.LMMMStreamCheckBox.CheckedChanged += new System.EventHandler(this.LMMMStreamCheckBox_CheckedChanged);
-            // 
-            // LMMMOKBtn
-            // 
-            this.LMMMOKBtn.Location = new System.Drawing.Point(509, 48);
-            this.LMMMOKBtn.Name = "LMMMOKBtn";
-            this.LMMMOKBtn.Size = new System.Drawing.Size(75, 23);
-            this.LMMMOKBtn.TabIndex = 28;
-            this.LMMMOKBtn.Text = "OK";
-            this.LMMMOKBtn.UseVisualStyleBackColor = true;
-            this.LMMMOKBtn.Click += new System.EventHandler(this.LMMMOKBtn_Click);
-            // 
-            // LMMMCancelBtn
-            // 
-            this.LMMMCancelBtn.Location = new System.Drawing.Point(509, 106);
-            this.LMMMCancelBtn.Name = "LMMMCancelBtn";
-            this.LMMMCancelBtn.Size = new System.Drawing.Size(75, 23);
-            this.LMMMCancelBtn.TabIndex = 29;
-            this.LMMMCancelBtn.Text = "Cancel";
-            this.LMMMCancelBtn.UseVisualStyleBackColor = true;
-            this.LMMMCancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
-            // 
-            // LMMMHelpBtn
-            // 
-            this.LMMMHelpBtn.Location = new System.Drawing.Point(509, 135);
-            this.LMMMHelpBtn.Name = "LMMMHelpBtn";
-            this.LMMMHelpBtn.Size = new System.Drawing.Size(75, 23);
-            this.LMMMHelpBtn.TabIndex = 30;
-            this.LMMMHelpBtn.Text = "Help";
-            this.LMMMHelpBtn.UseVisualStyleBackColor = true;
-            // 
-            // PerformanceTuningGroupBox
-            // 
-            this.PerformanceTuningGroupBox.Controls.Add(this.IntervalUnitsLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMStreamCheckBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMAsyncFileCheckBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMSyncAnalysisCheckBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.EventBufferUnitsLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMEventBufferTextBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.EventBufferLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.BufferWarningLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMBufferTextBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.BufferLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMConnectionsTextBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.ConnectionsLabel);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMFeedbackFlagCheckBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.LMMMIntervalTextBox);
-            this.PerformanceTuningGroupBox.Controls.Add(this.IntervalLabel);
-            this.PerformanceTuningGroupBox.Location = new System.Drawing.Point(11, 177);
-            this.PerformanceTuningGroupBox.Name = "PerformanceTuningGroupBox";
-            this.PerformanceTuningGroupBox.Size = new System.Drawing.Size(281, 223);
-            this.PerformanceTuningGroupBox.TabIndex = 31;
-            this.PerformanceTuningGroupBox.TabStop = false;
-            this.PerformanceTuningGroupBox.Text = "Performance tuning";
-            // 
-            // IntervalUnitsLabel
-            // 
-            this.IntervalUnitsLabel.AutoSize = true;
-            this.IntervalUnitsLabel.Location = new System.Drawing.Point(243, 24);
-            this.IntervalUnitsLabel.Name = "IntervalUnitsLabel";
-            this.IntervalUnitsLabel.Size = new System.Drawing.Size(20, 13);
-            this.IntervalUnitsLabel.TabIndex = 28;
-            this.IntervalUnitsLabel.Text = "ms";
-            // 
-            // InstrumentDiscoveryGroupBox
-            // 
-            this.InstrumentDiscoveryGroupBox.Controls.Add(this.LMMMDiscoverBtn);
-            this.InstrumentDiscoveryGroupBox.Controls.Add(this.LMMMBroadcastCheckBox);
-            this.InstrumentDiscoveryGroupBox.Controls.Add(this.DiscWaitTimeUnitsLabel);
-            this.InstrumentDiscoveryGroupBox.Controls.Add(this.LMMMDiscWaitTimeTextBox);
-            this.InstrumentDiscoveryGroupBox.Controls.Add(this.DiscWaitTimeLabel);
-            this.InstrumentDiscoveryGroupBox.Location = new System.Drawing.Point(257, 43);
-            this.InstrumentDiscoveryGroupBox.Name = "InstrumentDiscoveryGroupBox";
-            this.InstrumentDiscoveryGroupBox.Size = new System.Drawing.Size(240, 128);
-            this.InstrumentDiscoveryGroupBox.TabIndex = 32;
-            this.InstrumentDiscoveryGroupBox.TabStop = false;
-            this.InstrumentDiscoveryGroupBox.Text = "Instrument discovery";
-            // 
-            // JoeIsTheCoolestGroupBox
-            // 
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.LMMMRemotePortTextBox);
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.LMMMRemotePortLabel);
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.LMMMLocalPortTextBox);
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.PortLabel);
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.LMMMSubnetTextBox);
-            this.JoeIsTheCoolestGroupBox.Controls.Add(this.SubnetLabel);
-            this.JoeIsTheCoolestGroupBox.Location = new System.Drawing.Point(11, 43);
-            this.JoeIsTheCoolestGroupBox.Name = "JoeIsTheCoolestGroupBox";
-            this.JoeIsTheCoolestGroupBox.Size = new System.Drawing.Size(237, 128);
-            this.JoeIsTheCoolestGroupBox.TabIndex = 33;
-            this.JoeIsTheCoolestGroupBox.TabStop = false;
-            this.JoeIsTheCoolestGroupBox.Text = "Network";
-            // 
-            // LMMMPanel
-            // 
-            this.LMMMPanel.Controls.Add(this.HWConfig);
-            this.LMMMPanel.Controls.Add(this.LMMMBackBtn);
-            this.LMMMPanel.Controls.Add(this.LMMMLabel);
-            this.LMMMPanel.Controls.Add(this.JoeIsTheCoolestGroupBox);
-            this.LMMMPanel.Controls.Add(this.InstrumentDiscoveryGroupBox);
-            this.LMMMPanel.Controls.Add(this.PerformanceTuningGroupBox);
-            this.LMMMPanel.Controls.Add(this.LMMMHelpBtn);
-            this.LMMMPanel.Controls.Add(this.LMMMCancelBtn);
-            this.LMMMPanel.Controls.Add(this.LMMMOKBtn);
-            this.LMMMPanel.Location = new System.Drawing.Point(12, 130);
-            this.LMMMPanel.Name = "LMMMPanel";
-            this.LMMMPanel.Size = new System.Drawing.Size(601, 416);
-            this.LMMMPanel.TabIndex = 34;
-            this.LMMMPanel.Visible = false;
-            // 
-            // HWConfig
-            // 
-            this.HWConfig.Controls.Add(this.LMMMLLDmV);
-            this.HWConfig.Controls.Add(this.label3);
-            this.HWConfig.Controls.Add(this.LMMMLEDs);
-            this.HWConfig.Controls.Add(this.LMMMHV);
-            this.HWConfig.Controls.Add(this.LMMMDebugFlag);
-            this.HWConfig.Controls.Add(this.label2);
-            this.HWConfig.Controls.Add(this.LMMMInModeComboBox);
-            this.HWConfig.Controls.Add(this.LMMMInModeLabel);
-            this.HWConfig.Location = new System.Drawing.Point(315, 177);
-            this.HWConfig.Name = "HWConfig";
-            this.HWConfig.Size = new System.Drawing.Size(237, 223);
-            this.HWConfig.TabIndex = 34;
-            this.HWConfig.TabStop = false;
-            this.HWConfig.Text = "HW Config";
-            // 
-            // LMMMLLDmV
-            // 
-            this.LMMMLLDmV.Location = new System.Drawing.Point(123, 70);
-            this.LMMMLLDmV.Name = "LMMMLLDmV";
-            this.LMMMLLDmV.Size = new System.Drawing.Size(48, 20);
-            this.LMMMLLDmV.TabIndex = 33;
-            this.LMMMLLDmV.Text = "1";
-            this.toolTip1.SetToolTip(this.LMMMLLDmV, "Microvolts for some component. Very confusion.");
-            this.LMMMLLDmV.Leave += new System.EventHandler(this.LMMMLLDmV_Leave);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(67, 73);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(45, 13);
-            this.label3.TabIndex = 32;
-            this.label3.Text = "LLD mV";
-            this.toolTip1.SetToolTip(this.label3, "Microvolts for some component. Very confusion.");
-            // 
-            // LMMMLEDs
-            // 
-            this.LMMMLEDs.AutoSize = true;
-            this.LMMMLEDs.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMLEDs.Location = new System.Drawing.Point(85, 118);
-            this.LMMMLEDs.Name = "LMMMLEDs";
-            this.LMMMLEDs.Size = new System.Drawing.Size(52, 17);
-            this.LMMMLEDs.TabIndex = 31;
-            this.LMMMLEDs.Text = "LEDs";
-            this.toolTip1.SetToolTip(this.LMMMLEDs, "Use LEDs to show channel traffic. Such twinkle!");
-            this.LMMMLEDs.UseVisualStyleBackColor = true;
-            this.LMMMLEDs.CheckedChanged += new System.EventHandler(this.LMMMLEDs_CheckedChanged);
-            // 
-            // LMMMHV
-            // 
-            this.LMMMHV.Location = new System.Drawing.Point(123, 46);
-            this.LMMMHV.Name = "LMMMHV";
-            this.LMMMHV.Size = new System.Drawing.Size(48, 20);
-            this.LMMMHV.TabIndex = 30;
-            this.LMMMHV.Text = "1680";
-            this.toolTip1.SetToolTip(this.LMMMHV, "Expected high voltage");
-            this.LMMMHV.Leave += new System.EventHandler(this.LMMMHV_Leave);
-            // 
-            // LMMMDebugFlag
-            // 
-            this.LMMMDebugFlag.AutoSize = true;
-            this.LMMMDebugFlag.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.LMMMDebugFlag.Location = new System.Drawing.Point(34, 95);
-            this.LMMMDebugFlag.Name = "LMMMDebugFlag";
-            this.LMMMDebugFlag.Size = new System.Drawing.Size(103, 17);
-            this.LMMMDebugFlag.TabIndex = 17;
-            this.LMMMDebugFlag.Text = "Debug HW Flag";
-            this.toolTip1.SetToolTip(this.LMMMDebugFlag, "May not work with new HW");
-            this.LMMMDebugFlag.UseVisualStyleBackColor = true;
-            this.LMMMDebugFlag.CheckedChanged += new System.EventHandler(this.LMMMDebugFlag_CheckedChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(46, 49);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 13);
-            this.label2.TabIndex = 29;
-            this.label2.Text = "High voltage";
-            this.toolTip1.SetToolTip(this.label2, "Expected high voltage");
-            // 
-            // LMMMBackBtn
-            // 
-            this.LMMMBackBtn.Location = new System.Drawing.Point(509, 77);
-            this.LMMMBackBtn.Name = "LMMMBackBtn";
-            this.LMMMBackBtn.Size = new System.Drawing.Size(75, 23);
-            this.LMMMBackBtn.TabIndex = 35;
-            this.LMMMBackBtn.Text = "Back";
-            this.LMMMBackBtn.UseVisualStyleBackColor = true;
-            this.LMMMBackBtn.Click += new System.EventHandler(this.BackBtn_Click);
-            // 
-            // LMMMLabel
-            // 
-            this.LMMMLabel.AutoSize = true;
-            this.LMMMLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LMMMLabel.Location = new System.Drawing.Point(11, 11);
-            this.LMMMLabel.Name = "LMMMLabel";
-            this.LMMMLabel.Size = new System.Drawing.Size(254, 20);
-            this.LMMMLabel.TabIndex = 34;
-            this.LMMMLabel.Text = "LMMM Connection Parameters";
+            // ALMMIPLabel
+            // 
+            this.ALMMIPLabel.AutoSize = true;
+            this.ALMMIPLabel.Location = new System.Drawing.Point(25, 32);
+            this.ALMMIPLabel.Name = "ALMMIPLabel";
+            this.ALMMIPLabel.Size = new System.Drawing.Size(58, 13);
+            this.ALMMIPLabel.TabIndex = 0;
+            this.ALMMIPLabel.Text = "IP Address";
+            // 
+            // ALMMIPAddressTextBox
+            // 
+            this.ALMMIPAddressTextBox.Location = new System.Drawing.Point(115, 32);
+            this.ALMMIPAddressTextBox.Name = "ALMMIPAddressTextBox";
+            this.ALMMIPAddressTextBox.Size = new System.Drawing.Size(92, 20);
+            this.ALMMIPAddressTextBox.TabIndex = 1;
+            this.ALMMIPAddressTextBox.Text = "169.254.30.30";
+            this.toolTip1.SetToolTip(this.ALMMIPAddressTextBox, "subnet mask for LM network");
+            this.ALMMIPAddressTextBox.Leave += new System.EventHandler(this.ALMMIPAddressTextBox_Leave);
+            // 
+            // ALMMPortLabel
+            // 
+            this.ALMMPortLabel.AutoSize = true;
+            this.ALMMPortLabel.Location = new System.Drawing.Point(25, 58);
+            this.ALMMPortLabel.Name = "ALMMPortLabel";
+            this.ALMMPortLabel.Size = new System.Drawing.Size(26, 13);
+            this.ALMMPortLabel.TabIndex = 2;
+            this.ALMMPortLabel.Text = "Port";
+            // 
+            // ALMMPortTextBox
+            // 
+            this.ALMMPortTextBox.Location = new System.Drawing.Point(115, 58);
+            this.ALMMPortTextBox.Name = "ALMMPortTextBox";
+            this.ALMMPortTextBox.Size = new System.Drawing.Size(49, 20);
+            this.ALMMPortTextBox.TabIndex = 3;
+            this.ALMMPortTextBox.Text = "5011";
+            this.toolTip1.SetToolTip(this.ALMMPortTextBox, "port number for this app\'s LM TCP/IP listener");
+            this.ALMMPortTextBox.Leave += new System.EventHandler(this.ALMMPortTextBox_Leave);
+            // 
+            // ALMMBufferLabel
+            // 
+            this.ALMMBufferLabel.AutoSize = true;
+            this.ALMMBufferLabel.Location = new System.Drawing.Point(12, 23);
+            this.ALMMBufferLabel.Name = "ALMMBufferLabel";
+            this.ALMMBufferLabel.Size = new System.Drawing.Size(71, 13);
+            this.ALMMBufferLabel.TabIndex = 19;
+            this.ALMMBufferLabel.Text = "Socket buffer";
+            // 
+            // ALMMBufferTextBox
+            // 
+            this.ALMMBufferTextBox.Location = new System.Drawing.Point(147, 23);
+            this.ALMMBufferTextBox.Name = "ALMMBufferTextBox";
+            this.ALMMBufferTextBox.Size = new System.Drawing.Size(48, 20);
+            this.ALMMBufferTextBox.TabIndex = 20;
+            this.ALMMBufferTextBox.Text = "8192";
+            this.toolTip1.SetToolTip(this.ALMMBufferTextBox, "(note:  must match hardware configuration)");
+            this.ALMMBufferTextBox.Leave += new System.EventHandler(this.ALMMBufferTextBox_Leave);
+            // 
+            // ALMMOKBtn
+            // 
+            this.ALMMOKBtn.Location = new System.Drawing.Point(509, 48);
+            this.ALMMOKBtn.Name = "ALMMOKBtn";
+            this.ALMMOKBtn.Size = new System.Drawing.Size(75, 23);
+            this.ALMMOKBtn.TabIndex = 28;
+            this.ALMMOKBtn.Text = "OK";
+            this.ALMMOKBtn.UseVisualStyleBackColor = true;
+            this.ALMMOKBtn.Click += new System.EventHandler(this.ALMMOKBtn_Click);
+            // 
+            // ALMMCancelBtn
+            // 
+            this.ALMMCancelBtn.Location = new System.Drawing.Point(509, 106);
+            this.ALMMCancelBtn.Name = "ALMMCancelBtn";
+            this.ALMMCancelBtn.Size = new System.Drawing.Size(75, 23);
+            this.ALMMCancelBtn.TabIndex = 29;
+            this.ALMMCancelBtn.Text = "Cancel";
+            this.ALMMCancelBtn.UseVisualStyleBackColor = true;
+            this.ALMMCancelBtn.Click += new System.EventHandler(this.CancelBtn_Click);
+            // 
+            // ALMMHelpBtn
+            // 
+            this.ALMMHelpBtn.Location = new System.Drawing.Point(509, 135);
+            this.ALMMHelpBtn.Name = "ALMMHelpBtn";
+            this.ALMMHelpBtn.Size = new System.Drawing.Size(75, 23);
+            this.ALMMHelpBtn.TabIndex = 30;
+            this.ALMMHelpBtn.Text = "Help";
+            this.ALMMHelpBtn.UseVisualStyleBackColor = true;
+            // 
+            // ALMMPerformanceTuningGroupBox
+            // 
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.CommandWaitTimemsLabel);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMCommandWaitTimeTextBox);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMCommandWaitTimeLabel);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.LongWaitTimemsLabel);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMLongWaitTextBox);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMLongWaitTimeLabel);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMBufferTextBox);
+            this.ALMMPerformanceTuningGroupBox.Controls.Add(this.ALMMBufferLabel);
+            this.ALMMPerformanceTuningGroupBox.Location = new System.Drawing.Point(11, 177);
+            this.ALMMPerformanceTuningGroupBox.Name = "ALMMPerformanceTuningGroupBox";
+            this.ALMMPerformanceTuningGroupBox.Size = new System.Drawing.Size(281, 223);
+            this.ALMMPerformanceTuningGroupBox.TabIndex = 31;
+            this.ALMMPerformanceTuningGroupBox.TabStop = false;
+            this.ALMMPerformanceTuningGroupBox.Text = "Performance tuning";
+            // 
+            // CommandWaitTimemsLabel
+            // 
+            this.CommandWaitTimemsLabel.AutoSize = true;
+            this.CommandWaitTimemsLabel.Location = new System.Drawing.Point(201, 82);
+            this.CommandWaitTimemsLabel.Name = "CommandWaitTimemsLabel";
+            this.CommandWaitTimemsLabel.Size = new System.Drawing.Size(20, 13);
+            this.CommandWaitTimemsLabel.TabIndex = 27;
+            this.CommandWaitTimemsLabel.Text = "ms";
+            this.CommandWaitTimemsLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.toolTip1.SetToolTip(this.CommandWaitTimemsLabel, " ");
+            // 
+            // ALMMCommandWaitTimeTextBox
+            // 
+            this.ALMMCommandWaitTimeTextBox.Location = new System.Drawing.Point(147, 79);
+            this.ALMMCommandWaitTimeTextBox.Name = "ALMMCommandWaitTimeTextBox";
+            this.ALMMCommandWaitTimeTextBox.Size = new System.Drawing.Size(48, 20);
+            this.ALMMCommandWaitTimeTextBox.TabIndex = 26;
+            this.ALMMCommandWaitTimeTextBox.Text = "30";
+            this.toolTip1.SetToolTip(this.ALMMCommandWaitTimeTextBox, "(note:  must match hardware configuration)");
+            this.ALMMCommandWaitTimeTextBox.Leave += new System.EventHandler(this.ALMMCommandWaitTimeTextBox_Leave);
+            // 
+            // ALMMCommandWaitTimeLabel
+            // 
+            this.ALMMCommandWaitTimeLabel.AutoSize = true;
+            this.ALMMCommandWaitTimeLabel.Location = new System.Drawing.Point(12, 79);
+            this.ALMMCommandWaitTimeLabel.Name = "ALMMCommandWaitTimeLabel";
+            this.ALMMCommandWaitTimeLabel.Size = new System.Drawing.Size(105, 13);
+            this.ALMMCommandWaitTimeLabel.TabIndex = 25;
+            this.ALMMCommandWaitTimeLabel.Text = "Command Wait Time";
+            // 
+            // LongWaitTimemsLabel
+            // 
+            this.LongWaitTimemsLabel.AutoSize = true;
+            this.LongWaitTimemsLabel.Location = new System.Drawing.Point(201, 56);
+            this.LongWaitTimemsLabel.Name = "LongWaitTimemsLabel";
+            this.LongWaitTimemsLabel.Size = new System.Drawing.Size(20, 13);
+            this.LongWaitTimemsLabel.TabIndex = 24;
+            this.LongWaitTimemsLabel.Text = "ms";
+            this.LongWaitTimemsLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.toolTip1.SetToolTip(this.LongWaitTimemsLabel, " ");
+            // 
+            // ALMMLongWaitTextBox
+            // 
+            this.ALMMLongWaitTextBox.Location = new System.Drawing.Point(147, 53);
+            this.ALMMLongWaitTextBox.Name = "ALMMLongWaitTextBox";
+            this.ALMMLongWaitTextBox.Size = new System.Drawing.Size(48, 20);
+            this.ALMMLongWaitTextBox.TabIndex = 23;
+            this.ALMMLongWaitTextBox.Text = "250";
+            this.toolTip1.SetToolTip(this.ALMMLongWaitTextBox, "(note:  must match hardware configuration)");
+            this.ALMMLongWaitTextBox.Leave += new System.EventHandler(this.ALMMLongWaitTextBox_Leave);
+            // 
+            // ALMMLongWaitTimeLabel
+            // 
+            this.ALMMLongWaitTimeLabel.AutoSize = true;
+            this.ALMMLongWaitTimeLabel.Location = new System.Drawing.Point(12, 53);
+            this.ALMMLongWaitTimeLabel.Name = "ALMMLongWaitTimeLabel";
+            this.ALMMLongWaitTimeLabel.Size = new System.Drawing.Size(82, 13);
+            this.ALMMLongWaitTimeLabel.TabIndex = 22;
+            this.ALMMLongWaitTimeLabel.Text = "Long Wait Time";
+            // 
+            // ALMMNetworkSettings
+            // 
+            this.ALMMNetworkSettings.Controls.Add(this.ALMMPortTextBox);
+            this.ALMMNetworkSettings.Controls.Add(this.ALMMPortLabel);
+            this.ALMMNetworkSettings.Controls.Add(this.ALMMIPAddressTextBox);
+            this.ALMMNetworkSettings.Controls.Add(this.ALMMIPLabel);
+            this.ALMMNetworkSettings.Location = new System.Drawing.Point(11, 43);
+            this.ALMMNetworkSettings.Name = "ALMMNetworkSettings";
+            this.ALMMNetworkSettings.Size = new System.Drawing.Size(237, 128);
+            this.ALMMNetworkSettings.TabIndex = 33;
+            this.ALMMNetworkSettings.TabStop = false;
+            this.ALMMNetworkSettings.Text = "Network";
+            // 
+            // ALMMPanel
+            // 
+            this.ALMMPanel.Controls.Add(this.ALMMHWConfig);
+            this.ALMMPanel.Controls.Add(this.ALMMBackBtn);
+            this.ALMMPanel.Controls.Add(this.ALMMLabel);
+            this.ALMMPanel.Controls.Add(this.ALMMNetworkSettings);
+            this.ALMMPanel.Controls.Add(this.ALMMPerformanceTuningGroupBox);
+            this.ALMMPanel.Controls.Add(this.ALMMHelpBtn);
+            this.ALMMPanel.Controls.Add(this.ALMMCancelBtn);
+            this.ALMMPanel.Controls.Add(this.ALMMOKBtn);
+            this.ALMMPanel.Location = new System.Drawing.Point(12, 130);
+            this.ALMMPanel.Name = "ALMMPanel";
+            this.ALMMPanel.Size = new System.Drawing.Size(601, 416);
+            this.ALMMPanel.TabIndex = 34;
+            this.ALMMPanel.Visible = false;
+            // 
+            // ALMMHWConfig
+            // 
+            this.ALMMHWConfig.Controls.Add(this.ALMMHVTextBox);
+            this.ALMMHWConfig.Controls.Add(this.ALMMHVLabel);
+            this.ALMMHWConfig.Location = new System.Drawing.Point(315, 177);
+            this.ALMMHWConfig.Name = "ALMMHWConfig";
+            this.ALMMHWConfig.Size = new System.Drawing.Size(237, 223);
+            this.ALMMHWConfig.TabIndex = 34;
+            this.ALMMHWConfig.TabStop = false;
+            this.ALMMHWConfig.Text = "ALMMHW Config";
+            // 
+            // ALMMHVTextBox
+            // 
+            this.ALMMHVTextBox.Location = new System.Drawing.Point(123, 46);
+            this.ALMMHVTextBox.Name = "ALMMHVTextBox";
+            this.ALMMHVTextBox.Size = new System.Drawing.Size(48, 20);
+            this.ALMMHVTextBox.TabIndex = 30;
+            this.ALMMHVTextBox.Text = "1680";
+            this.toolTip1.SetToolTip(this.ALMMHVTextBox, "Expected high voltage");
+            this.ALMMHVTextBox.Leave += new System.EventHandler(this.ALMMHV_Leave);
+            // 
+            // ALMMHVLabel
+            // 
+            this.ALMMHVLabel.AutoSize = true;
+            this.ALMMHVLabel.Location = new System.Drawing.Point(46, 49);
+            this.ALMMHVLabel.Name = "ALMMHVLabel";
+            this.ALMMHVLabel.Size = new System.Drawing.Size(67, 13);
+            this.ALMMHVLabel.TabIndex = 29;
+            this.ALMMHVLabel.Text = "High voltage";
+            this.toolTip1.SetToolTip(this.ALMMHVLabel, "Expected high voltage");
+            // 
+            // ALMMBackBtn
+            // 
+            this.ALMMBackBtn.Location = new System.Drawing.Point(509, 77);
+            this.ALMMBackBtn.Name = "ALMMBackBtn";
+            this.ALMMBackBtn.Size = new System.Drawing.Size(75, 23);
+            this.ALMMBackBtn.TabIndex = 35;
+            this.ALMMBackBtn.Text = "Back";
+            this.ALMMBackBtn.UseVisualStyleBackColor = true;
+            this.ALMMBackBtn.Click += new System.EventHandler(this.BackBtn_Click);
+            // 
+            // ALMMLabel
+            // 
+            this.ALMMLabel.AutoSize = true;
+            this.ALMMLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ALMMLabel.Location = new System.Drawing.Point(11, 11);
+            this.ALMMLabel.Name = "ALMMLabel";
+            this.ALMMLabel.Size = new System.Drawing.Size(252, 20);
+            this.ALMMLabel.TabIndex = 34;
+            this.ALMMLabel.Text = "ALMM Connection Parameters";
             // 
             // SelectorPanel
             // 
@@ -695,7 +417,7 @@
             // 
             this.DetectorComboBox.FormattingEnabled = true;
             this.DetectorComboBox.Items.AddRange(new object[] {
-            "LMMM",
+            "ALMM",
             "PTR-32"});
             this.DetectorComboBox.Location = new System.Drawing.Point(156, 13);
             this.DetectorComboBox.Name = "DetectorComboBox";
@@ -732,7 +454,7 @@
             // 
             this.MCAComboBox.FormattingEnabled = true;
             this.MCAComboBox.Location = new System.Drawing.Point(192, 128);
-            this.MCAComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MCAComboBox.Margin = new System.Windows.Forms.Padding(2);
             this.MCAComboBox.Name = "MCAComboBox";
             this.MCAComboBox.Size = new System.Drawing.Size(271, 21);
             this.MCAComboBox.TabIndex = 52;
@@ -971,21 +693,19 @@
             this.Controls.Add(this.AddDetectorTypePanel);
             this.Controls.Add(this.PTR32Panel);
             this.Controls.Add(this.SelectorPanel);
-            this.Controls.Add(this.LMMMPanel);
+            this.Controls.Add(this.ALMMPanel);
             this.Name = "LMConnectionParams";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "List Mode Connection Parameters";
             this.TopMost = true;
-            this.PerformanceTuningGroupBox.ResumeLayout(false);
-            this.PerformanceTuningGroupBox.PerformLayout();
-            this.InstrumentDiscoveryGroupBox.ResumeLayout(false);
-            this.InstrumentDiscoveryGroupBox.PerformLayout();
-            this.JoeIsTheCoolestGroupBox.ResumeLayout(false);
-            this.JoeIsTheCoolestGroupBox.PerformLayout();
-            this.LMMMPanel.ResumeLayout(false);
-            this.LMMMPanel.PerformLayout();
-            this.HWConfig.ResumeLayout(false);
-            this.HWConfig.PerformLayout();
+            this.ALMMPerformanceTuningGroupBox.ResumeLayout(false);
+            this.ALMMPerformanceTuningGroupBox.PerformLayout();
+            this.ALMMNetworkSettings.ResumeLayout(false);
+            this.ALMMNetworkSettings.PerformLayout();
+            this.ALMMPanel.ResumeLayout(false);
+            this.ALMMPanel.PerformLayout();
+            this.ALMMHWConfig.ResumeLayout(false);
+            this.ALMMHWConfig.PerformLayout();
             this.SelectorPanel.ResumeLayout(false);
             this.SelectorPanel.PerformLayout();
             this.PTR32Panel.ResumeLayout(false);
@@ -998,49 +718,35 @@
 
         #endregion
 
-        private System.Windows.Forms.Label SubnetLabel;
-        private System.Windows.Forms.TextBox LMMMSubnetTextBox;
-        private System.Windows.Forms.Label PortLabel;
-        private System.Windows.Forms.TextBox LMMMLocalPortTextBox;
-        private System.Windows.Forms.Label DiscWaitTimeLabel;
-        private System.Windows.Forms.TextBox LMMMDiscWaitTimeTextBox;
-        private System.Windows.Forms.Label DiscWaitTimeUnitsLabel;
-        private System.Windows.Forms.Label LMMMRemotePortLabel;
-        private System.Windows.Forms.CheckBox LMMMBroadcastCheckBox;
-        private System.Windows.Forms.TextBox LMMMRemotePortTextBox;
-        private System.Windows.Forms.Label LMMMInModeLabel;
-        private System.Windows.Forms.ComboBox LMMMInModeComboBox;
-        private System.Windows.Forms.Button LMMMDiscoverBtn;
-        private System.Windows.Forms.Label IntervalLabel;
-        private System.Windows.Forms.TextBox LMMMIntervalTextBox;
-        private System.Windows.Forms.CheckBox LMMMFeedbackFlagCheckBox;
-        private System.Windows.Forms.Label ConnectionsLabel;
-        private System.Windows.Forms.TextBox LMMMConnectionsTextBox;
-        private System.Windows.Forms.Label BufferLabel;
-        private System.Windows.Forms.TextBox LMMMBufferTextBox;
-        private System.Windows.Forms.Label BufferWarningLabel;
-        private System.Windows.Forms.Label EventBufferLabel;
-        private System.Windows.Forms.TextBox LMMMEventBufferTextBox;
-        private System.Windows.Forms.Label EventBufferUnitsLabel;
-        private System.Windows.Forms.CheckBox LMMMSyncAnalysisCheckBox;
-        private System.Windows.Forms.CheckBox LMMMAsyncFileCheckBox;
-        private System.Windows.Forms.CheckBox LMMMStreamCheckBox;
-        private System.Windows.Forms.Button LMMMOKBtn;
-        private System.Windows.Forms.Button LMMMCancelBtn;
-        private System.Windows.Forms.Button LMMMHelpBtn;
-        private System.Windows.Forms.GroupBox PerformanceTuningGroupBox;
-        private System.Windows.Forms.GroupBox InstrumentDiscoveryGroupBox;
-        private System.Windows.Forms.GroupBox JoeIsTheCoolestGroupBox;
-        private System.Windows.Forms.Label IntervalUnitsLabel;
-        private System.Windows.Forms.Panel LMMMPanel;
-        private System.Windows.Forms.Label LMMMLabel;
+        private System.Windows.Forms.Label ALMMIPLabel;
+        private System.Windows.Forms.TextBox ALMMIPAddressTextBox;
+        private System.Windows.Forms.Label ALMMPortLabel;
+        private System.Windows.Forms.TextBox ALMMPortTextBox;
+        private System.Windows.Forms.Label ALMMBufferLabel;
+        private System.Windows.Forms.TextBox ALMMBufferTextBox;
+        private System.Windows.Forms.GroupBox ALMMHWConfig;
+        private System.Windows.Forms.TextBox ALMMHVTextBox;
+        private System.Windows.Forms.Label ALMMHVLabel;
+        private System.Windows.Forms.Button ALMMOKBtn;
+        private System.Windows.Forms.Button ALMMCancelBtn;
+        private System.Windows.Forms.Button ALMMHelpBtn;
+        private System.Windows.Forms.GroupBox ALMMPerformanceTuningGroupBox;
+        private System.Windows.Forms.GroupBox ALMMNetworkSettings;
+        private System.Windows.Forms.Panel ALMMPanel;
+        private System.Windows.Forms.Label ALMMLabel;
+        private System.Windows.Forms.Label CommandWaitTimemsLabel;
+        private System.Windows.Forms.TextBox ALMMCommandWaitTimeTextBox;
+        private System.Windows.Forms.Label ALMMCommandWaitTimeLabel;
+        private System.Windows.Forms.Label LongWaitTimemsLabel;
+        private System.Windows.Forms.TextBox ALMMLongWaitTextBox;
+        private System.Windows.Forms.Label ALMMLongWaitTimeLabel;
         private System.Windows.Forms.Panel SelectorPanel;
         private System.Windows.Forms.Button HelpButt;
         private System.Windows.Forms.Button CancelButt;
         private System.Windows.Forms.Button EditBtn;
         private System.Windows.Forms.Label DetectorTypeLabel;
         private System.Windows.Forms.ComboBox DetectorComboBox;
-        private System.Windows.Forms.Button LMMMBackBtn;
+        private System.Windows.Forms.Button ALMMBackBtn;
         private System.Windows.Forms.Panel PTR32Panel;
         private System.Windows.Forms.Label connLabel;
         private System.Windows.Forms.Button AddDetectorBtn;
@@ -1053,13 +759,6 @@
         private System.Windows.Forms.TextBox AddDetectorNameTextBox;
         private System.Windows.Forms.Label AddDetectorNameLabel;
         private System.Windows.Forms.ToolTip toolTip1;
-        private System.Windows.Forms.GroupBox HWConfig;
-        private System.Windows.Forms.CheckBox LMMMDebugFlag;
-        private System.Windows.Forms.TextBox LMMMHV;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox LMMMLEDs;
-        private System.Windows.Forms.TextBox LMMMLLDmV;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button PTR32Back;
         private System.Windows.Forms.Button PTR32Help;
         private System.Windows.Forms.Button PTR32Cancel;
@@ -1076,5 +775,6 @@
 		private System.Windows.Forms.Label MCANameLabel;
 		private System.Windows.Forms.TextBox MCAName;
 		private System.Windows.Forms.ComboBox MCAComboBox;
-	}
+
+    }
 }

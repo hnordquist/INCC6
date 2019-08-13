@@ -151,7 +151,16 @@ namespace NewUI
             if (N.App.AppContext.NCDFileAssay)
                 ap.data_src = ConstructedSource.NCDFile;
         }
-
+        private void Step2ALMMRadioBtn_CheckedChanged(object sender, EventArgs e)
+        {
+            if (N.App.AppContext.ALMMFileAssay != ((RadioButton)sender).Checked)
+            {
+                N.App.AppContext.modified = true; N.App.AppContext.ALMMFileAssay = ((RadioButton)sender).Checked;
+                AcqParamUpdate = true;
+            }
+            if (N.App.AppContext.ALMMFileAssay)
+                ap.data_src = ConstructedSource.ALMMFile;
+        }
         private void Step2SortedPulseRadioBtn_CheckedChanged(object sender, EventArgs e)
         {
             if (N.App.AppContext.PulseFileAssay != ((RadioButton)sender).Checked)
@@ -227,6 +236,10 @@ namespace NewUI
                 case ConstructedSource.NCDFile:
                     a = "Select NCD files or folder";
                     b = "LMMM NCD"; c = "ncd";
+                    break;
+                case ConstructedSource.ALMMFile:
+                    a = "Select BIN files or folder";
+                    b = "ALMM BIN"; c = "bin";
                     break;
                 case ConstructedSource.PTRFile:
                     a = "Select PTR-32 files or folder";
@@ -1001,7 +1014,7 @@ namespace NewUI
                 INCCDB.AcquireSelector sel = new INCCDB.AcquireSelector(det, ap.item_type, DateTime.Now);
                 ap.MeasDateTime = sel.TimeStamp; ap.lm.TimeStamp = sel.TimeStamp;
                 N.App.DB.AddAcquireParams(sel, ap);  // update acquire and lmacquire tables with this new one
-				if (LMParamUpdate)
+				if (ap.lm.modified)
 				{
 					meas.AcquireState.lm.Results = ap.lm.Results;
 					meas.AcquireState.lm.IncludeConfig = ap.lm.IncludeConfig;
@@ -1009,7 +1022,11 @@ namespace NewUI
 					meas.AcquireState.lm.Cycles = ap.lm.Cycles;
 					meas.AcquireState.lm.Interval = ap.lm.Interval;
 					LMParamUpdate = false;
-				}
+                    //urgh -- these are getting overwritten.
+                    N.App.Config.Cur.Interval = ap.lm.Interval;
+                    N.App.Config.Cur.Cycles = ap.lm.Cycles;
+
+                }
 				N.App.Opstate.Measurement.AcquireState.data_src = ap.data_src; // copy any new changes to the current measurement
                 
 				AcqParamUpdate = false;
@@ -1039,8 +1056,10 @@ namespace NewUI
 			else if (N.App.AppContext.PulseFileAssay)
 			    ap.data_src = ConstructedSource.SortedPulseTextFile; 
 			else if (N.App.AppContext.NCDFileAssay)
-		        ap.data_src = ConstructedSource.NCDFile; 
-			else if (N.App.AppContext.MCA527FileAssay)
+		        ap.data_src = ConstructedSource.NCDFile;
+            else if (N.App.AppContext.ALMMFileAssay)
+                ap.data_src = ConstructedSource.ALMMFile;
+            else if (N.App.AppContext.MCA527FileAssay)
 	            ap.data_src = ConstructedSource.MCA527File;
 			Swap(false);
 		}
@@ -1459,6 +1478,8 @@ namespace NewUI
                 ap.ending_comment_str = (((TextBox)sender).Text);
             ap.modified = true;
         }
+
+
 
         void EndEdit()
         {

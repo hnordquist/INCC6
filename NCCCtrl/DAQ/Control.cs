@@ -34,6 +34,7 @@ using LMComm;
 using NCC;
 using NCCReporter;
 using Instr;
+
 namespace DAQ
 {
 
@@ -56,7 +57,7 @@ namespace DAQ
 
             private DAQInstrState _state;
 
-            public bool broadcastGo;
+            //public bool broadcastGo;
 
             public string currentDataFilenamePrefix;
 
@@ -94,7 +95,9 @@ namespace DAQ
         {
             CurState.Measurement.CurrentRepetition = 0;
             CurState.ResetTokens();
-            CurState.broadcastGo = true; //  ((LMInstrument)Instruments.Active.FirstActive().id.FullConnInfo).NetComm.B; //devnote: geez this idea sure didn;t work out
+            //It didn't work, but you left it in here? Geez.
+            //CurState.broadcastGo = true; //  ((LMInstrument)Instruments.Active.FirstActive().id.FullConnInfo).NetComm.B; //devnote: geez this idea sure didn;t work out
+            //CurState.broadcastGo = false;
             //CurState.ResetTimer(1, tupleprocessing, Instruments.Active.FirstActive(), 250, (int)NC.App.AppContext.StatusTimerMilliseconds);
             CurState.Measurement.PrepareINCCResults();
         }
@@ -119,11 +122,12 @@ namespace DAQ
         {
             if (det.Id.SRType.IsSocketBasedLM())
             {
-				if (det.Id.SRType == InstrType.LMMM)
+				if (det.Id.SRType == InstrType.ALMM)
 				{
 					LMInstrument lm = new LMInstrument(det);
+                    lm.id.SRType = InstrType.ALMM;
 					lm.DAQState = DAQInstrState.Offline; 
-					lm.selected = false;  //must broadcast first to get it selected
+					lm.selected = false;  
 					if (!Instruments.All.Contains(lm))
 						Instruments.All.Add(lm); // add to global runtime list
 				} 
@@ -137,7 +141,7 @@ namespace DAQ
 				}
 				else
 				{
-                    // LMMM and MCA-527 are the only socket-based devices supported
+                    // ALMM and MCA-527 are the only socket-based devices supported
 				}
             }
             else if (det.Id.SRType.IsUSBBasedLM())
@@ -171,10 +175,11 @@ namespace DAQ
             }
         }
 
-		/// <summary>
-		/// Socket server instance for LMMM DAQ support
-		/// </summary>
-        private Server _SL;
+        /// <summary>
+        /// Socket server instance for ALMM DAQ support
+        /// </summary>
+        //private Server _SL;
+        private ALMMController _AL;
 
         //  why are these static? because of the coding style with the socket callbacks, static could be removed at any time with a bit of reorg
         private static int connections = 0;
@@ -191,9 +196,10 @@ namespace DAQ
         /// </summary>
         internal void StartLMDAQServer(LMConnectionInfo lmc = null)
         {
-            if (_SL == null)
+            //if (_SL == null)
+            if (_AL == null)
             {
-                LMMMNetComm lmn;
+                ALMMNetComm lmn;
                 if (lmc == null)
                 {
                     // get the one associated with selected current detector, and if not available, then get the last one used 
@@ -205,24 +211,39 @@ namespace DAQ
                 }
                 lmn = lmc.NetComm;
 
-                _SL = new Server(lmn.Port, lmn.NumConnections, lmn.ReceiveBufferSize, lmn.subnetip);
-                _SL.Logger = collog;
-                LMMMComm.LMServer = _SL;  // server root visible to COMM class 
+                //_SL = new Server(lmn.Port, 1, lmn.ReceiveBufferSize, lmn.ipaddress);
+                /*_SL.Logger = collog;
+                ALMMComm.LMServer = _SL;  // server root visible to COMM class 
+                ALMMComm.ALMMCtrl
                 _SL.clientConnected += SL_ClientConnected;
-                _SL.DataReceived += SL_DataReceived;
+                _SL.DataReceived += SL_DataReceived;*/
+                _AL = new ALMMController(lmc.NetComm.ipaddress.ToString(), lmc.NetComm.Port);
+                _AL.clientConnected += AL_ClientConnected;
+                _AL.ClientDisconnected += AL_ClientDisconnected;
+                ALMMComm.ALMMCtrl = _AL;
+                _AL.Logger = collog;
+                _AL.DataReceived += AL_DataReceived;
             }
 
-            if (_SL.IsRunning)
+            //if (_SL.IsRunning)
+            if (_AL.Connected())
             {
                 ctrllog.TraceEvent(LogLevels.Verbose, 123, "The LM DAQ Server is already running");
                 return;
             }
             else
             {
-                _SL.Start();
+                if (_AL.Pingable())
+                    ctrllog.TraceEvent(LogLevels.Verbose, 123, "The ALMM responds to a ping.");
+                else
+                    ctrllog.TraceEvent(LogLevels.Verbose, 123, "Cannot ping the ALMM device! Check your connections.");
+                //_SL.Start();
+                if (!(_AL.Connect() == ALMMController.ReturnCode.ALL_GOOD))
+                    collog.TraceEvent(LogLevels.Warning, 0, "Could not connect");
+
             }
 
-            CurState.State = DAQInstrState.Offline;
+            CurState.State = _AL.Connected()?DAQInstrState.Online:DAQInstrState.Offline;
         }
         internal void PrepSRDAQHandler()
         {
@@ -335,21 +356,25 @@ namespace DAQ
             }
         }
 
-        void DisconnectFromLMMMInstruments()
+        void DisconnectFromALMMInstruments()
         {
-            if (Instruments.Active.HasLMMM())
+            if (Instruments.Active.HasALMM())
             {
-                if (_SL == null)
+                //if (_SL == null)
+                if (_AL == null)
                     return;
                 // Stop incoming accepts
-                _SL.Stop();
+                //_SL.Stop();
+                _AL.Cancel();
+                _AL.Disconnect();
                 IEnumerator iter = Instruments.Active.GetLMEnumerator();
                 // Close all connected instruments
                 while (iter.MoveNext())
                 {
                     LMInstrument lmi = (LMInstrument)iter.Current;
-                    if (lmi.id.SRType == InstrType.LMMM && (lmi.DAQState != DAQInstrState.Offline) && (lmi.instrSocketEvent != null)) // if LMMM and connected
-                        _SL.StopClient(lmi.instrSocketEvent);
+                    if (lmi.id.SRType == InstrType.ALMM && (lmi.DAQState != DAQInstrState.Offline) && (lmi.instrSocketEvent != null)) // if ALMM and connected
+                        //_SL.StopClient(lmi.instrSocketEvent);
+                        _AL.Disconnect();
                 }
             }
         }
@@ -358,7 +383,7 @@ namespace DAQ
         //         typing 'stop' at prompt stops the current cycle, but not the overall processing state, this method should now stop the entire process
         // devnote: Could just use a timer-based check of the token, same as for progress polling into the analyzer
         /// <summary>
-        /// send the cancel command to each LMMM, set the instrument state Online to prevent data processing of any additional packets 
+        /// send the cancel command to each ALMM, set the instrument state Online to prevent data processing of any additional packets 
         /// </summary>
         /// <param name="removeCurLMDataFile">delete the current LM data files created for the current interval</param>
         private void StopLMCAssay(bool removeCurLMDataFile)
@@ -372,11 +397,11 @@ namespace DAQ
                 //This new from USB version incc6, commenting out has no effect on doubles/triples errors hn 9/22/2014
                 active.StopAssay(); // for PTR-32 and MCA527
 
-                // send cancel command to the LMMM instruments
-                if (active is LMInstrument && (active.id.SRType == InstrType.LMMM))
+                // send cancel command to the ALMM instruments
+                if (active is LMInstrument && (active.id.SRType == InstrType.ALMM))
                 {
                     LMInstrument lmi = active as LMInstrument;
-                    LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.cancel, 0, Instruments.Active.RankPositionInList(lmi)); // send to all active, 1 by 1
+                    //ALMMComm.FormatAndSendALMMCommand(ALMMLingo.Tokens.cancel, 0, Instruments.Active.RankPositionInList(lmi)); // send to all active, 1 by 1
                     if (collectingFileData && lmi.file != null)
                     {
                         lmi.file.CloseWriter();
@@ -427,7 +452,7 @@ namespace DAQ
 
         /// <summary>
         /// Start an assay on every instrument connected, this is for a single interval only
-        /// The LMMM does just one assay from it's POV, and needs to be retold by DAQ here to do the next interval
+        /// The ALMM does just one assay from it's POV, and needs to be retold by DAQ here to do the next interval
         /// </summary>
         private int StartLM_SRAssay()
         {
@@ -461,7 +486,7 @@ namespace DAQ
                 if (active is LMInstrument)
                 {
                     NCCFile.INeutronDataFile f = (active as LMInstrument).PrepOutputFile(CurState.currentDataFilenamePrefix, Instruments.Active.IndexOf(active), collog);
-                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for LMMM
+                    active.RDT.StartCycle(cycle, f); // internal handler needs access to the file handle for PTR-32 and MCA-527, but not for ALMM
                     ctrllog.TraceEvent(LogLevels.Verbose, 93939, "Cycle {0}, {1}", cycle.seq, string.IsNullOrEmpty(f.Filename) ? string.Empty: "output file name " + f.Filename);
                  }
                 else
@@ -472,6 +497,7 @@ namespace DAQ
                     //  devnote: with more than one active, these need to be revisited
                     if (active is LMInstrument)
                     {
+                        (active as LMInstrument).ApplySettings();
                         (active as LMInstrument).RDT.SetupCountingAnalyzerHandler(NC.App.Config, active.id.source.TimeBase(active.id.SRType));
                         (active as LMInstrument).RDT.PrepareAndStartCountingAnalyzers(CurState.Measurement.AnalysisParams);
                     }
@@ -482,10 +508,6 @@ namespace DAQ
                         // kick off the thread to try and init the SR
                         SRWrangler.StartSRActionAndWait((active as SRInstrument).id, SRTakeDataHandler.SROp.InitializeSR);
                     }
-                    else if (active is LMInstrument && active.id.SRType == InstrType.LMMM)
-                    {
-						LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.prep, 0, Instruments.All.IndexOf(active)); // send this config message to this LMMM
-                    }
 
                     // devnote: index might be wrong if some of multiple LMs are disabled via UI. This will require a revisit at integration time 
                 }
@@ -493,7 +515,7 @@ namespace DAQ
 
             NC.App.Loggers.Flush();
             FireEvent(EventType.ActionInProgress, this);
-            Thread.Sleep(250); // LMMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
+            Thread.Sleep(250); // ALMM only: wait for last send to finish, todo could we use EventHandler<SocketAsyncEventArgs> Completed here?
 
             // PTR-32/MCA-527
             // This loop works for PTR-32 and MCA-527 instruments, based on an improved instrument and control design
@@ -508,24 +530,12 @@ namespace DAQ
                 }
             }
 
-            // The following sections are for SR and LMMM 
-            // LMMM
-            if (Instruments.Active.HasLMMM())  // send to a plurality of thresholding units, err, I mean, LMMM Instruments
+            // The following sections are for SR and ALMM 
+            // ALMM
+            if (Instruments.Active.HasALMM())  // send to a plurality of thresholding units, err, I mean, ALMM Instruments
             {
-                if (CurState.broadcastGo) // send go
-                {
-					// this has to be sent separately, because linux control is looking for the Arm alone.
-					LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.arm); // send to all active
-
-                    Thread.Sleep(250);  // allow linux code to setup waiting socket.
-
-					// broadcast go message to all NCC.App.Config.Net.Subnet addresses. This is the instrument group.
-					LMMMComm.PostLMMMCommand(LMMMLingo.Tokens.go, true);
-                }
-                else
-                {
-					LMMMComm.FormatAndSendLMMMCommand(LMMMLingo.Tokens.go); // send to all active
-                }
+                ALMMComm.ALMMCtrl.Go();
+                collog.TraceEvent(LogLevels.Verbose, 0, string.Format ("Sending Go to ALMM on repetition {0}.", CurState.Measurement.CurrentRepetition));
             }
 
             // SR
